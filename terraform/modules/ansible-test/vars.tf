@@ -1,11 +1,9 @@
 variable "vm_count" {
   description = "Specific numerical count for the VMs"
-  default = 3
 }
 variable "ssh_key" {
   description = "The public key to use for the cluster"
   sensitive = true
-  default = ""
 }
 variable "node" {
   description = "First Proxmox Node"
@@ -14,6 +12,7 @@ variable "node" {
 variable "api_url" {
   # url is the hostname (FQDN if you have one) for the proxmox host you'd like to connect to to issue the commands. my proxmox host is 'prox-1u'. Add /api2/json at the end for the API
   description = "url for proxmox cluster"
+  sensitive = true
   default = "https://172.16.16.3:8006/api2/json"
 }
 variable "token_id" {
@@ -38,27 +37,24 @@ variable "vm_user" {
 }
 variable "ip_address" {
   description = "IPv4 Address for the VMs"
-  default = "172.16.16.20"
 }
 variable "gateway" {
   description = "Set the gateway for the interface"
-  default = "172.16.16.1"
 }
 variable "bridge" {
   description = "Linux Bridge for the VM"
-  default = "vmbr0"
 }
 variable "disk_size" {
   description = "Size of the VM Disk"
-  default = 15
+  default = 32
 }
 variable "cpu_count" {
   description = "Core count for the VM"
-  default = 2
+  default = 1
 }
 variable "ram_size" {
   description = "RAM Size for the VM"
-  default = 2048
+  default = 1024
 }
 variable "storage_location" {
   description = "Storage location for the VM"
@@ -66,9 +62,8 @@ variable "storage_location" {
 }
 variable "vlan_tag" {
   description = "VLAN tagging for the nic on the VM"
-  default = "0"
 }
 variable "vm_name" {
   description = "Name/Hostname of the VM"
-  default = "ansible-vm"
+  default = "debian-x11-cloud-drive"
 }
