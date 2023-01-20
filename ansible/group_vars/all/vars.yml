@@ -1,0 +1,26 @@
+timezone: America/New_York
+
+ntp_timezone: '{{ timezone }}'
+
+locale: en_US.UTF-8
+
+keyboard_layout: us
+
+shell: /usr/bin/zsh
+
+dotfiles_repo: https://github.com/chkpwd/dotfiles
+
+# Packages
+
+extra_packages:
+  - zsh
+  - iperf3
+  - speedtest-cli
+  - htop
+  - stow
+  - exa
+  - git
+  - neofetch
+  - neovim
+  - tmux
+  - ncdu

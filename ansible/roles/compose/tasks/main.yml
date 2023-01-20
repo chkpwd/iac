@@ -1,0 +1,4 @@
+- name: "Deploy media stack"
+  ansible.builtin.include_tasks: deploy_media_stack.yml
+- name: "Install ctop"
+  ansible.builtin.include_tasks: install_ctop.yml

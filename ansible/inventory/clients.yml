@@ -1,0 +1,63 @@
+hypervisors:
+  hosts:
+    proxmox:
+      ansible_host: 172.16.16.3
+    vmware:
+      ansible_host: 172.16.16.8
+  vars:
+    ansible_user: "root"
+    ansible_connection: ssh
+
+qemu:
+  hosts:
+    mirage:
+      ansible_host: 172.16.10.20
+    stable_diffusion:
+      ansible_host: 172.16.20.15
+    pathfinder:
+      ansible_host: 172.16.20.60
+  vars:
+    ansible_user: "hyoga"
+    ansible_connection: ssh
+
+lxc:
+  hosts:
+    vantage:
+      ansible_host: 172.16.16.17
+    phanton:
+      ansible_host: 172.16.16.16
+    horizon:
+      ansible_host: 172.16.16.10
+  vars:
+    ansible_user: "hyoga"
+    ansible_connection: ssh
+
+staging:
+  hosts:
+    vm1:
+      ansible_host: 172.16.16.201
+    vm2:
+      ansible_host: 172.16.16.202
+    vm3:
+      ansible_host: 172.16.16.203
+  vars:
+    ansible_user: "hyoga"
+    ansible_connection: ssh
+
+cluster:
+  children:
+    hypervisors:
+
+onprem:
+  children:
+    cluster:
+    qemu:
+    lxc:
+    staging:
+  vars:
+    ansible_ssh_private_key_file: ~/.ssh/ansible
+
+datacenter:
+  children:
+   # cloud:
+    onprem:

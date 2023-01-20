@@ -1,0 +1,38 @@
+---
+- name: Create a login user
+  ansible.builtin.user:
+    name: "{{ username }}"
+    password: !vault |
+      $ANSIBLE_VAULT;1.1;AES256
+      33356230616361633338333464323539616637353035353664373764353630383065623337623437
+      6564636561323764653533393430313866616136336538330a343732366232333632653133363335
+      36316561643539666361643864353231633739376336653266663231623133633963316631626636
+      3630316361343239630a306639363561336135353762303435323430656466613462626461383434
+      3338
+
+    groups:
+      - sudo
+    state: present
+    append: true # If false, the above groups are the only groups provided to the user
+
+- name: Chmod the user home directory
+  ansible.builtin.file:
+    path: "/home/{{ username }}"
+    state: directory
+    mode: 0755
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    recurse: false
+
+- name: Allow sudo group to have passwordless sudo
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo'
+    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+    validate: '/usr/sbin/visudo -cf %s'
+
+- name: Set the default shell
+  ansible.builtin.user:
+    name: "{{ username }}"
+    shell: "{{ shell }}"

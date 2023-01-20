@@ -1,0 +1,8 @@
+---
+- name: "Install the essentials on the target"
+- hosts: singular
+  become: true
+  gather_facts: false
+
+  roles:
+    - { role: ../roles/system }

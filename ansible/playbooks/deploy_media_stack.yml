@@ -1,0 +1,17 @@
+---
+- name: "Install docker and docker-compose on the target"
+  hosts: staging
+  become: true
+
+  vars:
+    pip_install_packages:
+      - name: docker
+    docker_edition: 'ce'
+    docker_package_state: latest
+    docker_users: [hyoga]
+
+  roles:
+    - { role: ../roles/system }
+    - geerlingguy.pip
+    - geerlingguy.docker
+    - { role: ../roles/compose }

@@ -1,0 +1,15 @@
+---
+- name: "Install docker and docker-compose on the target"
+- hosts: singular
+  become: true
+
+  vars:
+    pip_install_packages:
+      - name: docker
+    docker_edition: 'ce'
+    docker_package_state: present
+    docker_users: [vagrant]
+
+  roles:
+    - geerlingguy.pip
+    - geerlingguy.docker

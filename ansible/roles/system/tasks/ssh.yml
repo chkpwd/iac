@@ -1,0 +1,15 @@
+---
+- name: Copy the public SSH key
+  ansible.posix.authorized_key:
+    user: "{{ username }}"
+    state: present
+    key: "{{ ssh_public_key }}"
+
+- name: Disable SSH password auth
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#PasswordAuthentication yes"
+    line: "PasswordAuthentication no"
+  notify: Restart SSH daemon
+
+# - meta: flush_handlers
