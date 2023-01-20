@@ -3,14 +3,12 @@
   hosts: all
   become: true
   tasks:
-  - name: Update packages
-    ansible.builtin.apt:
-      update_cache: true
-      upgrade: true
+    - name: Update packages
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: true
 
-  - name: Install essential packages
-    ansible.builtin.package:
-      name: "{{ packages }}"
-      state: latest
-
-
+    - name: Install essential packages # noqa package-latest
+      ansible.builtin.package:
+        name: "{{ packages }}"
+        state: latest
