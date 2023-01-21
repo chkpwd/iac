@@ -1,22 +1,3 @@
-data "vsphere_datacenter" "dc" {
-  name = var.vsphere-datacenter
-}
-
-data "vsphere_datastore" "datastore" {
-  name          = var.vm-datastore
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
-data "vsphere_compute_cluster" "cluster" {
-  name          = var.vsphere-cluster
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
-data "vsphere_network" "network" {
-  name          = var.vm-network
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
 resource "vsphere_virtual_machine" "vm" {
   name             = var.name
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id

@@ -46,6 +46,7 @@ d-i apt-setup/cdrom/set-failed boolean false
 d-i mirror/country string manual GB
 d-i mirror/http/hostname string deb.debian.org
 d-i mirror/http/directory string /debian
+d-i mirror/http/proxy string 
 
 # Set root password
 d-i passwd/root-login boolean false

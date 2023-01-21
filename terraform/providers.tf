@@ -18,6 +18,25 @@ provider "vsphere" {
   allow_unverified_ssl = true
 }
 
+data "vsphere_datacenter" "dc" {
+  name = var.vsphere-datacenter
+}
+
+data "vsphere_datastore" "datastore" {
+  name          = var.vm-datastore
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_compute_cluster" "cluster" {
+  name          = var.vsphere-cluster
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
+data "vsphere_network" "network" {
+  name          = var.vm-network
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
 provider "proxmox" {
 
   # url is the hostname (FQDN if you have one) for the proxmox host you'd like to connect to to issue the commands. my proxmox host is 'prox-1u'. Add /api2/json at the end for the API
