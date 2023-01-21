@@ -24,6 +24,18 @@ variable "token_secret" {
   description = "Token secret for the proxmox cluster" 
   sensitive = true
 }
+variable "vsphere_user" {
+  description = "vSphere user"
+  sensitive = true
+}
+variable "vsphere_password" {
+  description = "vSphere password"
+  sensitive = true
+}
+variable "vsphere_server_name" {
+  description = "vSphere name of the server"
+  sensitive = true
+}
 variable "template_name" {
   description = "Template for the container to clone"
   default = "debian-x11-cloud-drive"

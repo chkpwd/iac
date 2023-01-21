@@ -4,7 +4,18 @@ terraform {
       source = "telmate/proxmox"
       version = "2.9.11"
     }
+    vsphere = {
+      source = "hashicorp/vsphere"
+      version = "2.2.0"
+    }
   }
+}
+
+provider "vsphere" {
+  user           = var.vsphere_user
+  password       = var.vsphere_password
+  vsphere_server = var.vsphere_server_name
+  allow_unverified_ssl = true
 }
 
 provider "proxmox" {

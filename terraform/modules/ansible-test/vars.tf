@@ -13,19 +13,28 @@ variable "api_url" {
   # url is the hostname (FQDN if you have one) for the proxmox host you'd like to connect to to issue the commands. my proxmox host is 'prox-1u'. Add /api2/json at the end for the API
   description = "url for proxmox cluster"
   sensitive = true
-  default = "https://172.16.16.3:8006/api2/json"
 }
 variable "token_id" {
   # api token id is in the form of: <username>@pam!<tokenId>
   description = "Token ID for the cluster"
   sensitive = true
-  default = "terraform-prov@pve!terraform"
 }
 variable "token_secret" {
   # this is the full secret wrapped in quotes. 
   description = "Token secret for the proxmox cluster" 
   sensitive = true
-  default = "60850beb-cbd0-473c-91a6-9188b06439ee"
+}
+variable "vsphere_user" {
+  description = "vSphere user"
+  sensitive = true
+}
+variable "vsphere_password" {
+  description = "vSphere password"
+  sensitive = true
+}
+variable "vsphere_server_name" {
+  description = "vSphere name of the server"
+  sensitive = true
 }
 variable "template_name" {
   description = "Template for the container to clone"
