@@ -14,51 +14,43 @@ module "ansible-vm" {
  vm_name = "ansible-vm"
 }
 
-module "example-server-windowsvm-advanced" {
-  source            = "Terraform-VMWare-Modules/vm/vsphere"
-  version           = "3.5.0"
-  dc                = "Datacenter"
-  vmrp              = "cluster/Resources" # Works with ESXi/Resources
-  vmfolder          = "Cattle"
-  datastore_cluster = "Datastore Cluster" # You can use datastore variable instead
-  vmtemp            = "TemplateName"
-  instances         = 2
-  vmname            = "AdvancedVM"
-  vmnameformat      = "%03d" # To use three decimal with leading zero vmnames will be AdvancedVM001,AdvancedVM002
-  domain            = "somedomain.com"
-  network = {
-    "Name of the Port Group in vSphere" = ["10.13.113.2", "10.13.113.3"] # To use DHCP create Empty list ["",""]; You can also use a CIDR annotation;
-    "Second Network Card"               = ["", ""]
+resource "vsphere_virtual_machine" "vm" {
+  name             = var.name
+  resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
+  datastore_id     = data.vsphere_datastore.datastore.id
+
+  num_cpus             = var.cpu
+  num_cores_per_socket = var.cores-per-socket
+  memory               = var.ram
+  guest_id             = var.vm-guest-id
+
+  network_interface {
+    network_id   = data.vsphere_network.network.id
+    adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
   }
-  ipv4submask  = ["24", "8"]
-  network_type = ["vmxnet3", "vmxnet3"]
-  tags = {
-    "terraform-test-category" = "terraform-test-tag"
+
+  disk {
+    label            = "${var.name}-disk"
+    thin_provisioned = data.vsphere_virtual_machine.template.disks.0.thin_provisioned
+    eagerly_scrub    = data.vsphere_virtual_machine.template.disks.0.eagerly_scrub
+    size             = var.disksize == "" ? data.vsphere_virtual_machine.template.disks.0.size : var.disksize 
   }
-  data_disk = {
-    disk1 = {
-      size_gb                   = 30,
-      thin_provisioned          = false,
-      data_disk_scsi_controller = 0,
-    },
-    disk2 = {
-      size_gb                   = 70,
-      thin_provisioned          = true,
-      data_disk_scsi_controller = 1,
-      datastore_id              = "datastore-90679"
-    }
+
+  clone {
+    template_uuid = data.vsphere_virtual_machine.template.id
   }
-  scsi_bus_sharing = "physicalSharing" // The modes are physicalSharing, virtualSharing, and noSharing
-  scsi_type        = "lsilogic"        // Other acceptable value "pvscsi"
-  scsi_controller  = 0                 // This will assign OS disk to controller 0
-  dns_server_list  = ["192.168.0.2", "192.168.0.1"]
-  enable_disk_uuid = true
-  vmgateway        = "192.168.0.1"
-  auto_logon       = true
-  run_once         = ["command01", "command02"] // You can also run Powershell commands
-  orgname          = "Terraform-Module"
-  workgroup        = "Module-Test"
-  is_windows_image = true
-  firmware         = "efi"
-  local_adminpass  = "Password@Strong"
+  extra_config = {
+    "guestinfo.metadata"          = base64encode(templatefile("${path.module}/templates/metadata.yaml", local.templatevars))
+    "guestinfo.metadata.encoding" = "base64"
+    "guestinfo.userdata"          = base64encode(templatefile("${path.module}/templates/userdata.yaml", local.templatevars))
+    "guestinfo.userdata.encoding" = "base64"
+  }
+  lifecycle {
+    ignore_changes = [
+      annotation,
+      clone[0].template_uuid,
+      clone[0].customize[0].dns_server_list,
+      clone[0].customize[0].network_interface[0]
+    ]
+  }
 }
