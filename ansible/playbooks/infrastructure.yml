@@ -1,4 +1,4 @@
 - name: Install media stack on media-server
-  ansible.builtin.import_playbook: /home/hyoga/code/boilerplates/ansible/playbooks/deploy_media_stack.yml
+  ansible.builtin.import_playbook: deploy_media_stack.yml
 - name: Install docker stack on horizon
-  ansible.builtin.import_playbook: "{{ playbook_dir }}/deploy_horizon_stack.yml"
+  ansible.builtin.import_playbook: deploy_horizon_stack.yml
