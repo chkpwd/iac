@@ -1,7 +1,7 @@
 # Setting the locales, country
 # Supported locales available in /usr/share/i18n/SUPPORTED
-d-i debian-installer/language string en_GB
-d-i debian-installer/country string GB
+d-i debian-installer/language string en_US
+d-i debian-installer/country string US
 
 # User creation
 d-i passwd/user-fullname string ${user_fullname}
@@ -14,10 +14,10 @@ d-i user-setup/allow-password-weak boolean true
 # Clock and Timezone
 d-i clock-setup/utc boolean true
 d-i clock-setup/ntp boolean true
-d-i time/zone string Europe/London
+d-i time/zone string America/New_York
 
 # Disk and Partitioning setup
-d-i partman-auto/disk string /dev/nvme0n1
+d-i partman-auto/disk string /dev/sda
 d-i partman-auto-lvm/guided_size string max
 d-i partman-auto/choose_recipe select atomic
 d-i partman-auto/method string regular
@@ -35,7 +35,7 @@ d-i partman-efi/non_efi_system boolean true
 
 # GRUB
 d-i grub-installer/only_debian boolean true
-d-i grub-installer/bootdev string /dev/nvme0n1
+d-i grub-installer/bootdev string /dev/sda
 
 # Disable scanning install image (because netinst)
 d-i apt-setup/cdrom/set-first boolean false
@@ -43,15 +43,15 @@ d-i apt-setup/cdrom/set-next boolean false
 d-i apt-setup/cdrom/set-failed boolean false
 
 # Set mirror
-d-i mirror/country string manual GB
+d-i mirror/country string manual US
 d-i mirror/http/hostname string deb.debian.org
 d-i mirror/http/directory string /debian
 d-i mirror/http/proxy string 
 
 # Set root password
 d-i passwd/root-login boolean false
-d-i passwd/root-password password 
-d-i passwd/root-password-again password 
+d-i passwd/root-password ${user_password}
+d-i passwd/root-password-again ${user_password}
 
 # Package installations
 popularity-contest popularity-contest/participate boolean false

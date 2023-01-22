@@ -2,7 +2,7 @@ packer {
   required_version = ">= 1.8.4"
   required_plugins {
     vsphere = {
-      version = ">= v1.1.0"
+      version = ">= v1.1.1"
       source  = "github.com/hashicorp/vsphere"
     }
   }
@@ -21,7 +21,7 @@ locals {
 source "vsphere-iso" "debian-11" {
   vm_name					      = var.vm_name
   # https://www.vmware.com/resources/compatibility/pdf/VMware_GOS_Compatibility_Guide.pdf
-  guest_os_type			    = "debian11_64Guest"
+  guest_os_type			    = "otherLinux64Guest"
   # https://kb.vmware.com/s/article/2007240
   vm_version				    = var.vm_version
   CPUs					        = var.vm_cpu_num
@@ -29,26 +29,27 @@ source "vsphere-iso" "debian-11" {
   CPU_hot_plug			    = false
   RAM_hot_plug			    = true
   firmware				      = "efi"
-  disk_controller_type	= ["nvme"]
+  disk_controller_type	= ["pvscsi"]
   usb_controller 			  = ["xhci"]
   network_adapters {
-    network			  = var.network
+    
     network_card	= "vmxnet3"
     passthrough		= true
   }
   storage {
     disk_size				      = var.vm_disk_size
+    disk_controller_index = 0
     disk_thin_provisioned	= true
   }
   remove_cdrom	        = true
-  boot_order	        	= "cdrom,disk"
+  boot_order            = "disk,cdrom"
   boot_command	        = [
     "c<wait>",
     "linux /install.amd/vmlinuz ",
     "auto url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
     "priority=high ",
-    "locale=en_GB.UTF-8 ",
-    "keymap=gb ",
+    "locale=en_US.UTF-8 ",
+    "keymap=us ",
     "hostname=${var.vm_name} ",
     "domain=${var.domain} ",
     "---<enter>",
