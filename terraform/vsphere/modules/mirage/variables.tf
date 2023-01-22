@@ -25,7 +25,7 @@ variable "vsphere_datacenter" {
 
 variable "vsphere_cluster" {
   description = "vSphere cluster"
-  default     = "Eduardo"
+  default     = ""
 }
 
 #=========================#
@@ -67,7 +67,6 @@ variable "vm_dns" {
 
 variable "vm_domain" {
   description = "Domain for the vSphere virtual machine"
-  default = "typhon.tech"
 }
 
 variable "vm_cpu" {
@@ -84,10 +83,8 @@ variable "vm_name" {
 
 variable "vm_public_key" {
   description = "The name of the vSphere virtual machines and the hostname of the machine"
-  default = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICsJocZS/OZ/4ZrLAxFOppiVMTym5oDkfHiir3YFg8mQ endearvorOS"
 }
 
 variable "ssh_username" {
   description = "ssh user for the guest"
-  default = "hyoga"
 }
