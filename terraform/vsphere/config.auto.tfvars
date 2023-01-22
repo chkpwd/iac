@@ -19,7 +19,7 @@ vsphere_cluster = "Eduardo"
 #===============================================================================
 
 # The name of the virtual machine #
-vm_name = "deb-x11-terraform"
+vm_name = "deb-x11"
 
 # The datastore name used to store the files of the virtual machine #
 vm_datastore = "datastore"
@@ -37,7 +37,7 @@ vm_netmask = "24"
 vm_gateway = "172.16.16.1"
 
 # The DNS server used by the virtual machine #
-vm_dns = "172.16.16.1"
+vm_dns = ["172.16.16.1", "8.8.8.8"]
 
 # The domain name used by the virtual machine #
 vm_domain = "typhon.tech"
@@ -53,3 +53,9 @@ vm_cpu = "1"
 
 # The amount of RAM allocated to the virtual machine #
 vm_ram = "1024"
+
+# The public key for the system
+vm_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICsJocZS/OZ/4ZrLAxFOppiVMTym5oDkfHiir3YFg8mQ lifeline"
+
+# The ssh username for the guest system
+ssh_username = "hyoga"

@@ -38,6 +38,18 @@ data "vsphere_virtual_machine" "template" {
   datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
 
+locals {
+  templatevars = {
+    name         = var.vm_name,
+    ipv4_address = var.vm_ip,
+    ipv4_gateway = var.vm_gateway,
+    dns_server_1 = var.vm_dns[0],
+    dns_server_2 = var.vm_dns[1],
+    public_key   = var.vm_public_key,
+    ssh_username = var.ssh_username
+  }
+}
+
 #===============================================================================
 # vSphere Resources
 #===============================================================================
@@ -57,7 +69,7 @@ resource "vsphere_virtual_machine" "standalone" {
   }
 
   disk {
-    label            = "${var.vm_name}.vmdk"
+    label            = "${var.vm_name}-terraform.vmdk"
     size             = "${data.vsphere_virtual_machine.template.disks.0.size}"
     eagerly_scrub    = "${data.vsphere_virtual_machine.template.disks.0.eagerly_scrub}"
     thin_provisioned = "${data.vsphere_virtual_machine.template.disks.0.thin_provisioned}"
@@ -71,7 +83,7 @@ resource "vsphere_virtual_machine" "standalone" {
       timeout = "20"
 
       linux_options {
-        host_name = "${var.vm_name}"
+        host_name = "${var.vm_name}-terraform"
         domain    = "${var.vm_domain}"
       }
 
@@ -81,7 +93,21 @@ resource "vsphere_virtual_machine" "standalone" {
       }
 
       ipv4_gateway    = "${var.vm_gateway}"
-      dns_server_list = ["${var.vm_dns}"]
+      dns_server_list = "${var.vm_dns}"
     }
+  }
+  extra_config = {
+    "guestinfo.metadata"          = base64encode(templatefile("${path.module}/templates/metadata.yml", local.templatevars))
+    "guestinfo.metadata.encoding" = "base64"
+    "guestinfo.userdata"          = base64encode(templatefile("${path.module}/templates/userdata.yml", local.templatevars))
+    "guestinfo.userdata.encoding" = "base64"
+  }
+  lifecycle {
+    ignore_changes = [
+      annotation,
+      clone[0].template_uuid,
+      clone[0].customize[0].dns_server_list,
+      clone[0].customize[0].network_interface[0]
+    ]
   }
 }
