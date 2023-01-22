@@ -17,7 +17,7 @@ d-i clock-setup/ntp boolean true
 d-i time/zone string America/New_York
 
 # Disk and Partitioning setup
-d-i partman-auto/disk string /dev/sda
+#d-i partman-auto/disk string /dev/sda
 d-i partman-auto-lvm/guided_size string max
 d-i partman-auto/choose_recipe select atomic
 d-i partman-auto/method string regular
@@ -56,7 +56,7 @@ d-i passwd/root-password-again ${user_password}
 # Package installations
 popularity-contest popularity-contest/participate boolean false
 d-i pkgsel/run_tasksel boolean false
-d-i pkgsel/include string openssh-server open-vm-tools python3-apt
+d-i pkgsel/include string openssh-server cloud-init cloud-initramfs-growroot open-vm-tools python3-apt
 d-i pkgsel/install-language-support boolean false
 d-i pkgsel/update-policy select none
 d-i pkgsel/upgrade select full-upgrade

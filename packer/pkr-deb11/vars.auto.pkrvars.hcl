@@ -5,7 +5,7 @@ vcenter_server = "172.16.16.4"
 vcenter_username = "administrator@vsphere.typhon.tech"
 vcenter_password = "Saggy-Truth-Guy1"
 
-host        = "ronin"
+host        = "172.16.16.23"
 folder      = "Templates"
 network     = "VM Network"
 datastore   = "datastore"
