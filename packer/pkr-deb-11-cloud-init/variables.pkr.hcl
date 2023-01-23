@@ -54,6 +54,10 @@ variable "guest_hostname" {
   type    = string
 }
 
+variable "guest_os_version" {
+  type    = string
+}
+
 variable "vm_cpu_num" {
 	type    = string
 	default = ""
