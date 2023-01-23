@@ -79,84 +79,24 @@ d-i partman/default_label                       string  gpt
 partman-basicfilesystems partman-basicfilesystems/no_swap boolean false
 # LVM partition
 # This recipe need almost 30Gb free space it's add all <min size>
-#   sda2 (16Gb), lv_* (~14Gb) then it should not count it because
-#   all logical volume are on sda2 ...
-d-i   partman-auto/expert_recipe                    string    \
-      boot-root ::                                            \
-              538 538 1075 free                               \
-                      $iflabel{ gpt }                         \
-                      $reusemethod{ }                         \
-                      method{ efi }                           \
-                      format{ }                               \
-              .                                               \
-              200 200000 250 ext3                             \
-                      $primary{ } $bootable{ }                \
-                      method{ format } format{ }              \
-                      use_filesystem{ } filesystem{ ext3 }    \
-                      label{ boot }                           \
-                      mountpoint{ /boot }                     \
-              .                                               \
-              16000 160000 27000 xfs                          \
-                      $defaultignore{ }                       \
-                      $primary{ }                             \
-                      method{ lvm }                           \
-                      vg_name{ vg00 }                         \
-              .                                               \
-              4000 80000 5000 xfs                             \
-                      $lvmok{ }                               \
-                      in_vg{ vg00 } lv_name{ root }           \
-                      method{ format } format{ }              \
-                      use_filesystem{ } filesystem{ xfs }     \
-                      label{ root }                           \
-                      mountpoint{ / }                         \
-              .                                               \
-              1000 70000 4000 xfs                            \
-                      $lvmok{ }                               \
-                      in_vg{ vg00 } lv_name{ usr }          \
-                      method{ format } format{ }              \
-                      use_filesystem{ } filesystem{ xfs }    \
-                      options/nodev{ nodev }                  \
-                      label{ usr }                            \
-                      mountpoint{ /usr }                      \
-              .                                               \
-              2000 60000 4000 xfs                             \
-                      $lvmok{ }                               \
-                      in_vg{ vg00 } lv_name{ var-log }          \
-                      method{ format } format{ }              \
-                      use_filesystem{ } filesystem{ xfs }    \
-                      options/nodev{ nodev }                  \
-                      label{ var-log }                            \
-                      mountpoint{ /var/log }                      \
-              .                                               \
-              532 50000 532 xfs                             \
-                      $lvmok{ }                               \
-                      in_vg{ vg00 } lv_name{ tmp }          \
-                      method{ format } format{ }              \
-                      use_filesystem{ } filesystem{ xfs }    \
-                      options/nodev{ nodev }                  \
-                      options/nosuid{ nosuid }                \
-                      label{ tmp }                            \
-                      mountpoint{ /tmp }                      \
-              .                                               \
-              7000 10000 9000 xfs                            \
-                      $lvmok{ }                               \
-                      in_vg{ vg00 } lv_name{ opt }         \
-                      method{ format } format{ }              \
-                      use_filesystem{ } filesystem{ xfs }    \
-                      options/nodev{ nodev }                  \
-                      label{ opt }                           \
-                      mountpoint{ /opt }                     \
-              .                                             \ 
-              200 500 100 linux-swap                        \
-                      $lvmok{ }                               \
-                      in_vg{ vg00 } lv_name{ swap }         \
-                      method{ swap } format{ }                \
-              .                                               
-                                                            
-### Need to put all free space in a temp logical volume/partition
-# Otherwise its the last partition which get all free space
-
 # Allow to not set a swap partition
+# Disk and Partitioning setup
+d-i partman-auto/disk string /dev/sda
+d-i partman-auto-lvm/guided_size string max
+d-i partman-auto/choose_recipe select atomic
+d-i partman-auto/method string regular
+d-i partman-lvm/confirm boolean true
+d-i partman-lvm/confirm boolean true
+d-i partman-lvm/confirm_nooverwrite boolean true
+d-i partman-lvm/device_remove_lvm boolean true
+d-i partman/choose_partition select finish
+d-i partman/confirm boolean true
+d-i partman/confirm_nooverwrite boolean true
+d-i partman-partitioning/choose_label string gpt
+d-i partman-partitioning/default_label string gpt
+d-i partman/confirm_write_new_label boolean true
+d-i partman-efi/non_efi_system boolean true
+
 #d-i partman-basicfilesystems/no_swap              boolean false
 
 # Automatically partition without confirmation

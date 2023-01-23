@@ -28,7 +28,7 @@ source "vsphere-iso" "debian_11" {
   insecure_connection  = true
 
   vm_name = var.vm_name
-  guest_os_type = "debian10_64guest"
+  guest_os_type = "otherLinux64Guest"
 
   ssh_username = var.guest_username
   ssh_password = var.guest_password
