@@ -1,9 +1,9 @@
-module "vm" {
+module "horizon" {
   source                    = "./modules/vm"
   vm_name                   = "horizon"
   vm_cpu                    = 2
   vm_ram                    = 4096
-  vm_template               = "deb-x11-template-test"
+  vm_template               = "deb-x11-template"
   vm_ip                     = "172.16.16.59"
   vm_netmask                = "24"
   vm_gateway                = "172.16.16.1"
@@ -13,12 +13,12 @@ module "vm" {
   vsphere_password          = var.vsphere_password
 }
 
-module "vm" {
+module "mirage" {
   source                    = "./modules/vm"
   vm_name                   = "mirage"
   vm_cpu                    = 2
-  vm_ram                    = 8192
-  vm_template               = "deb-x11-template-test"
+  vm_ram                    = 4096
+  vm_template               = "deb-x11-template"
   vm_ip                     = "172.16.20.102"
   vm_netmask                = "24"
   vm_gateway                = "172.16.16.1"
