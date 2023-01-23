@@ -30,8 +30,8 @@ source "vsphere-iso" "debian_11" {
   vm_name = var.vm_name
   guest_os_type = "debian10_64guest"
 
-  ssh_username = var.guest_ssh_username
-  ssh_password = var.guest_ssh_password
+  ssh_username = var.guest_username
+  ssh_password = var.guest_password
   http_content = local.preseed_config
 
   CPUs         = var.vm_cpu_num
