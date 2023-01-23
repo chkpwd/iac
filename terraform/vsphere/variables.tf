@@ -4,25 +4,27 @@
 
 # vSphere username used to deploy the infrastructure #
 variable "vsphere_user" {
-    description = "vSphere user"
+  description = "vSphere user"
 } 
 
 # vSphere password used to deploy the infrastructure #
 variable "vsphere_password" {
-    description = "vSphere password"
+  description = "vSphere password"
 } 
 
 variable "vsphere_vcenter" {
   description = "vCenter server FQDN or IP"
-  default = "172.16.16.4"
+  default     = "172.16.16.4"
 }
 
 variable "vsphere_unverified_ssl" {
   description = "Is the vCenter using a self signed certificate (true/false)"
+  default     = "true"
 }
 
 variable "vsphere_datacenter" {
   description = "vSphere datacenter"
+  default     = "The Outlands"
 }
 
 variable "vsphere_cluster" {
@@ -36,10 +38,12 @@ variable "vsphere_cluster" {
 
 variable "vm_datastore" {
   description = "Datastore used for the vSphere virtual machines"
+  default     = "datastore"
 }
 
 variable "vm_network" {
   description = "Network used for the vSphere virtual machines"
+  default     = "VM Network"
 }
 
 variable "vm_template" {
@@ -48,11 +52,11 @@ variable "vm_template" {
 
 variable "vm_linked_clone" {
   description = "Use linked clone to create the vSphere virtual machine from the template (true/false). If you would like to use the linked clone feature, your template need to have one and only one snapshot"
-  default = "false"
+  default     = "false"
 }
 
 variable "vm_ip" {
-  description = "Ip used for the vSpgere virtual machine"
+  description = "Ip used for the vSphere virtual machine"
 }
 
 variable "vm_netmask" {
@@ -86,10 +90,10 @@ variable "vm_name" {
 
 variable "vm_public_key" {
   description = "The name of the vSphere virtual machines and the hostname of the machine"
-  default = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICsJocZS/OZ/4ZrLAxFOppiVMTym5oDkfHiir3YFg8mQ endearvorOS"
+  default     = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICsJocZS/OZ/4ZrLAxFOppiVMTym5oDkfHiir3YFg8mQ endeavourOS"
 }
 
 variable "ssh_username" {
   description = "ssh user for the guest"
-  default = "hyoga"
+  default     = "hyoga"
 }

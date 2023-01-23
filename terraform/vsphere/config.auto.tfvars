@@ -43,7 +43,7 @@ vm_dns = ["172.16.16.1", "8.8.8.8"]
 vm_domain = "typhon.tech"
 
 # The vSphere template the virtual machine is based on #
-vm_template = "deb-x11-template"
+vm_template = "deb-x11-template-test"
 
 # Use linked clone (true/false)
 vm_linked_clone = "false"

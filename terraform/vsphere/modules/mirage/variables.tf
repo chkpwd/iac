@@ -2,13 +2,15 @@
 # vCenter connection #
 #====================#
 
+# vSphere username used to deploy the infrastructure #
 variable "vsphere_user" {
-  description = "vSphere user name"
-}
+    description = "vSphere user"
+} 
 
+# vSphere password used to deploy the infrastructure #
 variable "vsphere_password" {
-  description = "vSphere password"
-}
+    description = "vSphere password"
+} 
 
 variable "vsphere_vcenter" {
   description = "vCenter server FQDN or IP"
@@ -17,14 +19,17 @@ variable "vsphere_vcenter" {
 
 variable "vsphere_unverified_ssl" {
   description = "Is the vCenter using a self signed certificate (true/false)"
+  default = "true"
 }
 
 variable "vsphere_datacenter" {
   description = "vSphere datacenter"
+  default = "The Outlands"
 }
 
 variable "vsphere_cluster" {
   description = "vSphere cluster"
+  default     = "Eduardo"
 }
 
 #=========================#
@@ -33,10 +38,12 @@ variable "vsphere_cluster" {
 
 variable "vm_datastore" {
   description = "Datastore used for the vSphere virtual machines"
+  default = "datastore"
 }
 
 variable "vm_network" {
   description = "Network used for the vSphere virtual machines"
+  default = "VM Network"
 }
 
 variable "vm_template" {
@@ -49,7 +56,7 @@ variable "vm_linked_clone" {
 }
 
 variable "vm_ip" {
-  description = "Ip used for the vSpgere virtual machine"
+  description = "Ip used for the vSphere virtual machine"
 }
 
 variable "vm_netmask" {
@@ -66,6 +73,7 @@ variable "vm_dns" {
 
 variable "vm_domain" {
   description = "Domain for the vSphere virtual machine"
+  default = "typhon.tech"
 }
 
 variable "vm_cpu" {
@@ -82,8 +90,10 @@ variable "vm_name" {
 
 variable "vm_public_key" {
   description = "The name of the vSphere virtual machines and the hostname of the machine"
+  default = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICsJocZS/OZ/4ZrLAxFOppiVMTym5oDkfHiir3YFg8mQ endeavourOS"
 }
 
 variable "ssh_username" {
   description = "ssh user for the guest"
+  default = "hyoga"
 }
