@@ -25,7 +25,6 @@ variable "vsphere_datacenter" {
 
 variable "vsphere_cluster" {
   description = "vSphere cluster"
-  default     = ""
 }
 
 #=========================#
