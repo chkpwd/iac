@@ -19,7 +19,7 @@ module "mirage" {
   vm_cpu                    = 2
   vm_ram                    = 4096
   vm_template               = "deb-x11-template"
-  vm_ip                     = "172.16.20.102"
+  vm_ip                     = "172.16.10.102"
   vm_netmask                = "24"
   vm_gateway                = "172.16.16.1"
   vm_dns                    = var.vm_dns
