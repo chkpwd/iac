@@ -57,7 +57,7 @@ resource "vsphere_virtual_machine" "standalone" {
   }
 
   disk {
-    label            = "${var.vm_name}-terraform.vmdk"
+    label            = "${var.vm_name}.vmdk"
     size             = "${data.vsphere_virtual_machine.template.disks.0.size}"
     eagerly_scrub    = "${data.vsphere_virtual_machine.template.disks.0.eagerly_scrub}"
     thin_provisioned = "${data.vsphere_virtual_machine.template.disks.0.thin_provisioned}"
@@ -71,7 +71,7 @@ resource "vsphere_virtual_machine" "standalone" {
       timeout = "20"
 
       linux_options {
-        host_name = "${var.vm_name}-terraform"
+        host_name = "${var.vm_name}"
         domain    = "${var.vm_domain}"
       }
 
