@@ -19,7 +19,7 @@ vsphere_cluster = "Eduardo"
 #===============================================================================
 
 # The name of the virtual machine #
-vm_name = "deb-x11"
+vm_name = "deb-x11-terraform"
 
 # The datastore name used to store the files of the virtual machine #
 vm_datastore = "datastore"
@@ -43,7 +43,7 @@ vm_dns = ["172.16.16.1", "8.8.8.8"]
 vm_domain = "typhon.tech"
 
 # The vSphere template the virtual machine is based on #
-vm_template = "deb-x11-template-test"
+vm_template = "deb-x11-template"
 
 # Use linked clone (true/false)
 vm_linked_clone = "false"
