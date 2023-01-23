@@ -3,11 +3,11 @@
 resource "proxmox_vm_qemu" "debian-x11-bullseye" {
 
   count = var.vm_count # just want 1 for now, set to 0 and apply to destroy VM
-  name = var.vm_name #count.index starts at 0, so + 1 means this VM will be named test-vm-1 in proxmox
+  name = "${var.vm_name}-${count.index + 1}" #count.index starts at 0, so + 1 means this VM will be named test-vm-1 in proxmox
   
   # Specify VMID for the cluster
   # Comment this to obtain the next available ID
-  #vmid = "50${count.index + 1}"
+  vmid = "50${count.index + 1}"
 
   # Proxmox target node
   target_node = var.node
@@ -49,16 +49,21 @@ resource "proxmox_vm_qemu" "debian-x11-bullseye" {
   # Cloud init options
   #cicustom = "user=local:snippets/cloud_init_deb10_vm-01.yml"
   #ipconfig0 = "ip=172.16.16.3${count.index + 1}/24,gw=172.16.16.1"
-  ipconfig0 = "ip=${var.ip_address}/24,gw=${var.gateway}"
+  ipconfig0 = "ip=${var.ip_address}${count.index + 1}/24,gw=${var.gateway}"
+
+  # SSH Keys settings
+  sshkeys = <<EOF
+  ${var.ssh_key}
+  EOF
 
   # Establishes connection to be used by all
   # generic remote provisioners (i.e. file/remote-exec)
   connection {
     type     = "ssh"
     user     = var.vm_user
-    host     = var.ip_address
-    agent = false
-    private_key = "${file("~/.ssh/id_rsa")}"
+    host     = "${var.ip_address}${count.index + 1}"
+    agent = true
+    #private_key = "${file("/home/hyoga/.ssh/id_ed25519")}"
   }
 
   # Pull in Ansible Configurations 
@@ -68,15 +73,4 @@ resource "proxmox_vm_qemu" "debian-x11-bullseye" {
         "curl -fsSL https://raw.githubusercontent.com/chkpwd/scripts/main/Proxmox/helloworld.sh | exec bash"
       ]
   }
-  
-  provisioner "local-exec" {
-    #command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -u root -i '${self.ipv4_address},' --private-key ${var.pvt_key} -e 'pub_key=${var.pub_key}' apache-install.yml"
-    command = "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook '${var.ip_address},' --ask-vault-pass /home/hyoga/code/boilerplates/ansible/playbooks/maintenance.yml"
-  }
-
- 
-  # SSH Keys settings
-  sshkeys = <<EOF
-  ${var.ssh_key}
-  EOF
 }

@@ -1,4 +1,4 @@
-module "ansible-vm" {
+module "qemu" {
  source      = "./modules/ansible-test"
  vm_count = 3
  ssh_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICsJocZS/OZ/4ZrLAxFOppiVMTym5oDkfHiir3YFg8mQ"
