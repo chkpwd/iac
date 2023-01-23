@@ -5,11 +5,13 @@
 # vSphere username used to deploy the infrastructure #
 variable "vsphere_user" {
   description = "vSphere user"
+  sensitive = true
 } 
 
 # vSphere password used to deploy the infrastructure #
 variable "vsphere_password" {
   description = "vSphere password"
+  sensitive = true
 } 
 
 variable "vsphere_vcenter" {
