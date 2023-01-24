@@ -29,7 +29,7 @@ service_definitions:
       VALIDATION: dns
       DNSPLUGIN: cloudflare
       EMAIL: mentality@protonmail.com
-      STAGING: true
+      STAGING: "true"
     volumes:
       - "{{ configuration_path }}/swag:/config"
 
