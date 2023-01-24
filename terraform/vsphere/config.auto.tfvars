@@ -3,7 +3,7 @@
 #===============================================================================
 
 # vCenter IP or FQDN #
-vsphere_vcenter = "172.16.16.4"
+vsphere_vcenter = "172.16.16.6"
 
 # vSphere datacenter name where the infrastructure will be deployed #
 vsphere_datacenter = "The Outlands"

@@ -16,7 +16,7 @@ variable "vsphere_password" {
 
 variable "vsphere_vcenter" {
   description = "vCenter server FQDN or IP"
-  default     = "172.16.16.4"
+  default     = "172.16.16.6"
 }
 
 variable "vsphere_unverified_ssl" {
