@@ -1,8 +1,15 @@
 ---
 - name: "Install the essentials on the target"
-  hosts: singular
+  hosts: horizon
   become: true
   gather_facts: false
 
   roles:
     - { role: ../roles/system }
+    - role: gantsign.oh-my-zsh
+      users:
+        - username: hyoga
+          oh_my_zsh:
+            theme: bira
+            update_mode: reminder
+            update_frequency: 3
