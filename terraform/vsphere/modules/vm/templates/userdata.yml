@@ -5,7 +5,7 @@ users:
       - ssh-rsa ${public_key}
     sudo: ['ALL=(ALL) NOPASSWD:ALL']
     groups: sudo
-    shell: /bin/bash
+    shell: /usr/bin/zsh
 
 packages:
   - vim
