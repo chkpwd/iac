@@ -1,4 +1,6 @@
-- name: Install media stack on media-server
-  ansible.builtin.import_playbook: deploy_media_stack.yml
+- name: Provision and configure the system to basics 
+  ansible.builtin.import_playbook: basics.yml
+- name: Install docker
+  ansible.builtin.import_playbook: install_docker.yml
 - name: Install docker stack on horizon
-  ansible.builtin.import_playbook: deploy_horizon_stack.yml
+  ansible.builtin.import_playbook: deploy_containers.yml
