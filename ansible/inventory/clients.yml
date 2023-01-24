@@ -1,14 +1,14 @@
-hypervisors:
+vsphere:
   hosts:
-    proxmox:
+    octane:
       ansible_host: 172.16.16.3
-    vmware:
-      ansible_host: 172.16.16.8
+    caustic:
+      ansible_host: 172.16.16.4
   vars:
     ansible_user: "root"
     ansible_connection: ssh
 
-qemu:
+guests:
   hosts:
     mirage:
       ansible_host: 172.16.10.20
@@ -16,16 +16,6 @@ qemu:
       ansible_host: 172.16.20.15
     pathfinder:
       ansible_host: 172.16.20.60
-  vars:
-    ansible_user: "hyoga"
-    ansible_connection: ssh
-
-lxc:
-  hosts:
-    vantage:
-      ansible_host: 172.16.16.17
-    phanton:
-      ansible_host: 172.16.16.16
     horizon:
       ansible_host: 172.16.16.10
   vars:
@@ -46,13 +36,12 @@ staging:
 
 cluster:
   children:
-    hypervisors:
+    vsphere:
 
 onprem:
   children:
     cluster:
-    qemu:
-    lxc:
+    guests:
     staging:
   vars:
     ansible_ssh_private_key_file: ~/.ssh/ansible
