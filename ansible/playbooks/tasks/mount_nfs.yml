@@ -1,0 +1,19 @@
+- name: Install nfs package
+  ansible.builtin.apt:
+    pkg: ['nfs-common']
+
+- name: Create the dest directory for the mount
+  ansible.builtin.file:
+    path: '/home/{{ username }}/tmp_mnt'
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
+
+- name: Mount NFS share from TrueNAS 
+  ansible.posix.mount:
+    src: 172.16.16.5:/mnt/media/misc
+    path: /home/{{ username }}/tmp_mnt
+    opts: rw,sync,hard
+    state: mounted
+    fstype: nfs
