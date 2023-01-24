@@ -1,0 +1,129 @@
+---
+media_path: /mnt/media
+container_path: /data
+arr_uid: "1000"
+arr_gid: "1000"
+
+common_env: &common_env
+  TZ: America/New_York
+  PUID: "{{ arr_uid }}"
+  PGID: "{{ arr_gid }}"
+
+service_definitions:
+  - name: sonarr
+    image: "{{ hotio_image }}/sonarr:v4"
+    ports: [8989:8989]
+    env: "{{ common_env }}"
+    volumes:
+      - "{{ configuration_path }}/sonarr:/config"
+      - "{{ media_path }}:{{ container_path }}"
+
+  - name: radarr
+    image: "{{ hotio_image }}/radarr:latest"
+    ports: [7878:7878]
+    env: "{{ common_env }}"
+    volumes:
+      - "{{ configuration_path }}/radarr:/config"
+      - "{{ media_path }}:/download"
+
+  - name: qbittorrent
+    image: "{{ hotio_image }}/qbittorrent"
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+      - 8280:8080
+    env: "{{ common_env }}"
+    volumes:
+      - "{{ configuration_path }}/qbittorrent:/config"
+      - "{{ media_path }}/downloads/torrents:{{ container_path }}/downloads/torrents"
+
+  - name: sabnzbd
+    image: "{{ hotio_image }}/sabnzbd"
+    ports:
+      - 8180:8080
+      - 9090:9090
+    env: "{{ common_env }}"
+    volumes:
+      - "{{ configuration_path }}/sabnzbd:/config"
+      - "{{ media_path }}/downloads/nzb:{{ container_path }}/downloads/nzb"
+
+  - name: tautulli
+    image: "{{ hotio_image }}/tautulli"
+    ports: [8181:8181]
+    env: "{{ common_env }}"
+    volumes:
+      - "{{ configuration_path }}/tautulli:/config"
+      - "{{ configuration_path }}/tautulli/logs:/logs:ro"
+
+  - name: plex
+    image: "{{ hotio_image }}/plex"
+    ports: [32400:32400]
+    env:
+      <<: *common_env
+      VERSION: docker
+      PLEX_CLAIM: !vault |
+        $ANSIBLE_VAULT;1.1;AES256
+        32343736663433653530613864346562366161326133613835323465363539343137326132333232
+        6637316566666136653937643139303066663739643162650a383061316338343139393838666437
+        39343464323633643738663564643136636336343364643935613830616433326536316130663037
+        6237616530613533320a343937363530666466636437323664336637363632353762653537386466
+        63303636326464643336373665663630353062373963336338306465366533306436
+
+      UMASK_SET: "022"
+      ADVERTISE_IP: 172.0.10.20
+      ALLOWED_NETWORKS: 172.0.0.0/8
+      PLEX_PASS: "yes"
+    volumes:
+      - "{{ configuration_path }}/plex:/config"
+      - "{{ media_path }}:{{ container_path }}/media"
+      - "{{ media_path }}/tmp/plex:/transcode:rw"
+
+  - name: bazarr
+    image: "{{ hotio_image }}/bazarr"
+    ports: [6767:6767]
+    env:
+      <<: *common_env
+      UMASK: "002"
+    volumes:
+      - "{{ configuration_path }}/bazarr:/config"
+      - "{{ media_path }}:{{ container_path }}"
+
+  - name: prowlarr
+    image: "{{ hotio_image }}/prowlarr"
+    ports: [9696:9696]
+    env:
+      <<: *common_env
+      UMASK: "002"
+    volumes:
+      - "{{ configuration_path }}/prowlarr:/config"
+
+  - name: recyclarr
+    image: ghcr.io/recyclarr/recyclarr
+    init: true
+    env:
+      <<: *common_env
+      CRON_SCHEDULE: "5 4 * * sun"
+      TINI_SUBREAPER: "1"
+
+  - name: watchtower
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    env:
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_NOTIFICATION_TITLE_TAG: "Mirage"
+      WATCHTOWER_SCHEDULE: "0 7 */10 * *"
+      WATCHTOWER_NOTIFICATION_URL: !vault |
+        $ANSIBLE_VAULT;1.1;AES256
+        32653733663266336361393539303630356133346462666131306165373861353464333264336533
+        3939646531366264363836313561663230386536316331650a643434373331613964343136316461
+        36336261373662656531623831633634643437366133623566393431643661373932613865363632
+        6363633163326166370a393564363036633232373861393037313038326537303035396463386432
+        33633661653535373239386636383765396430396638313937303735633262653736316134663336
+        65616461353661396132336663313536353937366533626132613761666231356436313263333634
+        30346363343138373864323930623565663036663536656239356463613336633864626666633935
+        63646464353766633632366332623766333130356162623336326332383636353432653664613031
+        36613465383865626531353663373965363365613031393936323265343064643463
+
+      WATCHTOWER_MONITOR_ONLY: "false"
+      WATCHTOWER_NOTIFICATIONS: "shoutrrr"
