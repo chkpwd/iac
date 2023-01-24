@@ -22,10 +22,10 @@ vsphere_cluster = "Eduardo"
 vm_name = "deb-x11-terraform"
 
 # The datastore name used to store the files of the virtual machine #
-vm_datastore = "datastore"
+vm_datastore = "nvme-30A"
 
 # The vSphere network name used by the virtual machine #
-vm_network = "VM Network"
+vm_network = "LAN"
 
 # The IP address of the virtual machine #
 vm_ip = "172.16.16.65"
