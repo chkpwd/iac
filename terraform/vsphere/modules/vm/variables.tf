@@ -40,7 +40,7 @@ variable "vsphere_cluster" {
 
 variable "vm_datastore" {
   description = "Datastore used for the vSphere virtual machines"
-  default = "datastore"
+  default = "nvme-30A"
 }
 
 variable "vm_network" {
