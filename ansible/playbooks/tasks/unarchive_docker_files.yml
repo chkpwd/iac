@@ -1,0 +1,15 @@
+---
+- name: Move tar docker file
+  ansible.builtin.copy:
+    src: /home/{{ username }}/tmp_mnt/docker-{{ hostvar }}.tar.gz
+    dest: /home/{{ username }}/docker.tar.gz
+    remote_src: true
+    owner: hyoga
+    group: hyoga
+    mode: '0755'
+
+- name: Extract docker tar file into /opt
+  ansible.builtin.unarchive:
+    src: /home/{{ username }}/docker.tar.gz
+    dest: /opt
+    remote_src: true
