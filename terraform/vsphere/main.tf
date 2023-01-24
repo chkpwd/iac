@@ -9,7 +9,23 @@ module "horizon" {
   vm_network                = "LAN"
   vm_gateway                = "172.16.16.1"
   vm_dns                    = var.vm_dns
-  vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICsJocZS/OZ/4ZrLAxFOppiVMTym5oDkfHiir3YFg8mQ endeavourOS"
+  vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa hyoga@lifeline"
+  vsphere_user              = var.vsphere_user
+  vsphere_password          = var.vsphere_password
+}
+
+module "valkyrie" {
+  source                    = "./modules/vm"
+  vm_name                   = "valkyrie"
+  vm_cpu                    = 1
+  vm_ram                    = 1024
+  vm_network                = "LAN"
+  vm_template               = "deb-x11-template"
+  vm_ip                     = "172.16.16.11"
+  vm_netmask                = "24"
+  vm_gateway                = "172.16.16.1"
+  vm_dns                    = var.vm_dns
+  vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa hyoga@lifeline"
   vsphere_user              = var.vsphere_user
   vsphere_password          = var.vsphere_password
 }
@@ -25,7 +41,7 @@ module "mirage" {
   vm_netmask                = "24"
   vm_gateway                = "172.16.10.1"
   vm_dns                    = var.vm_dns
-  vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICsJocZS/OZ/4ZrLAxFOppiVMTym5oDkfHiir3YFg8mQ endeavourOS"
+  vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa hyoga@lifeline"
   vsphere_user              = var.vsphere_user
   vsphere_password          = var.vsphere_password
 }
