@@ -1,6 +1,5 @@
 - name: Mount NFS Share from TrueNAS on media server
   hosts: mirage
-  gather_facts: false
   become: true
   tasks:
     - name: Install nfs package
