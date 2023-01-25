@@ -1,8 +1,10 @@
 ---
-media_path: /mnt/media
+media_path: /home/{{ username }}/media
 container_path: /data
 arr_uid: "1000"
 arr_gid: "1000"
+nas_nfs: "172.16.16.5"
+opts_options: rw,sync,hard
 
 common_env: &common_env
   TZ: America/New_York
@@ -24,7 +26,7 @@ service_definitions:
     env: "{{ common_env }}"
     volumes:
       - "{{ configuration_path }}/radarr:/config"
-      - "{{ media_path }}:/download"
+      - "{{ media_path }}:{{ container_path }}"
 
   - name: qbittorrent
     image: "{{ hotio_image }}/qbittorrent"
