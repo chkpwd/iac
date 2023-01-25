@@ -11,7 +11,7 @@ network:
       gateway4: ${ipv4_gateway}
       nameservers:
         search: [home]
-        addresses: [${dns_server_1}, ${dns_server_2}]
+        addresses: ${dns_server_1}
 growpart:
   mode: auto
   devices: ['/dev/sda2']
