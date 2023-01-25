@@ -1,9 +1,0 @@
----
-- name: Chmod docker sock
-  ansible.builtin.file:
-    path: "/var/run/docker.sock"
-    state: file
-    mode: 0644
-    owner: "root"
-    group: "docker"
-    recurse: false
