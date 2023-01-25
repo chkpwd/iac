@@ -2,7 +2,6 @@
 arr_uid: "1000"
 arr_gid: "1000"
 hostvar: "valkyrie"
-username: "hyoga"
 
 common_env: &common_env
   TZ: America/New_York
@@ -33,8 +32,11 @@ service_definitions:
     ports:
       - 8080:8080
     env: "{{ common_env }}"
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
     volumes:
-      - "{{ configuration_path }}/unifi:/usr/lib/unifi/data"
+      - "{{ configuration_path }}/zigbee2mqtt-data:/app/data"
+      - /run/udev:/run/udev:ro
 
   - name: watchtower
     image: containrrr/watchtower
