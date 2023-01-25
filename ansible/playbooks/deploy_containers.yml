@@ -2,5 +2,6 @@
 - name: "Install docker containers"
   hosts: guests
   become: true
-
+  
+  roles:
     - { role: ../roles/compose }
