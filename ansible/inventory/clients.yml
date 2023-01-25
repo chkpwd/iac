@@ -1,50 +1,57 @@
-vsphere:
+all:
   hosts:
-    octane:
-      ansible_host: 172.16.16.3
-    caustic:
-      ansible_host: 172.16.16.4
-  vars:
-    ansible_user: "root"
-    ansible_connection: ssh
-
-guests:
-  hosts:
-    mirage:
-      ansible_host: 172.16.10.20
-    valkyrie:
-      ansible_host: 172.16.16.11
-    horizon:
-      ansible_host: 172.16.16.10
-  vars:
-    ansible_user: "hyoga"
-    ansible_connection: ssh
-
-staging:
-  hosts:
-    vm1:
-      ansible_host: 172.16.16.65
-    vm2:
-      ansible_host: 172.16.16.202
-    vm3:
-      ansible_host: 172.16.16.203
-  vars:
-    ansible_user: "hyoga"
-    ansible_connection: ssh
-
-cluster:
   children:
     vsphere:
+      children:
+        esxi_hosts:
+        vcenter:
 
-onprem:
-  children:
-    cluster:
+    vcenter:
+      hosts:
+        ronin:
+
+    esxi_hosts:
+      hosts:
+        #esx[1:3]:
+        octane:
+        caustic:
+
     guests:
-    staging:
-  vars:
-    ansible_ssh_private_key_file: ~/.ssh/ansible
+      children:
+        staging:
+        docker_hosts:
+        media_server:
+      hosts:
+        pathfinder:
 
-datacenter:
-  children:
-   # cloud:
+    docker_hosts:
+      hosts:
+        mirage:
+        horizon:
+        valkyrie: 
+
+    media_server:
+      hosts:
+        mirage:
+
+    staging:
+      hosts:
+        vm1:
+          ansible_host: 172.16.16.65
+        vm2:
+          ansible_host: 172.16.16.202
+        vm3:
+          ansible_host: 172.16.16.203
+
+    cloud:
+      hosts:
+        149.28.65.221:
+        
     onprem:
+      children:
+        vsphere:
+
+    datacenter:
+      children:
+        cloud:
+        onprem:
