@@ -1,10 +1,10 @@
 ---
 - name: "Install docker containers"
   hosts: guests
+  become: true
   module_defaults:
     community.docker.docker_container:
       restart_policy: always
-  become: true
   
   roles:
     - { role: ../roles/compose }
