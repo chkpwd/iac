@@ -1,6 +1,9 @@
 ---
 - name: "Install docker containers"
   hosts: guests
+  module_defaults:
+    community.docker.docker_container:
+      restart_policy: always
   become: true
   
   roles:
