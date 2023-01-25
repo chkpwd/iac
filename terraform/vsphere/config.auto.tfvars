@@ -37,7 +37,7 @@ vm_netmask = "24"
 vm_gateway = "172.16.16.1"
 
 # The DNS server used by the virtual machine #
-vm_dns = ["172.16.16.1", "8.8.8.8"]
+vm_dns = ["172.16.16.1"]
 
 # The domain name used by the virtual machine #
 vm_domain = "typhon.tech"

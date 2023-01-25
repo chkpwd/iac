@@ -32,7 +32,6 @@ locals {
     ipv4_address = var.vm_ip,
     ipv4_gateway = var.vm_gateway,
     dns_server_1 = var.vm_dns[0],
-    dns_server_2 = var.vm_dns[1],
     public_key   = var.vm_public_key,
     ssh_username = var.ssh_username
   }
