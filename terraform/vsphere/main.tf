@@ -34,7 +34,7 @@ module "stable-diffusion" {
   source                    = "./modules/vm"
   vm_name                   = "stable-diffusion"
   vm_cpu                    = 4
-  vm_ram                    = 
+  vm_ram                    = 10240
   vm_network                = "public"
   vm_template               = "deb-x11-template"
   vm_ip                     = "172.16.20.10"
