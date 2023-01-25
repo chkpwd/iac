@@ -35,7 +35,7 @@ module "stable-diffusion" {
   vm_name                   = "stable-diffusion"
   vm_cpu                    = 4
   vm_ram                    = 10240
-  vm_network                = "public"
+  vm_network                = "Public"
   vm_template               = "deb-x11-template"
   vm_ip                     = "172.16.20.10"
   vm_netmask                = "24"
