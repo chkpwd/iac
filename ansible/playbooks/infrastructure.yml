@@ -1,9 +1,12 @@
 ---
 - name: Provision and configure the system to basics 
   ansible.builtin.import_playbook: basics.yml
+
 - name: Install docker
   ansible.builtin.import_playbook: install_docker.yml
-- name: Mount NFS share
+
+- name: Mount NFS share to mirage
   ansible.builtin.import_playbook: mount_nfs.yml
+
 - name: Install docker stack on horizon
   ansible.builtin.import_playbook: deploy_containers.yml
