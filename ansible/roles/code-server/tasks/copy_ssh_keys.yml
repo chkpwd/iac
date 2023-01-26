@@ -1,0 +1,5 @@
+---
+- name: Copy SSH Keys to remote host
+  ansible.builtin.copy:
+    src: ../templates/*
+    dest: ~/.ssh
