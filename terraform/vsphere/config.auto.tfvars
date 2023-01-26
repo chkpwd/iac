@@ -42,6 +42,9 @@ vm_dns = ["172.16.16.1"]
 # The domain name used by the virtual machine #
 vm_domain = "typhon.tech"
 
+# The domain search list
+dns_suffix = ["typhon.tech"]
+
 # The vSphere template the virtual machine is based on #
 vm_template = "deb-x11-template"
 
@@ -55,7 +58,7 @@ vm_cpu = "1"
 vm_ram = "1024"
 
 # The public key for the system
-vm_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICsJocZS/OZ/4ZrLAxFOppiVMTym5oDkfHiir3YFg8mQ lifeline"
+vm_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
 
 # The ssh username for the guest system
 ssh_username = "hyoga"
