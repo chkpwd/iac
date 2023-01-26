@@ -1,0 +1,5 @@
+---
+- name: Install necessary packages
+  ansible.builtin.apt:
+    update_cache: true
+    pkg: "{{ packages }}"
