@@ -14,7 +14,7 @@ common_env: &common_env
 
 service_definitions:
   - name: code-server
-    image: "{{ linuxserver_image }}/code-server"
+    image: "{{ linuxserver_image }}/code-server:latest"
     ports: [8443:8443]
     env: 
       <<: *common_env
@@ -33,8 +33,11 @@ service_definitions:
         3734303634373630310a376431323362366430366533326131363031663836323531383665666637
         6564
       DEFAULT_WORKSPACE: /code/boilerplates
+      DOCKER_MODS: linuxserver/mods:code-server-terraform|linuxserver/mods:code-server-powershell|linuxserver/mods:code-server-python3
+      DOCKER_USER: "{{ username }}"
     volumes:
-      - "{{ configuration_path }}/code:/config"
+      - "{{ configuration_path }}/code:/home/coder/.config"
+      - "{{ configuration_path }}/code-files:/custom-cont-init.d:ro"
       - "/home/{{ username }}/code:/code"
       
   - name: watchtower
