@@ -1,0 +1,8 @@
+---
+- name: role
+  hosts: crypto
+  become: true
+
+  roles:
+    - { role: ../roles/code-server }
+  
