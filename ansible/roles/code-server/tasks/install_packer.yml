@@ -8,7 +8,7 @@
 
 - name: Add the Hashicorp repo
   ansible.builtin.apt_repository:
-    repo: deb [arch=amd64 signed-by={{ add_apt_key.dest }}] https://apt.releases.hashhttps://packages.microsoft.com/repos/microsoft-icorp.com/{{ ansible_distribution | lower }} {{ ansible_lsb.codename }} main
+    repo: deb [arch=amd64 signed-by={{ add_apt_key.dest }}] https://apt.releases.hashicorp.com {{ ansible_distribution | lower }} {{ ansible_lsb.codename }} main
     filename: packer
     state: present
 
