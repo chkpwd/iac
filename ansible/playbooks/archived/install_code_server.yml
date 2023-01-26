@@ -1,0 +1,29 @@
+---
+- name: Download and instal code-server web
+  hosts: crypto
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Install necessary packages
+      ansible.builtin.apt:
+        pkg:
+          - curl
+          - gnupg
+          - lsb-release
+          - ca-certificates
+
+    - name: Check if my_package is installed
+      ansible.builtin.command: dpkg-query -W {{ my_package_name }}.deb
+      register: my_package_check_deb
+      failed_when: my_package_check_deb.rc > 1
+      changed_when: my_package_check_deb.rc == 1
+
+    - name: Download my_package
+      ansible.builtin.get_url: 
+        url: "{{ my_package_url }}"
+        dest: /home/{{ username }}/{{ my_package_name }}.deb
+
+    - name: Install my_package
+      ansible.builtin.apt: deb="/home/{{ username }}/{{ my_package_name }}.deb"
+      when: my_package_check_deb.rc == 1
+
