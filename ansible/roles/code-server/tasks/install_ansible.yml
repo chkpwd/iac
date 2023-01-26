@@ -1,0 +1,7 @@
+---
+- name: Install Ansible and Ansible-Lint
+  ansible.builtin.pip:
+    name:
+      - ansible
+      - ansible-lint
+    extra_args: --user
