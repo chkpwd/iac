@@ -12,6 +12,13 @@ common_env: &common_env
   PGID: "{{ arr_gid }}"
 
 service_definitions:
+  - name: overseerr
+    image: "{{ hotio_image }}/overseerr"
+    ports: [5055:5055]
+    env: "{{ common_env }}"
+    volumes:
+      - "{{ configuration_path }}/overseerr:/config"
+
   - name: sonarr
     image: "{{ hotio_image }}/sonarr:v4"
     ports: [8989:8989]
