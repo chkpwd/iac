@@ -37,7 +37,7 @@ service_definitions:
       DOCKER_USER: "{{ username }}"
     volumes:
       - "{{ configuration_path }}/code:/home/coder/.config"
-      - "{{ configuration_path }}/code-files:/custom-cont-init.d:ro"
+      - "{{ configuration_path }}/code/scripts:/custom-cont-init.d:ro"
       - "/home/{{ username }}/code:/code"
       
   - name: watchtower
