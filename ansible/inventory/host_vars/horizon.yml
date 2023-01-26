@@ -30,6 +30,7 @@ service_definitions:
       DNSPLUGIN: cloudflare
       EMAIL: mentality@protonmail.com
       STAGING: "false"
+      DOCKER_MODS: linuxserver/mods:swag-auto-reload
     volumes:
       - "{{ configuration_path }}/swag:/config"
 
