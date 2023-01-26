@@ -16,7 +16,7 @@ variable "vsphere_password" {
 
 variable "vsphere_vcenter" {
   description = "vCenter server FQDN or IP"
-  default = "172.16.16.4"
+  default = "172.16.16.6"
 }
 
 variable "vsphere_unverified_ssl" {
@@ -45,7 +45,7 @@ variable "vm_datastore" {
 
 variable "vm_network" {
   description = "Network used for the vSphere virtual machines"
-  default = "VM Network"
+  default = "LAN"
 }
 
 variable "vm_template" {
@@ -63,6 +63,7 @@ variable "vm_ip" {
 
 variable "vm_netmask" {
   description = "Netmask used for the vSphere virtual machine (example: 24)"
+  default = "24"
 }
 
 variable "vm_gateway" {
@@ -71,11 +72,18 @@ variable "vm_gateway" {
 
 variable "vm_dns" {
   description = "DNS for the vSphere virtual machine"
+  default = "172.16.16.1"
 }
 
 variable "vm_domain" {
   description = "Domain for the vSphere virtual machine"
   default = "typhon.tech"
+}
+
+variable "dns_suffix" {
+  type = list
+  description = "Domain search list"
+  default = ["typhon.tech"]
 }
 
 variable "vm_cpu" {
@@ -92,7 +100,7 @@ variable "vm_name" {
 
 variable "vm_public_key" {
   description = "The name of the vSphere virtual machines and the hostname of the machine"
-  default = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICsJocZS/OZ/4ZrLAxFOppiVMTym5oDkfHiir3YFg8mQ endeavourOS"
+  default = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
 }
 
 variable "ssh_username" {
