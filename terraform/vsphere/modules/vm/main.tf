@@ -81,6 +81,7 @@ resource "vsphere_virtual_machine" "standalone" {
 
       ipv4_gateway    = "${var.vm_gateway}"
       dns_server_list = "${var.vm_dns}"
+      dns_suffix_list = "${var.dns_suffix}"
     }
   }
   extra_config = {
@@ -94,7 +95,8 @@ resource "vsphere_virtual_machine" "standalone" {
       annotation,
       clone[0].template_uuid,
       clone[0].customize[0].dns_server_list,
-      clone[0].customize[0].network_interface[0]
+      clone[0].customize[0].network_interface[0],
+      clone[0].customize[0].dns_suffix_list
     ]
   }
 }
