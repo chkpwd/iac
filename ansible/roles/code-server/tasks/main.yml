@@ -18,3 +18,9 @@
 
 - name: "Installing PowerShell"
   ansible.builtin.include_tasks: install_powershell.yml
+
+- name: "Create Git directory"
+  ansible.builtin.include_tasks: create_git_directory.yml
+
+- name: "Git clone the boilerplates"
+  ansible.builtin.include_tasks: clone_git_boilerplates.yml
