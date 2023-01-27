@@ -10,6 +10,9 @@
 - name: Create Keyring directory
   ansible.builtin.include_tasks: create_keyrings_dir.yml
 
+- name: "Add Hashicorp asc keys to the repo"
+  ansible.builtin.include_tasks: add_hashicorp_repo.yml
+
 - name: "Installing Hashicorp Stacks (Terraform, Packer)"
   ansible.builtin.include_tasks: install_hashicorp_stack.yml
 
