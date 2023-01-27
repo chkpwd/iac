@@ -78,7 +78,6 @@ service_definitions:
     ports: [6875:80]
     volumes:
       - "{{ configuration_path }}/bookstack:/config"
-    links: bookstack_db
 
   - name: bookstack_db
     image: "{{ linuxserver_image }}/mariadb"
