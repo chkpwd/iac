@@ -1,0 +1,8 @@
+---
+- name: Create Git directory
+  ansible.builtin.file:
+    path: /home/{{ username }}/code/boilerplates
+    state: directory
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: '0755'
