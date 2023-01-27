@@ -25,8 +25,8 @@ data "vsphere_virtual_machine" "template" {
   name          = "${var.vm_template}"
   datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
-
-locals {
+ 
+ locals {
   templatevars = {
     name         = var.vm_name,
     ipv4_address = var.vm_ip,

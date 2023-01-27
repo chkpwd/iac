@@ -1,7 +1,3 @@
-#===============================================================================
-# vSphere Data
-#===============================================================================
-
 data "vsphere_datacenter" "dc" {
   name = "${var.vsphere_datacenter}"
 }
@@ -111,7 +107,8 @@ resource "vsphere_virtual_machine" "standalone" {
   #   }
   # }
 
-  provisioner "local-exec" {
-    command = "ansible-playbook /home/hyoga/code/boilerplates/ansible/playbooks/setup_code_server.yml --private-key ~/.ssh/id_ed25519 -i /home/hyoga/code/boilerplates/ansible/inventory/clients.yml"
+  #provisioner "local-exec" {
+  #  command = "ansible-playbook /home/hyoga/code/boilerplates/ansible/playbooks/setup_code_server.yml --private-key ~/.ssh/id_ed25519 -i /home/hyoga/code/boilerplates/ansible/inventory/clients.yml"
+  #  }
   }
 }
