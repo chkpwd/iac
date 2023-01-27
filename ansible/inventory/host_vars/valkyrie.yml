@@ -33,7 +33,7 @@ service_definitions:
       - 8080:8080
     env: "{{ common_env }}"
     devices:
-      - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/serial/by-id/usb-ITead_Sonoff_Zigbee_3.0_USB_Dongle_Plus_fa9c1bb28112ec11ac9421c7bd930c07-if00-port0:/dev/ttyUSB0
     volumes:
       - "{{ configuration_path }}/zigbee2mqtt-data:/app/data"
       - /run/udev:/run/udev:ro
