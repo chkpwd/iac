@@ -102,7 +102,7 @@ service_definitions:
         6564
     volumes:
       - "{{ configuration_path }}/bookstack_db:/config"
-    recreate: true
+    #recreate: true
 
   - name: homer
     image: b4bz/homer
