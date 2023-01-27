@@ -65,6 +65,8 @@ service_definitions:
       APP_URL: https://docs.chkpwd.com
       DB_HOST: bookstack_db
       DB_USER: bookstack
+      DB_DATABASE: bookstackapp
+      DB_PORT: '3306'
       DB_PASS: !vault |
         $ANSIBLE_VAULT;1.1;AES256
         32316535326332316262366265666565336362613233323533353366363864373630663462346666
@@ -72,13 +74,15 @@ service_definitions:
         33303330626666333735386135323431373430313536366166323335633432633265633938653064
         3734303634373630310a376431323362366430366533326131363031663836323531383665666637
         6564
+    ports: [6875:80]
     volumes:
       - "{{ configuration_path }}/bookstack:/config"
-    ports: [6875:80]
+    links: bookstack_db
 
   - name: bookstack_db
-    image: "{{ linuxserver_image }}/mariadb:110.4.19mariabionic-ls21"
+    image: "{{ linuxserver_image }}/mariadb"
     env:
+      <<: *common_env
       MYSQL_ROOT_PASSWORD: !vault |
         $ANSIBLE_VAULT;1.1;AES256
         32316535326332316262366265666565336362613233323533353366363864373630663462346666
@@ -97,6 +101,7 @@ service_definitions:
         6564
     volumes:
       - "{{ configuration_path }}/bookstack_db:/config"
+    recreate: true
 
   - name: homer
     image: b4bz/homer
