@@ -5,11 +5,11 @@
 - name: Install docker
   ansible.builtin.import_playbook: install_docker.yml
 
-- name: Mount NFS share to mirage
+- name: Mount NFS share to mirage only
   ansible.builtin.import_playbook: mount_nfs.yml
 
 - name: Deploy crypto's code-server build
   ansible.builtin.import_playbook: setup_code_server.yml
 
-- name: Install docker stack on horizon
+- name: Deploy docker containers to stack
   ansible.builtin.import_playbook: deploy_containers.yml
