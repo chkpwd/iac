@@ -18,7 +18,6 @@ all:
 
     guests:
       children:
-        staging:
         docker_hosts:
         media_server:
       hosts:
@@ -35,6 +34,10 @@ all:
     media_server:
       hosts:
         mirage:
+
+    dev:
+      children:
+        staging:
 
     staging:
       hosts:
