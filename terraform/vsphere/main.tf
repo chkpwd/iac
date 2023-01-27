@@ -47,7 +47,7 @@ module "stable-diffusion" {
 }
 
 module "crypto" {
-  source                    = "./modules/vm"
+  source                    = "./modules/vm-code-server"
   vm_name                   = "crypto"
   vm_cpu                    = 4
   vm_ram                    = 4096
