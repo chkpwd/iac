@@ -1,0 +1,6 @@
+---
+- name: Add Keyrings dir
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: o+x

@@ -1,23 +1,16 @@
 ---
-- name: Install PowerShell 7.0
-  ansible.builtin.apt:
-    update_cache: true
-    pkg:
-      - gnupg 
-      - apt-transport-http
-
 - name: Add Microsoft GPG Key
   ansible.builtin.get_url:
     url: https://packages.microsoft.com/keys/microsoft.asc
-    dest: /etc/apt/trusted.gpg.d/microsoft.asc
+    dest: "{{ keyrings_dir }}/microsoft.asc"
     mode: 0644
+    force: true
   register: add_apt_key
 
 - name: Add the Microsoft Repo
   ansible.builtin.apt_repository:
-    repo: deb [arch=amd64 signed-by={{ add_apt_key.dest }}] https://packages.microsoft.com/repos/microsoft-{{ ansible_distribution | lower }}-{{ ansible_lsb.codename }}-prod {{ ansible_lsb.codename }} main
     filename: microsoft.list
-    state: present
+    repo: deb [signed-by={{ add_apt_key.dest }}] https://packages.microsoft.com/repos/microsoft-{{ ansible_distribution | lower }}-{{ ansible_lsb.codename }}-prod {{ ansible_lsb.codename }} main
 
 - name: Install PowerShell 7.0
   ansible.builtin.apt:
