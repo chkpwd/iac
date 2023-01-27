@@ -57,6 +57,7 @@ service_definitions:
     volumes:
       - "{{ configuration_path }}/filebrowser:/config"
       - "{{ configuration_path }}/filebrowser_data:/data"
+    state: stopped
 
   - name: bookstack
     image: "{{ linuxserver_image }}/bookstack"
