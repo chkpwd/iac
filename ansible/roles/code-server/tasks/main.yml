@@ -24,3 +24,9 @@
 
 - name: "Git clone the boilerplates"
   ansible.builtin.include_tasks: clone_git_boilerplates.yml
+
+- name: "Installing code-server"
+  ansible.builtin.include_tasks: install_code_server.yml
+
+- name: "Self-signed cert for code-server"
+  ansible.builtin.include_tasks: set_self-signed_cert.yml
