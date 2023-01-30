@@ -1,0 +1,20 @@
+---
+- name: "Sets cert: false to true in the code-server config"
+  ansible.builtin.lineinfile:
+    path: /home/{{ username }}/.config/code-server/config.yaml
+    backup: true
+    regexp: '^bind-addr: 127.0.0.1:8080'
+    line: 'bind-addr: 0.0.0.0:443'
+
+- name: "Sets cert: false to true in the code-server config"
+  ansible.builtin.lineinfile:
+    path: /home/{{ username }}/.config/code-server/config.yaml
+    backup: true
+    regexp: 'cert: false'
+    line: 'cert: true'
+
+- name: Allows code-server to listen on port 443
+  ansible.builtin.shell: sudo setcap cap_net_bind_service=+ep /usr/lib/code-server/lib/node
+  
+- name: Restart code-server
+  ansible.builtin.shell: sudo systemctl restart code-server@$USER
