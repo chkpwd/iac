@@ -18,4 +18,8 @@
 
 - name: Install code-server .deb package
   ansible.builtin.apt: deb="/tmp/code.deb"
-
+  
+- name: Start code-server
+  ansible.builtin.service:
+    name: code-server@{{ username }}.service
+    state: started
