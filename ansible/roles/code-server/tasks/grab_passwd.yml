@@ -1,0 +1,8 @@
+---
+- name: Display content of config.yaml
+  command: cat config.yaml chdir=/home/{{ username }}/.config/code-server
+  register: command_output
+
+- name: Print to console
+  debug:
+    msg: "{{command_output.stdout}}"
