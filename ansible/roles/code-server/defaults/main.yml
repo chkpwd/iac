@@ -2,9 +2,15 @@ ansible_dest: /home/hyoga/code/boilerplates/ansible
 
 keyrings_dir: /etc/apt/keyrings
 
+deb_file: code-server
+
 packages: 
   - gpg  
   - git
   - python3
   - python3-pip
   - apt-transport-https
+  - curl
+  - gnupg
+  - lsb-release
+  - ca-certificates
