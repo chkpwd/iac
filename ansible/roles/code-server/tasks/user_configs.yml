@@ -6,6 +6,7 @@
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: preserve
+    notify: Restart ssh daemon
 
 - name: Add .local/bin to the Path
   ansible.builtin.lineinfile:
