@@ -2,6 +2,6 @@
 - name: Update the apt cache and Install Packer
   ansible.builtin.apt:
     update_cache: true
-    pkg: 
+    pkg:
       - terraform
       - packer

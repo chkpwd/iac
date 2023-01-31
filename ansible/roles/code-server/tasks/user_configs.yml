@@ -6,3 +6,9 @@
     owner: "{{ username }}"
     group: "{{ username }}"
     mode: preserve
+
+- name: Add .local/bin to the Path
+  ansible.builtin.lineinfile:
+    path: /home/{{ username }}/.zshrc
+    insertafter: 'LANG'
+    line: 'export PATH=$HOME/.local/bin:$PATH'

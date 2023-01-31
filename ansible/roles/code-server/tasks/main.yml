@@ -1,5 +1,5 @@
 - name: "Copy SSH Files to the correct location"
-  ansible.builtin.include_tasks: copy_ssh_keys.yml
+  ansible.builtin.include_tasks: user_configs.yml
 
 - name: "Installing Packages"
   ansible.builtin.include_tasks: install_packages.yml

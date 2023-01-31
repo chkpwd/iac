@@ -1,8 +1,9 @@
 ---
 - name: Display content of config.yaml
-  command: cat config.yaml chdir=/home/{{ username }}/.config/code-server
+  ansible.builtin.command: cat config.yaml chdir=/home/{{ username }}/.config/code-server
   register: command_output
+  changed_when: command_output.stdout != 0
 
 - name: Print to console
-  debug:
-    msg: "{{command_output.stdout}}"
+  ansible.builtin.debug:
+    msg: "{{ command_output.stdout }}"

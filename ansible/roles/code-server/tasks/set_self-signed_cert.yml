@@ -15,7 +15,7 @@
 
 - name: Allows code-server to listen on port 443
   ansible.builtin.shell: sudo setcap cap_net_bind_service=+ep /usr/lib/code-server/lib/node
-  
+
 - name: Restart code-server
   ansible.builtin.shell: sudo systemctl restart code-server@$USER
   notify: restart code-server

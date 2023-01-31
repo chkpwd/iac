@@ -4,21 +4,25 @@
     pkg: "{{ packages }}"
 
 - name: Grabbing latest release from github api
-  ansible.builtin.uri:                                                               
+  ansible.builtin.uri:
     url: https://api.github.com/repos/coder/code-server/releases/latest
-    return_content: true                                             
-  register: json_reponse  
+    return_content: true
+  register: json_reponse
 
 - name: "Downloading code-server {{ json_reponse.json.tag_name }}"
   loop: "{{ json_reponse.json.assets }}"
   when: "'amd64.deb' in item.name"
-  ansible.builtin.get_url: 
+  ansible.builtin.get_url:
     url: "{{ item.browser_download_url }}"
     dest: /tmp/code.deb
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0644
 
 - name: Install code-server .deb package
-  ansible.builtin.apt: deb="/tmp/code.deb"
-  
+  ansible.builtin.apt:
+    deb: /tmp/code.deb
+
 - name: Start code-server
   ansible.builtin.service:
     name: code-server@{{ username }}.service
