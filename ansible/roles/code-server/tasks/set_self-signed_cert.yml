@@ -18,4 +18,4 @@
 
 - name: Restart code-server
   ansible.builtin.shell: sudo systemctl restart code-server@$USER
-  notify: restart code-server
+  notify: Restart code-server
