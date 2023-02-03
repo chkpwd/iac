@@ -94,21 +94,21 @@ resource "vsphere_virtual_machine" "standalone" {
       clone[0].customize[0].network_interface[0],
       clone[0].customize[0].dns_suffix_list
     ]
-      
-  # provisioner "remote-exec" {
-  #   inline = ["sudo apt update", "sudo apt install python3 -y", "echo Done!"]
-
-  #   connection {
-  #     host        = local.templatevars.ipv4_address
-  #     type        = "ssh"
-  #     user        = var.ssh_username
-  #     agent = true
-  #     private_key = "${file("~/.ssh/id_ed25519")}"
-  #   }
-  # }
+  }   
+  provisioner "remote-exec" {
+    inline = ["sudo apt update", "sudo apt install python3 -y", "echo Done!"]
+  
+    connection {
+      host        = local.templatevars.ipv4_address
+      type        = "ssh"
+      user        = "${var.ssh_username}"
+      password    = "${var.ssh_password}"
+      #agent = true
+      #private_key = "${file("~/.ssh/id_ed25519")}"
+  }
+  }
 
   #provisioner "local-exec" {
   #  command = "ansible-playbook /home/hyoga/code/boilerplates/ansible/playbooks/setup_code_server.yml --private-key ~/.ssh/id_ed25519 -i /home/hyoga/code/boilerplates/ansible/inventory/clients.yml"
   #  }
-  }
 }
