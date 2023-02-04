@@ -86,17 +86,19 @@ resource "vsphere_virtual_machine" "standalone" {
     "guestinfo.userdata"          = base64encode(templatefile("${path.module}/templates/userdata.yml", local.templatevars))
     "guestinfo.userdata.encoding" = "base64"
   }
+  
   lifecycle {
     ignore_changes = [
       annotation,
       clone[0].template_uuid,
       clone[0].customize[0].dns_server_list,
       clone[0].customize[0].network_interface[0],
-      clone[0].customize[0].dns_suffix_list
+      clone[0].customize[0].dns_suffix_list,
+      extra_config
     ]
   }   
   provisioner "remote-exec" {
-    inline = ["sudo apt update", "sudo apt install python3 -y", "echo Done!"]
+    inline = ["echo Done!"]
   
     connection {
       host        = local.templatevars.ipv4_address
