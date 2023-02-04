@@ -72,7 +72,7 @@ variable "vm_gateway" {
 
 variable "vm_dns" {
   description = "DNS for the vSphere virtual machine"
-  default = "172.16.16.1"
+  type        = list(string)
 }
 
 variable "vm_domain" {
@@ -106,4 +106,9 @@ variable "vm_public_key" {
 variable "ssh_username" {
   description = "ssh user for the guest"
   default = "hyoga"
+}
+
+variable "ssh_password" {
+  description = "ssh password for the guest"
+  type        = string
 }
