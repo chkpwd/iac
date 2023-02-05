@@ -31,7 +31,7 @@ module "stable-diffusion" {
 }
 
 module "crypto" {
-  source                    = "./modules/vm-code-server"
+  source                    = "./modules/vm"
   vm_name                   = "crypto"
   vm_cpu                    = 4
   vm_ram                    = 4096
@@ -44,7 +44,6 @@ module "crypto" {
   vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa hyoga@lifeline"
   vsphere_user              = var.vsphere_user
   vsphere_password          = var.vsphere_password
-  ssh_password              = var.ssh_password
 }
 
 module "mirage" {
