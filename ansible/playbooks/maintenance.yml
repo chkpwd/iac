@@ -2,6 +2,7 @@
 - name: "Update the target system"
   hosts: all
   become: true
+
   tasks:
     - name: Update packages
       ansible.builtin.apt:
