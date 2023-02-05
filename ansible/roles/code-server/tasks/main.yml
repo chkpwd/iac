@@ -30,6 +30,6 @@
 
 - name: "Self-signed cert for code-server"
   ansible.builtin.include_tasks: set_self-signed_cert.yml
-    
+
 - name: "Grab config.yaml password generated"
   ansible.builtin.include_tasks: grab_passwd.yml
