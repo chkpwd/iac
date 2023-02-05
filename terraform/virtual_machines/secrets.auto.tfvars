@@ -1,0 +1,5 @@
+vsphere_user = "administrator@vsphere.typhon.tech"
+vsphere_password = "Saggy-Truth-Girl2"
+ssh_username = "hyoga"
+ssh_password = "bryanswag12"
+vultr_api_key = "SPFOAWU7R7AGREIZ4EDKSU5PCBQ4FJNNB2IQ"
