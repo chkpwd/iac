@@ -1,0 +1,58 @@
+---
+- name: Install the necessary packages
+  ansible.builtin.apt:
+    update_cache: true
+    pkg: "{{ packages }}"
+    state: present
+
+- name: Query the latest Home Assistant Agent and store the json output
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/home-assistant/os-agent/releases/latest
+    return_content: true
+  register: json_reponse
+
+- name: "Downloading Home Assistant Agent {{ json_reponse.json.tag_name }}"
+  loop: "{{ json_reponse.json.assets }}"
+  when: "'x86_64.deb' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/os-agent.deb
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0644
+
+- name: Install os-agent.deb package
+  ansible.builtin.apt:
+    deb: /tmp/os-agent.deb
+
+- name: Install the latest Home Assistant Supervised-installer
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/home-assistant/supervised-installer/releases/latest
+    return_content: true
+  register: json_reponse_1
+
+- name: "Downloading Home Assistant Agent {{ json_reponse_1.json.tag_name }}"
+  loop: "{{ json_reponse_1.json.assets }}"
+  when: "'supervised.deb' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/ha-supervised.deb
+    owner: "{{ username }}"
+    group: "{{ username }}"
+    mode: 0644
+
+- name: Install os-agent.deb package
+  ansible.builtin.apt:
+    deb: /tmp/ha-supervised.deb
+
+- name: Configure NetworkManager dns settings
+  ansible.builtin.lineinfile:
+    path: /etc/resolv.conf
+    line: '{{ item }}'
+  with_items:
+    - "search typhon.tech"
+    - "nameserver 172.16.16.1"
+  notify: Restart Networking service
+
+- name: Unconditionally reboot the machine with all defaults
+  ansible.builtin.reboot:
