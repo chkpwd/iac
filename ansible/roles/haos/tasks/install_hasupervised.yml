@@ -5,6 +5,17 @@
     pkg: "{{ packages }}"
     state: present
 
+- name: Add an Ethernet connection with static IP configuration
+  community.general.nmcli:
+    conn_name: ens192
+    ifname: ens192
+    type: ethernet
+    ip4: 172.16.16.11/24
+    gw4: 172.16.16.1
+    dns4:
+      - 172.16.16.1
+    state: present
+
 - name: Query the latest Home Assistant Agent and store the json output
   ansible.builtin.uri:
     url: https://api.github.com/repos/home-assistant/os-agent/releases/latest
