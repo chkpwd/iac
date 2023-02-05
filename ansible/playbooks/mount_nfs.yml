@@ -14,7 +14,7 @@
         group: "{{ username }}"
         mode: '0755'
 
-    - name: Mount NFS share from TrueNAS 
+    - name: Mount NFS share from TrueNAS
       ansible.posix.mount:
         src: "{{ nas_nfs }}:/mnt/media"
         path: "{{ media_path }}"
