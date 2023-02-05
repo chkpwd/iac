@@ -8,6 +8,9 @@
 - name: Mount NFS share to mirage only
   ansible.builtin.import_playbook: mount_nfs.yml
 
+- name: Configure the Home Assistant VM
+  ansible.builtin.import_playbook: setup_ha_server.yml
+
 - name: Deploy crypto's code-server build
   ansible.builtin.import_playbook: setup_code_server.yml
 
