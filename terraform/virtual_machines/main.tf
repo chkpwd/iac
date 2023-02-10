@@ -62,6 +62,22 @@ module "mirage" {
   vsphere_password          = var.vsphere_password
 }
 
+module "printing" {
+  source                    = "./modules/vsphere"
+  vm_name                   = "revenant"
+  vm_cpu                    = 4
+  vm_ram                    = 4096
+  vm_network                = "Public"
+  vm_template               = "deb-x11-template"
+  vm_ip                     = "172.16.20.10"
+  vm_netmask                = "24"
+  vm_gateway                = "172.16.20.1"
+  vm_dns                    = var.vm_dns
+  vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
+  vsphere_user              = var.vsphere_user
+  vsphere_password          = var.vsphere_password
+}
+
 module "homeassistant" {
   source                    = "./modules/vsphere"
   vm_name                   = "valkyrie"
@@ -78,10 +94,10 @@ module "homeassistant" {
   vsphere_password          = var.vsphere_password
 }
 
-module "rocky-linux" {
-  source                    = "./modules/vultr"
-  vultr_api_key             = var.vultr_api_key
-}
+# module "rocky-linux" {
+#   source                    = "./modules/vultr"
+#   vultr_api_key             = var.vultr_api_key
+# }
 
 # module "proxmox-vm" {
 #  source      = "./modules/proxmox"
