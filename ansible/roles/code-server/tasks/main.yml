@@ -33,3 +33,6 @@
 
 - name: "Grab config.yaml password generated"
   ansible.builtin.include_tasks: grab_passwd.yml
+
+- name: "Download and install Pulumi"
+  ansible.builtin.include_tasks: install_pulumi.yml
