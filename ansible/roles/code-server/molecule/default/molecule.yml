@@ -13,10 +13,12 @@ platforms:
       - /var/run/dbus
     cgroupns_mode: host
     privileged: true
-    pre_build_image: true
-    ansible_user: hyoga
-    ansible_ssh_user: hyoga
+    pre_build_image: false
 provisioner:
   name: ansible
+  inventory:
+    host_vars:
+      debian11:
+        ansible_user: ansible
   env:
     ANSIBLE_VAULT_PASSWORD_FILE: $HOME/code/boilerplates/ansible/vault-password
