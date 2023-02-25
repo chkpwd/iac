@@ -1,12 +1,11 @@
-packer/pkr-deb-11-cloud-init/secrets.auto.pkrvars.hcl
-terraform/virtual_machines/secrets.auto.tfvars
 ansible/roles/code-server/templates
-terraform/virtual_machines/.terraform
+**/secrets.auto.pkrvars.hcl
 vagrant/kvm/debian/.vagrant
 ansible/roles/cloudflare
-ansible/vault-password
+**/secrets.auto.tfvars
+**/vault-password
+**/.terraform
 .fact_cache/
-.terraform/
 .vscode/
 pulumi/
 re

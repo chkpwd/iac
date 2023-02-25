@@ -1,5 +1,5 @@
 module "horizon" {
-  source                    = "./modules/vsphere"
+  source                    = "../modules/vsphere"
   vm_name                   = "horizon"
   vm_cpu                    = 2
   vm_ram                    = 4096
@@ -15,7 +15,7 @@ module "horizon" {
 }
 
 module "stable-diffusion" {
-  source                    = "./modules/vsphere"
+  source                    = "../modules/vsphere"
   vm_name                   = "stable-diffusion"
   vm_cpu                    = 4
   vm_ram                    = 10240
@@ -31,7 +31,7 @@ module "stable-diffusion" {
 }
 
 module "crypto" {
-  source                    = "./modules/vsphere"
+  source                    = "../modules/vsphere"
   vm_name                   = "crypto"
   vm_cpu                    = 4
   vm_disk_size              = "48"
@@ -48,7 +48,7 @@ module "crypto" {
 }
 
 module "mirage" {
-  source                    = "./modules/vsphere"
+  source                    = "../modules/vsphere"
   vm_name                   = "mirage"
   vm_cpu                    = 2
   vm_ram                    = 8192
@@ -64,7 +64,7 @@ module "mirage" {
 }
 
 module "homeassistant" {
-  source                    = "./modules/vsphere"
+  source                    = "../modules/vsphere"
   vm_name                   = "valkyrie"
   vm_cpu                    = 2
   vm_ram                    = 4096
@@ -80,7 +80,7 @@ module "homeassistant" {
 }
 
 module "kubes-control-plane" {
-  source                    = "./modules/vsphere"
+  source                    = "../modules/vsphere"
   for_each                  = toset(["1", "2", "3"])
   vm_name                   = "kubes-master-${each.key}"
   vm_cpu                    = 2
@@ -97,7 +97,7 @@ module "kubes-control-plane" {
 }
 
 module "kubes-worker-nodes" {
-  source                    = "./modules/vsphere"
+  source                    = "../modules/vsphere"
   for_each                  =  toset([for n in range(4, 6) : tostring(n)])
   vm_name                   = "kubes-worker-${each.key}"
   vm_cpu                    = 2
@@ -114,12 +114,12 @@ module "kubes-worker-nodes" {
   vsphere_password          = var.vsphere_password
 }
 # module "rocky-linux" {
-#   source                    = "./modules/vultr"
+#   source                    = "../modules/vultr"
 #   vultr_api_key             = var.vultr_api_key
 # }
 
 # module "proxmox-vm" {
-#  source      = "./modules/proxmox"
+#  source      = "../modules/proxmox"
 #  vm_count = 3
 #  ssh_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICsJocZS/OZ/4ZrLAxFOppiVMTym5oDkfHiir3YFg8mQ"
 #  vm_user = "hyoga"
