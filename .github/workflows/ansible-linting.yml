@@ -26,6 +26,9 @@ jobs:
 
       - name: Run Molecule tests.
         run: "cd ansible/roles/code-server && molecule test"
+        # with:
+        #   ansible_creds: '${{ secrets.VAULT_KEY }}'
+        #   keyvault_name: my-keyvault-name
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
