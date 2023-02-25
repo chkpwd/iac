@@ -25,7 +25,7 @@ jobs:
         run: |
           export PIP_NO_WARN_ABOUT_ROOT_USER=0
           python3 -m pip install --upgrade pip
-          python3 -m pip install -r ansible/requirements.txt
+          python3 -m pip install -r ansible/requirements.yml
 
       - name: Run Molecule tests.
         run: "cd ansible/roles/code-server && molecule test"
