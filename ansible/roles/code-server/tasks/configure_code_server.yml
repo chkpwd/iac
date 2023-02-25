@@ -1,8 +1,4 @@
 ---
-- name: Enable Terraform auto-completion
-  ansible.builtin.command: terraform -install-auotcomplete
-  changed_when: false
-
 - name: Grabbing latest release from github api
   ansible.builtin.uri:
     url: https://api.github.com/repos/coder/code-server/releases/latest
@@ -48,9 +44,9 @@
     regexp: 'cert: false'
     line: 'cert: true'
 
-# - name: Allows code-server to listen on port 443
-#   ansible.builtin.shell: sudo setcap cap_net_bind_service=+ep /usr/lib/code-server/lib/node
-#   become: true
+- name: Allows code-server to listen on port 443
+  ansible.builtin.shell: sudo setcap cap_net_bind_service=+ep /usr/lib/code-server/lib/node
+  become: true
 
 - name: Set cap_net_bind_service on file
   community.general.capabilities:
