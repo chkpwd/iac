@@ -13,6 +13,9 @@
     mode: 0644
     force: true
   register: add_apt_key
+  until: add_apt_key is succeeded
+  retries: 2
+  delay: 2
   become: true
 
 - name: Add the Hashicorp repo
@@ -28,6 +31,9 @@
     mode: 0644
     force: true
   register: add_apt_key
+  until: add_apt_key is succeeded
+  retries: 2
+  delay: 2
   become: true
 
 - name: Add the VirtualBox repo
@@ -43,6 +49,9 @@
     mode: 0644
     force: true
   register: add_apt_key
+  until: add_apt_key is succeeded
+  retries: 2
+  delay: 2
   become: true
 
 - name: Add the Microsoft Repo
