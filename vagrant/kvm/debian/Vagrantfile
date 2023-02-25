@@ -1,0 +1,10 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "geerlingguy/debian11"
+  config.vm.hostname = "vm1"
+  config.vm.network "private_network", ip: "172.16.25.230"
+
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--memory", 1024]
+    vb.customize ["modifyvm", :id, "--cpus", 2]
+  end
+end

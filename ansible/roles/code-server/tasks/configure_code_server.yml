@@ -1,0 +1,83 @@
+---
+- name: Enable Terraform auto-completion
+  ansible.builtin.command: terraform -install-auotcomplete
+  changed_when: false
+
+- name: Grabbing latest release from github api
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/coder/code-server/releases/latest
+    return_content: true
+  register: json_reponse
+
+- name: "Downloading code-server {{ json_reponse.json.tag_name }}"
+  loop: "{{ json_reponse.json.assets }}"
+  when: "'amd64.deb' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/code.deb
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: 0644
+
+- name: Install code-server .deb package
+  ansible.builtin.apt:
+    deb: /tmp/code.deb
+  become: true
+
+- name: Start code-server
+  ansible.builtin.service:
+    name: code-server@{{ ansible_user_id }}.service
+    state: started
+  become: true
+
+- name: "Wait until config file for code-server exists"
+  ansible.builtin.wait_for:
+    path: /home/{{ ansible_user_id }}/.config/code-server/config.yaml
+
+- name: "Change the bind address for the code-server"
+  ansible.builtin.lineinfile:
+    path: /home/{{ ansible_user_id }}/.config/code-server/config.yaml
+    backup: true
+    regexp: '^bind-addr: 127.0.0.1:8080'
+    line: 'bind-addr: 0.0.0.0:443'
+
+- name: "Sets cert: false to true in the code-server config"
+  ansible.builtin.lineinfile:
+    path: /home/{{ ansible_user_id }}/.config/code-server/config.yaml
+    backup: true
+    regexp: 'cert: false'
+    line: 'cert: true'
+
+# - name: Allows code-server to listen on port 443
+#   ansible.builtin.shell: sudo setcap cap_net_bind_service=+ep /usr/lib/code-server/lib/node
+#   become: true
+
+- name: Set cap_net_bind_service on file
+  community.general.capabilities:
+    path: /usr/lib/code-server/lib/node
+    capability: cap_net_bind_service+ep
+    state: present
+  become: true
+  notify: Restart code-server
+
+- name: Force all notified handlers to run at this point, not waiting for normal sync points
+  ansible.builtin.meta: flush_handlers
+
+- name: Ensure code-server is up
+  ansible.builtin.systemd:
+    state: started
+    name: code-server@$USER
+  become: true
+
+- name: Display content of config.yaml
+  ansible.builtin.command: cat config.yaml chdir=/home/{{ ansible_user_id }}/.config/code-server
+  register: command_output
+  changed_when: command_output.stdout != 0
+
+- name: Print to console
+  ansible.builtin.debug:
+    msg: "{{ command_output.stdout }}"
+
+# - name: Output contents from the config.yaml file
+#   ansible.builtin.debug:
+#     msg: "Password for the code-server is {{lookup('ansible.builtin.file', code_config_file )}}"

@@ -1,0 +1,52 @@
+---
+- name: Add Keyrings dir
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Add Hashicorp GPG Key
+  ansible.builtin.get_url:
+    url: https://apt.releases.hashicorp.com/gpg
+    dest: "{{ keyrings_dir }}/hashicorp-archive-keyring.asc"
+    mode: 0644
+    force: true
+  register: add_apt_key
+  become: true
+
+- name: Add the Hashicorp repo
+  ansible.builtin.apt_repository:
+    filename: hashicorp
+    repo: deb [signed-by={{ add_apt_key.dest }}] https://apt.releases.hashicorp.com {{ ansible_lsb.codename }} main
+  become: true
+
+- name: Add VirtualBox GPG Key
+  ansible.builtin.get_url:
+    url: https://www.virtualbox.org/download/oracle_vbox_2016.asc
+    dest: "{{ keyrings_dir }}/oracle_vbox_2016.asc"
+    mode: 0644
+    force: true
+  register: add_apt_key
+  become: true
+
+- name: Add the VirtualBox repo
+  ansible.builtin.apt_repository:
+    filename: virtualbox
+    repo: deb [signed-by={{ add_apt_key.dest }}] http://download.virtualbox.org/virtualbox/{{ ansible_distribution | lower }} {{ ansible_lsb.codename }} contrib
+  become: true
+
+- name: Add Microsoft GPG Key
+  ansible.builtin.get_url:
+    url: https://packages.microsoft.com/keys/microsoft.asc
+    dest: "{{ keyrings_dir }}/microsoft.asc"
+    mode: 0644
+    force: true
+  register: add_apt_key
+  become: true
+
+- name: Add the Microsoft Repo
+  ansible.builtin.apt_repository:
+    filename: microsoft
+    repo: deb [signed-by={{ add_apt_key.dest }}] https://packages.microsoft.com/repos/microsoft-{{ ansible_distribution | lower }}-{{ ansible_lsb.codename }}-prod {{ ansible_lsb.codename }} main
+  become: true

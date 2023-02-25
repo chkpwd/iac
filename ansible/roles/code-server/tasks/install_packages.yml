@@ -1,0 +1,58 @@
+---
+- name: Install necessary dependecies for the base system
+  ansible.builtin.apt:
+    update_cache: true
+    pkg: "{{ dependecies }}"
+  become: true
+
+- name: Install Pip Tools
+  ansible.builtin.pip:
+    name:
+      - ansible
+      - ansible-lint
+      - molecule
+      - molecule-docker
+      - molecule-vagrant
+    # extra_args: --user
+
+- name: Install packages
+  ansible.builtin.apt:
+    update_cache: true
+    pkg:
+      - terraform
+      - packer
+      - vagrant
+      - powershell
+  become: true
+
+- name: Grab latest tar file from Pulumi Github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/pulumi/pulumi/releases/latest
+    return_content: true
+  register: latest_tar
+
+- name: "Download the tar"
+  loop: "{{ latest_tar.json.assets }}"
+  when: "'linux-x64.tar.gz' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/pulumi.tar.gz
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: 0644
+
+- name: Unarchive the Pulumi tar file
+  ansible.builtin.unarchive:
+    src: /tmp/pulumi.tar.gz
+    dest: "/tmp"
+    remote_src: true
+
+- name: Move the Pulumi commands to a specific dest
+  ansible.builtin.copy:
+    src: /tmp/pulumi/
+    dest: "/home/{{ ansible_user_id }}/.local/bin"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0755'
+    remote_src: true
+  become: true

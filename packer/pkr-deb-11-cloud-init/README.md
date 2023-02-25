@@ -1,0 +1,1 @@
+idk, maybe try ubuntu for cloud-init stuff

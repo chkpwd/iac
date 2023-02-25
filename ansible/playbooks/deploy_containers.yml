@@ -1,0 +1,11 @@
+---
+- name: "Install docker containers"
+  hosts: docker_hosts
+  become: false
+  module_defaults:
+    community.docker.docker_container:
+      restart_policy: always
+
+# Added a dependency to run Compose before the cloudflare role
+  roles:
+    - { role: ../roles/cloudflare}

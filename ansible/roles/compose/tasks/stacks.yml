@@ -1,0 +1,8 @@
+---
+- name: Deploy Docker containers # noqa args[module]
+  community.docker.docker_container: "{{ item }}"
+  loop: "{{ service_definitions }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: deploy_containers
+# notify: Chmod docker sock

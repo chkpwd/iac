@@ -1,0 +1,66 @@
+---
+all:
+  hosts:
+    localhost:
+  children:
+    vsphere:
+      children:
+        esxi_hosts:
+        vcenter:
+
+    vcenter:
+      hosts:
+        ronin:
+
+    esxi_hosts:
+      hosts:
+        # esx[1:3]:
+        octane:
+        caustic:
+
+    guests:
+      children:
+        docker_hosts:
+        media_server:
+        printers:
+      hosts:
+        pathfinder:
+        stable-diffusion:
+
+    docker_hosts:
+      hosts:
+        mirage:
+        horizon:
+        valkyrie:
+        crypto:
+
+    printers:
+      hosts:
+        revenant:
+
+    media_server:
+      hosts:
+        mirage:
+
+    dev:
+      children:
+        staging:
+
+    staging:
+      hosts:
+        debian10:
+        debian11:
+        centos:
+
+    cloud:
+      hosts:
+        149.28.65.221:
+
+    onprem:
+      children:
+        vsphere:
+
+    datacenter:
+      children:
+        cloud:
+        onprem:

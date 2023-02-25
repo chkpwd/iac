@@ -1,0 +1,18 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Verify the code-server service is up
+      ansible.builtin.systemd:
+        state: started
+        name: code-server@$USER
+
+    - name: Verify the code-server is serving a page
+      ansible.builtin.uri:
+        url: https://0.0.0.0:443
+        status_code: 302
+        validate_certs: true

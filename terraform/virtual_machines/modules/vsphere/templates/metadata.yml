@@ -1,0 +1,20 @@
+#cloud-config
+local-hostname: ${name}-terraform
+instance-id: ${name}-terraform
+network:
+  version: 2
+  ethernets:
+    ens192:
+      dhcp4: false
+      addresses:
+        - ${ipv4_address}/24
+      gateway4: ${ipv4_gateway}
+      nameservers:
+        search: [home]
+        addresses: ${dns_server_1}
+growpart:
+  mode: auto
+  devices: ['/dev/sda2']
+  ignore_growroot_disabled: true
+wait-on-network:
+  ipv4: true

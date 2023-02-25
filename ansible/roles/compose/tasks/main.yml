@@ -1,0 +1,4 @@
+- name: "Deploy containers in their respective stacks"
+  ansible.builtin.include_tasks: stacks.yml
+- name: "Install ctop"
+  ansible.builtin.include_tasks: install_ctop.yml

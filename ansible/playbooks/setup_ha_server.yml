@@ -1,0 +1,26 @@
+---
+- name: Configure Home Assistant Supervised
+  hosts: valkyrie
+  become: true
+
+  vars:
+    pip_install_packages:
+      - name: docker
+    docker_edition: 'ce'
+    docker_package_state: latest
+    docker_users: hyoga
+    docker_install_compose_plugin: false
+    docker_install_compose: false
+
+  roles:
+    - { role: ../roles/system }
+    - role: gantsign.oh-my-zsh
+      users:
+        - username: "{{ ansible_user_id }}"
+          oh_my_zsh:
+            theme: bira
+            update_mode: auto
+            update_frequency: 3
+    - geerlingguy.pip
+    - geerlingguy.docker
+    - { role: ../roles/haos }

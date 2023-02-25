@@ -1,0 +1,19 @@
+---
+- name: Create Git directory
+  ansible.builtin.file:
+    path: /home/{{ ansible_user_id }}/code/boilerplates
+    state: directory
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_id }}"
+    mode: '0755'
+
+- name: Check if the directory exists
+  ansible.builtin.stat:
+    path: /home/{{ ansible_user }}/code/boilerplates
+  register: repo_directory
+
+- name: Clone a repo with separate git directory
+  ansible.builtin.git:
+    repo: https://github.com/chkpwd/boilerplates.git
+    dest: /home/{{ ansible_user }}/code/boilerplates
+  when: not repo_directory.stat.exists

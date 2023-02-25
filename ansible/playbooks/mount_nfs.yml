@@ -1,0 +1,23 @@
+- name: Mount NFS Share from TrueNAS on media server
+  hosts: mirage
+  become: true
+  tasks:
+    - name: Install nfs package
+      ansible.builtin.apt:
+        pkg: ['nfs-common']
+
+    - name: Create the dest directory for the mount
+      ansible.builtin.file:
+        path: "{{ media_path }}"
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: '0755'
+
+    - name: Mount NFS share from TrueNAS
+      ansible.posix.mount:
+        src: "{{ nas_nfs }}:/mnt/media"
+        path: "{{ media_path }}"
+        opts: rw,sync,hard
+        state: mounted
+        fstype: nfs

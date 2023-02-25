@@ -1,0 +1,11 @@
+skip_list:
+  - fqcn-builtins
+  - git-latest
+  - package-latest
+  - yaml
+
+warn_list:
+  - load-failure
+  - command-instead-of-shell  # Use shell only when shell functionality is required.
+  - latest[git]  # Result of the command may vary on subsequent runs.
+  - no-changed-when  # Commands should not change things if nothing needs doing.
