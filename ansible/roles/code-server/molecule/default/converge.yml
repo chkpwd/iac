@@ -11,6 +11,7 @@
         update_cache: true
         cache_valid_time: 600
       when: ansible_os_family == 'Debian'
+      become: true
 
     - name: Wait for systemd to complete initialisation # noqa 303
       ansible.builtin.command: systemctl is-system-running
@@ -23,6 +24,7 @@
       when: ansible_service_mgr == 'systemd'
       changed_when: false
       failed_when: systemctl_status.rc > 1
+      become: true
 
     - debug: var=systemctl_status
 
@@ -31,5 +33,4 @@
     #     name: geerlingguy.docker
 
   roles:
-    - { role: system }
     - { role: code-server }
