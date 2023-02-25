@@ -1,4 +1,10 @@
 ---
+scenario:
+  test_sequence:
+    - create
+    - converge
+    #- idempotence
+    - verify
 dependency:
   name: galaxy
 driver:
