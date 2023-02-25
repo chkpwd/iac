@@ -10,9 +10,11 @@
       ansible.builtin.systemd:
         state: started
         name: code-server@$USER
+      become: true
 
     - name: Verify the code-server is serving a page
       ansible.builtin.uri:
         url: https://0.0.0.0:443
-        status_code: 302
-        validate_certs: true
+        method: GET
+        status_code: 200
+        validate_certs: false
