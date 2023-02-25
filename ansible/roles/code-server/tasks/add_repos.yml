@@ -18,7 +18,7 @@
 - name: Add the Hashicorp repo
   ansible.builtin.apt_repository:
     filename: hashicorp
-    repo: deb [signed-by={{ add_apt_key.dest }}] https://apt.releases.hashicorp.com {{ ansible_lsb.codename }} main
+    repo: deb [signed-by={{ add_apt_key.dest }}] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main
   become: true
 
 - name: Add VirtualBox GPG Key
@@ -33,7 +33,7 @@
 - name: Add the VirtualBox repo
   ansible.builtin.apt_repository:
     filename: virtualbox
-    repo: deb [signed-by={{ add_apt_key.dest }}] http://download.virtualbox.org/virtualbox/{{ ansible_distribution | lower }} {{ ansible_lsb.codename }} contrib
+    repo: deb [signed-by={{ add_apt_key.dest }}] http://download.virtualbox.org/virtualbox/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} contrib
   become: true
 
 - name: Add Microsoft GPG Key
@@ -48,5 +48,5 @@
 - name: Add the Microsoft Repo
   ansible.builtin.apt_repository:
     filename: microsoft
-    repo: deb [signed-by={{ add_apt_key.dest }}] https://packages.microsoft.com/repos/microsoft-{{ ansible_distribution | lower }}-{{ ansible_lsb.codename }}-prod {{ ansible_lsb.codename }} main
+    repo: deb [signed-by={{ add_apt_key.dest }}] https://packages.microsoft.com/repos/microsoft-{{ ansible_distribution | lower }}-{{ ansible_distribution_release }}-prod {{ ansible_distribution_release }} main
   become: true

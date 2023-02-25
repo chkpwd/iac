@@ -18,7 +18,7 @@
 
 - name: Add ctop repository
   ansible.builtin.apt_repository:
-    repo: deb [arch=amd64 signed-by={{ add_apt_key.dest }}] http://packages.azlux.fr/{{ ansible_distribution | lower }} {{ ansible_lsb.codename }} main
+    repo: deb [arch=amd64 signed-by={{ add_apt_key.dest }}] http://packages.azlux.fr/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} main
     filename: ctop
     state: present
   become: true

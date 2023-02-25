@@ -4,7 +4,7 @@ dependency:
 driver:
   name: docker
 platforms:
-  - name: debian10
+  - name: debian11
     image: geerlingguy/docker-debian11-ansible:latest
     command: ""
     volumes: 
@@ -14,5 +14,9 @@ platforms:
     cgroupns_mode: host
     privileged: true
     pre_build_image: true
+    ansible_user: hyoga
+    ansible_ssh_user: hyoga
 provisioner:
   name: ansible
+  env:
+    ANSIBLE_VAULT_PASSWORD_FILE: $HOME/code/boilerplates/ansible/vault-password
