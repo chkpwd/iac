@@ -1,0 +1,12 @@
+- name: Check installed code-server version
+  shell: 'set -o pipefail; code-server --version | grep -P -o "(?<=^|info  )\d+(\.\d+)+(-[^ ]+)?"'
+  args:
+    executable: /bin/bash
+  register: code_server_version
+  changed_when: false
+
+- name: Check latest code-server version
+  uri:
+    url: https://api.github.com/repos/cdr/code-server/releases
+  register: code_server_releases
+  delegate_to: localhost
