@@ -73,6 +73,11 @@
 - name: Print to console
   ansible.builtin.debug:
     msg: "{{ command_output.stdout }}"
+  
+- name: Install code-server extensions
+  ansible.builtin.shell: code-server --install-extension {{ item }}
+  loop: "{{ extensions }}"
+  changed_when: false
 
 # - name: Output contents from the config.yaml file
 #   ansible.builtin.debug:
