@@ -1,7 +1,6 @@
 ---
 - name: Code-server installation
-  hosts: crypto
-  become: true
+  hosts: localhost
 
   roles:
     - { role: ../roles/code-server }
