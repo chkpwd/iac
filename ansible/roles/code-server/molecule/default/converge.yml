@@ -28,9 +28,5 @@
 
     - debug: var=systemctl_status
 
-    # - name: Install Docker
-    #   ansible.builtin.include_role:
-    #     name: geerlingguy.docker
-
   roles:
     - { role: code-server }
