@@ -26,7 +26,7 @@ service_definitions:
   - name: sonarr
     image: "{{ hotio_image }}/sonarr:v4"
     ports: [8989:8989]
-    env: "{{ common_env }}"
+    env: "{{ common_env }}" # * Check for docs.theme-park.dev integration to v4
     volumes:
       - "{{ configuration_path }}/sonarr:/config"
       - "{{ media_path }}:{{ container_path }}"
