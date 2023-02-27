@@ -2,6 +2,7 @@
 - name: "Install the essentials on the target"
   hosts: guests
   become: true
+  
   roles:
     - { role: ../roles/system }
     - role: gantsign.oh-my-zsh
