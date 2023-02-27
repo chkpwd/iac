@@ -1,0 +1,14 @@
+---
+- name: "Install the essentials on the target"
+  hosts: default
+  become: true
+  
+  roles:
+    - { role: ../roles/system }
+    - role: gantsign.oh-my-zsh
+      users:
+        - username: "{{ ansible_user_id }}"
+          oh_my_zsh:
+            theme: bira
+            update_mode: auto
+            update_frequency: 3
