@@ -48,9 +48,12 @@ all:
 
     staging:
       hosts:
-        debian10:
-        debian11:
-        centos:
+        node-01:
+          ansible_host: 172.16.16.231
+        node-02:
+          ansible_host: 172.16.16.232
+        node-03:
+          ansible_host: 172.16.16.233
 
     cloud:
       hosts:
