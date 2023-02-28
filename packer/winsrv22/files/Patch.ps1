@@ -20,10 +20,10 @@ Install-Module PSWindowsUpdate -confirm:$false -Force
 # Install updates
 Write-Output "`nInstalling updates - Logging to $logDir\WindowsUpdate.log"
 
-#Get-WindowsUpdate -MicrosoftUpdate -Install -IgnoreUserInput -AcceptAll -IgnoreReboot | Out-File -FilePath "$logDir\WindowsUpdate.log" -Append
+Get-WindowsUpdate -MicrosoftUpdate -Install -IgnoreUserInput -AcceptAll -IgnoreReboot | Out-File -FilePath "$logDir\WindowsUpdate.log" -Append
 
 # Run again to catch any missed updates
-#Get-WindowsUpdate -MicrosoftUpdate -Install -IgnoreUserInput -AcceptAll -IgnoreReboot | Out-File -FilePath "$logDir\WindowsUpdate.log" -Append
+Get-WindowsUpdate -MicrosoftUpdate -Install -IgnoreUserInput -AcceptAll -IgnoreReboot | Out-File -FilePath "$logDir\WindowsUpdate.log" -Append
 
 # And again to catch drivers - This cmdlet has shown a little more success in that regard.
-#Get-WUList -MicrosoftUpdate -Install -AcceptAll -IgnoreReboot | Out-File -FilePath "$logDir\WindowsUpdate.log" -Append
+Get-WUList -MicrosoftUpdate -Install -AcceptAll -IgnoreReboot | Out-File -FilePath "$logDir\WindowsUpdate.log" -Append

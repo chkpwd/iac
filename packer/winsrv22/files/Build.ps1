@@ -46,19 +46,6 @@ try {
 	# Get Packer CD drive letter
 	$packerCd = (Get-Volume -FriendlyName 'packer').DriveLetter
 
-	# Install PSWindowsUpdate Module
-	Write-Output "`nInstalling Nuget package provider."
-	Get-PackageProvider -name Nuget -Force | Out-Null
-
-	Write-Output "`nInstalling PSWindowsUpdate Module."
-	Install-Module PSWindowsUpdate -confirm:$false -Force
-
-	# Install updates
-	Write-Output "`nInstalling updates - Logging to $logDir\WindowsUpdate.log"
-	Get-WindowsUpdate -MicrosoftUpdate -Install -IgnoreUserInput -AcceptAll -IgnoreReboot | Out-File -FilePath "$logDir\WindowsUpdate.log" -Append
-	# Again to catch drivers - This cmdlet has shown a little more success in that regard.
-	Get-WUList -MicrosoftUpdate -Install -AcceptAll -IgnoreReboot | Out-File -FilePath "$logDir\WindowsUpdate.log" -Append
-
 	# Copy files
 	Write-Output "`nCopying deployment files."
 	$files = @{
