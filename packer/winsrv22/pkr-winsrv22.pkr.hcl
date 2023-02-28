@@ -12,21 +12,25 @@ source "vsphere-iso" "winsrv22" {
 	boot_order		        = "disk,cdrom"
 	disk_controller_type	= ["lsilogic-sas"]
 	usb_controller 			  = ["xhci"]
+
 	network_adapters {
 		network			        = var.network
 		network_card        = "vmxnet3"
 		passthrough		      = true
 	}
+
   storage {
     disk_size             = var.vm_disk_size_gui
     disk_thin_provisioned = true
   }
+
   boot_wait             = "5s"
   boot_command	        = [
     "<leftCtrlOn><leftAltOn><del><leftCtrlOff><leftAltOff>",
     "<wait>",
     "<spacebar>"
   ]
+
 	vcenter_server	    	= var.vcenter_server
 	username		        	= var.vcenter_username
 	password		        	= var.vcenter_password
@@ -36,6 +40,7 @@ source "vsphere-iso" "winsrv22" {
 	folder			        	= var.folder
 	host				          = var.host
   cdrom_type            = "sata"
+
   cd_files              = [
     "${path.root}/files/Autounattend.xml",
     "${path.root}/files/Unattend-Sysprep.xml",
@@ -48,12 +53,14 @@ source "vsphere-iso" "winsrv22" {
     "${path.root}/files/Sysprep.ps1",
     "${path.root}/files/TaskbarLayout.xml"
   ]
+
   iso_paths             = [
     # Windows ISO
     var.iso_path,
     # VMTools for Windows ISO
     "[] /usr/lib/vmware/isoimages/windows.iso"
   ]
+
   communicator          = "winrm"
   winrm_username        = var.winrm_username
   winrm_password        = var.winrm_password
