@@ -112,3 +112,14 @@ variable "vm_disk_size" {
   description = "The size of the guest machine disk"
   default = "16"
 }
+
+variable "os_type" {
+  description = "Set the OS type"
+  default = ""
+}
+
+variable "instance_count" {
+  description = "The number of vSphere virtual machines"
+  type = string
+  default = "1"
+}

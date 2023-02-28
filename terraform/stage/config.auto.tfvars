@@ -64,3 +64,7 @@ vm_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo
 ssh_username = "hyoga"
 
 vm_disk_size = "The size of the guest machine disk"
+
+os_type = "linux"
+
+instance_count = "1"
