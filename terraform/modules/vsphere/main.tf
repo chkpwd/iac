@@ -119,3 +119,7 @@ resource "vsphere_virtual_machine" "standalone" {
   #  command = "ansible-playbook /home/hyoga/code/boilerplates/ansible/playbooks/setup_ha_server.yml --private-key ~/.ssh/id_ed25519 -i /home/hyoga/code/boilerplates/ansible/inventory/clients.yml"
   #}
 }
+
+# resource "vsphere_virtual_machine" "windows" {
+
+# }

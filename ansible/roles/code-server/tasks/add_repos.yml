@@ -18,11 +18,28 @@
   delay: 2
   become: true
 
-- name: Add the Hashicorp repo
+- name: Add the Hashicorp repo for Debian family
   ansible.builtin.apt_repository:
     filename: hashicorp
     repo: deb [signed-by={{ add_apt_key.dest }}] https://apt.releases.hashicorp.com {{ ansible_distribution_release }} main
   become: true
+  when: ansible_distribution == 'Debian'
+
+- name: Add the Hashicorp repo for Fedora family
+  ansible.builtin.yum_repository:
+    name: hashicorp
+    description: Hashicorp Repository
+    baseurl: https://rpm.releases.hashicorp.com/{{ ansible_distribution_release }}/hashicorp.repo
+  become: true
+  when: ansible_distribution == 'Fedora'
+
+- name: Add the Hashicorp repo for RHEL family
+  ansible.builtin.yum_repository:
+    name: hashicorp
+    description: Hashicorp Repository
+    baseurl: https://rpm.releases.hashicorp.com/rhel/hashicorp.repo
+  become: true
+  when: ansible_distribution == 'Rocky'
 
 - name: Add VirtualBox GPG Key
   ansible.builtin.get_url:
@@ -39,8 +56,9 @@
 - name: Add the VirtualBox repo
   ansible.builtin.apt_repository:
     filename: virtualbox
-    repo: deb [signed-by={{ add_apt_key.dest }}] http://download.virtualbox.org/virtualbox/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} contrib
+    repo: deb [signed-by={{ add_apt_key.dest }}] http://download.virtualbox.org/virtualbox/{{ ansible_os_family | lower }} {{ ansible_distribution_release }} contrib
   become: true
+  when: ansible_os_family == 'Debian'
 
 - name: Add Microsoft GPG Key
   ansible.builtin.get_url:

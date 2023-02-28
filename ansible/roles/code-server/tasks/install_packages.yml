@@ -39,13 +39,15 @@
     dest: /tmp/pulumi.tar.gz
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
-    mode: 0644
+    mode: '0755'
+  no_log: true # * Removes output of the API call
 
 - name: Unarchive the Pulumi tar file
   ansible.builtin.unarchive:
     src: /tmp/pulumi.tar.gz
     dest: "/tmp"
     remote_src: true
+  # changed_when: "{{ pulumi_tar }}" # TODO Fixme: maybe remove
 
 - name: Move the Pulumi commands to a specific dest
   ansible.builtin.copy:

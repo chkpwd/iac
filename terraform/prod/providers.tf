@@ -57,4 +57,3 @@ provider "proxmox" {
   pm_parallel = 5
 
 }
-

@@ -14,8 +14,9 @@
     owner: "{{ ansible_user_id }}"
     group: "{{ ansible_user_id }}"
     mode: 0644
+  no_log: true
 
-- name: Install code-server .deb package
+- name: Install code-server.{{ json_reponse.json.tag_name }}.deb package
   ansible.builtin.apt:
     deb: /tmp/code.deb
   become: true

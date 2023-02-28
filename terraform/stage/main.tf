@@ -1,4 +1,4 @@
-module "veeam-backup" {
+module "staging" {
   source                    = "../modules/vsphere"
   for_each                  = toset(["1", "2", "3"])
   vm_name                   = "node-${each.key}"
@@ -15,6 +15,55 @@ module "veeam-backup" {
   vsphere_password          = var.vsphere_password
 }
 
+module "vm" {
+  source  = "Terraform-VMWare-Modules/vm/vsphere"
+  version = "3.5.0"
+  
+  dc                = "The Outlands"
+  vmrp              = "" #Works with ESXi/Resources
+  vmfolder          = "Cattle"
+  datastore = "nvme-30A" #You can use datastore variable instead
+  vmtemp            = "TemplateName"
+  instances         = 1
+  vmname            = "NonAdvancedVM"
+  vmnameformat      = "%03d" #To use three decimal with leading zero vmnames will be AdvancedVM001,AdvancedVM002
+  domain            = ""
+  network = {
+    "Public" = ["", ""] # To use DHCP create Empty list ["",""]; You can also use a CIDR annotation;
+    "Public" = ["", ""]
+  }
+  ipv4submask  = ["24", "24"]
+  network_type = ["vmxnet3", "vmxnet3"]
+  tags = {
+    "terraform-test-category" = "terraform-test-tag"
+  }
+  data_disk = {
+    disk1 = {
+      size_gb                   = 48,
+      thin_provisioned          = false,
+      data_disk_scsi_controller = 0,
+    }#,
+    # disk2 = {
+    #   size_gb                   = 70,
+    #   thin_provisioned          = true,
+    #   data_disk_scsi_controller = 1,
+    #   datastore_id              = "datastore-90679"
+    # }
+  }
+  scsi_bus_sharing = "physicalSharing" // The modes are physicalSharing, virtualSharing, and noSharing
+  scsi_type        = "lsilogic"        // Other acceptable value "pvscsi"
+  scsi_controller  = 0                 // This will assign OS disk to controller 0
+  dns_server_list  = ["172.16.16.1"]
+  enable_disk_uuid = true
+  vmgateway        = "172.16.20.1"
+  auto_logon       = true
+  run_once         = ["date", "dir"] // You can also run Powershell commands
+  orgname          = "Terraform-Module"
+  workgroup        = "Module-Test"
+  is_windows_image = true
+  firmware         = "efi"
+  local_adminpass  = "Password@Strong"
+}
 # module "kubes-control-plane" {
 #   source                    = "../modules/vsphere"
 #   for_each                  = toset(["1", "2", "3"])
