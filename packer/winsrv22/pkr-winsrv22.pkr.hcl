@@ -133,7 +133,7 @@ source "vsphere-iso" "Core" {
   winrm_timeout         = "15m"
   shutdown_command      = "powershell.exe -ExecutionPolicy Bypass -File C:\\Automation\\Packer\\Sysprep.ps1"
 	remove_cdrom	        = true
-  convert_to_template   = false
+  convert_to_template   = true
 }
 
 build {
