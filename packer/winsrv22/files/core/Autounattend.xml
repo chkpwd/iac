@@ -9,8 +9,8 @@
             </SetupUILanguage>
 
             <!-- InputLocale specifies the input language and the method for input devices, such as the keyboard layout. -->
-            <!-- 0409:00000409 = en-US -->
-            <InputLocale>0409:00000409</InputLocale>
+            <!-- 0409:00020409 = en-US -->
+            <InputLocale>0409:00020409</InputLocale>
 
             <!-- UserLocale specifies the per-user settings used for formatting dates, times, currency, and numbers in a Windows installation. -->
             <UserLocale>en-US</UserLocale>
@@ -104,7 +104,7 @@
                         <MetaData wcm:action="add">
                             <Key>/IMAGE/NAME</Key>
                             <!-- Image name to install -->
-                            <Value>Windows Server 2022 SERVERSTANDARD</Value>
+                            <Value>Windows Server 2022 SERVERSTANDARDCORE</Value>
                         </MetaData>
                     </InstallFrom>
 
@@ -134,8 +134,8 @@
     <settings pass="specialize">
 
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <ComputerName>WS22-GUI-Template</ComputerName>
-            <TimeZone>Eastern Standard Time</TimeZone>
+            <ComputerName>WS22-Core-Temp</ComputerName>
+            <TimeZone>EST</TimeZone>
             <RegisteredOrganization>chkpwd</RegisteredOrganization>
             <RegisteredOwner>chkpwd</RegisteredOwner>
             <!-- Force desktop as opposed to tablet (0) or last used (2) -->
@@ -185,7 +185,7 @@
             <!-- Set Administrator password -->
             <UserAccounts>
                 <AdministratorPassword>
-                    <Value>DefaultPass@Packer</Value>
+                    <Value>DefaultPass@</Value>
                     <PlainText>true</PlainText>
                 </AdministratorPassword>
             </UserAccounts>
@@ -196,7 +196,7 @@
                 <LogonCount>3</LogonCount>
                 <Username>Administrator</Username>
                 <Password>
-                    <Value>DefaultPass@Packer</Value>
+                    <Value>DefaultPass@</Value>
                     <PlainText>true</PlainText>
                 </Password>
             </AutoLogon>
@@ -250,5 +250,5 @@
         </component>
     </settings>
 
-    <cpi:offlineImage cpi:source="wim:x:/sources/install.wim#Windows Server 2022 SERVERSTANDARD" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
+    <cpi:offlineImage cpi:source="wim:x:/sources/install.wim#Windows Server 2022 SERVERSTANDARDCORE" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
 </unattend>

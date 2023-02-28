@@ -147,15 +147,9 @@ try {
 		Write-Output "`nEnabling dark mode."
 		Set-RegistryKey -Path "HKU:\DefaultUser\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Key "AppsUseLightTheme" -Value "0" | Out-Null
 
-		# # Copy BGinfo files
-		# Write-Output "`nCopying BGinfo files."
-		# New-Item -ItemType Directory -Path $logDir\BGinfo -Force | Out-Null
-		# Copy-Item -Path "$($packerCd):\BGinfo64.exe", "$($packerCd):\config.bgi", "$($packerCd):\BGinfo.bat" -Destination "$logDir\BGinfo\" -Force
-
-
 		# Remove HKU PSDrive
 		Write-Output "`nRemoving HKU PSDrive."
-		Remove-PSDrive -Name HKU -Force | Out-Null
+		Remove-PSDrive -Name HKU -Force -ErrorAction SilentlyContinue | Out-Null
 
 		<#
 		Unload default user hive
