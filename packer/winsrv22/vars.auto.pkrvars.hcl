@@ -20,6 +20,6 @@ vm_mem_size_gui = "4096"
 vm_disk_size_gui = "40960"
 
 winrm_username = "Administrator"
-winrm_password = "Password8"
+winrm_password = "DefaultPass@Packer"
 
 iso_path = "[vsphere_nfs] template/iso/en-us_windows_server_2022_updated_june_2022_x64_dvd_ac918027.iso"
