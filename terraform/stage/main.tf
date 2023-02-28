@@ -1,12 +1,15 @@
-module "staging" {
+module "WinSrv22-DE-Temp" {
   source                    = "../modules/vsphere"
-  for_each                  = toset(["1", "2", "3"])
-  vm_name                   = "node-${each.key}"
+  count                     = 1
+  os_type                   = "windows"
+  instance_count            = 1
+  vm_name                   = "WS22-DE${count.index + 1}"
   vm_cpu                    = 2
   vm_ram                    = 2048
+  vm_disk_size              = 40 
   vm_network                = "LAN"
-  vm_template               = "deb-x11-template"
-  vm_ip                     = "172.16.16.23${each.key}"
+  vm_template               = "WinSrv22-template-DE"
+  vm_ip                     = "172.16.16.23${count.index + 1}"
   vm_netmask                = "24"
   vm_gateway                = "172.16.16.1"
   vm_dns                    = var.vm_dns
@@ -15,54 +18,24 @@ module "staging" {
   vsphere_password          = var.vsphere_password
 }
 
-module "vm" {
-  source  = "Terraform-VMWare-Modules/vm/vsphere"
-  version = "3.5.0"
-  
-  dc                = "The Outlands"
-  vmrp              = "" #Works with ESXi/Resources
-  vmfolder          = "Cattle"
-  datastore = "nvme-30A" #You can use datastore variable instead
-  vmtemp            = "TemplateName"
-  instances         = 1
-  vmname            = "NonAdvancedVM"
-  vmnameformat      = "%03d" #To use three decimal with leading zero vmnames will be AdvancedVM001,AdvancedVM002
-  domain            = ""
-  network = {
-    "Public" = ["", ""] # To use DHCP create Empty list ["",""]; You can also use a CIDR annotation;
-    "Public" = ["", ""]
-  }
-  ipv4submask  = ["24", "24"]
-  network_type = ["vmxnet3", "vmxnet3"]
-  tags = {
-    "terraform-test-category" = "terraform-test-tag"
-  }
-  data_disk = {
-    disk1 = {
-      size_gb                   = 48,
-      thin_provisioned          = false,
-      data_disk_scsi_controller = 0,
-    }#,
-    # disk2 = {
-    #   size_gb                   = 70,
-    #   thin_provisioned          = true,
-    #   data_disk_scsi_controller = 1,
-    #   datastore_id              = "datastore-90679"
-    # }
-  }
-  scsi_bus_sharing = "physicalSharing" // The modes are physicalSharing, virtualSharing, and noSharing
-  scsi_type        = "lsilogic"        // Other acceptable value "pvscsi"
-  scsi_controller  = 0                 // This will assign OS disk to controller 0
-  dns_server_list  = ["172.16.16.1"]
-  enable_disk_uuid = true
-  vmgateway        = "172.16.20.1"
-  auto_logon       = true
-  run_once         = ["date", "dir"] // You can also run Powershell commands
-  orgname          = "Terraform-Module"
-  workgroup        = "Module-Test"
-  is_windows_image = true
-  firmware         = "efi"
-  local_adminpass  = "Password@Strong"
+module "WinSrv22-Core-Temp" {
+  source                    = "../modules/vsphere"
+  count                     = 0
+  os_type                   = "windows"
+  instance_count            = 1
+  vm_name                   = "WS22-Core${count.index + 1}"
+  vm_cpu                    = 2
+  vm_ram                    = 2048
+  vm_disk_size              = 40 
+  vm_network                = "LAN"
+  vm_template               = "WinSrv22-template-Core"
+  vm_ip                     = "172.16.16.23${count.index + 1}"
+  vm_netmask                = "24"
+  vm_gateway                = "172.16.16.1"
+  vm_dns                    = var.vm_dns
+  vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
+  vsphere_user              = var.vsphere_user
+  vsphere_password          = var.vsphere_password
 }
 # module "kubes-control-plane" {
 #   source                    = "../modules/vsphere"
