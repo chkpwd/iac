@@ -1,4 +1,4 @@
-vm_name = "WinSrv22"
+vm_name = "WinSrv22-template"
 domain = "typhon.tech"
 
 vcenter_server = "ronin.typhon.tech"
