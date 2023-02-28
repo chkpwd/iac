@@ -68,7 +68,15 @@ build {
     "source.vsphere-iso.debian_11"
   ]
 
-  provisioner "shell-local" {
-    inline  = ["echo the address is: $PACKER_HTTP_ADDR and build name is: $PACKER_BUILD_NAME"]
+  // provisioner "shell-local" {
+  //   inline  = ["echo the address is: $PACKER_HTTP_ADDR and build name is: $PACKER_BUILD_NAME"]
+  // }
+  
+  provisioner "ansible" {
+    playbook_file           = "../../ansible/playbooks/packer.yml"
+    use_proxy               = false
+    max_retries             = 3
+    inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_password={{ .Password }} ansible_become_password={{ .Password }} ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAuthentication=no'"
+    ansible_env_vars        = ["ANSIBLE_CONFIG=../../ansible/ansible.cfg"]
   }
 }

@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+    <settings pass="windowsPE">
+        <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+            <!-- UI language to use during WinPE setup -->
+            <SetupUILanguage>
+                <UILanguage>en-US</UILanguage>
+            </SetupUILanguage>
+
+            <!-- InputLocale specifies the input language and the method for input devices, such as the keyboard layout. -->
+            <!-- 0409:00000409 = en-US -->
+            <InputLocale>0409:00000409</InputLocale>
+
+            <!-- UserLocale specifies the per-user settings used for formatting dates, times, currency, and numbers in a Windows installation. -->
+            <UserLocale>en-US</UserLocale>
+
+            <!-- UILanguage specifies the default system language that is used to display user interface (UI) items (such as menus, dialog boxes, and Help files). -->
+            <UILanguage>en-US</UILanguage>
+            <UILanguageFallback>en-US</UILanguageFallback>
+
+            <!-- SystemLocale specifies the default language to use for non-Unicode programs. -->
+            <SystemLocale>en-US</SystemLocale>
+
+        </component>
+        <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <DiskConfiguration>
+                <WillShowUI>OnError</WillShowUI>
+                <Disk wcm:action="add">
+                    <DiskID>0</DiskID>
+                    <WillWipeDisk>true</WillWipeDisk>
+                    <CreatePartitions>
+
+                        <!-- Windows RE Tools partition -->
+                        <CreatePartition wcm:action="add">
+                            <Order>1</Order>
+                            <Type>Primary</Type>
+                            <Size>300</Size>
+                        </CreatePartition>
+
+                        <!-- EFI system partition (ESP) -->
+                        <CreatePartition wcm:action="add">
+                            <Order>2</Order>
+                            <Type>EFI</Type>
+                            <Size>100</Size>
+                        </CreatePartition>
+
+                        <!-- Microsoft reserved partition (MSR) -->
+                        <CreatePartition wcm:action="add">
+                            <Order>3</Order>
+                            <Type>MSR</Type>
+                            <Size>128</Size>
+                        </CreatePartition>
+
+                        <!-- Windows data partition -->
+                        <CreatePartition wcm:action="add">
+                            <Order>4</Order>
+                            <Type>Primary</Type>
+                            <Extend>true</Extend>
+                        </CreatePartition>
+
+                    </CreatePartitions>
+                    <ModifyPartitions>
+
+                        <!-- Windows RE Tools partition -->
+                        <ModifyPartition wcm:action="add">
+                            <Order>1</Order>
+                            <PartitionID>1</PartitionID>
+                            <Label>WinRE</Label>
+                            <Format>NTFS</Format>
+                            <TypeID>DE94BBA4-06D1-4D40-A16A-BFD50179D6AC</TypeID>
+                        </ModifyPartition>
+
+                        <!-- EFI system partition (ESP) -->
+                        <ModifyPartition wcm:action="add">
+                            <Order>2</Order>
+                            <PartitionID>2</PartitionID>
+                            <Label>System</Label>
+                            <Format>FAT32</Format>
+                        </ModifyPartition>
+
+                        <!-- Microsoft reserved partition (MSR) -->
+                        <ModifyPartition wcm:action="add">
+                            <Order>3</Order>
+                            <PartitionID>3</PartitionID>
+                        </ModifyPartition>
+
+                        <!-- Windows data partition -->
+                        <ModifyPartition wcm:action="add">
+                            <Order>4</Order>
+                            <PartitionID>4</PartitionID>
+                            <Format>NTFS</Format>
+                            <Letter>C</Letter>
+                            <Label>OS</Label>
+
+                        </ModifyPartition>
+                    </ModifyPartitions>
+                </Disk>
+            </DiskConfiguration>
+
+            <ImageInstall>
+                <OSImage>
+                    <InstallFrom>
+                        <MetaData wcm:action="add">
+                            <Key>/IMAGE/NAME</Key>
+                            <!-- Image name to install -->
+                            <Value>Windows Server 2022 SERVERSTANDARD</Value>
+                        </MetaData>
+                    </InstallFrom>
+
+                    <InstallTo>
+                        <DiskID>0</DiskID>
+                        <PartitionID>4</PartitionID>
+                    </InstallTo>
+                    <WillShowUI>OnError</WillShowUI>
+                    <InstallToAvailablePartition>false</InstallToAvailablePartition>
+                </OSImage>
+            </ImageInstall>
+
+            <UserData>
+                <AcceptEula>true</AcceptEula>
+                <ProductKey>
+                    <Key>VDYBN-27WPP-V4HQT-9VMD4-VMK7H</Key>
+                    <WillShowUI>Never</WillShowUI>
+                </ProductKey>
+            </UserData>
+
+            <DynamicUpdate>
+                <Enable>true</Enable>
+            </DynamicUpdate>
+
+        </component>
+    </settings>
+    <settings pass="specialize">
+
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <ComputerName>WS22-GUI-Temp</ComputerName>
+            <TimeZone>UTC</TimeZone>
+            <RegisteredOrganization>chkpwd</RegisteredOrganization>
+            <RegisteredOwner>chkpwd</RegisteredOwner>
+            <!-- Force desktop as opposed to tablet (0) or last used (2) -->
+            <SignInMode>1</SignInMode>
+        </component>
+
+        <!-- Do not join the CEIP -->
+        <component name="Microsoft-Windows-SQMApi" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <CEIPEnabled>0</CEIPEnabled>
+        </component>
+
+    </settings>
+    <settings pass="generalize">
+
+        <!-- Do not remove drivers on generalise -->
+        <component name="Microsoft-Windows-PnpSysprep" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <PersistAllDeviceInstalls>true</PersistAllDeviceInstalls>
+        </component>
+
+    </settings>
+    <settings pass="oobeSystem">
+
+        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" 
+            xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+            <!-- Enter audit mode -->
+            <Reseal>
+                <Mode>Audit</Mode>
+                <ForceShutdownNow>false</ForceShutdownNow>
+            </Reseal>
+
+        </component>
+
+    </settings>
+
+    <settings pass="auditSystem">
+
+        <!-- 
+            These admin user steps are required.
+            See https://docs.microsoft.com/en-us/windows-hardware/customize/desktop/unattend/microsoft-windows-shell-setup-useraccounts-administratorpassword
+
+            "Both Microsoft-Windows-Shell-Setup | Autologon and Microsoft-Windows-Shell-Setup | UserAccounts | AdministratorPassword sections are now needed for autologon in audit mode to work. Both of these settings should be added to the auditSystem configuration pass."
+        -->
+        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+            <!-- Set Administrator password -->
+            <UserAccounts>
+                <AdministratorPassword>
+                    <Value>Password8</Value>
+                    <PlainText>true</PlainText>
+                </AdministratorPassword>
+            </UserAccounts>
+
+            <!-- Autologon -->
+            <AutoLogon>
+                <Enabled>true</Enabled>
+                <LogonCount>3</LogonCount>
+                <Username>Administrator</Username>
+                <Password>
+                    <Value>Password8</Value>
+                    <PlainText>true</PlainText>
+                </Password>
+            </AutoLogon>
+
+        </component>
+    </settings>
+
+    <settings pass="auditUser">
+        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" 
+            xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+            <RunSynchronous>
+
+                <!-- Install VMTools -->
+                <RunSynchronousCommand wcm:action="add">
+                    <Description>Install VMware Tools</Description>
+                    <Order>1</Order>
+                    <WillReboot>Never</WillReboot>
+                    <Path>C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File F:\Install-VMTools.ps1</Path>
+                </RunSynchronousCommand>
+
+                <!-- Install Win32-OpenSSH -->
+                <RunSynchronousCommand wcm:action="add">
+                    <Description>Install Win32-OpenSSH</Description>
+                    <Order>2</Order>
+                    <WillReboot>Always</WillReboot>
+                    <Path>C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File F:\Install-OpenSSH.ps1</Path>
+                </RunSynchronousCommand>
+
+                <!-- Prvious step MUST reboot - This allows Windows Update to find & install driver updates for VMTools. -->
+
+                <!-- Run patch script -->
+                <RunSynchronousCommand wcm:action="add">
+                    <Description>Run patch script</Description>
+                    <Order>3</Order>
+                    <WillReboot>Always</WillReboot> <!-- Reboot for updates -->
+                    <Path>C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File F:\Patch.ps1</Path>
+                </RunSynchronousCommand>
+
+                <!-- Run build script -->
+                <RunSynchronousCommand wcm:action="add">
+                    <Description>Run build script</Description>
+                    <Order>4</Order>
+                    <WillReboot>Always</WillReboot> <!-- Reboot for updates -->
+                    <Path>C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File F:\Build.ps1</Path>
+                </RunSynchronousCommand>
+
+            </RunSynchronous>
+
+        </component>
+    </settings>
+
+    <cpi:offlineImage cpi:source="wim:x:/sources/install.wim#Windows Server 2022 SERVERSTANDARD" xmlns:cpi="urn:schemas-microsoft-com:cpi" />
+</unattend>

@@ -2,6 +2,9 @@
 - name: "Install the essentials on the target"
   hosts: default
   become: true
+
+  vars:
+    
   
   roles:
     - { role: ../roles/system }
