@@ -9,7 +9,7 @@
 
 - name: Check if the directory exists
   ansible.builtin.stat:
-    path: /home/{{ ansible_user }}/code/boilerplates
+    path: /home/{{ ansible_user }}/code/boilerplates/ansible
   register: repo_directory
 
 - name: Clone a repo with separate git directory

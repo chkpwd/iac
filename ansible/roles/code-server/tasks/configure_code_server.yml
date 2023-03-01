@@ -79,6 +79,7 @@
   ansible.builtin.shell: code-server --install-extension {{ item }}
   loop: "{{ extensions }}"
   changed_when: false
+  ignore_errors: true
 
 # - name: Output contents from the config.yaml file
 #   ansible.builtin.debug:
