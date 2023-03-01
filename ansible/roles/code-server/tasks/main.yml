@@ -1,6 +1,6 @@
 ---
-# - name: "Copy SSH Files to the correct location"
-#   ansible.builtin.include_tasks: user_configs.yml
+- name: "Copy SSH Files to the correct location"
+  ansible.builtin.include_tasks: user_configs.yml
 
 - name: "Configure Repositories for necessary packages"
   ansible.builtin.include_tasks: add_repos.yml
