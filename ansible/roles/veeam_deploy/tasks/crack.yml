@@ -1,0 +1,83 @@
+---
+
+# License-v11.zip
+# ├─ Veeam_ASv10_1500.lic
+# ├─ VeeamLicense.dll
+
+- name: Stop all Veeam services
+  ansible.windows.win_shell: |
+    Stop-Process -Name "Veeam.Backup.Shell" -Force -ErrorAction SilentlyContinue
+    Get-Service veeam* | Stop-Service
+
+- name: Copy Veeam license ZIP
+  ansible.windows.win_copy:
+    src: License-v11.zip
+    dest: "{{ ansible_env.TEMP }}"
+
+- name: Extract Veeam license ZIP
+  community.windows.win_unzip:
+    src: "{{ ansible_env.TEMP }}\\License-v11.zip"
+    dest: "{{ ansible_env.TEMP }}\\VeeamCrack"
+
+- name: Backup old VeeamLicense.dll
+  ansible.windows.win_powershell:
+    script: |
+      Rename-Item -Path "$env:CommonProgramFiles\Veeam\VeeamLicense.dll" -NewName "VeeamLicense.dll.orig" -Force
+
+- name: Install new VeeamLicense.dll
+  ansible.windows.win_copy:
+    src: "{{ ansible_env.TEMP }}\\VeeamCrack\\VeeamLicense.dll"
+    dest: "{{ ansible_env.CommonProgramFiles }}\\Veeam\\VeeamLicense.dll"
+    remote_src: true
+
+- name: Start all Veeam services
+  ansible.windows.win_shell: |
+    Get-Service veeam* | Start-Service
+
+- block: # noqa name[missing]
+
+    - name: Install new Veeam license file
+      ansible.windows.win_powershell:
+        script: |
+          try { Install-VBRLicense -Path "$env:TEMP\VeeamCrack\Veeam_ASv10_1500.lic" }
+          catch { $Ansible.Failed = $true ; $Ansible.Result = $Error }
+
+    - name: Verify new Veeam license file
+      ansible.windows.win_powershell:
+        script: |
+          $Ansible.Changed = $false
+          $license = Get-VBRInstalledLicense
+          If (
+            ($license.Status -ne 'Valid') -or ($license.LicensedTo -ne 'DiGiBoY')
+          ) {
+            Write-Output "License check failed; See result attribute."
+            $Ansible.Result = $license
+            $Ansible.Failed = $true
+          }
+
+  rescue:
+
+    - name: Restart all Veeam services
+      ansible.windows.win_shell: |
+        Stop-Process -Name "Veeam.Backup.Shell" -Force -ErrorAction SilentlyContinue
+        Get-Service veeam* | Stop-Service -Force
+        Get-Service veeam* | Start-Service
+
+    - name: Install new Veeam license file
+      ansible.windows.win_powershell:
+        script: |
+          try { Install-VBRLicense -Path "$env:TEMP\VeeamCrack\Veeam_ASv10_1500.lic" }
+          catch { $Ansible.Failed = $true ; $Ansible.Result = $Error }
+
+    - name: Verify new Veeam license file
+      ansible.windows.win_powershell:
+        script: |
+          $Ansible.Changed = $false
+          $license = Get-VBRInstalledLicense
+          If (
+            ($license.Status -ne 'Valid') -or ($license.LicensedTo -ne 'DiGiBoY')
+          ) {
+            Write-Output "License check failed; See result attribute."
+            $Ansible.Result = $license
+            $Ansible.Failed = $true
+          }

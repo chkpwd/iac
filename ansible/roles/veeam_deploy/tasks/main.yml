@@ -1,0 +1,14 @@
+---
+
+- name: Include vbr_install
+  ansible.builtin.include_role:
+    name: veeamhub.veeam.veeam_vas
+    tasks_from: vbr_install
+
+- name: Include em_install
+  ansible.builtin.include_role:
+    name: veeamhub.veeam.veeam_vas
+    tasks_from: em_install
+
+- name: Include crack
+  ansible.builtin.include_tasks: crack.yml
