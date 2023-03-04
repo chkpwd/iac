@@ -2,14 +2,15 @@
 - name: Copy SSH Keys to remote host
   ansible.builtin.copy:
     src: "{{ ansible_dest }}/roles/code-server/templates/"
-    dest: /home/{{ ansible_user_id }}/.ssh
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    dest: "/home/{{ ansible_user }}/.ssh"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: preserve
   notify: Restart ssh daemon
 
 - name: Add .local/bin to the Path
   ansible.builtin.lineinfile:
-    path: /home/{{ ansible_user_id }}/.zshrc
+    path: "/home/{{ ansible_user }}/.zshrc"
     insertafter: 'LANG'
     line: 'export PATH=$HOME/.local/bin:$PATH'
+  changed_when: false

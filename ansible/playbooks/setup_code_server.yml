@@ -1,6 +1,26 @@
 ---
-- name: Code-server installation
-  hosts: localhost
+- name: Configure Coder/Code-Server
+  hosts: crypto
+  become: true
+
+  vars:
+    pip_install_packages:
+      - name: docker
+    docker_edition: 'ce'
+    docker_package_state: latest
+    docker_users: hyoga
+    docker_install_compose_plugin: false
+    docker_install_compose: true
 
   roles:
+    - { role: ../roles/system }
+    - role: gantsign.oh-my-zsh
+      users:
+        - username: "{{ ansible_user }}"
+          oh_my_zsh:
+            theme: bira
+            update_mode: auto
+            update_frequency: 3
+    - geerlingguy.pip
+    - geerlingguy.docker
     - { role: ../roles/code-server }

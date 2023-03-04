@@ -1,9 +1,6 @@
-- name: Update packages
-  ansible.builtin.apt:
-    update_cache: true
-    upgrade: true
-
+---
 - name: Install essential packages # noqa package-latest
-  ansible.builtin.package:
+  ansible.builtin.apt:
     name: "{{ packages }}"
     state: latest
+  become: true

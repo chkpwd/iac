@@ -34,11 +34,11 @@ service_definitions:
         6564
       DEFAULT_WORKSPACE: /code/boilerplates
       DOCKER_MODS: linuxserver/mods:code-server-terraform|linuxserver/mods:code-server-powershell|linuxserver/mods:code-server-python3 # yamllint disable-line rule:line-length
-      DOCKER_USER: "{{ ansible_user_id }}"
+      DOCKER_USER: "{{ ansible_user }}"
     volumes:
       - "{{ configuration_path }}/code:/home/coder/.config"
       - "{{ configuration_path }}/code/scripts:/custom-cont-init.d:ro"
-      - "/home/{{ ansible_user_id }}/code:/code"
+      - "/home/{{ ansible_user }}/code:/code"
 
   - name: watchtower
     image: containrrr/watchtower

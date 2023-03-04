@@ -1,6 +1,6 @@
 ---
 - name: "Install docker and docker-compose on the target"
-  hosts: guests
+  hosts: docker_hosts
   become: true
 
   vars:

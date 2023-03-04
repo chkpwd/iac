@@ -28,8 +28,8 @@
   ansible.builtin.get_url:
     url: "{{ item.browser_download_url }}"
     dest: /tmp/os-agent.deb
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: 0644
 
 - name: Install os-agent.deb package
@@ -48,8 +48,8 @@
   ansible.builtin.get_url:
     url: "{{ item.browser_download_url }}"
     dest: /tmp/ha-supervised.deb
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: 0644
 
 - name: Install ha-supervised.deb package

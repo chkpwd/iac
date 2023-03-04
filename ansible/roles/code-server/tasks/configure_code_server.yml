@@ -11,8 +11,8 @@
   ansible.builtin.get_url:
     url: "{{ item.browser_download_url }}"
     dest: /tmp/code.deb
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: 0644
   no_log: true
 
@@ -23,24 +23,24 @@
 
 - name: Start code-server
   ansible.builtin.service:
-    name: code-server@{{ ansible_user_id }}.service
+    name: code-server@{{ ansible_user }}.service
     state: started
   become: true
 
 - name: "Wait until config file for code-server exists"
   ansible.builtin.wait_for:
-    path: /home/{{ ansible_user_id }}/.config/code-server/config.yaml
+    path: /home/{{ ansible_user }}/.config/code-server/config.yaml
 
 - name: "Change the bind address for the code-server"
   ansible.builtin.lineinfile:
-    path: /home/{{ ansible_user_id }}/.config/code-server/config.yaml
+    path: /home/{{ ansible_user }}/.config/code-server/config.yaml
     backup: true
     regexp: '^bind-addr: 127.0.0.1:8080'
     line: 'bind-addr: 0.0.0.0:443'
 
 - name: "Sets cert: false to true in the code-server config"
   ansible.builtin.lineinfile:
-    path: /home/{{ ansible_user_id }}/.config/code-server/config.yaml
+    path: /home/{{ ansible_user }}/.config/code-server/config.yaml
     backup: true
     regexp: 'cert: false'
     line: 'cert: true'
@@ -67,7 +67,7 @@
   become: true
 
 - name: Display content of config.yaml
-  ansible.builtin.command: cat config.yaml chdir=/home/{{ ansible_user_id }}/.config/code-server
+  ansible.builtin.command: cat config.yaml chdir=/home/{{ ansible_user }}/.config/code-server
   register: command_output
   changed_when: command_output.stdout != 0
 
@@ -78,8 +78,6 @@
 - name: Install code-server extensions
   ansible.builtin.shell: code-server --install-extension {{ item }}
   loop: "{{ extensions }}"
-  changed_when: false
-  ignore_errors: true
 
 # - name: Output contents from the config.yaml file
 #   ansible.builtin.debug:

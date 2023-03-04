@@ -1,7 +1,4 @@
 ---
-- name: "Copy SSH Files to the correct location"
-  ansible.builtin.include_tasks: user_configs.yml
-
 - name: "Configure user for code"
   ansible.builtin.include_tasks: user_configs.yml
 

@@ -1,23 +1,34 @@
 - name: Mount NFS Share from TrueNAS on media server
-  hosts: mirage
+  hosts: docker_hosts
+  gather_facts: true
   become: true
+
   tasks:
     - name: Install nfs package
       ansible.builtin.apt:
-        pkg: ['nfs-common']
+        pkg: 'nfs-common'
 
     - name: Create the dest directory for the mount
       ansible.builtin.file:
-        path: "{{ media_path }}"
+        path: "{{ nfs_share_dir }}"
         state: directory
-        owner: "{{ ansible_user_id }}"
-        group: "{{ ansible_user_id }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
         mode: '0755'
 
     - name: Mount NFS share from TrueNAS
       ansible.posix.mount:
-        src: "{{ nas_nfs }}:/mnt/media"
-        path: "{{ media_path }}"
-        opts: rw,sync,hard
+        src: "{{ nfs_share_ip }}:/mnt/media/docker-confs"
+        path: "{{ docker_path }}"
+        opts: rw,sync,hard,nofail
         state: mounted
         fstype: nfs
+
+    - name: Mount NFS share from TrueNAS
+      ansible.posix.mount:
+        src: "{{ nfs_share_ip }}:/mnt/media"
+        path: "{{ media_path }}"
+        opts: rw,sync,hard,nofail
+        state: mounted
+        fstype: nfs
+      when: ansible_hostname == "mirage"

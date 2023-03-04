@@ -10,7 +10,7 @@
     - { role: ../roles/system }
     - role: gantsign.oh-my-zsh
       users:
-        - username: "{{ ansible_user_id }}"
+        - username: "{{ ansible_user }}"
           oh_my_zsh:
             theme: bira
             update_mode: auto

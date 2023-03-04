@@ -140,6 +140,21 @@ service_definitions:
       <<: *common_env
     ports: [8083:5000]
 
+  - name: netbootxyz
+    image: lscr.io/linuxserver/netbootxyz:latest
+    env:
+      <<: *common_env
+      MENU_VERSION: 1.9.9
+      PORT_RANGE: 30000:30010
+      SUBFOLDER: /
+    volumes:
+      - "{{ configuration_path }}/netbootxyz:/config"
+      - "{{ configuration_path }}/netbootxyz/assets:/assets"
+    ports:
+      - 3000:3000
+      - 69:69/udp
+      - 8080:80
+
   - name: watchtower
     image: containrrr/watchtower
     volumes:

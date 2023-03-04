@@ -37,8 +37,8 @@
   ansible.builtin.get_url:
     url: "{{ item.browser_download_url }}"
     dest: /tmp/pulumi.tar.gz
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: '0755'
   no_log: true # * Removes output of the API call
 
@@ -52,8 +52,8 @@
 - name: Move the Pulumi commands to a specific dest
   ansible.builtin.copy:
     src: /tmp/pulumi/
-    dest: "/home/{{ ansible_user_id }}/.local/bin"
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    dest: "/usr/local/bin"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: '0755'
     remote_src: true

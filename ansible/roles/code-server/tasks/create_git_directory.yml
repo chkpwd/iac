@@ -1,10 +1,10 @@
 ---
 - name: Create Git directory
   ansible.builtin.file:
-    path: /home/{{ ansible_user_id }}/code/boilerplates
+    path: /home/{{ ansible_user }}/code/boilerplates
     state: directory
-    owner: "{{ ansible_user_id }}"
-    group: "{{ ansible_user_id }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: '0755'
 
 - name: Check if the directory exists

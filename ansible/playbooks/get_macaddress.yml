@@ -1,0 +1,7 @@
+---
+- name: Get the MAC Address of newly deployed machines
+  hosts: all
+  
+  tasks:
+    - name: Get MAC
+      debug: msg="{{ hostvars[inventory_hostname].ansible_default_ipv4.macaddress }}"
