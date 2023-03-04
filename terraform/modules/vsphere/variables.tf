@@ -59,31 +59,34 @@ variable "vm_linked_clone" {
 
 variable "vm_ip" {
   description = "Ip used for the vSphere virtual machine"
+  default = ""
 }
 
 variable "vm_netmask" {
   description = "Netmask used for the vSphere virtual machine (example: 24)"
-  default = "24"
+  default = ""
 }
 
 variable "vm_gateway" {
   description = "Gateway for the vSphere virtual machine"
+  default = ""
 }
 
 variable "vm_dns" {
   description = "DNS for the vSphere virtual machine"
-  default = "172.16.16.1"
+  default = ""
 }
 
 variable "vm_domain" {
   description = "Domain for the vSphere virtual machine"
-  default = "typhon.tech"
+  default = ""
 }
 
 variable "dns_suffix" {
   type = list
   description = "Domain search list"
-  default = ["typhon.tech"]
+  default = []
+  #default = ["typhon.tech"]
 }
 
 variable "vm_cpu" {
@@ -98,14 +101,14 @@ variable "vm_name" {
   description = "The name of the vSphere virtual machines and the hostname of the machine"
 }
 
-variable "vm_public_key" {
-  description = "The name of the vSphere virtual machines and the hostname of the machine"
-  default = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
-}
-
 variable "ssh_username" {
   description = "ssh user for the guest"
   default = "hyoga"
+}
+
+variable "vm_public_key" {
+  description = "Public SSH Key for VMs"
+  default = ""
 }
 
 variable "vm_disk_size" {
@@ -120,6 +123,6 @@ variable "os_type" {
 
 variable "instance_count" {
   description = "The number of vSphere virtual machines"
-  type = string
-  default = "1"
+  type = number
+  default = 1
 }

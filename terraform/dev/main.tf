@@ -29,6 +29,7 @@ module "WinSrv22-Core-Temp" {
   vsphere_user              = var.vsphere_user
   vsphere_password          = var.vsphere_password
 }
+
 # module "kubes-control-plane" {
 #   source                    = "../modules/vsphere"
 #   for_each                  = toset(["1", "2", "3"])

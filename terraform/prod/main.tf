@@ -1,13 +1,11 @@
 module "horizon" {
   source                    = "../modules/vsphere"
+  os_type                   = "linux"
   vm_name                   = "horizon"
   vm_cpu                    = 2
   vm_ram                    = 4096
   vm_template               = "deb-x11-template"
-  vm_ip                     = "172.16.16.10"
-  vm_netmask                = "24"
   vm_network                = "LAN"
-  vm_gateway                = "172.16.16.1"
   vm_dns                    = var.vm_dns
   vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa hyoga@lifeline"
   vsphere_user              = var.vsphere_user
@@ -16,31 +14,12 @@ module "horizon" {
 
 module "stable-diffusion" {
   source                    = "../modules/vsphere"
+  os_type                   = "linux"
   vm_name                   = "stable-diffusion"
   vm_cpu                    = 4
   vm_ram                    = 10240
   vm_network                = "Public"
   vm_template               = "deb-x11-template"
-  vm_ip                     = "172.16.20.10"
-  vm_netmask                = "24"
-  vm_gateway                = "172.16.20.1"
-  vm_dns                    = var.vm_dns
-  vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa hyoga@lifeline"
-  vsphere_user              = var.vsphere_user
-  vsphere_password          = var.vsphere_password
-}
-
-module "jumpbox-dev" {
-  source                    = "../modules/vsphere"
-  vm_name                   = "jumpbox-dev"
-  vm_cpu                    = 4
-  vm_disk_size              = "48"
-  vm_ram                    = 4096
-  vm_network                = "LAN"
-  vm_template               = "deb-x11-template"
-  vm_ip                     = "172.16.16.232"
-  vm_netmask                = "24"
-  vm_gateway                = "172.16.16.1"
   vm_dns                    = var.vm_dns
   vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa hyoga@lifeline"
   vsphere_user              = var.vsphere_user
@@ -49,15 +28,13 @@ module "jumpbox-dev" {
 
 module "crypto" {
   source                    = "../modules/vsphere"
+  os_type                   = "linux"
   vm_name                   = "crypto"
   vm_cpu                    = 4
   vm_disk_size              = "48"
   vm_ram                    = 4096
   vm_network                = "LAN"
   vm_template               = "deb-x11-template"
-  vm_ip                     = "172.16.16.12"
-  vm_netmask                = "24"
-  vm_gateway                = "172.16.16.1"
   vm_dns                    = var.vm_dns
   vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa hyoga@lifeline"
   vsphere_user              = var.vsphere_user
@@ -66,14 +43,12 @@ module "crypto" {
 
 module "mirage" {
   source                    = "../modules/vsphere"
+  os_type                   = "linux"
   vm_name                   = "mirage"
   vm_cpu                    = 2
   vm_ram                    = 8192
   vm_network                = "IoT"
   vm_template               = "deb-x11-template"
-  vm_ip                     = "172.16.10.20"
-  vm_netmask                = "24"
-  vm_gateway                = "172.16.10.1"
   vm_dns                    = var.vm_dns
   vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa hyoga@lifeline"
   vsphere_user              = var.vsphere_user
@@ -82,15 +57,29 @@ module "mirage" {
 
 module "homeassistant" {
   source                    = "../modules/vsphere"
+  os_type                   = "linux"
   vm_name                   = "valkyrie"
   vm_cpu                    = 2
   vm_ram                    = 4096
   vm_network                = "LAN"
   vm_template               = "deb-x11-template"
-  vm_ip                     = "172.16.16.11"
-  vm_netmask                = "24"
-  vm_gateway                = "172.16.16.1"
   vm_dns                    = var.vm_dns
+  vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
+  vsphere_user              = var.vsphere_user
+  vsphere_password          = var.vsphere_password
+}
+
+module "bloodhound" {
+  source                    = "../modules/vsphere"
+  count                     = 1
+  os_type                   = "windows"
+  instance_count            = 1
+  vm_name                   = "bloodhound"
+  vm_cpu                    = 2
+  vm_ram                    = 4096
+  vm_disk_size              = 40 
+  vm_network                = "LAN"
+  vm_template               = "WinSrv22-template-DE"
   vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
   vsphere_user              = var.vsphere_user
   vsphere_password          = var.vsphere_password

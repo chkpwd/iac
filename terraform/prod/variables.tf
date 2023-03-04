@@ -129,3 +129,13 @@ variable "vultr_api_key" {
 variable "vm_disk_size" {
   description = "The size of the guest machine disk"
 }
+
+variable "os_type" {
+  description = "Set the OS type"
+  default = ""
+}
+
+variable "instance_count" {
+  description = "The number of vSphere guest machines"
+  type = string
+}
