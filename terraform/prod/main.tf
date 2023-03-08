@@ -8,8 +8,6 @@ module "horizon" {
   vm_network                = "LAN"
   vm_dns                    = var.vm_dns
   vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa hyoga@lifeline"
-  vsphere_user              = var.vsphere_user
-  vsphere_password          = var.vsphere_password
 }
 
 module "stable-diffusion" {
@@ -22,8 +20,6 @@ module "stable-diffusion" {
   vm_template               = "deb-x11-template"
   vm_dns                    = var.vm_dns
   vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa hyoga@lifeline"
-  vsphere_user              = var.vsphere_user
-  vsphere_password          = var.vsphere_password
 }
 
 module "crypto" {
@@ -37,8 +33,6 @@ module "crypto" {
   vm_template               = "deb-x11-template"
   vm_dns                    = var.vm_dns
   vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa hyoga@lifeline"
-  vsphere_user              = var.vsphere_user
-  vsphere_password          = var.vsphere_password
 }
 
 module "mirage" {
@@ -51,8 +45,6 @@ module "mirage" {
   vm_template               = "deb-x11-template"
   vm_dns                    = var.vm_dns
   vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa hyoga@lifeline"
-  vsphere_user              = var.vsphere_user
-  vsphere_password          = var.vsphere_password
 }
 
 module "homeassistant" {
@@ -65,8 +57,6 @@ module "homeassistant" {
   vm_template               = "deb-x11-template"
   vm_dns                    = var.vm_dns
   vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
-  vsphere_user              = var.vsphere_user
-  vsphere_password          = var.vsphere_password
 }
 
 module "bloodhound" {
@@ -81,6 +71,4 @@ module "bloodhound" {
   vm_network                = "LAN"
   vm_template               = "WinSrv22-template-DE"
   vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
-  vsphere_user              = var.vsphere_user
-  vsphere_password          = var.vsphere_password
 }

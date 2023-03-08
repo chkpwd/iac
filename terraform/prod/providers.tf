@@ -20,21 +20,29 @@ terraform {
       source = "hashicorp/aws"
       version = "4.55.0"
     }
+    sops = { 
+      source = "carlpett/sops"
+      version = "0.7.2"
+    }
   }
+}
+
+data "sops_file" "vsphere-secrets" {
+  source_file = "../terraform.sops.yaml"
 }
 
 # Configure the vSphere Provider
 provider "vsphere" {
   vsphere_server = "${var.vsphere_vcenter}"
-  user           = "${var.vsphere_user}"
-  password       = "${var.vsphere_password}"
+  user = "${data.sops_file.vsphere-secrets.data["vsphere_user"]}"
+  password = "${data.sops_file.vsphere-secrets.data["vsphere_password"]}"
 
   allow_unverified_ssl = "${var.vsphere_unverified_ssl}"
 }
 
 # Configure the Vultr Provider
 provider "vultr" {
-  api_key = "${var.vultr_api_key}"
+  api_key = "${data.sops_file.vsphere-secrets.data["vultr_api_key"]}"
   rate_limit = 100
   retry_limit = 3
 }

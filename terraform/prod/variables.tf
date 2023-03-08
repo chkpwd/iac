@@ -2,19 +2,19 @@
 # vCenter connection #
 #====================#
 
-# vSphere username used to deploy the infrastructure #
-variable "vsphere_user" {
-  description = "vSphere user"
-  type        = string
-  sensitive   = true
-} 
+# # vSphere username used to deploy the infrastructure #
+# variable "vsphere_user" {
+#   description = "vSphere user"
+#   type        = string
+#   sensitive   = true
+# } 
 
-# vSphere password used to deploy the infrastructure #
-variable "vsphere_password" {
-  description = "vSphere password"
-  type        = string
-  sensitive   = true
-} 
+# # vSphere password used to deploy the infrastructure #
+# variable "vsphere_password" {
+#   description = "vSphere password"
+#   type        = string
+#   sensitive   = true
+# } 
 
 variable "vsphere_vcenter" {
   description = "vCenter server FQDN or IP"
@@ -113,17 +113,6 @@ variable "vm_public_key" {
 variable "ssh_username" {
   description = "ssh user for the guest"
   type        = string
-}
-
-variable "ssh_password" {
-  description = "ssh password for the guest"
-  type        = string
-}
-
-variable "vultr_api_key" {
-  description = "api key for vultr instance"
-  type        = string
-  sensitive = true
 }
 
 variable "vm_disk_size" {
