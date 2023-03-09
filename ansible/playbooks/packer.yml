@@ -1,6 +1,6 @@
 ---
 - name: "Install the essentials on the target"
-  hosts: default
+  hosts: default #* Add this to your inventory file and manually --limit within provisioner
   become: true
 
   vars:
