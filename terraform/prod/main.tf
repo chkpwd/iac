@@ -15,7 +15,8 @@ module "stable-diffusion" {
   os_type                   = "linux"
   vm_name                   = "stable-diffusion"
   vm_cpu                    = 4
-  vm_ram                    = 10240
+  vm_disk_size              = "48"
+  vm_ram                    = 4096
   vm_network                = "Public"
   vm_template               = "deb-x11-template"
   vm_dns                    = var.vm_dns
