@@ -1,0 +1,93 @@
+---
+- name: "Update the target system"
+  hosts: guests
+  become: true
+
+  tasks:
+
+    # - name: Enable non-free and contrib packages
+    #   ansible.builtin.command:
+    #     cmd: sudo apt-add-repository contrib
+    #   register: add_repo_types
+    #   changed_when: >-
+    #     add_repo_types.stdout == "'contrib' distribution component enabled for all sources."
+
+    - name: Install NVIDIA requirements
+      ansible.builtin.apt:
+        update_cache: true
+        name:
+          - gcc
+          - make
+          - linux-headers-amd64
+        state: present
+
+    - name: Import NVIDIA GPG Key
+      ansible.builtin.get_url:
+        url: https://developer.download.nvidia.com/compute/cuda/repos/{{ release }}/{{ ansible_architecture }}/3bf863cc.pub
+        dest: "/etc/apt/trusted.gpg.d/cuda-debian11-keyring.asc"
+        mode: 0644
+        force: true
+      register: add_apt_key
+      until: add_apt_key is succeeded
+      retries: 2
+      delay: 2
+
+    - name: Add NVIDIA Repository
+      ansible.builtin.apt_repository:
+        filename: cuda-drivers
+        repo: 'deb [signed-by={{ add_apt_key.dest }}] https://developer.download.nvidia.com/compute/cuda/repos/{{ release }}/{{ ansible_architecture }}/ /'
+      when: ansible_distribution == 'Debian'
+
+    - name: Enabled contrib sources
+      ansible.builtin.lineinfile:
+        path: /etc/apt/sources.list
+        line: '\1 contrib non-free'
+        backrefs: true
+        regexp: '^(deb\s.*bullseye\smain)(\s(non-free|contrib)){0,2}$'
+
+    - name: Update cache
+      ansible.builtin.apt:
+        update_cache: true
+
+    - name: Disable Nouveau drivers
+      ansible.builtin.copy:
+        content: |
+          blacklist nouveau
+          options nouveau modeset=0
+        dest: /etc/modprobe.d/blacklist-nouveau.conf
+        mode: '644'
+        owner: root
+      notify: Unconditionally reboot the machine with all defaults
+    
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
+
+    - name: Install NVIDIA CUDA packages
+      ansible.builtin.apt:
+        update_cache: true
+        pkg:
+         - nvidia-driver
+         - nvidia-smi 
+         - cuda 
+        state: present
+      ignore_errors: "{{ ansible_check_mode }}"
+
+    # Disallow updates
+    - name: Hold NVIDIA CUDA package
+      ansible.builtin.dpkg_selections:
+        name: cuda
+        selection: hold
+
+    - name: Add CUDA paths to environment
+      ansible.builtin.copy:
+        content: |
+          # /usr/local/cuda is a symlink to a symlink to the latest installed version of CUDA, i.e. /usr/local/cuda-x.x.x
+          export PATH="/usr/local/cuda/bin/:$PATH"
+          export LD_LIBRARY_PATH="/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+        dest: /etc/profile.d/cuda_paths.sh
+        mode: '644'
+        owner: root
+
+  handlers:
+    - name: Unconditionally reboot the machine with all defaults
+      ansible.builtin.reboot:
