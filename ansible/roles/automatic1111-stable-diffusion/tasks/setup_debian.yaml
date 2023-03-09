@@ -1,0 +1,4 @@
+---
+- name: Install necessary packages
+  ansible.builtin.apt:
+    pkg: "{{ packages }}"
