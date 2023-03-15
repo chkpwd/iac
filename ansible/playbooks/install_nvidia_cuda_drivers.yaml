@@ -38,12 +38,12 @@
         repo: 'deb [signed-by={{ add_apt_key.dest }}] https://developer.download.nvidia.com/compute/cuda/repos/{{ release }}/{{ ansible_architecture }}/ /'
       when: ansible_distribution == 'Debian'
 
-    - name: Enabled contrib sources
+    - name: Enabled contrib and non-free sources
       ansible.builtin.lineinfile:
         path: /etc/apt/sources.list
         line: '\1 contrib non-free'
         backrefs: true
-        regexp: '^(deb\s.*bullseye\smain)(\s(non-free|contrib)){0,2}$'
+        regexp: '^(deb\s.*{{ ansible_distribution_release }}\smain)(\s(non-free|contrib)){0,2}$'
 
     - name: Update cache
       ansible.builtin.apt:
