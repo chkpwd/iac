@@ -1,5 +1,4 @@
 ---
 - name: Install necessary packages
   ansible.builtin.apt:
-    pkg: "{{ packages }}"
-  become: true
+    pkg: "{{ packages | reject('match', '^python3-venv$') }}"

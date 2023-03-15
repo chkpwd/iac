@@ -2,4 +2,13 @@ packages:
   - wget
   - git
   - python3
+  - python3-pip
   - python3-venv
+
+install_dir: "{{ ansible_user_dir }}"
+
+clone_dir: "stable-diffusion-webui"
+
+venv_dir: "stable-diffusion-venv"
+
+can_run_as_root: 0
