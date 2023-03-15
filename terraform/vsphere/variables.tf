@@ -115,8 +115,13 @@ variable "ssh_username" {
   type        = string
 }
 
-variable "vm_disk_size" {
+variable "vm_pri_disk_size" {
   description = "The size of the guest machine disk"
+}
+
+variable "vm_sec_disk_size" {
+  description = "The size of the guest machine disk"
+  default = ""
 }
 
 variable "os_type" {
@@ -127,4 +132,9 @@ variable "os_type" {
 variable "instance_count" {
   description = "The number of vSphere guest machines"
   type = string
+}
+
+variable "secondary_disks" {
+  type    = bool
+  default = false
 }

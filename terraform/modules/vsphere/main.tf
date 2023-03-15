@@ -26,6 +26,13 @@ data "vsphere_virtual_machine" "template" {
   datacenter_id = "${data.vsphere_datacenter.dc.id}"
 }
 
+locals {
+  # flexible number of data disks for VM
+  disks = [
+    { "id":1, "dev":"sdb", "sizeGB":var.vm_sec_disk_size },
+  ]
+}
+
 #===============================================================================
 # vSphere Resources
 #===============================================================================
@@ -48,9 +55,21 @@ resource "vsphere_virtual_machine" "linux" {
 
   disk {
     label            = "${var.vm_name}.vmdk"
-    size             = "${var.vm_disk_size}"
+    size             = "${var.vm_pri_disk_size}"
     eagerly_scrub    = "${data.vsphere_virtual_machine.template.disks.0.eagerly_scrub}"
     thin_provisioned = "${data.vsphere_virtual_machine.template.disks.0.thin_provisioned}"
+  }
+
+  dynamic "disk" {
+    for_each = var.secondary_disks ? local.disks: []
+    content {
+      label            = "${var.vm_name}.${disk.value.id}"
+      size             = "${disk.value.sizeGB}"
+      eagerly_scrub    = false
+      thin_provisioned = true
+      keep_on_remove   = true
+      unit_number      = disk.key + 1
+    }
   }
 
   clone {
@@ -94,7 +113,7 @@ resource "vsphere_virtual_machine" "windows" {
 
   disk {
     label            = "${var.vm_name}.vmdk"
-    size             = "${var.vm_disk_size}"
+    size             = "${var.vm_pri_disk_size}"
     eagerly_scrub    = "${data.vsphere_virtual_machine.template.disks.0.eagerly_scrub}"
     thin_provisioned = "${data.vsphere_virtual_machine.template.disks.0.thin_provisioned}"
   }

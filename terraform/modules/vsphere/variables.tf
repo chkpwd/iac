@@ -112,9 +112,14 @@ variable "vm_public_key" {
   default = ""
 }
 
-variable "vm_disk_size" {
+variable "vm_pri_disk_size" {
   description = "The size of the guest machine disk"
   default = "16"
+}
+
+variable "vm_sec_disk_size" {
+  description = "The size of the guest machine disk"
+  default = ""
 }
 
 variable "os_type" {
@@ -126,4 +131,9 @@ variable "instance_count" {
   description = "The number of vSphere virtual machines"
   type = number
   default = 1
+}
+
+variable "secondary_disks" {
+  type    = bool
+  default = false
 }
