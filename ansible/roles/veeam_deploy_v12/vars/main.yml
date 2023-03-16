@@ -1,0 +1,26 @@
+---
+version: "12"
+
+iso_download: true
+iso_url: https://download2.veeam.com/VBR/v12/VeeamBackup&Replication_12.0.0.1420_20230303.iso
+iso_checksum: "013e0c3a4b89eaab6d21311492517a79f0c1dabb0ecdb48dd8a35549e8c0143d"
+destination_iso_file: "vbr-12.0.0.1420_20230303.iso"
+
+destination: "C:\\VeeamInstall\\"
+
+license: true
+source_license: Veeam-20instances-suite-nfr-2022.lic
+destination_license_file: "{{ source_license }}"
+
+sql_install_username: "sql_install"
+sql_service_username: "sql_svc"
+sql_username: "sa"
+sql_install_password: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  30326530663433306136323433383630626161326535633563306632373762316261633630646366
+  6536393462313663643537663239333766616437376136650a643363313761616164336632303864
+  33653037306633393361393031313035303561303563643338653739356664303536643631396231
+  6334363039303935310a323639376162633033393566663335616162616161623130313962316332
+  62626433633737313435646434363062366334393665666538663731633161386365
+sql_service_password: "{{ sql_install_password }}"
+sql_password: "{{ sql_install_password }}"
