@@ -1,18 +1,94 @@
 ---
 - name: Provision and configure the system to basics
-  ansible.builtin.import_playbook: basics.yml
+  hosts: guests
+  gather_facts: yes
+  become: yes
 
-- name: Install docker
-  ansible.builtin.import_playbook: install_docker.yml
+  roles:
+    - system
 
-- name: Mount NFS share 
-  ansible.builtin.import_playbook: mount_nfs.yml
+- name: Prep Docker Hosts for Docker Installation
+  hosts: docker_hosts
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - geerlingguy.pip
+    - geerlingguy.docker
+
+- name: Mount NFS share for all Docker Hosts
+  hosts: docker_hosts
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: Install nfs package
+      ansible.builtin.apt:
+        pkg: 'nfs-common'
+
+    - name: Create the dest directory for the mount
+      ansible.builtin.file:
+        path: "{{ nfs_share_dir }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
+    - name: Mount NFS share from TrueNAS
+      ansible.posix.mount:
+        src: "{{ nfs_share_ip }}:/mnt/media/docker-confs"
+        path: "{{ docker_path }}"
+        opts: rw,sync,hard,nofail
+        state: mounted
+        fstype: nfs
+
+    - name: Mount NFS share from TrueNAS
+      ansible.posix.mount:
+        src: "{{ nfs_share_ip }}:/mnt/media"
+        path: "{{ media_path }}"
+        opts: rw,sync,hard,nofail
+        state: mounted
+        fstype: nfs
+      when: ansible_hostname == "mirage"
 
 - name: Configure the Home Assistant VM
-  ansible.builtin.import_playbook: setup_ha_server.yml
+  hosts: valkyrie
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - { role: ../roles/system }
+    - role: gantsign.oh-my-zsh
+      users:
+        - username: "{{ ansible_user }}"
+          oh_my_zsh:
+            theme: bira
+            update_mode: auto
+            update_frequency: 3
+    - geerlingguy.pip
+    - geerlingguy.docker
+    - { role: ../roles/haos }
 
 - name: Deploy crypto's code-server build
-  ansible.builtin.import_playbook: setup_code_server.yml
+  hosts: crypto
+  gather_facts: yes
+  become: yes
+  roles:
+    - system
+    - role: gantsign.oh-my-zsh
+      users:
+        - username: "{{ ansible_user }}"
+          oh_my_zsh:
+            theme: bira
+            update_mode: auto
+            update_frequency: 3
+    - geerlingguy.pip
+    - geerlingguy.docker
+    - code-server
 
 - name: Deploy docker containers to stack
-  ansible.builtin.import_playbook: deploy_containers.yml
+  hosts: docker_hosts
+  gather_facts: yes
+  become: yes
+  roles:
+    - compose
