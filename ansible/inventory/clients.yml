@@ -27,6 +27,17 @@ all:
         pathfinder:
         stable-diffusion:
 
+    windows:
+      hosts:
+        bloodhound:
+        revenant:
+      vars:
+        ansible_become_method: runas
+        ansible_become_user: "{{ ansible_ssh_user }}"
+        ansible_ssh_user: administrator
+        ansible_shell_type: powershell
+        ansible_connection: ssh
+
     docker_hosts:
       hosts:
         mirage:
