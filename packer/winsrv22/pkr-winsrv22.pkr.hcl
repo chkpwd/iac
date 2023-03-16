@@ -1,3 +1,13 @@
+packer {
+  required_version = ">= 1.8.4"
+  required_plugins {
+    vsphere = {
+      version = ">= v1.1.0"
+      source  = "github.com/hashicorp/vsphere"
+    }
+  }
+}
+
 source "vsphere-iso" "DE" {
 	vm_name					      = "${var.vm_name}-DE"
   notes                 = "Windows Server 2022 Desktop Experience. Built by Packer at ${timestamp()}."
@@ -73,7 +83,7 @@ source "vsphere-iso" "DE" {
 
 source "vsphere-iso" "Core" {
 	vm_name					      = "${var.vm_name}-Core"
-  notes                  = "Windows Server 2022 Core. Built by Packer at ${timestamp()}."
+  notes                 = "Windows Server 2022 Core. Built by Packer at ${timestamp()}."
   guest_os_type         = "windows2019srvNext_64Guest"
  	vm_version				    = var.vm_version
 	CPUs					        = var.vm_cpu_num_core
@@ -140,7 +150,7 @@ build {
   name    = var.vm_name
   sources = [
     "source.vsphere-iso.Core",
-    "source.vsphere-iso.DE",
+    "source.vsphere-iso.DE"
   ]
   provisioner "powershell" {
     scripts  = ["${path.root}/files/ResetWinRM-Task.ps1"]

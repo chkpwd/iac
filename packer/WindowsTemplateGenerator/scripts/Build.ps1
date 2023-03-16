@@ -1,3 +1,4 @@
+function Set-RegistryKey
 {
     param(
         [string]$Path,
