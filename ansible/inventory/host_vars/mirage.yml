@@ -69,7 +69,7 @@ service_definitions:
       - "{{ configuration_path }}/tautulli/logs:/logs:ro"
 
   - name: plex
-    image: "{{ hotio_image }}/plex"
+    image: "{{ hotio_image }}/plex:latest"
     ports: [32400:32400]
     network_mode: "host"
     env:
@@ -85,7 +85,7 @@ service_definitions:
       UMASK_SET: "022"
       ADVERTISE_IP: 172.0.10.20
       ALLOWED_NETWORKS: 172.0.0.0/8
-      PLEX_PASS: "yes"
+      # PLEX_PASS: "yes"
     volumes:
       - "{{ configuration_path }}/plex:/config"
       - "{{ media_path }}:{{ container_path }}/media"
