@@ -1,3 +1,4 @@
+vm_name = "WSrv22-CE-Temp"
 os_version = "2022Core"
 os_family = "windows"
 guest_os_type = "windows9_64Guest"

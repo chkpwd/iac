@@ -1,3 +1,4 @@
+vm_name = "WSrv19-DE-Temp"
 os_version = "2019"
 os_family = "windows"
 guest_os_type = "windows2019srv_64Guest"
