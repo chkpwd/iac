@@ -37,9 +37,17 @@ locals {
 # vSphere Resources
 #===============================================================================
 
+resource "vsphere_folder" "parent" {
+  path = "cattles"
+  type = "vm"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
 resource "vsphere_virtual_machine" "linux" {
 
   count = "${var.os_type == "linux" ? var.instance_count : 0}"
+  folder           = vsphere_folder.parent.path
+
   name             = "${var.vm_name}"
   resource_pool_id = "${data.vsphere_compute_cluster.cluster.resource_pool_id}"
   datastore_id     = "${data.vsphere_datastore.datastore.id}"
@@ -84,8 +92,7 @@ resource "vsphere_virtual_machine" "linux" {
         domain    = "${var.vm_domain}"
       }
 
-      network_interface {
-      }
+      network_interface {}
     }
   }
 
@@ -97,6 +104,8 @@ resource "vsphere_virtual_machine" "linux" {
 
 resource "vsphere_virtual_machine" "windows" {
   count = "${var.os_type == "windows" ? var.instance_count : 0}"
+  folder           = vsphere_folder.parent.path
+
   name             = "${var.vm_name}"
   resource_pool_id = "${data.vsphere_compute_cluster.cluster.resource_pool_id}"
   datastore_id     = "${data.vsphere_datastore.datastore.id}"
