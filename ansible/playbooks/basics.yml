@@ -1,6 +1,6 @@
 ---
 - name: "Install the essentials on the target"
-  hosts: guests
+  hosts: all
   become: true
   
   roles:
@@ -12,3 +12,7 @@
             theme: bira
             update_mode: auto
             update_frequency: 3
+            plugins:
+              - git
+              - zsh-autosuggestions
+
