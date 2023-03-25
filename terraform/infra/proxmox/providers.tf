@@ -4,21 +4,9 @@
 
 terraform {
   required_providers {
-    vsphere = {
-      source = "hashicorp/vsphere"
-      version = "2.2.0"
-    }
-    vultr = {
-      source = "vultr/vultr"
-      version = "2.12.0"
-    }
     proxmox = {
       source = "telmate/proxmox"
       version = "2.9.11"
-    }
-    aws = {
-      source = "hashicorp/aws"
-      version = "4.55.0"
     }
     sops = { 
       source = "carlpett/sops"
@@ -29,22 +17,6 @@ terraform {
 
 data "sops_file" "vsphere-secrets" {
   source_file = "../terraform.sops.yaml"
-}
-
-# Configure the vSphere Provider
-provider "vsphere" {
-  vsphere_server = "${var.vsphere_vcenter}"
-  user = "${data.sops_file.vsphere-secrets.data["vsphere_user"]}"
-  password = "${data.sops_file.vsphere-secrets.data["vsphere_password"]}"
-
-  allow_unverified_ssl = "${var.vsphere_unverified_ssl}"
-}
-
-# Configure the Vultr Provider
-provider "vultr" {
-  api_key = "${data.sops_file.vsphere-secrets.data["vultr_api_key"]}"
-  rate_limit = 100
-  retry_limit = 3
 }
 
 provider "proxmox" {

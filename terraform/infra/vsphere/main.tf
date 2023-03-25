@@ -1,5 +1,5 @@
 module "horizon" {
-  source                    = "../modules/vsphere"
+  source                    = "../../modules/vsphere"
   os_type                   = "linux"
   vm_name                   = "horizon"
   vm_cpu                    = 2
@@ -11,7 +11,7 @@ module "horizon" {
 }
 
 module "stable-diffusion" {
-  source                    = "../modules/vsphere"
+  source                    = "../../modules/vsphere"
   os_type                   = "linux"
   vm_name                   = "stable-diffusion"
   vm_cpu                    = 4
@@ -26,7 +26,7 @@ module "stable-diffusion" {
 }
 
 module "crypto" {
-  source                    = "../modules/vsphere"
+  source                    = "../../modules/vsphere"
   os_type                   = "linux"
   vm_name                   = "crypto"
   vm_cpu                    = 4
@@ -39,7 +39,7 @@ module "crypto" {
 }
 
 module "mirage" {
-  source                    = "../modules/vsphere"
+  source                    = "../../modules/vsphere"
   os_type                   = "linux"
   vm_name                   = "mirage"
   vm_cpu                    = 4
@@ -51,19 +51,19 @@ module "mirage" {
 }
 
 module "homeassistant" {
-  source                    = "../modules/vsphere"
+  source                    = "../../modules/vsphere"
   os_type                   = "linux"
   vm_name                   = "valkyrie"
   vm_cpu                    = 2
   vm_ram                    = 2048
-  vm_network                = "IoT"
+  vm_network                = "LAN"
   vm_template               = "deb-x11-template"
   vm_dns                    = var.vm_dns
   vm_public_key             = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
 }
 
 module "bloodhound" {
-  source                    = "../modules/vsphere"
+  source                    = "../../modules/vsphere"
   count                     = 1
   os_type                   = "windows"
   instance_count            = 1

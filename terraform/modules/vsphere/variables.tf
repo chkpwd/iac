@@ -3,6 +3,7 @@
 #====================#
 
 # Utilizing SOPS to manage secrets for terraform. No longer need to variabelize credentials. #
+
 # # vSphere username used to deploy the infrastructure #
 # variable "vsphere_user" {
 #     description = "vSphere user"
