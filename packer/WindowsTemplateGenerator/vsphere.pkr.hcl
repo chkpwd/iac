@@ -14,6 +14,7 @@ source "vsphere-iso" "windows" {
   boot_wait           = "3s"
 
   # VM Settings
+	vm_name					      = var.vm_name
   ip_wait_timeout       = "45m"
   communicator          = "winrm"
   winrm_username        = var.connection_username
@@ -28,7 +29,6 @@ source "vsphere-iso" "windows" {
   ]
 
   iso_checksum          = var.iso_checksum
-  vm_name               = "Windows${ var.os_version }"
   guest_os_type         = var.guest_os_type
   disk_controller_type  = ["pvscsi"] # Windows requires vmware tools drivers for pvscsi to work
   network_adapters {

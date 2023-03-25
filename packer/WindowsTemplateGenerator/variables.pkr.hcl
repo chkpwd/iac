@@ -53,3 +53,4 @@ variable "os_iso_url" {
     default = ""
 }
 variable "boot_command" {} #TODO: Figure out a better way to handle this
+variable "vm_name" {}
