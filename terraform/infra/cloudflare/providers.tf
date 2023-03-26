@@ -15,10 +15,10 @@ terraform {
   }
 }
 
-data "sops_file" "vsphere-secrets" {
-  source_file = "../terraform.sops.yaml"
+data "sops_file" "cloudflare-secrets" {
+  source_file = "../../terraform.sops.yaml"
 }
 
 provider "cloudflare" {
-  api_token = var.cloudflare_api_token
+  api_token = "${data.sops_file.cloudflare-secrets.data["cloudflare_zone_token"]}"
 }
