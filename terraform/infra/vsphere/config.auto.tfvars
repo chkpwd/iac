@@ -63,10 +63,12 @@ vm_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo
 # The ssh username for the guest system
 ssh_username = "hyoga"
 
-vm_pri_disk_size = "The size of the primary guest machine disk"
+vm_pri_disk_size = ""
 
-vm_sec_disk_size = "The size of the secondary guest machine disk"
+vm_sec_disk_size = ""
 
 os_type = "linux"
 
 instance_count = "1"
+
+folder_id = "cattles"

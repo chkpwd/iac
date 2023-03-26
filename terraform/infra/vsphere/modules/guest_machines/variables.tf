@@ -138,3 +138,8 @@ variable "secondary_disks" {
   type    = bool
   default = false
 }
+
+variable "folder_id" {
+  type    = string
+  default = ""
+}
