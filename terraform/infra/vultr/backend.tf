@@ -4,7 +4,7 @@ terraform {
     organization = "chkpwd"
 
     workspaces {
-      name = "chkpwd"
+      name = "vultr"
     }
     
   }
