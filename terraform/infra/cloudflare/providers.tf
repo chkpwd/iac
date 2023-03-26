@@ -8,8 +8,8 @@ terraform {
       source  = "cloudflare/cloudflare"
       version = "~> 3.0"
     }
-    sops = { 
-      source = "carlpett/sops"
+    sops = {
+      source  = "carlpett/sops"
       version = "0.7.2"
     }
   }
@@ -20,5 +20,5 @@ data "sops_file" "cloudflare-secrets" {
 }
 
 provider "cloudflare" {
-  api_token = "${data.sops_file.cloudflare-secrets.data["cloudflare_zone_token"]}"
+  api_token = data.sops_file.cloudflare-secrets.data["cloudflare_zone_token"]
 }

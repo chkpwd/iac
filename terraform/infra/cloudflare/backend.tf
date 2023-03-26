@@ -1,11 +1,11 @@
 terraform {
   backend "remote" {
-    hostname = "app.terraform.io"
+    hostname     = "app.terraform.io"
     organization = "chkpwd"
 
     workspaces {
       name = "cloudflare"
     }
-    
+
   }
 }
