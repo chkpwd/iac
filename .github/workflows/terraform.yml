@@ -74,6 +74,15 @@ jobs:
       with:
         cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
+    # Install SOPs on the remote runner
+    - name: Sops Binary Installer
+      uses: mdgreenwald/mozilla-sops-action@v1.4.1
+      id: install
+
+    # Decrypt SOPs on the remote runner
+    - name: Decrypt SOPS secrets
+      run: export SOPS_AGE_KEY=${{ secrets.CHK_SOPS_AGE_KEY }}
+
     # Change to Project directory
     - name: Change to Cloudflare Directory
       working-directory: ./terraform/infra/cloudflare
