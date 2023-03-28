@@ -32,9 +32,9 @@ module "stable-diffusion" {
   vm_cpu                    = 4
   secondary_disks           = false
   vm_pri_disk_size          = 48 
-  #vm_sec_disk_size          = 48
+  #vm_sec_disk_size         = 48
   vm_ram                    = 10240
-  vm_network                = "Public"
+  vm_network                = "IoT"
   vm_template               = "deb-x11-template"
 }
 
