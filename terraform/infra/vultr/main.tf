@@ -1,21 +1,22 @@
-terraform {
-  required_providers {
-    vultr = {
-      source = "vultr/vultr"
-      version = "2.12.0"
-    }
-  }
-}
+#===============================================================================
+# vSphere Resources
+#===============================================================================
 
-resource "vultr_instance" "my_instance" {
-    plan = "vc2-1c-0.5gb"
-    region = "ewr"
-    os_id = 448
-    label = "rocky-balboa"
-    tags = ["rocky-balboa"]
-    hostname = "rocky-balboa"
+resource "vultr_instance" "instances" {
+    for_each = var.instances
+
+    region    = each.value.region
+    plan      = each.value.plan
+    os_id     = each.value.os_id
+    label     = each.value.label
+    hostname  = each.value.hostname
     enable_ipv6 = true
     backups = "disabled"
     ddos_protection = false
     activation_email = false
+    tags = ["rocks"]
+  
+  provisioner "remote-exec" {
+    
+  }
 }
