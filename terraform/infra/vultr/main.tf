@@ -2,8 +2,23 @@
 # vSphere Resources
 #===============================================================================
 
-resource "vultr_instance" "instances" {
-    for_each = var.instances
+resource "vultr_instance" "rocks" {
+
+    region   = "ewr"
+    plan     = "vc2-1c-0.5gb"
+    os_id    = 448 # Rocky Linux 8 x64
+    label    = "rockie"
+    hostname = "rocky-linux"
+    enable_ipv6 = true
+    backups = "disabled"
+    ddos_protection = false
+    activation_email = false
+    tags = ["rocks"]
+  
+}
+
+resource "vultr_instance" "fedora_hats" {
+    for_each = var.hattie
 
     region    = each.value.region
     plan      = each.value.plan
@@ -16,7 +31,4 @@ resource "vultr_instance" "instances" {
     activation_email = false
     tags = ["rocks"]
   
-  provisioner "remote-exec" {
-    
-  }
 }
