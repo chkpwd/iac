@@ -184,6 +184,11 @@
                     <Order>5</Order>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
+                    <CommandLine>powershell.exe -File a:\Fix-Firewall.ps1</CommandLine>
+                    <Description>Change Firewall to Private</Description>
+                    <Order>6</Order>
+                </SynchronousCommand>
+                <SynchronousCommand wcm:action="add">
                     <Order>8</Order>
                     <Description>Disable Windows Firewall</Description>
                     <CommandLine>cmd.exe /c "Netsh Advfirewall set allprofiles state off"</CommandLine>
