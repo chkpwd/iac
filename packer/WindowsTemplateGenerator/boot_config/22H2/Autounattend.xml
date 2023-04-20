@@ -179,12 +179,12 @@
                     <RequiresUserInput>true</RequiresUserInput>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>cmd.exe /c a:\winrm.bat</CommandLine>
+                    <CommandLine>cmd.exe /c A:\winrm.bat</CommandLine>
                     <Description>WinRM Enabling</Description>
                     <Order>5</Order>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>powershell.exe -File a:\Fix-Firewall.ps1</CommandLine>
+                    <CommandLine>powershell.exe -File A:\Fix-Firewall.ps1</CommandLine>
                     <Description>Change Firewall to Private</Description>
                     <Order>6</Order>
                 </SynchronousCommand>
@@ -196,7 +196,7 @@
                 <SynchronousCommand>
                     <Order>9</Order>
                     <Description>Run vmtools install</Description>
-                    <CommandLine>powershell.exe -File a:\Install-VMwareTools.ps1</CommandLine>
+                    <CommandLine>powershell.exe -File A:\Install-VMwareTools.ps1</CommandLine>
                 </SynchronousCommand>
             </FirstLogonCommands>
 

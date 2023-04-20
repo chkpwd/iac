@@ -22,7 +22,7 @@ variable "connection_password" {
     default = "Unattendvm1"
 }
 variable "vm_hardware_version" {
-    default = "13"
+    default = "15"
 }
 variable "iso_checksum" {}
 variable "os_version" {}

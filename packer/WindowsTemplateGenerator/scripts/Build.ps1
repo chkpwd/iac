@@ -59,7 +59,7 @@ try {
 
 		# Pin apps to taskbar & clear Start Menu pins
 		Write-Output "`nSetting start layout & taskbar pins."
-		Import-StartLayout -LayoutPath "a:\TaskbarLayout.xml" -MountPath "C:\"
+		Import-StartLayout -LayoutPath "A:\TaskbarLayout.xml" -MountPath "C:\"
 
 		# Create PSDrive for HKU
 		Write-Output "`nCreating 'HKU' PSDrive for 'HKEY_USERS'."

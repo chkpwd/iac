@@ -50,6 +50,7 @@ source "vsphere-iso" "windows" {
       "./boot_config/${var.os_version}/Autounattend.xml",
       "./scripts/winrm.bat",
       "./scripts/Install-VMWareTools.ps1",
+      "./scripts/Fix-Firewall.ps1",
       "./files/TaskbarLayout.xml",
       "./drivers/"
   ]
