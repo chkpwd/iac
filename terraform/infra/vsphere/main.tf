@@ -81,3 +81,16 @@ module "bloodhound" {
   vm_network                = "LAN"
   vm_template               = "WinSrv22-template-DE"
 }
+
+module "kube-ops" {
+  source                    = "./modules/guest_machines"
+  count                     = 3
+  os_type                   = "linux"
+  instance_count            = 1
+  vm_name                   = "kuber-master${count.index + 1}"
+  vm_cpu                    = 4
+  vm_ram                    = 12288
+  vm_pri_disk_size          = 60 
+  vm_network                = "LAN"
+  vm_template               = "deb-x11-template"
+}
