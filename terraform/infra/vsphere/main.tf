@@ -73,7 +73,6 @@ module "bloodhound" {
   source                    = "./modules/guest_machines"
   count                     = 1
   os_type                   = "windows"
-  instance_count            = 1
   vm_name                   = "bloodhound"
   vm_cpu                    = 2
   vm_ram                    = 8192
@@ -86,7 +85,6 @@ module "kube-ops" {
   source                    = "./modules/guest_machines"
   count                     = 3
   os_type                   = "linux"
-  instance_count            = 1
   vm_name                   = "kuber-master${count.index + 1}"
   vm_cpu                    = 4
   vm_ram                    = 12288
