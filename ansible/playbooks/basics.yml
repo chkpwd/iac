@@ -15,13 +15,3 @@
             plugins:
               - git
               - zsh-autosuggestions
-
-  tasks:
-    - name: Set the ZSH_CUSTOM shell var if not present
-      ansible.builtin.set_fact:
-        zsh_custom: "{{ lookup('env', 'ZSH_CUSTOM') | default('/home/' ~ ansible_user ~ '/.oh-my-zsh/custom', true) }}"
-
-    - name: Clone a zsh-autosuggestions repo
-      ansible.builtin.git:
-        repo: https://github.com/zsh-users/zsh-autosuggestions
-        dest: "{{ zsh_custom }}/plugins/zsh-autosuggestions"
