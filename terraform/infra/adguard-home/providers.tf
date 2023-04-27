@@ -4,9 +4,9 @@
 
 terraform {
   required_providers {
-    vsphere = {
-      source = "hashicorp/vsphere"
-      version = "2.2.0"
+    adguard = {
+      source = "gmichels/adguard"
+      version = "0.4.1"
     }
     sops = { 
       source = "carlpett/sops"
@@ -19,11 +19,11 @@ data "sops_file" "vsphere-secrets" {
   source_file = "../../terraform.sops.yml"
 }
 
-# Configure the vSphere Provider
-provider "vsphere" {
-  vsphere_server = "${var.vsphere_vcenter}"
-  user = "${data.sops_file.vsphere-secrets.data["vsphere_user"]}"
-  password = "${data.sops_file.vsphere-secrets.data["vsphere_password"]}"
-
-  allow_unverified_ssl = "${var.vsphere_unverified_ssl}"
+# configuration for adguard home
+provider "adguard" {
+  host     = "172.16.16.1:8080"
+  username = "admin"
+  password = "${data.sops_file.vsphere-secrets.data["adguard_home_password"]}"
+  scheme   = "http" # defaults to https
+  timeout  = 5
 }
