@@ -1,1 +1,0 @@
-You want to know what's in this repository? You can't handle what's in this repository! It's the Terraform configuration that will blow your mind. But be warned, if you're not careful, it might blow up your infrastructure too. This is not a game, this is Terraform, and we're all soldiers in this fight. Welcome to the Terraform repository, where the only easy day was yesterday.

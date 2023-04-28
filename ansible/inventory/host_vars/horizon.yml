@@ -56,25 +56,6 @@ service_definitions:
     volumes:
       - "{{ configuration_path }}/unifi:/usr/lib/unifi/data"
 
-  # - name: gokapi
-  #   image: f0rc3/gokapi:latest
-  #   ports:
-  #     - 5555:53842
-  #   env: 
-  #     <<: *common_env
-  #     GOKAPI_USERNAME: "admin"
-  #     GOKAPI_PASSWORD: !vault |
-  #       $ANSIBLE_VAULT;1.1;AES256
-  #       32316535326332316262366265666565336362613233323533353366363864373630663462346666
-  #       6533343163613733656161303565633166353735616334300a373064393761313330313862626633
-  #       33303330626666333735386135323431373430313536366166323335633432633265633938653064
-  #       3734303634373630310a376431323362366430366533326131363031663836323531383665666637
-  #       6564
-  #     GOKAPI_PORT: "5555"
-  #   volumes:
-  #     - "{{ configuration_path }}/gokapi:/app/config"
-  #     - "{{ configuration_path }}/gokapi_data:/app/data"
-
   - name: bookstack
     image: "{{ linuxserver_image }}/bookstack"
     env:

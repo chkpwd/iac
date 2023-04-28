@@ -31,7 +31,7 @@ Available Commands:
 
 Flags:
   -a, --account string                  Use specific account ID for commands
-  -c, --config string                   Path to configuration file (default is $HOME/.cf-terraforming.yaml)
+  -c, --config string                   Path to configuration file (default is $HOME/.cf-terraforming.yml)
   -e, --email string                    API Email address associated with your account
   -h, --help                            Help for cf-terraforming
   -k, --key string                      API Key generated on the 'My Profile' page. See: https://dash.cloudflare.com/profile
@@ -84,7 +84,7 @@ Alternatively, if using a config file, then specify the inputs using the same
 names the `flag` names. Example:
 
 ```
-$ cat ~/.cf-terraforming.yaml
+$ cat ~/.cf-terraforming.yml
 email: "email@domain.com"
 key: "<key>"
 #or
