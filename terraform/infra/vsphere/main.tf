@@ -85,9 +85,21 @@ module "kube-ops" {
   source                    = "./modules/guest_machines"
   count                     = 3
   os_type                   = "linux"
-  vm_name                   = "kuber-master${count.index + 1}"
-  vm_cpu                    = 4
-  vm_ram                    = 12288
+  vm_name                   = "kubes-cp-${count.index + 1}"
+  vm_cpu                    = 2
+  vm_ram                    = 2048
+  vm_pri_disk_size          = 60 
+  vm_network                = "LAN"
+  vm_template               = "deb-x11-template"
+}
+
+module "traefik" {
+  source                    = "./modules/guest_machines"
+  count                     = 1
+  os_type                   = "linux"
+  vm_name                   = "node-01"
+  vm_cpu                    = 2
+  vm_ram                    = 2048
   vm_pri_disk_size          = 60 
   vm_network                = "LAN"
   vm_template               = "deb-x11-template"
