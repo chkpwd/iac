@@ -22,6 +22,7 @@ all:
       children:
         docker_hosts:
         media_server:
+        k3s:
       hosts:
         stable-diffusion:
 
@@ -42,6 +43,13 @@ all:
         horizon:
         valkyrie:
         crypto:
+        node-01:
+    
+    k3s:
+      hosts:
+        kubes-cp-1:
+        kubes-cp-2:
+        kubes-cp-3:
 
     printers:
       hosts:
