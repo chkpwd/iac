@@ -14,7 +14,7 @@
     msg: "Running on {{ ansible_user_id }} user"
 
 - name: Packages
-  ansible.builtin.include_tasks: "setup_{{ ansible_os_family | lower }}.yaml"
+  ansible.builtin.include_tasks: "setup_{{ ansible_os_family | lower }}.yml"
 
 - name: Create Git directory
   ansible.builtin.file:

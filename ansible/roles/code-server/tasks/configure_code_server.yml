@@ -29,18 +29,18 @@
 
 - name: "Wait until config file for code-server exists"
   ansible.builtin.wait_for:
-    path: /home/{{ ansible_user }}/.config/code-server/config.yaml
+    path: /home/{{ ansible_user }}/.config/code-server/config.yml
 
 - name: "Change the bind address for the code-server"
   ansible.builtin.lineinfile:
-    path: /home/{{ ansible_user }}/.config/code-server/config.yaml
+    path: /home/{{ ansible_user }}/.config/code-server/config.yml
     backup: true
     regexp: '^bind-addr: 127.0.0.1:8080'
     line: 'bind-addr: 0.0.0.0:443'
 
 - name: "Sets cert: false to true in the code-server config"
   ansible.builtin.lineinfile:
-    path: /home/{{ ansible_user }}/.config/code-server/config.yaml
+    path: /home/{{ ansible_user }}/.config/code-server/config.yml
     backup: true
     regexp: 'cert: false'
     line: 'cert: true'
@@ -66,8 +66,8 @@
     name: code-server@$USER
   become: true
 
-- name: Display content of config.yaml
-  ansible.builtin.command: cat config.yaml chdir=/home/{{ ansible_user }}/.config/code-server
+- name: Display content of config.yml
+  ansible.builtin.command: cat config.yml chdir=/home/{{ ansible_user }}/.config/code-server
   register: command_output
   changed_when: command_output.stdout != 0
 
@@ -79,6 +79,6 @@
   ansible.builtin.shell: code-server --install-extension {{ item }}
   loop: "{{ extensions }}"
 
-# - name: Output contents from the config.yaml file
+# - name: Output contents from the config.yml file
 #   ansible.builtin.debug:
 #     msg: "Password for the code-server is {{lookup('ansible.builtin.file', code_config_file )}}"
