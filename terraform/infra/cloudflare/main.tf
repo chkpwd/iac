@@ -43,6 +43,15 @@ resource "cloudflare_record" "overseerr_cname" {
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
 
+resource "cloudflare_record" "code-server_cname" {
+  name    = "code"
+  proxied = true
+  ttl     = 1
+  type    = "CNAME"
+  value   = "chkpwd.com"
+  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
+}
+
 resource "cloudflare_record" "freshrss_cname" {
   name    = "rss"
   proxied = true
