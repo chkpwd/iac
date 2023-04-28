@@ -1,8 +1,12 @@
 ---
+- name: Create a network
+  community.docker.docker_network:
+    name: "{{ item }}"
+  loop: "{{ docker_network }}"
+
 - name: Deploy Docker containers # noqa args[module]
   community.docker.docker_container: "{{ item }}"
   loop: "{{ service_definitions }}"
   loop_control:
     label: "{{ item.name }}"
   register: deploy_containers
-# notify: Chmod docker sock
