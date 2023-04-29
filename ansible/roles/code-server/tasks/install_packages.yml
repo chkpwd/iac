@@ -59,32 +59,65 @@
     remote_src: true
   become: true
 
-- name: Grab latest 'nap' release from github
+- name: Grab latest 'snipkit' release from github
   ansible.builtin.uri:
-    url: https://api.github.com/repos/maaslalani/nap/releases/latest
+    url: https://api.github.com/repos/lemoony/snipkit/releases/latest
     return_content: true
   register: json_reponse
 
-- name: "Downloading naps {{ json_reponse.json.tag_name }}"
+- name: "Downloading 'snipkit' {{ json_reponse.json.tag_name }}"
   loop: "{{ json_reponse.json.assets }}"
-  when: "'amd64.tar.gz' in item.name"
+  when: "'linux_amd64.tar.gz' in item.name"
   ansible.builtin.get_url:
     url: "{{ item.browser_download_url }}"
-    dest: /tmp/nap_amd64.tar.gz
+    dest: /tmp/snipkit_amd64.tar.gz
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: 0644
   no_log: true
 
-- name: Unarchive the nap tar file
+- name: Unarchive the 'snipkit' tar file
   ansible.builtin.unarchive:
-    src: /tmp/nap_amd64.tar.gz
+    src: /tmp/snipkit_amd64.tar.gz
     dest: "/tmp"
     remote_src: true
 
-- name: Move the nap binary to local bin
+- name: Move the 'snipkit' binary to local bin
   ansible.builtin.copy:
-    src: "/tmp/nap"
+    src: "/tmp/snipkit"
+    dest: "/usr/local/bin/"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+    remote_src: true
+  become: true
+
+- name: Grab latest 'k9s' release from github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/derailed/k9s/releases/latest
+    return_content: true
+  register: json_reponse
+
+- name: "Downloading 'k9s' {{ json_reponse.json.tag_name }}"
+  loop: "{{ json_reponse.json.assets }}"
+  when: "'Linux_amd64.tar.gz' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/k9s_amd64.tar.gz
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+  no_log: true
+
+- name: Unarchive the 'k9s' tar file
+  ansible.builtin.unarchive:
+    src: /tmp/k9s_amd64.tar.gz
+    dest: "/tmp"
+    remote_src: true
+
+- name: Move the 'k9s' binary to local bin
+  ansible.builtin.copy:
+    src: "/tmp/k9s"
     dest: "/usr/local/bin/"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
