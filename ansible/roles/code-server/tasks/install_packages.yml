@@ -58,3 +58,36 @@
     mode: '0755'
     remote_src: true
   become: true
+
+- name: Grab latest 'nap' release from github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/maaslalani/nap/releases/latest
+    return_content: true
+  register: json_reponse
+
+- name: "Downloading naps {{ json_reponse.json.tag_name }}"
+  loop: "{{ json_reponse.json.assets }}"
+  when: "'amd64.tar.gz' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/nap_amd64.tar.gz
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+  no_log: true
+
+- name: Unarchive the nap tar file
+  ansible.builtin.unarchive:
+    src: /tmp/nap_amd64.tar.gz
+    dest: "/tmp"
+    remote_src: true
+
+- name: Move the nap binary to local bin
+  ansible.builtin.copy:
+    src: "/tmp/nap"
+    dest: "/usr/local/bin/"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+    remote_src: true
+  become: true
