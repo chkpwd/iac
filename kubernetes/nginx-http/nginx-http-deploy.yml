@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx-http
+  namespace: apps
 spec:
   replicas: 1
   selector:
@@ -18,15 +19,3 @@ spec:
         ports:
         - name: web
           containerPort: 80
-        volumeMounts:
-        - name: nginx-http-cm
-          mountPath: /etc/nginx
-        - name: nginx-http-vol
-          mountPath: /usr/share/nginx/html
-      volumes:
-      - name: nginx-http-cm
-        configMap:
-          name: nginx-http-cm
-      - name: nginx-http-vol
-        hostPath:
-          path: /var/nginxserver

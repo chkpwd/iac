@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nginx-http-svc
+  namespace: apps
   labels:
     app: nginx-http
 spec:
