@@ -1,4 +1,4 @@
-# * Add a new task to the playbook to download the latest version of code-server if the installed version is not the latest version.
+# * TODO Add a new task to the playbook to download the latest version of code-server if the installed version is not the latest version.
 - name: Check installed code-server version
   shell: 'set -o pipefail; code-server --version | grep -P -o "(?<=^|info  )\d+(\.\d+)+(-[^ ]+)?"'
   args:
