@@ -1,6 +1,7 @@
 ---
 code_config_file: /home/{{ ansible_user }}/.config/code-server/config.yaml
 ansible_dest: /home/hyoga/code/boilerplates/ansible
+template_path: "{{ ansible_dest }}/roles/code-server/templates/"
 
 keyrings_dir: /etc/apt/keyrings
 

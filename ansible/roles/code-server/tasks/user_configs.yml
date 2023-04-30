@@ -8,12 +8,22 @@
     mode: preserve
   notify: Restart ssh daemon
 
-- name: Add .local/bin to the Path
-  ansible.builtin.lineinfile:
-    path: "/home/{{ ansible_user }}/.zshrc"
-    insertafter: 'LANG'
-    line: 'export PATH=$HOME/.local/bin:$PATH'
-  changed_when: false
+- name: Copy templated .zshrc
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: preserve
+  with_items:
+    - { src: '{{ template_path }}zshcustoms.j2', dst: '/home/{{ ansible_user }}/.oh-my-zsh/custom/zshcustoms.zsh' }
+
+# - name: Add .local/bin to the Path
+#   ansible.builtin.lineinfile:
+#     path: "/home/{{ ansible_user }}/.zshrc"
+#     insertafter: 'LANG'
+#     line: 'export PATH=$HOME/.local/bin:$PATH'
+#   changed_when: false
 
 - name: Set the ZSH_CUSTOM shell var if not present
   ansible.builtin.set_fact:
@@ -23,3 +33,8 @@
   ansible.builtin.git:
     repo: https://github.com/zsh-users/zsh-autosuggestions
     dest: "{{ zsh_custom }}/plugins/zsh-autosuggestions"
+
+- name: Clone a zsh-syntax-highlighting repo
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+    dest: "{{ zsh_custom }}/plugins/zsh-syntax-highlighting"
