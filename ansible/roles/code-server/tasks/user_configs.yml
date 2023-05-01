@@ -1,22 +1,23 @@
 ---
 - name: Copy SSH Keys to remote host
   ansible.builtin.copy:
-    src: "{{ ansible_dest }}/roles/code-server/templates/"
+    src: "{{ ansible_dest }}/roles/code-server/templates/ssh_contents/"
     dest: "/home/{{ ansible_user }}/.ssh"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: preserve
   notify: Restart ssh daemon
 
-- name: Copy templated .zshrc
+- name: Copy ZSH contents to remote host
   ansible.builtin.template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dst }}"
+    src: "{{ item }}"
+    dest: "/home/{{ ansible_user }}/.oh-my-zsh/custom/{{ item | basename }}"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: preserve
-  with_items:
-    - { src: '{{ template_path }}zshcustoms.j2', dst: '/home/{{ ansible_user }}/.oh-my-zsh/custom/zshcustoms.zsh' }
+  with_fileglob:
+    - "{{ template_path }}/zsh_contents/*"
+
 
 # - name: Add .local/bin to the Path
 #   ansible.builtin.lineinfile:
