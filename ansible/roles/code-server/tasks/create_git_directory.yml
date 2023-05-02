@@ -6,6 +6,7 @@
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: '0755'
+  become: false
 
 - name: Check if the directory exists
   ansible.builtin.stat:
@@ -17,3 +18,4 @@
     repo: https://github.com/chkpwd/boilerplates.git
     dest: /home/{{ ansible_user }}/code/boilerplates
   when: not repo_directory.stat.exists
+  become: false
