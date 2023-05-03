@@ -124,3 +124,19 @@
     mode: 0755
     remote_src: true
   become: true
+
+- name: Install Go binary
+  ansible.builtin.get_url:
+    url: https://go.dev/dl/go1.20.4.linux-amd64.tar.gz
+    dest: /tmp/go.tar.gz
+    
+
+- name: Move GO binary to "/usr/local/bin/"
+  ansible.builtin.copy:
+    src: "/tmp/go/bin/go"
+    dest: "/usr/local/bin"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+    remote_src: true
+  become: true
