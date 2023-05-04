@@ -15,14 +15,14 @@ spec:
   replicas: 3
   selector:
     matchLabels:
-      app: nginx-http
+      app: nginx
   template:
     metadata:
       labels:
-        app: nginx-http
+        app: nginx
     spec:
       containers:
-        - name: nginx-http
+        - name: nginx
           image: nginx
           ports:
             - name: web
