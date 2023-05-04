@@ -27,5 +27,6 @@ provider "flux" {
   git = {
     url = "https://github.com/chkpwd/boilerplates.git"
     
+    
   }
 }
