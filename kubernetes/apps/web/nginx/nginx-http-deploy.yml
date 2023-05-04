@@ -5,7 +5,7 @@ metadata:
   name: nginx-http
   namespace: apps
 spec:
-  replicas: 6
+  replicas: 1
   selector:
     matchLabels:
       app: nginx-http
@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: nginx-http
-          image: nginx
+          image: nginxdemos/hello
           ports:
             - name: web
               containerPort: 80
