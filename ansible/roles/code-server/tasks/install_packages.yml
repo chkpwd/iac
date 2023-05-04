@@ -59,32 +59,32 @@
     remote_src: true
   become: true
 
-- name: Grab latest 'snipkit' release from github
+- name: Grab latest 'Pet' release from github
   ansible.builtin.uri:
-    url: https://api.github.com/repos/lemoony/snipkit/releases/latest
+    url: https://api.github.com/repos/smetroid/pet/releases/latest
     return_content: true
   register: json_reponse
 
-- name: "Downloading 'snipkit' {{ json_reponse.json.tag_name }}"
+- name: "Downloading 'Pet' {{ json_reponse.json.tag_name }}"
   loop: "{{ json_reponse.json.assets }}"
   when: "'linux_amd64.tar.gz' in item.name"
   ansible.builtin.get_url:
     url: "{{ item.browser_download_url }}"
-    dest: /tmp/snipkit_amd64.tar.gz
+    dest: /tmp/pet_amd64.tar.gz
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: 0644
   no_log: true
 
-- name: Unarchive the 'snipkit' tar file
+- name: Unarchive the 'Pet' tar file
   ansible.builtin.unarchive:
-    src: /tmp/snipkit_amd64.tar.gz
+    src: /tmp/pet_amd64.tar.gz
     dest: "/tmp"
     remote_src: true
 
-- name: Move the 'snipkit' binary to local bin
+- name: Move the 'Pet' binary to local bin
   ansible.builtin.copy:
-    src: "/tmp/snipkit"
+    src: "/tmp/pet"
     dest: "/usr/local/bin/"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
@@ -129,7 +129,6 @@
   ansible.builtin.get_url:
     url: https://go.dev/dl/go1.20.4.linux-amd64.tar.gz
     dest: /tmp/go.tar.gz
-    
 
 - name: Move GO binary to "/usr/local/bin/"
   ansible.builtin.copy:
