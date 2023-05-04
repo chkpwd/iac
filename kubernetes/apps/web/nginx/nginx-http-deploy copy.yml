@@ -1,0 +1,29 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1beta1
+kind: Kustomization
+metadata:
+  name: nginx
+  namespace: apps
+spec:
+  interval: 10s
+  path: ./kubernetes/apps/web/nginx
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  validation: client
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx-http
+  template:
+    metadata:
+      labels:
+        app: nginx-http
+    spec:
+      containers:
+        - name: nginx-http
+          image: nginx
+          ports:
+            - name: web
+              containerPort: 80
