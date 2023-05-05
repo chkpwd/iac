@@ -12,6 +12,10 @@ terraform {
       source = "carlpett/sops"
       version = "0.7.2"
     }
+    github = {
+      source  = "integrations/github"
+      version = ">=5.24.0"
+    }
   }
 }
 
@@ -24,9 +28,9 @@ provider "flux" {
   kubernetes = {
     config_path = "~/.kube/config"
   }
-  git = {
-    url = "https://github.com/chkpwd/boilerplates.git"
-    
-    
+  provider "github" {
+    owner = var.github_org
+    token = "${data.sops_file.fluxcd_secrets.data["github_token"]}"
   }
+    
 }
