@@ -3,8 +3,10 @@ kind: Deployment
 metadata:
   name: sonarr
   namespace: media
+  labels:
+    app: sonarr
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: sonarr
@@ -18,18 +20,15 @@ spec:
           image: cr.hotio.dev/hotio/sonarr:v4
           ports:
             - containerPort: 8989
-          # envFrom:
-          #   - configMapRef:
-          #       name: common-env
           volumeMounts:
             - name: sonarr-config
               mountPath: /config
-            - name: media
+            - name: sonarr-media
               mountPath: /data
       volumes:
         - name: sonarr-config
-          hostPath:
-            path: /sonarr
-        - name: media
           persistentVolumeClaim:
-            - claimName: sonarr-pvc
+            claimName: sonarr-pvc
+        - name: sonarr-media
+          persistentVolumeClaim:
+            claimName: sonarr-pvc
