@@ -1,17 +1,15 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: longhorn
-  namespace: longhorn
+  name: podinfo
+  namespace: podinfo
 spec:
+  releaseName: podinfo
   chart:
     spec:
-      chart: longhorn
-      version: 1.4.1
+      chart: podinfo
       sourceRef:
         kind: HelmRepository
-        name: longhorn
+        name: podinfo
         namespace: flux-system
-  interval: 15m
-  timeout: 5m
-  releaseName: longhorn
+  interval: 50m
