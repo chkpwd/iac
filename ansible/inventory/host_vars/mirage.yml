@@ -1,0 +1,168 @@
+media_path: /home/{{ ansible_user }}/media
+container_path: /data
+arr_uid: "1000"
+arr_gid: "1000"
+nas_nfs: 172.16.16.5
+opts_options: rw,sync,hard
+docker_network:
+    - media
+    - traefik
+discord_webhook: "{{ discord_token }}"
+claim_token: "{{ plex_token }}"
+cname_records:
+    - requests
+    - wizarr
+common_env: &common_env
+    TZ: America/New_York
+    PUID: '{{ arr_uid }}'
+    PGID: '{{ arr_gid }}'
+
+service_definitions:
+    - name: overseerr
+      image: '{{ hotio_image }}/overseerr'
+      ports:
+        - 5055:5055
+      env: '{{ common_env }}'
+      volumes:
+        - '{{ configuration_path }}/overseerr:/config'
+      networks:
+        - name: media
+        - name: traefik
+    - name: sonarr
+      image: '{{ hotio_image }}/sonarr:v4'
+      ports:
+        - 8989:8989
+      # * Check for docs.theme-park.dev integration to v4
+      env: '{{ common_env }}'
+      volumes:
+        - '{{ configuration_path }}/sonarr:/config'
+        - '{{ media_path }}:{{ container_path }}'
+      networks:
+        - name: media
+        - name: traefik
+    - name: radarr
+      image: '{{ hotio_image }}/radarr:latest'
+      ports:
+        - 7878:7878
+      env: '{{ common_env }}'
+      volumes:
+        - '{{ configuration_path }}/radarr:/config'
+        - '{{ media_path }}:{{ container_path }}'
+      networks:
+        - name: media
+        - name: traefik
+    - name: qbittorrent
+      image: '{{ hotio_image }}/qbittorrent'
+      ports:
+        - 6881:6881
+        - 6881:6881/udp
+        - 8280:8080
+      env: '{{ common_env }}'
+      volumes:
+        - '{{ configuration_path }}/qbittorrent:/config'
+        # ymallint disable-line rule:line-length
+        - '{{ media_path }}/downloads/torrents:{{ container_path }}/downloads/torrents'
+      networks:
+        - name: media
+        - name: traefik
+    - name: sabnzbd
+      image: '{{ hotio_image }}/sabnzbd'
+      ports:
+        - 8180:8080
+        - 9090:9090
+      env: '{{ common_env }}'
+      volumes:
+        - '{{ configuration_path }}/sabnzbd:/config'
+        - '{{ media_path }}/downloads/nzb:{{ container_path }}/downloads/nzb'
+      networks:
+        - name: media
+        - name: traefik
+    - name: tautulli
+      image: '{{ hotio_image }}/tautulli'
+      ports:
+        - 8181:8181
+      env: '{{ common_env }}'
+      volumes:
+        - '{{ configuration_path }}/tautulli:/config'
+        - '{{ configuration_path }}/tautulli/logs:/logs:ro'
+      networks:
+        - name: media
+        - name: traefik
+    - name: plex
+      image: '{{ hotio_image }}/plex:latest'
+      ports:
+        - 32400:32400
+      network_mode: host
+      env:
+        <<: *common_env
+        VERSION: docker
+        PLEX_CLAIM: '{{ claim_token }}'
+        UMASK_SET: "022"
+        ADVERTISE_IP: 172.0.10.20
+        ALLOWED_NETWORKS: 172.0.0.0/8
+        # PLEX_PASS: "yes"
+      volumes:
+        - '{{ configuration_path }}/plex:/config'
+        - '{{ media_path }}:{{ container_path }}/media'
+        - '{{ media_path }}/tmp/plex:/transcode:rw'
+    - name: bazarr
+      image: '{{ hotio_image }}/bazarr'
+      ports:
+        - 6767:6767
+      env:
+        <<: *common_env
+        UMASK: "002"
+      volumes:
+        - '{{ configuration_path }}/bazarr:/config'
+        - '{{ media_path }}:{{ container_path }}'
+      networks:
+        - name: media
+        - name: traefik
+    - name: prowlarr
+      image: '{{ hotio_image }}/prowlarr'
+      ports:
+        - 9696:9696
+      env:
+        <<: *common_env
+        UMASK: "002"
+      volumes:
+        - '{{ configuration_path }}/prowlarr:/config'
+      networks:
+        - name: media
+        - name: traefik
+    - name: recyclarr
+      image: ghcr.io/recyclarr/recyclarr
+      init: true
+      env:
+        <<: *common_env
+        CRON_SCHEDULE: 5 4 * * sun
+        TINI_SUBREAPER: "1"
+      networks:
+        - name: media
+        - name: traefik
+    - name: wizarr
+      image: ghcr.io/wizarrrr/wizarr
+      ports:
+        - 5690:5690
+      volumes:
+        - '{{ configuration_path }}/wizarr:/data/database'
+      env:
+        <<: *common_env
+        APP_URL: https://wizarr.chkpwd.com
+        # * Set to true ONLY if you are using another auth provider (Authelia, Authentik, etc)
+        DISABLE_BUILTIN_AUTH: "false"
+      networks:
+        - name: media
+        - name: traefik
+    - name: watchtower
+      image: containrrr/watchtower
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+      env:
+        WATCHTOWER_CLEANUP: "true"
+        WATCHTOWER_NOTIFICATION_TITLE_TAG: Mirage
+        WATCHTOWER_SCHEDULE: 0 7 */10 * *
+        WATCHTOWER_NOTIFICATION_URL: '{{ discord_webhook }}'
+      networks:
+        - name: media
+        - name: traefik

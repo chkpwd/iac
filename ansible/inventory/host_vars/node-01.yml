@@ -1,0 +1,89 @@
+container_path: /data
+arr_uid: "1000"
+arr_gid: "1000"
+common_env:
+    TZ: America/New_York
+    PUID: '{{ arr_uid }}'
+    PGID: '{{ arr_gid }}'
+service_definitions:
+    - name: nginx
+      image: nginx
+      labels:
+        # By default its disabled.
+        traefik.enable: "true"
+        # The entrypoint for the service; by default port 80
+        traefik.http.routers.nginx.entrypoints: http
+        # Matches to service; same as dns entry
+        traefik.http.routers.nginx.rule: Host(`nginx.local.chkpwd.com`)
+        # Middleware establishes an encrypted session by redirecting requests
+        traefik.http.routers.nginx.middlewares: traefik-https-redirect
+        # Entrypoint for secured tls
+        traefik.http.routers.nginx-secure.entrypoints: https
+        # Matches to the service; however, it denotes by the router (Notice: nginx-secure vs nginx)
+        traefik.http.routers.nginx-secure.rule: Host(`nginx.local.chkpwd.com`)
+        # On this service, do tls
+        traefik.http.routers.nginx-secure.tls: "true"
+        # Name of the service (found in dashboard)
+        traefik.http.routers.nginx-secure.service: nginx
+        # Backend port for the service internally
+        traefik.http.services.nginx.loadbalancer.server.port: "80"
+        # The scheme determines what protocol to utilize
+        traefik.http.services.nginx.loadbalancer.server.scheme: http
+    - name: freshrss
+      image: '{{ linuxserver_image }}/freshrss:latest'
+      env: '{{ common_env }}'
+      ports:
+        - 8087:80
+      volumes:
+        - '{{ configuration_path }}/freshrss:/config'
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.freshrss.entrypoints: http
+        traefik.http.routers.freshrss.rule: Host(`rss.local.chkpwd.com`)
+        traefik.http.routers.freshrss.middlewares: traefik-https-redirect
+        traefik.http.routers.freshrss-secure.entrypoints: https
+        traefik.http.routers.freshrss-secure.rule: Host(`rss.local.chkpwd.com`)
+        traefik.http.routers.freshrss-secure.tls: "true"
+        traefik.http.routers.freshrss-secure.service: freshrss
+        traefik.http.services.freshrss.loadbalancer.server.port: "80"
+        traefik.http.services.freshrss.loadbalancer.server.scheme: http
+    - name: traefik
+      image: traefik:latest
+      env:
+        <<:
+        CF_API_EMAIL: '{{ cf_email }}'
+        CF_DNS_API_TOKEN: '{{ cf_api_token }}'
+      volumes:
+        - /etc/localtime:/etc/localtime:ro
+        - /var/run/docker.sock:/var/run/docker.sock:ro
+        - /home/{{ ansible_user }}/traefik/data/traefik.yml:/traefik.yml:ro
+        - /home/{{ ansible_user }}/traefik/data/acme.json:/acme.json
+        - /home/{{ ansible_user }}/traefik/data/config.yml:/config.yml:ro
+      ports:
+        - 80:80
+        - 443:443
+      labels:
+        # Allows access to the Dashboard
+        traefik.enable: "true"
+        traefik.http.routers.traefik.entrypoints: http
+        # Host name rule
+        traefik.http.routers.traefik.rule: Host(`traefik-dashboard.local.chkpwd.com`)
+        # Defining the protocol for the middleware
+        traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme: https
+        # Applies Headers for the middleware 'traefik-https-redirect' SSL certs
+        traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto: https
+        # The middleware(s) to be utilize on the container
+        traefik.http.routers.traefik.middlewares: traefik-https-redirect
+        # Entrypoint for the dashboard
+        traefik.http.routers.traefik-secure.entrypoints: https
+        traefik.http.routers.traefik-secure.rule: Host(`traefik-dashboard.local.chkpwd.com`)
+        # Enable SSL
+        traefik.http.routers.traefik-secure.tls: "true"
+        # The cert manager for the traefik
+        traefik.http.routers.traefik-secure.tls.certresolver: cloudflare
+        # Primary domain 
+        traefik.http.routers.traefik-secure.tls.domains[0].main: local.chkpwd.com
+        # Apply a wildcard for the domain across all subdomains
+        traefik.http.routers.traefik-secure.tls.domains[0].sans: '*.local.chkpwd.com'
+        # Internal service name
+        traefik.http.routers.traefik-secure.service: api@internal
