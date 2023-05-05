@@ -139,3 +139,36 @@
     mode: 0755
     remote_src: true
   become: true
+
+- name: Grab latest 'helm' release from github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/helm/helm/releases/latest
+    return_content: true
+  register: json_reponse
+
+- name: "Downloading 'helm' {{ json_reponse.json.tag_name }}"
+  loop: "{{ json_reponse.json.assets }}"
+  when: "'linux-amd64.tar.gz' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/helm_amd64.tar.gz
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+  no_log: true
+
+- name: Unarchive the 'helm' tar file
+  ansible.builtin.unarchive:
+    src: /tmp/helm_amd64.tar.gz
+    dest: "/tmp"
+    remote_src: true
+
+- name: Move the 'helm' binary to local bin
+  ansible.builtin.copy:
+    src: "/tmp/helm"
+    dest: "/usr/local/bin/"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+    remote_src: true
+  become: true
