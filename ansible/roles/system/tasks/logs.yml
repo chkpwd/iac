@@ -1,0 +1,26 @@
+- name: Include | logrotate
+  ansible.builtin.include_role:
+    name: arillso.logrotate
+  vars:
+    logrotate_global_config: false
+    logrotate_applications:
+      - name: rsyslog
+        definitions:
+          - logs:
+              - /var/log/*.log
+            options:
+              - daily
+              - size 20M
+              - missingok
+              - rotate 10
+              - compress
+              - delaycompress
+              - notifempty
+              - create 640 root adm
+              - sharedscripts
+            # postrotate:
+            #   This weird indentation is required.
+            #   - |
+            #     if [ -f /var/run/nginx.pid ]; then
+            #               kill -USR1 `cat /var/run/nginx.pid`
+            #             fi
