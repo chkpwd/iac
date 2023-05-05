@@ -1,0 +1,9 @@
+- name: Install Open-ISCSI driver
+  ansible.builtin.apt:
+    name: open-iscsi
+    state: present
+
+- name: Enable iscsi modprobe module
+  community.general.modprobe:
+    name: iscsi_tcp
+    state: present
