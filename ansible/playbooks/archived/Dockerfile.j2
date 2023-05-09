@@ -33,8 +33,8 @@ RUN release=$("$release") && \
 # Solution: ln -s /usr/bin/python3 /usr/bin/python
 
 # Create `ansible` user with sudo permissions and membership in `DEPLOY_GROUP`
-# This template gets rendered using `loop: "{{ molecule_yml.platforms }}"`, so
-# each `item` is an element of platforms list from the molecule.yml file for this scenario.
+# This template gets rendered using `loop: "{{ molecule_yaml.platforms }}"`, so
+# each `item` is an element of platforms list from the molecule.yaml file for this scenario.
 ENV ANSIBLE_USER=ansible DEPLOY_GROUP=deployer
 ENV SUDO_GROUP={{'sudo' if 'debian' in item.image or 'ubuntu' in item.image else 'wheel'}}
 RUN set -xe \

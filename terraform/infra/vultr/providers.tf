@@ -16,7 +16,7 @@ terraform {
 }
 
 data "sops_file" "vsphere-secrets" {
-  source_file = "../../terraform.sops.yml"
+  source_file = "../../terraform.sops.yaml"
 }
 
 # Configure the Vultr Provider

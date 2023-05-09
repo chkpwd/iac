@@ -16,7 +16,7 @@ terraform {
 }
 
 data "sops_file" "adguard-home-secrets" {
-  source_file = "../../terraform.sops.yml"
+  source_file = "../../terraform.sops.yaml"
 }
 
 # configuration for adguard home

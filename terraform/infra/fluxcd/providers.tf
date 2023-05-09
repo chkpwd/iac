@@ -20,7 +20,7 @@ terraform {
 }
 
 data "sops_file" "fluxcd-secrets" {
-  source_file = "../../terraform.sops.yml"
+  source_file = "../../terraform.sops.yaml"
 }
 
 # Configure the fluxcd Provider
