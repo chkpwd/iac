@@ -104,3 +104,15 @@ module "traefik" {
   vm_network                = "LAN"
   vm_template               = "deb-x11-template"
 }
+
+module "quark" {
+  source                    = "./modules/guest_machines"
+  count                     = 1
+  os_type                   = "linux"
+  vm_name                   = "quark"
+  vm_cpu                    = 1
+  vm_ram                    = 1024
+  vm_pri_disk_size          = 16
+  vm_network                = "LAN"
+  vm_template               = "deb-x11-template"
+}

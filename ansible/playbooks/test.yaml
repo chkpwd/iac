@@ -1,0 +1,7 @@
+---
+- name: Test dynamic playbooks
+  hosts: all
+  become: true
+
+  roles:
+    - robertdebock.kubectl

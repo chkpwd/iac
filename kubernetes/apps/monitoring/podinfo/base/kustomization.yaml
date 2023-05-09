@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: podinfo
 resources:
   # Pre Flux-Kustomizations
-  - ./namespace.yaml
+  - ./namespace.yml
   # Flux-Kustomizations
-  - ./repository.yaml
-  - ./helmrelease.yaml
+  - ./repository.yml
+  - ./helmrelease.yml
