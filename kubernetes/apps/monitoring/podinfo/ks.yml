@@ -1,0 +1,15 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: cluster-apps-podinfo
+  namespace: flux-system
+spec:
+  path: ./kubernetes/apps/monitoring/podinfo/base
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: git-ops-kubernetes
+  interval: 15m
+  retryInterval: 1m
+  timeout: 30s
