@@ -4,7 +4,7 @@
 
   tasks:
     - name: Include task to mount nfs
-      ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/mount_nfs.yml"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/mount_nfs.yaml"
 
     - name: Include tasks to unarchive the files
-      ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/unarchive_docker_files.yml"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/tasks/unarchive_docker_files.yaml"

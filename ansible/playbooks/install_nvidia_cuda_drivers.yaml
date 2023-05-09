@@ -81,7 +81,7 @@
     - name: Add CUDA paths to environment
       ansible.builtin.copy:
         content: |
-          # /usr/local/cuda is a symlink to a symlink to the latest installed version of CUDA, i.e. /usr/local/cuda-x.x.x
+          # /usr/local/cuda is a syamlink to a syamlink to the latest installed version of CUDA, i.e. /usr/local/cuda-x.x.x
           export PATH="/usr/local/cuda/bin/:$PATH"
           export LD_LIBRARY_PATH="/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
         dest: /etc/profile.d/cuda_paths.sh

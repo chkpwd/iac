@@ -1,8 +1,8 @@
 - name: Apply necessary configs for all new guests
-  ansible.builtin.include_tasks: essential.yml
+  ansible.builtin.include_tasks: essential.yaml
 
 - name: Apply user configurations for {{ ansible_user }}
-  ansible.builtin.include_tasks: user.yml
+  ansible.builtin.include_tasks: user.yaml
 
 - name: Apply SSH configurations
-  ansible.builtin.include_tasks: ssh.yml
+  ansible.builtin.include_tasks: ssh.yaml

@@ -56,9 +56,9 @@ service_definitions:
       volumes:
         - /etc/localtime:/etc/localtime:ro
         - /var/run/docker.sock:/var/run/docker.sock:ro
-        - /home/{{ ansible_user }}/traefik/data/traefik.yml:/traefik.yml:ro
+        - /home/{{ ansible_user }}/traefik/data/traefik.yaml:/traefik.yaml:ro
         - /home/{{ ansible_user }}/traefik/data/acme.json:/acme.json
-        - /home/{{ ansible_user }}/traefik/data/config.yml:/config.yml:ro
+        - /home/{{ ansible_user }}/traefik/data/config.yaml:/config.yaml:ro
       ports:
         - 80:80
         - 443:443

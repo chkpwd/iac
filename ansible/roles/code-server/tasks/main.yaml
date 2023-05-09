@@ -1,15 +1,15 @@
 ---
 - name: "Configure user for code"
-  ansible.builtin.include_tasks: user_configs.yml
+  ansible.builtin.include_tasks: user_configs.yaml
 
 - name: "Configure Repositories for necessary packages"
-  ansible.builtin.include_tasks: add_repos.yml
+  ansible.builtin.include_tasks: add_repos.yaml
 
 - name: "Configure all needed packages"
-  ansible.builtin.include_tasks: install_packages.yml
+  ansible.builtin.include_tasks: install_packages.yaml
 
 - name: "Configure Git directory"
-  ansible.builtin.include_tasks: create_git_directory.yml
+  ansible.builtin.include_tasks: create_git_directory.yaml
 
 - name: "Configure code-server"
-  ansible.builtin.include_tasks: configure_code_server.yml
+  ansible.builtin.include_tasks: configure_code_server.yaml

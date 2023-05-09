@@ -4,6 +4,7 @@ metadata:
   name: longhorn
   namespace: longhorn-system
 spec:
+  releaseName: longhorn
   chart:
     spec:
       chart: longhorn
@@ -11,7 +12,5 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: longhorn
-        namespace: flux-system
-  interval: 15m
-  timeout: 5m
-  releaseName: longhorn
+        namespace: longhorn-system
+  interval: 5m
