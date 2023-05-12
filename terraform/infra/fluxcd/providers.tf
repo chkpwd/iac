@@ -4,7 +4,7 @@
 
 terraform {
   required_providers {
-    vultr = {
+    flux = {
       source = "fluxcd/flux"
       version = "1.0.0-rc.1"
     }
@@ -23,14 +23,20 @@ data "sops_file" "fluxcd-secrets" {
   source_file = "../../terraform.sops.yaml"
 }
 
-# Configure the fluxcd Provider
+locals {
+  github_org        = "chkpwd"
+  github_repository = "boilerplates"
+}
+
 provider "flux" {
   kubernetes = {
     config_path = "~/.kube/config"
   }
-  provider "github" {
-    owner = var.github_org
-    token = "${data.sops_file.fluxcd_secrets.data["github_token"]}"
+  git = {
+    url = "https://github.com/${local.github_org}/${local.github_repository}.git"
+    http = {
+      username = "unixchkpwd"
+      password = "${data.sops_file.fluxcd-secrets.data["github_token"]}"
+    }
   }
-    
 }

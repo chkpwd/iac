@@ -2,11 +2,8 @@
 # Fluxcd Resources
 #===============================================================================
 
-locals {
-  github_org        = "chkpwd"
-  github_repository = "boilerplates"
-}
-
 resource "flux_bootstrap_git" "kubernetes-cluster" {
-  path = "kubernetes/infrastructure"
+  path = "./kubernetes/infrastructure"
+  namespace = "flux-system"
+  components_extra = [ "image-reflector-controller", "image-automation-controller" ]
 }
