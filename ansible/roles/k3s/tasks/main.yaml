@@ -1,6 +1,6 @@
-- name: Install Open-ISCSI driver
+- name: Install dependencies
   ansible.builtin.apt:
-    name: open-iscsi
+    pkg: "{{ dependencies }}"
     state: present
 
 - name: Enable iscsi modprobe module
