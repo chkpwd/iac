@@ -87,7 +87,7 @@ module "kube-ops" {
   os_type                   = "linux"
   vm_name                   = "kubes-cp-${count.index + 1}"
   vm_cpu                    = 2
-  vm_ram                    = 2048
+  vm_ram                    = 4096
   vm_pri_disk_size          = 60 
   vm_network                = "LAN"
   vm_template               = "deb-x11-template"
