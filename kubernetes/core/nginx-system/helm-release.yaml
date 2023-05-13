@@ -19,7 +19,7 @@ spec:
     controller:
       replicaCount: 1
       updateStrategy:
-        type: RollingUpdate
+        type: RollingUpdate # * Spins up a new pod before the old pod
         rollingUpdate:
           maxSurge: 1
       service:
@@ -28,7 +28,7 @@ spec:
         loadBalancerIP: 172.16.16.204
         externalTrafficPolicy: Local
       publishService:
-        enabled: true
+        enabled: true # * If not set, it will report back the status and what IP address
       ingressClassResource:
         default: true
       config:
@@ -37,7 +37,7 @@ spec:
         client-body-timeout: 120
         custom-http-errors: >-
           403,404,500,501,502,503
-        enable-brotli: "true"
+        enable-brotli: "true" # * Compression Algorithym
         enable-real-ip: "true"
         #forwarded-for-header: "CF-Connecting-IP"
         hsts-max-age: "31449600"

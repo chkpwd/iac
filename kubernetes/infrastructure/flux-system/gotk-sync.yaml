@@ -8,11 +8,10 @@ metadata:
 spec:
   interval: 1m0s
   ref:
-    branch: master
+    branch: main
   secretRef:
     name: flux-system
-  url: ssh://git@github.com/chkpwd/boilerplates
-
+  url: ssh://git@github.com/chkpwd/boilerplates.git
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
