@@ -1,5 +1,5 @@
 #===============================================================================
-# vSphere Provider
+# Fluxcd Provider
 #===============================================================================
 
 terraform {
@@ -33,10 +33,15 @@ provider "flux" {
     config_path = "~/.kube/config"
   }
   git = {
-    url = "https://github.com/${local.github_org}/${local.github_repository}.git"
-    http = {
-      username = "unixchkpwd"
-      password = "${data.sops_file.fluxcd-secrets.data["github_token"]}"
+    url = "ssh://git@github.com/${local.github_org}/${local.github_repository}.git"
+    ssh = {
+      username    = "git"
+      private_key = tls_private_key.flux_secret.private_key_pem
     }
   }
+}
+
+provider "github" {
+  owner = "chkpwd"
+  token = "${data.sops_file.fluxcd-secrets.data["github_token"]}"
 }
