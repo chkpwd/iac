@@ -20,6 +20,7 @@ metadata:
     nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required '
     nginx.ingress.kubernetes.io/proxy-body-size: 10000m
 spec:
+  ingressClassName: nginx
   rules:
   - http:
       paths:
