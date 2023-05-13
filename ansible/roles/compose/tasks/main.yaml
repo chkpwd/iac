@@ -1,4 +1,13 @@
-- name: "Deploy containers in their respective stacks"
-  ansible.builtin.include_tasks: stacks.yaml
+- name: Create network(s)
+  community.docker.docker_network:
+    name: "{{ item }}"
+  loop: "{{ docker_network }}"
+
+- name: Deploy Docker containers # noqa args[module]
+  community.docker.docker_container: "{{ item }}"
+  loop: "{{ service_definitions }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: deploy_containers
 - name: "Install ctop"
   ansible.builtin.include_tasks: install_ctop.yaml
