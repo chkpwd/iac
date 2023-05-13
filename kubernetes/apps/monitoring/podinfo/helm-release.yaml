@@ -14,3 +14,16 @@ spec:
         name: podinfo
         namespace: monitoring
   interval: 5m
+  values:
+    ingress:
+      enabled: true
+      className: "nginx"
+      hosts:
+        - host: podinfo.local.chkpwd.com
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+      tls: []
+      #  - secretName: chart-example-tls
+      #    hosts:
+      #      - chart-example.local
