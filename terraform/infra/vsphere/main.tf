@@ -44,7 +44,7 @@ module "crypto" {
   vm_name                   = "crypto"
   vm_cpu                    = 4
   vm_pri_disk_size          = "48"
-  vm_ram                    = 4096
+  vm_ram                    = 8192
   vm_network                = "LAN"
   vm_template               = "deb-x11-template"
 }

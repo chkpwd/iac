@@ -1,0 +1,42 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: longhorn
+  namespace: longhorn-system
+spec:
+  releaseName: longhorn
+  chart:
+    spec:
+      chart: longhorn
+      version: 1.4.1
+      sourceRef:
+        kind: HelmRepository
+        name: longhorn
+        namespace: flux-system
+  interval: 5m
+  values:
+    persistence:
+      defaultClassReplicaCount: 1
+    defaultSettings:
+      defaultReplicaCount: 1
+      defaultLonghornStaticStorageClass: longhorn
+      defaultDataPath: /data
+      createDefaultDiskLabeledNodes: true
+      backupTarget: s3://longhorn@dummyregion/backups
+      backupTargetCredentialSecret: longhorn-secret
+      storageMinimalAvailablePercentage: 10
+    ingress:
+      enabled: true
+      annotations:
+        external-dns.alpha.kubernetes.io/target: porkboi.io
+        nginx.ingress.kubernetes.io/auth-method: GET
+        nginx.ingress.kubernetes.io/auth-url: http://authelia.default.svc.cluster.local/api/verify
+        nginx.ingress.kubernetes.io/auth-signin: https://auth.porkboi.io?rm=$request_method
+        nginx.ingress.kubernetes.io/auth-response-headers: Remote-User,Remote-Name,Remote-Groups,Remote-Email
+        nginx.ingress.kubernetes.io/auth-snippet: |
+          proxy_set_header X-Forwarded-Method $request_method;
+        nginx.ingress.kubernetes.io/whitelist-source-range: |
+          10.0.0.0/24
+      ingressClassName: nginx
+      host: longhorn.porkboi.io
+      tls: true
