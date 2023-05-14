@@ -17,7 +17,7 @@ spec:
       interval: 15m
   values:
     controller:
-      replicaCount: 3
+      replicaCount: 1
       updateStrategy:
         type: RollingUpdate # * Spins up a new pod before the old pod
         rollingUpdate:
@@ -26,7 +26,7 @@ spec:
         enabled: true
         type: LoadBalancer
         loadBalancerIP: 172.16.16.204
-        externalTrafficPolicy: Local
+        externalTrafficPolicy: Cluster # * With 'Local' set - Finds the source of the response and stops hopping afterwards 
       publishService:
         enabled: true # * If not set, it will report back the status and what IP address
       ingressClassResource:
