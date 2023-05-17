@@ -5,7 +5,7 @@ metadata:
   namespace: cert-manager
 type: Opaque
 stringData:
-  api-token: jXvdT5U8umGrLZKY7XNmftn0HwOPdZth99iXi6w0
+  api-token: ${CLOUDFLARE_API_TOKEN}
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -21,12 +21,10 @@ spec:
       - dns01:
           cloudflare:
             email: mentality@protonmail.com
-            apiKeySecretRef:
+            apiTokenSecretRef:
               name: cloudflare-api-token-secret
               key: api-token
-        selector:
-          dnsZones:
-            - "chkpwd.com"
+        selector: {}
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -42,9 +40,7 @@ spec:
       - dns01:
           cloudflare:
             email: mentality@protonmail.com
-            apiKeySecretRef:
+            apiTokenSecretRef:
               name: cloudflare-api-token-secret
               key: api-token
-        selector:
-          dnsZones:
-            - "chkpwd.com"
+        selector: {}

@@ -6,7 +6,8 @@ metadata:
 spec:
   secretName: chkpwd-cert
   dnsNames:
+  - "chkpwd.com"
   - "*.chkpwd.com"
   issuerRef:
-    name: letsencrypt-staging
+    name: letsencrypt-production
     kind: ClusterIssuer
