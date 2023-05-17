@@ -22,8 +22,8 @@ spec:
       defaultLonghornStaticStorageClass: longhorn
       defaultDataPath: /data
       createDefaultDiskLabeledNodes: true
-      backupTarget: s3://longhorn@dummyregion/backups
-      backupTargetCredentialSecret: longhorn-secret
+      # backupTarget: s3://longhorn@dummyregion/backups
+      # backupTargetCredentialSecret: longhorn-secret
       storageMinimalAvailablePercentage: 10
     ingress:
       enabled: true
@@ -38,5 +38,5 @@ spec:
         nginx.ingress.kubernetes.io/whitelist-source-range: |
           10.0.0.0/24
       ingressClassName: nginx
-      host: longhorn.porkboi.io
+      host: longhorn.local.chkpwd.com
       tls: true
