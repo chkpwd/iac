@@ -1,21 +1,3 @@
-#====================#
-# vCenter connection #
-#====================#
-
-# Utilizing SOPS to manage secrets for terraform. No longer need to variabelize credentials. #
-
-# # vSphere username used to deploy the infrastructure #
-# variable "vsphere_user" {
-#     description = "vSphere user"
-#     sensitive = true
-# } 
-
-# # vSphere password used to deploy the infrastructure #
-# variable "vsphere_password" {
-#     description = "vSphere password"
-#     sensitive = true
-# } 
-
 variable "vsphere_vcenter" {
   description = "vCenter server FQDN or IP"
   default = "172.16.16.6"
@@ -91,14 +73,6 @@ variable "dns_suffix" {
   #default = ["typhon.tech"]
 }
 
-variable "vm_cpu" {
-  description = "Number of vCPU for the vSphere virtual machines"
-}
-
-variable "vm_ram" {
-  description = "Amount of RAM for the vSphere virtual machines (example: 2048)"
-}
-
 variable "vm_name" {
   description = "The name of the vSphere virtual machines and the hostname of the machine"
 }
@@ -113,16 +87,6 @@ variable "vm_public_key" {
   default = ""
 }
 
-variable "vm_pri_disk_size" {
-  description = "The size of the guest machine disk"
-  default = "16"
-}
-
-variable "vm_sec_disk_size" {
-  description = "The size of the guest machine disk"
-  default = ""
-}
-
 variable "os_type" {
   description = "Set the OS type"
   default = ""
@@ -134,12 +98,21 @@ variable "instance_count" {
   default = 1
 }
 
-variable "secondary_disks" {
-  type    = bool
-  default = false
-}
-
 variable "folder_id" {
   type    = string
   default = ""
+}
+
+variable "spec" {
+  type = object({
+    cpu       = number
+    memory    = number
+    disk_size = number
+    additional_network = optional(list(object({
+      network = string
+    })))
+    additional_disks = optional(list(object({
+      size = number
+    })))
+  })
 }

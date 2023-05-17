@@ -90,16 +90,6 @@ variable "dns_suffix" {
   type = list(string)
 }
 
-variable "vm_cpu" {
-  description = "Number of vCPU for the vSphere virtual machines"
-  type        = string
-}
-
-variable "vm_ram" {
-  description = "Amount of RAM for the vSphere virtual machines (example: 2048)"
-  type        = string
-}
-
 variable "vm_name" {
   description = "The name of the vSphere virtual machines and the hostname of the machine"
   type        = string
@@ -115,15 +105,6 @@ variable "ssh_username" {
   type        = string
 }
 
-variable "vm_pri_disk_size" {
-  description = "The size of the guest machine disk"
-}
-
-variable "vm_sec_disk_size" {
-  description = "The size of the guest machine disk"
-  default = ""
-}
-
 variable "os_type" {
   description = "Set the OS type"
   default = ""
@@ -132,11 +113,6 @@ variable "os_type" {
 variable "instance_count" {
   description = "The number of vSphere guest machines"
   type = string
-}
-
-variable "secondary_disks" {
-  type    = bool
-  default = false
 }
 
 variable "folder_id" {

@@ -51,21 +51,11 @@ vm_template = "deb-x11-template"
 # Use linked clone (true/false)
 vm_linked_clone = "false"
 
-# The number of vCPU allocated to the virtual machine #
-vm_cpu = "1"
-
-# The amount of RAM allocated to the virtual machine #
-vm_ram = "1024"
-
 # The public key for the system
 vm_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
 
 # The ssh username for the guest system
 ssh_username = "hyoga"
-
-vm_pri_disk_size = ""
-
-vm_sec_disk_size = ""
 
 os_type = "linux"
 
