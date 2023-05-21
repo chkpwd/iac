@@ -26,7 +26,7 @@ spec:
         enabled: true
         type: LoadBalancer
         loadBalancerIP: 172.16.16.204
-        externalTrafficPolicy: Cluster # * With 'Local' set - Finds the source of the response and stops hopping afterwards 
+        externalTrafficPolicy: Cluster # * With 'Local' set - Finds the source of the response and stops hopping afterwards
       publishService:
         enabled: true # * If not set, it will report back the status and what IP address
       ingressClassResource:
@@ -39,7 +39,7 @@ spec:
           403,404,500,501,502,503
         enable-brotli: "true" # * Compression Algorithym
         enable-real-ip: "true"
-        #forwarded-for-header: "CF-Connecting-IP"
+        # forwarded-for-header: "CF-Connecting-IP"
         hsts-max-age: "31449600"
         keep-alive: 120
         keep-alive-requests: 10000
