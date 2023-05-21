@@ -1,0 +1,12 @@
+---
+- name: Ensure log path is created
+  ansible.windows.win_file:
+    path: "{{ ansible_facts.env.TEMP }}\\Updates"
+    state: directory
+
+- name: Install all updates and reboot as many times as needed
+  ansible.windows.win_updates:
+    category_names: '*'
+    reboot: true
+    reboot_timeout: 3600
+    log_path: "{{ ansible_facts.env.TEMP }}\\Updates\\logs.txt"

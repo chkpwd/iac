@@ -1,0 +1,9 @@
+---
+- name: Ensure Chocolatey itself is installed, using community repo for the bootstrap
+  chocolatey.chocolatey.win_chocolatey:
+    name: chocolatey
+
+- name: Copy folder contents recursively
+  ansible.windows.win_copy:
+    src: templates
+    dest: "{{ ansible_facts.env.TEMP }}"

@@ -1,0 +1,5 @@
+---
+- name: Add users to remote interactive login rights
+  ansible.windows.win_user_right:
+    name: SeRemoteInteractiveLogonRight
+    users: "{{ ansible_user }}"

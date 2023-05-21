@@ -1,0 +1,42 @@
+---
+- name: Bootstrap Process
+  ansible.builtin.include_tasks: bootstrap.yaml
+
+- name: Change the hostname to loba
+  ansible.windows.win_hostname:
+    name: loba
+  register: hostname
+
+- name: Install dependencies
+  chocolatey.chocolatey.win_chocolatey:
+    name: "{{ chocolates }}"
+    state: present
+
+- name: Registry Edits
+  ansible.builtin.include_tasks: registry.yaml
+
+- name: Define Taskbar Layout
+  ansible.windows.win_powershell:
+    script: |
+      Import-StartLayout -LayoutPath "TaskbarLayout.xml" -MountPath "{{ ansible_facts.env.TEMP }}\templates\TaskbarLayout.xml"
+
+- name: Install Optional Features
+  ansible.builtin.include_tasks: features.yaml
+
+- name: Change power plan to Balanced
+  community.windows.win_power_plan:
+    name: balanced
+
+- name: Ensure RDP rights are given to {{ ansible_user }}
+  ansible.builtin.include_tasks: users.yaml
+
+- name: Download 128Bit Yuzu Installer
+  ansible.windows.win_get_url:
+    url: https://github.com/MostlyWhat/128Bit-Yuzu-Installer/releases/download/v0.2/128Bit-Yuzu-Installer.v0.2.exe
+    dest: C:\Users\{{ ansible_user }}\Downloads\128Bit-Yuzu-Installer.v0.2.exe
+    checksum: 6b6b9ca1660ecfaf75c6a328f7bd2e590a304cba74602bfb84ab13fb6f123427
+    checksum_algorithm: sha256
+    force: True
+
+- name: Update the system
+  ansible.builtin.include_tasks: system.yaml
