@@ -1,3 +1,6 @@
+- name: Apply secondary disk partitioning
+  ansible.builtin.include_tasks: disk.yaml
+
 - name: Apply necessary configs for all new guests
   ansible.builtin.include_tasks: essential.yaml
 
