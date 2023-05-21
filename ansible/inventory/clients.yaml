@@ -32,10 +32,7 @@ all:
         bloodhound:
       vars:
         ansible_become_method: runas
-        ansible_become_user: "{{ ansible_ssh_user }}"
-        ansible_ssh_user: hyoga
-        ansible_shell_type: powershell
-        ansible_connection: ssh
+        ansible_become_user: "{{ ansible_user }}"
 
     docker_hosts:
       hosts:
