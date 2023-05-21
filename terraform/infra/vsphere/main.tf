@@ -67,19 +67,19 @@ module "homeassistant" {
   }
 }
 
-module "bloodhound" {
-  source                    = "./modules/guest_machines"
-  count                     = 1
-  os_type                   = "windows"
-  vm_name                   = "bloodhound"
-  vm_network                = "LAN"
-  vm_template               = "WinSrv22-template-DE"
-  spec = {
-    cpu                     = 2
-    memory                  = 8192
-    disk_size               = 48
-  }
-}
+# module "bloodhound" {
+#   source                    = "./modules/guest_machines"
+#   count                     = 1
+#   os_type                   = "windows"
+#   vm_name                   = "bloodhound"
+#   vm_network                = "LAN"
+#   vm_template               = "WinSrv22-template-DE"
+#   spec = {
+#     cpu                     = 2
+#     memory                  = 8192
+#     disk_size               = 48
+#   }
+# }
 
 module "kube-ops" {
   source                    = "./modules/guest_machines"
@@ -91,10 +91,10 @@ module "kube-ops" {
   spec = {
     cpu                     = 2
     memory                  = 4096
-    disk_size               = 60
+    disk_size               = 16
     additional_disks = [
       {
-        size                = 25
+        size                = 60
       }
     ]
   }
