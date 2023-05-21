@@ -1,40 +1,6 @@
-- name: Install dependencies
-  ansible.builtin.apt:
-    pkg: "{{ dependencies }}"
-    state: present
-
-- name: Enable iscsi modprobe module
-  community.general.modprobe:
-    name: iscsi_tcp
-    state: present
-
-- name: Prepare longhorn partition
-  community.general.parted:
-    device: /dev/sdb
-    number: 1
-    name: data
-    label: gpt
-    state: present
-
-- name: Create ext4 fs on partition
-  community.general.filesystem:
-    dev: /dev/sdb1
-    fstype: ext4
-    state: present
-
-- name: Auto-mount longhorn partition
-  ansible.posix.mount:
-    src: /dev/sdb1
-    fstype: ext4
-    path: /mnt/data
-    opts: defaults
-    passno: 2
-    boot: true
-    state: mounted
-
-- name: Set permissions on mount
-  ansible.builtin.file:
-    path: /mnt/data
-    owner: "{{ ansible_user }}"
-    mode: '755'
-    state: directory
+---
+- name: Build a cluster with HA control plane
+  include_role:
+    name: xanmanning.k3s
+  vars:
+    k3s_state: installed

@@ -1,0 +1,15 @@
+---
+k3s_control_node: true
+
+k3s_server:
+  node-ip: "{{ ansible_host }}"
+  tls-san:
+    - "{{ kube_vip_address }}" # Floating LoadBalancer IP for Control Plane API
+    - k3s-vip.local.chkpwd.com
+  https-listen-port: 6443
+  docker: false
+  flannel-backend: "vxlan" # quote
+  disable:
+    - servicelb
+    - traefik
+  write-kubeconfig-mode: "0644"
