@@ -1,9 +1,15 @@
 ---
 collections:
   - name: veeamhub.veeam
+  - name: ansible.utils
+  - name: community.general
+  - name: ansible.posix
+  - name: kubernetes.core
+  - name: chocolatey.chocolatey
 
 roles:
   - name: geerlingguy.docker
   - name: geerlingguy.pip
   - name: gantsign.oh-my-zsh
   - name: arillso.logrotate
+  - name: xanmanning.k3s
