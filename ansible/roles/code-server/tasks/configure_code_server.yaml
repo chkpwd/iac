@@ -16,7 +16,7 @@
     mode: 0644
   no_log: true
 
-- name: Install code-server.{{ json_reponse.json.tag_name }}.deb package
+- name: Install code-server.{{ json_reponse.json.tag_name }}
   ansible.builtin.apt:
     deb: /tmp/code.deb
   become: true
