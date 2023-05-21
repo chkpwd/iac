@@ -1,6 +1,0 @@
----
-- name: Install essential packages # noqa package-latest
-  ansible.builtin.apt:
-    name: "{{ packages }}"
-    state: latest
-  become: true

@@ -1,11 +1,40 @@
+- name: Install essential packages # noqa package-latest
+  ansible.builtin.apt:
+    name: "{{ packages }}"
+    state: latest
+  become: true
+
 - name: Apply secondary disk partitioning
   ansible.builtin.include_tasks: disk.yaml
-
-- name: Apply necessary configs for all new guests
-  ansible.builtin.include_tasks: essential.yaml
 
 - name: Apply user configurations for {{ ansible_user }}
   ansible.builtin.include_tasks: user.yaml
 
-- name: Apply SSH configurations
-  ansible.builtin.include_tasks: ssh.yaml
+- name: Set the ZSH_CUSTOM shell var if not present
+  ansible.builtin.set_fact:
+    zsh_custom: "{{ ansible_env.ZSH_CUSTOM | default('/home/' ~ ansible_user ~ '/.oh-my-zsh/custom', true) }}"
+
+- name: Clone a zsh-autosuggestions repo
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-autosuggestions
+    dest: "{{ zsh_custom }}/plugins/zsh-autosuggestions"
+
+- name: Clone a zsh-syntax-highlighting repo
+  ansible.builtin.git:
+    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
+    dest: "{{ zsh_custom }}/plugins/zsh-syntax-highlighting"
+
+- name: Copy the public SSH key
+  ansible.posix.authorized_key:
+    user: "{{ ansible_user }}"
+    state: present
+    key: "{{ ssh_public_key }}"
+  become: true
+
+- name: Disable SSH password auth
+  ansible.builtin.lineinfile:
+    dest: /etc/ssh/sshd_config
+    regexp: "^#PasswordAuthentication yes"
+    line: "PasswordAuthentication no"
+  notify: Restart SSH daemon
+  become: true
