@@ -20,8 +20,14 @@
     script: |
       Import-StartLayout -LayoutPath "TaskbarLayout.xml" -MountPath "{{ ansible_facts.env.TEMP }}\templates\TaskbarLayout.xml"
 
-- name: Install Optional Features
-  ansible.builtin.include_tasks: features.yaml
+- name: Install Windows Features
+  ansible.windows.win_optional_feature:
+    name: 
+      - Microsoft-Windows-Subsystem-Linux
+      - ServicesForNFS-ClientOnly
+      - ClientForNFS-Infrastructure
+    state: present
+  notify: Reboot if feature requires it
 
 - name: Change power plan to Balanced
   community.windows.win_power_plan:
@@ -32,7 +38,7 @@
 
 - name: Download 128Bit Yuzu Installer
   ansible.windows.win_get_url:
-    url: https://github.com/MostlyWhat/128Bit-Yuzu-Installer/releases/download/v0.2/128Bit-Yuzu-Installer.v0.2.exe
+    url: https://github.com/MostlyWhat/128Bit-Yuzu-Installer/releases/download/v0.2/128Bit-Yuzu-Installer.v0.2.exe # * Levarge ansible_facts for the path
     dest: C:\Users\{{ ansible_user }}\Downloads\128Bit-Yuzu-Installer.v0.2.exe
     checksum: 6b6b9ca1660ecfaf75c6a328f7bd2e590a304cba74602bfb84ab13fb6f123427
     checksum_algorithm: sha256

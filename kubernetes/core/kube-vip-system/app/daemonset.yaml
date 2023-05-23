@@ -22,36 +22,36 @@ spec:
           image: ghcr.io/kube-vip/kube-vip:v0.6.0
           imagePullPolicy: Always
           args:
-          - manager
+            - manager
           env:
-          - name: vip_arp
-            value: "true"
-          - name: port
-            value: "6443"
-          - name: vip_interface
-            value: ens192
-          - name: vip_cidr
-            value: "32"
-          - name: cp_enable
-            value: "true"
-          - name: cp_namespace
-            value: kube-system
-          - name: vip_ddns
-            value: "false"
-          - name: svc_enable
-            value: "true"
-          - name: vip_leaderelection
-            value: "true"
-          - name: vip_leaseduration
-            value: "5"
-          - name: vip_renewdeadline
-            value: "3"
-          - name: vip_retryperiod
-            value: "1"
-          - name: address
-            value: "${KUBE_VIP_ADDRESS}"
-          - name: prometheus_server
-            value: :2112
+            - name: vip_arp
+              value: "true"
+            - name: port
+              value: "6443"
+            - name: vip_interface
+              value: ens192
+            - name: vip_cidr
+              value: "32"
+            - name: cp_enable
+              value: "true"
+            - name: cp_namespace
+              value: kube-system
+            - name: vip_ddns
+              value: "false"
+            - name: svc_enable
+              value: "true"
+            - name: vip_leaderelection
+              value: "true"
+            - name: vip_leaseduration
+              value: "5"
+            - name: vip_renewdeadline
+              value: "3"
+            - name: vip_retryperiod
+              value: "1"
+            - name: address
+              value: "${KUBE_VIP_ADDRESS}"
+            - name: prometheus_server
+              value: :2112
           resources: {}
           securityContext:
             capabilities:
