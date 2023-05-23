@@ -47,3 +47,14 @@
     name: fDenyTSConnections
     data: 0
     type: dword
+
+# https://docs.microsoft.com/en-us/mem/configmgr/core/plan-design/security/enable-tls-1-2-client#configure-for-strong-cryptography
+- name: Miscellaneous | Configure .NET SchUseStrongCrypto
+  ansible.windows.win_regedit:
+    path: "{{ item }}"
+    name: SchUseStrongCrypto
+    data: 1
+    type: dword
+  loop:
+    - HKLM:\SOFTWARE\Microsoft\.NetFramework\v4.0.30319
+    - HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NetFramework\v4.0.30319
