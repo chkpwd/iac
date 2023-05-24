@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - longhorn-system.yaml
   - metallb-system.yaml
+  - kube-vip-system.yaml
+  - ingress-nginx-system.yaml
   # - monitoring.yaml
-  - network-system.yaml
   - cert-manager-system.yaml

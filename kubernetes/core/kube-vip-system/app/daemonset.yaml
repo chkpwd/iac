@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: kube-vip-ds
-  namespace: kube-system
+  namespace: kube-vip-system
   labels:
     app.kubernetes.io/instance: kube-vip-ds
     app.kubernetes.io/name: kube-vip-ds
