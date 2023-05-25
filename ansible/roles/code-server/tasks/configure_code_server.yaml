@@ -36,19 +36,7 @@
     path: /home/{{ ansible_user }}/.config/code-server/config.yaml
     backup: true
     regexp: '^bind-addr: 127.0.0.1:8080'
-    line: 'bind-addr: 0.0.0.0:443'
-
-- name: Allows code-server to listen on port 443
-  ansible.builtin.shell: sudo setcap cap_net_bind_service=+ep /usr/lib/code-server/lib/node
-  become: true
-
-- name: Set cap_net_bind_service on file
-  community.general.capabilities:
-    path: /usr/lib/code-server/lib/node
-    capability: cap_net_bind_service+ep
-    state: present
-  become: true
-  notify: Restart code-server
+    line: 'bind-addr: 0.0.0.0:8080'
 
 - name: Force all notified handlers to run at this point, not waiting for normal sync points
   ansible.builtin.meta: flush_handlers
