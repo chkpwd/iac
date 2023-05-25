@@ -19,7 +19,6 @@
     recurse: false
   become: true
 
-
 - name: Allow sudo group to have passwordless sudo
   ansible.builtin.lineinfile:
     path: /etc/sudoers

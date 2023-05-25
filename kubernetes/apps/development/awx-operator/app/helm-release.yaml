@@ -27,12 +27,24 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    ingress:
+    AWX:
       enabled: true
-      ingressClassName: "nginx"
-      host: awx.${LOCAL_DOMAIN}
-      tls: true
-      tlsSecret: awx.tls
-      path: /
-      annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-production
+      name: awx
+      spec:
+        replicas: 2
+        admin_user: chkpwd
+        admin_password_secret: awx-admin-password
+        admin_email: ${AWX_ADMIN_EMAIL}
+        ingress_type: ingress
+        ingress_class_name: nginx
+        hostname: awx.${LOCAL_DOMAIN}
+        postgres_configuration_secret: awx-operator-postgres-configuration
+        postgres_storage_class: longhorn
+        postgres_storage_requirements:
+          requests:
+            storage: 8Gi
+        postgres_keep_pvc_after_upgrade: false
+        projects_persistence: true
+        projects_storage_size: 8Gi
+        projects_storage_class: longhorn
+        projects_existing_claim: awx-operator-claim

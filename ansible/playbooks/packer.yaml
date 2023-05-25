@@ -3,15 +3,5 @@
   hosts: default #* Add this to your inventory file and manually --limit within provisioner
   become: true
 
-  vars:
-    
-  
   roles:
-    - { role: ../roles/system }
-    - role: gantsign.oh-my-zsh
-      users:
-        - username: "{{ ansible_user }}"
-          oh_my_zsh:
-            theme: bira
-            update_mode: auto
-            update_frequency: 3
+    - system

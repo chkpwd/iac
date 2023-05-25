@@ -2,9 +2,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cluster-apps-awx-operator
+  name: development-awx-operator
   namespace: flux-system
 spec:
+  dependsOn:
+    - name: development-awx-config
   path: ./kubernetes/apps/development/awx-operator/app
   prune: true
   sourceRef:
@@ -28,40 +30,10 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cluster-apps-awx-config
+  name: development-awx-config
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: cluster-apps-awx-operator
   path: ./kubernetes/apps/development/awx-operator/config
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  interval: 30m
-  retryInterval: 1m
-  timeout: 5m
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
-  postBuild:
-    substituteFrom:
-      - kind: ConfigMap
-        name: cluster-settings
-      - kind: Secret
-        name: sops-secrets
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: cluster-apps-awx-postgres
-  namespace: flux-system
-spec:
-  dependsOn:
-    - name: cluster-apps-awx-config
-    - name: cluster-apps-awx-operator
-  path: ./kubernetes/apps/development/awx-operator/db
   prune: true
   sourceRef:
     kind: GitRepository

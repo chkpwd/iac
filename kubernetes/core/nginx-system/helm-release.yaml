@@ -22,6 +22,8 @@ spec:
         type: RollingUpdate # * Spins up a new pod before the old pod
         rollingUpdate:
           maxSurge: 1
+      extraArgs:
+        default-ssl-certificate: cert-manager/chkpwd-cert # * The tls secret name for every CR. This will allow every ingress resource to use the default.
       service:
         enabled: true
         type: LoadBalancer

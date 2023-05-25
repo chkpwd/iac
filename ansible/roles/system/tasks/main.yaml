@@ -14,6 +14,26 @@
   ansible.builtin.set_fact:
     zsh_custom: "{{ ansible_env.ZSH_CUSTOM | default('/home/' ~ ansible_user ~ '/.oh-my-zsh/custom', true) }}"
 
+- name: Run ZSH configs
+  ansible.builtin.include_role:
+    name: gantsign.oh-my-zsh
+  vars:
+    oh_my_zsh_plugins:
+      - git
+      - zsh-autosuggestions
+      - sudo
+    users:
+      - username: "{{ ansible_user }}"
+        oh_my_zsh:
+          theme: bira
+          update_mode: auto
+          update_frequency: 3
+          write_zshrc: true
+          plugins:
+            - git
+            - zsh-autosuggestions
+            - sudo
+
 - name: Clone a zsh-autosuggestions repo
   ansible.builtin.git:
     repo: https://github.com/zsh-users/zsh-autosuggestions

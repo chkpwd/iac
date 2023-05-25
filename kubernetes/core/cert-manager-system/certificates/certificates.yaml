@@ -8,6 +8,7 @@ spec:
   dnsNames:
     - "chkpwd.com"
     - "*.chkpwd.com"
+    - "*.local.chkpwd.com" # Wildcard doesn't recurse
   issuerRef:
     name: letsencrypt-production
     kind: ClusterIssuer
