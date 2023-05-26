@@ -17,7 +17,7 @@ spec:
       interval: 15m
   values:
     controller:
-      replicaCount: 1
+      replicaCount: 3
       updateStrategy:
         type: RollingUpdate # * Spins up a new pod before the old pod
         rollingUpdate:
