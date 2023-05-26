@@ -172,3 +172,36 @@
     mode: 0755
     remote_src: true
   become: true
+
+- name: Grab latest 'viddy' release from github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/sachaos/viddy/releases/latest
+    return_content: true
+  register: json_reponse
+
+- name: "Downloading 'viddy' {{ json_reponse.json.tag_name }}"
+  loop: "{{ json_reponse.json.assets }}"
+  when: "'Linux_x86_64.tar.gz' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/viddy_amd64.tar.gz
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+  no_log: true
+
+- name: Unarchive the 'viddy' tar file
+  ansible.builtin.unarchive:
+    src: /tmp/viddy_amd64.tar.gz
+    dest: "/tmp"
+    remote_src: true
+
+- name: Move the 'viddy' binary to local bin
+  ansible.builtin.copy:
+    src: "/tmp/viddy"
+    dest: "/usr/local/bin/"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+    remote_src: true
+  become: true
