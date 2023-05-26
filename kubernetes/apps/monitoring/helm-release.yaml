@@ -19,8 +19,10 @@ spec:
       enabled: true
       className: "nginx"
       hosts:
-        - host: podinfo.local.chkpwd.com
+        - host: pod.local.chkpwd.com
           paths:
             - path: /
-              pathType: ImplementationSpecific
-      tls: []
+              pathType: Prefix
+      tls:
+        - hosts:
+            - pod.local.chkpwd.com
