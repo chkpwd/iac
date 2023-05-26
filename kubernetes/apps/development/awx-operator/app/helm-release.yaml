@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: awx-operator
+  name: awx
   namespace: development
 spec:
   interval: 5m
@@ -32,19 +32,18 @@ spec:
       name: awx
       spec:
         replicas: 2
-        admin_user: chkpwd
+        admin_user: admin
         admin_password_secret: awx-admin-password
-        admin_email: ${AWX_ADMIN_EMAIL}
         ingress_type: ingress
         ingress_class_name: nginx
         hostname: awx.${LOCAL_DOMAIN}
-        postgres_configuration_secret: awx-operator-postgres-configuration
-        postgres_storage_class: longhorn
-        postgres_storage_requirements:
-          requests:
-            storage: 8Gi
-        postgres_keep_pvc_after_upgrade: false
-        projects_persistence: true
-        projects_storage_size: 8Gi
-        projects_storage_class: longhorn
-        projects_existing_claim: awx-operator-claim
+        # postgres_storage_requirements:
+        #   requests:
+        #     storage: 1Gi
+        # postgres_storage_class: longhorn
+        # postgres_keep_pvc_after_upgrade: false
+        # postgres_configuration_secret: awx-operator-postgres-configuration
+        # projects_persistence: true
+        # projects_storage_size: 1Gi
+        # projects_storage_class: longhorn
+        # projects_existing_claim: awx-operator-claim
