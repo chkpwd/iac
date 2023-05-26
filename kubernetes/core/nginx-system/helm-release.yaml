@@ -17,7 +17,7 @@ spec:
       interval: 15m
   values:
     controller:
-      replicaCount: 3
+      replicaCount: 1
       updateStrategy:
         type: RollingUpdate # * Spins up a new pod before the old pod
         rollingUpdate:
@@ -37,8 +37,6 @@ spec:
         client-header-timeout: 120
         client-body-buffer-size: "100M"
         client-body-timeout: 120
-        custom-http-errors: >-
-          403,404,500,501,502,503
         enable-brotli: "true" # * Compression Algorithym
         enable-real-ip: "true"
         # forwarded-for-header: "CF-Connecting-IP"
