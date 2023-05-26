@@ -73,10 +73,10 @@ build {
   // }
   
   provisioner "ansible" {
-    playbook_file           = "../../ansible/playbooks/packer.yaml"
+    playbook_file           = "/home/hyoga/code/boilerplates/ansible/playbooks/packer.yaml"
     use_proxy               = false
     max_retries             = 3
     inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_password={{ .Password }} ansible_become_password={{ .Password }} ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAuthentication=no'"
-    ansible_env_vars        = ["ANSIBLE_CONFIG=../../ansible/ansible.cfg"]
+    ansible_env_vars        = ["ANSIBLE_CONFIG=/home/hyoga/code/boilerplates/ansible/ansible.cfg"]
   }
 }
