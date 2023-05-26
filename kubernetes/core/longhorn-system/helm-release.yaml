@@ -35,7 +35,7 @@ spec:
       ingressClassName: "nginx"
       host: longhorn.${LOCAL_DOMAIN}
       tls: true
-      tlsSecret: longhorn.tls
+      #tlsSecret: longhorn.tls
       path: /
       annotations:
         cert-manager.io/cluster-issuer: letsencrypt-production
