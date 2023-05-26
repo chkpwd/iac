@@ -10,7 +10,7 @@ d-i time/zone string America/New_York
 d-i netcfg/choose_interface select auto
 
 ### Host
-d-i netcfg/get_domain string typhon.tech
+d-i netcfg/get_domain string local.chkpwd.com
 d-i netcfg/hostname string deb-x11-template
 d-i netcfg/wireless_wep string
 
@@ -125,14 +125,6 @@ d-i pkgsel/upgrade select full-upgrade
 d-i grub-installer/only_debian boolean true
 d-i grub-installer/with_other_os boolean true
 d-i grub-installer/bootdev string /dev/sda
-
-# Optional password for grub, either in clear text
-d-i grub-installer/password password ${user_password}
-d-i grub-installer/password-again password ${user_password}
-
-# or encrypted using an MD5 hash, see grub-md5-crypt(8).
-#d-i grub-installer/password-crypted password [MD5 hash]
-d-i debian-installer/add-kernel-opts string nousb
 
 # ignore the completion message
 d-i finish-install/reboot_in_progress note
