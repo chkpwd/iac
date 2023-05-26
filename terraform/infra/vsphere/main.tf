@@ -89,7 +89,7 @@ module "kube-ops" {
   vm_network                = "LAN"
   vm_template               = "deb-x11-template"
   spec = {
-    cpu                     = 2
+    cpu                     = 4
     memory                  = 4096
     disk_size               = 16
     additional_disks = [
