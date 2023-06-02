@@ -1,0 +1,44 @@
+- name: Create docker folder if not exist
+  ansible.builtin.file:
+    path: "{{ traefik_config_path }}"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+  become: true
+
+- name: Copy config files for traefik
+  ansible.builtin.copy:
+    src: "templates/"
+    dest: "{{ traefik_config_path }}/traefik.yaml"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0644
+  become: true
+
+- name: Set acme.json permissions to 0600
+  ansible.builtin.file:
+    path: "{{ traefik_config_path }}/acme.json"
+    state: file
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0600
+  become: true
+
+- name: Deploy Docker containers
+  community.docker.docker_container:
+    name: "{{ item.name }}"
+    image: "{{ item.image }}"
+    ports: "{{ item.ports | default(omit) }}"
+    volumes: "{{ item.volumes | default(omit) }}"
+    restart_policy: "{{ item.restart_policy | default('always') }}"
+    capabilities: "{{ item.capabilities | default(omit) }}"
+    sysctls: "{{ item.sysctls | default(omit) }}"
+    env: "{{ item.env | default(omit) }}"
+    networks: "{{ item.networks | default([{'name': docker_network.results[0].network.Name}]) }}"
+    pull: "{{ item.pull | default(true) }}"
+    state: "{{ item.state | default('started') }}"
+  loop: "{{ service_definitions }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: deploy_containers

@@ -5,12 +5,13 @@ common_env: &common_env
     TZ: America/New_York
     PUID: '1000'
     PGID: '1000'
+
 service_definitions:
     - name: traefik
       image: traefik:latest
       env:
         <<: *common_env
-        CF_API_EMAIL: '{{ CG_EMAIL }}'
+        CF_API_EMAIL: '{{ CF_EMAIL }}'
         CF_DNS_API_TOKEN: '{{ CF_API_TOKEN }}'
       volumes:
         - /etc/localtime:/etc/localtime:ro
@@ -22,28 +23,16 @@ service_definitions:
         - 80:80
         - 443:443
       labels:
-        # Allows access to the Dashboard
         traefik.enable: "false"
-        # Define entrypoint
         traefik.http.routers.traefik.entrypoints: http
-        # Host name rule
         traefik.http.routers.traefik.rule: Host(`traefik-dashboard.local.chkpwd.com`)
-        # Defining the protocol for the middleware
         traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme: https
-        # Applies Headers for the middleware 'traefik-https-redirect' SSL certs
         traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto: https
-        # The middleware(s) to be utilize on the container
         traefik.http.routers.traefik.middlewares: traefik-https-redirect
-        # Entrypoint for the dashboard
         traefik.http.routers.traefik-secure.entrypoints: https
         traefik.http.routers.traefik-secure.rule: Host(`traefik-dashboard.local.chkpwd.com`)
-        # Enable SSL
         traefik.http.routers.traefik-secure.tls: "true"
-        # The cert manager for the traefik
         traefik.http.routers.traefik-secure.tls.certresolver: cloudflare
-        # Primary domain 
         traefik.http.routers.traefik-secure.tls.domains[0].main: local.chkpwd.com
-        # Apply a wildcard for the domain across all subdomains
         traefik.http.routers.traefik-secure.tls.domains[0].sans: '*.local.chkpwd.com'
-        # Internal service name
         traefik.http.routers.traefik-secure.service: api@internal
