@@ -40,24 +40,16 @@ vm_gateway = "172.16.16.1"
 vm_dns = ["172.16.16.1"]
 
 # The domain name used by the virtual machine #
-vm_domain = "typhon.tech"
+vm_domain = ""
 
 # The domain search list
-dns_suffix = ["typhon.tech"]
+dns_suffix = ["local.chkpwd.com"]
 
 # The vSphere template the virtual machine is based on #
 vm_template = "deb-x11-template"
 
-# Use linked clone (true/false)
-vm_linked_clone = "false"
-
-# The public key for the system
-vm_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
-
 # The ssh username for the guest system
 ssh_username = "hyoga"
-
-os_type = "linux"
 
 instance_count = "1"
 

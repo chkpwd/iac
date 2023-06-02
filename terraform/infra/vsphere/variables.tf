@@ -55,11 +55,6 @@ variable "vm_template" {
   type        = string
 }
 
-variable "vm_linked_clone" {
-  description = "Use linked clone to create the vSphere virtual machine from the template (true/false). If you would like to use the linked clone feature, your template need to have one and only one snapshot"
-  type        = string
-}
-
 variable "vm_ip" {
   description = "Ip used for the vSphere virtual machine"
   type        = string
@@ -95,19 +90,9 @@ variable "vm_name" {
   type        = string
 }
 
-variable "vm_public_key" {
-  description = "The name of the vSphere virtual machines and the hostname of the machine"
-  type        = string
-}
-
 variable "ssh_username" {
   description = "ssh user for the guest"
   type        = string
-}
-
-variable "os_type" {
-  description = "Set the OS type"
-  default = ""
 }
 
 variable "instance_count" {

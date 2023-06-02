@@ -36,11 +36,6 @@ variable "vm_template" {
   description = "Template used to create the vSphere virtual machines"
 }
 
-variable "vm_linked_clone" {
-  description = "Use linked clone to create the vSphere virtual machine from the template (true/false). If you would like to use the linked clone feature, your template need to have one and only one snapshot"
-  default = "false"
-}
-
 variable "vm_ip" {
   description = "Ip used for the vSphere virtual machine"
   default = ""
@@ -70,7 +65,6 @@ variable "dns_suffix" {
   type = list
   description = "Domain search list"
   default = []
-  #default = ["typhon.tech"]
 }
 
 variable "vm_name" {
@@ -80,16 +74,6 @@ variable "vm_name" {
 variable "ssh_username" {
   description = "ssh user for the guest"
   default = "hyoga"
-}
-
-variable "vm_public_key" {
-  description = "Public SSH Key for VMs"
-  default = ""
-}
-
-variable "os_type" {
-  description = "Set the OS type"
-  default = ""
 }
 
 variable "instance_count" {
@@ -108,11 +92,20 @@ variable "spec" {
     cpu       = number
     memory    = number
     disk_size = number
+    os_type   = optional(string)
+    linked_clone = optional(bool)
     additional_network = optional(list(object({
       network = string
     })))
     additional_disks = optional(list(object({
       size = number
     })))
+  })
+}
+
+variable "network_spec" {
+  type = object({
+    network_id      = optional(string)
+    mac_address     = optional(string)
   })
 }

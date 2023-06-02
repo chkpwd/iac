@@ -1,3 +1,3 @@
-output "test" {
-  value = module.mirage.*
-}
+# output "test" {
+#   value = module.mirage.*
+# }
