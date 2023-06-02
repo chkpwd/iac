@@ -15,3 +15,22 @@
     name: xanmanning.k3s
   vars:
     k3s_state: installed
+
+- name: Copy kubeconfig file
+  run_once: true
+  ansible.builtin.fetch:
+    src: "/etc/rancher/k3s/k3s.yaml"
+    dest: "{{ ansible_env.HOME }}/.kube/config"
+    flat: true
+  when:
+    - k3s_control_node is defined
+    - k3s_control_node
+
+- name: Update kubeconfig with the correct IPv4 address
+  delegate_to: localhost
+  become: false
+  run_once: true
+  ansible.builtin.replace:
+    path: "{{ ansible_env.HOME }}/.kube/config"
+    regexp: "https://127.0.0.1:6443"
+    replace: "https://{{ k3s_registration_address }}:6443"
