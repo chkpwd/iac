@@ -2,7 +2,7 @@
 - name: Create a login user
   ansible.builtin.user:
     name: "{{ ansible_user }}"
-    password: "{{ usr_password_sops }}"
+    password: "{{ USR_PASSWORD_SOPS }}"
     # groups:
     #  - sudo
     # append: true # If false, the above groups are the only groups provided to the user

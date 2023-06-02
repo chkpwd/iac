@@ -7,8 +7,8 @@ opts_options: rw,sync,hard
 docker_network:
     - media
     - traefik
-discord_webhook: "{{ discord_token }}"
-claim_token: "{{ plex_token }}"
+discord_webhook: "{{ DISCORD_TOKEN }}"
+claim_token: "{{ PLEX_TOKEN }}"
 cname_records:
     - requests
     - wizarr
