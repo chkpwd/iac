@@ -18,13 +18,6 @@
   with_fileglob:
     - "{{ template_path }}/zsh_contents/*"
 
-# - name: Add .local/bin to the Path
-#   ansible.builtin.lineinfile:
-#     path: "/home/{{ ansible_user }}/.zshrc"
-#     insertafter: 'LANG'
-#     line: 'export PATH=$HOME/.local/bin:$PATH'
-#   changed_when: false
-
 - name: Set the ZSH_CUSTOM shell var if not present
   ansible.builtin.set_fact:
     zsh_custom: "{{ ansible_env.ZSH_CUSTOM | default('/home/' ~ ansible_user ~ '/.oh-my-zsh/custom', true) }}"
