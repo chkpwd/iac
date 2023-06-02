@@ -4,11 +4,13 @@
 
 module "horizon" {
   source                    = "./modules/guest_machines"
-  os_type                   = "linux"
   vm_name                   = "horizon"
   vm_template               = "deb-x11-template"
-  vm_network                = "LAN"
+  network_spec = {
+    network_id              = "LAN"
+  }
   spec = {
+    os_type                   = "linux"
     cpu                     = 2
     memory                  = 4096
     disk_size               = 16
@@ -17,11 +19,14 @@ module "horizon" {
 
 module "stable-diffusion" {
   source                    = "./modules/guest_machines"
-  os_type                   = "linux"
+  count                     = 0
   vm_name                   = "stable-diffusion"
-  vm_network                = "IoT"
   vm_template               = "deb-x11-template"
+  network_spec = {
+    network_id              = "IoT"
+  }
   spec = {
+    os_type                   = "linux"
     cpu                     = 4
     memory                  = 10240
     disk_size               = 48
@@ -30,11 +35,13 @@ module "stable-diffusion" {
 
 module "crypto" {
   source                    = "./modules/guest_machines"
-  os_type                   = "linux"
   vm_name                   = "crypto"
-  vm_network                = "LAN"
   vm_template               = "deb-x11-template"
+  network_spec = {
+    network_id              = "LAN"
+  }
   spec = {
+    os_type                   = "linux"
     cpu                     = 4
     memory                  = 8192
     disk_size               = 48
@@ -43,11 +50,13 @@ module "crypto" {
 
 module "mirage" {
   source                    = "./modules/guest_machines"
-  os_type                   = "linux"
   vm_name                   = "mirage"
-  vm_network                = "Media"
   vm_template               = "deb-x11-template"
+  network_spec = {
+    network_id              = "Media"
+  }
   spec = {
+    os_type                   = "linux"
     cpu                     = 4
     memory                  = 8192
     disk_size               = 16
@@ -56,39 +65,46 @@ module "mirage" {
 
 module "homeassistant" {
   source                    = "./modules/guest_machines"
-  os_type                   = "linux"
   vm_name                   = "valkyrie"
-  vm_network                = "LAN"
   vm_template               = "deb-x11-template"
+  network_spec = {
+    network_id              = "LAN"
+  }
   spec = {
+    os_type                   = "linux"
     cpu                     = 2
     memory                  = 2048
     disk_size               = 16
   }
 }
 
-# module "bloodhound" {
-#   source                    = "./modules/guest_machines"
-#   count                     = 1
-#   os_type                   = "windows"
-#   vm_name                   = "bloodhound"
-#   vm_network                = "LAN"
-#   vm_template               = "WinSrv22-template-DE"
-#   spec = {
-#     cpu                     = 2
-#     memory                  = 8192
-#     disk_size               = 48
-#   }
-# }
+module "bloodhound" {
+  source                    = "./modules/guest_machines"
+  count                     = 0
+  vm_name                   = "bloodhound"
+  vm_template               = "WinSrv22-template-DE"
+  network_spec = {
+    network_id              = "LAN"
+  }
+  spec = {
+    os_type                   = "windows"
+    cpu                     = 2
+    memory                  = 8192
+    disk_size               = 48
+  }
+}
 
 module "kube-ops" {
   source                    = "./modules/guest_machines"
   count                     = 3
-  os_type                   = "linux"
   vm_name                   = "kubes-cp-${count.index + 1}"
-  vm_network                = "LAN"
   vm_template               = "deb-x11-template"
+  network_spec = {
+    network_id              = "LAN"
+    mac_address             = ["00:50:56:93:8a:b9", "00:50:56:93:35:60", "00:50:56:93:fa:88"][count.index]
+  }
   spec = {
+    os_type                 = "linux"
     cpu                     = 4
     memory                  = 4096
     disk_size               = 16
@@ -103,11 +119,13 @@ module "kube-ops" {
 module "traefik" {
   source                    = "./modules/guest_machines"
   count                     = 1
-  os_type                   = "linux"
   vm_name                   = "node-01"
-  vm_network                = "LAN"
   vm_template               = "deb-x11-template"
+  network_spec = {
+    network_id              = "LAN"
+  }
   spec = {
+    os_type                 = "linux"
     cpu                     = 2
     memory                  = 2048
     disk_size               = 60

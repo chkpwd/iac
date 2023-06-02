@@ -3,7 +3,7 @@
 #===============================================================================
 
 resource "vsphere_virtual_machine" "linux" {
-  count = var.os_type == "linux" ? var.instance_count : 0
+  count = var.spec.os_type == "linux" ? var.instance_count : 0
 
   name             = var.vm_name
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
@@ -13,11 +13,12 @@ resource "vsphere_virtual_machine" "linux" {
   memory   = var.spec.memory
   guest_id = data.vsphere_virtual_machine.template.guest_id
 
-  #sync_time_with_host = true
+  sync_time_with_host = true
 
   network_interface {
     network_id   = data.vsphere_network.network.id
-    adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
+    adapter_type = "vmxnet3"
+    mac_address  = var.network_spec.mac_address != null ? var.network_spec.mac_address : ""
   }
 
   disk {
@@ -39,6 +40,7 @@ resource "vsphere_virtual_machine" "linux" {
 
   clone {
     template_uuid = data.vsphere_virtual_machine.template.id
+    linked_clone  = var.spec.linked_clone
 
     customize {
       timeout = "20"
@@ -68,7 +70,7 @@ resource "vsphere_virtual_machine" "linux" {
 }
 
 resource "vsphere_virtual_machine" "windows" {
-  count = var.os_type == "windows" ? var.instance_count : 0
+  count = var.spec.os_type == "windows" ? var.instance_count : 0
 
   name             = var.vm_name
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
@@ -83,8 +85,8 @@ resource "vsphere_virtual_machine" "windows" {
   sync_time_with_host = true
 
   network_interface {
-    network_id   = data.vsphere_network.network.id
-    adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
+    network_id   = var.network_spec.network_id
+    adapter_type = "vmxnet3"
   }
 
   disk {
@@ -106,7 +108,7 @@ resource "vsphere_virtual_machine" "windows" {
 
   clone {
     template_uuid = data.vsphere_virtual_machine.template.id
-    linked_clone  = var.vm_linked_clone
+    linked_clone  = var.spec.linked_clone
   }
 
   lifecycle {
@@ -121,4 +123,3 @@ resource "vsphere_virtual_machine" "windows" {
     ]
   }
 }
-
