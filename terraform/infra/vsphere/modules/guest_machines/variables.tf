@@ -107,5 +107,6 @@ variable "network_spec" {
   type = object({
     network_id      = optional(string)
     mac_address     = optional(string)
+    static_mac_addr = bool
   })
 }

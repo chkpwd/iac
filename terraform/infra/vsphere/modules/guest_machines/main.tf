@@ -18,6 +18,7 @@ resource "vsphere_virtual_machine" "linux" {
   network_interface {
     network_id   = data.vsphere_network.network.id
     adapter_type = "vmxnet3"
+    use_static_mac = var.network_spec.static_mac_addr != null ? var.network_spec.static_mac : "true"
     mac_address  = var.network_spec.mac_address != null ? var.network_spec.mac_address : ""
   }
 
