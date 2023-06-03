@@ -133,6 +133,12 @@
     group: "{{ ansible_user }}"
     mode: 0755
 
+- name: Unarchive the 'go' tar file
+  ansible.builtin.unarchive:
+    src: /tmp/go.tar.gz
+    dest: "/tmp"
+    remote_src: true
+
 - name: Move GO binary to "/usr/local/bin/"
   ansible.builtin.copy:
     src: "/tmp/go/bin/go"
