@@ -1,0 +1,32 @@
+- name: Get latest deb package for Cockpit File Sharing
+  ansible.builtin.uri:
+    url: "{{ cp_filesharing_plugin }}"
+  register: file_sharing_release
+
+- name: Install .deb pkg - Cockpit File Sharing
+  loop: "{{ file_sharing_release.json.assets }}"
+  when: "'focal_all.deb' in item.name"
+  ansible.builtin.apt:
+    deb: "{{ item.browser_download_url }}"
+
+- name: Get latest deb package for Cockpit Navigator
+  ansible.builtin.uri:
+    url: "{{ cp_navigator_plugin }}"
+  register: navigator_release
+
+- name: Install .deb pkg - Cockpit Navigator
+  loop: "{{ navigator_release.json.assets }}"
+  when: "'focal_all.deb' in item.name"
+  ansible.builtin.apt:
+    deb: "{{ item.browser_download_url }}"
+
+- name: Get latest deb package for Cockpit Identities
+  ansible.builtin.uri:
+    url: "{{ cp_identities_plugin }}"
+  register: identities_release
+
+- name: Install .deb pkg - Cockpit Identities
+  loop: "{{ identities_release.json.assets }}"
+  when: "'focal_all.deb' in item.name"
+  ansible.builtin.apt:
+    deb: "{{ item.browser_download_url }}"

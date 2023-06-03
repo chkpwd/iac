@@ -1,0 +1,15 @@
+- name: Install Cockpit using bullseye-backports release
+  ansible.builtin.apt:
+    name: cockpit
+    state: "{{ cp_state }}"
+    default_release: bullseye-backports
+    update_cache: true
+
+- name: Install plugins
+  ansible.builtin.import_tasks: install_plugins.yaml
+
+- name: Enable the Cockpit service
+  ansible.builtin.service:
+    name: "{{ cockpit.socket }}"
+    state: started
+    enabled: true
