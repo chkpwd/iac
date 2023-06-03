@@ -10,7 +10,7 @@ service_definitions:
       image: traefik:latest
       env:
         <<: *common_env
-        CF_API_EMAIL: '{{ CG_EMAIL }}'
+        CF_API_EMAIL: '{{ CF_EMAIL }}'
         CF_DNS_API_TOKEN: '{{ CF_API_TOKEN }}'
       volumes:
         - /etc/localtime:/etc/localtime:ro
