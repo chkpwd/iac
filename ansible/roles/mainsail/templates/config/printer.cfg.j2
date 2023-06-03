@@ -1,0 +1,180 @@
+# This file contains pin mappings for the stock 2020 Creality Ender 3
+# V2. To use this config, during "make menuconfig" select the
+# STM32F103 with a "28KiB bootloader" and serial (on USART1 PA10/PA9)
+# communication.
+
+# If you prefer a direct serial connection, in "make menuconfig"
+# select "Enable extra low-level configuration options" and select
+# serial (on USART3 PB11/PB10), which is broken out on the 10 pin IDC
+# cable used for the LCD module as follows:
+# 3: Tx, 4: Rx, 9: GND, 10: VCC
+
+# Flash this firmware by copying "out/klipper.bin" to a SD card and
+# turning on the printer with the card inserted. The firmware
+# filename must end in ".bin" and must not match the last filename
+# that was flashed.
+
+# See docs/Config_Reference.md for a description of parameters.
+[include mainsail.cfg]
+[include slicer_macros.cfg]
+
+[stepper_x]
+step_pin: PC2
+dir_pin: PB9
+enable_pin: !PC3
+microsteps: 16
+rotation_distance: 40
+endstop_pin: ^PA5
+position_endstop: 0
+position_min: 0
+position_max: 235
+homing_speed: 50
+
+[stepper_y]
+step_pin: PB8
+dir_pin: PB7
+enable_pin: !PC3
+microsteps: 16
+rotation_distance: 40
+endstop_pin: ^PA6
+position_endstop: 0
+position_min: 0
+position_max: 230
+homing_speed: 50
+
+[stepper_z]
+step_pin: PB6
+dir_pin: PB5
+enable_pin: !PC3
+microsteps: 16
+rotation_distance: 8
+endstop_pin: probe:z_virtual_endstop
+#position_endstop: 0.0
+position_max: 250
+position_min: -2
+
+[bed_mesh]
+speed: 120
+horizontal_move_z: 5
+mesh_min: 10, 10
+mesh_max: 182.3, 216
+probe_count: 5,3
+algorithm: bicubic
+fade_start: 1
+fade_end: 10
+fade_target: 0
+
+[bed_screws]
+screw1: 45, 35
+screw2: 205, 210
+screw3: 200, 45
+screw4: 45, 216.5
+screw5: 170.20, 131.50
+
+[screws_tilt_adjust]
+screw1: 85.2, 46.5
+screw1_name: front left screw
+screw2: 235, 46.5
+screw2_name: front right screw
+screw3: 235, 216.5
+screw3_name: rear right screw
+screw4: 85.2, 216.5
+screw4_name: rear left screw
+horizontal_move_z: 10
+speed: 50
+screw_thread: CW-M4
+
+[bltouch]
+sensor_pin: ^PB1
+control_pin: PB0
+x_offset: -52.7
+y_offset: -14
+#z_offset: 0
+
+[safe_z_home] 
+home_xy_position: 170.2, 131.5 # Change coordinates to the center of your print bed
+z_hop: 10 # Move up 10mm 
+z_hop_speed: 5
+
+[extruder]
+max_extrude_only_distance: 100.0
+step_pin: PB4
+dir_pin: PB3
+enable_pin: !PC3
+microsteps: 16
+rotation_distance: 23.056
+gear_ratio: 57:11
+nozzle_diameter: 0.400
+filament_diameter: 1.750
+heater_pin: PA1
+sensor_type: EPCOS 100K B57560G104F
+sensor_pin: PC5
+#control: pid
+# tuned for stock hardware with 200 degree Celsius target
+#pid_Kp: 21.527
+#pid_Ki: 1.063
+#pid_Kd: 108.982
+min_temp: 0
+max_temp: 250
+
+[heater_bed]
+heater_pin: PA2
+sensor_type: EPCOS 100K B57560G104F
+sensor_pin: PC4
+#control: pid
+# tuned for stock hardware with 50 degree Celsius target
+#pid_Kp: 54.027
+#pid_Ki: 0.770
+#pid_Kd: 948.182
+min_temp: 0
+max_temp: 130
+
+[fan]
+pin: PA0
+
+[mcu]
+serial: /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0
+restart_method: command
+
+[printer]
+kinematics: cartesian
+max_velocity: 300
+max_accel: 3000
+max_accel_to_decel: 3000
+max_z_velocity: 5
+max_z_accel: 100
+
+#*# <---------------------- SAVE_CONFIG ---------------------->
+#*# DO NOT EDIT THIS BLOCK OR BELOW. The contents are auto-generated.
+#*#
+#*# [bed_mesh default]
+#*# version = 1
+#*# points =
+#*# 	-0.085000, -0.075000, -0.032500, 0.015000, 0.075000
+#*# 	-0.017500, -0.027500, -0.022500, -0.022500, -0.002500
+#*# 	-0.025000, -0.075000, -0.060000, -0.027500, 0.012500
+#*# x_count = 5
+#*# y_count = 3
+#*# mesh_x_pps = 2
+#*# mesh_y_pps = 2
+#*# algo = bicubic
+#*# tension = 0.2
+#*# min_x = 10.0
+#*# max_x = 182.26999999999998
+#*# min_y = 10.0
+#*# max_y = 216.0
+#*#
+#*# [bltouch]
+#*# z_offset = 2.000
+#*#
+#*# [extruder]
+#*# control = pid
+#*# pid_kp = 28.084
+#*# pid_ki = 1.510
+#*# pid_kd = 130.593
+#*#
+#*# [heater_bed]
+#*# control = pid
+#*# pid_kp = 70.787
+#*# pid_ki = 0.987
+#*# pid_kd = 1268.857

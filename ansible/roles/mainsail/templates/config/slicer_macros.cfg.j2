@@ -1,0 +1,41 @@
+[gcode_macro START_PRINT]
+gcode:
+    {% set BED_TEMP = params.BED_TEMP|default(60)|float %}
+    {% set EXTRUDER_TEMP = params.EXTRUDER_TEMP|default(190)|float %}
+    # Home the printer
+    G28   
+    # Heat extruder to standby temp
+    M104 S140
+    # Start bed heating
+    M140 S{BED_TEMP}
+    # Use absolute coordinates
+    G90
+	# Load bed mesh profile
+    BED_MESH_PROFILE LOAD=default
+    # Reset the G-Code Z offset (adjust Z offset if needed)
+    SET_GCODE_OFFSET Z=0.0
+    # Move the nozzle near the bed
+    G1 Z5 F3000
+    # Move the nozzle very close to the bed
+    G1 Z0.15 F300
+    # Wait for bed to reach temperature
+    M190 S{BED_TEMP}
+    # Set and wait for nozzle to reach temperature
+    M109 S{EXTRUDER_TEMP}
+    # Get to start position/height safely
+	G1 X120 Y80 Z5 F3000
+
+[gcode_macro END_PRINT]
+gcode:
+    # Turn off bed, extruder, and fan
+    M140 S0
+    M104 S0
+    M106 S0
+    # Move nozzle away from print while retracting
+    G91
+    G1 X-2 Y-2 E-3 F300
+    # Raise nozzle by 10mm
+    G1 Z10 F3000
+    G90
+    # Disable steppers
+    M84
