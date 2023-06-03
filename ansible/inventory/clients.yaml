@@ -58,7 +58,10 @@ all:
 
     printers:
       hosts:
-        revenant:
+        rampart:
+      vars:
+        ansible_user: pi
+        ansible_become_user: pi
 
     media_server:
       hosts:
