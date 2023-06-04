@@ -18,6 +18,11 @@ common_env: &common_env
     PGID: '{{ arr_gid }}'
 
 service_definitions:
+    - name: buildarr
+      image: callum027/buildarr:latest
+      volumes:
+        - '{{ configuration_path }}/buildarr:/config'
+      env: '{{ common_env }}'
     - name: overseerr
       image: '{{ hotio_image }}/overseerr'
       ports:
@@ -25,11 +30,8 @@ service_definitions:
       env: '{{ common_env }}'
       volumes:
         - '{{ configuration_path }}/overseerr:/config'
-      networks:
-        - name: media
-        - name: traefik
     - name: sonarr
-      image: '{{ hotio_image }}/sonarr:v4'
+      image: '{{ hotio_image }}/sonarr:latest'
       ports:
         - 8989:8989
       # * Check for docs.theme-park.dev integration to v4
@@ -37,9 +39,6 @@ service_definitions:
       volumes:
         - '{{ configuration_path }}/sonarr:/config'
         - '{{ media_path }}:{{ container_path }}'
-      networks:
-        - name: media
-        - name: traefik
     - name: radarr
       image: '{{ hotio_image }}/radarr:latest'
       ports:
@@ -48,9 +47,6 @@ service_definitions:
       volumes:
         - '{{ configuration_path }}/radarr:/config'
         - '{{ media_path }}:{{ container_path }}'
-      networks:
-        - name: media
-        - name: traefik
     - name: qbittorrent
       image: '{{ hotio_image }}/qbittorrent'
       ports:
@@ -62,9 +58,6 @@ service_definitions:
         - '{{ configuration_path }}/qbittorrent:/config'
         # ymallint disable-line rule:line-length
         - '{{ media_path }}/downloads/torrents:{{ container_path }}/downloads/torrents'
-      networks:
-        - name: media
-        - name: traefik
     - name: sabnzbd
       image: '{{ hotio_image }}/sabnzbd'
       ports:
@@ -74,9 +67,6 @@ service_definitions:
       volumes:
         - '{{ configuration_path }}/sabnzbd:/config'
         - '{{ media_path }}/downloads/nzb:{{ container_path }}/downloads/nzb'
-      networks:
-        - name: media
-        - name: traefik
     - name: tautulli
       image: '{{ hotio_image }}/tautulli'
       ports:
@@ -85,9 +75,6 @@ service_definitions:
       volumes:
         - '{{ configuration_path }}/tautulli:/config'
         - '{{ configuration_path }}/tautulli/logs:/logs:ro'
-      networks:
-        - name: media
-        - name: traefik
     - name: plex
       image: '{{ hotio_image }}/plex:latest'
       ports:
@@ -115,9 +102,6 @@ service_definitions:
       volumes:
         - '{{ configuration_path }}/bazarr:/config'
         - '{{ media_path }}:{{ container_path }}'
-      networks:
-        - name: media
-        - name: traefik
     - name: prowlarr
       image: '{{ hotio_image }}/prowlarr'
       ports:
@@ -127,9 +111,6 @@ service_definitions:
         UMASK: "002"
       volumes:
         - '{{ configuration_path }}/prowlarr:/config'
-      networks:
-        - name: media
-        - name: traefik
     - name: recyclarr
       image: ghcr.io/recyclarr/recyclarr
       init: true
@@ -137,9 +118,6 @@ service_definitions:
         <<: *common_env
         CRON_SCHEDULE: 5 4 * * sun
         TINI_SUBREAPER: "1"
-      networks:
-        - name: media
-        - name: traefik
     - name: wizarr
       image: ghcr.io/wizarrrr/wizarr
       ports:
@@ -151,9 +129,6 @@ service_definitions:
         APP_URL: https://wizarr.chkpwd.com
         # * Set to true ONLY if you are using another auth provider (Authelia, Authentik, etc)
         DISABLE_BUILTIN_AUTH: "false"
-      networks:
-        - name: media
-        - name: traefik
     - name: watchtower
       image: containrrr/watchtower
       volumes:
@@ -163,6 +138,3 @@ service_definitions:
         WATCHTOWER_NOTIFICATION_TITLE_TAG: Mirage
         WATCHTOWER_SCHEDULE: 0 7 */10 * *
         WATCHTOWER_NOTIFICATION_URL: '{{ discord_webhook }}'
-      networks:
-        - name: media
-        - name: traefik
