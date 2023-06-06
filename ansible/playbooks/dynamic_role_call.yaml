@@ -9,4 +9,21 @@
         prompt: "\nWARNING: The role will run against localhost. You have 5 seconds to cancel"
         seconds: 5
       when: onhosts | default('localhost') == 'localhost'
-  roles: ["{{ role | default() }}"]
+
+  tasks:
+    - name: Module Defaults - Docker Containers
+      module_defaults:
+        community.docker.docker_container:
+          restart_policy: always
+      when: role is defined and role == 'compose'
+      block:
+        - name: Run the 'compose' role
+          include_role:
+            name: "{{ role }}"
+      
+    - name: Non-module defaults
+      when: role is not defined or role != 'compose'
+      block:
+        - name: Run other roles
+          include_role:
+            name: "{{ role }}"
