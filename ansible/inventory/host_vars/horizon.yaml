@@ -4,6 +4,8 @@ container_path: /data
 arr_uid: "1000"
 arr_gid: "1000"
 docker_sock: /var/run/docker.sock:/var/run/docker.sock:ro
+docker_network:
+    - misc
 
 cname_records:
   - docs
@@ -17,6 +19,10 @@ common_env: &common_env
   PGID: "{{ arr_gid }}"
 
 service_definitions:
+  - name: winxuu
+    image: chkpwd/winxuu:latest
+    ports: [3389:3389]
+
   - name: syncthing
     image: lscr.io/linuxserver/syncthing:latest
     env: "{{ common_env }}"
