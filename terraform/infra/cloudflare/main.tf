@@ -16,6 +16,15 @@ resource "cloudflare_record" "www_a_record" {
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
 
+resource "cloudflare_record" "winxuu_cname" {
+  name    = "winxuu"
+  proxied = true
+  ttl     = 1
+  type    = "CNAME"
+  value   = "chkpwd.com"
+  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
+}
+
 resource "cloudflare_record" "bookstacks_cname" {
   name    = "docs"
   proxied = true
