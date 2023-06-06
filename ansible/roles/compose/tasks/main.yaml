@@ -9,5 +9,6 @@
   loop_control:
     label: "{{ item.name }}"
   register: deploy_containers
+
 - name: "Install ctop"
   ansible.builtin.include_tasks: install_ctop.yaml
