@@ -1,21 +1,18 @@
 media_path: /home/{{ ansible_user }}/media
 container_path: /data
-arr_uid: "1000"
-arr_gid: "1000"
-nas_nfs: 172.16.16.5
 opts_options: rw,sync,hard
 docker_network:
     - media
-    - traefik
 discord_webhook: "{{ DISCORD_TOKEN }}"
 claim_token: "{{ PLEX_TOKEN }}"
 cname_records:
     - requests
     - wizarr
+
 common_env: &common_env
-    TZ: America/New_York
-    PUID: '{{ arr_uid }}'
-    PGID: '{{ arr_gid }}'
+    TZ: 'America/New_York'
+    PUID: '1000'
+    PGID: '1000'
 
 service_definitions:
     - name: buildarr
@@ -23,6 +20,8 @@ service_definitions:
       volumes:
         - '{{ configuration_path }}/buildarr:/config'
       env: '{{ common_env }}'
+      networks:
+        - name: media
     - name: overseerr
       image: '{{ hotio_image }}/overseerr'
       ports:
@@ -30,8 +29,10 @@ service_definitions:
       env: '{{ common_env }}'
       volumes:
         - '{{ configuration_path }}/overseerr:/config'
+      networks:
+        - name: media
     - name: sonarr
-      image: '{{ hotio_image }}/sonarr:latest'
+      image: '{{ hotio_image }}/sonarr:v4'
       ports:
         - 8989:8989
       # * Check for docs.theme-park.dev integration to v4
@@ -39,6 +40,8 @@ service_definitions:
       volumes:
         - '{{ configuration_path }}/sonarr:/config'
         - '{{ media_path }}:{{ container_path }}'
+      networks:
+        - name: media
     - name: radarr
       image: '{{ hotio_image }}/radarr:latest'
       ports:
@@ -47,6 +50,8 @@ service_definitions:
       volumes:
         - '{{ configuration_path }}/radarr:/config'
         - '{{ media_path }}:{{ container_path }}'
+      networks:
+        - name: media
     - name: qbittorrent
       image: '{{ hotio_image }}/qbittorrent'
       ports:
@@ -56,8 +61,10 @@ service_definitions:
       env: '{{ common_env }}'
       volumes:
         - '{{ configuration_path }}/qbittorrent:/config'
-        # ymallint disable-line rule:line-length
+        # yamllint disable-line rule:line-length
         - '{{ media_path }}/downloads/torrents:{{ container_path }}/downloads/torrents'
+      networks:
+        - name: media
     - name: sabnzbd
       image: '{{ hotio_image }}/sabnzbd'
       ports:
@@ -67,6 +74,8 @@ service_definitions:
       volumes:
         - '{{ configuration_path }}/sabnzbd:/config'
         - '{{ media_path }}/downloads/nzb:{{ container_path }}/downloads/nzb'
+      networks:
+        - name: media
     - name: tautulli
       image: '{{ hotio_image }}/tautulli'
       ports:
@@ -75,6 +84,8 @@ service_definitions:
       volumes:
         - '{{ configuration_path }}/tautulli:/config'
         - '{{ configuration_path }}/tautulli/logs:/logs:ro'
+      networks:
+        - name: media
     - name: plex
       image: '{{ hotio_image }}/plex:latest'
       ports:
@@ -85,13 +96,11 @@ service_definitions:
         VERSION: docker
         PLEX_CLAIM: '{{ claim_token }}'
         UMASK_SET: "022"
-        ADVERTISE_IP: 172.0.10.20
-        ALLOWED_NETWORKS: 172.0.0.0/8
-        # PLEX_PASS: "yes"
+        ADVERTISE_IP: 172.16.10.20
       volumes:
         - '{{ configuration_path }}/plex:/config'
         - '{{ media_path }}:{{ container_path }}/media'
-        - '{{ media_path }}/tmp/plex:/transcode:rw'
+        - '/tmp/plex:/transcode'
     - name: bazarr
       image: '{{ hotio_image }}/bazarr'
       ports:
@@ -102,6 +111,8 @@ service_definitions:
       volumes:
         - '{{ configuration_path }}/bazarr:/config'
         - '{{ media_path }}:{{ container_path }}'
+      networks:
+        - name: media
     - name: prowlarr
       image: '{{ hotio_image }}/prowlarr'
       ports:
@@ -111,6 +122,8 @@ service_definitions:
         UMASK: "002"
       volumes:
         - '{{ configuration_path }}/prowlarr:/config'
+      networks:
+        - name: media
     - name: recyclarr
       image: ghcr.io/recyclarr/recyclarr
       init: true
@@ -118,6 +131,10 @@ service_definitions:
         <<: *common_env
         CRON_SCHEDULE: 5 4 * * sun
         TINI_SUBREAPER: "1"
+      volumes:
+        - "{{ configuration_path }}/recyclarr/recyclarr.yml:/config/recyclarr.yml"
+      networks:
+        - name: media
     - name: wizarr
       image: ghcr.io/wizarrrr/wizarr
       ports:
@@ -129,6 +146,8 @@ service_definitions:
         APP_URL: https://wizarr.chkpwd.com
         # * Set to true ONLY if you are using another auth provider (Authelia, Authentik, etc)
         DISABLE_BUILTIN_AUTH: "false"
+      networks:
+        - name: media
     - name: watchtower
       image: containrrr/watchtower
       volumes:
