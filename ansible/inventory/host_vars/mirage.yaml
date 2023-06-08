@@ -157,3 +157,15 @@ service_definitions:
         WATCHTOWER_NOTIFICATION_TITLE_TAG: Mirage
         WATCHTOWER_SCHEDULE: 0 7 */10 * *
         WATCHTOWER_NOTIFICATION_URL: '{{ discord_webhook }}'
+
+    - name: wireguard
+      image: lscr.io/linuxserver/wireguard:latest
+      capabilities:
+        - net_admin
+        #- sys_module #optional
+      env: "{{ common_env }}"
+      volumes:
+        - '{{ configuration_path }}/wireguard:/config'
+        - /lib/modules:/lib/modules
+      #sysctls: net.ipv4.conf.all.src_valid_mark=1
+      network_mode: host
