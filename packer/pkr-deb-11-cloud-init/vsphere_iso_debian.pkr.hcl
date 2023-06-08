@@ -68,15 +68,26 @@ build {
     "source.vsphere-iso.debian_11"
   ]
 
-  // provisioner "shell-local" {
-  //   inline  = ["echo the address is: $PACKER_HTTP_ADDR and build name is: $PACKER_BUILD_NAME"]
-  // }
-  
-  provisioner "ansible" {
-    playbook_file           = "/home/hyoga/code/boilerplates/ansible/playbooks/packer.yaml"
-    use_proxy               = false
-    max_retries             = 3
-    inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_password={{ .Password }} ansible_become_password={{ .Password }} ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAuthentication=no'"
-    ansible_env_vars        = ["ANSIBLE_CONFIG=/home/hyoga/code/boilerplates/ansible/ansible.cfg"]
-  }
+ provisioner "shell-local" {
+  command = <<EOH
+    mkdir -p ~/.ssh
+    chmod 700 ~/.ssh
+    echo '${var.ssh_public_key}' > ~/.ssh/authorized_keys
+    chmod 600 ~/.ssh/authorized_keys
+  EOH
+}
+ 
+provisioner "shell-local"{
+  environment_vars = ["PROVISIONERTEST=ProvisionerTest1"]
+  execute_command = ["bash", "-c", "{{.Vars}} {{.Script}}"]
+  use_linux_pathing = true
+  scripts = ["C:/Users/me/scripts/example_bash.sh"]
+}
+  # provisioner "ansible" {
+  #   playbook_file           = "/home/hyoga/code/boilerplates/ansible/playbooks/packer.yaml"
+  #   use_proxy               = false
+  #   max_retries             = 3
+  #   inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_password={{ .Password }} ansible_become_password={{ .Password }} ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAuthentication=no'"
+  #   ansible_env_vars        = ["ANSIBLE_CONFIG=/home/hyoga/code/boilerplates/ansible/ansible.cfg"]
+  # }
 }
