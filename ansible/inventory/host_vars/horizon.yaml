@@ -19,6 +19,18 @@ common_env: &common_env
   PGID: "{{ arr_gid }}"
 
 service_definitions:
+  - name: couchdb
+    image: couchdb:latest
+    env:
+      <<: *common_env
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: "{{ COUCHDB_DB_PASSWORD }}"
+    ports:
+      - '5984:5984'
+    volumes:
+      - "{{ configuration_path }}/couchdb:/opt/couchdb/data"
+      - "{{ configuration_path }}/couchdb/local.ini:/opt/couchdb/etc/local.ini"
+
   - name: winxuu
     image: chkpwd/winxuu:latest
     ports: [3389:3389]
