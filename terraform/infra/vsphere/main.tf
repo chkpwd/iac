@@ -102,6 +102,7 @@ module "kube-ops" {
   network_spec = {
     network_id              = "LAN"
     mac_address             = ["00:50:56:93:8a:b9", "00:50:56:93:35:60", "00:50:56:93:fa:88"][count.index]
+    static_mac_addr         = "true"
   }
   spec = {
     os_type                 = "linux"
