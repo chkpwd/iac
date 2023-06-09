@@ -1,0 +1,6 @@
+media_host_ip    = "172.16.10.20"
+sonarr_port      = "8989"
+prowlarr_port    = "9696"
+radarr_port      = "7878"
+sabnzbd_port     = "8180"
+qbittorrent_port = "8280"
