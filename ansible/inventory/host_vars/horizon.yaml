@@ -19,6 +19,38 @@ common_env: &common_env
   PGID: "{{ arr_gid }}"
 
 service_definitions:
+  - name: zipline-postgres
+    image: postgres:15
+    env:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DATABASE: postgres
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: "5"
+
+  - name: zipline
+    image: ghcr.io/diced/zipline
+    ports: [3001:3000]
+    env:
+      CORE_SECRET: "$6$LE8KUBB6EM9Gkg9w$sSNd6YCtugFUq62xN/VqrW4gPLDGvG0DzDLqZVqsWkT2CD4pPxB3mnqX1sPGm3OSY.Xwdk3I4EoreRXXCvkgS0"
+      CORE_HOST: "0.0.0.0"
+      CORE_RETURN_HTTPS: "true"
+      CORE_PORT: "3000"
+      CORE_DATABASE_URL: "postgres://postgres:postgres@zipline-postgres/postgres"
+      CORE_LOGGER: "true"
+      WEBSITE_TITLE: "Chkpwd's File Server"
+      UPLOADER_DEFAULT_FORMAT: 'NAME'
+      MFA_TOTP_ENABLED: "true"
+    volumes:
+      - "{{ configuration_path }}/zipline/uploads:/zipline/uploads"
+      - "{{ configuration_path }}/zipline/public:/zipline/public"
+    links: [zipline-postgres]
+
   - name: couchdb
     image: couchdb:latest
     env:
@@ -86,39 +118,6 @@ service_definitions:
     volumes:
       - "{{ configuration_path }}/unifi:/usr/lib/unifi/data"
 
-  - name: bookstack
-    image: "{{ linuxserver_image }}/bookstack"
-    env:
-      <<: *common_env
-      APP_URL: https://docs.chkpwd.com
-      DB_HOST: bookstack_db
-      DB_USER: bookstack
-      DB_DATABASE: bookstackapp
-      DB_PORT: '3306'
-      DB_PASS: "{{ USR_PASSWORD_SOPS }}"
-    ports: [6875:80]
-    volumes:
-      - "{{ configuration_path }}/bookstack:/config"
-    links: bookstack_db
-
-  - name: bookstack_db
-    image: "{{ linuxserver_image }}/mariadb"
-    env:
-      <<: *common_env
-      MYSQL_ROOT_PASSWORD: "{{ USR_PASSWORD_SOPS }}"
-      MYSQL_DATABASE: bookstackapp
-      MYSQL_USER: bookstack
-      MYSQL_PASSWORD: "{{ USR_PASSWORD_SOPS }}"
-    volumes:
-      - "{{ configuration_path }}/bookstack_db:/config"
-
-  - name: homer
-    image: b4bz/homer
-    ports: [8081:8080]
-    env: "{{ common_env }}"
-    volumes:
-      - "{{ configuration_path }}/homer:/www/assets"
-  
   - name: homepage
     image: ghcr.io/benphelps/homepage:latest
     ports: [3000:3000]
