@@ -2,7 +2,7 @@ resource "sonarr_download_client_sabnzbd" "sabnzbd" {
   enable   = true
   priority = 1
   name     = "sabnzbd"
-  host     = "${media_host_ip}"
+  host     = var.media_host_ip
   url_base = "/"
   port     = 8180
   api_key  = "${data.sops_file.servarr-secrets.data["sabnzbd_api_key"]}"
@@ -14,7 +14,7 @@ resource "sonarr_download_client_qbittorrent" "qbittorrent" {
   enable         = true
   priority       = 1
   name           = "qbittorrent"
-  host           = "${media_host_ip}"
+  host           = var.media_host_ip
   url_base       = "/"
   tv_category    = "tv-sonarr"
   port           = 8280

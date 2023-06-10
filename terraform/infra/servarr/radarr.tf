@@ -2,9 +2,9 @@ resource "radarr_download_client_sabnzbd" "sabnzbd" {
   enable            = true
   priority          = 1
   name              = "sabnzbd"
-  host              = "${media_host_ip}"
+  host              = var.media_host_ip
   url_base          = "/"
-  port              = "${sabnzbd_port}"
+  port              = var.ports["sabnzbd"]
   movie_category    = "movies"
   api_key           = "${data.sops_file.servarr-secrets.data["sabnzbd_api_key"]}"
   username          = "${data.sops_file.servarr-secrets.data["servarr_username"]}"
@@ -15,17 +15,17 @@ resource "radarr_download_client_qbittorrent" "qbittorrent" {
   enable         = true
   priority       = 1
   name           = "qbittorrent"
-  host           = "${media_host_ip}"
+  host           = var.media_host_ip
   url_base       = "/"
   movie_category = "radarr"
-  port           = "${qbittorrent_port}"
+  port           = var.ports["qbittorrent"]
   first_and_last = false
   username       = "${data.sops_file.servarr-secrets.data["servarr_username"]}"
   password       = "${data.sops_file.servarr-secrets.data["servarr_password"]}"
 }
 
 resource "radarr_naming" "media_naming_configs" {
-  include_quality            = true
+  include_quality            = false
   rename_movies              = true
   replace_illegal_characters = true
   replace_spaces             = false
