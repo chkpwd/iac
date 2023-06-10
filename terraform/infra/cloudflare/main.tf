@@ -16,8 +16,8 @@ resource "cloudflare_record" "www_a_record" {
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
 
-resource "cloudflare_record" "winxuu_cname" {
-  name    = "winxuu"
+resource "cloudflare_record" "zipline_cname" {
+  name    = "zipline"
   proxied = true
   ttl     = 1
   type    = "CNAME"
@@ -25,8 +25,8 @@ resource "cloudflare_record" "winxuu_cname" {
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
 
-resource "cloudflare_record" "bookstacks_cname" {
-  name    = "docs"
+resource "cloudflare_record" "winxuu_cname" {
+  name    = "winxuu"
   proxied = true
   ttl     = 1
   type    = "CNAME"
@@ -45,15 +45,6 @@ resource "cloudflare_record" "kavita_cname" {
 
 resource "cloudflare_record" "overseerr_cname" {
   name    = "request"
-  proxied = true
-  ttl     = 1
-  type    = "CNAME"
-  value   = "chkpwd.com"
-  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
-}
-
-resource "cloudflare_record" "code-server_cname" {
-  name    = "code"
   proxied = true
   ttl     = 1
   type    = "CNAME"
