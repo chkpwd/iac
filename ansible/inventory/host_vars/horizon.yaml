@@ -126,14 +126,6 @@ service_definitions:
       - "{{ configuration_path }}/homepage:/app/config"
       - "{{ docker_sock }}"
 
-  - name: code-server
-    image: "{{ linuxserver_image }}/code-server"
-    ports: [9443:8443]
-    env: "{{ common_env }}"
-    volumes:
-      - "{{ configuration_path }}/code:/config"
-      - "{{ configuration_path }}/homer:/config/homer:rw"
-
   - name: freshrss
     image: "{{ linuxserver_image }}/freshrss:latest"
     env: "{{ common_env }}"
