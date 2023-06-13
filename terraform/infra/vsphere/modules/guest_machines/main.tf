@@ -18,7 +18,7 @@ resource "vsphere_virtual_machine" "linux" {
   network_interface {
     network_id   = data.vsphere_network.network.id
     adapter_type = "vmxnet3"
-    use_static_mac = var.network_spec.static_mac_addr != null ? var.network_spec.static_mac_addr : true
+    use_static_mac = var.network_spec.static_mac_addr
     mac_address  = var.network_spec.mac_address != null ? var.network_spec.mac_address : ""
   }
 
@@ -59,8 +59,8 @@ resource "vsphere_virtual_machine" "linux" {
     ignore_changes = [
       folder,
       disk.0.thin_provisioned,
-      disk.0.label,
       clone.0.template_uuid,
+      clone[0].customize,
       resource_pool_id,
       pci_device_id,
       memory_reservation,
@@ -86,8 +86,10 @@ resource "vsphere_virtual_machine" "windows" {
   sync_time_with_host = true
 
   network_interface {
-    network_id   = var.network_spec.network_id
+    network_id   = data.vsphere_network.network.id
     adapter_type = "vmxnet3"
+    use_static_mac = var.network_spec.static_mac_addr
+    mac_address  = var.network_spec.mac_address != null ? var.network_spec.mac_address : ""
   }
 
   disk {
@@ -117,6 +119,7 @@ resource "vsphere_virtual_machine" "windows" {
       folder,
       disk.0.thin_provisioned,
       clone.0.template_uuid,
+      clone[0].customize,
       resource_pool_id,
       pci_device_id,
       memory_reservation,

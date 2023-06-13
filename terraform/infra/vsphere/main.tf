@@ -10,25 +10,24 @@ module "horizon" {
     network_id              = "LAN"
   }
   spec = {
-    os_type                   = "linux"
+    os_type                 = "linux"
     cpu                     = 2
     memory                  = 4096
     disk_size               = 16
   }
 }
 
-module "stable-diffusion" {
+module "cockpit" {
   source                    = "./modules/guest_machines"
-  count                     = 0
-  vm_name                   = "stable-diffusion"
+  vm_name                   = "cockpit"
   vm_template               = "deb-x11-template"
   network_spec = {
-    network_id              = "IoT"
+    network_id              = "LAN"
   }
   spec = {
-    os_type                   = "linux"
-    cpu                     = 4
-    memory                  = 10240
+    os_type                 = "linux"
+    cpu                     = 1
+    memory                  = 1024
     disk_size               = 48
   }
 }
@@ -41,7 +40,7 @@ module "crypto" {
     network_id              = "LAN"
   }
   spec = {
-    os_type                   = "linux"
+    os_type                 = "linux"
     cpu                     = 4
     memory                  = 8192
     disk_size               = 48
@@ -56,7 +55,7 @@ module "mirage" {
     network_id              = "Media"
   }
   spec = {
-    os_type                   = "linux"
+    os_type                 = "linux"
     cpu                     = 4
     memory                  = 8192
     disk_size               = 16
@@ -71,7 +70,7 @@ module "homeassistant" {
     network_id              = "LAN"
   }
   spec = {
-    os_type                   = "linux"
+    os_type                 = "linux"
     cpu                     = 2
     memory                  = 2048
     disk_size               = 16
@@ -87,7 +86,7 @@ module "bloodhound" {
     network_id              = "LAN"
   }
   spec = {
-    os_type                   = "windows"
+    os_type                 = "windows"
     cpu                     = 2
     memory                  = 8192
     disk_size               = 48
@@ -96,13 +95,13 @@ module "bloodhound" {
 
 module "kube-ops" {
   source                    = "./modules/guest_machines"
-  count                     = 3
+  count                     = 0
   vm_name                   = "kubes-cp-${count.index + 1}"
   vm_template               = "deb-x11-template"
   network_spec = {
     network_id              = "LAN"
     mac_address             = ["00:50:56:93:8a:b9", "00:50:56:93:35:60", "00:50:56:93:fa:88"][count.index]
-    static_mac_addr         = "true"
+    static_mac_addr         = true
   }
   spec = {
     os_type                 = "linux"
@@ -132,3 +131,19 @@ module "traefik" {
     disk_size               = 60
   }
 }
+
+# module "testing" {
+#   source                    = "./modules/guest_machines"
+#   count                     = 1
+#   vm_name                   = "kubes-cp-${count.index + 1}"
+#   vm_template               = "deb-x11-template"
+#   network_spec = {
+#     network_id              = "LAN"
+#   }
+#   spec = {
+#     os_type                 = "linux"
+#     cpu                     = 4
+#     memory                  = 4096
+#     disk_size               = 16
+#   }
+# }
