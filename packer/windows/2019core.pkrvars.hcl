@@ -1,4 +1,4 @@
-vm_name = "WSrv19-CE-Temp"
+machine_name = "WSrv19-CE-Temp"
 os_version = "2019Core"
 os_family = "windows"
 guest_os_type = "windows9_64Guest"

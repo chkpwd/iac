@@ -161,7 +161,7 @@ LoadOrderGroup=SCSI Miniport
 ; We need to force the use of \Driver\pvscsi32 as the driver object name,
 ; otherwise the crash dump driver loader functions cannot find the driver.
 ; StartName entry defined in the INF format is supposed to facilitate that,
-; but at least on win2k3sp2-32 and win2k8-datacenter-32 the driver installer
+; but at least on win2k3sp2-32 and win2k8-vcenter_datacenter-32 the driver installer
 ; interpretes StartName as the name of the account to start the service under,
 ; which is an incorrect interpretation for SERVICE_KERNEL_DRIVER type. As a
 ; work around ObjectName registry entry is added directly using brute-force.

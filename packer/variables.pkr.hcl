@@ -1,19 +1,30 @@
+variable "vcenter_datacenter" {
+  default = "The Outlands"
+}
 variable "vcenter_server" {
     description = "vCenter server to build the VM on"
+    default = "ronin.local.chkpwd"
 }
 variable "vcenter_username" {
     description = "Username to authenticate to vCenter"
+    default = "administrator@vsphere.local.chkpwd.com"
 }
 variable "vcenter_password" {
     description = "Password to authenticate to vCenter"
     default     = ""
 }
-variable "vcenter_cluster" {}
-variable "vcenter_datacenter" {}
-variable "vcenter_host" {}
-variable "vcenter_datastore" {}
+variable "vcenter_cluster" {
+  default = "Eduardo"
+}
+variable "vcenter_host" {
+  default = "octane.local.chkpwd.com"
+}
+variable "vcenter_datastore" {
+  default = "nvme-30A"
+}
 variable "vcenter_folder" {
     description = "The vcenter folder to store the template"
+    default = "Templates"
 }
 variable "connection_username" {
     default = "Administrator"
@@ -34,15 +45,12 @@ variable "root_disk_size" {
 variable "nic_type" {
     default = "vmxnet3"
 }
-variable "vm_network" { }
-variable "num_cpu" {
-    default = 2
-}
+variable "network_name" { }
 variable "num_cores" {
-    default = 2
+    default = 1
 }
-variable "vm_ram" {
-    default = 8192
+variable "mem_size" {
+    default = 1024
 }
 variable "os_family" {
     description = "OS Family builds the paths needed for packer"
@@ -53,4 +61,7 @@ variable "os_iso_url" {
     default = ""
 }
 variable "boot_command" {} #TODO: Figure out a better way to handle this
-variable "vm_name" {}
+variable "iso_checksum_type" {}
+variable "hostname" {}
+variable "domain" {}
+variable "machine_name" {}

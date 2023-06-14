@@ -15,6 +15,8 @@ resource "vsphere_virtual_machine" "linux" {
 
   sync_time_with_host = true
 
+  # firmware = "efi"
+
   network_interface {
     network_id   = data.vsphere_network.network.id
     adapter_type = "vmxnet3"
