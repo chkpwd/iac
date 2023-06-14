@@ -3,7 +3,7 @@ variable "vcenter_datacenter" {
 }
 variable "vcenter_server" {
     description = "vCenter server to build the VM on"
-    default = "ronin.local.chkpwd"
+    default = "ronin.local.chkpwd.com"
 }
 variable "vcenter_username" {
     description = "Username to authenticate to vCenter"
@@ -36,8 +36,12 @@ variable "vm_hardware_version" {
     default = "15"
 }
 variable "iso_checksum" {}
-variable "os_version" {}
-variable "os_iso_path" {}
+variable "os_version" {
+  default = ""
+}
+variable "os_iso_path" {
+  default = ""
+}
 variable "guest_os_type" {}
 variable "root_disk_size" {
     default = 48000
@@ -60,7 +64,9 @@ variable "os_iso_url" {
     description = "The download url for the ISO"
     default = ""
 }
-variable "boot_command" {} #TODO: Figure out a better way to handle this
+variable "boot_command" {
+  default = ""
+} #TODO: Figure out a better way to handle this
 variable "iso_checksum_type" {}
 variable "hostname" {}
 variable "domain" {}
