@@ -1,8 +1,8 @@
 packer {
-  required_version = ">= 1.8.4"
+  required_version = ">= 1.9.1"
   required_plugins {
     vsphere = {
-      version = ">= v1.1.2"
+      version = ">= v1.2.0"
       source  = "github.com/hashicorp/vsphere"
     }
     windows-update = {
@@ -33,7 +33,7 @@ source "vsphere-iso" "linux" {
   folder                = "templates"
 
   vm_name       = var.machine_name
-  guest_os_type = var.os_version
+  guest_os_type = var.guest_os_type
 
   ssh_username = var.connection_username
   ssh_password = var.connection_password
@@ -48,19 +48,19 @@ source "vsphere-iso" "linux" {
   disk_controller_type =  ["lsilogic-sas"]
 
   storage {
-    disk_size = var.root_disk_size
     disk_thin_provisioned = true
+    disk_size             = var.root_disk_size
   }
 
-  iso_checksum		      = "${var.iso_checksum_type}:${var.iso_checksum}"
-  iso_url				        = var.os_iso_url
+  iso_checksum = "${var.iso_checksum_type}:${var.iso_checksum}"
+  iso_url      = var.os_iso_url
 
   network_adapters {
     network =  var.network_name
     network_card = "vmxnet3"
   }
 
-    boot_command = [
+  boot_command = [
     "c<wait>",
     "linux /install.amd/vmlinuz ",
     "auto url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
@@ -76,7 +76,6 @@ source "vsphere-iso" "linux" {
 }
 
 source "vsphere-iso" "windows" {
-  # vCenter settings
   vcenter_server      = var.vcenter_server
   username            = var.vcenter_username
   password            = var.vcenter_password
@@ -102,11 +101,11 @@ source "vsphere-iso" "windows" {
   shutdown_timeout      = "15m"
   vm_version            = var.vm_hardware_version
   iso_paths              = [
-      var.os_iso_path
+    var.os_iso_path
   ]
 
   iso_checksum          = var.iso_checksum
-  guest_os_type         = var.os_version
+  guest_os_type         = var.guest_os_type
   disk_controller_type  = ["pvscsi"] # Windows requires vmware tools drivers for pvscsi to work
   network_adapters {
     # For windows, the vmware tools network drivers are required to be connected by floppy before tools is installed
@@ -124,7 +123,7 @@ source "vsphere-iso" "windows" {
   RAM_hot_plug          = true
   firmware              = "efi"
   floppy_files          = [
-      "./boot_config/${var.os_version}/Autounattend.xml",
+      "./boot_config/${var.guest_os_type}/Autounattend.xml",
       "./scripts/winrm.bat",
       "./scripts/Install-VMWareTools.ps1",
       "./scripts/Fix-Firewall.ps1",
@@ -142,8 +141,12 @@ build {
     playbook_file           = "/home/hyoga/code/boilerplates/ansible/playbooks/packer.yaml"
     use_proxy               = false
     max_retries             = 3
-    inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_password={{ .Password }} ansible_become_password={{ .Password }} ansible_ssh_common_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAuthentication=no'"
-    ansible_env_vars        = ["ANSIBLE_CONFIG=/home/hyoga/code/boilerplates/ansible/ansible.cfg"]
+    inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_password={{ .Password }} ansible_become_password={{ .Password }}"
+    ansible_env_vars        = [
+      "ANSIBLE_CONFIG=/home/hyoga/code/boilerplates/ansible/ansible.cfg", 
+      "ANSIBLE_SSH_ARGS='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAuthentication=no'",
+      "ANSIBLE_VERBOSITY=2"
+      ]
   }
 
 }
