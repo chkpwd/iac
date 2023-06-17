@@ -12,16 +12,16 @@ common_env: &common_env
   PGID: "1000"
 
 service_definitions:
-  - name: semaphoredb
-    image: mysql:8.0
-    hostname: semaphore
-    volumes:
-      - "{{ configuration_path }}/semaphore/db:/var/lib/mysql"
+  - name: semaphore-postgres
+    ports: [5432:5432]
+    image: postgres:14
+    hostname: postgres
+    volumes: 
+      - "{{ configuration_path }}/semaphore/db:/var/lib/postgresql/data"
     env:
-      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
-      MYSQL_DATABASE: semaphore
-      MYSQL_USER: semaphore
-      MYSQL_PASSWORD: "{{ SEMAPHORE_DB_PASSWORD }}"
+      POSTGRES_USER: semaphore
+      POSTGRES_PASSWORD: "{{ SEMAPHORE_DB_PASSWORD }}"
+      POSTGRES_DB: semaphore
 
   - name: semaphore
     image: semaphoreui/semaphore:v2.8.90
@@ -29,8 +29,8 @@ service_definitions:
     env:
       SEMAPHORE_DB_USER: semaphore
       SEMAPHORE_DB_PASS: "{{ SEMAPHORE_DB_PASSWORD }}"
-      SEMAPHORE_DB_HOST: semaphoredb
-      SEMAPHORE_DB_PORT: "3306"
+      SEMAPHORE_DB_HOST: semaphore-postgres
+      SEMAPHORE_DB_PORT: "5432"
       SEMAPHORE_DB_DIALECT: mysql
       SEMAPHORE_DB: semaphore
       SEMAPHORE_PLAYBOOK_PATH: /tmp/semaphore/
@@ -44,7 +44,7 @@ service_definitions:
       - "{{ semaphore_inv_file }}:/inventory:ro"
       - "{{ configuration_path }}/semaphore/authorized-keys/:/authorized-keys:ro"
       - "{{ configuration_path }}/config/:/etc/semaphore:rw"
-    links: [semaphoredb]
+    links: [semaphore-postgres]
 
   - name: zipline-postgres
     image: postgres:15
