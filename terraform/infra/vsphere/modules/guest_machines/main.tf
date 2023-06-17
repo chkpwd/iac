@@ -15,7 +15,7 @@ resource "vsphere_virtual_machine" "linux" {
 
   sync_time_with_host = true
 
-  # firmware = "efi"
+  firmware = "efi"
 
   network_interface {
     network_id   = data.vsphere_network.network.id
@@ -33,10 +33,12 @@ resource "vsphere_virtual_machine" "linux" {
     for_each = var.spec.additional_disks != null ? var.spec.additional_disks : []
     content {
       label            = "extra-disk-${disk.key}"
+      datastore_id     = disk.value.datastore_id != null ? disk.value.datastore_id : null
+      attach           = disk.value.attach_disk
       size             = disk.value.size
       eagerly_scrub    = false
       thin_provisioned = true
-      keep_on_remove   = true
+      keep_on_remove   = disk.value.attach_disk ? null : true
       unit_number      = disk.key + 1
     }
   }
@@ -59,15 +61,10 @@ resource "vsphere_virtual_machine" "linux" {
 
   lifecycle {
     ignore_changes = [
-      folder,
-      disk.0.thin_provisioned,
-      clone.0.template_uuid,
+      firmware,
+      clone[0].template_uuid,
       clone[0].customize,
-      resource_pool_id,
-      pci_device_id,
-      memory_reservation,
-      # until https://github.com/hashicorp/terraform-provider-vsphere/pull/1603
-      extra_config,
+      pci_device_id
     ]
   }
 }
@@ -103,6 +100,7 @@ resource "vsphere_virtual_machine" "windows" {
     for_each = var.spec.additional_disks != null ? var.spec.additional_disks : []
     content {
       label            = "extra-disk-${disk.key}"
+      datastore_id     = disk.value.datastore_id != null ? disk.value.datastore_id : null
       size             = disk.value.size
       eagerly_scrub    = false
       thin_provisioned = true
@@ -118,14 +116,19 @@ resource "vsphere_virtual_machine" "windows" {
 
   lifecycle {
     ignore_changes = [
-      folder,
-      disk.0.thin_provisioned,
-      clone.0.template_uuid,
+      firmware,
+      clone[0].template_uuid,
       clone[0].customize,
-      resource_pool_id,
-      pci_device_id,
-      memory_reservation,
-      extra_config,
+      pci_device_id
     ]
   }
 }
+
+# resource "vsphere_virtual_disk" "virtual_disk" {
+#   size               = 5400
+#   type               = "thin"
+#   vmdk_path          = "/cockpit/cockpit.vmdk"
+#   create_directories = false
+#   datacenter         = data.vsphere_datacenter.datacenter.name
+#   datastore          = data.vsphere_datastore.media_datastore.name
+# }

@@ -2,20 +2,6 @@
 # vCenter connection #
 #====================#
 
-# # vSphere username used to deploy the infrastructure #
-# variable "vsphere_user" {
-#   description = "vSphere user"
-#   type        = string
-#   sensitive   = true
-# } 
-
-# # vSphere password used to deploy the infrastructure #
-# variable "vsphere_password" {
-#   description = "vSphere password"
-#   type        = string
-#   sensitive   = true
-# } 
-
 variable "vsphere_vcenter" {
   description = "vCenter server FQDN or IP"
   type        = string

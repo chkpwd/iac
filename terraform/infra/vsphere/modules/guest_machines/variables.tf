@@ -98,7 +98,9 @@ variable "spec" {
       network = string
     })))
     additional_disks = optional(list(object({
-      size = number
+      size           = number
+      datastore_id   = optional(string)
+      attach_disk    = optional(bool)
     })))
   })
 }
