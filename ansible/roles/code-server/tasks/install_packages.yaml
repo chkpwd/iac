@@ -61,7 +61,7 @@
 
 - name: Grab latest 'Pet' release from github
   ansible.builtin.uri:
-    url: https://api.github.com/repos/smetroid/pet/releases/latest
+    url: https://api.github.com/repos/knqyf263/pet/releases/latest
     return_content: true
   register: json_reponse
 
@@ -155,16 +155,14 @@
     return_content: true
   register: json_reponse
 
-- name: "Downloading 'helm' {{ json_reponse.json.tag_name }}"
-  loop: "{{ json_reponse.json.assets }}"
-  when: "'linux-amd64.tar.gz' in item.name"
+- name: "Downloading 'helm'"
   ansible.builtin.get_url:
-    url: "{{ item.browser_download_url }}"
+    url: "https://get.helm.sh/helm-{{ json_reponse.json.tag_name }}-linux-amd64.tar.gz"
     dest: /tmp/helm_amd64.tar.gz
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: 0644
-  no_log: true
+  no_log: false
 
 - name: Unarchive the 'helm' tar file
   ansible.builtin.unarchive:
@@ -174,7 +172,7 @@
 
 - name: Move the 'helm' binary to local bin
   ansible.builtin.copy:
-    src: "/tmp/helm"
+    src: "/tmp/linux-amd64/helm"
     dest: "/usr/local/bin/"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
