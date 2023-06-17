@@ -7,27 +7,3 @@
     group: "{{ ansible_user }}"
     mode: preserve
   notify: Restart ssh daemon
-
-- name: Copy ZSH contents to remote host
-  ansible.builtin.template:
-    src: "{{ item }}"
-    dest: "/home/{{ ansible_user }}/.oh-my-zsh/custom/{{ item | basename }}"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: preserve
-  with_fileglob:
-    - "{{ template_path }}/zsh_contents/*"
-
-- name: Set the ZSH_CUSTOM shell var if not present
-  ansible.builtin.set_fact:
-    zsh_custom: "{{ ansible_env.ZSH_CUSTOM | default('/home/' ~ ansible_user ~ '/.oh-my-zsh/custom', true) }}"
-
-- name: Clone a zsh-autosuggestions repo
-  ansible.builtin.git:
-    repo: https://github.com/zsh-users/zsh-autosuggestions
-    dest: "{{ zsh_custom }}/plugins/zsh-autosuggestions"
-
-- name: Clone a zsh-syntax-highlighting repo
-  ansible.builtin.git:
-    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
-    dest: "{{ zsh_custom }}/plugins/zsh-syntax-highlighting"
