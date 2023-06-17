@@ -35,15 +35,28 @@
             - zsh-autosuggestions
             - sudo
 
-- name: Clone a zsh-autosuggestions repo
-  ansible.builtin.git:
-    repo: https://github.com/zsh-users/zsh-autosuggestions
-    dest: "{{ zsh_custom }}/plugins/zsh-autosuggestions"
+- name: Check all plugins exists
+  ansible.builtin.stat:
+    path: "{{ zsh_custom }}/plugins/{{ item.name }}"
+  loop: "{{ zsh_plugins }}"
+  register: plugins_stats
 
-- name: Clone a zsh-syntax-highlighting repo
+- name: Clone OMZ plugins if they do not exist or need updates
   ansible.builtin.git:
-    repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
-    dest: "{{ zsh_custom }}/plugins/zsh-syntax-highlighting"
+    repo: "{{ item.repo }}"
+    dest: "{{ zsh_custom }}/plugins/{{ item.name }}"
+    update: true
+    force: true
+  loop: "{{ zsh_plugins }}"
+
+- name: Clone all ZSH settings
+  ansible.builtin.get_url:
+    url: "https://gist.githubusercontent.com/unix-chkpwd/{{ item.id }}/raw"
+    dest: "{{ zsh_custom }}/{{ item.name }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0644"
+  loop: "{{ zsh_gists }}"
 
 - name: Copy the public SSH key
   ansible.posix.authorized_key:
