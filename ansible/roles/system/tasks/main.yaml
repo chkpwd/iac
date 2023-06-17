@@ -33,21 +33,17 @@
           plugins:
             - git
             - zsh-autosuggestions
+            - zsh-syntax-highlighting
             - sudo
-
-- name: Check all plugins exists
-  ansible.builtin.stat:
-    path: "{{ zsh_custom }}/plugins/{{ item.name }}"
-  loop: "{{ zsh_plugins }}"
-  register: plugins_stats
 
 - name: Clone OMZ plugins if they do not exist or need updates
   ansible.builtin.git:
     repo: "{{ item.repo }}"
     dest: "{{ zsh_custom }}/plugins/{{ item.name }}"
     update: true
-    force: true
   loop: "{{ zsh_plugins }}"
+  loop_control:
+    label: "{{ item.name }}"
 
 - name: Clone all ZSH settings
   ansible.builtin.get_url:
@@ -57,6 +53,8 @@
     group: "{{ ansible_user }}"
     mode: "0644"
   loop: "{{ zsh_gists }}"
+  loop_control:
+    label: "{{ item.name }}"
 
 - name: Copy the public SSH key
   ansible.posix.authorized_key:
