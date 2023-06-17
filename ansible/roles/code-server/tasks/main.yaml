@@ -1,7 +1,7 @@
 ---
 - name: "Set file watcher limit to max in /etc/sysctl.conf"
   ansible.posix.sysctl:
-    name: fs.inotify.max_user_watches=
+    name: fs.inotify.max_user_watches
     value: '524288'
     state: present
 
