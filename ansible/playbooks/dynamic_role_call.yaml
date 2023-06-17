@@ -1,13 +1,13 @@
 ---
 - name: Dynamic Role Playbook
   hosts: "{{ onhosts | default('localhost') }}"
-  become: "{{ become | default(false if onhosts | default('localhost') == 'localhost' else true) }}"
+  become: "{{ become | default(false)}}"
   gather_facts: true
   pre_tasks:
     - name: Warn if localhost
       ansible.builtin.pause:
-        prompt: "\nWARNING: The role will run against localhost. You have 5 seconds to cancel"
-        seconds: 5
+        prompt: "\nWARNING: The role will run against localhost. You have 2 seconds to cancel"
+        seconds: 2
       when: onhosts | default('localhost') == 'localhost'
 
   tasks:
