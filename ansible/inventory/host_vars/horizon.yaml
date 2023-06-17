@@ -1,24 +1,51 @@
 ---
 media_path: /mnt/media
 container_path: /data
-arr_uid: "1000"
-arr_gid: "1000"
+semaphore_inv_file: "/home/hyoga/code/boilerplates/ansible/inventory/clients.yaml"
 docker_sock: /var/run/docker.sock:/var/run/docker.sock:ro
 docker_network:
     - misc
 
-cname_records:
-  - docs
-  - vault
-  - rss
-  - kavita
-
 common_env: &common_env
   TZ: America/New_York
-  PUID: "{{ arr_uid }}"
-  PGID: "{{ arr_gid }}"
+  PUID: "1000"
+  PGID: "1000"
 
 service_definitions:
+  - name: semaphoredb
+    image: mysql:8.0
+    hostname: semaphore
+    volumes:
+      - "{{ configuration_path }}/semaphore/db:/var/lib/mysql"
+    env:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_DATABASE: semaphore
+      MYSQL_USER: semaphore
+      MYSQL_PASSWORD: "{{ SEMAPHORE_DB_PASSWORD }}"
+
+  - name: semaphore
+    image: semaphoreui/semaphore:v2.8.90
+    ports: [3002:3000]
+    env:
+      SEMAPHORE_DB_USER: semaphore
+      SEMAPHORE_DB_PASS: "{{ SEMAPHORE_DB_PASSWORD }}"
+      SEMAPHORE_DB_HOST: semaphoredb
+      SEMAPHORE_DB_PORT: "3306"
+      SEMAPHORE_DB_DIALECT: mysql
+      SEMAPHORE_DB: semaphore
+      SEMAPHORE_PLAYBOOK_PATH: /tmp/semaphore/
+      SEMAPHORE_ADMIN_NAME: admin
+      SEMAPHORE_ADMIN_PASSWORD: "{{ SEMAPHORE_UI_PASSWORD }}"
+      SEMAPHORE_ADMIN_EMAIL: "{{ GMAIL_ADDR }}"
+      SEMAPHORE_ADMIN: admin
+      SEMAPHORE_ACCESS_KEY_ENCRYPTION: "{{ SEMAPHORE_ACCESS_KEY }}"
+      ANSIBLE_HOST_KEY_CHECKING: "false"
+    volumes:
+      - "{{ semaphore_inv_file }}:/inventory:ro"
+      - "{{ configuration_path }}/semaphore/authorized-keys/:/authorized-keys:ro"
+      - "{{ configuration_path }}/config/:/etc/semaphore:rw"
+    links: [semaphoredb]
+
   - name: zipline-postgres
     image: postgres:15
     env:
@@ -26,7 +53,7 @@ service_definitions:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DATABASE: postgres
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - "{{ configuration_path }}/zipline/db:/var/lib/postgresql/data"
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 10s
