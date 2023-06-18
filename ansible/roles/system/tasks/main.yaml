@@ -4,6 +4,13 @@
     state: latest
   become: true
 
+- name: Configure logrotate
+  ansible.builtin.include_tasks: logs.yaml
+
+- name: Configure Docker Daemon Path
+  ansible.builtin.include_tasks: docker.yaml
+  when: "'docker_hosts' in group_names"
+
 - name: Apply secondary disk partitioning
   ansible.builtin.include_tasks: disk.yaml
   when: ansible_facts['devices'] | length > 1
