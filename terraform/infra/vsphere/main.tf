@@ -12,8 +12,13 @@ module "horizon" {
   spec = {
     os_type                 = "linux"
     cpu                     = 2
-    memory                  = 4096
+    memory                  = 5120
     disk_size               = 16
+    additional_disks = [
+      {
+        size                = 25
+      }
+    ]
   }
 }
 
