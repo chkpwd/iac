@@ -1,7 +1,7 @@
 ---
 - name: Dynamic Role Playbook
   hosts: "{{ onhosts | default('localhost') }}"
-  become: "{{ become | default(false)}}"
+  become: "{{ elevate | default(false)}}"
   gather_facts: true
   pre_tasks:
     - name: Warn if localhost
