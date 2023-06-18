@@ -1,9 +1,0 @@
----
-- name: Playbook for testing things
-  hosts: guests
-  become: true
-  tasks:
-    - name:
-      ansible.builtin.command: hostname -I
-      run_once: true
-      delegate_to: horizon
