@@ -4,10 +4,11 @@
   vars:
     logrotate_global_config: false
     logrotate_applications:
-      - name: rsyslog
+      - name: custom_logging
         definitions:
           - logs:
-              - /var/log/*.log
+              - /var/log/syslog.log
+              - /var/log/messages
             options:
               - daily
               - size 20M
@@ -18,9 +19,8 @@
               - notifempty
               - create 640 root adm
               - sharedscripts
-            # postrotate:
-            #   This weird indentation is required.
-            #   - |
-            #     if [ -f /var/run/nginx.pid ]; then
-            #               kill -USR1 `cat /var/run/nginx.pid`
-            #             fi
+
+- name: Health Check logrotate Service
+  ansible.builtin.service:
+    name: logrotate
+    state: started
