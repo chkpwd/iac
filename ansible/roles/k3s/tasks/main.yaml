@@ -1,4 +1,16 @@
 ---
+- name: Check if cluster is installed
+  check_mode: false
+  ansible.builtin.stat:
+    path: /etc/rancher/k3s/config.yaml
+  register: k3s_check_installed
+
+- name: Ignore manifests templates and urls if the cluster is already installed
+  when: k3s_check_installed.stat.exists
+  ansible.builtin.set_fact:
+    k3s_server_manifests_templates: []
+    k3s_server_manifests_urls: []
+
 - name: Install dependencies
   ansible.builtin.apt:
     update_cache: true
@@ -16,21 +28,45 @@
   vars:
     k3s_state: installed
 
-- name: Copy kubeconfig file
-  run_once: true
-  ansible.builtin.fetch:
-    src: "/etc/rancher/k3s/k3s.yaml"
-    dest: "{{ ansible_env.HOME }}/.kube/config"
-    flat: true
-  when:
-    - k3s_control_node is defined
-    - k3s_control_node
+- name: Control remote_user escalation
+  vars: 
+    ansible_user_dir: "/home/{{ ansible_user }}"
+  block:
+    - name: Copy kubeconfig file
+      become: false
+      run_once: true
+      ansible.builtin.fetch:
+        src: "/etc/rancher/k3s/k3s.yaml"
+        dest: "{{ ansible_user_dir }}/.kube/config"
+        flat: true
+      when:
+        - k3s_control_node is defined
+        - k3s_control_node
 
-- name: Update kubeconfig with the correct IPv4 address
-  delegate_to: localhost
-  become: false
-  run_once: true
-  ansible.builtin.replace:
-    path: "{{ ansible_env.HOME }}/.kube/config"
-    regexp: "https://127.0.0.1:6443"
-    replace: "https://{{ k3s_registration_address }}:6443"
+    - name: Copy kube-vip manifest file
+      delegate_to: "{{ item }}"
+      ansible.builtin.copy:
+        src: templates/kube-vip-static-pod.yaml.j2
+        dest: /var/lib/rancher/k3s/server/manifests/kube-vip-static-pod.yaml
+        owner: "root"
+        group: "root"
+        mode: 0644
+      when:
+        - k3s_control_node is defined
+        - k3s_control_node
+      loop:
+        - kubes-cp-2
+        - kubes-cp-3
+      loop_control:
+        label: "{{ item }}"
+
+    - name: Update kubeconfig with the correct IPv4 address
+      delegate_to: localhost
+      become: false
+      run_once: true
+      ansible.builtin.replace:
+        path: "{{ ansible_user_dir }}/.kube/config"
+        regexp: "https://127.0.0.1:6443"
+        replace: "https://{{ kube_vip_address }}:6443"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
