@@ -38,7 +38,6 @@ resource "vsphere_virtual_machine" "linux" {
       size             = disk.value.size
       eagerly_scrub    = false
       thin_provisioned = true
-      keep_on_remove   = disk.value.attach_disk ? null : true
       unit_number      = disk.key + 1
     }
   }
