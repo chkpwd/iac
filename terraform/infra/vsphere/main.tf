@@ -107,7 +107,7 @@ module "bloodhound" {
 
 module "kube-ops" {
   source                    = "./modules/guest_machines"
-  count                     = 0
+  count                     = 3
   vm_name                   = "kubes-cp-${count.index + 1}"
   vm_template               = "deb-12-template"
   network_spec = {
@@ -122,7 +122,7 @@ module "kube-ops" {
     disk_size               = 16
     additional_disks = [
       {
-        size                = 60
+        size                = 25
       }
     ]
   }
