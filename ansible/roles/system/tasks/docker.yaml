@@ -7,3 +7,4 @@
     group: "root"
     mode: 0644
   notify: Restart Docker Service
+  when: ansible_facts['devices'] | length > 1
