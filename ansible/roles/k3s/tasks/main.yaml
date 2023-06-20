@@ -40,8 +40,7 @@
         dest: "{{ ansible_user_dir }}/.kube/config"
         flat: true
       when:
-        - k3s_control_node is defined
-        - k3s_control_node
+        - k3s_control_node | default(false)
 
     - name: Copy kube-vip manifest file
       delegate_to: "{{ item }}"
@@ -52,14 +51,11 @@
         group: "root"
         mode: 0644
       when:
-        - k3s_control_node is defined
-        - k3s_control_node
-      loop:
-        - kubes-cp-2
-        - kubes-cp-3
+        - k3s_control_node | default(false)
+      loop: "{{ groups['master'][1:] }}" 
       loop_control:
         label: "{{ item }}"
-
+  
     - name: Update kubeconfig with the correct IPv4 address
       delegate_to: localhost
       become: false
