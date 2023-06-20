@@ -71,6 +71,11 @@ module "mirage" {
     cpu                     = 4
     memory                  = 8192
     disk_size               = 16
+    additional_disks = [
+      {
+        size                = 25
+      }
+    ]
   }
 }
 
