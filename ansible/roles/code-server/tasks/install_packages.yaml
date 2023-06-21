@@ -6,14 +6,10 @@
   become: true
 
 - name: Install Pip Tools
-  ansible.builtin.pip:
-    name:
-      - ansible
-      - ansible-lint
-      - molecule
-      - molecule-docker
-      - molecule-vagrant
-    # * extra_args: --user
+  community.general.pipx:
+    name: "{{ item }}"
+    install_deps: true
+  loop: "{{ pipx_tools }}"
 
 - name: Install packages
   ansible.builtin.apt:
@@ -22,7 +18,7 @@
       - terraform
       - packer
       - vagrant
-      - powershell
+        #- powershell
   become: true
 
 - name: Grab latest tar file from Pulumi Github

@@ -41,25 +41,26 @@
   become: true
   when: ansible_distribution == 'Rocky'
 
-- name: Add VirtualBox GPG Key
-  ansible.builtin.get_url:
-    url: https://www.virtualbox.org/download/oracle_vbox_2016.asc
-    dest: "{{ keyrings_dir }}/oracle_vbox_2016.asc"
-    mode: 0644
-    force: true
-  register: add_apt_key
-  until: add_apt_key is succeeded
-  retries: 2
-  delay: 2
-  become: true
-
-- name: Add the VirtualBox repo
-  ansible.builtin.apt_repository:
-    filename: virtualbox
-    repo: deb [signed-by={{ add_apt_key.dest }}] http://download.virtualbox.org/virtualbox/{{ ansible_os_family | lower }} {{ ansible_distribution_release }} contrib
-  become: true
-  when: ansible_os_family == 'Debian'
-
+#- name: Add VirtualBox GPG Key
+#  ansible.builtin.get_url:
+#    url: https://www.virtualbox.org/download/oracle_vbox_2016.asc
+#    dest: "{{ keyrings_dir }}/oracle_vbox_2016.asc"
+#    mode: 0644
+#    force: true
+#  register: add_apt_key
+#  until: add_apt_key is succeeded
+#  retries: 2
+#  delay: 2
+#  become: true
+#
+#- name: Add the VirtualBox repo
+#  ansible.builtin.apt_repository:
+#    filename: virtualbox
+#    #repo: deb [signed-by={{ add_apt_key.dest }}] http://download.virtualbox.org/virtualbox/{{ ansible_os_family | lower }} {{ ansible_distribution_release }} contrib
+#    repo: deb [signed-by={{ add_apt_key.dest }}] http://download.virtualbox.org/virtualbox/ bionic {{ ansible_distribution_release }} contrib
+#  become: true
+#  when: ansible_os_family == 'Debian'
+#
 - name: Add Microsoft GPG Key
   ansible.builtin.get_url:
     url: https://packages.microsoft.com/keys/microsoft.asc

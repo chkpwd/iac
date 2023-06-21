@@ -20,10 +20,3 @@
   when: not repo_directory.stat.exists
   become: false
 
-- name: Create a symbolic link to .vscode settings file
-  ansible.builtin.file:
-    src: /home/hyoga/code/boilerplates/.vscode/settings.json
-    dest: /home/hyoga/code/.vscode/settings.json
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    state: link

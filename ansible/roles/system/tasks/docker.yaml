@@ -1,4 +1,12 @@
 ---
+- name: Create Docker Config Dir
+  ansible.builtin.file:
+    path: /etc/docker
+    owner: "root"
+    group: "root"
+    mode: 0755
+    state: directory
+
 - name: Set Docker Daemon Config
   ansible.builtin.template:
     src: templates/daemon.json.j2
