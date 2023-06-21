@@ -4,6 +4,11 @@
     state: latest
   become: true
 
+- name: Ensure a locale exists
+  community.general.locale_gen:
+    name: en_US.UTF-8
+    state: present
+
 - name: Configure logrotate
   ansible.builtin.include_tasks: logs.yaml
 
