@@ -1,0 +1,15 @@
+plugin: vmware_vm_inventory
+strict: False
+hostname: "ronin.local.chkpwd.com"
+username: "administrator@vsphere.local.chkpwd.com"
+validate_certs: False
+with_tags: True
+properties:
+  - 'name'
+  - 'guest.ipAddress'
+  - 'config.name'
+  - 'config.uuid'
+filters:
+  - runtime.powerState == "poweredOn"
+hostnames:
+  - config.name
