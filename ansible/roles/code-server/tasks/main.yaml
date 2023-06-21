@@ -17,6 +17,24 @@
 - name: "Configure Git directory"
   ansible.builtin.include_tasks: create_git_directory.yaml
 
+- name: Create a symbolic link to .vscode settings file
+  ansible.builtin.file:
+    src: "/home/{{ common_user }}/code/boilerplates/.vscode/settings.json"
+    dest: "/home/{{ common_user }}/.vscode/settings.json"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    state: link
+  become: false
+
+- name: Create a symbolic link to workbench settings
+  ansible.builtin.file:
+    src: "/home/{{ common_user }}/code/boilerplates/.vscode/workbench/settings.json"
+    dest: "/home/{{ common_user }}/.local/share/code-server/User/settings.json"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    state: link
+  become: false
+
 - name: "Grabbing latest release from github api"
   ansible.builtin.uri:
     url: https://api.github.com/repos/coder/code-server/releases/latest
@@ -38,7 +56,7 @@
     deb: /tmp/code.deb
   become: true
 
-- name: "Start code-server"
+- name: "Start code-server for {{ ansible_user }}"
   ansible.builtin.service:
     name: code-server@{{ ansible_user }}.service
     state: started
@@ -55,14 +73,6 @@
     regexp: '^bind-addr: 127.0.0.1:8080'
     line: 'bind-addr: 0.0.0.0:8080'
 
-- name: Create a symbolic link to .vscode settings file
-  ansible.builtin.file:
-    src: /home/hyoga/code/boilerplates/.vscode/settings.json
-    dest: /home/hyoga/code/.vscode/settings.json
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    state: link
-
 - name: "Force all notified handlers to run at this point, not waiting for normal sync points"
   ansible.builtin.meta: flush_handlers
 
@@ -72,10 +82,12 @@
     name: code-server@$USER
   become: true
 
-- name: "Install code-server extensions"
-  ansible.builtin.command: code-server --install-extension {{ item }}
+- name: "Install code-server@{{ ansible_user }} extensions"
+  ansible.builtin.command: code-server --install-extension {{ item.value }}
   loop: "{{ extensions }}"
-  changed_when: command_output.stdout != 0
+  loop_control:
+    label: "{{ item.name }}"
+  become: false
 
 - name: "Output contents from the config.yaml file"
   ansible.builtin.debug:
