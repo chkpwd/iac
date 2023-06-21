@@ -11,6 +11,10 @@
     install_deps: true
   loop: "{{ pipx_tools }}"
 
+- name: Install sops on remote hosts
+  ansible.builtin.include_role:
+    name: community.sops.install
+
 - name: Install packages
   ansible.builtin.apt:
     update_cache: true
