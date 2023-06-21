@@ -54,8 +54,13 @@ module "crypto" {
   spec = {
     os_type                 = "linux"
     cpu                     = 4
-    memory                  = 8192
-    disk_size               = 48
+    memory                  = 4096
+    disk_size               = 16
+    additional_disks = [
+      {
+        size                = 25
+      }
+    ]
   }
 }
 
