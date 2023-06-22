@@ -10,7 +10,7 @@
 
     - name: Create the dest directory for the mount
       ansible.builtin.file:
-        path: "{{ nfs_share_dir }}"
+        path: "{{ docker_confs_dir }}"
         state: directory
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
@@ -18,7 +18,7 @@
 
     - name: Mount NFS share from TrueNAS
       ansible.posix.mount:
-        src: "{{ nfs_share_ip }}:/mnt/media/docker-confs"
+        src: "{{ docker_confs_nfs }}:/mnt/media/docker-confs"
         path: "{{ docker_path }}"
         opts: rw,sync,hard,nofail
         state: mounted
@@ -26,7 +26,7 @@
 
     - name: Mount NFS share from TrueNAS
       ansible.posix.mount:
-        src: "{{ nfs_share_ip }}:/mnt/media"
+        src: "{{ docker_confs_nfs }}:/mnt/media"
         path: "{{ media_path }}"
         opts: rw,sync,hard,nofail
         state: mounted

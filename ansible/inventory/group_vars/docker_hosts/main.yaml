@@ -1,8 +1,10 @@
 ---
 ansible_user: "hyoga"
 docker_path: "/opt/docker-confs"
-nfs_share_dir: "/mnt/media/docker-confs"
-nfs_share_ip: "172.16.16.5"
+docker_confs_dir: "/mnt/data"
+docker_confs_nfs: "172.16.16.16"
+media_nfs_share: "/mnt/data"
+media_nfs: "172.16.16.15"
 configuration_path: /opt/docker-confs
 hotio_image: cr.hotio.dev/hotio
 linuxserver_image: ghcr.io/linuxserver
