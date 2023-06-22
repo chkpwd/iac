@@ -2,8 +2,7 @@
 media_path: /mnt/media
 container_path: /data
 docker_sock: /var/run/docker.sock:/var/run/docker.sock:ro
-docker_network:
-    - misc
+docker_network: [misc]
 
 common_env: &common_env
   TZ: America/New_York
@@ -11,6 +10,23 @@ common_env: &common_env
   PGID: "1000"
 
 service_definitions:
+  - name: photoprism-db
+    image: mariadb:10.11
+    privileged: "true"
+    security_opts:
+      - seccomp:unconfined
+      - apparmor:unconfined
+    command: mysqld --innodb-buffer-pool-size=2G --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=180
+    env:
+      MARIADB_AUTO_UPGRADE: "1"
+      MARIADB_INITDB_SKIP_TZINFO: "1"
+      MARIADB_DATABASE: "photoprism"
+      MARIADB_USER: "photoprism"
+      MARIADB_PASSWORD: "insecure"
+      MARIADB_ROOT_PASSWORD: "insecure"
+    volumes:
+      - "{{ configuration_path }}/photoprism/db:/var/lib/mysql"
+
   - name: photoprism
     image: photoprism/photoprism:latest
     links: [photoprism-db]
@@ -56,23 +72,6 @@ service_definitions:
       - "{{ configuration_path }}/photoprism/originals:/photoprism/originals"    # original media files (photos and videos)
       - "{{ configuration_path }}/photoprism/import:/photoprism/import"          # *optional* folder from which files can be imported to originals
       - "{{ configuration_path }}/photoprism:/photoprism/storage"        # *writable* storage folder for cache, database, and sidecar files (never remove)
-
-  - name: photoprism-db
-    image: mariadb:10.11
-    privileged: "true"
-    security_opts:
-      - seccomp:unconfined
-      - apparmor:unconfined
-    command: mysqld --innodb-buffer-pool-size=2G --lower-case-table-names=1 --transaction-isolation=READ-COMMITTED --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --max-connections=512 --innodb-rollback-on-timeout=OFF --innodb-lock-wait-timeout=180
-    env:
-      MARIADB_AUTO_UPGRADE: "1"
-      MARIADB_INITDB_SKIP_TZINFO: "1"
-      MARIADB_DATABASE: "photoprism"
-      MARIADB_USER: "photoprism"
-      MARIADB_PASSWORD: "insecure"
-      MARIADB_ROOT_PASSWORD: "insecure"
-    volumes:
-      - "{{ configuration_path }}/photoprism/db:/var/lib/mysql"
 
   - name: semaphore
     image: semaphoreui/semaphore:v2.8.90
