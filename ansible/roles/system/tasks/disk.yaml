@@ -1,3 +1,36 @@
+- name: Check Docker Present
+  ansible.builtin.stat:
+    path: /usr/bin/docker
+  register: docker_installed
+
+- name: Mount NFS options only if Docker is present
+  when: "'docker_hosts' in group_names and docker_installed.stat.exists"
+  block:
+    - name: Create the dest directory for the mount
+      ansible.builtin.file:
+        path: "{{ docker_confs_dir }}"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+
+    - name: Mount NFS share from TrueNAS
+      ansible.posix.mount:
+        src: "{{ docker_confs_nfs }}:/mnt/atlantic/media"
+        path: "{{ docker_path }}"
+        opts: rw,sync,hard,nofail
+        state: mounted
+        fstype: nfs
+
+    - name: Mount NFS share from TrueNAS
+      ansible.posix.mount:
+        src: "{{ media_nfs_share }}:/mnt/data"
+        path: "{{ media_path }}"
+        opts: rw,sync,hard,nofail
+        state: mounted
+        fstype: nfs
+      when: ansible_hostname == "mirage"
+
 - name: Install parted
   ansible.builtin.apt:
     name: parted

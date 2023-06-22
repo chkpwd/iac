@@ -1,16 +1,4 @@
 ---
-- name: Restart Docker Service
-  ansible.builtin.service:
-    name: docker
-    state: restarted
-  listen: Restart Docker Service
-
-- name: Delete Docker Data
-  ansible.builtin.file:
-    path: /var/lib/docker
-    state: absent
-  listen: Restart Docker Service
-
 - name: Restart SSH daemon
   ansible.builtin.service:
     name: sshd

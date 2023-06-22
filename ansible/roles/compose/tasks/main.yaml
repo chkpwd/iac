@@ -1,3 +1,43 @@
+- name: Check Docker Present
+  ansible.builtin.stat:
+    path: /usr/bin/docker
+  register: docker_installed
+
+- name: Install Docker only if not installed
+  when: "'docker_hosts' in group_names and not docker_installed.stat.exists"
+  block:
+    - name: Docker Install
+      ansible.builtin.include_role:
+        - geerlingguy.pip
+        - role: geerlingguy.docker
+          vars:
+            pip_install_packages:
+              - name: docker
+            docker_edition: 'ce'
+            docker_package_state: latest
+            docker_users: hyoga
+
+- name: Configure Docker Daemon Path
+  when: "'docker_hosts' in group_names and docker_installed.stat.exists"
+  block:
+    - name: Create Docker Config Dir
+      ansible.builtin.file:
+        path: /etc/docker
+        owner: "root"
+        group: "root"
+        mode: 0755
+        state: directory
+
+    - name: Set Docker Daemon Config
+      ansible.builtin.template:
+        src: templates/daemon.json.j2
+        dest: /etc/docker/daemon.json
+        owner: "root"
+        group: "root"
+        mode: 0644
+      notify: Restart Docker Service
+      when: ansible_facts['devices'] | length > 1
+
 - name: Create network(s)
   community.docker.docker_network:
     name: "{{ item }}"
