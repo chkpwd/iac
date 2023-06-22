@@ -12,6 +12,9 @@
 - name: Configure logrotate
   ansible.builtin.include_tasks: logs.yaml
 
+- name: Install Projects
+  ansible.builtin.include_tasks: install_projects.yaml
+
 - name: Configure PET Snippet
   ansible.builtin.template:
     src: templates/config.toml.j2 
@@ -61,6 +64,10 @@
   loop: "{{ zsh_plugins }}"
   loop_control:
     label: "{{ item.name }}"
+  register: zsh_plugins
+  until: zsh_plugins is succeeded
+  retries: 2
+  delay: 2
 
 - name: Clone all ZSH settings
   ansible.builtin.get_url:
@@ -72,6 +79,10 @@
   loop: "{{ zsh_gists }}"
   loop_control:
     label: "{{ item.name }}"
+  register: zsh_settings
+  until: zsh_settings is succeeded
+  retries: 2
+  delay: 2
 
 - name: Copy the public SSH key
   ansible.posix.authorized_key:
