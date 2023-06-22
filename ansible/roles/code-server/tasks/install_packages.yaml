@@ -25,6 +25,40 @@
         #- powershell
   become: true
 
+- name: Grab latest tar file from flux Github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/fluxcd/flux2/releases/latest
+    return_content: true
+  register: latest_tar
+
+- name: Download the tar
+  loop: "{{ latest_tar.json.assets }}"
+  when: "'linux_amd64.tar.gz' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/flux.tar.gz
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+  no_log: true # * Removes output of the API call
+
+- name: Unarchive the flux tar file
+  ansible.builtin.unarchive:
+    src: /tmp/flux.tar.gz
+    dest: "/tmp"
+    remote_src: true
+  # changed_when: "{{ flux_tar }}" # TODO Fixme: maybe remove
+
+- name: Move the flux commands to a specific dest
+  ansible.builtin.copy:
+    src: /tmp/flux
+    dest: "/usr/local/bin/"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+    remote_src: true
+  become: true
+
 - name: Grab latest tar file from Pulumi Github
   ansible.builtin.uri:
     url: https://api.github.com/repos/pulumi/pulumi/releases/latest
