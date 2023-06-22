@@ -4,6 +4,14 @@
     return_content: true
   register: json_reponse
 
+- name: Create Pet Snippet dir
+  ansible.builtin.file:
+    path: "/home/{{ common_user }}/.config/pet"
+    state: directory
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0644
+
 - name: "Downloading 'Pet' {{ json_reponse.json.tag_name }}"
   loop: "{{ json_reponse.json.assets }}"
   when: "'linux_amd64.tar.gz' in item.name"
