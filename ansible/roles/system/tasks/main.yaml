@@ -12,11 +12,19 @@
 - name: Configure logrotate
   ansible.builtin.include_tasks: logs.yaml
 
+- name: Configure PET Snippet
+  ansible.builtin.template:
+    src: templates/config.toml.j2 
+    dest: "/home/{{ common_user }}/.config/pet/config.toml"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: '0644'
+
 - name: Apply secondary disk partitioning
   ansible.builtin.include_tasks: disk.yaml
   when: ansible_facts['devices'] | length > 1
 
-- name: Apply user configurations for {{ ansible_user }}
+- name: Apply user configurations for {{ common_user }}
   ansible.builtin.include_tasks: user.yaml
 
 - name: Set the ZSH_CUSTOM shell var if not present
