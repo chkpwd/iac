@@ -89,6 +89,8 @@ variable "folder_id" {
 
 variable "spec" {
   type = object({
+    folder    = optional(string)
+    tags      = optional(list(string))
     cpu       = number
     memory    = number
     disk_size = number

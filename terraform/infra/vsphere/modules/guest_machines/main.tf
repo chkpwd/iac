@@ -3,7 +3,9 @@
 #===============================================================================
 
 resource "vsphere_virtual_machine" "linux" {
-  count = var.spec.os_type == "linux" ? var.instance_count : 0
+  count  = var.spec.os_type == "linux" ? var.instance_count : 0
+  tags   = var.spec.tags
+  #folder = folder.value.path
 
   name             = var.vm_name
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
@@ -70,6 +72,8 @@ resource "vsphere_virtual_machine" "linux" {
 
 resource "vsphere_virtual_machine" "windows" {
   count = var.spec.os_type == "windows" ? var.instance_count : 0
+  tags   = var.spec.tags
+  #folder = var.spec.folder
 
   name             = var.vm_name
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
@@ -122,12 +126,3 @@ resource "vsphere_virtual_machine" "windows" {
     ]
   }
 }
-
-# resource "vsphere_virtual_disk" "virtual_disk" {
-#   size               = 5400
-#   type               = "thin"
-#   vmdk_path          = "/cockpit/cockpit.vmdk"
-#   create_directories = false
-#   datacenter         = data.vsphere_datacenter.datacenter.name
-#   datastore          = data.vsphere_datastore.media_datastore.name
-# }

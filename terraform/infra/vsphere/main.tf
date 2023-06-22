@@ -10,6 +10,8 @@ module "horizon" {
     network_id              = "LAN"
   }
   spec = {
+    #folder                  = data.vsphere_folder.cattles.path
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
     os_type                 = "linux"
     cpu                     = 2
     memory                  = 5120
@@ -30,6 +32,7 @@ module "cockpit" {
     network_id              = "LAN"
   }
   spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id ]
     os_type                 = "linux"
     cpu                     = 1
     memory                  = 1024
@@ -52,6 +55,7 @@ module "crypto" {
     network_id              = "LAN"
   }
   spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.dev.id ]
     os_type                 = "linux"
     cpu                     = 4
     memory                  = 4096
@@ -72,6 +76,7 @@ module "mirage" {
     network_id              = "Media"
   }
   spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id, vsphere_tag.docker.id ]
     os_type                 = "linux"
     cpu                     = 4
     memory                  = 8192
@@ -92,6 +97,7 @@ module "homeassistant" {
     network_id              = "LAN"
   }
   spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
     os_type                 = "linux"
     cpu                     = 2
     memory                  = 2048
@@ -108,6 +114,7 @@ module "bloodhound" {
     network_id              = "LAN"
   }
   spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
     os_type                 = "windows"
     cpu                     = 2
     memory                  = 8192
@@ -126,6 +133,7 @@ module "kube-ops" {
     static_mac_addr         = true
   }
   spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.kubernetes.id ]
     os_type                 = "linux"
     cpu                     = 4
     memory                  = 4096
@@ -147,6 +155,7 @@ module "traefik" {
     network_id              = "LAN"
   }
   spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
     os_type                 = "linux"
     cpu                     = 2
     memory                  = 2048
