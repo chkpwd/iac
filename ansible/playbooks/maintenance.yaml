@@ -1,6 +1,6 @@
 ---
-- name: "Update the target system"
-  hosts: all
+- name: "Update Linux Systems" 
+  hosts: linux
   become: true
 
   tasks:
@@ -8,8 +8,3 @@
       ansible.builtin.apt:
         update_cache: true
         upgrade: true
-
-    - name: Install essential packages # noqa package-latest
-      ansible.builtin.package:
-        name: "{{ packages }}"
-        state: latest
