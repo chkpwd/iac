@@ -8,14 +8,13 @@
   block:
     - name: Docker Install
       ansible.builtin.include_role:
-        - geerlingguy.pip
-        - role: geerlingguy.docker
-          vars:
-            pip_install_packages:
-              - name: docker
-            docker_edition: 'ce'
-            docker_package_state: latest
-            docker_users: hyoga
+        name: geerlingguy.docker
+      vars:
+        pip_install_packages:
+          - name: docker
+        docker_edition: 'ce'
+        docker_package_state: latest
+        docker_users: hyoga
 
 - name: Configure Docker Daemon Path
   when: "'docker_hosts' in group_names and docker_installed.stat.exists"
