@@ -1,0 +1,35 @@
+- name: Install and configure rclone
+  when: ansible_hostname == "cockpit" or ansible_hostname == "crypto" or ansible_hostname == "localhost"
+  ansible.builtin.include_role:
+    name: stefangweichinger.ansible_rclone
+
+  vars:
+    rclone_version: "1.62.0"
+    rclone_arch: "amd64"
+    rclone_release: "stable"
+    rclone_config_location: "/home/{{ common_user }}/.config/rclone/rclone.conf"
+    rclone_configs:
+      - name: "{{ rclone.remote_names.media }}"
+        properties:
+          type: dropbox
+          scope: dropbox
+          client_id: "{{ DROPBOX_MEDIA_CLIENT_ID }}"
+          client_secret: "{{ DROPBOX_MEDIA_CLIENT_SECRET }}"
+
+      - name: "{{ rclone.remote_names.media_crypt }}"
+        properties:
+          type: crypt
+          remote: "{{ rclone.remote_names.media }}:media"
+          filename_encryption: standard
+          directory_name_encryption: true
+          password: "{{ CRYPT_PASS1 }}"
+          password2: "{{ CRYPT_PASS2 }}"
+
+    rclone:
+      remote_names:
+        media: media
+        media_crypt: media-crypt
+
+    rclone_config_owner:
+      OWNER: "{{ common_user }}"
+      GROUP: "{{ common_user }}"
