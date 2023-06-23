@@ -23,6 +23,9 @@
     group: "{{ common_user }}"
     mode: '0644'
 
+- name: Configure Rclone
+  ansible.builtin.include_tasks: rclone_config.yaml
+
 - name: Apply secondary disk partitioning
   ansible.builtin.include_tasks: disk.yaml
   when: ansible_facts['devices'] | length > 1
