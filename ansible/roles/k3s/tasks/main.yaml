@@ -66,3 +66,10 @@
         replace: "https://{{ kube_vip_address }}:6443"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
+
+- name: Create SOPs secret
+  delegate_to: localhost
+  kubernetes.core.k8s:
+    state: present
+    template: templates/age.sops.yaml.j2 
+  become: false
