@@ -1,4 +1,3 @@
-ansible_user: hyoga
 ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
 
 packages:
@@ -7,6 +6,7 @@ packages:
   - htop
   - ranger
   - nfs-common
+  - screen
 
 ansible_dest: /home/hyoga/code/boilerplates/ansible
 template_path: "{{ ansible_dest }}/roles/code-server/templates"
