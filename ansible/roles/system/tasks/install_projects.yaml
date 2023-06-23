@@ -10,7 +10,7 @@
     state: directory
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
-    mode: 0644
+    mode: 0755
 
 - name: "Downloading 'Pet' {{ json_reponse.json.tag_name }}"
   loop: "{{ json_reponse.json.assets }}"
