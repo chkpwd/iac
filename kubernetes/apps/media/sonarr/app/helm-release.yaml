@@ -36,7 +36,7 @@ spec:
       TZ: "America/New_York"
       SONARR__INSTANCE_NAME: Sonarr
       SONARR__PORT: &port 80
-      SONARR__APPLICATION_URL: "https://sonarr.local.chkpwd.com"
+      SONARR__APPLICATION_URL: "https://sonarrk3s.local.chkpwd.com"
       SONARR__LOG_LEVEL: info
 
     service:
@@ -56,7 +56,7 @@ spec:
           hajimari.io/info: Show discovery agent
           hajimari.io/group: media
         hosts:
-          - host: &host "sonarr.local.chkpwd.com"
+          - host: &host "sonarrk3s.local.chkpwd.com"
             paths:
               - path: /
                 pathType: Prefix
