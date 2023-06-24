@@ -16,6 +16,13 @@
           client_id: "{{ DROPBOX_MEDIA_CLIENT_ID }}"
           client_secret: "{{ DROPBOX_MEDIA_CLIENT_SECRET }}"
 
+      - name: "{{ rclone.remote_names.media }}"
+        properties:
+          type: dropbox
+          scope: dropbox
+          client_id: "{{ DROPBOX_IMAGES_CLIENT_ID }}"
+          client_secret: "{{ DROPBOX_IMAGES_CLIENT_SECRET }}"
+
       - name: "{{ rclone.remote_names.media_crypt }}"
         properties:
           type: crypt
