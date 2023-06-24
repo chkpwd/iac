@@ -38,9 +38,6 @@ spec:
       SONARR__PORT: &port 80
       SONARR__APPLICATION_URL: "https://sonarr.local.chkpwd.com"
       SONARR__LOG_LEVEL: info
-    envFrom:
-      - secretRef:
-          name: *app
 
     service:
       main:
