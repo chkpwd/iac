@@ -68,11 +68,11 @@ spec:
       config:
         enabled: true
         existingClaim: sonarr-config-pvc
-      # nfs-nas-media:
-      #   enabled: true
-      #   existingClaim: media-nfs-share-pvc
-      #   mountPath: /media
-      #   readOnly: false
+      media:
+        enabled: true
+        existingClaim: sonarr-media-pvc
+        mountPath: /data
+        readOnly: false
 
     podSecurityContext:
       runAsUser: 568
