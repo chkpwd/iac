@@ -28,12 +28,13 @@ spec:
       nameOverride: *app
 
     image:
-      repository: cr.hotio.dev/hotio/overseerr
-      tag: 1.33.0
+      repository: ghcr.io/sct/overseerr
+      tag: 1.33.0@sha256:95f71372d74a813a0213b88672bb84fbbb1eb73bc77fba2057fdf44995d09104
 
     env:
       TZ: "America/New_York"
-      PORT: 5055
+      LOG_LEVEL: info
+      PORT: &port 5055
 
     hostname: overseerr
 
@@ -41,7 +42,7 @@ spec:
       main:
         ports:
           http:
-            port: 5055
+            port: *port
 
     ingress:
       main:
@@ -55,15 +56,22 @@ spec:
           - hosts:
               - *host
 
+    podSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      fsGroupChangePolicy: OnRootMismatch
+
+
     persistence:
       config:
         enabled: true
         existingClaim: overseerr-config
-        mountPath: /config
+        mountPath: /app/config
 
     resources:
       requests:
         cpu: 10m
-        memory: 200Mi
+        memory: 500Mi
       limits:
-        memory: 200Mi
+        memory: 500Mi
