@@ -16,6 +16,16 @@ spec:
         name: bjw-s-charts
         namespace: flux-system
 
+  install:
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+
+  values:
+    global:
+      nameOverride: *app
     image:
       repository: ghcr.io/onedr0p/sonarr-develop
       tag: 4.0.0.539@sha256:dc7860e1117cb040435c2eace3fc4d67a64672e671c3e692d19df2a98d4dede4
@@ -23,7 +33,7 @@ spec:
     env:
       TZ: "America/New_York"
       SONARR__INSTANCE_NAME: Sonarr
-      SONARR__PORT: &port 8989
+      SONARR__PORT: &port 80
       SONARR__APPLICATION_URL: "https://sonarrk3s.local.chkpwd.com"
       SONARR__LOG_LEVEL: info
 
@@ -49,6 +59,7 @@ spec:
           - host: &host "sonarrk3s.local.chkpwd.com"
             paths:
               - path: /
+                pathType: Prefix
         tls:
           - hosts:
               - *host

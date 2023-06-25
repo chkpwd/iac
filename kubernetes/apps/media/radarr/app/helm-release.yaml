@@ -16,6 +16,16 @@ spec:
         name: bjw-s-charts
         namespace: flux-system
 
+  install:
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+
+  values:
+    global:
+      nameOverride: *app
     image:
       repository: ghcr.io/onedr0p/radarr-develop
       tag: 4.6.2.7490@sha256:689342f7dfe06d7403d59097cab2f688639108de2e555cf532f7255fe84d51b5
