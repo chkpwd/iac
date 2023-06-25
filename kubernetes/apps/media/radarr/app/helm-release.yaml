@@ -21,9 +21,10 @@ spec:
       tag: 4.6.2.7490@sha256:689342f7dfe06d7403d59097cab2f688639108de2e555cf532f7255fe84d51b5
 
     env:
+      TZ: "America/New_York"
       RADARR__INSTANCE_NAME: Radarr
       RADARR__PORT: &port 7878
-      RADARR__APPLICATION_URL: "https://radarr.local.chkpwd.com"
+      RADARR__APPLICATION_URL: "https://radarrk3s.local.chkpwd.com"
       RADARR__LOG_LEVEL: info
 
     hostname: radarr
