@@ -10,23 +10,11 @@ spec:
     spec:
       chart: app-template
       version: 1.5.1
+      interval: 30m
       sourceRef:
         kind: HelmRepository
         name: bjw-s-charts
         namespace: flux-system
-
-  maxHistory: 2
-  install:
-    createNamespace: true
-    remediation:
-      retries: 5
-  upgrade:
-    remediation:
-      retries: 5
-
-  values:
-    global:
-      nameOverride: *app
 
     image:
       repository: ghcr.io/onedr0p/sonarr-develop
@@ -39,6 +27,8 @@ spec:
       SONARR__APPLICATION_URL: "https://sonarrk3s.local.chkpwd.com"
       SONARR__LOG_LEVEL: info
 
+    hostname: sonarr
+
     service:
       main:
         ports:
@@ -48,7 +38,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: nginx
+        ingressClassName: "nginx"
         annotations:
           hajimari.io/enable: "true"
           hajimari.io/appName: "Sonarr"
@@ -59,7 +49,6 @@ spec:
           - host: &host "sonarrk3s.local.chkpwd.com"
             paths:
               - path: /
-                pathType: Prefix
         tls:
           - hosts:
               - *host
@@ -67,10 +56,10 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: sonarr-config-pvc
+        existingClaim: sonarr-config
       media:
         enabled: true
-        existingClaim: sonarr-media-pvc
+        existingClaim: sonarr-media
         mountPath: /data
         readOnly: false
 
