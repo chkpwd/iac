@@ -1,0 +1,69 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app overseerr
+  namespace: media
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+
+  values:
+    global:
+      nameOverride: *app
+
+    image:
+      repository: cr.hotio.dev/hotio/overseerr
+      tag: 1.33.0
+
+    env:
+      TZ: "America/New_York"
+      PORT: 5055
+
+    hostname: overseerr
+
+    service:
+      main:
+        ports:
+          http:
+            port: 5055
+
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: nginx
+        hosts:
+          - host: &host "overseerrk3s.local.chkpwd.com"
+            paths:
+              - path: /
+        tls:
+          - hosts:
+              - *host
+
+    persistence:
+      config:
+        enabled: true
+        existingClaim: overseerr-config
+        mountPath: /config
+
+    resources:
+      requests:
+        cpu: 10m
+        memory: 200Mi
+      limits:
+        memory: 200Mi
