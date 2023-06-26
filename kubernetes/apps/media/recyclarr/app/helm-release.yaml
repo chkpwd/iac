@@ -36,6 +36,10 @@ spec:
     command: ['/app/recyclarr/recyclarr']
     args: ['sync']
 
+    service:
+      main:
+        enabled: false
+
     persistence:
       config:
         enabled: true
