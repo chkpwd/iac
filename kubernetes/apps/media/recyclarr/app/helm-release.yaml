@@ -26,14 +26,15 @@ spec:
   values:
     global:
       nameOverride: *app
+    controller:
+      type: cronjob
+      cronjob:
+        schedule: '@daily'
     image:
       repository: ghcr.io/recyclarr/recyclarr
       tag: 5.0.3@sha256:7d74dbc921c36fe1c13ec21520f1e300ccac202bb249b3c7be6b42c588b20a84
-
-    env:
-      TZ: "America/New_York"
-
-    hostname: recyclarr
+    command: ['/app/recyclarr/recyclarr']
+    args: ['sync']
 
     persistence:
       config:
@@ -41,18 +42,12 @@ spec:
         existingClaim: recyclarr-config
         mountPath: /config/recyclarr.yml
         subPath: recyclarr.yml
-
-    podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-      fsGroupChangePolicy: OnRootMismatch
-      supplementalGroups:
-        - 65539
+        defaultMode: 775
+        readOnly: true
 
     resources:
       requests:
         cpu: 10m
-        memory: 250M
+        memory: 100M
       limits:
-        memory: 450M
+        memory: 110M

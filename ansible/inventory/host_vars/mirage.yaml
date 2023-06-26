@@ -22,6 +22,7 @@ service_definitions:
       env: '{{ common_env }}'
       networks:
         - name: media
+      state: absent
     - name: overseerr
       image: '{{ hotio_image }}/overseerr'
       ports:
