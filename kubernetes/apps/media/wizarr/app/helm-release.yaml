@@ -1,0 +1,73 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app wizarr
+  namespace: media
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+
+  values:
+    image:
+      repository: ghcr.io/wizarrrr/wizarr
+      tag: 2.1.3
+
+    env:
+      TZ: "America/New_York"
+      APP_URL: https://wizarrk3s.local.chkpwd.com
+      DISABLE_BUILTIN_AUTH: "true"
+
+    hostname: wizarr
+
+    service:
+      main:
+        ports:
+          http:
+            port: &port 5690
+
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: "nginx"
+        hosts:
+          - host: &host "wizarrk3s.local.chkpwd.com"
+            paths:
+              - path: /
+        tls:
+          - hosts:
+              - *host
+
+    persistence:
+      config:
+        enabled: true
+        existingClaim: wizarr-config
+        mountPath: /data/database
+
+    podSecurityContext:
+      runAsUser: 568
+      runAsGroup: 568
+      fsGroup: 568
+      fsGroupChangePolicy: OnRootMismatch
+
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100M
+      limits:
+        memory: 300M
