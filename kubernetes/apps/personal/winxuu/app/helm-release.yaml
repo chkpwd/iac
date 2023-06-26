@@ -1,0 +1,54 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app winxuu
+  namespace: personal
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+
+  values:
+    image:
+      repository: chkpwd/winxuu
+      tag: 2.0.1@sha256:3e2c9db2b77b7aaa2783481814a8600df52eef757dce52efa9052d7dfede3ccc
+
+    service:
+      main:
+        ports:
+          http:
+            port: &port 3389
+
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: "nginx"
+        hosts:
+          - host: &host "winxuu.local.chkpwd.com"
+            paths:
+              - path: /
+        tls:
+          - hosts:
+              - *host
+
+    resources:
+      requests:
+        cpu: 10m
+        memory: 50M
+      limits:
+        memory: 50M
