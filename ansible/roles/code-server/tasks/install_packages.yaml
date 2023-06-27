@@ -57,7 +57,6 @@
     group: "{{ ansible_user }}"
     mode: '0755'
     remote_src: true
-  become: true
 
 - name: Grab latest tar file from Pulumi Github
   ansible.builtin.uri:
@@ -91,7 +90,6 @@
     group: "{{ ansible_user }}"
     mode: '0755'
     remote_src: true
-  become: true
 
 - name: Grab latest 'Pet' release from github
   ansible.builtin.uri:
@@ -124,7 +122,6 @@
     group: "{{ ansible_user }}"
     mode: 0755
     remote_src: true
-  become: true
 
 - name: Grab latest 'k9s' release from github
   ansible.builtin.uri:
@@ -157,7 +154,6 @@
     group: "{{ ansible_user }}"
     mode: 0755
     remote_src: true
-  become: true
 
 - name: Install Go binary
   ansible.builtin.get_url:
@@ -181,7 +177,6 @@
     group: "{{ ansible_user }}"
     mode: 0755
     remote_src: true
-  become: true
 
 - name: Grab latest 'helm' release from github
   ansible.builtin.uri:
@@ -212,7 +207,6 @@
     group: "{{ ansible_user }}"
     mode: 0755
     remote_src: true
-  become: true
 
 - name: Grab latest 'viddy' release from github
   ansible.builtin.uri:
@@ -245,4 +239,59 @@
     group: "{{ ansible_user }}"
     mode: 0755
     remote_src: true
-  become: true
+
+- name: Grab latest 'krew' release from github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/kubernetes-sigs/krew/releases/latest
+    return_content: true
+  register: json_reponse
+
+- name: "Downloading 'krew' {{ json_reponse.json.tag_name }}"
+  loop: "{{ json_reponse.json.assets }}"
+  when: "'linux_amd64.tar.gz' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/krew_amd64.tar.gz
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0644
+  no_log: true
+
+- name: Unarchive the 'krew' tar file
+  ansible.builtin.unarchive:
+    src: /tmp/krew_amd64.tar.gz
+    dest: "/tmp"
+    remote_src: true
+
+- name: Install 'krew'
+  command: "/tmp/krew-linux_amd64 install krew"
+  args:
+    chdir: "/tmp"
+  register: krew_cmd_output
+  changed_when: krew_cmd_output.rc != 0
+
+- name: Grab latest 'virtctl' release from github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/kubevirt/kubevirt/releases
+    return_content: true
+  register: pre_release_json
+
+- name: "Downloading 'virtctl' {{ pre_release_json.json.tag_name }}"
+  loop: "{{ pre_release_json[0].json.assets }}"
+  when: "'linux_amd64.tar.gz' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/virtctl_amd64.tar.gz
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0644
+  no_log: true
+
+- name: Move the 'virtctl' binary to local bin
+  ansible.builtin.copy:
+    src: "/tmp/viddy"
+    dest: "/usr/local/bin/"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 0755
+    remote_src: true
