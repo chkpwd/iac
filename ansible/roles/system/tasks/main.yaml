@@ -33,10 +33,6 @@
 - name: Apply user configurations for {{ common_user }}
   ansible.builtin.include_tasks: user.yaml
 
-- name: Set the ZSH_CUSTOM shell var if not present
-  ansible.builtin.set_fact:
-    zsh_custom: "{{ ansible_env.ZSH_CUSTOM | default('/home/' ~ common_user ~ '/.oh-my-zsh/custom', true) }}"
-
 - name: Run ZSH configs
   ansible.builtin.include_role:
     name: gantsign.oh-my-zsh
@@ -51,12 +47,7 @@
           update_mode: auto
           update_frequency: 3
           write_zshrc: true
-          plugins:
-            - git
-            - zsh-autosuggestions
-            - zsh-syntax-highlighting
-            - sudo
-            - z
+          plugins: "{{ zsh_dynamic_plugins }}"
 
 - name: Clone OMZ plugins if they do not exist or need updates
   ansible.builtin.git:

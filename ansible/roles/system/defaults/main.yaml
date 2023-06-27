@@ -1,4 +1,12 @@
 ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
+zsh_custom: "/home/{{ common_user }}/.oh-my-zsh/custom"
+
+zsh_dynamic_plugins:
+  - git 
+  - zsh-autosuggestions
+  - zsh-syntax-highlighting
+  - sudo
+  - z
 
 packages:
   - zsh
