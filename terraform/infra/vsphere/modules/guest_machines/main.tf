@@ -14,6 +14,7 @@ resource "vsphere_virtual_machine" "linux" {
   num_cpus = var.spec.cpu
   memory   = var.spec.memory
   guest_id = data.vsphere_virtual_machine.template.guest_id
+  nested_hv_enabled = var.spec.enable_hv
 
   sync_time_with_host = true
 

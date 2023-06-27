@@ -91,6 +91,7 @@ variable "spec" {
   type = object({
     folder    = optional(string)
     tags      = optional(list(string))
+    enable_hv = optional(bool)
     cpu       = number
     memory    = number
     disk_size = number
