@@ -34,8 +34,8 @@ module "cockpit" {
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id ]
     os_type                 = "linux"
-    cpu                     = 1
-    memory                  = 1024
+    cpu                     = 2
+    memory                  = 4096
     disk_size               = 48
     additional_disks = [
       {
