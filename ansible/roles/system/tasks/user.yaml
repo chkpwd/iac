@@ -1,7 +1,7 @@
 ---
 - name: Create a login user
   ansible.builtin.user:
-    name: "{{ ansible_user }}"
+    name: "{{ common_user }}"
     password: "{{ USR_PASSWORD_SOPS }}"
     # groups:
     #  - sudo
@@ -11,11 +11,11 @@
 
 - name: Chmod the user home directory
   ansible.builtin.file:
-    path: "/home/{{ ansible_user }}"
+    path: "/home/{{ common_user }}"
     state: directory
     mode: 0755
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     recurse: false
   become: true
 
