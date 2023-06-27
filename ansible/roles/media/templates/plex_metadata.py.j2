@@ -1,0 +1,174 @@
+import logging
+import os
+import shlex
+import subprocess
+import sys
+from datetime import datetime
+from typing import Union
+
+import requests
+
+# Root privileges assertion
+if os.geteuid() != 0:
+    raise PermissionError('Script requires root privileges.')
+
+# Set up logging
+LOG_PATH = "/var/log/plex-backup-py.log"
+logging.basicConfig(
+    filename=LOG_PATH,
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s: %(message)s"
+)
+logging.info("Backup process starting...")
+
+# PMS application support path
+PMS_APP_DIR = "{{ pms_app_dir }}/Plex Media Server"
+
+# Backup directory
+BACKUP_DIR = "{{ media_path }}"
+
+# Maximum backups to retain.
+# Backups are pruned oldest first.
+MAX_BACKUPS = 4
+
+# Archive full path and filename.
+backup_time = datetime.now().strftime("%y-%m-%d_%H-%M")
+BACKUP_ARCHIVE = f"{BACKUP_DIR}/plex-{backup_time}.tar.gz"
+
+# Temporary archive full path and filename.
+# Used to store the paths in `STOPPED_DIRS` below,
+# and later included in the archive above.
+TMP_ARCHIVE = "/tmp/plex-plugin-support.tar.gz"
+
+# Directories to backup while PMS is stopped.
+# Backed up to `TMP_ARCHIVE` and included in archive of files in `dirs` array.
+STOPPED_DIRS = [
+    "./Plug-in Support/Data",
+    "./Plug-in Support/Databases",
+    "./Plug-in Support/Preferences",
+]
+
+# Directories to backup while PMS is running.
+RUNNING_DIRS = [
+    "./Media",
+    "./Metadata",
+    "./Plug-ins",
+    "./Preferences.xml",
+    TMP_ARCHIVE,
+]
+
+# Paths/file globs to exclude from the backup.
+EXCLUDES = [
+    "*.db-2*",
+    "Backups",
+]
+
+# Number of cores pigz should use during compression
+PIGZ_CORES = len(os.sched_getaffinity(0))-1
+
+def get_backup_files() -> list:
+    """List all backup files, sorted by modification time (oldest first)"""
+    return sorted(
+        [f for f in os.listdir(BACKUP_DIR) if f.startswith("plex-") and f.endswith(".tar.gz")]
+    )
+
+def pms_service_handler(action: str):
+    """Plex Media Server Docker Container"""
+    subprocess.run(
+        ["docker", action, "plex"],
+        check=True
+    )
+
+def make_archive(src: Union[str, list], dest: str):
+    """Wrapper for tar + pigz archive creation"""
+    if not isinstance(src, (list, str)):
+        raise ValueError('src expected list or str')
+
+    src = src if isinstance(src, list) else [src]
+    tar_cmd = [
+        "tar",
+        f"--use-compress-program='pigz -p{PIGZ_CORES} --best --recursive'",
+        "--totals",
+        ] + exclude_patterns + [
+        "-cf",
+        dest
+    ] + [shlex.quote(s) for s in src]
+
+    return subprocess.run(
+        (' ').join(tar_cmd),
+        check=True,
+        cwd=PMS_APP_DIR,
+        shell=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+
+
+# Build exclusion args for tar commands
+exclude_patterns = [f"--exclude {excl}" for excl in EXCLUDES]
+
+# Calculate the amount of space we want to be available.
+# This is calculated as the size of the last backup + 10%
+last_backup_size = os.path.getsize(
+    os.path.join(
+        BACKUP_DIR,
+        get_backup_files()[-1]
+    )
+)
+wanted_space = int(last_backup_size * 1.1)
+available_space = os.statvfs(BACKUP_DIR).f_frsize * os.statvfs(BACKUP_DIR).f_bavail
+
+if available_space < wanted_space:
+    logging.error("Not enough space available in %s. Exiting.\n\n", BACKUP_DIR)
+    sys.exit(1)
+
+os.chdir(PMS_APP_DIR)
+
+try:
+    # Stop PMS before backing up STOPPED_DIRS
+    logging.info("Stopping PMS Container")
+    pms_service_handler('stop')
+
+    # Bacbkup DBs, plugin data
+    logging.info(
+        "Backing up the following files to a temporary archive (%s):\n%s",
+        TMP_ARCHIVE,
+        "\n".join(STOPPED_DIRS)
+    )
+    archive_result = make_archive(STOPPED_DIRS, TMP_ARCHIVE)
+    # 'totals' output goes to stderr
+    logging.info(archive_result.stderr.decode().strip())
+except Exception as exc:
+    pms_service_handler('start')
+    logging.error('An error occured during the backup process for STOPPED_DIRS.', exc_info=exc)
+
+# Start PMS
+logging.info("Starting PMS Container")
+pms_service_handler('start')
+
+# Backup other metadata. Thumbs, analysis, etc.
+logging.info(
+    "Backing up the following files to %s:\n%s",
+    BACKUP_ARCHIVE,
+    "\n".join(RUNNING_DIRS)
+)
+archive_result = make_archive(RUNNING_DIRS, BACKUP_ARCHIVE)
+# 'totals' output goes to stderr
+logging.info(archive_result.stderr.decode().strip())
+
+# Clear temp archive and old backups
+logging.info("Removing temporary archive (%s)", TMP_ARCHIVE)
+os.remove(TMP_ARCHIVE)
+
+# Remove all but the most recent MAX_BACKUPS files
+for file in get_backup_files()[:-MAX_BACKUPS]:
+    if file.startswith("plex-") and file.endswith(".tar.gz"):
+        file_path = os.path.join(BACKUP_DIR, file)
+        os.remove(file_path)
+        logging.info("Removed old backup file: %s", file_path)
+
+logging.info('Sending heartbeat to Uptime Kuma...')
+url = "https://discord.com/api/webhooks/1123307973259833464/pKFTySIOcAZXL5Jo8Q7RvpDNS90fqXcJRk7Si5DeDm_RurytlCeCjxejn5FOW8j1_dBp"
+response = requests.get(url)
+
+logging.info("Backup process complete.\n\n")

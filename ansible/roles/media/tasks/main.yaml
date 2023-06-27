@@ -1,0 +1,10 @@
+- name: Template Plex Metadata script
+  ansible.builtin.template:
+    src: templates/plex_metadata.py.j2
+    dest: ~/plex_metadata.py
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}" 
+    mode: 0755
+
+- name: Run Plex Metadata script
+  ansible.builtin.script: ~/plex_metadata.py
