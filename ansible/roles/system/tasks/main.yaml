@@ -35,7 +35,7 @@
 
 - name: Set the ZSH_CUSTOM shell var if not present
   ansible.builtin.set_fact:
-    zsh_custom: "{{ ansible_env.ZSH_CUSTOM | default('/home/' ~ ansible_user ~ '/.oh-my-zsh/custom', true) }}"
+    zsh_custom: "{{ ansible_env.ZSH_CUSTOM | default('/home/' ~ common_user ~ '/.oh-my-zsh/custom', true) }}"
 
 - name: Run ZSH configs
   ansible.builtin.include_role:
@@ -46,7 +46,7 @@
       - zsh-autosuggestions
       - sudo
     users:
-      - username: "{{ ansible_user }}"
+      - username: "{{ common_user }}"
         oh_my_zsh:
           theme: bira
           update_mode: auto
@@ -76,8 +76,8 @@
   ansible.builtin.get_url:
     url: "https://gist.githubusercontent.com/unix-chkpwd/{{ item.id }}/raw"
     dest: "{{ zsh_custom }}/{{ item.name }}"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: "0644"
   loop: "{{ zsh_gists }}"
   loop_control:
@@ -89,7 +89,7 @@
 
 - name: Copy the public SSH key
   ansible.posix.authorized_key:
-    user: "{{ ansible_user }}"
+    user: "{{ common_user }}"
     state: present
     key: "{{ ssh_public_key }}"
   become: true
