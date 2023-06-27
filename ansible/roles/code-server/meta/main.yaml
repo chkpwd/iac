@@ -1,22 +1,3 @@
 dependencies:
-- system
-- role: gantsign.oh-my-zsh
-  oh_my_zsh_plugins:
-    - git
-    - zsh-autosuggestions
-    - sudo
-  users:
-    - username: "{{ ansible_user }}"
-      oh_my_zsh:
-        theme: bira
-        update_mode: auto
-        update_frequency: 3
-        write_zshrc: true
-        plugins:
-          - git
-          - zsh-autosuggestions
-          - sudo
-          - docker
-- geerlingguy.pip
-- geerlingguy.docker
-- robertdebock.kubectl
+  - name: system
+  - role: robertdebock.kubectl
