@@ -82,7 +82,7 @@
     name: code-server@$USER
   become: true
 
-- name: "Install code-server@{{ ansible_user }} extensions"
+- name: "Install extensions for code-server@{{ common_user }}"
   ansible.builtin.command: code-server --install-extension {{ item.value }}
   loop: "{{ extensions }}"
   loop_control:
