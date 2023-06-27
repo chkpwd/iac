@@ -135,8 +135,9 @@ module "kube-ops" {
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.kubernetes.id ]
     os_type                 = "linux"
+    enable_hv               = true
     cpu                     = 4
-    memory                  = 4096
+    memory                  = 8192
     disk_size               = 16
     additional_disks = [
       {
