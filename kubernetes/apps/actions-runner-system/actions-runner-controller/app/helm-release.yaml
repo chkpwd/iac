@@ -38,20 +38,23 @@ spec:
       readOnlyRootFilesystem: true
       runAsNonRoot: true
       runAsUser: 1000
-    metrics:
-      serviceMonitor: true
-    logFormat: json
+
     githubWebhookServer:
       enabled: true
       logFormat: json
 
+    metrics:
+      serviceMonitor: false
+      port: 8080
+      proxy:
+        enabled: false
     actionsMetrics:
-      # Do note that you also need actionsMetricsServer.enabled=true
-      # to deploy the actions-metrics-server whose k8s service is referenced by the service monitor.
-      serviceMonitor: true
+      serviceMonitor: false
+      port: 8080
+      proxy:
+        enabled: false
     actionsMetricsServer:
       enabled: true
-      logFormat: json
 
     resources:
       requests:
