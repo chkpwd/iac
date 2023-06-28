@@ -38,5 +38,7 @@ spec:
         ingress_type: ingress
         ingress_class_name: nginx
         hostname: awx.${LOCAL_DOMAIN}
-        # projects_persistence: true
-        # projects_existing_claim: awx-operator-claim
+        projects_persistence: true
+        projects_existing_claim: awx-operator-claim
+        projects_storage_size: 1Gi
+        projects_storage_class: longhorn
