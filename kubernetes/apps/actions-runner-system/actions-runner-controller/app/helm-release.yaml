@@ -30,7 +30,7 @@ spec:
       repository: ghcr.io/actions-runner-controller/actions-runner-controller
     authSecret:
       create: true
-      github_token: ${GITHUB_TOKEN}
+      github_token: ${ACTION_RUNNER_GIT_TOKEN}
     securityContext:
       capabilities:
         drop:
