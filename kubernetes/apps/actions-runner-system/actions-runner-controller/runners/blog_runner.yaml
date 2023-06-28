@@ -1,0 +1,9 @@
+apiVersion: actions.summerwind.dev/v1alpha1
+kind: RunnerDeployment
+metadata:
+  name: blog-site-runner
+spec:
+  replicas: 1
+  template:
+    spec:
+      repository: chkpwd/blog-chkpwd
