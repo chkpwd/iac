@@ -59,9 +59,10 @@ spec:
         existingClaim: bazarr-config
       media:
         enabled: true
-        existingClaim: bazarr-media
+        type: nfs
+        server: "cockpit.${LOCAL_DOMAIN}"
+        path: /mnt/data/
         mountPath: /data
-        readOnly: false
 
     podSecurityContext:
       runAsUser: 568
@@ -74,6 +75,6 @@ spec:
     resources:
       requests:
         cpu: 10m
-        memory: 250M
+        memory: 500M
       limits:
-        memory: 450M
+        memory: 600M
