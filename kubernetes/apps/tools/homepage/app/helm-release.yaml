@@ -33,6 +33,13 @@ spec:
 
     env:
       TZ: "America/New_York"
+      PORT: &port 3000
+
+    service:
+      main:
+        ports:
+          http:
+            port: *port
 
     hostname: homepage
 
@@ -62,7 +69,7 @@ spec:
 
     resources:
       requests:
-        cpu: 100m
+        cpu: 35m
         memory: 150Mi
       limits:
-        memory: 200Mi
+        memory: 225Mi
