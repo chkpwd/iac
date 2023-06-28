@@ -137,7 +137,7 @@ module "kube-ops" {
     os_type                 = "linux"
     enable_hv               = true
     cpu                     = 4
-    memory                  = 8192
+    memory                  = 10240
     disk_size               = 16
     additional_disks = [
       {
