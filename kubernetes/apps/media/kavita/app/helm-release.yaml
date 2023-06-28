@@ -1,0 +1,81 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app kavita
+  namespace: media
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+
+  values:
+    global:
+      nameOverride: *app
+    image:
+      repository: kizaing/kavita
+      tag: 0.7.3
+
+    env:
+      TZ: "America/New_York"
+
+    hostname: kavita
+
+    service:
+      main:
+        ports:
+          http:
+            port: &port 5000
+
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: "nginx"
+        hosts:
+          - host: &host "kavita.local.chkpwd.com"
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - *host
+
+    persistence:
+      config:
+        enabled: true
+        existingClaim: kavita-config
+      media:
+        enabled: true
+        type: nfs
+        server: "cockpit.${LOCAL_DOMAIN}"
+        path: /mnt/data/reading
+        mountPath: /data
+
+    podSecurityContext:
+      runAsUser: 568
+      runAsGroup: 568
+      fsGroup: 568
+      fsGroupChangePolicy: OnRootMismatch
+      supplementalGroups:
+        - 100
+
+    resources:
+      requests:
+        cpu: 25m
+        memory: 350Mi
+      limits:
+        memory: 1000Mi
