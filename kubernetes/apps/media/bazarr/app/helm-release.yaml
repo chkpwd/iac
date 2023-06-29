@@ -46,7 +46,7 @@ spec:
         enabled: true
         ingressClassName: "nginx"
         hosts:
-          - host: &host "bazarrk3s.local.chkpwd.com"
+          - host: &host "bazarrk3s.${LOCAL_DOMAIN}"
             paths:
               - path: /
         tls:

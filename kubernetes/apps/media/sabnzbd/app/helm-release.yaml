@@ -47,7 +47,7 @@ spec:
         enabled: true
         ingressClassName: "nginx"
         hosts:
-          - host: &host "sabnzbdk3s.local.chkpwd.com"
+          - host: &host "sabnzbdk3s.${LOCAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

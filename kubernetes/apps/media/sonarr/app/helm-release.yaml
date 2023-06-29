@@ -34,7 +34,7 @@ spec:
       TZ: "America/New_York"
       SONARR__INSTANCE_NAME: Sonarr
       SONARR__PORT: &port 8989
-      SONARR__APPLICATION_URL: "https://sonarrk3s.local.chkpwd.com"
+      SONARR__APPLICATION_URL: "https://sonarrk3s.${LOCAL_DOMAIN}"
       SONARR__API_KEY: ${API_KEY_SONARR}
       SONARR__AUTHENTICATION_METHOD: Forms
       SONARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
@@ -62,7 +62,7 @@ spec:
           gethomepage.dev/widget.url: "http://sonarr.media.svc.cluster.local"
           gethomepage.dev/widget.key: "${API_KEY_SONARR}"
         hosts:
-          - host: &host "sonarrk3s.local.chkpwd.com"
+          - host: &host "sonarrk3s.${LOCAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

@@ -49,7 +49,7 @@ spec:
         enabled: true
         ingressClassName: "nginx"
         hosts:
-          - host: &host "tautulli.local.chkpwd.com"
+          - host: &host "tautulli.${LOCAL_DOMAIN}"
             paths:
               - path: /
         tls:

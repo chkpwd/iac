@@ -30,7 +30,7 @@ spec:
 
     env:
       TZ: "America/New_York"
-      APP_URL: https://wizarrk3s.local.chkpwd.com
+      APP_URL: https://wizarrk3s.${LOCAL_DOMAIN}
       DISABLE_BUILTIN_AUTH: "true"
 
     hostname: wizarr
@@ -46,7 +46,7 @@ spec:
         enabled: true
         ingressClassName: "nginx"
         hosts:
-          - host: &host "wizarrk3s.local.chkpwd.com"
+          - host: &host "wizarrk3s.${LOCAL_DOMAIN}"
             paths:
               - path: /
         tls:

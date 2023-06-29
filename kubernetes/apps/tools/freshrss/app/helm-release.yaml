@@ -33,7 +33,7 @@ spec:
 
     env:
       TZ: "America/New_York"
-      DOMAIN: &host "freshrss.local.chkpwd.com"
+      DOMAIN: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
 
     hostname: freshrss
 

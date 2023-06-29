@@ -56,7 +56,7 @@ spec:
         enabled: true
         ingressClassName: "nginx"
         hosts:
-          - host: &host "homepage.local.chkpwd.com"
+          - host: &host "homepage.${LOCAL_DOMAIN}"
             paths:
               - path: /
         tls:
