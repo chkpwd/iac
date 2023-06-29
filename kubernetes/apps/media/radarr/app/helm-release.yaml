@@ -75,9 +75,10 @@ spec:
         existingClaim: radarr-config
       media:
         enabled: true
-        existingClaim: radarr-media
+        type: nfs
+        server: "cockpit.${LOCAL_DOMAIN}"
+        path: /mnt/data/
         mountPath: /data
-        readOnly: false
 
     podSecurityContext:
       runAsUser: 1000
