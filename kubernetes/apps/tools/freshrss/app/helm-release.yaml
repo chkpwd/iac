@@ -28,13 +28,12 @@ spec:
       nameOverride: *app
 
     image:
-      repository: linuxserver/freshrss
+      repository: freshrss/freshrss
       tag: 1.21.0
 
     env:
       TZ: "America/New_York"
-      LOG_LEVEL: info
-      PORT: &port 80
+      DOMAIN: &host "freshrss.local.chkpwd.com"
 
     hostname: freshrss
 
@@ -42,36 +41,29 @@ spec:
       main:
         ports:
           http:
-            port: *port
+            port: 80
 
     ingress:
       main:
         enabled: true
         ingressClassName: "nginx"
         hosts:
-          - host: &host "freshrss.local.chkpwd.com"
+          - host: *host
             paths:
               - path: /
         tls:
           - hosts:
               - *host
 
-    podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-      fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups: [100]
-
     persistence:
       config:
         enabled: true
-        mountPath: /config
+        mountPath: /var/www/FreshRSS/data
         existingClaim: freshrss-config
 
     resources:
       requests:
         cpu: 100m
-        memory: 500Mi
+        memory: 200Mi
       limits:
-        memory: 600Mi
+        memory: 256Mi
