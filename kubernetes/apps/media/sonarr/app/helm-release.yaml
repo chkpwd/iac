@@ -35,6 +35,7 @@ spec:
       SONARR__INSTANCE_NAME: Sonarr
       SONARR__PORT: &port 80
       SONARR__APPLICATION_URL: "https://sonarrk3s.local.chkpwd.com"
+      SONARR__API_KEY: ${API_KEY_SONARR}
       SONARR__LOG_LEVEL: info
 
     hostname: sonarr
@@ -49,6 +50,15 @@ spec:
       main:
         enabled: true
         ingressClassName: "nginx"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "Sonarr"
+          gethomepage.dev/group: "Media Automation"
+          gethomepage.dev/icon: "sonarr"
+          gethomepage.dev/description: "Smart PVR for newsgroup and bittorrent users."
+          gethomepage.dev/widget.type: "sonarr"
+          gethomepage.dev/widget.url: "http://sonarr.media.svc.cluster.local"
+          gethomepage.dev/widget.key: "${API_KEY_SONARR}"
         hosts:
           - host: &host "sonarrk3s.local.chkpwd.com"
             paths:
