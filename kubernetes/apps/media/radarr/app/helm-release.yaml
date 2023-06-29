@@ -68,16 +68,15 @@ spec:
         readOnly: false
 
     podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
-      fsGroupChangePolicy: OnRootMismatch
-      supplementalGroups:
-        - 65539
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      fsGroupChangePolicy: "OnRootMismatch"
+      supplementalGroups: [568]
 
     resources:
       requests:
-        cpu: 14m
+        cpu: 100m
         memory: 250M
       limits:
         memory: 300M
