@@ -70,8 +70,7 @@ spec:
       runAsGroup: 1000
       fsGroup: 1000
       fsGroupChangePolicy: OnRootMismatch
-      supplementalGroups:
-        - 100
+      supplementalGroups: [568]
 
     resources:
       requests:
