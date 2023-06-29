@@ -140,7 +140,7 @@ data:
         text: "Heya!"
     - kubernetes:
         cluster:
-          show: true
+          show: false
           cpu: true
           memory: true
           showLabel: true
@@ -150,4 +150,10 @@ data:
           cpu: true
           memory: true
           showLabel: true
+          label: Control Plane
+    # - unifi_console:
+    #   url: https://unifi.host.or.ip:port
+    #   username: user
+    #   password: pass
+    #   site: Site Name # optional
   docker.yaml: ""
