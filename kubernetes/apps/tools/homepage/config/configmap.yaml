@@ -15,6 +15,28 @@ data:
     theme: dark
     color: stone
     target: _self
+    layout:
+      Media Management:
+        style: row
+        columns: 4
+      Collaboration:
+        style: row
+        columns: 2
+      Observability:
+        style: column
+        columns: 1
+      Media Automation:
+        style: column
+        columns: 1
+      Security:
+        style: row
+        columns: 2
+      Downloaders:
+        style: row
+        columns: 2
+      Storage:
+        style: row
+        columns: 2
   bookmarks.yaml: |
     ---
     - Developer:
@@ -33,102 +55,6 @@ data:
               href: https://youtube.com/
   services.yaml: |
     ---
-    - Selfhost:
-        - FreshRSS:
-            href: http://172.16.16.10:8087
-            description: RSS Reader
-        - Home_Assistant:
-            href: http://172.16.16.11:8123
-            description: Smart Home
-        - Code_Server:
-            href: https://172.16.16.12
-            description: Coding Environment
-        - Kavita:
-            href: https://172.16.16.10:8083
-            description: Digital Library
-        - Bazarr:
-            href: http://172.16.10.20:6767
-            description: Subtitle Manager
-
-    - Media:
-        - Sonarr:
-            href: http://172.16.10.20:8989
-            description: TV Shows Organizer
-        - Radarr:
-            href: http://172.16.10.20:7878
-            description: Movie Organizer
-        - Overseerr:
-            href: http://172.16.10.20:5055
-            description: Media Requests
-        - Plex:
-            href: http://172.16.10.20:32400/web
-            description: Media Server
-        - Prowlarr:
-            href: http://172.16.10.20:9696
-            description: Indexer Handler
-        - Tautulli:
-            href: http://172.16.10.20:8181
-            description: Plex Analytics
-
-    - Management:
-        - OPNsense:
-            href: https://172.16.16.1
-            description: Network Router
-            target: _blank
-        - Unifi_Controller:
-            href: https://172.16.16.10:8443
-            description: Network APs
-            target: _blank
-        - TrueNAS:
-            href: http://172.16.16.5
-            description: Storage Manager
-        - AdGuard_Home:
-            href: http://172.16.16.1:8080/
-            description: DNS Filter
-        - Cloudflare:
-            href: https://dash.cloudflare.com/login
-            description: Domain Manager
-        - Portainer_CE:
-            href: https://172.16.16.16:9443
-            description: Docker Management
-
-    - Tools:
-        - Vaultwarden:
-            href: https://vault.chkpwd.com
-            description: Secure Passwords
-        - Bookstack:
-            href: http://172.16.16.10:6875
-            description: Knowledge Base
-        - Filebrowser:
-            href: http://172.16.16.10:5555
-            description: File Explorer
-
-    - Downloaders:
-        - SABnzbd:
-            href: http://172.16.10.20:8180
-            description: Usenet Downloader
-        - qBittorrent:
-            href: http://172.16.10.20:8280
-            description: Torrent Client
-
-    - Virtualization:
-        - vSphere:
-            href: http://172.16.16.6/ui
-            description: VM Manager
-            target: _blank
-        - Proxmox:
-            href: https://172.16.16.3:8006
-            description: Virtualization Platform
-            target: _blank
-
-    - misc:
-        - OctoPrint:
-            href: https://print.chkpwd.com
-            description: 3D Print Control
-
-    - Apps:
-        - Sunshine:
-            href: https://localhost:47990/
   widgets.yaml: |
     ---
     - search:
@@ -151,6 +77,17 @@ data:
           memory: true
           showLabel: true
           label: Control Plane
+    - openweathermap:
+      label: Weather
+      units: metric
+      provider: openweathermap
+      apiKey: ${API_KEY_OPENWEATHERMAP}
+      cache: 5
+    - datetime:
+      text_size: x1
+      format:
+        dateStyle: long
+        timeStyle: short
     # - unifi_console:
     #   url: https://unifi.host.or.ip:port
     #   username: user
