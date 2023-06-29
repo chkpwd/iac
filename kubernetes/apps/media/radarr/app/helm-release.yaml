@@ -36,6 +36,9 @@ spec:
       RADARR__PORT: &port 7878
       RADARR__APPLICATION_URL: "https://radarrk3s.local.chkpwd.com"
       RADARR__LOG_LEVEL: info
+      RADARR__API_KEY: ${API_KEY_RADARR}
+      RADARR__AUTHENTICATION_METHOD: Forms
+      RADARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
 
     hostname: radarr
 
@@ -49,6 +52,15 @@ spec:
       main:
         enabled: true
         ingressClassName: "nginx"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "Radarr"
+          gethomepage.dev/group: "Media Automation"
+          gethomepage.dev/icon: "radarr"
+          gethomepage.dev/description: "Movie automation tool."
+          gethomepage.dev/widget.type: "radarr"
+          gethomepage.dev/widget.url: "http://radarr.media.svc.cluster.local"
+          gethomepage.dev/widget.key: "${API_KEY_RADARR}"
         hosts:
           - host: &host "radarrk3s.local.chkpwd.com"
             paths:

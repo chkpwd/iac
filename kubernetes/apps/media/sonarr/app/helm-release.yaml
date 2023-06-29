@@ -33,9 +33,11 @@ spec:
     env:
       TZ: "America/New_York"
       SONARR__INSTANCE_NAME: Sonarr
-      SONARR__PORT: &port 80
+      SONARR__PORT: &port 8989
       SONARR__APPLICATION_URL: "https://sonarrk3s.local.chkpwd.com"
       SONARR__API_KEY: ${API_KEY_SONARR}
+      SONARR__AUTHENTICATION_METHOD: Forms
+      SONARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
       SONARR__LOG_LEVEL: info
 
     hostname: sonarr
@@ -55,7 +57,7 @@ spec:
           gethomepage.dev/name: "Sonarr"
           gethomepage.dev/group: "Media Automation"
           gethomepage.dev/icon: "sonarr"
-          gethomepage.dev/description: "Smart PVR for newsgroup and bittorrent users."
+          gethomepage.dev/description: "TV Show automation tool."
           gethomepage.dev/widget.type: "sonarr"
           gethomepage.dev/widget.url: "http://sonarr.media.svc.cluster.local"
           gethomepage.dev/widget.key: "${API_KEY_SONARR}"

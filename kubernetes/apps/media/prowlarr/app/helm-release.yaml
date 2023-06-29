@@ -35,8 +35,11 @@ spec:
       TZ: "America/New_York"
       PROWLARR__INSTANCE_NAME: Prowlarr
       PROWLARR__PORT: &port 9696
+      RADARR__APPLICATION_URL: "https://prowlarr3s.local.chkpwd.com"
       PROWLARR__LOG_LEVEL: info
-      PROWLARR__ANALYTICS_ENABLED: "False"
+      RADARR__API_KEY: ${API_KEY_PROWLARR}
+      RADARR__AUTHENTICATION_METHOD: Forms
+      RADARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
 
     hostname: prowlarr
 
@@ -50,6 +53,15 @@ spec:
       main:
         enabled: true
         ingressClassName: "nginx"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "Prowlarr"
+          gethomepage.dev/group: "Media Automation"
+          gethomepage.dev/icon: "prowlarr"
+          gethomepage.dev/description: "Indexer manager for Sonarr and Radarr."
+          gethomepage.dev/widget.type: "prowlarr"
+          gethomepage.dev/widget.url: "http://prowlarr.media.svc.cluster.local"
+          gethomepage.dev/widget.key: "${API_KEY_PROWLARR}"
         hosts:
           - host: &host "prowlarrk3s.local.chkpwd.com"
             paths:
