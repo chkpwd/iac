@@ -31,6 +31,12 @@ spec:
       repository: ghcr.io/benphelps/homepage
       tag: v0.6.21
 
+    # The service account is necessary to allow discovery of other services
+    serviceAccount:
+      create: true
+      name: homepage
+
+    # This enables the service account to access the necessary resources
     enableRbac: true
 
     env:
@@ -64,11 +70,12 @@ spec:
       fsGroupChangePolicy: "OnRootMismatch"
       supplementalGroups: [65534]
 
-    persistence:
-      config:
-        enabled: true
-        mountPath: /config
-        existingClaim: homepage-config
+    config:
+      useExistingConfigMap: *app
+    logs:
+      enabled: true
+      type: emptyDir
+      mountPath: /app/config/logs
 
     resources:
       requests:
