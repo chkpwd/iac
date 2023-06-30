@@ -2,7 +2,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: cluster-apps-kube-vip
+  name: core-kube-vip
   namespace: flux-system
 spec:
   path: ./kubernetes/core/kube-vip-system/app

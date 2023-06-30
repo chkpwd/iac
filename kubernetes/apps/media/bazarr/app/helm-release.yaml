@@ -32,14 +32,21 @@ spec:
 
     env:
       TZ: "America/New_York"
+      BAZARR__INSTANCE_NAME: "{{ .Release.Name }}"
+      BAZARR__PORT: &port 6767
+      BAZARR__APPLICATION_URL: "https://{{ .Release.Name }}k3s.${LOCAL_DOMAIN}"
+      BAZARR__API_KEY: ${API_KEY_BAZARR}
+      BAZARR__AUTHENTICATION_METHOD: Forms
+      BAZARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
+      BAZARR__LOG_LEVEL: info
 
-    hostname: bazarr
+    hostname: *app
 
     service:
       main:
         ports:
           http:
-            port: &port 6767
+            port: *port
 
     ingress:
       main:
@@ -49,11 +56,11 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/name: "Bazarr"
           gethomepage.dev/group: "Media Automation"
-          gethomepage.dev/icon: "bazarr"
-          gethomepage.dev/description: "TV Show automation tool."
-          gethomepage.dev/widget.type: "bazarr"
-          gethomepage.dev/widget.url: "http://bazarr.media.svc.cluster.local"
-          gethomepage.dev/widget.key: "${API_KEY_bazarr}"
+          gethomepage.dev/icon: *app
+          gethomepage.dev/description: "Subtitles Automation Tool."
+          gethomepage.dev/widget.type: *app
+          gethomepage.dev/widget.url: "http://{{ .Release.Name }}.media.svc.cluster.local"
+          gethomepage.dev/widget.key: "${API_KEY_BAZARR}"
         hosts:
           - host: &host "bazarrk3s.${LOCAL_DOMAIN}"
             paths:
@@ -65,7 +72,7 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: "{{ .Release.Name }}-config"
+        existingClaim: radarr-config
       media:
         enabled: true
         type: nfs
