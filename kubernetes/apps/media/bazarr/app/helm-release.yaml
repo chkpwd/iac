@@ -45,6 +45,15 @@ spec:
       main:
         enabled: true
         ingressClassName: "nginx"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "Bazarr"
+          gethomepage.dev/group: "Media Automation"
+          gethomepage.dev/icon: "bazarr"
+          gethomepage.dev/description: "TV Show automation tool."
+          gethomepage.dev/widget.type: "bazarr"
+          gethomepage.dev/widget.url: "http://bazarr.media.svc.cluster.local"
+          gethomepage.dev/widget.key: "${API_KEY_bazarr}"
         hosts:
           - host: &host "bazarrk3s.${LOCAL_DOMAIN}"
             paths:
@@ -56,7 +65,7 @@ spec:
     persistence:
       config:
         enabled: true
-        existingClaim: bazarr-config
+        existingClaim: "{{ .Release.Name }}-config"
       media:
         enabled: true
         type: nfs
