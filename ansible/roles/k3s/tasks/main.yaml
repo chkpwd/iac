@@ -44,12 +44,12 @@
 
     - name: Copy kube-vip manifest file
       delegate_to: "{{ item }}"
-      ansible.builtin.copy:
+      ansible.builtin.template:
         src: templates/kube-vip-static-pod.yaml.j2
         dest: /var/lib/rancher/k3s/server/manifests/kube-vip-static-pod.yaml
         owner: "root"
         group: "root"
-        mode: 0644
+        mode: "0644"
       when:
         - k3s_control_node | default(false)
       loop: "{{ groups['master'][1:] }}" 
