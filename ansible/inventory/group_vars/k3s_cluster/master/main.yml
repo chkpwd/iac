@@ -6,10 +6,11 @@ k3s_server:
   tls-san:
     - "{{ kube_vip_address }}" # Floating LoadBalancer IP for Control Plane API
     - k3s-vip.local.chkpwd.com
-  https-listen-port: 6443
   docker: false
   flannel-backend: "vxlan" # quote
   disable:
+    - metrics-server
     - servicelb
     - traefik
+    - local-storage
   write-kubeconfig-mode: "0644"
