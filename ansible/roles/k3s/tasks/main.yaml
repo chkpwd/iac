@@ -66,6 +66,16 @@
         replace: "https://{{ kube_vip_address }}:6443"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
+        mode: "0644"
+
+- name: Bootstrap Flux Namespace
+  delegate_to: localhost
+  kubernetes.core.k8s:
+    name: flux-system
+    api_version: v1
+    kind: Namespace
+    state: present
+    kubeconfig: "/home/{{ common_user }}/.kube/config"
 
 - name: Create SOPs secret
   delegate_to: localhost
