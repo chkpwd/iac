@@ -36,13 +36,22 @@
     name: parted
     state: present
 
-- name: Prepare secondary partition
+- name: Prepare secondary disk
   community.general.parted:
     device: /dev/sdb
     number: 1
     name: data
     label: gpt
     state: present
+  register: parted_result
+  failed_when: parted_result.failed
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: Reboot machine if partitioning failed
+  reboot:
+  when: parted_result.failed
+  delegate_to: "{{ inventory_hostname }}"
+  notify: Reboot machines
 
 - name: Create ext4 fs on partition
   community.general.filesystem:
