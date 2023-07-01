@@ -21,13 +21,13 @@ spec:
         - name: port
           value: "6443"
         - name: vip_interface
-          value: ens192
+          value: "{{ kube_vip_interface }}"
         - name: vip_cidr
           value: "32"
         - name: cp_enable
           value: "true"
         - name: cp_namespace
-          value: kube-system
+          value: "{{ kube_vip_namespace }}"
         - name: vip_ddns
           value: "false"
         - name: svc_enable
