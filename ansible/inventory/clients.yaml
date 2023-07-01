@@ -34,9 +34,9 @@ all:
         crypto:
         node-01:
         cockpit:
-        kubes-cp-1.local.chkpwd.com:
-        kubes-cp-2.local.chkpwd.com:
-        kubes-cp-3.local.chkpwd.com:
+        kubes-cp-1:
+        kubes-cp-2:
+        kubes-cp-3:
 
     windows:
       hosts:
@@ -61,9 +61,12 @@ all:
 
     master:
       hosts:
-        kubes-cp-1.local.chkpwd.com:
-        kubes-cp-2.local.chkpwd.com:
-        kubes-cp-3.local.chkpwd.com:
+        kubes-cp-1:
+          ansible_host: 172.16.16.201
+        kubes-cp-2:
+          ansible_host: 172.16.16.202
+        kubes-cp-3:
+          ansible_host: 172.16.16.203
 
     printers:
       hosts:
