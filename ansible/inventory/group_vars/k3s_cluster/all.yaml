@@ -13,7 +13,7 @@ k3s_server_manifests_urls:
 k3s_server_manifests_templates:
   - kube-vip-static-pod.yaml.j2
 
-k3s_registration_address: "{{ kubevip_address }}"
+k3s_registration_address: "{{ kube_vip_address }}"
 
 systemd_dir: /etc/systemd/system
 
