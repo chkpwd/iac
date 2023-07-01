@@ -1,8 +1,8 @@
 ---
 - name: Test dynamic playbooks
-  hosts: loba
-  become: true
+  hosts: all
 
   tasks:
-    - name: Get disk facts
-      community.windows.win_disk_facts:
+    - name: Debugging Variables
+      debug:
+        var: testvar
