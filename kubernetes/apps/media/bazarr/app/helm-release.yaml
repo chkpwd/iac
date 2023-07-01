@@ -56,10 +56,10 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/name: "Bazarr"
           gethomepage.dev/group: "Media Automation"
-          gethomepage.dev/icon: *app
+          gethomepage.dev/icon: "{{ .values.global.nameOverride }}"
           gethomepage.dev/description: "Subtitles Automation Tool."
-          gethomepage.dev/widget.type: *app
-          gethomepage.dev/widget.url: "http://{{ .Release.Name }}.media.svc.cluster.local"
+          gethomepage.dev/widget.type: "{{ .values.global.nameOverride }}"
+          gethomepage.dev/widget.url: "http://{{ .values.global.nameOverride }}.media.svc.cluster.local"
           gethomepage.dev/widget.key: "${API_KEY_BAZARR}"
         hosts:
           - host: &host "bazarrk3s.${LOCAL_DOMAIN}"
