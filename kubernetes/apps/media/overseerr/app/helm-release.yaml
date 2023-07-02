@@ -56,9 +56,9 @@ spec:
           gethomepage.dev/description: "User requests management"
           gethomepage.dev/widget.type: "overseerr"
           gethomepage.dev/widget.url: "http://overseerr.media.svc.cluster.local"
-          # gethomepage.dev/widget.key: "${API_KEY_OVERSEERR}"
+          gethomepage.dev/widget.key: "${API_KEY_OVERSEERR}"
         hosts:
-          - host: &host "{{ .Release.Name }}k3s.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
         tls:

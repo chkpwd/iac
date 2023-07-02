@@ -30,10 +30,10 @@ spec:
 
     env:
       TZ: "America/New_York"
-      APP_URL: https://wizarrk3s.${LOCAL_DOMAIN}
+      APP_URL: https://{{ .Release.Name }}.${LOCAL_DOMAIN}
       DISABLE_BUILTIN_AUTH: "true"
 
-    hostname: wizarr
+    hostname: *app
 
     service:
       main:
@@ -45,8 +45,15 @@ spec:
       main:
         enabled: true
         ingressClassName: "nginx"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "wizarr"
+          gethomepage.dev/group: "Media Automation"
+          gethomepage.dev/icon: "https://github.com/Wizarrrr/wizarr/blob/master/screenshots/wizard.png"
+          gethomepage.dev/description: "Plex Registration Tool"
+          gethomepage.dev/widget.url: "http://wizarr.media.svc.cluster.local"
         hosts:
-          - host: &host "wizarrk3s.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
         tls:

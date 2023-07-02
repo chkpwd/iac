@@ -35,7 +35,7 @@ spec:
       TZ: "America/New_York"
       PROWLARR__INSTANCE_NAME: Prowlarr
       PROWLARR__PORT: &port 9696
-      RADARR__APPLICATION_URL: "https://prowlarr3s.${LOCAL_DOMAIN}"
+      RADARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
       PROWLARR__LOG_LEVEL: info
       RADARR__API_KEY: ${API_KEY_PROWLARR}
       RADARR__AUTHENTICATION_METHOD: Forms
@@ -63,7 +63,7 @@ spec:
           gethomepage.dev/widget.url: "http://prowlarr.media.svc.cluster.local"
           gethomepage.dev/widget.key: "${API_KEY_PROWLARR}"
         hosts:
-          - host: &host "{{ .Release.Name }}k3s.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
