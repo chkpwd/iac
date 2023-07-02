@@ -41,7 +41,7 @@ spec:
       RADARR__AUTHENTICATION_METHOD: Forms
       RADARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
 
-    hostname: prowlarr
+    hostname: *app
 
     service:
       main:
@@ -63,7 +63,7 @@ spec:
           gethomepage.dev/widget.url: "http://prowlarr.media.svc.cluster.local"
           gethomepage.dev/widget.key: "${API_KEY_PROWLARR}"
         hosts:
-          - host: &host "prowlarrk3s.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}k3s.${LOCAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
