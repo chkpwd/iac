@@ -36,7 +36,7 @@ spec:
       LOG_LEVEL: info
       PORT: &port 5055
 
-    hostname: overseerr
+    hostname: *app
 
     service:
       main:
@@ -48,8 +48,17 @@ spec:
       main:
         enabled: true
         ingressClassName: nginx
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "overseerr"
+          gethomepage.dev/group: "Media Automation"
+          gethomepage.dev/icon: "overseerr"
+          gethomepage.dev/description: "User requests management"
+          gethomepage.dev/widget.type: "overseerr"
+          gethomepage.dev/widget.url: "http://overseerr.media.svc.cluster.local"
+          # gethomepage.dev/widget.key: "${API_KEY_OVERSEERR}"
         hosts:
-          - host: &host "overseerrk3s.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}k3s.${LOCAL_DOMAIN}"
             paths:
               - path: /
         tls:
