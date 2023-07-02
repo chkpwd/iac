@@ -32,7 +32,7 @@ spec:
 
     env:
       TZ: "America/New_York"
-      BAZARR__INSTANCE_NAME: "{{ .Release.Name }}"
+      BAZARR__INSTANCE_NAME: *app
       BAZARR__PORT: &port 6767
       BAZARR__APPLICATION_URL: "https://{{ .Release.Name }}k3s.${LOCAL_DOMAIN}"
       BAZARR__API_KEY: ${API_KEY_BAZARR}
