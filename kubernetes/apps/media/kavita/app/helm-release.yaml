@@ -33,7 +33,7 @@ spec:
     env:
       TZ: "America/New_York"
 
-    hostname: kavita
+    hostname: *app
 
     service:
       main:
@@ -45,6 +45,13 @@ spec:
       main:
         enabled: true
         ingressClassName: "nginx"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "Kavita"
+          gethomepage.dev/group: "Media Automation"
+          gethomepage.dev/icon: "https://wiki.kavitareader.com/user/pages/01.home/kavita-logo3.png"
+          gethomepage.dev/description: "Book Media"
+          gethomepage.dev/widget.url: "http://kavita.media.svc.cluster.local"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
