@@ -35,7 +35,7 @@ spec:
       TZ: "America/New_York"
       DOMAIN: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
 
-    hostname: freshrss
+    hostname: *app
 
     service:
       main:
@@ -47,6 +47,16 @@ spec:
       main:
         enabled: true
         ingressClassName: "nginx"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "freshrss"
+          gethomepage.dev/group: "Media Automation"
+          gethomepage.dev/icon: "freshrss"
+          gethomepage.dev/description: "RSS Feeds Manager"
+          gethomepage.dev/widget.type: "freshrss"
+          gethomepage.dev/widget.url: "http://freshrss.tools.svc.cluster.local"
+          gethomepage.dev/widget.username: "admin"
+          gethomepage.dev/widget.password: ${APPS_PWD_FRESHRSS}
         hosts:
           - host: *host
             paths:

@@ -34,7 +34,7 @@ spec:
       TZ: "America/New_York"
       QBITTORRENT__PORT: &port 80
 
-    hostname: qbittorrent
+    hostname: *app
 
     service:
       main:
@@ -49,8 +49,17 @@ spec:
       main:
         enabled: true
         ingressClassName: "nginx"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "QBittorrent"
+          gethomepage.dev/group: "Media Automation"
+          gethomepage.dev/icon: "qbittorrent"
+          gethomepage.dev/description: "BitTorrent client written in native C++."
+          gethomepage.dev/widget.type: "qbittorrent"
+          gethomepage.dev/widget.url: "http://qbittorrent.media.svc.cluster.local"
+          gethomepage.dev/widget.key: "${API_KEY_QBITTORRENT}"
         hosts:
-          - host: &host "qbittorrentk3s.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

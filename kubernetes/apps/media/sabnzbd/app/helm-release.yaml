@@ -32,22 +32,39 @@ spec:
 
     env:
       TZ: "America/New_York"
-      SABNZBD__PORT: &port 80
+      SABNZBD__API_KEY: ${API_KEY_SABNZBD}
+      SABNZBD__NZB_KEY: ${API_KEY_NZBGEEK}
+      SABNZBD__HOST_WHITELIST_ENTRIES: >-
+        {{ .Release.Name }},
+        {{ .Release.Name }}.media,
+        {{ .Release.Name }}.media.svc,
+        {{ .Release.Name }}.media.svc.cluster,
+        {{ .Release.Name }}.media.svc.cluster.local,
+        {{ .Release.Name }}.local.chkpwd.com
 
-    hostname: sabnzbd
+    hostname: *app
 
     service:
       main:
         ports:
           http:
-            port: *port
+            port: 80
 
     ingress:
       main:
         enabled: true
         ingressClassName: "nginx"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "Sabnzbd"
+          gethomepage.dev/group: "Media Automation"
+          gethomepage.dev/icon: "sabnzbd"
+          gethomepage.dev/description: "Binary Newsreader"
+          gethomepage.dev/widget.type: "sabnzbd"
+          gethomepage.dev/widget.url: "http://sabnzbd.media.svc.cluster.local"
+          gethomepage.dev/widget.key: "${API_KEY_SABNZBD}"
         hosts:
-          - host: &host "sabnzbdk3s.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

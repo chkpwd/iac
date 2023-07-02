@@ -36,7 +36,7 @@ spec:
       LOG_LEVEL: info
       PORT: &port 8181
 
-    hostname: tautulli
+    hostname: *app
 
     service:
       main:
@@ -48,8 +48,17 @@ spec:
       main:
         enabled: true
         ingressClassName: "nginx"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "Tautulli"
+          gethomepage.dev/group: "Media Automation"
+          gethomepage.dev/icon: "tautulli"
+          gethomepage.dev/description: "Media and activity statistics monitoring tool"
+          gethomepage.dev/widget.type: "tautulli"
+          gethomepage.dev/widget.url: "http://tautulli.media.svc.cluster.local"
+          gethomepage.dev/widget.key: "${API_KEY_TAUTULLI}"
         hosts:
-          - host: &host "tautulli.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
         tls:
