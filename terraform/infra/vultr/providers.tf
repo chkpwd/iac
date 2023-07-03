@@ -6,7 +6,7 @@ terraform {
   required_providers {
     vultr = {
       source = "vultr/vultr"
-      version = "2.12.0"
+      version = "2.15.1"
     }
     sops = { 
       source = "carlpett/sops"
