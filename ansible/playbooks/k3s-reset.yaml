@@ -4,46 +4,39 @@
   become: true
   gather_facts: true
   any_errors_fatal: true
+    vars_prompt:
+    - name: nuke
+      prompt: |-
+        Are you sure you want to nuke this cluster?
+        Type 'YES I WANT TO DESTROY THIS CLUSTER' to proceed
+      default: "n"
+      private: false
+      
+  pre_tasks:
+    - name: Check for confirmation
+      ansible.builtin.fail:
+        msg: Aborted nuking the cluster
+      when: nuke != 'cluster destroy'
 
+    - name: Pausing for 5 seconds...
+      ansible.builtin.pause:
+        seconds: 5
   tasks:
-    - name: Disable services
-      systemd:
-        name: "{{ item }}"
-        state: stopped
-        enabled: no
-      failed_when: false
-      with_items:
-        - k3s
-        - k3s-node
+    - name: Stop Kubernetes
+      ansible.builtin.include_role:
+        name: xanmanning.k3s
+        public: true
+      vars:
+        k3s_state: stopped
 
-    - name: Kill the service - pkill -9 -f "k3s/data/[^/]+/bin/containerd-shim-runc"
-      register: pkill_containerd_shim_runc
-      command: pkill -9 -f "k3s/data/[^/]+/bin/containerd-shim-runc"
-      changed_when: "pkill_containerd_shim_runc.rc == 0"
-      failed_when: false
+    - name: Uninstall Kubernetes
+      ansible.builtin.include_role:
+        name: xanmanning.k3s
+        public: true
+      vars:
+        k3s_state: uninstalled
 
-    - name: Umount k3s filesystems
-      include_tasks: umount_with_children.yaml
-      with_items:
-        - /run/k3s
-        - /var/lib/kubelet
-        - /run/netns
-        - /var/lib/rancher/k3s
-      loop_control:
-        loop_var: mounted_fs
-
-    - name: Remove service files, binaries and data
-      file:
-        name: "{{ item }}"
-        state: absent
-      with_items:
-        - /usr/local/bin/k3s
-        - "{{ systemd_dir }}/k3s.service"
-        - "{{ systemd_dir }}/k3s-node.service"
-        - /etc/rancher/k3s
-        - /var/lib/kubelet
-        - /var/lib/rancher/k3s
-
-    - name: Reload daemon_reload
-      systemd:
-        daemon_reload: yes
+    - name: Reboot
+      ansible.builtin.reboot:
+        msg: Rebooting nodes
+        reboot_timeout: 3600
