@@ -3,4 +3,109 @@ kind: Kustomization
 resources:
   - gotk-components.yaml
   - gotk-sync.yaml
+  - gotk-pvc.yaml
   - sources/helm-repos
+patches:
+  # This patch adds a persistent volume to the source-controller Deployment.
+  - patch: |
+      - op: add
+        path: '/spec/template/spec/volumes/-'
+        value:
+          name: persistent-data
+          persistentVolumeClaim:
+            claimName: gotk-pvc
+      - op: replace
+        path: '/spec/template/spec/containers/0/volumeMounts/0'
+        value:
+          name: persistent-data
+          mountPath: /data      
+    target:
+      kind: Deployment
+      name: source-controller
+  # This patch adds helm caching options to the source-controller Deployment.
+  - patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --helm-cache-max-size=10
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --helm-cache-ttl=60m
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --helm-cache-purge-interval=5m      
+    target:
+      kind: Deployment
+      name: source-controller
+  # This patch enables OOM watch feature for the helm-controller Deployment.
+  - patch: |
+      # Enable OOM watch feature
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --feature-gates=OOMWatch=true
+      # Threshold at which to trigger a graceful shutdown (optional, default 95%)
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --oom-watch-memory-threshold=95
+      # Interval at which to check memory usage (optional, default 500ms)
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --oom-watch-interval=500ms      
+    target:
+      kind: Deployment
+      name: helm-controller
+  # This patch adds decryption and postBuild configurations to the Kustomization resource.
+  - patch: |
+      - op: add
+        path: /spec/decryption
+        value: 
+          provider: sops
+          secretRef:
+            name: sops-age
+      - op: add
+        path: /spec/postBuild
+        value: 
+          substituteFrom:
+            - kind: ConfigMap
+              name: cluster-settings
+            - kind: Secret
+              name: sops-secrets
+    target:
+      version: v1
+      kind: Kustomization
+      name: flux-system
+      namespace: flux-system
+  # This patch adds more fine-tuned control of the Kubernetes API server for the specified controllers.
+  - patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --concurrent=20
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --kube-api-qps=500
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --kube-api-burst=1000
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --requeue-dependency=5s      
+    target:
+      kind: Deployment
+      name: "(kustomize-controller|helm-controller|source-controller)"
+  # This patch increases the CPU and memory limits of the specified controllers.
+  - patch: |
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: all
+      spec:
+        template:
+          spec:
+            containers:
+              - name: manager
+                resources:
+                  limits:
+                    cpu: 2000m
+                    memory: 2Gi      
+    target:
+      kind: Deployment
+      name: "(kustomize-controller|helm-controller|source-controller)"
