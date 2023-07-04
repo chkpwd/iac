@@ -15,7 +15,7 @@ patches:
         value: --helm-cache-ttl=60m
       - op: add
         path: /spec/template/spec/containers/0/args/-
-        value: --helm-cache-purge-interval=5m      
+        value: --helm-cache-purge-interval=5m
     target:
       kind: Deployment
       name: source-controller
@@ -32,7 +32,7 @@ patches:
       # Interval at which to check memory usage (optional, default 500ms)
       - op: add
         path: /spec/template/spec/containers/0/args/-
-        value: --oom-watch-interval=500ms      
+        value: --oom-watch-interval=500ms
     target:
       kind: Deployment
       name: helm-controller
@@ -49,7 +49,7 @@ patches:
         value: --kube-api-burst=1000
       - op: add
         path: /spec/template/spec/containers/0/args/-
-        value: --requeue-dependency=5s      
+        value: --requeue-dependency=5s
     target:
       kind: Deployment
       name: "(kustomize-controller|helm-controller|source-controller)"
@@ -67,7 +67,7 @@ patches:
                 resources:
                   limits:
                     cpu: 2000m
-                    memory: 2Gi      
+                    memory: 2Gi
     target:
       kind: Deployment
       name: "(kustomize-controller|helm-controller|source-controller)"
@@ -75,13 +75,13 @@ patches:
   - patch: |
       - op: add
         path: /spec/decryption
-        value: 
+        value:
           provider: sops
           secretRef:
             name: sops-age
       - op: add
         path: /spec/postBuild
-        value: 
+        value:
           substituteFrom:
             - kind: ConfigMap
               name: cluster-settings
