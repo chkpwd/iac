@@ -1,0 +1,48 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app immich-redis
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+
+  values:
+    image:
+      repository: public.ecr.aws/docker/library/redis
+      tag: 7.0.11
+
+    env:
+      REDIS_REPLICATION_MODE: master
+    envFrom:
+      - secretRef:
+          name: immich-secret
+
+    command: ["redis-server", "--requirepass", "$(REDIS_PASSWORD)"]
+    service:
+      main:
+        ports:
+          http:
+            port: 6379
+
+    resources:
+      requests:
+        memory: 64M
+      limits:
+        memory: 64M
