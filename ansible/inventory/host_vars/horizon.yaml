@@ -73,10 +73,6 @@ service_definitions:
       - "{{ configuration_path }}/couchdb:/opt/couchdb/data"
       - "{{ configuration_path }}/couchdb/local.ini:/opt/couchdb/etc/local.ini"
 
-  - name: winxuu
-    image: chkpwd/winxuu:latest
-    ports: [3389:3389]
-
   - name: swag
     image: "{{ linuxserver_image }}/swag:latest"
     ports:
