@@ -71,7 +71,7 @@ patches:
     target:
       kind: Deployment
       name: "(kustomize-controller|helm-controller|source-controller)"
-        # This patch adds decryption and postBuild configurations to the Kustomization resource.
+  # This patch adds decryption and postBuild configurations to the Kustomization resource.
   - patch: |
       - op: add
         path: /spec/decryption
