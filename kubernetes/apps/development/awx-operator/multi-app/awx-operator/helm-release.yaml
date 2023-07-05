@@ -1,0 +1,12 @@
+---
+apiVersion: awx.ansible.com/v1beta1
+kind: AWX
+metadata:
+  name: awx-operator
+  namespace: development
+spec:
+  ingress_type: ingress
+  hostname: &host "awx.${LOCAL_DOMAIN}"
+  ingress_path: '/'
+  ingress_path_type: 'Prefix'
+  ingress_tls_secret: *host

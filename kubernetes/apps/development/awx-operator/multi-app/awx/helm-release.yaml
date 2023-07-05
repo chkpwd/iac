@@ -5,40 +5,30 @@ metadata:
   name: awx
   namespace: development
 spec:
-  interval: 5m
+  interval: 15m
   chart:
     spec:
       chart: awx-operator
       version: 2.3.0
+      interval: 30m
       sourceRef:
         kind: HelmRepository
         name: awx-chart
         namespace: flux-system
-      interval: 5m
-  maxHistory: 2
+
   install:
-    createNamespace: true
     remediation:
       retries: 3
   upgrade:
-    cleanupOnFail: true
     remediation:
       retries: 3
-  uninstall:
-    keepHistory: false
+
   values:
+    nameOverride: awx
     AWX:
       enabled: true
       name: awx
       spec:
-        replicas: 2
         admin_user: admin
         admin_email: ${AWX_ADMIN_EMAIL}
-        admin_password_secret: awx-admin-password
-        ingress_type: ingress
-        ingress_class_name: nginx
-        hostname: awx.${LOCAL_DOMAIN}
-        projects_persistence: true
-        projects_existing_claim: awx-operator-claim
-        projects_storage_size: 1Gi
-        projects_storage_class: longhorn
+        admin_password_secret: ${AWX_ADMIN_PASSWORD}
