@@ -1,0 +1,14 @@
+---
+- name: Clean Docker
+  hosts: docker_hosts
+
+  tasks:
+    - name: Prune dangling images and containers
+      community.docker.docker_prune:
+        containers: true
+        images: true
+        images_filters:
+          dangling: false
+        networks: false
+        volumes: false
+        builder_cache: false
