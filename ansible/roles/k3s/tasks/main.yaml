@@ -52,7 +52,7 @@
         replace: "https://{{ kube_vip_address }}:6443"
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
-        mode: "0644"
+        mode: "0600"
 
 - name: Bootstrap Flux Namespace
   delegate_to: localhost
