@@ -5,8 +5,6 @@ metadata:
   name: tools-immich
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: cluster-apps-cloudnative-pg-cluster
   path: ./kubernetes/apps/default/immich/multi-app
   prune: true
   sourceRef:

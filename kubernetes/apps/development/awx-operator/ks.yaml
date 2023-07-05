@@ -7,7 +7,66 @@ metadata:
 spec:
   dependsOn:
     - name: development-awx-config
-  path: ./kubernetes/apps/development/awx-operator/multi-app
+    - name: development-awx-postgres
+    - name: development-awx-operator
+  path: ./kubernetes/apps/development/awx-operator/multi-app/awx
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-settings
+      - kind: Secret
+        name: sops-secrets
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: development-awx
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: development-awx-config
+    - name: development-awx-postgres
+  path: ./kubernetes/apps/development/awx-operator/multi-app/awx-operator
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-settings
+      - kind: Secret
+        name: sops-secrets
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: development-awx
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: development-awx-config
+  path: ./kubernetes/apps/development/awx-operator/multi-app/awx-postgres
   prune: true
   sourceRef:
     kind: GitRepository
