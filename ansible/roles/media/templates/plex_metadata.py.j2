@@ -168,7 +168,7 @@ for file in get_backup_files()[:-MAX_BACKUPS]:
         logging.info("Removed old backup file: %s", file_path)
 
 logging.info('Sending heartbeat to Uptime Kuma...')
-url = "https://discord.com/api/webhooks/1123307973259833464/pKFTySIOcAZXL5Jo8Q7RvpDNS90fqXcJRk7Si5DeDm_RurytlCeCjxejn5FOW8j1_dBp"
+url = "{{ discord_media_webhook }}"
 response = requests.get(url)
 
 logging.info("Backup process complete.\n\n")
