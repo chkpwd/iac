@@ -4,6 +4,8 @@ kind: Kustomization
 metadata:
   name: personal-winxuu
   namespace: flux-system
+  labels:
+    substitution.flux.home.arpa/enabled: "true"
 spec:
   path: ./kubernetes/apps/personal/winxuu/app
   prune: true
@@ -14,13 +16,3 @@ spec:
   interval: 30m
   retryInterval: 1m
   timeout: 5m
-  decryption:
-    provider: sops
-    secretRef:
-      name: sops-age
-  postBuild:
-    substituteFrom:
-      - kind: ConfigMap
-        name: cluster-settings
-      - kind: Secret
-        name: sops-secrets
