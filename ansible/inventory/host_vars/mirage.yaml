@@ -32,6 +32,7 @@ service_definitions:
         - '{{ configuration_path }}/overseerr:/config'
       networks:
         - name: media
+      state: stopped
     - name: sonarr
       image: '{{ hotio_image }}/sonarr:v4'
       ports:
