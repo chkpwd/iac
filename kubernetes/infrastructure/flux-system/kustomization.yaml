@@ -88,7 +88,5 @@ patches:
             - kind: Secret
               name: sops-secrets
     target:
-      version: v1
       kind: Kustomization
       name: flux-system
-      namespace: flux-system
