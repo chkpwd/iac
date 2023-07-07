@@ -1,0 +1,46 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app longhorn
+  namespace: longhorn-system
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: longhorn
+      version: 1.4.2
+      interval: 10m
+      sourceRef:
+        kind: HelmRepository
+        name: longhorn
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    ingress:
+      enabled: true
+      ingressClassName: "nginx"
+      host: longhorn.${LOCAL_DOMAIN}
+      tls: true
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-production
+
+    persistence:
+      defaultClass: true
+      defaultClassReplicaCount: 2
+      reclaimPolicy: Retain
+      recurringJobSelector:
+        enable: false
+
+    defaultSettings:
+      storageOverProvisioningPercentage: 100
+      storageMinimalAvailablePercentage: 10
+      nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
+      restoreVolumeRecurringJobs: true
+      concurrentAutomaticEngineUpgradePerNodeLimit: 1
