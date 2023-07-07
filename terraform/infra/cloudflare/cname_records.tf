@@ -1,3 +1,12 @@
+resource "cloudflare_record" "overseerr" {
+  name    = "overseerr"
+  proxied = true
+  ttl     = 1
+  type    = "CNAME"
+  value   = "chkpwd.com"
+  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
+}
+
 resource "cloudflare_record" "zipline_cname" {
   name    = "zipline"
   proxied = true
@@ -18,15 +27,6 @@ resource "cloudflare_record" "winxuu_cname" {
 
 resource "cloudflare_record" "kavita_cname" {
   name    = "kavita"
-  proxied = true
-  ttl     = 1
-  type    = "CNAME"
-  value   = "chkpwd.com"
-  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
-}
-
-resource "cloudflare_record" "overseerr_cname" {
-  name    = "request"
   proxied = true
   ttl     = 1
   type    = "CNAME"
