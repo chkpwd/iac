@@ -22,7 +22,7 @@ logging.basicConfig(
 logging.info("Backup process starting...")
 
 # PMS application support path
-PMS_APP_DIR = "{{ pms_app_dir }}/Plex Media Server"
+PMS_APP_DIR = "{{ pms_app_dir }}"
 
 # Backup directory
 BACKUP_DIR = "{{ media_path }}"
@@ -109,13 +109,25 @@ exclude_patterns = [f"--exclude {excl}" for excl in EXCLUDES]
 
 # Calculate the amount of space we want to be available.
 # This is calculated as the size of the last backup + 10%
-last_backup_size = os.path.getsize(
-    os.path.join(
-        BACKUP_DIR,
-        get_backup_files()[-1]
+backup_files = get_backup_files()
+
+if len(backup_files) > 0:
+    last_backup_size = os.path.getsize(
+        os.path.join(
+            BACKUP_DIR,
+            backup_files[-1]
+        )
     )
-)
-wanted_space = int(last_backup_size * 1.1)
+    wanted_space = int(last_backup_size * 1.1)
+
+else:
+    wanted_space = 0
+    for dirpath, _, filenames in os.walk(PMS_APP_DIR):
+        wanted_space += sum(
+            os.path.getsize(os.path.join(dirpath, filename))
+            for filename in filenames
+        )
+
 available_space = os.statvfs(BACKUP_DIR).f_frsize * os.statvfs(BACKUP_DIR).f_bavail
 
 if available_space < wanted_space:
