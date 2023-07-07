@@ -3,7 +3,7 @@
 #===============================================================================
 
 module "horizon" {
-  source                    = "./modules/guest_machines"
+  source                    = "../_modules/vsphere_vm"
   vm_name                   = "horizon"
   vm_template               = "deb-12-template"
   network_spec = {
@@ -25,7 +25,7 @@ module "horizon" {
 }
 
 module "cockpit" {
-  source                    = "./modules/guest_machines"
+  source                    = "../_modules/vsphere_vm"
   vm_name                   = "cockpit"
   vm_template               = "deb-12-template"
   network_spec = {
@@ -48,7 +48,7 @@ module "cockpit" {
 }
 
 module "crypto" {
-  source                    = "./modules/guest_machines"
+  source                    = "../_modules/vsphere_vm"
   vm_name                   = "crypto"
   vm_template               = "deb-12-template"
   network_spec = {
@@ -69,7 +69,7 @@ module "crypto" {
 }
 
 module "mirage" {
-  source                    = "./modules/guest_machines"
+  source                    = "../_modules/vsphere_vm"
   vm_name                   = "mirage"
   vm_template               = "deb-12-template"
   network_spec = {
@@ -90,7 +90,7 @@ module "mirage" {
 }
 
 module "homeassistant" {
-  source                    = "./modules/guest_machines"
+  source                    = "../_modules/vsphere_vm"
   vm_name                   = "valkyrie"
   vm_template               = "deb-12-template"
   network_spec = {
@@ -106,7 +106,7 @@ module "homeassistant" {
 }
 
 module "bloodhound" {
-  source                    = "./modules/guest_machines"
+  source                    = "../_modules/vsphere_vm"
   count                     = 0
   vm_name                   = "bloodhound"
   vm_template               = "WinSrv22-template-DE"
@@ -123,7 +123,7 @@ module "bloodhound" {
 }
 
 module "kube-ops" {
-  source                    = "./modules/guest_machines"
+  source                    = "../_modules/vsphere_vm"
   count                     = 3
   vm_name                   = "kubes-cp-${count.index + 1}"
   vm_template               = "deb-12-template"
@@ -148,7 +148,7 @@ module "kube-ops" {
 }
 
 module "traefik" {
-  source                    = "./modules/guest_machines"
+  source                    = "../_modules/vsphere_vm"
   count                     = 1
   vm_name                   = "node-01"
   vm_template               = "deb-12-template"

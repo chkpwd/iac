@@ -16,7 +16,7 @@ terraform {
 }
 
 data "sops_file" "aws-secrets" {
-  source_file = "../../terraform.sops.yaml"
+  source_file = "../terraform.sops.yaml"
 }
 
 # Configure the AWS Provider

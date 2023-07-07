@@ -20,7 +20,7 @@ terraform {
 }
 
 data "sops_file" "fluxcd-secrets" {
-  source_file = "../../terraform.sops.yaml"
+  source_file = "../terraform.sops.yaml"
 }
 
 locals {

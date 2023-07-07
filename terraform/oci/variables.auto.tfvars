@@ -1,1 +1,0 @@
-private_key_path = "~/.ssh/oci.598Z.pem"
