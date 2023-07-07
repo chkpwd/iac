@@ -1,9 +1,7 @@
 - name: Copy mainsail configs
-  ansible.builtin.template:
+  ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ ansible_env.HOME }}/printer_data/config/test/{{ item | basename | regex_replace('.j2$', '') }}"
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
     mode: 0755
-  with_fileglob:
-    - "templates/config/*.j2"
