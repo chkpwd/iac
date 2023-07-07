@@ -2,8 +2,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - longhorn-system
-  - nginx-system
   - namespaces
+  - longhorn-system/ks.yaml
+  - nginx-system/ks.yaml
   - metallb-system/ks.yaml
   - cert-manager-system/ks.yaml
