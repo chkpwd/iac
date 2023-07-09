@@ -1,0 +1,53 @@
+---
+configuration_path: /opt/docker-confs
+
+common_env: &common_env
+  TZ: America/New_York
+  PUID: "1000"
+  PGID: "1000"
+
+service_definitions:
+  - name: zipline-postgres
+    image: postgres:15
+    env:
+      <<: *common_env
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DATABASE: postgres
+    volumes:
+      - "{{ configuration_path }}/zipline/db:/var/lib/postgresql/data"
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: "5"
+
+  - name: zipline
+    image: ghcr.io/diced/zipline
+    ports: [3001:3000]
+    env:
+      CORE_SECRET: "$6$LE8KUBB6EM9Gkg9w$sSNd6YCtugFUq62xN/VqrW4gPLDGvG0DzDLqZVqsWkT2CD4pPxB3mnqX1sPGm3OSY.Xwdk3I4EoreRXXCvkgS0"
+      CORE_HOST: "0.0.0.0"
+      CORE_RETURN_HTTPS: "true"
+      CORE_PORT: "3000"
+      CORE_DATABASE_URL: "postgres://postgres:postgres@zipline-postgres/postgres"
+      CORE_LOGGER: "true"
+      WEBSITE_TITLE: "Chkpwd's File Server"
+      UPLOADER_DEFAULT_FORMAT: 'NAME'
+      MFA_TOTP_ENABLED: "true"
+    volumes:
+      - "{{ configuration_path }}/zipline/uploads:/zipline/uploads"
+      - "{{ configuration_path }}/zipline/public:/zipline/public"
+    links: [zipline-postgres]
+
+  - name: couchdb
+    image: couchdb:latest
+    env:
+      <<: *common_env
+      COUCHDB_USER: admin
+      COUCHDB_PASSWORD: "{{ COUCHDB_DB_PASSWORD }}"
+    ports:
+      - '5984:5984'
+    volumes:
+      - "{{ configuration_path }}/couchdb:/opt/couchdb/data"
+      - "{{ configuration_path }}/couchdb/local.ini:/opt/couchdb/etc/local.ini"

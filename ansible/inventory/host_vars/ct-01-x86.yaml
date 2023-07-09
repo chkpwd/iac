@@ -1,0 +1,28 @@
+---
+configuration_path: /opt/docker-confs
+
+common_env: &common_env
+  TZ: America/New_York
+  PUID: "1000"
+  PGID: "1000"
+
+service_definitions:
+  - name: wireguard
+    image: lscr.io/linuxserver/wireguard:1.0.20210914
+    capabilities:
+      - net_admin # Allows modifications of net utils
+      - sys_module # Allows privileged operations on non-root systems
+    env: "{{ common_env }}"
+    volumes:
+      - '{{ configuration_path }}/wireguard:/config'
+      - /lib/modules:/lib/modules
+    sysctls: net.ipv4.conf.all.src_valid_mark=1
+    network_mode: host
+    state: present # Only added to easily be able to delete afterwards
+  
+  - name: uptime-kuma
+    image: louislam/uptime-kuma:1.22.1
+    volumes:
+      - "{{ configuration_path }}/uptime-kuma:/app/data" 
+    ports: [3001:3001]
+    state: present # Only added to easily be able to delete afterwards
