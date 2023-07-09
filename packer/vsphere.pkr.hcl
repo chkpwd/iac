@@ -39,7 +39,7 @@ source "vsphere-iso" "linux" {
   ssh_password = var.connection_password
   http_content = local.preseed_config
 
-  firmware     = "efi" 
+  firmware     = "efi"
 
   CPUs         = var.num_cores
   RAM          = var.mem_size
