@@ -53,6 +53,8 @@ all:
         valkyrie:
         crypto:
         node-01:
+        ct-01-x86:
+        ct-02-x86:
     
     k3s_cluster:
       children:
@@ -93,8 +95,16 @@ all:
           ansible_host: 172.16.16.232
 
     cloud:
+      vars:
+        ansible_remote_user: ubuntu
+        ansible_ssh_user: ubuntu
+        ansible_ssh_private_key_file: ~/.ssh/oci
+        common_user: ubuntu
       hosts:
-        149.28.65.221:
+        ct-01-x86:
+          ansible_host:	129.80.232.217
+        ct-02-x86:
+          ansible_host:	129.153.185.40
 
     onprem:
       children:
