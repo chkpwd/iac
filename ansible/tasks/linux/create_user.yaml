@@ -1,0 +1,26 @@
+---
+- name: Create a login user
+  ansible.builtin.user:
+    name: "{{ common_user }}"
+    password: "{{ USR_PASSWORD_SOPS }}"
+    state: present
+  become: true
+
+- name: Chmod the user home directory
+  ansible.builtin.file:
+    path: "/home/{{ common_user }}"
+    state: directory
+    mode: 0755
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    recurse: false
+  become: true
+
+- name: Allow sudo group to have passwordless sudo
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    state: present
+    regexp: '^%sudo'
+    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+    validate: '/usr/sbin/visudo -cf %s'
+  become: true
