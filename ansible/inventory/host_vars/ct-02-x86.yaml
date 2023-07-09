@@ -24,7 +24,7 @@ service_definitions:
 
   - name: zipline
     image: ghcr.io/diced/zipline
-    ports: [3001:3000]
+    ports: [3000:3000]
     env:
       CORE_SECRET: "$6$LE8KUBB6EM9Gkg9w$sSNd6YCtugFUq62xN/VqrW4gPLDGvG0DzDLqZVqsWkT2CD4pPxB3mnqX1sPGm3OSY.Xwdk3I4EoreRXXCvkgS0"
       CORE_HOST: "0.0.0.0"
