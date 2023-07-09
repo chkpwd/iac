@@ -14,8 +14,8 @@ variable "instance_spec" {
       subnet_id                 = string
       vnic_label                = optional(string, "Primaryvnic")
       hostname                  = optional(string)
-      assign_public_ip          = optional(string, false)
-      assign_private_dns_record = optional(string, false)
+      assign_public_ip          = optional(bool, false)
+      assign_private_dns_record = optional(bool, false)
       private_ip                = optional(string)
     })
     ssh_authorized_keys = string

@@ -3,11 +3,6 @@ data "oci_identity_availability_domain" "ad" {
   ad_number      = var.oci_availability_domain_number
 }
 
-data "tfe_outputs" "oracle_cloud" {
-  organization = "unixchkpwd"
-  workspace = "oracle-cloud"
-}
-
 data "http" "cf_ips" {
   url = "https://www.cloudflare.com/ips-v4"
   request_headers = {
@@ -43,7 +38,6 @@ resource "oci_core_instance" "instance" {
   }
 
   create_vnic_details {
-    # subnet_id                 = data.tfe_outputs.oracle_cloud.values.personal_subnet_id
     subnet_id                 = var.instance_spec.network.subnet_id
     display_name              = var.instance_spec.network.vnic_label
     hostname_label            = var.instance_spec.network.hostname
@@ -60,7 +54,7 @@ resource "oci_core_instance" "instance" {
 
 resource "oci_core_network_security_group" "nsg" {
   compartment_id  = "${data.sops_file.oci-secrets.data["oci_tenancy_ocid"]}"
-  vcn_id          = data.tfe_outputs.oracle_cloud.values.orc_vcn_id
+  vcn_id          = "${data.sops_file.oci-secrets.data["oci_vcn_ocid"]}"
   display_name    = "${var.instance_spec.name} NSG"
 }
 
