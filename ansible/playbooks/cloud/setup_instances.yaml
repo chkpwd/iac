@@ -1,0 +1,21 @@
+---
+- name: Setup OCI Instances
+  hosts: cloud
+  become: true
+
+  tasks:
+    - name: Install Packages
+      ansible.builtin.apt:
+        update_cache: true
+        name:
+          - vim
+          - curl
+          - wget
+          - iputils-ping
+        state: present
+
+    - name: User Administration
+      ansible.builtin.include_tasks: ../../tasks/linux/create_user.yaml
+        
+    - name: Docker Containerization | Installation
+      ansible.builtin.include_tasks: ../../tasks/docker/install_docker.yaml
