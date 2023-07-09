@@ -1,7 +1,21 @@
+- name: Check if multiple disks
+  ansible.builtin.stat:
+    path: /mnt/data
+  register: multiple_disks
+
 - name: Check Docker Present
   ansible.builtin.stat:
     path: /usr/bin/docker
   register: docker_installed
+
+- name: Create dir
+  ansible.builtin.file:
+    path: "{{ configuration_path }}"
+    state: directory
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: '0755'
+  register: docker_dir
 
 - name: Install Docker only if not installed
   when: "'docker_hosts' in group_names and not docker_installed.stat.exists"
@@ -14,10 +28,10 @@
           - name: docker
         docker_edition: 'ce'
         docker_package_state: latest
-        docker_users: hyoga
+        docker_users: "{{ common_user }}"
 
 - name: Configure Docker Daemon Path
-  when: "'docker_hosts' in group_names and docker_installed.stat.exists"
+  when: "'docker_hosts' in group_names and docker_installed.stat.exists and multiple_disks.stat.exists"
   block:
     - name: Create Docker Config Dir
       ansible.builtin.file:
@@ -38,16 +52,15 @@
       when: ansible_facts['devices'] | length > 1
 
 - name: Create network(s)
+  when: docker_network is defined
   community.docker.docker_network:
     name: "{{ item }}"
   loop: "{{ docker_network }}"
 
 - name: Deploy Docker containers # noqa args[module]
+  when: docker_dir
   community.docker.docker_container: "{{ item }}"
   loop: "{{ service_definitions }}"
   loop_control:
     label: "{{ item.name }}"
   register: deploy_containers
-
-- name: "Install ctop"
-  ansible.builtin.include_tasks: install_ctop.yaml
