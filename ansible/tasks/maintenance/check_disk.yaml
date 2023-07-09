@@ -1,0 +1,6 @@
+---
+- name: Get free disk space
+  shell: |
+    set -o pipefail
+    df -h /tmp --output\=avail | tail -n 1 
+  register: disk_usage
