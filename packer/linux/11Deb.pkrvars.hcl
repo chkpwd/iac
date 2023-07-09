@@ -1,7 +1,7 @@
 os_iso_url          = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-11.7.0-amd64-netinst.iso"
 iso_checksum        = "e482910626b30f9a7de9b0cc142c3d4a079fbfa96110083be1d0b473671ce08d"
 iso_checksum_type   = "sha256"
-num_cores             = "1"
+num_cores           = "1"
 mem_size            = "1024"
 root_disk_size      = "16000"
 guest_os_type       = "otherLinux64Guest"
