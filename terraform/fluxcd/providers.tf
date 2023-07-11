@@ -6,7 +6,7 @@ terraform {
   required_providers {
     flux = {
       source = "fluxcd/flux"
-      version = "1.0.0-rc.5"
+      version = "1.0.1"
     }
     sops = { 
       source = "carlpett/sops"
