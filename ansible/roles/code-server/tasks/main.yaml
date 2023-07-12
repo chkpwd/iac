@@ -66,8 +66,10 @@
 
 - name: Create VS Code Dir
   ansible.builtin.file:
-    path: "/home/{{ common_user }}/.vscode/settings.json"
+    path: "/home/{{ common_user }}/.vscode/workbench"
     state: directory
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0755
 
 - name: Create a symbolic link to .vscode settings file
@@ -90,7 +92,7 @@
     force: true
   become: false
 
-- name: "Install extensions for code-server@{{ common_user }}"
+- name: "Code-Server | Install extensions"
   ansible.builtin.command: code-server --install-extension {{ item.value }}
   loop: "{{ extensions }}"
   loop_control:
