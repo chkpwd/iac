@@ -1,1 +1,0 @@
-echo $vault_password

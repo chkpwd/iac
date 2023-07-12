@@ -1,6 +1,0 @@
----
-- import_tasks: install.yml
-  when: state|default('present') == "present"
-
-- import_tasks: uninstall.yml
-  when: state|default('present') == "absent"
