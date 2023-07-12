@@ -6,10 +6,10 @@
   become: true
 
 - name: Install Pip Tools
-  community.general.pipx:
+  ansible.builtin.pip:
     name: "{{ item }}"
-    install_deps: true
-  loop: "{{ pipx_tools }}"
+    virtualenv: "{{ virtualenv }}"
+  loop: "{{ pip_tools }}"
 
 - name: Install sops on remote hosts
   ansible.builtin.include_role:

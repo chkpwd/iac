@@ -4,12 +4,13 @@ code_config_file: /home/{{ ansible_user }}/.config/code-server/config.yaml
 ansible_dest: /home/hyoga/code/boilerplates/ansible
 template_path: "{{ ansible_dest }}/roles/code-server/templates"
 zsh_custom: "/home/{{ common_user }}/.oh-my-zsh/custom"
+virtualenv: "{{ ansible_dest }}/env"
 
 keyrings_dir: /etc/apt/keyrings
 
 deb_file: code-server
 
-pipx_tools:
+pip_tools:
   - ansible
   - ansible-lint
   - molecule
@@ -42,6 +43,7 @@ dependecies:
   - fzf
   - python3-kubernetes
   - yq
+  - python3-pyvmomi
 
 extensions:
   - 4ops.terraform
