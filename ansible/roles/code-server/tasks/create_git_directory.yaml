@@ -1,12 +1,13 @@
 ---
 - name: Create Git directory
   ansible.builtin.file:
-    path: /home/{{ ansible_user }}/code/boilerplates
+    path: "/home/{{ ansible_user }}/code/boilerplates"
     state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: '0755'
   become: false
+  register: repo
 
 - name: Check if the directory exists
   ansible.builtin.stat:
@@ -19,4 +20,3 @@
     dest: /home/{{ ansible_user }}/code/boilerplates
   when: not repo_directory.stat.exists
   become: false
-

@@ -5,35 +5,17 @@
     value: '524288'
     state: present
 
-- name: "Configure user for code"
-  ansible.builtin.include_tasks: user_configs.yaml
+      #- name: "Configure user for code"
+      #ansible.builtin.include_tasks: user_configs.yaml
 
 - name: "Configure Repositories for necessary packages"
   ansible.builtin.include_tasks: add_repos.yaml
 
-- name: "Configure all needed packages"
-  ansible.builtin.include_tasks: install_packages.yaml
-
 - name: "Configure Git directory"
   ansible.builtin.include_tasks: create_git_directory.yaml
 
-- name: Create a symbolic link to .vscode settings file
-  ansible.builtin.file:
-    src: "/home/{{ common_user }}/code/boilerplates/.vscode/settings.json"
-    dest: "/home/{{ common_user }}/.vscode/settings.json"
-    owner: "{{ common_user }}"
-    group: "{{ common_user }}"
-    state: link
-  become: false
-
-- name: Create a symbolic link to workbench settings
-  ansible.builtin.file:
-    src: "/home/{{ common_user }}/code/boilerplates/.vscode/workbench/settings.json"
-    dest: "/home/{{ common_user }}/.local/share/code-server/User/settings.json"
-    owner: "{{ common_user }}"
-    group: "{{ common_user }}"
-    state: link
-  become: false
+- name: "Configure all needed packages"
+  ansible.builtin.include_tasks: install_packages.yaml
 
 - name: "Grabbing latest release from github api"
   ansible.builtin.uri:
@@ -46,8 +28,8 @@
   ansible.builtin.get_url:
     url: "{{ item.browser_download_url }}"
     dest: /tmp/code.deb
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0644
   no_log: true
 
@@ -56,19 +38,19 @@
     deb: /tmp/code.deb
   become: true
 
-- name: "Start code-server for {{ ansible_user }}"
+- name: "Start code-server for {{ common_user }}"
   ansible.builtin.service:
-    name: code-server@{{ ansible_user }}.service
+    name: code-server@{{ common_user }}.service
     state: started
   become: true
 
 - name: "Wait until config file for code-server exists"
   ansible.builtin.wait_for:
-    path: /home/{{ ansible_user }}/.config/code-server/config.yaml
+    path: /home/{{ common_user }}/.config/code-server/config.yaml
 
 - name: "Change the bind address for the code-server"
   ansible.builtin.lineinfile:
-    path: /home/{{ ansible_user }}/.config/code-server/config.yaml
+    path: /home/{{ common_user }}/.config/code-server/config.yaml
     backup: true
     regexp: '^bind-addr: 127.0.0.1:8080'
     line: 'bind-addr: 0.0.0.0:8080'
@@ -81,6 +63,32 @@
     state: started
     name: code-server@$USER
   become: true
+
+- name: Create VS Code Dir
+  ansible.builtin.file:
+    path: "/home/{{ common_user }}/.vscode/settings.json"
+    state: directory
+    mode: 0755
+
+- name: Create a symbolic link to .vscode settings file
+  ansible.builtin.file:
+    src: "/home/{{ common_user }}/code/boilerplates/.vscode/settings.json"
+    dest: "/home/{{ common_user }}/.vscode/settings.json"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    state: link
+    force: true
+  become: false
+
+- name: Create a symbolic link to workbench settings
+  ansible.builtin.file:
+    src: "/home/{{ common_user }}/code/boilerplates/.vscode/workbench/settings.json"
+    dest: "/home/{{ common_user }}/.local/share/code-server/User/settings.json"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    state: link
+    force: true
+  become: false
 
 - name: "Install extensions for code-server@{{ common_user }}"
   ansible.builtin.command: code-server --install-extension {{ item.value }}

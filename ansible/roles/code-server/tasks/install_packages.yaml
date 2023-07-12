@@ -9,6 +9,7 @@
   ansible.builtin.pip:
     name: "{{ item }}"
     virtualenv: "{{ virtualenv }}"
+    virtualenv_command: "/usr/bin/python3 -m venv"
   loop: "{{ pip_tools }}"
 
 - name: Install sops on remote hosts
@@ -269,29 +270,3 @@
     chdir: "/tmp"
   register: krew_cmd_output
   changed_when: krew_cmd_output.rc != 0
-
-- name: Grab latest 'virtctl' release from github
-  ansible.builtin.uri:
-    url: https://api.github.com/repos/kubevirt/kubevirt/releases
-    return_content: true
-  register: pre_release_json
-
-- name: "Downloading 'virtctl' {{ pre_release_json.json.tag_name }}"
-  loop: "{{ pre_release_json[0].json.assets }}"
-  when: "'linux_amd64.tar.gz' in item.name"
-  ansible.builtin.get_url:
-    url: "{{ item.browser_download_url }}"
-    dest: /tmp/virtctl_amd64.tar.gz
-    owner: "{{ common_user }}"
-    group: "{{ common_user }}"
-    mode: 0644
-  no_log: true
-
-- name: Move the 'virtctl' binary to local bin
-  ansible.builtin.copy:
-    src: "/tmp/viddy"
-    dest: "/usr/local/bin/"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
-    mode: 0755
-    remote_src: true
