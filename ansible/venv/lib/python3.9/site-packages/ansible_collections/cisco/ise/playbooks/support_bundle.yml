@@ -1,0 +1,57 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    # - name: Create or update an support_bundle
+    #   cisco.ise.support_bundle:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     name: supportBundle
+    #     description: Support Bundle Generation
+    #     hostName: ise
+    #     supportBundleIncludeOptions:
+    #       includeConfigDB: true
+    #       includeDebugLogs: true
+    #       includeLocalLogs: true
+    #       includeCoreFiles: true
+    #       mntLogs: true
+    #       includeSystemLogs: true
+    #       policyXml: true
+    #       fromDate: 07/19/2021
+    #       toDate: 07/20/2021
+    #   register: result
+
+    - name: Support bundle status
+      cisco.ise.support_bundle_status_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        id: ise
+      register: support_bundle_status_result
+
+    - name: Print result
+      ansible.builtin.debug:
+        var: support_bundle_status_result
+
+    - name: Support bundle download
+      cisco.ise.support_bundle_download:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        dirPath: /Users/wilhelm32/Downloads/result/
+        fileName: "{{ support_bundle_status_result['ise_response']['fileName']}}"
+        saveFile: true
+      when:
+        - support_bundle_status_result['ise_response'] is defined
+        - support_bundle_status_result['ise_response']['status'] == "complete"
+        - support_bundle_status_result['ise_response']['fileName']
+      register: support_bundle_download_result
+
+    - name: Print support_bundle_download_result
+      ansible.builtin.debug:
+        var: support_bundle_status_result
+      when: support_bundle_download_result

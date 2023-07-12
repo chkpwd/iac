@@ -1,0 +1,148 @@
+---
+#
+# Configure HyperFlex Edge Cluster Profiles
+#
+# The hosts group used is provided by the group variable or defaulted to 'Intersight_HX'.
+# You can specify a specific host (or host group) on the command line:
+#   ansible-playbook ... -e group=<your host group>
+#   e.g., ansible-playbook server_profiles.yml -e group=TME_Demo
+#
+- hosts: "{{ group | default('Intersight_HX') }}"
+  connection: local
+  gather_facts: false
+  vars:
+  # If your inventory or host/group_vars don't specify required api key information, you can set directly below:
+  # api_private_key: ~/Downloads/SecretKey.txt
+  # api_key_id: 5a3404ac3768393836093cab/5b02fa7e6d6c356772394170/5b02fad36d6c356772394449
+  vars_prompt:
+    
+    - name: "hx_vcenter_password"
+      prompt: "Enter the vCenter administrative password"
+      private: yes
+      confirm: yes
+      unsafe: yes
+
+    - name: "hx_hypervisor_password"
+      prompt: "Enter the new ESXi nodes' administrative password"
+      private: yes
+      confirm: yes
+      unsafe: yes
+
+    - name: "hx_dp_root_password"
+      prompt: "Enter the HyperFlex administrative password"
+      private: yes
+      confirm: yes
+      unsafe: yes
+
+    - name: "execute_auto_support"
+      prompt: "Do you need to enable Auto Support settings? (yes/no)"
+      private: no
+
+    - name: "execute_proxy"
+      prompt: "Do you need to configure proxy settings? (yes/no)"
+      private: no
+
+  tasks:
+    # Intersight Org
+    - import_role:
+        name: policies/hyperflex_policies/intersight_org
+      vars:
+        org_name: "{{ intersight_org_name }}"
+      tags: ['org']
+    # Cluster Profile
+    - import_role:
+        name: policies/hyperflex_policies/edge_cluster_profile
+      vars:
+        hx_cluster_profile: "{{ hx_cluster_name }}"
+      tags: ['cluster_profile']
+    # Software Version 
+    - import_role:
+        name: policies/hyperflex_policies/edge_software_version
+      vars:
+        hx_software_policy: "{{ hx_cluster_name }}-software-version-policy"
+      tags: ['software']
+    # DNS
+    - import_role:
+        name: policies/hyperflex_policies/sys_config
+      vars:
+        hx_sys_config_policy: "{{ hx_cluster_name }}-sys-config-policy"
+      tags: ['dns']
+    # Security
+    - import_role:
+        name: policies/hyperflex_policies/local_credential
+      vars:
+        hx_local_credential_policy: "{{ hx_cluster_name }}-local-credential-policy"
+      tags: ['security']
+    # vCenter
+    - import_role:
+        name: policies/hyperflex_policies/vcenter
+      vars:
+        hx_vcenter_config_policy: "{{ hx_cluster_name }}-vcenter-config-policy"
+      tags: ['vcenter']
+    # Storage Config
+    - import_role:
+        name: policies/hyperflex_policies/edge_cluster_storage
+      vars:
+        hx_cluster_storage_policy: "{{ hx_cluster_name }}-cluster-storage-policy"
+      tags: ['storage']
+    # Auto Support
+    - import_role: 
+        name: policies/hyperflex_policies/auto_support
+      vars:
+        hx_auto_support_policy: "{{ hx_cluster_name }}-auto-support-policy"
+        hx_auto_support_enable: true
+      when: execute_auto_support|bool
+      tags: ['autosupport']
+    # Proxy
+    - import_role:
+        name: policies/hyperflex_policies/proxy
+      vars:
+        hx_proxy_setting_policy: "{{ hx_cluster_name }}-proxy-setting-policy"
+      when: execute_proxy|bool
+      tags: ['proxy']
+    # Network Config
+    - import_role:
+        name: policies/hyperflex_policies/edge_cluster_network
+      vars:
+        hx_cluster_network_policy: "{{ hx_cluster_name }}-cluster-network-policy"
+      tags: ['network']
+    # Node IP and Hostname
+    - import_role:
+        name: policies/hyperflex_policies/node_config
+      vars:
+        hx_node_config_policy: "{{ hx_cluster_name }}-node-config-policy"
+      tags: ['nodes']
+
+    - debug:
+        msg: "All policies and the HyperFlex cluster profile have been created."
+
+    - name: "Prompt to assign"
+      pause:
+        prompt: "Proceed with physical node assignment? (yes/no)"
+        echo: yes
+      register: assign_response
+      run_once: true
+      tags: ['prompt_assign']
+
+    # Assign servers to cluster profile and set deployment action
+    - import_role:
+        name: policies/hyperflex_policies/node_profiles
+      tags: ['assign']
+      when: assign_response.user_input|bool
+
+    - name: "Prompt to deploy"
+      pause:
+        prompt: "Proceed with cluster deployment? (yes/no)"
+        echo: yes
+      register: deploy_response
+      run_once: true
+      tags: ['prompt_deploy']
+
+    # Set cluster profile deployment action
+    - import_role:
+        name: policies/hyperflex_policies/deploy
+      tags: ['deploy']
+      when: deploy_response.user_input|bool
+
+    - debug:
+        msg: "HyperFlex Edge cluster creation is complete."

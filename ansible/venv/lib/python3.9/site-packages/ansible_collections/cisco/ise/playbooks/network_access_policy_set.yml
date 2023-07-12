@@ -1,0 +1,59 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    # - name: Get all network policy set
+    #   cisco.ise.network_access_policy_set_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #   register: result
+
+    # - name: Print all
+    #   ansible.builtin.debug:
+    #     var: result
+
+    # - name: Get a network policy set by id
+    #   cisco.ise.network_access_policy_set_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     id: "acd4b55d-dca3-4b93-a160-8a2d01669827"
+    #   register: result
+
+    # - name: Print by id
+    #   ansible.builtin.debug:
+    #     var: result
+
+    - name: Create or update a network policy set
+      cisco.ise.network_access_policy_set:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        condition:
+          conditionType: ConditionReference
+          isNegate: false
+          name: My New Condition
+          description: New optional Description
+          id: 7bca72c0-712e-41ea-9d58-a8c368bc234d
+        default: false
+        description: Test Policy Set
+        isProxy: false
+        rank: 00
+        serviceName: Default Network Access
+        name: Test Policy Set 2
+      register: result
+
+  # - name: Delete a network policy set by id
+  #   cisco.ise.network_access_policy_set:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #     state: absent
+  #     id: 4f83e8c4-978e-4767-a218-9d5472d4dcc7
+  #   register: result

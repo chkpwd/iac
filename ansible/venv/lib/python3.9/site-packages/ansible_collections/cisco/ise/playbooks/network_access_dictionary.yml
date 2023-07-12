@@ -1,0 +1,42 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    # - name: Get all
+    #   cisco.ise.network_access_dictionary_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     name: Test_dict
+    #   register: result
+
+    # - name: Print all
+    #   ansible.builtin.debug:
+    #     var: result
+
+    # - name: Get by id
+    #   cisco.ise.network_access_dictionary_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     id: d704e911-a916-11eb-8830-2ec507028ea8
+    #   register: result
+
+    - name: Create or update an network_access_dictionary
+      cisco.ise.network_access_dictionary:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Test_dict
+        description: test dictionary
+        version: "1.0"
+        dictionaryAttrType: ENTITY_ATTR
+      register: result
+
+    - name: Print result
+      ansible.builtin.debug:
+        var: result

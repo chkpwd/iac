@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -euo pipefail
+
+# Strip the 'v' from the Tag Name
+TAG=${TAG_NAME//"v"}
+
+TOP_LEVEL_DIR="$(cd "$(dirname "$BASH_SOURCE")"; pwd)/.."
+
+pushd "$TOP_LEVEL_DIR" >/dev/null
+  docker run --rm -t \
+    -e GALAXY_API_KEY \
+    -v "$TOP_LEVEL_DIR:/collection" \
+    python:3 /bin/bash -c "
+      pip install ansible
+      ansible-galaxy collection publish --api-key \${GALAXY_API_KEY} /collection/cyberark-conjur-${TAG}.tar.gz
+    "
+popd  >/dev/null

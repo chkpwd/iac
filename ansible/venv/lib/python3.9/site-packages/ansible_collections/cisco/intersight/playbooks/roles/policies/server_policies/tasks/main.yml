@@ -1,0 +1,40 @@
+---
+- name: "Configure {{ api_body.Name }} Server Policy"
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+  cisco.intersight.intersight_rest_api:
+    <<: *api_info
+    resource_path: "{{ resource_path }}"
+    query_params:
+      $filter: "Name eq '{{ api_body.Name }}'"
+    api_body: "{{ api_body }}"
+  register: policy_resp
+# Append profile_resp list to policy
+- block:
+    # Create a list of all host's profile Moids
+    - set_fact:
+        # See the Ansible docs on json_query for info on how the Moid data is being extracted
+        profile_list: "{{ ansible_play_hosts | map('extract', hostvars, 'profile_resp') | list | json_query(moid_query) }}"
+      vars:
+        moid_query: "[*].api_response.{Moid: Moid, ObjectType: 'server.Profile'}"
+    - name: "Update Server Profiles used by {{ api_body.Name }} Server Policy (change may always be reported)"
+      cisco.intersight.intersight_rest_api:
+        <<: *api_info
+        resource_path: "{{ resource_path }}"
+        query_params:
+          $filter: "Name eq '{{ api_body.Name }}'"
+        api_body: {
+          "Profiles": "{{ profile_list + policy_resp.api_response.Profiles }}"
+        }
+  # Do not update if the profile isn't available
+  when:
+    - profile_resp is defined
+    - profile_resp.api_response.Moid is defined
+    - policy_resp is defined
+    - policy_resp.api_response.Profiles is defined

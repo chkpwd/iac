@@ -1,0 +1,18 @@
+---
+- hosts: localhost
+  gather_facts: false
+  collections:
+    - infinidat.infinibox
+  vars:
+    name: iSCSI
+    service: iSCSI
+  tasks:
+
+    - name: POSITIVE test -> Remove network space named {{ name }}
+      infini_network_space:
+        name: "{{ name }}"
+        state: absent
+
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"

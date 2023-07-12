@@ -1,0 +1,92 @@
+objects: {}
+plugins:
+  become: {}
+  cache: {}
+  callback: {}
+  cliconf: {}
+  connection:
+    oc:
+      description: Execute tasks in pods running on OpenShift.
+      name: oc
+      version_added: null
+  httpapi: {}
+  inventory:
+    openshift:
+      description: OpenShift inventory source
+      name: openshift
+      version_added: null
+  lookup: {}
+  module:
+    k8s:
+      description: Manage OpenShift objects
+      name: k8s
+      namespace: ''
+      version_added: null
+    openshift_adm_groups_sync:
+      description: Sync OpenShift Groups with records from an external provider.
+      name: openshift_adm_groups_sync
+      namespace: ''
+      version_added: 2.1.0
+    openshift_adm_migrate_template_instances:
+      description: Update TemplateInstances to point to the latest group-version-kinds
+      name: openshift_adm_migrate_template_instances
+      namespace: ''
+      version_added: 2.2.0
+    openshift_adm_prune_auth:
+      description: Removes references to the specified roles, clusterroles, users,
+        and groups
+      name: openshift_adm_prune_auth
+      namespace: ''
+      version_added: 2.2.0
+    openshift_adm_prune_builds:
+      description: Prune old completed and failed builds
+      name: openshift_adm_prune_builds
+      namespace: ''
+      version_added: 2.3.0
+    openshift_adm_prune_deployments:
+      description: Remove old completed and failed deployment configs
+      name: openshift_adm_prune_deployments
+      namespace: ''
+      version_added: 2.2.0
+    openshift_adm_prune_images:
+      description: Remove unreferenced images
+      name: openshift_adm_prune_images
+      namespace: ''
+      version_added: 2.2.0
+    openshift_auth:
+      description: Authenticate to OpenShift clusters which require an explicit login
+        step
+      name: openshift_auth
+      namespace: ''
+      version_added: 0.2.0
+    openshift_build:
+      description: Start a new build or Cancel running, pending, or new builds.
+      name: openshift_build
+      namespace: ''
+      version_added: 2.3.0
+    openshift_import_image:
+      description: Import the latest image information from a tag in a container image
+        registry.
+      name: openshift_import_image
+      namespace: ''
+      version_added: 2.2.0
+    openshift_process:
+      description: Process an OpenShift template.openshift.io/v1 Template
+      name: openshift_process
+      namespace: ''
+      version_added: 0.3.0
+    openshift_registry_info:
+      description: Display information about the integrated registry.
+      name: openshift_registry_info
+      namespace: ''
+      version_added: 2.2.0
+    openshift_route:
+      description: Expose a Service as an OpenShift Route.
+      name: openshift_route
+      namespace: ''
+      version_added: 0.3.0
+  netconf: {}
+  shell: {}
+  strategy: {}
+  vars: {}
+version: 2.3.0

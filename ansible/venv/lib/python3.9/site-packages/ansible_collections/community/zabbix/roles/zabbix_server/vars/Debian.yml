@@ -1,0 +1,29 @@
+---
+apache_user: www-data
+apache_group: www-data
+apache_log: apache2
+
+mysql_create_dir: ""
+
+zabbix_valid_server_versions:
+  # Debian
+  "11":
+    - 6.4
+    - 6.2
+    - 6.0
+  "10":
+    - 6.0
+  # Ubuntu
+  "22":
+    - 6.4
+    - 6.2
+    - 6.0
+  "20":
+    - 6.4
+    - 6.2
+    - 6.0
+  "18":
+    - 6.0
+
+debian_keyring_path: /etc/apt/keyrings/
+zabbix_gpg_key: "{{ debian_keyring_path }}/zabbix-official-repo.asc"

@@ -1,0 +1,6 @@
+FROM centos:8
+RUN dnf makecache \
+      && dnf install -y \
+           /usr/bin/python3 /usr/bin/python3-config /usr/bin/dnf-3 \
+           sudo bash iproute \
+      && dnf clean all

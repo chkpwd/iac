@@ -1,0 +1,59 @@
+- name: "RedHat | Setting Short PHP Version"
+  set_fact:
+    zabbix_web_php_installed_version: "{{ zabbix_web_php_installed_version | regex_replace('\\.', '') }}"
+  tags:
+    - always
+
+- name: "RedHat | Install basic repo file"
+  yum_repository:
+    name: "{{ item.name }}"
+    description: "{{ item.description | default(omit) }}"
+    baseurl: "{{ item.baseurl }}"
+    gpgcheck: "{{ item.gpgcheck | default(omit) }}"
+    gpgkey: "{{ item.gpgkey | default(omit) }}"
+    mode: "{{ item.mode | default('0644') }}"
+    priority: "{{ item.priority | default('99') }}"
+    state: "{{ item.state | default('present') }}"
+    proxy: "{{ zabbix_http_proxy | default(omit) }}"
+  with_items: "{{ zabbix_repo_yum }}"
+  register: yum_repo_installed
+  become: true
+  notify:
+    - "clean repo files from proxy creds"
+  tags:
+    - install
+
+- name: "RedHat | Install zabbix-web-{{ zabbix_server_database }}"
+  yum:
+    name:
+      - "zabbix-web-{{ zabbix_server_database }}"
+    state: "{{ zabbix_web_package_state }}"
+    update_cache: true
+    disablerepo: "{{ zabbix_web_disable_repo | default(omit) }}"
+  environment:
+    http_proxy: "{{ zabbix_http_proxy | default(None) | default(omit) }}"
+    https_proxy: "{{ zabbix_https_proxy | default(None) | default(omit) }}"
+  register: zabbix_web_package_install
+  until: zabbix_web_package_install is succeeded
+  become: true
+  tags:
+    - install
+
+- name: "RedHat | Install zabbix-web-configuration"
+  yum:
+    name:
+      - "zabbix-{{ zabbix_web_http_server }}-conf"
+    state: "{{ zabbix_web_package_state }}"
+    update_cache: true
+    disablerepo: "{{ zabbix_web_disable_repo | default(omit) }}"
+  environment:
+    http_proxy: "{{ zabbix_http_proxy | default(None) | default(omit) }}"
+    https_proxy: "{{ zabbix_https_proxy | default(None) | default(omit) }}"
+  register: zabbix_web_package_install
+  until: zabbix_web_package_install is succeeded
+  become: true
+  when:
+    - zabbix_web_version is version('6.0', '!=')
+    - ansible_distribution_major_version == '9'
+  tags:
+    - install

@@ -1,0 +1,23 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Create
+      cisco.ise.native_supplicant_profile:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        id: 67a6ca50-edc9-4236-ada4-225559ed54d6
+        name: Cisco-ISE-Chrome-NSP
+        description: Pre-configured Native Supplicant Profile For Chrome OS
+        wirelessProfiles:
+          - ssid: ChromeDummySSID
+            allowedProtocol: TLS
+            certificateTemplateId: 0ca8f1b6-500d-560b-e053-75189a0ab0d1
+      register: native_supplicant_profile
+
+    - name: Print
+      ansible.builtin.debug:
+        var: native_supplicant_profile

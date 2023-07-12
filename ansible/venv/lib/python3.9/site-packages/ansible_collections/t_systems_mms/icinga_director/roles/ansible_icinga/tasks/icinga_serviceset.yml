@@ -1,0 +1,26 @@
+---
+# serviceset.1 = serviceset array
+# serviceset.0 = icinga_serviceset attribute
+- name: icinga_serviceset
+  icinga_serviceset:
+    url: "{{ icinga_url }}"
+    use_proxy: "{{ icinga_use_proxy | default(omit) }}"
+    validate_certs: "{{ icinga_validate_certs | default(omit) }}"
+    url_username: "{{ icinga_user }}"
+    url_password: "{{ icinga_pass }}"
+    force_basic_auth: "{{ icinga_force_basic_auth | default(omit) }}"
+    client_cert: "{{ icinga_client_cert | default(omit) }}"
+    client_key: "{{ icinga_client_key | default(omit) }}"
+    state: "{{ service.0.state | default(omit) }}"
+    assign_filter: "{{ serviceset.0.assign_filter | default(omit)}}"
+    description: "{{ serviceset.0.description | default(omit)}}"
+    object_name: "{{ serviceset.1 }}"
+  retries: 3
+  delay: 3
+  register: result
+  until: result is succeeded
+  loop: "{{ icinga_servicesets|subelements('serviceset_object') }}"
+  loop_control:
+    loop_var: serviceset
+  tags: serviceset
+  notify: config_deploy

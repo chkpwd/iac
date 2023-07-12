@@ -1,0 +1,27 @@
+---
+- hosts: localhost
+  collections:
+  - fortinet.fortios
+  vars:
+   host: "192.168.52.177"
+   username: "admin"
+   password: ""
+   vdom: "root"
+   ssl_verify: "False"
+  tasks:
+  - name: Configure virtual IP for IPv4.
+    fortios_firewall_vip:
+      host:  "{{ host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      vdom:  "{{ vdom }}"
+      https: "True"
+      ssl_verify:  "{{ ssl_verify }}"
+      state: "present"
+      firewall_vip:
+        name: "testfwvip"
+        extip: "1.1.1.1-1.1.1.4"
+        extintf: "any"
+        mappedip:
+         -
+            range: "1.1.2.1-1.1.2.4"

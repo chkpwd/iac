@@ -1,0 +1,25 @@
+---
+- name: Start sensu-backend
+  service:
+    name: sensu-backend
+    state: started
+    enabled: true
+
+- name: Check for sensu-backend init command
+  command:
+    cmd: sensu-backend init -h
+  register: init_command_test
+  failed_when: false  # Never fail, we just want to know if init exists.
+  changed_when: false  # Displaying help is read-only operation.
+  check_mode: false  # We do not modify the system, so we can always run
+
+- name: Initialize backend
+  command:
+    cmd: sensu-backend init
+  environment:
+    SENSU_BACKEND_CLUSTER_ADMIN_USERNAME: "{{ cluster_admin_username }}"
+    SENSU_BACKEND_CLUSTER_ADMIN_PASSWORD: "{{ cluster_admin_password }}"
+  when: init_command_test.rc == 0
+  register: init_command
+  failed_when: init_command.rc not in (0, 3)  # 0 - OK, 3 - already initialized
+  changed_when: init_command.rc == 0

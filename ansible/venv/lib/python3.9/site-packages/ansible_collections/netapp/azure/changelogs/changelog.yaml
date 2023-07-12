@@ -1,0 +1,169 @@
+ancestor: null
+releases:
+  19.10.0:
+    modules:
+    - description: Manage NetApp Azure Files Account
+      name: azure_rm_netapp_account
+      namespace: ''
+    - description: Manage NetApp Azure Files capacity pool
+      name: azure_rm_netapp_capacity_pool
+      namespace: ''
+    - description: Manage NetApp Azure Files Snapshot
+      name: azure_rm_netapp_snapshot
+      namespace: ''
+    - description: Manage NetApp Azure Files Volume
+      name: azure_rm_netapp_volume
+      namespace: ''
+    release_date: '2019-11-14'
+  20.2.0:
+    changes:
+      bugfixes:
+      - galaxy.yml - fix path to github repository.
+    fragments:
+    - 20.2.0.yaml
+    release_date: '2020-02-05'
+  20.4.0:
+    changes:
+      bugfixes:
+      - fix changes to azure-mgmt-netapp as per new release.
+      - removed ONTAP dependency import.
+    fragments:
+    - 20.4.0.yaml
+    release_date: '2020-04-21'
+  20.5.0:
+    changes:
+      minor_changes:
+      - azure_rm_netapp_account - new option ``tags``.
+      - azure_rm_netapp_capacity_pool - new option ``service_level``.
+      - azure_rm_netapp_volume - new option ``size``.
+      - azure_rm_netapp_volume - new option ``vnet_resource_group_for_subnet``, resource
+        group for virtual_network and subnet_id to be used.
+      - azure_rm_netapp_volume - now returns mount_path of the volume specified.
+    fragments:
+    - 20.5.0.yaml
+    release_date: '2020-05-06'
+  20.6.0:
+    changes:
+      minor_changes:
+      - azure_rm_netapp_capacity_pool - now allows modify for size.
+      - azure_rm_netapp_volume - now returns complete mount_path of the volume specified.
+    fragments:
+    - 20.6.0.yaml
+    release_date: '2020-06-03'
+  20.7.0:
+    changes:
+      bugfixes:
+      - azure_rm_netapp_capacity_pool - fixed idempotency for delete operation.
+    fragments:
+    - 20.7.0.yaml
+    release_date: '2020-06-24'
+  20.8.0:
+    changes:
+      minor_changes:
+      - azure_rm_netapp_capacity_pool - Updated ANF capacity pool modify function
+        for size parameter mandatory issue.
+      - use a three group format for version_added. So 2.7 becomes 2.7.0. Same thing
+        for 2.8 and 2.9.
+    fragments:
+    - 20.8.0.yaml
+    release_date: '2020-08-05'
+  21.10.0:
+    changes:
+      minor_changes:
+      - PR1 - allow usage of Ansible module group defaults - for Ansible 2.12+.
+    fragments:
+    - DEVOPS-4416.yaml
+    release_date: '2021-11-03'
+  21.2.0:
+    changes:
+      bugfixes:
+      - azure_rm_netapp_volume - fix 'Nonetype' object is not subscriptable exception
+        when mount target is not created.
+      minor_changes:
+      - azure_rm_netapp_account - new option ``active_directories`` to support SMB
+        volumes.
+      - azure_rm_netapp_volume - new option ``protocol_types`` to support SMB volumes.
+      - azure_rm_netapp_volume - new option ``subnet_name`` as subnet_id is ambiguous.  subnet_id
+        is now aliased to subnet_name.
+    fragments:
+    - DEVOPS-3505.yaml
+    release_date: '2021-02-04'
+  21.3.0:
+    changes:
+      bugfixes:
+      - azure_rm_netapp_account - wait for job completion for asynchroneous requests,
+        and report belated errors.
+      - support for azure-mgmt-netapp 1.0.0, while maintaining compatibility with
+        0.10.0.
+      minor_changes:
+      - azure_rm_netapp_account - new option ``active_directories`` to support SMB
+        volumes.
+      - azure_rm_netapp_account - new suboptions ``ad_name``, ``kdc_ip``, ``service_root_ca_certificate```
+        for Active Directory.
+      - azure_rm_netapp_volume - new option ``protocol_types`` to support SMB volumes.
+    fragments:
+    - DEVOPS-3526.yaml
+    - DEVOPS-3663.yaml
+    - DEVOPS-3704.yaml
+    release_date: '2021-03-03'
+  21.5.0:
+    changes:
+      minor_changes:
+      - azure_rm_netapp_volume - enable changes in volume size.
+      - azure_rm_netapp_volume - rename msg to mount_path, as documented in RETURN.
+    fragments:
+    - DEVOPS-3849.yaml
+    release_date: '2021-04-21'
+  21.6.0:
+    changes:
+      minor_changes:
+      - azure_rm_netapp_account - support additional authentication schemes provided
+        by AzureRMModuleBase.
+      - azure_rm_netapp_capacity_pool - support additional authentication schemes
+        provided by AzureRMModuleBase, and tags.
+      - azure_rm_netapp_capacity_pool - wait for completion when creating, modifying,
+        or deleting a pool.
+      - azure_rm_netapp_snapshot - support additional authentication schemes provided
+        by AzureRMModuleBase.
+      - azure_rm_netapp_snapshot - wait for completion when creating, modifying, or
+        deleting a pool.
+      - azure_rm_netapp_volume - support additional authentication schemes provided
+        by AzureRMModuleBase, and tags.
+    fragments:
+    - DEVOPS-3935.yaml
+    - DEVOPS-3949.yaml
+    release_date: '2021-05-06'
+  21.7.0:
+    changes:
+      bugfixes:
+      - fix CI pipeline to work with azcollection, and isolate UTs from azcollection.
+    fragments:
+    - DEVOPS-4001.yaml
+    release_date: '2021-06-03'
+  21.8.0:
+    changes:
+      bugfixes:
+      - fix CI pipeline as azcollection does not support python 2.6.
+      - fix CI pipeline as ignores are not required with latest azcollection.
+    fragments:
+    - DEVOPS-4070.yaml
+    release_date: '2021-07-14'
+  21.8.1:
+    changes:
+      bugfixes:
+      - Hub Automation cannot generate documentation (cannot use doc fragments from
+        another collection).
+    fragments:
+    - DEVOPS-4135.yaml
+    release_date: '2021-07-16'
+  21.9.0:
+    changes:
+      bugfixes:
+      - azure_rm_netapp_volume - 'Change Ownership' is not permitted when creating
+        NFSv4.1 volume with latest azure-mgmt-netapp package (4.0.0).
+      minor_changes:
+      - azure_rm_netapp_volume - new option ``feature_flags`` to selectively enable/disable
+        a feature.
+    fragments:
+    - DEVOPS-4246.yaml
+    release_date: '2021-09-01'

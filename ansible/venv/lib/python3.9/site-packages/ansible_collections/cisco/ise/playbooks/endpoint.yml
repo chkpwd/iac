@@ -1,0 +1,45 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Get endpoint group
+      cisco.ise.endpoint_group_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        name: RegisteredDevices
+      register: endpoint_group
+
+    - name: Print endpoint group
+      ansible.builtin.debug:
+        var: endpoint_group['ise_response']['id']
+      when: not ansible_check_mode
+
+    - name: Create or update endpoint
+      cisco.ise.endpoint:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: 11:22:33:44:55:66
+        description: MyEndpoint
+        mac: 11:22:33:44:55:66
+        profileId: 67a6ca50-edc9-4236-ada4-225559ed54d6
+        groupId: "{{ endpoint_group['ise_response']['id']}}"
+        staticProfileAssignment: true
+        staticGroupAssignment: true
+        portalUser: portalUser
+        identityStore: identityStore
+        identityStoreId: identityStoreId
+        customAttributes:
+          customAttributes:
+            key1: value1
+            key2: value2
+      when: not ansible_check_mode
+      register: result
+
+    - name: Print result
+      ansible.builtin.debug:
+        var: result

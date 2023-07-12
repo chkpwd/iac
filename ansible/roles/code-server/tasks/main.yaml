@@ -98,7 +98,3 @@
   loop_control:
     label: "{{ item.name }}"
   become: false
-
-- name: "Output contents from the config.yaml file"
-  ansible.builtin.debug:
-    msg: "Password for the code-server is {{ lookup('file', code_config_file) }}"

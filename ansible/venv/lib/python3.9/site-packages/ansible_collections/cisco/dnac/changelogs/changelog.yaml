@@ -1,0 +1,692 @@
+releases:
+  1.0.0:
+    release_date: "2020-12-02"
+    changes:
+      release_summary: This is the initial release of the collection.
+  1.0.1:
+    release_date: "2021-03-22"
+    changes:
+      release_summary: Fixes a bug related to idempotent modules.
+      bugfixes:
+        - Fixes a bug in the 'site' and 'tag' modules, which are the only two idempotent modules.
+  1.0.2:
+    release_date: "2021-03-22"
+    changes:
+      release_summary: Fixes a bug related to optional module parameters.
+      bugfixes:
+        - Improve the documentation.
+        - Fixes a bug that caused the task execution to fail if the optional parameters like port, dnac version and SSL verification were missing from the hosts.yml file.
+  1.0.3:
+    release_date: "2021-03-29"
+    changes:
+      release_summary: Fixes several bugs and issues required to pass sanity checks
+      bugfixes:
+        - Adds code of conduct
+        - Adds missing boilerplate code
+        - Adds code specific to idempotent module definitions
+        - Adds entries to the sanity check ignore file
+        - Fixes pylint issues
+        - Fixes yamllint issues
+        - Fixes return syntax errors
+        - Removes the RETURN section from all modules
+        - Removes blank spaces from DOCUMENTATION
+        - Removes colon characters from DOCUMENTATION
+        - Removes duplicate keys from DOCUMENTATION
+        - Removes ANSIBLE_METADATA section from all modules
+        - Adds changelog
+  1.0.4:
+    release_date: "2021-03-29"
+    changes:
+      release_summary: Fixes linting problems with the DOCUMENTATION and adds CI tests.
+      bugfixes:
+        - Fixes linting problems with the DOCUMENTATION.
+  2.0.0:
+    release_date: "2021-04-05"
+    changes:
+      release_summary: Moves the module parameters out of the inventory and places them inside the tasks themselves.
+      major_changes:
+        - Moves the module parameters out of the inventory and places them inside the tasks themselves.
+      bugfixes:
+        - Adds policy about releasing, versioning and deprecation to the README.
+        - Documents the minimum version of Python supported by the collection.
+        - Documents the dependency on ansible.utils
+        - Documents the non-standard return values of all modules in the collection
+  2.0.1:
+    release_date: "2021-04-05"
+    changes:
+      release_summary: Fixes linting problems with the DOCUMENTATION.
+      bugfixes:
+        - Fixes linting problems with the DOCUMENTATION.
+  2.0.2:
+    release_date: "2021-04-06"
+    changes:
+      release_summary: Adds code to gracefully handle missing dependencies.
+      bugfixes:
+        - Adds try/except clauses to gracefully handle missing SDK and ansible.utils dependencies per ansible-core-2.11 requirements
+  2.0.3:
+    release_date: "2021-04-06"
+    changes:
+      release_summary: Updates the README to reflect latest API changes.
+      bugfixes:
+        - Updates the README to reflect latest API changes.
+  2.0.4:
+    release_date: "2021-04-12"
+    changes:
+      release_summary: Resolves an issue with overlapping params in some plugins as well as some documentation issues.
+      bugfixes:
+        - Fixes linting problems with the DOCUMENTATION.
+        - Fixes a problem with the overlapping 'state' param in four plugins.
+  2.0.5:
+    release_date: "2021-04-12"
+    changes:
+      release_summary: This release introduces no changes. Exists just to be in sync with the Ansible Galaxy release number.
+      minor_changes:
+        - sync with Ansible Galaxy release number
+  2.0.6:
+    release_date: "2021-04-13"
+    changes:
+      release_summary: Adds dnacentersdk to the requirements.txt file. Adds sanitiy checks for Ansible v2.9.
+      bugfixes:
+        - Adds dnacentersdk to requirements.
+      minor_changes:
+        - Adds sanity ignores for ansible-2.9.
+  2.0.7:
+    release_date: "2021-04-14"
+    changes:
+      release_summary: Changes the minimum supported version of Ansible to v2.9.
+      minor_changes:
+        - Changes the minimum supported version from Ansible v.2.10.5 to v2.9.10.
+  3.0.0:
+    release_date: "2021-08-05"
+    changes:
+      release_summary: Drop special `state` params. Adds info plugins and resources.
+      major_changes:
+        - Adds _info plugins to query information from database.
+        - Adds resources for modules to manage CRUD operations.
+        - Adds plugins without state that perform special operation on DNA Center.
+        - Adds plugins for resource's operations that have different structure in request/response bodies (ie. _create, _update, _delete plugins).
+  3.1.0:
+    release_date: "2021-08-10"
+    changes:
+      release_summary: Updates to support DNA version 2.2.2.3
+      major_changes:
+        - Adds new plugins related to DNA version 2.2.2.3.
+        - Updates previous plugins to follow DNA version 2.2.2.3 specification.
+  3.1.1:
+    release_date: "2021-09-03"
+    changes:
+      release_summary: Adds headers parameter to info modules.
+      minor_changes:
+        - Adds ``headers`` parameter to info modules.
+  3.1.2:
+    release_date: "2021-09-08"
+    changes:
+      release_summary: Updates the README to reflect latest API changes.
+      bugfixes:
+        - Updates the README to reflect latest API changes.
+  3.1.3:
+    release_date: "2021-09-14"
+    changes:
+      release_summary: Fixes global credentials payload
+      bugfixes:
+        - It only accepts not None keys to dictionary item
+        - It changes payload from dict to list of dict
+  3.1.4:
+    release_date: "2021-09-14"
+    changes:
+      release_summary: Updates module documentation & site_design_floormap
+      bugfixes:
+        - Adds param payload to site_design_floormap module
+  3.1.5:
+    release_date: "2021-09-17"
+    changes:
+      release_summary: Fixes internal 'exists' comparison
+      bugfixes:
+        - Changes the comparison from value to keys
+  3.1.6:
+    release_date: "2021-09-20"
+    changes:
+      release_summary: Fixes get_object_by_name issues
+      bugfixes:
+        - Add try catch/except to dnac execution
+        - Update get for wireless_dynamic_interface, change key that has name
+        - Update get for wireless_enterprise_ssid, obtain item.ssidDetails from items
+  3.1.7:
+    release_date: "2021-10-12"
+    changes:
+      release_summary: Fixes delete/update mixups
+      bugfixes:
+        - Fixes *delete modules that were calling update operation
+        - Fixes *update modules that were calling delete operation
+        - Fixes *update modules that were calling create operation
+  3.2.0:
+    release_date: "2021-10-22"
+    changes:
+      release_summary: Improves documentation and fixes check_mode behavior.
+      bugfixes:
+        - Improves the changelog.
+        - Improves the documentation of modules.
+        - Fixes check_mode behavior for non-info modules.
+  3.2.1:
+    release_date: "2021-10-25"
+    changes:
+      release_summary: Fixes check_mode behavior
+      bugfixes:
+        - On regular modules additional comparison of check_mode was removed as Ansible already handles it.
+        - On info modules comparison was removed, because info modules should always run.
+  3.2.2:
+    release_date: "2021-11-01"
+    changes:
+      release_summary: Fixes id required condition
+      bugfixes:
+        - global_pool - includes request param as an alternative to id
+        - network_device - includes request param as an alternative to id
+        - pnp_device - includes request param as an alternative to id
+  3.2.3:
+    release_date: "2021-12-01"
+    changes:
+      release_summary: Fixes internal code and update test/sanity
+      bugfixes:
+        - Updated internal code for credential and discovery
+      minor_changes:
+        - Updated test/sanity and remove duplicates
+  3.3.0:
+    release_date: "2022-02-07"
+    changes:
+      release_summary: Fixes update tag_membership
+      minor_changes:
+        - tag_membership - changes in memberToTags from list to object in the way the value is obtained.
+  3.3.1:
+    release_date: "2022-02-13"
+    changes:
+      release_summary: Add early check of status for SDA modules
+      bugfixes:
+        - sda_fabric_authentication_profile - add early check of 'status' for module.
+        - sda_fabric_border_device - add early check of 'status' for module.
+        - sda_fabric_control_plane_device - add early check of 'status' for module.
+        - sda_fabric_edge_device - add early check of 'status' for module.
+        - sda_fabric_site - add early check of 'status' for module.
+        - sda_fabric - add early check of 'status' for module.
+        - sda_multicast - add early check of 'status' for module.
+        - sda_port_assignment_for_access_point - add early check of 'status' for module.
+        - sda_port_assignment_for_user_device - add early check of 'status' for module.
+        - sda_provision_device - add early check of 'status' for module.
+        - sda_virtual_network_ip_pool - add early check of 'status' for module.
+        - sda_virtual_network_v2 - add early check of 'status' for module.
+        - sda_virtual_network - add early check of 'status' for module.
+  3.3.2:
+    release_date: "2022-02-13"
+    changes:
+      release_summary: Add early check of status for SDA modules
+      bugfixes:
+        - sda_fabric_authentication_profile - add early check of 'status' for module.
+        - sda_fabric_border_device - add early check of 'status' for module.
+        - sda_fabric_control_plane_device - add early check of 'status' for module.
+        - sda_fabric_edge_device - add early check of 'status' for module.
+        - sda_fabric_site - add early check of 'status' for module.
+        - sda_fabric - add early check of 'status' for module.
+        - sda_multicast - add early check of 'status' for module.
+        - sda_port_assignment_for_access_point - add early check of 'status' for module.
+        - sda_port_assignment_for_user_device - add early check of 'status' for module.
+        - sda_provision_device - add early check of 'status' for module.
+        - sda_virtual_network_ip_pool - add early check of 'status' for module.
+        - sda_virtual_network_v2 - add early check of 'status' for module.
+        - sda_virtual_network - add early check of 'status' for module.
+  4.0.0:
+    release_date: "2021-12-01"
+    changes:
+      release_summary: Update to use DNAC v2.2.3.3
+      minor_changes:
+        - app_policy_default_info - new module.
+        - app_policy_info - new module.
+        - app_policy_intent_create - new module.
+        - app_policy_queuing_profile - new module.
+        - app_policy_queuing_profile_count_info - new module.
+        - app_policy_queuing_profile_info - new module.
+        - associate_site_to_network_profile - new module.
+        - business_sda_hostonboarding_ssid_ippool - new module.
+        - business_sda_hostonboarding_ssid_ippool_info - new module.
+        - business_sda_wireless_controller_create - new module.
+        - business_sda_wireless_controller_delete - new module.
+        - device_family_identifiers_details_info - new module.
+        - disassociate_site_to_network_profile - new module.
+        - disasterrecovery_system_operationstatus_info - new module.
+        - disasterrecovery_system_status_info - new module.
+        - dnacaap_management_execution_status_info - new module.
+        - endpoint_analytics_profiling_rules - new module.
+        - endpoint_analytics_profiling_rules_info - new module.
+        - golden_image_create - new module.
+        - golden_tag_image_delete - new module.
+        - golden_tag_image_details_info - new module.
+        - profiling_rules_count_info - new module.
+        - profiling_rules_in_bulk_create - new module.
+        - projects_details_info - new module.
+        - qos_device_interface_info_count_info - new module.
+        - reserve_ip_subpool_create - new module.
+        - reserve_ip_subpool_delete - new module.
+        - reserve_ip_subpool_update - new module.
+        - templates_details_info - new module.
+      bugfixes:
+        - configuration_template - update module logic.
+        - configuration_template_project - update module logic.
+        - path_trace - update module logic.
+        - pnp_device - update module logic.
+        - reports - update module logic.
+        - wireless_profile - update module logic.
+      major_changes:
+        - applications_health_info - new `applicationName` parameter.
+        - network_device - change `isForceDelete` parameter to `cleanConfig` parameter.
+        - network_device - new `cleanConfig` parameter.
+        - network_device_lexicographically_sorted_info - change `offset` param type from str to int
+        - network_device_lexicographically_sorted_info - change `limit` param type from str to int
+        - reserve_ip_subpool - new `ipv4GateWay` parameter.
+        - sda_fabric - remove `payload` parameter.
+        - sda_fabric_authentication_profile_info - add `authenticateTemplateName` parameter.
+        - sda_fabric_authentication_profile - remove `payload` parameter.
+        - sda_fabric_authentication_profile - add `authenticateTemplateName` parameter.
+        - sda_fabric_authentication_profile - add `authenticationOrder` parameter.
+        - sda_fabric_authentication_profile - add `dot1xToMabFallbackTimeout` parameter.
+        - sda_fabric_authentication_profile - add `wakeOnLan` parameter.
+        - sda_fabric_authentication_profile - add `numberOfHosts` parameter.
+        - sda_device_info - change `deviceIPAddress` to `deviceManagementIpAddress` parameter.
+        - sda_fabric_border_device - change `deviceIPAddress` to `deviceManagementIpAddress` parameter.
+        - sda_fabric_border_device - remove `payload` parameter.
+        - sda_fabric_border_device - add `deviceManagementIpAddress` parameter.
+        - sda_fabric_border_device - add `siteNameHierarchy` parameter.
+        - sda_fabric_border_device - add `externalDomainRoutingProtocolName` parameter.
+        - sda_fabric_border_device - add `externalConnectivityIpPoolName` parameter.
+        - sda_fabric_border_device - add `internalAutonomouSystemNumber` parameter.
+        - sda_fabric_border_device - add `borderSessionType` parameter.
+        - sda_fabric_border_device - add `connectedToInternet` parameter.
+        - sda_fabric_border_device - add `externalConnectivitySettings` parameter.
+        - sda_fabric_border_device - add `interfaceName` parameter.
+        - sda_fabric_border_device - add `externalAutonomouSystemNumber` parameter.
+        - sda_fabric_border_device - add `l3Handoff` parameter.
+        - sda_fabric_border_device - add `virtualNetwork` parameter.
+        - sda_fabric_border_device - add `virtualNetworkName` parameter.
+        - sda_fabric_border_device - add `vlanId parameter.`
+        - sda_fabric_border_device_info - change `deviceIPAddress` to `deviceManagementIpAddress` parameter.
+        - sda_fabric_control_plane_device - change `deviceIPAddress` to `deviceManagementIpAddress` parameter.
+        - sda_fabric_control_plane_device - remove `payload` parameter.
+        - sda_fabric_control_plane_device - add `siteNameHierarchy` parameter.
+        - sda_fabric_control_plane_device_info - change `deviceIPAddress` to `deviceManagementIpAddress` parameter.
+        - sda_fabric_edge_device - change `deviceIPAddress` to `deviceManagementIpAddress` parameter.
+        - sda_fabric_edge_device - remove `payload` parameter.
+        - sda_fabric_edge_device - add `siteNameHierarchy` parameter.
+        - sda_fabric_edge_device_info - change `deviceIPAddress` to `deviceManagementIpAddress` parameter.
+        - sda_fabric_site - remove `payload` parameter.
+        - sda_fabric_site - add `fabricName` parameter.
+        - sda_multicast - change `fabricSiteNameHierarchy` to `siteNameHierarchy` parameter.
+        - sda_multicast_info - change `fabricSiteNameHierarchy` to `siteNameHierarchy` parameter.
+        - sda_port_assignment_for_access_point - remove `payload` parameter.
+        - sda_port_assignment_for_access_point - change `device_ip` to `deviceManagementIpAddress` parameter.
+        - sda_port_assignment_for_access_point - add `siteNameHierarchy` parameter.
+        - sda_port_assignment_for_access_point - add `deviceManagementIpAddress` parameter.
+        - sda_port_assignment_for_access_point - add `dataIpAddressPoolName` parameter.
+        - sda_port_assignment_for_access_point - add `authenticateTemplateName` parameter.
+        - sda_port_assignment_for_access_point - add `interfaceDescription` parameter.
+        - sda_port_assignment_for_access_point_info - change `device_ip` to `deviceManagementIpAddress` parameter.
+        - sda_port_assignment_for_user_device - remove `payload` parameter.
+        - sda_port_assignment_for_user_device - change `device_ip` to `deviceManagementIpAddress` parameter.
+        - sda_port_assignment_for_user_device - add `siteNameHierarchy` parameter.
+        - sda_port_assignment_for_user_device - add `voiceIpAddressPoolName` parameter.
+        - sda_port_assignment_for_user_device - add `dataIpAddressPoolName` parameter.
+        - sda_port_assignment_for_user_device - add `authenticateTemplateName` parameter.
+        - sda_port_assignment_for_user_device - add `scalableGroupName` parameter.
+        - sda_port_assignment_for_user_device - add `interfaceDescription` parameter.
+        - sda_port_assignment_for_user_device_info - change `device_ip` to `deviceManagementIpAddress` parameter.
+        - sda_virtual_network - remove `payload` parameter.
+        - snmpv2_read_community_credential - remove `id` and `instanceTenantId` parameter.
+        - snmpv2_write_community_credential - remove `id` and `instanceTenantId` parameter.
+        - site_health_info - add `siteType`, `offset`, `limit` parameters
+        - sda_virtual_network_ip_pool - remove `payload` and `ipPoolName` parameter.
+        - sda_virtual_network_ip_pool - add `siteNameHierarchy`, `ipPoolName`, `trafficType`, `authenticationPolicyName`, `scalableGroupName`, `isL2FloodingEnabled`, `isThisCriticalPool`, `poolType`, `vlanName`, `isWirelessPool` parameters.
+  4.1.0:
+    release_date: "2021-12-14"
+    changes:
+      release_summary: Add qos_device_interface and fixes tag_member
+      minor_changes:
+        - qos_device_interface - new module.
+        - qos_device_interface_info - new module.
+      bugfixes:
+        - tag_member - change object param to use payload.
+        - tag_member - update module documentation.
+  4.1.1:
+    release_date: "2022-01-12"
+    changes:
+      release_summary: Update module doc and fix issues 31 & 32
+      bugfixes:
+        - Updates the README to map versions (dnacentersdk and Cisco DNA Center with the ansible collection)
+        - app_policy_queuing_profile - fix get_object_by_id (issue 32), which helps deletion.
+        - application_sets - fix get_object_by_id (issue 32), which helps deletion.
+        - applications - fix get_object_by_id (issue 32), which helps deletion.
+        - business_sda_hostonboarding_ssid_ippool - fix exists check (issue 31).
+        - business_sda_hostonboarding_ssid_ippool - fix get_object_by_id (issue 32), which helps deletion.
+        - device_replacement - fix get_object_by_id (issue 32), which helps deletion.
+        - event_subscription - fix get_object_by_id (issue 32), which helps deletion.
+        - event_subscription_email - fix get_object_by_id (issue 32), which helps deletion.
+        - event_subscription_rest - fix get_object_by_id (issue 32), which helps deletion.
+        - event_subscription_syslog - fix get_object_by_id (issue 32), which helps deletion.
+        - network_create - update module DOCUMENTATION block.
+        - network_device_lexicographically_sorted_info - update module RETURN block.
+        - network_update - update module DOCUMENTATION block.
+        - pnp_global_settings - fix get_object_by_id (issue 32), which helps deletion.
+        - qos_device_interface - fix get_object_by_id (issue 32), which helps deletion.
+        - reserve_ip_subpool - fix get_object_by_id (issue 32), which helps deletion.
+        - sda_fabric - fix get_object_by_id (issue 32), which helps deletion.
+        - sda_fabric_authentication_profile - fix exists check (issue 31).
+        - sda_fabric_authentication_profile - fix get_object_by_id (issue 32), which helps deletion.
+        - sda_fabric_border_device - fix exists check (issue 31).
+        - sda_fabric_border_device - fix get_object_by_id (issue 32), which helps deletion.
+        - sda_fabric_control_plane_device - fix exists check (issue 31).
+        - sda_fabric_control_plane_device - fix get_object_by_id (issue 32), which helps deletion.
+        - sda_fabric_edge_device - fix exists check (issue 31).
+        - sda_fabric_edge_device - fix get_object_by_id (issue 32), which helps deletion.
+        - sda_fabric_site - add playbook
+        - sda_fabric_site - fix exists check (issue 31).
+        - sda_fabric_site - fix get_object_by_id (issue 32), which helps deletion.
+        - sda_multicast - fix exists check (issue 31).
+        - sda_multicast - fix get_object_by_id (issue 32), which helps deletion.
+        - sda_port_assignment_for_access_point - fix exists check (issue 31).
+        - sda_port_assignment_for_access_point - fix get_object_by_id (issue 32), which helps deletion.
+        - sda_port_assignment_for_user_device - fix exists check (issue 31).
+        - sda_port_assignment_for_user_device - fix get_object_by_id (issue 32), which helps deletion.
+        - sda_provision_device - add 'update' capability to module.
+        - sda_provision_device - fix exists check (issue 31).
+        - sda_provision_device - fix get_object_by_id (issue 32), which helps deletion.
+        - sda_provision_device - update module description and EXAMPLES block.
+        - sda_virtual_network - add playbook
+        - sda_virtual_network - fix exists check (issue 31).
+        - sda_virtual_network - fix get_object_by_id (issue 32), which helps deletion.
+        - sda_virtual_network_ip_pool - fix exists check (issue 31).
+        - sda_virtual_network_ip_pool - fix get_object_by_id (issue 32), which helps deletion.
+        - sda_virtual_network_v2 - fix exists check (issue 31).
+        - sda_virtual_network_v2 - fix get_object_by_id (issue 32), which helps deletion.
+        - sensor - fix get_object_by_id (issue 32), which helps deletion.
+        - snmp_properties - fix get_object_by_id (issue 32), which helps deletion.
+        - wireless_dynamic_interface - fix get_object_by_id (issue 32), which helps deletion.
+        - wireless_enterprise_ssid - fix get_object_by_id (issue 32), which helps deletion.
+        - wireless_profile - fix get_object_by_id (issue 32), which helps deletion.
+        - wireless_rf_profile - fix get_object_by_id (issue 32), which helps deletion.
+  4.1.2:
+    release_date: "2022-01-17"
+    changes:
+      release_summary: Update plugin module documentation, update site_design_floormap_info
+      bugfixes:
+        - plugin/modules/* - Update plugin module documentation
+      minor_changes:
+        - site_design_floormap_info - Add get_all to module
+  4.1.3:
+    release_date: "2022-01-19"
+    changes:
+      release_summary: Update documentation link
+      minor_changes:
+        - update documentation link in galaxy
+  4.2.0:
+    release_date: "2022-01-31"
+    changes:
+      release_summary: Parameters were added to pnp_device_claim_to_site
+      minor_changes:
+        - pnp_device_claim_to_site - Add hostname, imageInfo and configInfo parameters to module.
+        - Update dnacentersdk requirement from 2.4.0 to 2.4.4
+  5.0.0:
+    release_date: "2022-02-02"
+    changes:
+      release_summary: Parameters added and dropped for modules (service_provider_profile_delete, reserve_ip_subpool_update, network_device, business_sda_wireless_controller_create and business_sda_wireless_controller_delete)
+      major_changes:
+        - Update dnacentersdk requirement from 2.4.4 to 2.4.5
+        - service_provider_profile_delete - Rename argument from 'sp_profile_name' to 'spProfileName'.
+        - reserve_ip_subpool_update - Removed 'type', 'ipv4GlobalPool', 'ipv4Prefix', 'ipv4PrefixLength', 'ipv4Subnet' and 'ipv4TotalHost' arguments.
+        - network_device - Removed 'managementIpAddress' arguments.
+        - business_sda_wireless_controller_create - Removed 'deviceIPAddress' arguments.
+        - business_sda_wireless_controller_delete - Removed 'deviceName' and 'siteNameHierarchy' arguments.
+  5.1.0:
+    release_date: "2022-02-07"
+    changes:
+      release_summary: Fixes update tag_membership for Cisco DNA Center v2.2.3.3
+      minor_changes:
+        - tag_membership - changes in memberToTags from list to object in the way the value is obtained.
+        - Update README
+  5.1.1:
+    release_date: "2022-02-07"
+    changes:
+      release_summary: Fixes tag_membership module documentation
+      minor_changes:
+        - tag_membership - Fixes module documentation
+  5.1.2:
+    release_date: "2022-02-13"
+    changes:
+      release_summary: Add early check of status for SDA modules
+      bugfixes:
+        - sda_fabric_authentication_profile - add early check of 'status' for module.
+        - sda_fabric_border_device - add early check of 'status' for module.
+        - sda_fabric_control_plane_device - add early check of 'status' for module.
+        - sda_fabric_edge_device - add early check of 'status' for module.
+        - sda_fabric_site - add early check of 'status' for module.
+        - sda_fabric - add early check of 'status' for module.
+        - sda_multicast - add early check of 'status' for module.
+        - sda_port_assignment_for_access_point - add early check of 'status' for module.
+        - sda_port_assignment_for_user_device - add early check of 'status' for module.
+        - sda_provision_device - add early check of 'status' for module.
+        - sda_virtual_network_ip_pool - add early check of 'status' for module.
+        - sda_virtual_network_v2 - add early check of 'status' for module.
+        - sda_virtual_network - add early check of 'status' for module.
+  5.2.0:
+    release_date: "2022-02-24"
+    changes:
+      release_summary: Added siteNameHierarchy option to sda_virtual_network_ip_pool_info and sda_virtual_network_ip_pool
+      minor_changes:
+        - sda_virtual_network_ip_pool_info - add siteNameHierarchy option.
+        - sda_virtual_network_ip_pool - update example documentation to include siteNameHierarchy option.
+      bugfixes:
+        - sda_fabric - add early check of 'status' for module when state is absent.
+        - sda_fabric_authentication_profile - add early check of 'status' for module when state is absent.
+        - sda_fabric_border_device - add early check of 'status' for module when state is absent.
+        - sda_fabric_control_plane_device - add early check of 'status' for module when state is absent.
+        - sda_fabric_edge_device - add early check of 'status' for module when state is absent.
+        - sda_fabric_site - add early check of 'status' for module when state is absent.
+        - sda_multicast - add early check of 'status' for module when state is absent.
+        - sda_port_assignment_for_access_point - add early check of 'status' for module when state is absent.
+        - sda_port_assignment_for_user_device - add early check of 'status' for module when state is absent.
+        - sda_provision_device - add early check of 'status' for module when state is absent.
+        - sda_virtual_network - add early check of 'status' for module when state is absent.
+        - sda_virtual_network_ip_pool - add early check of 'status' for module when state is absent.
+        - sda_virtual_network_ip_pool_info - add early check of 'status' for module when state is absent.
+        - sda_virtual_network_v2 - add early check of 'status' for module when state is absent.
+  6.0.0:
+    release_date: "2022-03-14"
+    changes:
+      release_summary: Fixes update sda_fabric_border_device for Cisco DNA Center v2.2.3.3
+      major_changes:
+        - Update dnacentersdk requirement from 2.4.5 to 2.4.6
+        - sda_fabric_border_device - changes in externalConnectivitySettings from object to list.
+  6.1.0:
+    release_date: "2022-03-22"
+    changes:
+      release_summary: Add new param on pnp_device_claim_to_site request
+      minor_changes:
+        - Update dnacentersdk requirement from 2.4.6 to 2.4.7
+        - pnp_device_claim_to_site - add parameter rfProfile.
+      bugfixes:
+        - Fixed module documentation to have elements.
+        - Fixed the type of dnac_port in the documentation from string to int.
+  6.2.0:
+    release_date: "2022-03-24"
+    changes:
+      release_summary: Change download modules response to include file details
+      minor_changes:
+        - file_info - Instead of returning the data string, it now returns a dictionary. The dictionary has property data with the previous string value.
+        - file_info - add parameter filename.
+        - reports_executions_info - Instead of returning the data string, it now returns a dictionary. The dictionary has property data with the previous string value.
+        - reports_executions_info - add parameter filename.
+  6.2.1:
+    release_date: "2022-03-24"
+    changes:
+      release_summary: Update README
+      bugfixes:
+        - Update README, update Compatibility matrix.
+  6.3.0:
+    release_date: "2022-03-31"
+    changes:
+      release_summary: Adds headers parameter to wireless provision device update.
+      minor_changes:
+        - Adds ``headers`` parameter to wireless provision device update.
+        - reports - `tag` and `deliveries` now support empty format
+  6.4.0:
+    release_date: "2022-04-20"
+    changes:
+      release_summary: Adds parameters to pnp_device_claim_to_site.
+      minor_changes:
+        - Adds following ``parameters`` to pnp_device_claim_to_site, gateway, imageId, ipInterfaceName, staticIP, subnetMask, vlanId
+  6.5.0:
+    release_date: "2022-06-20"
+    changes:
+      release_summary: New Dna Center API version 2.3.3.0.
+      minor_changes:
+        - Update dnacentersdk requirement from 2.4.7 to 2.5.0
+        - assign_device_to_site - new module.
+        - buildings_planned_access_points_info - new module.
+        - business_sda_virtual_network_summary_info - new module.
+        - event_config_connector_types_info - new module.
+        - event_email_config_create - new module.
+        - event_email_config_update - new module.
+        - event_webhook_create - new module.
+        - event_webhook_update - new module.
+        - file_import - new module.
+        - interface_info - new module.
+        - interface_operation_create - new module.
+        - interface_update - new module.
+        - lan_automation_count_info - new module.
+        - lan_automation_create - new module.
+        - lan_automation_delete - new module.
+        - lan_automation_log_info - new module.
+        - lan_automation_status_info - new module.
+        - network_device_custom_prompt_info - new module.
+        - network_device_custom_prompt - new module.
+  6.5.1:
+    release_date: "2022-07-19"
+    changes:
+      release_summary: Added a status check, changed a required parameter and improved the doc.
+      bugfixes:
+        - sda_fabric_edge_device - Change required payload parameter to deviceManagementIpAddress
+        - transit_peer_network - Added status check
+        - file_info - Improve the module documentation.
+  6.5.2:
+    release_date: "2022-07-20"
+    changes:
+      release_summary: Deletion function fixed in several modules.
+      bugfixes:
+        - application_sets - delete function fixed.
+        - applications - delete function fixed.
+        - event_subscription - delete function fixed.
+        - sda_fabric_authentication_profile - delete function fixed.
+        - sda_fabric_border_device - delete function fixed.
+        - sda_fabric_control_plane_device - delete function fixed.
+        - sda_fabric_edge_device - delete function fixed.
+        - sda_virtual_network - delete function fixed.
+  6.5.3:
+    release_date: "2022-08-12"
+    changes:
+      release_summary: Added new function and fixed module
+      bugfixes:
+        - Update dnacentersdk requirement from 2.5.0 to 2.5.4
+        - business_sda_hostonboarding_ssid_ippool - create function added.
+        - wireless_profile - create function fixed.
+  6.6.0:
+    release_date: "2022-09-13"
+    changes:
+      release_summary: Added new intent modules
+      minor_changes:
+        - pnp_intent - new module.
+        - site_intent - new module.
+        - swim_intent - new module.
+        - template_intent - new module.
+  6.6.1:
+    release_date: "2022-11-17"
+    changes:
+      release_summary: Added the ability to export DNA Center credentials as environment variables and rennamed some vars.
+      bugfixes:
+        - DNA Center credentials can now be exported and used as env vars.
+        - sda_virtual_network_ip_pool - Now pass the site_name_hierarchy correctly in get method.
+  6.6.2:
+    release_date: "2022-12-19"
+    changes:
+      release_summary: 
+      bugfixes:
+        - sda_fabric_border_device - fix Create example at EXAMPLES block
+        - site_intent - fix Case_1 return example at RETURN block
+        - swim_intent - fix functionality and tests
+  6.6.3:
+    release_date: "2023-01-19"
+    changes:
+      release_summary: Fixes get_object_by_name issues.
+      bugfixes:
+        - netconf_credential - Removed to search by username.
+        - snmpv2_read_community_credential - Removed to search by username.
+        - snmpv2_write_community_credential - Removed to search by username.
+  6.6.4:
+    release_date: "2023-03-14"
+    changes:
+      release_summary: New method to compare changes
+      bugfixes:
+        - A new method to compare changes for specific cases has been added.
+        - network_device - Used a new method to compare changes.
+  6.7.0:
+    release_date: "2023-04-12"
+    changes:
+      release_summary: Compatibility with 2.3.5.3 DNA Center APIs
+      minor_changes:
+        - accesspoint_configuration_details_by_task_id_info - new module
+        - authentication_policy_servers_info - new module
+        - credential_to_site_by_siteid_create_v2 - new module
+        - device_reboot_apreboot_info - new module
+        - dnac_packages_info - new module
+        - eox_status_device_info - new module
+        - eox_status_summary_info - new module
+        - event_email_config - new module
+        - event_email_config_info - new module
+        - event_snmp_config_info - new module
+        - event_syslog_config - new module
+        - event_syslog_config_info - new module
+        - execute_suggested_actions_commands - new module
+        - global_credential_v2 - new module
+        - global_credential_v2_info - new module
+        - integration_settings_instances_itsm - new module
+        - integration_settings_instances_itsm_info - new module
+        - lan_automation_log_by_serial_number_info - new module
+        - network_device_user_defined_field - new module
+        - network_device_user_defined_field_info - new module
+        - network_v2 - new module
+        - network_v2_info - new module
+        - role_permissions_info - new module
+        - roles_info - new module
+        - service_provider_v2 - new module
+        - service_provider_v2_info - new module
+        - sp_profile_delete_v2 - new module
+        - user - new module
+        - user_info - new module
+        - users_external_servers_info - new module
+        - wireless_accespoint_configuration - new module
+        - wireless_accesspoint_configuration_summary_info - new module
+        - device_interface_info - attributes `lastInputTime` and `lastOutputTime` were added.
+        - pnp_device_claim_to_site - attributes `removeInactive` and `hostname` were removed. 
+        - sda_fabric_border_device - attributes `routeDistributionProtocol` and `borderPriority` were added.
+        - sda_fabric_control_plane_device attribute `routeDistributionProtocol` was added.
+        - sda_fabric_edge_device - attribute `siteNameHierarchy` was added.
+        - sda_fabric_site - attribute `fabricType` was added.
+        - sda_port_assignment_for_user_device - attribute `interfaceNames` was added.
+        - sda_virtual_network - attribute `vManageVpnId` was added.
+        - sda_virtual_network_ip_pool - attribute `isBridgeModeVm` was added.
+        - sda_virtual_network_v2 - attribute `isBridgeModeVm` was added.
+    6.7.1:
+      release_date: "2023-04-12"
+      changes:
+        release_summary: Adding documentation for 2.3.5.3 API
+        minor_changes:
+          - Adding documentation for 2.3.5.3 API
+    6.7.2:
+      release_date: "2023-05-09"
+      changes:
+        release_summary: Adding documentation for 2.3.5.3 API
+        minor_changes:
+          - Updating documentation, collection supports 2.3.5.3 DNA Center API Version.

@@ -1,0 +1,15 @@
+- name: server test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "get server status information"
+    inspur.sm.server_info:
+      provider: "{{ ism }}"

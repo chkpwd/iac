@@ -1,0 +1,34 @@
+---
+- name: Using the IBM Spectrum Virtualize collection
+  collections:
+    - ibm.spectrum_virtualize
+  gather_facts: no
+  connection: local
+  hosts: localhost
+  vars:
+    - clustername: x.x.x.x
+    - username: username
+    - password: password
+    - volname: vol0
+    - pool: pool0
+    - easy_tier: "off"
+    - size: 1
+    - unit: gb
+  tasks:
+    - name: Send CLI command over ssh connection
+      ibm_svctask_command:
+       command: [
+         "svctask mkvdisk -name {{ volname }} -mdiskgrp '{{ pool }}' -easytier '{{ easy_tier }}' -size {{ size }} -unit {{ unit }}",
+         "svctask rmvdisk {{ volname }}"
+       ]
+       clustername: "{{ clustername }}"
+       username: "{{ username }}"
+       password: "{{ password }}"
+       log_path: /tmp/playbook.debug
+    - name: Send CLI command over ssh connection
+      ibm_svcinfo_command:
+       command: "svcinfo lsvdisk"
+       clustername: "{{ clustername }}"
+       username: "{{ username }}"
+       password: "{{ password }}"
+       log_path: /tmp/playbook.debug

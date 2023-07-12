@@ -1,0 +1,8 @@
+---
+requires_ansible: ">=2.9.10"
+action_groups:
+  netapp_aws:
+    - aws_netapp_cvs_active_directory
+    - aws_netapp_cvs_filesystems
+    - aws_netapp_cvs_pool
+    - aws_netapp_cvs_snapshots

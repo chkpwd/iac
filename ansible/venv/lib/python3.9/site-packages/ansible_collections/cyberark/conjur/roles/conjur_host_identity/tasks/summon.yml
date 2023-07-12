@@ -1,0 +1,7 @@
+---
+- name: Download and unpack Summon
+  unarchive:
+    src: https://github.com/cyberark/summon/releases/download/v{{ summon.version }}/summon-{{ summon.os }}.tar.gz
+    dest: /usr/local/bin
+    remote_src: yes
+    creates: /usr/local/bin/summon

@@ -1,0 +1,35 @@
+---
+requires_ansible: ">=2.9.10"
+plugin_routing:
+  action:
+    asa_acls:
+      redirect: cisco.asa.asa
+    acls:
+      redirect: cisco.asa.asa
+    asa_command:
+      redirect: cisco.asa.asa
+    command:
+      redirect: cisco.asa.asa
+    asa_config:
+      redirect: cisco.asa.asa
+    config:
+      redirect: cisco.asa.asa
+    asa_facts:
+      redirect: cisco.asa.asa
+    facts:
+      redirect: cisco.asa.asa
+    asa_ogs:
+      redirect: cisco.asa.asa
+    ogs:
+      redirect: cisco.asa.asa
+  modules:
+    acls:
+      redirect: cisco.asa.asa_acls
+    command:
+      redirect: cisco.asa.asa_command
+    config:
+      redirect: cisco.asa.asa_config
+    facts:
+      redirect: cisco.asa.asa_facts
+    ogs:
+      redirect: cisco.asa.asa_ogs

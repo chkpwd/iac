@@ -1,0 +1,140 @@
+---
+#
+# Configure UCS Domain Profiles
+#
+- hosts: localhost
+  connection: local
+  collections:
+    - cisco.intersight
+  gather_facts: false
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      # if api_key vars are omitted, INTERSIGHT_API_KEY_ID, INTERSIGHT_API_PRIVATE_KEY,
+      # and INTERSIGHT_API_URI environment variables used for API key data
+      api_private_key: "{{ api_private_key | default(omit) }}"
+      api_key_id: "{{ api_key_id | default(omit) }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+    # Domain Profile name
+    profile_name: SJC07-R14-R15
+    org_name: dsoper-DevNet
+    port_policy: server-1-6-eth-pc-47-48
+    qos_policy: required-qos
+    # Fabric Intersight A and B Serial Numbers
+    fia_sn: FDO23450Q6D
+    fib_sn: FDO23480DAL
+  tasks:
+    # Get the Organization Moid
+    - name: "Get {{ org_name }} Organization Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /organization/Organizations
+        query_params:
+          $filter: "Name eq '{{ org_name }}'"
+      register: org_resp
+    # Get the Port Policy
+    - name: "Get {{ port_policy }} Port Policy Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /fabric/PortPolicies
+        query_params:
+          $filter: "Name eq '{{ port_policy }}'"
+      register: port_resp
+    # Get the QoS Policy
+    - name: "Get {{ qos_policy }} Qos Policy Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /fabric/SystemQosPolicies
+        query_params:
+          $filter: "Name eq '{{ qos_policy }}'"
+      register: qos_resp
+    # Get FI A Moid
+    - name: "Get FI A {{ fia_sn }} Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /network/Elements
+        query_params:
+          $filter: "Serial eq '{{ fia_sn }}'"
+      register: fia_resp
+    # Get FI B Moid
+    - name: "Get FI B {{ fib_sn }} Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /network/Elements
+        query_params:
+          $filter: "Serial eq '{{ fib_sn }}'"
+      register: fib_resp
+    # Config Domain (SwitchCluster) Profile
+    - name: "Configure {{ profile_name }} Domain Profile"
+      intersight_rest_api:
+        <<: *api_info
+        state: "{{ state | default('present') }}"
+        resource_path: /fabric/SwitchClusterProfiles
+        query_params:
+          $filter: "Name eq '{{ profile_name }}'"
+        api_body: {
+          "Name": "{{ profile_name }}",
+          "Organization": {
+            "Moid": "{{ org_resp.api_response.Moid }}"
+          }
+        }
+      register: profile_resp
+    # Config Switch Profile A with Policy Bucket
+    # Command line arg -e profile_action=Unassign can be used to unassign the profile
+    # Command line arg -e profile_action=Deploy can be used to deploy the profile
+    - name: "Configure {{ profile_name }}-A Switch Profile"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /fabric/SwitchProfiles
+        query_params:
+          $filter: "Name eq '{{ profile_name }}-A'"
+        api_body: {
+          "Name": "{{ profile_name }}-A",
+          "SwitchClusterProfile": {
+            "Moid": "{{ profile_resp.api_response.Moid }}"
+          },
+          "PolicyBucket": [
+            {
+              "Moid": "{{ port_resp.api_response.Moid }}",
+              "ObjectType": "fabric.PortPolicy"
+            },
+            {
+              "Moid": "{{ qos_resp.api_response.Moid }}",
+              "ObjectType": "fabric.SystemQosPolicy"
+            }
+          ],
+          "AssignedSwitch": {
+            "Moid": "{{ fia_resp.api_response.Moid }}"
+          },
+          "Action": "{{ profile_action | default('No-op') }}"
+        }
+      when: profile_resp.api_response is defined and profile_resp.api_response
+    # Config Switch Profile B with Policy Bucket
+    - name: "Configure {{ profile_name }}-B Switch Profile"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /fabric/SwitchProfiles
+        query_params:
+          $filter: "Name eq '{{ profile_name }}-B'"
+        api_body: {
+          "Name": "{{ profile_name }}-B",
+          "SwitchClusterProfile": {
+            "Moid": "{{ profile_resp.api_response.Moid }}"
+          },
+          "PolicyBucket": [
+            {
+              "Moid": "{{ port_resp.api_response.Moid }}",
+              "ObjectType": "fabric.PortPolicy"
+            },
+            {
+              "Moid": "{{ qos_resp.api_response.Moid }}",
+              "ObjectType": "fabric.SystemQosPolicy"
+            }
+          ],
+          "AssignedSwitch": {
+            "Moid": "{{ fib_resp.api_response.Moid }}"
+          },
+          "Action": "{{ profile_action | default('No-op') }}"
+        }
+      when: profile_resp.api_response is defined and profile_resp.api_response

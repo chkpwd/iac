@@ -1,0 +1,43 @@
+---
+# Get cluster profile
+- name: Get Cluster Profile
+  vars:
+    api_info: &api_info
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+  intersight_rest_api:
+    <<: *api_info
+    resource_path: /hyperflex/ClusterProfiles
+    query_params:
+      $filter: "Name eq '{{ hx_cluster_name }}'"
+  register: profile
+# Prompt for cluster deployment action
+- name: "Prompt for deployment action"
+  pause:
+    prompt: "Set the deployment action. Valid choices are Validate, Deploy, Continue or Retry."
+    echo: yes
+  register: hx_action
+  run_once: true
+# Set cluster deployment action
+- name: Set Cluster Action
+  vars:
+  intersight_rest_api:
+    <<: *api_info
+    resource_path: /hyperflex/ClusterProfiles
+    query_params:
+      $filter: "Name eq '{{ hx_cluster_name }}'"
+    api_body: {
+      "Action": "{{ hx_action.user_input }}"
+    }
+  when:
+    - profile.api_response.ConfigContext.ConfigState != 'Configuring'
+    - profile.api_response.ConfigContext.ConfigState != 'Associated'
+# Can optionally wait for subsequent tasks if needed
+# register: result
+# until: result.api_response.config_context.config_state == 'Associated'
+# retries: 20
+# delay: 30
+- debug: msg="HyperFlex Cluster Profile deployment action has been triggered successfully."

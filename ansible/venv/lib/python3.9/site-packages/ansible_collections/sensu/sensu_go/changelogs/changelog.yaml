@@ -1,0 +1,456 @@
+---
+releases:
+  1.13.2:
+    release_date: "2022-12-22"
+    changes:
+      release_summary: |
+        Support for latest Ansible and Rocky and Alma linux
+      minor_changes:
+        - Added support for ansible 2.14
+        - Added support for Rocky and Alma linux
+  1.13.1:
+    release_date: "2022-04-19"
+    changes:
+      release_summary: |
+        Support for latest Ansible
+      minor_changes:
+        - Added support for ansible 2.13
+        - Removed support for CentOS 8
+  1.13.0:
+    release_date: "2022-01-17"
+    changes:
+      release_summary: |
+        Bonsai asset definitions can be downloaded on controller or remote nodes 
+
+        A user can decide if Bonsai asset definitions should be downloaded to
+        remote nodes or the controller node. This is useful, but not limited to,
+        in case that the controller node's Internet connection is unstable or in
+        general worse than that of the remote nodes.
+      minor_changes:
+        - Added argument remote_on inside bonsai_asset module
+
+  1.12.1:
+    release_date: "2021-12-20"
+    changes:
+      release_summary: |
+        Keeping up with updates
+      minor_changes:
+        - Add Sensu Go 6.5.5 Windows metadata
+        - Add sensu Go 6.6.2 Windows metadata
+  1.12.0:
+    release_date: "2021-08-31"
+    changes:
+      release_summary: |
+        Keeping up with the updates
+
+        In this release, community contributed support for the OracleLinux. We
+        added a few tests to catch if things break in the future and this is
+        about it. And while we were at work, we also added support for Sensu Go
+        6.4.0 and 6.4.1 on Windows.
+      minor_changes:
+        - Add support for OracleLinux.
+        - Add Sensu Go 6.4.0 Windows metadata.
+        - Add Sensu Go 6.4.1 Windows metadata.
+
+  1.11.1:
+    release_date: "2021-05-27"
+    changes:
+      release_summary: |
+        Sensu Go 6.3.0 is here
+
+        For this release, we only updated the list of available Sensu Go agent
+        versions for Windows, and made sure collection works with the latest
+        Sensu Go version.
+      minor_changes:
+        - Update list of available Sensu Go agent packages for Windows
+          installations (added 6.3.0).
+
+  1.11.0:
+    release_date: "2021-05-18"
+    changes:
+      release_summary: |
+        Validate all the things!
+
+        If you ever thought to yourself, "Ansible does not yell enough at me,"
+        we have some great news. The Sensu Go Ansible Collection gained role
+        argument specifications, making it possible to validate variable values
+        before executing a role. You are welcome ;)
+      minor_changes:
+        - Add argument specification to the install role.
+        - Add argument specification to the backend role.
+        - Add argument specification to the agent role.
+
+  1.10.0:
+    release_date: "2021-05-04"
+    changes:
+      release_summary: |
+        Authentication, authentication on the wall, Who has Access to Them All?
+
+        New modules allow Sensu Go users to configure authentication within
+        their Ansible playbooks. The users can authenticate via external
+        authentication providers such as Lightweight Directory Access Protocol (LDAP),
+        Active Directory (AD), or OpenID Connect 1.0 protocol (OIDC).
+      minor_changes:
+        - Add modules for managing Sensu Go authentication providers.
+    modules:
+      - name: ad_auth_provider
+        description: Manage Sensu AD authentication provider
+        namespace: ""
+      - name: ldap_auth_provider
+        description: Manage Sensu LDAP authentication provider
+        namespace: ""
+      - name: oidc_auth_provider
+        description: Manage Sensu OIDC authentication provider
+        namespace: ""
+      - name: auth_provider_info
+        description: List Sensu authentication providers
+        namespace: ""
+
+  1.9.4:
+    release_date: "2021-03-30"
+    changes:
+      release_summary: |
+        Opening Windows for real
+
+        This is a bugfix release that makes sure Sensu Go Ansible Collection
+        can operate even in the absence of the Windows Ansible Collection
+        (assuming we do not want to manage agents on Windows hosts, that is).
+      bugfixes:
+        - Make sure we lazy-load Windows-related content.
+
+  1.9.3:
+    release_date: "2021-03-30"
+    changes:
+      release_summary: |
+        Opening Windows
+
+        The only change in this release is removal of the ``ansible.windows``
+        dependency. This should allow users that only use certified collections
+        to install and use the collection.
+      minor_hanges:
+        - Remove Windows Ansible Collection dependency.
+
+  1.9.2:
+    release_date: "2021-03-28"
+    changes:
+      release_summary: |
+        A fresh batch of updates
+
+        For this release, we only updated the list of available Sensu Go agent
+        versions for Windows.
+      minor_hanges:
+        - Update list of available Sensu Go agent packages for Windows
+          installations (added 5.21.4, 5.21.5, 6.2.5, and 6.2.6).
+  1.9.1:
+    release_date: "2021-03-08"
+    changes:
+      release_summary: |
+        Containerize all the things
+
+        There are two main reasons for this release. We made sure the Sensu Go
+        Ansible Collection works with development version of Ansible (upcoming
+        ansible-core 2.11). And we added enough metadata to the collection that
+        ansible-builder can create an execution environment with the Sensu Go
+        Ansible Collection without having to manually specify dependencies.
+      bugfixes:
+        - Add ansible.windows dependency that we forgot to add when we
+          introducted the Sensu Go agent installation on Windows.
+
+  1.9.0:
+    release_date: "2021-02-28"
+    changes:
+      release_summary: |
+        Multi-cluster visibility with federation
+
+        Two new module pairs allow Sensu Go users to configure federation from
+        the comfort of their Ansible playbooks.
+      minor_changes:
+        - Add modules for managing etcd replicatiors, which form the basis of
+          the Sensu Go federation.
+        - Add modules for managing Sensu Go clusters.
+        - Update list of available Sensu Go agent packages for Windows
+          installations.
+      bugfixes:
+        - Allow downgrading Sensu Go packages on Linux distributions that use
+          yum or dnf for package management.
+    modules:
+      - name: cluster
+        description: Manage Sensu Go clusters
+        namespace: ""
+      - name: cluster_info
+        description: List available Sensu Go clusters
+        namespace: ""
+      - name: etcd_replicator
+        description: Manage Sensu Go etcd replicators
+        namespace: ""
+      - name: etcd_replicator_info
+        description: List Sensu Go etcd replicators
+        namespace: ""
+
+  1.8.0:
+    release_date: "2021-01-26"
+    changes:
+      release_summary: |
+        Supporting hashed user passwords
+
+        Starting with this release, Sensu Go users can use password hashes
+        directly when manipulating role-based access control resources.
+      minor_changes:
+        - Add support for hashed password in user module.
+      bugfixes:
+        - Mimic actual responses when user module runs in check mode.
+        - Make it possible to use modules on Sensu Go backends with no version
+          number.
+
+  1.7.2:
+    release_date: "2021-01-21"
+    changes:
+      release_summary: |
+        Be kind
+
+        The main thing in this release is a small adjustment of our code of
+        conduct that is a bit more generic and less event-focused.
+      minor_changes:
+        - Specify minimal python version for modules.
+        - Update code of conduct.
+        - List version 6.2.1 and 6.2.2 in Windows lookup table.
+
+  1.7.1:
+    release_date: "2020-12-30"
+    changes:
+      release_summary: |
+        Slow and steady
+
+        There are no major new features in this release, just honest little
+        fixes that should make using Sensu Go Ansible Collection a bit more
+        pleasant.
+      minor_changes:
+        - List version 6.2.0 and 6.1.3 in Windows lookup table.
+        - Add module return value samples.
+
+  1.7.0:
+    release_date: "2020-12-14"
+    changes:
+      release_summary: |
+        Say hello to Amazon Linux and Windows
+
+        As the title suggests, we worked hard to bring you two new supported
+        platforms to the Sensu Go Ansible Colletions. And yes, all your
+        existing playbooks still work.All you need to do is run them against
+        the right host and voila ;)
+      minor_changes:
+        - Add support for installing Sensu Go on Amazon Linux.
+        - Add support for installing Sensu Go agents on Windows.
+
+  1.6.1:
+    release_date: "2020-11-04"
+    changes:
+      release_summary: |
+        Comparing entities is hard
+        
+        This is a bugfix release that makes sure agent entity changes are
+        properly detected.
+      bugfixes:
+        - Make subscriptions comparison insensitive to ordering.
+        - Make sure agent entities handle *entity:{name}* automatic
+          subscriptions.
+
+  1.6.0:
+    release_date: "2020-10-12"
+    changes:
+      release_summary: |
+        Our little secret
+        
+        This release contains a few new modules that allow you to manage all
+        things related to the Sensu Go secrets: from adding secrets providers
+        to passing secrets to resources that know how to use them.
+      minor_changes:
+       - Add modules for managing Sensu Go secret providers.
+       - Add modules for managing Sensu Go secrets.
+       - Add support for secrets to pipe handler module.
+       - Add support for secrets to check module.
+       - Add support for secrets to mutator module.
+    modules:
+      - name: secret
+        description: Manage Sensu Go secrets
+        namespace: ""
+      - name: secret_info
+        description: List available Sensu Go secrets
+        namespace: ""
+      - name: secrets_provider_env
+        description: Manage Sensu Env secrets provider
+        namespace: ""
+      - name: secrets_provider_vault
+        description: Manage Sensu VaultProvider secrets provider
+        namespace: ""
+      - name: secrets_provider_info
+        description: List Sensu secrets providers
+        namespace: ""
+
+  1.5.0:
+    release_date: "2020-07-24"
+    changes:
+      release_summary: |
+        Self-signed security
+        
+        The primary focus of this release is to enable configuration of Sensu
+        Go backends that use certificates that are not considered trusted when
+        using system-provided CA bundle.
+      minor_changes:
+        - Allow modules to supply custom CA bundle for backend certificate
+          validation or skip the validation entirely.
+      bugfixes:
+        - Expand documentation about the *check_hooks* parameter in the check
+          module.
+        - Explain how the resource name parameter is used and what invariants
+          need to hold in order for the Sensu Go to consider it a valid name.
+
+  1.4.2:
+    release_date: "2020-07-02"
+    changes:
+      release_summary: |
+        Break the fall
+
+        There is really only one reason for this release: making sure user
+        management works with Sensu Go 5.21.0 and newer. And while the
+        upstream did break the API, we did not, so all your playbooks should
+        function as nothing happened. We had to add a *bcrypt* dependency to
+        our collection so make sure it is installed on hosts that will execute
+        the user module.
+      bugfixes:
+        - Make sure check module is as idempotent as possible.
+        - Make user module compatible with Sensu Go >= 5.21.0.
+
+  1.4.1:
+    release_date: "2020-06-25"
+    changes:
+      release_summary: |
+        Maintenance is the name of the game
+        
+        There are no nothing earth-shattering changes in this release, just
+        honest little bug fixes and compatibility improvements.
+
+        **NOTE:** The *sensu.sensu_go.user* module currently **DOES NOT** work
+        on Sensu Go 5.21.0 and later. This is a know issue that will be fixed
+        as soon as the updated user-related backend API endpoints are
+        documented.
+      bugfixes:
+        - Make sure event module always returns a predicted result.
+        - Make user module fully-idempotent. Previous versions did not
+          properly detect the password changes.
+        - Use fully-qualified collection names in module documentation.
+        - Ensure backend initialization properly reports changed state.
+        - Make API key authentication work even for regular users with limited
+          permissions.
+        - Update the datastore module to cope with the minor API changes.
+
+  1.4.0:
+    release_date: "2020-04-30"
+    changes:
+      release_summary: |
+        Keeping up with the world
+        
+        Main changes in this release are related to updates in the Sensu Go's
+        web API that broke our change detection.
+      minor_changes:
+        - Add support for RHEL and CentOS 8.
+      bugfixes:
+        - Fix resource metadata comparison on Sensu Go 5.19.0 and newer.
+        - Update entity comparator to handle new fields.
+
+  1.3.1:
+    release_date: "2020-03-21"
+    changes:
+      release_summary: |
+        Bug fixing galore
+        
+        This release makes it possible to use the *asset* module when
+        replacing the deprecated, single-build assets that were created by
+        means other than Ansible.
+      bugfixes:
+        - Do not die when encountering a deprecated asset format.
+        - Update return value documentation for info modules.
+        - Add Sensu Go 5.17.x and 5.18.x to the test suite and remove the
+          unsupported versions (5.14.2 and lower).
+        - Update the role metadata with proper platform markers.
+        - Remove unsupported Ubuntu versions from the test suite.
+
+  1.3.0:
+    release_date: "2020-02-03"
+    changes:
+      release_summary: |
+        Authenticating with style on Debian
+        
+        Sensu Go 5.15.0 gained an API key authentication method and the
+        Ansible collection finally caught up. This means that we can now
+        replace *user* and *password* authentication parameters with a single
+        *api_key* value.
+       
+        And the other big news is the addition of Debian support to the
+        `install` role.
+      minor_changes:
+        - Add API key authentication support.
+        - Add support for Debian installation.
+
+  1.2.0:
+    release_date: "2020-01-17"
+    changes:
+      release_summary: |
+        Building support for builds
+
+        This release adds support for specifying builds when installing
+        various Sensu Go components.
+      minor_changes:
+        - Add *build* variable to the *install* role that further pins down
+          the package version that gets installed.
+
+  1.1.1:
+    release_date: "2020-01-08"
+    changes:
+      release_summary: |
+        Python 2 is Still a Thing
+
+        This is a bugfix release that makes sure the Sensu collection is
+        working when Ansible control node uses Python 2.
+      minor_changes:
+        - Add support for RHEL 7 to the install role (thanks, @danragnar).
+      bugfixes:
+        - Accept *str* and *unicode* instance as a valid string in
+          *bonsai_asset* action plugin.
+
+  1.1.0:
+    release_date: "2019-12-28"
+    changes:
+      release_summary: |
+        Hello Sensu Go 5.16
+
+        This is the first release that supports installing Sensu Go 5.16.
+      minor_changes:
+        - Support for Sensu Go 5.16 initialization in backend role.
+        - Support for external datastore management using *datastore* and
+          *datastore_info* modules.
+      bugfixes:
+        - Reintroduce namespace support to *bonsai_asset* module (thanks,
+          @jakeo)
+    modules:
+      - name: datastore
+        description: Manage Sensu external datastore providers
+        namespace: ""
+      - name: datastore_info
+        description: List external Sensu datastore providers
+        namespace: ""
+
+  1.0.0:
+    release_date: "2019-12-09"
+    changes:
+      release_summary: |
+        Rising From The Ashes
+
+        This is the initial stable release of the Sensu Go Ansible Collection.
+        It contains roles for installing and configuring Sensu Go backends and
+        agents and a set of modules for managing Sensu Go resources.
+
+        Where does the release name comes from? We took an existing Ansible
+        Collection that @flowerysong wrote, gave it a thorough tune-up and
+        added a comprehensive test suite. And now, it is ready to face the
+        world!

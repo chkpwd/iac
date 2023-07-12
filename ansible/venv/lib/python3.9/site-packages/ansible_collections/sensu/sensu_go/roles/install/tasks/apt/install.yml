@@ -1,0 +1,9 @@
+---
+- name: Install component
+  apt:
+    name: "{{ 'apt' | sensu.sensu_go.package_name(item, version, build) }}"
+    state: "{{ (version == 'latest') | ternary('latest', 'present') }}"
+    # FIXME(@tadeboro): This is a temporary "fix" for
+    # https://github.com/ansible/ansible/issues/29451.
+    force: true
+  loop: "{{ components }}"

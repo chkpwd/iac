@@ -1,0 +1,134 @@
+---
+#
+# Configure LAN Connectivity Policy
+#
+- hosts: localhost
+  connection: local
+  collections:
+    - cisco.intersight
+  gather_facts: false
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      # if api_key vars are omitted, INTERSIGHT_API_KEY_ID, INTERSIGHT_API_PRIVATE_KEY,
+      # and INTERSIGHT_API_URI environment variables used for API key data
+      api_private_key: "{{ api_private_key | default(omit) }}"
+      api_key_id: "{{ api_key_id | default(omit) }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+    # LAN Connectivity Policy name
+    lcp_name: SJC07-R14-R15-lan-conn
+    eth_net_group: sjc07-248-net-group
+    eth_net_control: default-eth-net-control
+    eth_qos: default-eth-qos
+    eth_adapter: eth-adapter
+    mac_pool: sjc07-de31-mac
+    vnic_name: eth0
+    org_name: dsoper-DevNet
+  tasks:
+    # Get the Organization Moid
+    - name: "Get {{ org_name }} Organization Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /organization/Organizations
+        query_params:
+          $filter: "Name eq '{{ org_name }}'"
+      register: org_resp
+    # Get the Ethernet Network Group Policy
+    - name: "Get {{ eth_net_group }} Ethernet Network Group Policy Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /fabric/EthNetworkGroupPolicies
+        query_params:
+          $filter: "Name eq '{{ eth_net_group }}'"
+      register: eth_net_group_resp
+    # Get the Ethernet Network Control Policy
+    - name: "Get {{ eth_net_control }} Ethernet Network Control Policy Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /fabric/EthNetworkControlPolicies
+        query_params:
+          $filter: "Name eq '{{ eth_net_control }}'"
+      register: eth_net_control_resp
+    # Get the Ethernet QoS Policy
+    - name: "Get {{ eth_qos }} Ethernet QoS Policy Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /vnic/EthQosPolicies
+        query_params:
+          $filter: "Name eq '{{ eth_qos }}'"
+      register: eth_qos_resp
+    # Get the Ethernet Network Group Policy
+    - name: "Get {{ eth_adapter }} Ethernet Adapter Policy Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /vnic/EthAdapterPolicies
+        query_params:
+          $filter: "Name eq '{{ eth_adapter }}'"
+      register: eth_adapter_resp
+    # Get MAC Address Pool
+    - name: "Get {{ mac_pool }} MAC Address Pool Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /macpool/Pools
+        query_params:
+          $filter: "Name eq '{{ mac_pool }}'"
+      register: mac_resp
+    # Config LAN Connectivity Policy
+    - name: "Configure {{ lcp_name }} LAN Connectivity Policy"
+      intersight_rest_api:
+        <<: *api_info
+        state: "{{ state | default('present') }}"
+        resource_path: /vnic/LanConnectivityPolicies
+        query_params:
+          $filter: "Name eq '{{ lcp_name }}'"
+        api_body: {
+          "Name": "{{ lcp_name }}",
+          "Organization": {
+            "Moid": "{{ org_resp.api_response.Moid }}"
+          },
+          "PlacementMode": "auto",
+          "TargetPlatform": "FIAttached"
+        }
+      register: lcp_resp
+    # Config vNIC with LAN Connectivity Policy
+    - name: "Configure {{ vnic_name }} vNIC"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /vnic/EthIfs
+        query_params:
+          $filter: "Name eq '{{ vnic_name }}'"
+        api_body: {
+          "Name": "{{ vnic_name }}",
+          "MacAddressType": "POOL",
+          "MacPool": {
+            "Moid": "{{ mac_resp.api_response.Moid }}",
+          },
+          "Placement": {
+            "SwitchId": "A",
+            "AutoSlotId": false,
+            "AutoPciLink": false
+          },
+          "Cdn": {
+            "Source": "vnic"
+          },
+          "FailoverEnabled": true,
+          "FabricEthNetworkGroupPolicy": [
+            {
+              "Moid": "{{ eth_net_group_resp.api_response.Moid }}"
+            }
+          ],
+          "FabricEthNetworkControlPolicy": {
+            "Moid": "{{ eth_net_control_resp.api_response.Moid }}"
+          },
+          "EthQosPolicy": {
+            "Moid": "{{ eth_qos_resp.api_response.Moid }}"
+          },
+          "EthAdapterPolicy": {
+            "Moid": "{{ eth_adapter_resp.api_response.Moid }}"
+          },
+          "LanConnectivityPolicy": {
+            "Moid": "{{ lcp_resp.api_response.Moid }}"
+          }
+        }
+      when: lcp_resp.api_response is defined and lcp_resp.api_response

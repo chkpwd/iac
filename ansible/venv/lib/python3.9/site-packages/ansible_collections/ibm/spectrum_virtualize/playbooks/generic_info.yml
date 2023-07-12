@@ -1,0 +1,24 @@
+---
+- name: Using the IBM Spectrum Virtualize collection
+  collections:
+    - ibm.spectrum_virtualize
+  gather_facts: no
+  connection: local
+  hosts: localhost
+  vars:
+    - user: username
+    - clustername: x.x.x.x
+    - username: username
+    - password: password
+  tasks:
+    - name: Run CLI commands
+      register: results
+      ibm_svcinfo_command:
+       command: "svcinfo lssystem"
+       clustername: "{{ clustername }}"
+       username: "{{ username }}"
+       password: "{{ password }}"
+       log_path: /tmp/test.debug
+    - name: show time zone in lssystem
+      set_fact:
+        time_zone: "{{ (results['stdout'] | from_json).time_zone }}"

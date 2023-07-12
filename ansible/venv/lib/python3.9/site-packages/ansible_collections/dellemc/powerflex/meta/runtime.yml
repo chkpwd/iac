@@ -1,0 +1,39 @@
+---
+requires_ansible: ">=2.12"
+plugin_routing:
+    modules:
+        dellemc_powerflex_gatherfacts:
+            redirect: dellemc.powerflex.info
+            deprecation:
+                removal_date: "2024-03-31"
+                warning_text: Use info module instead.
+        dellemc_powerflex_device:
+            redirect: dellemc.powerflex.device
+            deprecation:
+                removal_date: "2024-03-31"
+                warning_text: Use device module instead.
+        dellemc_powerflex_sdc:
+            redirect: dellemc.powerflex.sdc
+            deprecation:
+                removal_date: "2024-03-31"
+                warning_text: Use sdc module instead.
+        dellemc_powerflex_sds:
+            redirect: dellemc.powerflex.sds
+            deprecation:
+                removal_date: "2024-03-31"
+                warning_text: Use sds module instead.
+        dellemc_powerflex_snapshot:
+            redirect: dellemc.powerflex.snapshot
+            deprecation:
+                removal_date: "2024-03-31"
+                warning_text: Use snapshot module instead.
+        dellemc_powerflex_storagepool:
+            redirect: dellemc.powerflex.storagepool
+            deprecation:
+                removal_date: "2024-03-31"
+                warning_text: Use storagepool module instead.
+        dellemc_powerflex_volume:
+            redirect: dellemc.powerflex.volume
+            deprecation:
+                removal_date: "2024-03-31"
+                warning_text: Use volume module instead.

@@ -1,8 +1,11 @@
 ---
 - name: Test dynamic playbooks
-  hosts: all
+  hosts: localhost
 
   tasks:
     - name: Debugging Variables
-      debug:
-        var: testvar
+      ansible.builtin.pip:
+        name: ansible
+        virtualenv: /home/hyoga/test
+        virtualenv_command: "sudo -u hyoga /usr/bin/python3 -m venv"
+      become: false

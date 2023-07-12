@@ -1,0 +1,85 @@
+---
+#
+# The hosts group used is provided by the group variable or defaulted to 'Intersight_Servers'.
+# You can specify a specific host (or host group) on the command line:
+#   ansible-playbook ... -e group=<your host group>
+#   e.g., ansible-playbook server_profiles.yml -e group=TME_Demo
+#
+- hosts: "{{ group | default('Intersight_Servers') }}"
+  connection: local
+  collections:
+    - cisco.intersight
+  gather_facts: false
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      # if api_key vars are omitted, INTERSIGHT_API_KEY_ID, INTERSIGHT_API_PRIVATE_KEY,
+      # and INTERSIGHT_API_URI environment variables used for API key data
+      api_private_key: "{{ api_private_key | default(omit) }}"
+      api_key_id: "{{ api_key_id | default(omit) }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+    # Firmware Version
+    fw_version: 4.2(2d)
+  tasks:
+    # Set the distributable type based on the management mode and server type
+    - set_fact:
+        dist_type: IMMHOST
+      when: mode == 'Intersight' or mode == 'IntersightStandalone'
+    - set_fact:
+        dist_type: UMMBLADE
+      when: mode == 'UCSM' and object_type == 'Blade'
+    - set_fact:
+        dist_type: UMMRACK
+      when: mode == 'UCSM' and object_type == 'RackUnit'
+    # Get a user defined FW version
+    - name: Get Moid of user defined FW version
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /firmware/Distributables
+        query_params:
+          $filter: "SupportedModels eq '{{ model }}' and Version eq '{{ fw_version }}' and Tags.Key eq 'cisco.meta.distributabletype' and Tags.Value eq '{{ dist_type }}' and Tags.Key eq 'cisco.meta.repositorytype' and Tags.Value eq 'IntersightCloud'"
+      delegate_to: localhost
+      register: fw_resp
+    # Update server firmware with a post based on server moid
+    - name: Update server firmware
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /firmware/Upgrades
+        query_params:
+          $filter: "Server.Moid eq '{{ server_moid }}'"
+        update_method: post
+        api_body: {
+          "DirectDownload": {
+            "Upgradeoption": "upgrade_mount_only"
+          },
+          "Distributable": {
+            "Moid": "{{ fw_resp.api_response.Moid }}"
+          },
+          "Server": {
+            "Moid": "{{ server_moid }}",
+            "ObjectType": "compute.{{ object_type }}"
+          },
+          "UpgradeType": "direct_upgrade",
+          "SkipEstimateImpact": true
+        }
+      delegate_to: localhost
+      register: update_resp
+      when:
+        - server_moid is defined
+        - fw_resp.api_response.Moid is defined
+    # Wait for download/update to complete
+    - name: Check firmware download/update status
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /firmware/UpgradeStatuses
+        query_params:
+          $filter: "Moid eq '{{ update_resp.api_response.UpgradeStatus.Moid }}'"
+      delegate_to: localhost
+      register: status_resp
+      until: status_resp.api_response.Overallstatus == 'pending' or status_resp.api_response.Overallstatus == 'success'
+      # 60 minutes to allow download/update to complete
+      retries: 60
+      delay: 60
+      when:
+        - update_resp.api_response is defined

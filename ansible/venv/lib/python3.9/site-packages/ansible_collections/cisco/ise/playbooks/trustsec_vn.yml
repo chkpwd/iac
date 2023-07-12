@@ -1,0 +1,90 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+
+  vars:
+    ise_login: &ise_login
+      ise_hostname: "{{ ise_hostname }}"
+      ise_username: "{{ ise_username }}"
+      ise_password: "{{ ise_password }}"
+      ise_verify: "{{ ise_verify }}"
+      ise_debug: "{{ ise_debug }}"
+
+  tasks:
+    # - name: '[Get Virtual Network]'
+    #   cisco.ise.trustsec_vn_info:
+    #     <<: *ise_login
+    #     page: 1
+    #     size: 100
+    #   register: vn_all
+
+    # - name: '[Print Virtual Network all]'
+    #   ansible.builtin.debug:
+    #     var: vn_all
+
+    - name: "Get VN filtered by name"
+      cisco.ise.trustsec_vn_info:
+        <<: *ise_login
+        filter: name.EQ.vn1
+      register: vn_filtered
+
+    - name: "Create VN"
+      cisco.ise.trustsec_vn:
+        <<: *ise_login
+        state: present
+        name: vn1
+        additionalAttributes: '{"Created": "1616961914"}'
+      when:
+        - vn_filtered is defined
+        - vn_filtered.ise_response is defined
+        - vn_filtered.ise_response | length == 0
+      register: vn_manage
+
+    - name: "Print Create Vn"
+      ansible.builtin.debug:
+        var: vn_manage
+
+    - name: "Update Vn"
+      cisco.ise.trustsec_vn:
+        <<: *ise_login
+        state: present
+        name: vn1
+        additionalAttributes: '{"Created": "1616961914", "Update": "1616962914"}'
+      when:
+        - vn_filtered is defined
+        - vn_filtered.ise_response is defined
+        - vn_filtered.ise_response | length > 0
+      register: vn_manage
+
+    - name: "Print Update VN"
+      ansible.builtin.debug:
+        var: vn_manage
+
+    - name: "Get VN by id"
+      cisco.ise.trustsec_vn_info:
+        <<: *ise_login
+        id: "{{ vn_manage.ise_response.id }}"
+      when:
+        - vn_manage is defined
+        - vn_manage.ise_response is defined
+      register: vn_by_id
+
+    - name: "Print VN by id"
+      ansible.builtin.debug:
+        var: vn_by_id
+
+    - name: "Delete Vn"
+      cisco.ise.trustsec_vn:
+        <<: *ise_login
+        state: absent
+        name: vn1
+        additionalAttributes: '{"Created": "1616961914", "Update": "1616962914"}'
+      when:
+        - vn_filtered is defined
+        - vn_filtered.ise_response is defined
+        - vn_filtered.ise_response | length > 0
+      register: vn_manage
+
+    - name: "Print Delete VN"
+      ansible.builtin.debug:
+        var: vn_manage

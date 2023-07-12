@@ -1,0 +1,27 @@
+---
+
+# Default values for possible input parameters
+
+# CyberArk's Privileged Account Security Web Services SDK api base URL
+rest_api_url: ""
+
+# Whether to validate certificates for REST api calls
+validate_certs: true
+
+# Zip file with distribution of AIM Provider
+zip_file_name: ""
+
+# Folder name within the ZIP file that will be used by default is taken from zip file name.
+folder_name: '{{zip_file_name.split("/")[-1].split("-Rls")[0]}}'
+
+# CyberArk location for App Provider user to be created
+app_provider_user_location: "\\Applications"
+
+# CyberArk Vault Address
+vault_address: ""
+
+# Whether to use shared logon authentication
+use_shared_logon_authentication: false
+
+# State - the state of the provider: present mean installing the provide and Absent means uninstalling
+state: "present"

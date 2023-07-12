@@ -1,0 +1,35 @@
+---
+- name: Make sure we are installing agent
+  assert:
+    that:
+      - components | length == 1
+      - components.0 == "sensu-go-agent"
+    fail_msg: Windows hosts only support agent installation
+    quiet: true
+
+- name: Load supported agent versions on Windows
+  include_vars:
+    file: Windows.yml
+
+- name: Check if version is supported
+  assert:
+    that:
+      - version in _msi_lookup
+    fail_msg: Version {{ version }} is not supported
+    quiet: true
+
+- name: Set version, build, and arch
+  set_fact:
+    _version: "{{ _msi_lookup[version].version }}"
+    _build: "{{ _msi_lookup[version].build }}"
+    _arch: "{{ (ansible_facts.architecture == '64-bit') | ternary('x64', 'x86') }}"
+
+- name: Fetch product code
+  set_fact:
+    _product_code: "{{ _msi_lookup[_version].product_codes[_arch] }}"
+
+- name: Install component
+  win_package:
+    path: "https://s3-us-west-2.amazonaws.com/sensu.io/sensu-go/{{ _version }}\
+           /sensu-go-agent_{{ _version }}.{{ _build }}_en-US.{{ _arch }}.msi"
+    product_id: "{{ _product_code }}"

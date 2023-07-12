@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  collections:
+  - fortinet.fortios
+  vars:
+   host: "192.168.52.177"
+   username: "admin"
+   password: ""
+   vdom: "root"
+   ssl_verify: "False"
+  tasks:
+  - name: Configure global attributes.
+    fortios_system_global:
+      host:  "{{ host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      vdom:  "{{ vdom }}"
+      https: "True"
+      ssl_verify:  "{{ ssl_verify }}"
+      system_global:
+        admintimeout: "23"
+        hostname: "FortiGate11"
+        admin_lockout_threshold: "8"
+        admin_login_max: "9"

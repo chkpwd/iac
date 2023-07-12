@@ -1,0 +1,30 @@
+---
+# user.1 = user array
+# user.0 = icinga_user attribute
+- name: icinga_user
+  icinga_user:
+    url: "{{ icinga_url }}"
+    use_proxy: "{{ icinga_use_proxy | default(omit) }}"
+    validate_certs: "{{ icinga_validate_certs | default(omit) }}"
+    url_username: "{{ icinga_user }}"
+    url_password: "{{ icinga_pass }}"
+    force_basic_auth: "{{ icinga_force_basic_auth | default(omit) }}"
+    client_cert: "{{ icinga_client_cert | default(omit) }}"
+    client_key: "{{ icinga_client_key | default(omit) }}"
+    state: "{{ user.0.state | default(omit) }}"
+    object_name: "{{ user.1 }}"
+    display_name: "{{ user.0.display_name | default(omit) }}"
+    imports: "{{ user.0.imports | default(icinga_user_imports) }}"
+    pager: "{{ user.0.pager | default(omit) }}"
+    period: "{{ user.0.period | default(omit) }}"
+    disabled: "{{ user.0.disabled | default(omit) }}"
+    email: "{{ user.0.email | default(icinga_user_email) }}"
+  retries: 3
+  delay: 3
+  register: result
+  until: result is succeeded
+  loop: "{{ icinga_users|subelements('user_object') }}"
+  loop_control:
+    loop_var: user
+  tags: user
+  notify: config_deploy

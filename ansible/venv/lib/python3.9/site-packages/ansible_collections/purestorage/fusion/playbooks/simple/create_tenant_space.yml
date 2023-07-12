@@ -1,0 +1,12 @@
+---
+- name: Create tenant space
+  hosts: localhost
+  tasks:
+
+    - name: Create new tenant space db_tenant_space for tenant_name
+      purestorage.fusion.fusion_ts:
+        issuer_id: "{{ ansible_env.FUSION_ISSUER_ID }}"
+        private_key_file: "{{ ansible_env.FUSION_PRIVATE_KEY_FILE }}"
+        state: "present"  # or absent
+        name: "db_tenant_space"
+        tenant: "tenant_name"

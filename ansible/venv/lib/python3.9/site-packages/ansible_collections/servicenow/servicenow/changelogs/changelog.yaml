@@ -1,0 +1,50 @@
+ancestor: null
+releases:
+  1.0.3:
+    changes:
+      bugfixes:
+      - fix inventory plugin transforming hostnames unnecessarily
+      - fix malformed documentation on docs.ansible.com
+      minor_changes:
+      - adds the ability to use `SN_INSTANCE` (ex. `dev61775`) or `SN_HOST` (ex. `dev61775.service-now.com`)
+        with the inventory plugin.
+      release_summary: use consistent auth parameters across plugins and modules
+    fragments:
+    - 1.0.3_release_summary.yml
+    - 17_auth_consistency.yml
+    - 22_hostnames.yml
+    - 29_documentation.yml
+    release_date: '2020-10-30'
+  1.0.4:
+    changes:
+      major_changes:
+      - add new tests (find with no result, search many)
+      - add related tests
+      - add support for ServiceNOW table api display_value exclude_reference_link
+        and suppress_pagination_header
+      - use new API for pysnow >=0.6.0
+    fragments:
+    - 34_pysnow_0.6.yml
+    - 35_add_new_parameters.yml
+    release_date: '2021-02-03'
+  1.0.5:
+    changes:
+      breaking_changes:
+      - auth field now required for anything other than Basic authentication
+      major_changes:
+      - refactored client to inherit from AnsibleModule
+      - supports OpenID Connect authentication protocol
+      - supports bearer tokens for authentication
+      minor_changes:
+      - standardized invocation output
+    fragments:
+    - 27_openid.yml
+    release_date: '2021-04-02'
+  1.0.6:
+    changes:
+      bugfixes:
+      - order_by again working by locally sorting return list of records
+      - makes auth backwards compatible by defaulting to OAuth if client_id is present without specifying auth
+    fragments:
+    - 58_order_by.yml
+    release_date: '2021-05-26'

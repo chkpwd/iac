@@ -1,0 +1,131 @@
+plugins:
+  become: {}
+  cache: {}
+  callback: {}
+  cliconf: {}
+  connection: {}
+  httpapi: {}
+  inventory:
+    nios_inventory:
+      description: Infoblox inventory plugin
+      name: nios_inventory
+      version_added: 1.0.0
+  lookup:
+    nios_lookup:
+      description: Query Infoblox NIOS objects
+      name: nios_lookup
+      version_added: 1.0.0
+    nios_next_ip:
+      description: Return the next available IP address for a network
+      name: nios_next_ip
+      version_added: 1.0.0
+    nios_next_network:
+      description: Return the next available network range for a network-container
+      name: nios_next_network
+      version_added: 1.0.0
+  module:
+    nios_a_record:
+      description: Configure Infoblox NIOS A records
+      name: nios_a_record
+      namespace: ''
+      version_added: 1.0.0
+    nios_aaaa_record:
+      description: Configure Infoblox NIOS AAAA records
+      name: nios_aaaa_record
+      namespace: ''
+      version_added: 1.0.0
+    nios_cname_record:
+      description: Configure Infoblox NIOS CNAME records
+      name: nios_cname_record
+      namespace: ''
+      version_added: 1.0.0
+    nios_dns_view:
+      description: Configure Infoblox NIOS DNS views
+      name: nios_dns_view
+      namespace: ''
+      version_added: 1.0.0
+    nios_dtc_lbdn:
+      description: Configure Infoblox NIOS DTC LBDN
+      name: nios_dtc_lbdn
+      namespace: ''
+      version_added: 1.1.0
+    nios_dtc_pool:
+      description: Configure Infoblox NIOS DTC Pool
+      name: nios_dtc_pool
+      namespace: ''
+      version_added: 1.1.0
+    nios_dtc_server:
+      description: Configure Infoblox NIOS DTC Server
+      name: nios_dtc_server
+      namespace: ''
+      version_added: 1.1.0
+    nios_fixed_address:
+      description: Configure Infoblox NIOS DHCP Fixed Address
+      name: nios_fixed_address
+      namespace: ''
+      version_added: 1.0.0
+    nios_host_record:
+      description: Configure Infoblox NIOS host records
+      name: nios_host_record
+      namespace: ''
+      version_added: 1.0.0
+    nios_member:
+      description: Configure Infoblox NIOS members
+      name: nios_member
+      namespace: ''
+      version_added: 1.0.0
+    nios_mx_record:
+      description: Configure Infoblox NIOS MX records
+      name: nios_mx_record
+      namespace: ''
+      version_added: 1.0.0
+    nios_naptr_record:
+      description: Configure Infoblox NIOS NAPTR records
+      name: nios_naptr_record
+      namespace: ''
+      version_added: 1.0.0
+    nios_network:
+      description: Configure Infoblox NIOS network object
+      name: nios_network
+      namespace: ''
+      version_added: 1.0.0
+    nios_network_view:
+      description: Configure Infoblox NIOS network views
+      name: nios_network_view
+      namespace: ''
+      version_added: 1.0.0
+    nios_nsgroup:
+      description: Configure InfoBlox DNS Nameserver Groups
+      name: nios_nsgroup
+      namespace: ''
+      version_added: 1.0.0
+    nios_ptr_record:
+      description: Configure Infoblox NIOS PTR records
+      name: nios_ptr_record
+      namespace: ''
+      version_added: 1.0.0
+    nios_restartservices:
+      description: Restart grid services.
+      name: nios_restartservices
+      namespace: ''
+      version_added: 1.1.0
+    nios_srv_record:
+      description: Configure Infoblox NIOS SRV records
+      name: nios_srv_record
+      namespace: ''
+      version_added: 1.0.0
+    nios_txt_record:
+      description: Configure Infoblox NIOS txt records
+      name: nios_txt_record
+      namespace: ''
+      version_added: 1.0.0
+    nios_zone:
+      description: Configure Infoblox NIOS DNS zones
+      name: nios_zone
+      namespace: ''
+      version_added: 1.0.0
+  netconf: {}
+  shell: {}
+  strategy: {}
+  vars: {}
+version: 1.5.0

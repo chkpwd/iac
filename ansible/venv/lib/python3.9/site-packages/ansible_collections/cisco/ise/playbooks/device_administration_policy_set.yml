@@ -1,0 +1,65 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    # - name: Get all network policy set
+    #   cisco.ise.device_administration_policy_set_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #   register: result
+
+    # - name: Print all
+    #   ansible.builtin.debug:
+    #     var: result
+
+    # - name: Get a network policy set by id
+    #   cisco.ise.device_administration_policy_set_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     id: "acd4b55d-dca3-4b93-a160-8a2d01669827"
+    #   register: result
+
+    # - name: Print by id
+    #   ansible.builtin.debug:
+    #     var: result
+
+    - name: Create or update a network policy set
+      cisco.ise.device_administration_policy_set:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        default: false
+        id: cfa2063a-5292-466b-8841-901dd3f9d03f
+        name: New Policy Set 1
+        description: New Policy Set test
+        hitCounts: 00
+        rank: 00
+        state_: disabled
+        condition:
+          conditionType: ConditionReference
+          isNegate: false
+          name: test3
+          id: dc75fe09-1a9f-40cc-9f13-e29afadd72b9
+        serviceName: Default Device Admin
+        isProxy: false
+      register: result
+
+    - name: Print
+      ansible.builtin.debug:
+        var: result
+
+  # - name: Delete a network policy set by id
+  #   cisco.ise.device_administration_policy_set:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #     state: absent
+  #     id: 4f83e8c4-978e-4767-a218-9d5472d4dcc7
+  #   register: result

@@ -1,0 +1,288 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: byod_portal
+      cisco.ise.byod_portal:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        ise_debug: "{{ ise_debug }}"
+        state: present
+        name: Test BYOD Portal (default)
+        description: Test portal and user experience used when employees register a personal device on the network
+        portalType: BYOD
+        settings:
+          portalSettings:
+            httpsPort: 8443
+            allowedInterfaces:
+              - eth0
+              - bond0
+            certificateGroupTag: Default Portal Certificate Group
+            displayLang: USEBROWSERLOCALE
+            fallbackLanguage: English
+            alwaysUsedLanguage: English
+          byodSettings:
+            byodWelcomeSettings:
+              enableBYOD: false
+              enableGuestAccess: false
+              requireMDM: false
+              includeAup: true
+              aupDisplay: ONPAGE
+              requireAupAcceptance: false
+              requireScrolling: false
+            byodRegistrationSettings:
+              showDeviceID: true
+              endPointIdentityGroupId: aa13bb40-8bff-11e6-996c-525400b48521
+            byodRegistrationSuccessSettings:
+              successRedirect: AUTHSUCCESSPAGE
+          supportInfoSettings:
+            includeSupportInfoPage: false
+            includeMacAddr: true
+            includeIpAddress: true
+            includeBrowserUserAgent: true
+            includePolicyServer: true
+            includeFailureCode: true
+            emptyFieldDisplay: HIDE
+        customizations:
+          portalTheme:
+            id: 9eb421c0-8c01-11e6-996c-525400b48521
+            name: Default Blue theme
+          portalTweakSettings: {}
+          language:
+            viewLanguage: English
+          globalCustomizations:
+            bannerTitle: BYOD Portal
+            contactText: Contact Support
+            footerElement: ""
+          pageCustomizations:
+            data:
+              - key: ui_contact_ip_address_label
+                value: SVAgYWRkcmVzczo=
+              - key: ui_error_content_label
+                value: RXJyb3I=
+              - key: ui_error_retry_button
+                value: UmV0cnk=
+              - key: ui_byod_install_ios_button
+                value: TGF1bmNoIEFwcGxlIFByb2ZpbGUgYW5kIENlcnRpZmljYXRlIEluc3RhbGxlcnMgTm93
+              - key: ui_byod_welcome_aup_text
+                value:
+                  "UGxlYXNlIGFjY2VwdCB0aGUgcG9saWN5OiBZb3UgYXJlIHJlc3BvbnNpYmxlIGZvciBtYWludGFpbmluZyB0aGUgY29uZmlkZW50aWFsaXR5IG9mIHRo\
+                  ZSBwYXNzd29yZCBhbmQgYWxsIGFjdGl2aXRpZXMgdGhhdCBvY2N1ciB1bmRlciB5b3VyIHVzZXJuYW1lIGFuZCBwYXNzd29yZC4gQ2lzY28gU3lzdGVtc\
+                  yBvZmZlcnMgdGhlICBTZXJ2aWNlIGZvciBhY3Rpdml0aWVzICBzdWNoIGFzIHRoZSBhY3RpdmUgdXNlIG9mIGUtbWFpbCwgaW5zdGFudCBtZXNzYWdpbm\
+                  csIGJyb3dzaW5nIHRoZSBXb3JsZCBXaWRlIFdlYiBhbmQgYWNjZXNzaW5nIGNvcnBvcmF0ZSBpbnRyYW5ldHMuIEhpZ2ggdm9sdW1lIGRhdGEgdHJhbnN\
+                  mZXJzLCBlc3BlY2lhbGx5IHN1c3RhaW5lZCBoaWdoIHZvbHVtZSBkYXRhIHRyYW5zZmVycywgYXJlIG5vdCBwZXJtaXR0ZWQuIEhvc3RpbmcgYSB3ZWIg\
+                  c2VydmVyIG9yIGFueSBvdGhlciBzZXJ2ZXIgYnkgdXNlIG9mIG91ciBTZXJ2aWNlIGlzIHByb2hpYml0ZWQuIFRyeWluZyB0byBhY2Nlc3Mgc29tZW9uZ\
+                  SBlbHNlJ3MgYWNjb3VudCwgc2VuZGluZyB1bnNvbGljaXRlZCBidWxrIGUtbWFpbCwgY29sbGVjdGlvbiBvZiBvdGhlciBwZW9wbGUncyBwZXJzb25hbC\
+                  BkYXRhIHdpdGhvdXQgdGhlaXIga25vd2xlZGdlIGFuZCBpbnRlcmZlcmVuY2Ugd2l0aCBvdGhlciBuZXR3b3JrIHVzZXJzIGFyZSBhbGwgcHJvaGliaXR\
+                  lZC4gQ2lzY28gU3lzdGVtcyByZXNlcnZlcyB0aGUgcmlnaHQgdG8gc3VzcGVuZCB0aGUgU2VydmljZSBpZiBDaXNjbyBTeXN0ZW1zIHJlYXNvbmFibHkg\
+                  YmVsaWV2ZXMgdGhhdCB5b3VyIHVzZSBvZiB0aGUgU2VydmljZSBpcyB1bnJlYXNvbmFibHkgZXhjZXNzaXZlIG9yIHlvdSBhcmUgdXNpbmcgdGhlIFNlc\
+                  nZpY2UgZm9yIGNyaW1pbmFsIG9yIGlsbGVnYWwgYWN0aXZpdGllcy4gWW91IGRvIG5vdCBoYXZlIHRoZSByaWdodCB0byByZXNlbGwgdGhpcyBTZXJ2aW\
+                  NlIHRvIGEgdGhpcmQgcGFydHkuIENpc2NvIFN5c3RlbXMgcmVzZXJ2ZXMgdGhlIHJpZ2h0IHRvIHJldmlzZSwgYW1lbmQgb3IgbW9kaWZ5IHRoZXNlIFR\
+                  lcm1zICYgQ29uZGl0aW9ucywgb3VyIG90aGVyIHBvbGljaWVzIGFuZCBhZ3JlZW1lbnRzLCBhbmQgYXNwZWN0cyBvZiB0aGUgU2VydmljZSBpdHNlbGYu\
+                  IE5vdGljZSBvZiBhbnkgcmV2aXNpb24sIGFtZW5kbWVudCwgb3IgbW9kaWZpY2F0aW9uIHdpbGwgYmUgcG9zdGVkIG9uIENpc2NvIFN5c3RlbSdzIHdlY\
+                  nNpdGUgYW5kIHdpbGwgYmUgZWZmZWN0aXZlIGFzIHRvIGV4aXN0aW5nIHVzZXJzIDMwIGRheXMgYWZ0ZXIgcG9zdGluZy4="
+              - key: ui_byod_install_winmac_button
+                value: RG93bmxvYWQgYW5kIEluc3RhbGw=
+              - key: ui_byod_install_android_instruction_message
+                value:
+                  "VG8gY29uZmlndXJlIHlvdXIgZGV2aWNlIGZvciBzZWN1cmUgYWNjZXNzLCB5b3UgbmVlZCB0byBnbyB0byBHb29nbGUgUGxheSBhbmQgZG93bmxv\
+                  YWQgdGhlIENpc2NvIE5ldHdvcmsgU2V0dXAgQXNzaXN0YW50Lg=="
+              - key: ui_byod_reg_id_label
+                value: RGV2aWNlIElEOg==
+              - key: ui_byod_reg_install_button
+                value: RG93bmxvYWQgYW5kIEluc3RhbGw=
+              - key: ui_byod_install_page_title
+                value: SW5zdGFsbA==
+              - key: ui_contact_optional_content_1
+                value: ""
+              - key: ui_contact_optional_content_2
+                value: ""
+              - key: ui_byod_ios_provisioning_error
+                value:
+                  "VW5hYmxlIHRvIGNvbXBsZXRlIHByb3Zpc2lvbmluZyBvZiB5b3VyIGRldmljZS4gQ2xpY2sgUmV0cnkgdG8gdHJ5IGFnYWluLiBJZiBwcm92aXNpb2\
+                  5pbmcgY29udGludWVzIHRvIGZhaWwsIHBsZWFzZSBjb250YWN0IHRoZSBoZWxwIGRlc2sgZm9yIGFzc2lzdGFuY2Uu"
+              - key: ui_welcome_label
+                value: V2VsY29tZQ==
+              - key: ui_byod_reg_page_title
+                value: RGV2aWNlIEluZm9ybWF0aW9u
+              - key: ui_user_last_login_pass_time_label
+                value: TGFzdCBMb2dpbjo=
+              - key: ui_byod_success_redirecting_message
+                value: UmVjb25uZWN0aW5nIGFuZCByZWRpcmVjdGluZy4uLg==
+              - key: ui_byod_reg_instruction_message
+                value: ""
+              - key: ui_byod_success_manual_reconnect_message
+                value:
+                  "SW5zdGFsbGF0aW9uIGFuZCBDb25maWd1cmF0aW9uIG9mIHlvdXIgZGV2aWNlIGlzIG5vdyBmaW5pc2hlZC4gWW91IG11c3Qgbm93IG1hbnVhbGx5IHN3a\
+                  XRjaCBXaS1GaSBuZXR3b3JrcyBhbmQgY29ubmVjdCB0byAkdWlfYnlvZF9zdWNjZXNzX2lvc19zc2lkJC4="
+              - key: ui_error_page_title
+                value: RXJyb3I=
+              - key: ui_byod_welcome_os_selection_message
+                value: U2VsZWN0IHlvdXIgRGV2aWNl
+              - key: ui_byod_install_android_button
+                value: R28gdG8gR29vZ2xlIFBsYXkgdG8gZ2V0IHRoZSBhcHBsaWNhdGlvbg==
+              - key: ui_contact_sessioninfo_text
+                value:
+                  "VGhpcyBpbmZvcm1hdGlvbiBwcm92aWRlcyBkZXRhaWxzIHRoYXQgdGhlIGhlbHAgZGVzayBtaWdodCBuZWVkIHRvIHJlc29sdmUgYW55IG\
+                  lzc3VlcyB5b3UgYXJlIGV4cGVyaWVuY2luZy4="
+              - key: ui_contact_content_label
+                value: U3VwcG9ydCBJbmZvcm1hdGlvbg==
+              - key: ui_byod_success_page_title
+                value: QllPRCBTdWNjZXNz
+              - key: ui_contact_sessioninfo_title
+                value: U2Vzc2lvbiBJbmZvcm1hdGlvbg==
+              - key: ui_byod_welcome_aup_agreement_label
+                value: SSBhZ3JlZSB0byB0aGUgdGVybXMgYW5kIGNvbmRpdGlvbnM=
+              - key: ui_byod_reg_optional_content_1
+                value: ""
+              - key: ui_byod_install_content_label
+                value: SW5zdGFsbA==
+              - key: ui_error_optional_content_2
+                value: ""
+              - key: ui_error_optional_content_1
+                value: ""
+              - key: ui_byod_welcome_renew_cert_message
+                value:
+                  "WW91ciBkZXZpY2UgcmVnaXN0cmF0aW9uIG11c3QgYmUgcmVuZXdlZCB0byBjb250aW51ZSB1c2luZyB0aGUgc2VjdXJlIG5ldHdvcmsuI\
+                  ENsaWNrIDxiPlJlbmV3PC9iPiB0byByZWNvbmZpZ3VyZSB5b3VyIGRldmljZS4="
+              - key: ui_portal_internal_error
+                value: QW4gdW5leHBlY3RlZCBlcnJvciBvY2N1cnJlZC4gUGxlYXNlIGNvbnRhY3QgdGhlIGhlbHAgZGVzayBmb3IgYXNzaXN0YW5jZS4=
+              - key: ui_byod_reg_delete_confirmation_message
+                value:
+                  "QXJlIHlvdSBzdXJlIHlvdSB3YW50IHRvIGRlbGV0ZSB0aGlzIGRldmljZT8gIFlvdSB3b24ndCBiZSBhYmxlIHRvIHVzZSBpdCB0\
+                  byBhY2Nlc3MgdGhlIG5ldHdvcmsgYW55bW9yZS4="
+              - key: ui_byod_welcome_page_title
+                value: QllPRCBXZWxjb21l
+              - key: ui_byod_install_optional_content_2
+                value: ""
+              - key: ui_byod_reg_desc_label
+                value: RGVzY3JpcHRpb246
+              - key: ui_byod_install_optional_content_1
+                value: ""
+              - key: ui_footer_label
+                value: ""
+              - key: ui_byod_success_optional_content_2
+                value: ""
+              - key: ui_byod_success_optional_content_1
+                value: ""
+              - key: ui_contact_page_title
+                value: U3VwcG9ydCBJbmZvcm1hdGlvbg==
+              - key: ui_byod_install_ios_after_install_message
+                value: QWZ0ZXIgY29uZmlndXJpbmcgeW91ciBkZXZpY2UsIHlvdSB3aWxsIGJlIGFibGUgdG8gY29ubmVjdCB0byB0aGUgbmV0d29yay4=
+              - key: ui_byod_reg_content_message
+                value:
+                  "RW50ZXIgdGhlIGRldmljZSBuYW1lIGFuZCBvcHRpb25hbCBkZXNjcmlwdGlvbiBmb3IgdGhpcyBkZXZpY2Ugc28geW91IGNhb\
+                  iBtYW5hZ2UgaXQgdXNpbmcgdGhlIE15IERldmljZXMgUG9ydGFsLg=="
+              - key: ui_byod_reg_continue_button
+                value: Q29udGludWU=
+              - key: ui_byod_success_instruction_message
+                value: WW91IGNhbiBjbG9zZSB5b3VyIGJyb3dzZXIgbm93Lg==
+              - key: ui_contact_instruction_message
+                value:
+                  "U2hhcmUgdGhlc2UgZGV0YWlscyB3aXRoIHRoZSBoZWxwIGRlc2sgd2hlbiB0cm91Ymxlc2hvb3RpbmcgaXNzdWVzIHdpdGggd\
+                  GhpcyBwb3J0YWwu"
+              - key: ui_session_timeout_error
+                value: WW91ciBzZXNzaW9uIGhhcyB0aW1lZCBvdXQuIENsaWNrIFJldHJ5IHRvIHRyeSBhZ2Fpbi4=
+              - key: ui_byod_success_unsupported_device_message
+                value: WW91IGFyZSBub3cgY29ubmVjdGVkIHRvIHRoZSBzZWN1cmUgbmV0d29yay4=
+              - key: ui_contact_helpdesk_text
+                value: Q29udGFjdCB0aGUgaGVscCBkZXNrIGF0ICh4eHgpIHh4eC14eHh4Lg==
+              - key: ui_byod_welcome_renew_button
+                value: UmVuZXc=
+              - key: ui_byod_reg_limit_message
+                value:
+                  "WW91IGhhdmUgcmVhY2hlZCB0aGUgbWF4aW11bSBudW1iZXIgb2YgZGV2aWNlcyBhbGxvd2VkIHRvIHJlZ2lzdGVyLiBTZ\
+                  WxlY3Qgb25lIGZyb20gdGhlIGxpc3QgdG8gZGVsZXRlIGFuZCBjb250aW51ZS4="
+              - key: ui_byod_install_instruction_message
+                value: ""
+              - key: ui_byod_reg_optional_content_2
+                value: ""
+              - key: ui_contact_failure_code_label
+                value: RmFpbHVyZSBjb2RlOg==
+              - key: ui_contact_link
+                value: Q29udGFjdCBTdXBwb3J0
+              - key: ui_byod_install_android_after_install_message
+                value: QWZ0ZXIgaW5zdGFsbGluZywgcnVuIHRoZSBTZXR1cCBBc3Npc3RhbnQgYW5kIHlvdSB3aWxsIGF1dG9tYXRpY2FsbHkgYmUgcmVjb25uZWN0ZWQgdG8gdGhlIG5ldHdvcmsu
+              - key: ui_byod_welcome_config_device_message
+                value:
+                  "QWNjZXNzIHRvIHRoaXMgbmV0d29yayByZXF1aXJlcyB5b3VyIGRldmljZSB0byBiZSBjb25maWd1cmVkIGZvciBlbmhhbmNlZCBzZWN1cml0eS4gQ2xpY2sgPGI+U3RhcnQ\
+                  8L2I+IHRvIHByb3ZpZGUgZGV2aWNlIGluZm9ybWF0aW9uIGJlZm9yZSBjb21wb25lbnRzIGFyZSBpbnN0YWxsZWQgb24geW91ciBkZXZpY2Uu"
+              - key: ui_contact_user_agent_label
+                value: VXNlciBhZ2VudDo=
+              - key: ui_byod_success_content_label
+                value: U3VjY2Vzcw==
+              - key: ui_contact_mac_address_label
+                value: TUFDIGFkZHJlc3M6
+              - key: ui_error_instruction_message
+                value: ""
+              - key: ui_byod_reg_confirmation_yes_button
+                value: WWVz
+              - key: ui_contact_username_label
+                value: VXNlcm5hbWU6
+              - key: ui_byod_reg_name_label
+                value: RGV2aWNlIG5hbWU6
+              - key: ui_javascript_disabled_message
+                value: WW91IG11c3QgdHVybiBvbiBKYXZhU2NyaXB0IHRvIHVzZSB0aGlzIHdlYiBzaXRlLg==
+              - key: ui_byod_welcome_instruction_message
+                value: V2VsY29tZSB0byB0aGUgQllPRCBwb3J0YWwu
+              - key: ui_contact_policy_server_label
+                value: UG9saWN5IHNlcnZlcjo=
+              - key: ui_user_last_login_ipaddr_label
+                value: RnJvbTo=
+              - key: ui_byod_time_skew_error
+                value:
+                  "VGhlIHRpbWUgYW5kIGRhdGUgc2V0dGluZ3Mgb24geW91ciBkZXZpY2UgYXJlIG5vdCBzZXQgcHJvcGVydGx5LiBDaGVjayB0\
+                  aGUgc2V0dGluZ3Mgb3IgY29udGFjdCB0aGUgaGVscCBkZXNrIGZvciBhc3Npc3RhbmNlLg=="
+              - key: ui_byod_reg_next_button
+                value: TmV4dA==
+              - key: ui_byod_reg_confirmation_no_button
+                value: Tm8=
+              - key: ui_contact_helpdesk_title
+                value: U3VwcG9ydCBJbmZvcm1hdGlvbg==
+              - key: ui_byod_welcome_start_button
+                value: U3RhcnQ=
+              - key: ui_byod_install_winmac_instruction_message
+                value:
+                  "UGxlYXNlIHdhaXQgd2hpbGUgd2UgZG93bmxvYWQgdGhlIENpc2NvIE5ldHdvcmsgU2V0dXAgQXNzaXN0YW50LiBZb3Ugd2lsbC\
+                  B0aGVuIG5lZWQgdG8gbWFudWFsbHkgcnVuIHRoZSBTZXR1cCBBc3Npc3RhbnQgYW5kIGZvbGxvdyB0aGUgaW5zdHJ1Y3Rpb25zI\
+                  HRvIGZpbmlzaCByZWdpc3RlcmluZyB0aGlzIGRldmljZS4="
+              - key: ui_byod_install_ios_instruction_message
+                value:
+                  "VG8gY29uZmlndXJlIHlvdXIgZGV2aWNlLCBjbGljayB0aGUgPGI+TGF1bmNoIEFwcGxlIFByb2ZpbGUgYW5kIENlcnRp\
+                  ZmljYXRlIEluc3RhbGxlcnMgTm93PC9iPiBidXR0b24uIENsaWNrIDxiPkluc3RhbGw8L2I+IGluIHJlc3BvbnNlIHRvIHRoZS\
+                  BtZXNzYWdlcyB0aGF0IGRpc3BsYXku"
+              - key: ui_byod_welcome_os_detection_confirmation_message
+                value: V2FzIHlvdXIgZGV2aWNlIGRldGVjdGVkIGluY29ycmVjdGx5Pw==
+              - key: ui_byod_welcome_optional_content_1
+                value: ""
+              - key: ui_byod_welcome_optional_content_2
+                value: ""
+              - key: ui_byod_welcome_os_detected_message
+                value: VGhlIGZvbGxvd2luZyBzeXN0ZW0gd2FzIGRldGVjdGVk
+              - key: ui_session_timeout_retry_button
+                value: UmV0cnk=
+              - key: ui_byod_welcome_guest_access_button
+                value: SSB3YW50IGd1ZXN0IGFjY2VzcyBvbmx5
+              - key: ui_contact_message
+                value: U3VwcG9ydCBJbmZvcm1hdGlvbg==
+              - key: ui_field_required_error
+                value: VGhpcyBmaWVsZCBpcyByZXF1aXJlZC4=
+              - key: ui_byod_reg_content_label
+                value: RGV2aWNlIEluZm9ybWF0aW9u
+              - key: ui_byod_reg_delete_button
+                value: RGVsZXRl
+              - key: ui_banner_label
+                value: QllPRCBQb3J0YWw=
+              - key: ui_byod_welcome_aup_link
+                value: UGxlYXNlIHJlYWQgdGhlIHRlcm1zIGFuZCBjb25kaXRpb25zLg==
+              - key: ui_byod_success_message
+                value: RmluaXNoZWQgaW5zdGFsbGluZyBhbmQgY29uZmlndXJpbmcgeW91ciBkZXZpY2UuIFlvdSBhcmUgbm93IGNvbm5lY3RlZCB0byB0aGUgc2VjdXJlIG5ldHdvcmsu
+              - key: ui_byod_welcome_content_label
+                value: QllPRCBXZWxjb21l
+      register: byod_portal
+
+    - name: Print
+      ansible.builtin.debug:
+        var: byod_portal

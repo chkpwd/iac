@@ -1,0 +1,88 @@
+---
+#
+# Configure Server Profiles
+#
+# The hosts group used is provided by the group variable or defaulted to 'Intersight_Servers'.
+# You can specify a specific host (or host group) on the command line:
+#   ansible-playbook ... -e group=<your host group>
+#   e.g., ansible-playbook server_profiles.yml -e group=TME_Demo
+#
+- hosts: "{{ group | default('Intersight_Servers') }}"
+  connection: local
+  collections:
+    - cisco.intersight
+  gather_facts: false
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      # Key can be directly specified, and vault should be used to encrypt:
+      # Ex. ansible-vault encrypt_string --vault-id tme@/Users/dsoper/Documents/vault_password_file '-----BEGIN EC PRIVATE KEY-----
+      #     <your private key data>
+      #     -----END EC PRIVATE KEY-----'
+      # To use with vault:
+      #     ansible-playbook -i inventory --vault-id tme@vault_password_file intersight_server_profile.yml
+      api_private_key: !vault |
+        $ANSIBLE_VAULT;1.2;AES256;tme
+        34376535353966373536386366646435643735636364373163343365623465343466393338386331
+        3135633161333861386265393631616237623236643263620a613363396362386631613863643364
+        65376635316232613561373761363633633034346138366165356561666462333562643065393332
+        6631363239333332640a376632376434366461393039663530386161313864633265353839636337
+        39393939363535376566333565666537666137366537396639623633643665363066646161633833
+        35656430366665336334383435326239316333323631306237626432636361356166383466656362
+        36626566643637366264393933353038653062373035306338663730383739336530313664646162
+        30623337383832306665356433346331656164366638633563396532313463643032366537666639
+        32383230633135373764623733653261326536626561656462343565613535386331643365343738
+        62623631383135623539393538396435623064306636323165623661633466373664326130396663
+        31333163643763616263623566353565363030383761366566613036616163343530663362313131
+        32643737653063383330356436303437383966366163383461376236363563313264303833653631
+        62613432303536386630646166346262636566303563646337653166303937333134356537656630
+        39303363383262376237366565346638336139346363383634623333356639616538303366616634
+        35666439356634353530363566313864333966386263623566323564656366356264313166353038
+        66643566313361636231616338633939323131643061646664396264366538386230366364326633
+        3831
+      api_key_id: "{{ api_key_id | default(omit) }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+    # Server Profile name default
+    profile_name: "SP-{{ inventory_hostname }}"
+  tasks:
+    #
+    # Configure profiles specific to server (run for each server in the inventory)
+    #
+    - set_fact:
+        mode: Standalone
+      when: mode is not defined or mode == 'IntersightStandalone'
+    - set_fact:
+        mode: FIAttached
+      when: mode == 'Intersight'
+    # Get server moid when not defined in inventory
+    - block:
+        - name: "Get {{ inventory_hostname }} Server Moid"
+          cisco.intersight.intersight_info:
+            <<: *api_info
+            server_names: "{{ inventory_hostname }}"
+          register: server
+        - set_fact:
+            server_moid: "{{ server.intersight_servers[0].Moid }}"
+      when: server_moid is not defined
+      delegate_to: localhost
+    - name: "Configure {{ profile_name }} Server Profile"
+      intersight_server_profile:
+        <<: *api_info
+        organization: "{{ organization | default(omit) }}"
+        name: "{{ profile_name }}"
+        target_platform: "{{ mode | default(omit) }}"
+        tags:
+          - Key: Site
+            Value: SJC02
+        description: "Updated Profile for server name {{ inventory_hostname }}"
+        assigned_server: "{{ server_moid }}"
+        boot_order_policy: "{{ boot_order_policy | default(omit) }}"
+        imc_access_policy: "{{ imc_access_policy | default(omit) }}"
+        lan_connectivity_policy: "{{ lan_connectivity_policy | default(omit) }}"
+        local_user_policy: "{{ local_user_policy | default(omit) }}"
+        ntp_policy: "{{ ntp_policy | default(omit) }}"
+        virtual_media_policy: "{{ virtual_media_policy | default(omit) }}"
+      when: server_moid is defined
+      delegate_to: localhost

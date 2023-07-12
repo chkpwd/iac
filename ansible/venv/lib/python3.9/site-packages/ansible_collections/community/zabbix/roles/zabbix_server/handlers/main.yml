@@ -1,0 +1,19 @@
+---
+# handlers file for wdijkerman.zabbix
+
+- name: zabbix-server restarted
+  service:
+    name: zabbix-server
+    state: restarted
+    enabled: true
+  tags: zabbix-server
+  become: true
+  when:
+    - zabbix_server_manage_service | bool
+
+- name: "clean repo files from proxy creds"
+  shell: ls /etc/yum.repos.d/zabbix* && sed -i 's/^proxy =.*//' /etc/yum.repos.d/zabbix* || true
+  become: true
+  when:
+    - ansible_os_family == 'RedHat'
+    - zabbix_http_proxy is defined or zabbix_https_proxy is defined

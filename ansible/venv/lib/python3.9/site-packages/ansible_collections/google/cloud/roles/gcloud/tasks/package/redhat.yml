@@ -1,0 +1,31 @@
+---
+- name: Gcloud | RHEL | Add an Apt signing key, uses whichever key is at the URL
+  ansible.builtin.yum_repository:
+    name: google-cloud-sdk
+    description: Google Cloud SDK
+    baseurl: https://packages.cloud.google.com/yum/repos/cloud-sdk-el7-x86_64
+    enabled: yes
+    gpgcheck: yes
+    repo_gpgcheck: yes
+    gpgkey:
+      - https://packages.cloud.google.com/yum/doc/yum-key.gpg
+      - https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+
+- name: Gcloud | RHEL | Install the google-cloud-sdk package
+  ansible.builtin.yum:
+    name: "google-cloud-sdk"
+    update_cache: "yes"
+  register: task_result
+  until: task_result is success
+  retries: 10
+  delay: 2
+
+- name: Gcloud | Debian | Install the google-cloud-sdk additional components
+  ansible.builtin.yum:
+    name: "google-cloud-sdk-{{ item }}"
+    update_cache: "yes"
+  register: task_result
+  until: task_result is success
+  retries: 10
+  delay: 2
+  loop: "{{ gcloud_additional_components }}"

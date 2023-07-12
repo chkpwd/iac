@@ -1,0 +1,57 @@
+---
+- hosts: ise_servers
+  vars_files:
+    - vars/device_administration_time_date_conditions.yml
+  gather_facts: false
+  tasks:
+    # - name: Get all
+    #   cisco.ise.device_administration_time_date_conditions_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #   register: result
+
+    # - name: Print all
+    #   ansible.builtin.debug:
+    #     var: result
+
+    # - name: Get by id
+    #   cisco.ise.device_administration_time_date_conditions_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     id: d704e911-a916-11eb-8830-2ec507028ea8
+    #   register: result
+
+    - name: Create or update an device_administration_time_date_conditions
+      cisco.ise.device_administration_time_date_conditions:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        conditionType: "{{ condition_type }}"
+        isNegate: false
+        name: "{{ name }}"
+        description:
+        hoursRange:
+          startTime: "{{ hours_range_start_time }}"
+          endTime: "{{ hours_range_end_time }}"
+        hoursRangeException:
+          startTime: "{{ hours_range_exception_start_time }}"
+          endTime: "{{ hours_range_exception_end_time }}"
+        weekDays: "{{ week_days | list }}"
+        weekDaysException: "{{ week_days_exception | list }}"
+        datesRange:
+          startDate: "{{ dates_range_start_date }}"
+          endDate: "{{ dates_range_end_date }}"
+        datesRangeException:
+          startDate: "{{ dates_range_exception_start_date }}"
+          endDate: "{{ dates_range_exception_end_date }}"
+      register: result
+
+    - name: Print result
+      ansible.builtin.debug:
+        var: result

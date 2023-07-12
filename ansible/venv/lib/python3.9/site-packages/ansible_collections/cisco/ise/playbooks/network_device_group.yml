@@ -1,0 +1,62 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    # - name: Get all network device groups
+    #   cisco.ise.network_device_group_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #   register: result
+
+    - name: Get a network device group by id
+      cisco.ise.network_device_group_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        id: bcb32700-b04d-11eb-95af-f263cf05f605
+      register: result
+
+    - name: Get a network device group by name
+      cisco.ise.network_device_group_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        name: Department#Department#TEST5
+      register: result
+
+    - name: Create or update a network device group
+      cisco.ise.network_device_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        id: bcb32700-b04d-11eb-95af-f263cf05f605
+        name: Department#Department#TEST5
+        description: All Departments
+        othername: Department
+      register: result
+
+  # - name: Delete a network device by id
+  #   cisco.ise.network_device:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #     state: absent
+  #     id: a8147640-a9ff-11eb-95af-f263cf05f605
+  #   register: result
+
+  # - name: Delete a network device group by name
+  #   cisco.ise.network_device_group:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #     state: absent
+  #     name: Department#Department#TEST3
+  #   register: result

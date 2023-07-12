@@ -1,0 +1,78 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    # - name: Get all network access conditions
+    #   cisco.ise.network_access_conditions_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #   register: result
+
+    # - name: Print all
+    #   ansible.builtin.debug:
+    #     var: result
+
+    # - name: Get a network access conditions by id
+    #   cisco.ise.network_access_conditions_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     id: 15c562ac-459b-401f-8bf6-28bba3173467
+    #   register: result
+
+    - name: Create or update a network access conditions
+      cisco.ise.network_access_conditions:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        conditionType: LibraryConditionAttributes
+        isNegate: false
+        name: My New Condition
+        description: New optional Description
+        dictionaryName: Radius
+        attributeName: Service-Type
+        operator: equals
+        attributeValue: Call Check
+      register: result
+
+    - name: Print result
+      ansible.builtin.debug:
+        var: result
+
+  # - name: Get a network access conditions by name
+  #   cisco.ise.network_access_conditions_info:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #     name: "My New Condition"
+  #   register: result
+
+  # - name: Print by name
+  #   ansible.builtin.debug:
+  #     var: result
+
+  # - name: Delete a network access conditions by id
+  #   cisco.ise.network_access_conditions:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #     state: absent
+  #     id: 08ff9783-20db-45e2-94fd-760c20320367
+  #   register: result
+
+  # - name: Delete a network access conditions by name
+  #   cisco.ise.network_access_conditions:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #     state: absent
+  #     name: "My New Condition"
+  #   register: result

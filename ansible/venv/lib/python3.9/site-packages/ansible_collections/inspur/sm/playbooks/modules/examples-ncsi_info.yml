@@ -1,0 +1,15 @@
+- name: ncsi test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "set ncsi information"
+    inspur.sm.ncsi_info:
+      provider: "{{ ism }}"

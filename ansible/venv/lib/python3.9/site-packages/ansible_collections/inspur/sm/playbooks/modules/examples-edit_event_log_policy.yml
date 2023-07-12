@@ -1,0 +1,16 @@
+- name: Event log policy test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "Set event log policy"
+    inspur.sm.edit_event_log_policy:
+      policy: "Linear"
+      provider: "{{ ism }}"

@@ -1,0 +1,19 @@
+- name: NCSI test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "Set ncsi information"
+    inspur.sm.edit_ncsi:
+      mode: "manual"
+      nic_type: "PCIE"
+      interface_name: "eth0"
+      channel_number: 1
+      provider: "{{ ism }}"

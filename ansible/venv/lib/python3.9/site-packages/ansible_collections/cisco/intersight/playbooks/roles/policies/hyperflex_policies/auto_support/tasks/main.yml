@@ -1,0 +1,31 @@
+---
+- name: "Configure Auto Support Policy"
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+  intersight_rest_api:
+    <<: *api_info
+    resource_path: /hyperflex/AutoSupportPolicies
+    query_params:
+      $filter: "Name eq '{{ hx_auto_support_policy }}'"
+    api_body: {
+      "Organization": {
+        "Moid": "{{ intersight_org.api_response.Moid }}"
+      },
+      "Name": "{{ hx_auto_support_policy }}",
+      "AdminState":"{{ hx_auto_support_enable }}",
+      "ServiceTicketReceipient":"{{ hx_auto_support_receipient }}",
+      "ClusterProfiles": [
+        {
+        "Moid": "{{ cluster_profile.api_response.Moid }}"
+        }
+      ]
+    }
+  register: auto_support_policy
+
+- debug: msg="HyperFlex Autosupport Policy named {{ hx_auto_support_policy }} has been created successfully."

@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "config:base"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchManagers": ["github-actions"],
+      "automerge": true,
+      "automergeType": "branch"
+    }
+  ]
+}
+

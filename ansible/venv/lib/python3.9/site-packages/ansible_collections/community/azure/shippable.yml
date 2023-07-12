@@ -1,0 +1,37 @@
+language: python
+
+env:
+  matrix:
+    - T=none
+
+matrix:
+  exclude:
+    - env: T=none
+  include:
+    - env: T=devel/sanity/1
+    - env: T=devel/sanity/extra
+#    - env: T=2.10/sanity
+
+#    - env: T=devel/azure/2.7/1
+#    - env: T=devel/azure/3.6/1
+#    - env: T=2.10/azure/2.7/1
+#    - env: T=2.10/azure/3.6/1
+
+
+branches:
+  except:
+    - "*-patch-*"
+    - "revert-*-*"
+
+build:
+  ci:
+    - tests/utils/shippable/timing.sh tests/utils/shippable/shippable.sh $T
+
+integrations:
+  notifications:
+    - integrationName: email
+      type: email
+      on_success: never
+      on_failure: never
+      on_start: never
+      on_pull_request: never

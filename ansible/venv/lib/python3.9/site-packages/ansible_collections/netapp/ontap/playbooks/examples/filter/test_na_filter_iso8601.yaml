@@ -1,0 +1,77 @@
+-
+  name: test netapp.ontap ISO8601 filters
+  gather_facts: false
+  hosts: localhost
+
+  vars:
+    iso_duration: 'P689DT13H57M44S'
+    iso_duration_weeks: 'P98W'
+    seconds_duration: 59579864
+
+
+  tasks:
+    - name: convert duration in ISO 8601 format to seconds
+      set_fact:
+        input: "{{ iso_duration }}"
+        out: "{{ iso_duration | netapp.ontap.iso8601_duration_to_seconds }}"
+
+    - name: validate results
+      assert:
+        that: out | int == seconds_duration
+        quiet: true
+
+    - name: convert seconds to duration in ISO 8601 format
+      set_fact:
+        input: "{{ seconds_duration }}"
+        out: "{{ seconds_duration | netapp.ontap.iso8601_duration_from_seconds }}"
+
+    - name: validate results
+      assert:
+        that: out == iso_duration
+        quiet: true
+
+    - name: convert seconds to duration in ISO 8601 format, using format specifier
+      set_fact:
+        input: "{{ seconds_duration }}"
+        out: "{{ seconds_duration | netapp.ontap.iso8601_duration_from_seconds(format='P%P') }}"
+
+    - name: validate results
+      assert:
+        that: out == iso_duration
+        quiet: true
+
+    - name: convert seconds to duration in ISO 8601 format, using format specifier for weeks
+      set_fact:
+        input: "{{ seconds_duration }}"
+        out: "{{ seconds_duration | netapp.ontap.iso8601_duration_from_seconds(format='P%p') }}"
+
+    - name: validate results
+      assert:
+        that: out == iso_duration_weeks
+        quiet: true
+
+    - name: input error, input does not match ISO format
+      set_fact:
+        out: "{{ 'dummy' | netapp.ontap.iso8601_duration_to_seconds }}"
+      ignore_errors: true
+      register: results
+
+    - name: validate error message
+      assert:
+        that: results.msg == error
+        quiet: true
+      vars:
+        error: "iso8601_duration_to_seconds - error: Unable to parse duration string 'dummy' - expecting PnnYnnMnnDTnnHnnMnnS, received: dummy"
+
+    - name: input error, input does not match int or float format
+      set_fact:
+        out: "{{ 'dummy' | netapp.ontap.iso8601_duration_from_seconds }}"
+      ignore_errors: true
+      register: results
+
+    - name: validate error message
+      assert:
+        that: results.msg == error
+        quiet: true
+      vars:
+        error: "iso8601_duration_from_seconds - error: unsupported type for timedelta seconds component: str - received: dummy"

@@ -1,0 +1,15 @@
+[Intersight_Servers]
+SJC07-R14-FI-1-1-7
+SJC07-R14-FI-1-1-8
+
+# Examples can use Intersight or Intersight_Servers host group
+[Intersight:children]
+Intersight_Servers
+
+# For examples that use localhost, all:vars allows key lookup
+[all:vars]
+api_key_id=596cc79e5d91b400010d15ad/5db71f977564612d30cc3860/5e9217a57564612d302f475b
+# Policies to use with profiles
+boot_order_policy=tf-module-boot-policy
+imc_access_policy=tf-module-SJC07-R14-15-access
+lan_connectivity_policy=tf-module-lan-connectivity-policy

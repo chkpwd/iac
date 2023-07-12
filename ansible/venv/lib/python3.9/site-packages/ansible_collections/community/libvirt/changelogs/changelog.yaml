@@ -1,0 +1,85 @@
+ancestor: null
+releases:
+  1.0.0:
+    changes:
+      major_changes:
+      - added generic libvirt inventory plugin
+      - removed libvirt_lxc inventory script
+    fragments:
+    - 23-inventory.yml
+    release_date: '2020-08-18'
+  1.0.1:
+    changes:
+      bugfixes:
+      - libvirt_qemu - Mitigate a CPU hammering active wait loop
+      - libvirt_qemu - add import error handling
+      - virt - Correctly get the error message from libvirt
+      - virt - Return "changed" status when using "define" command and domain XML
+        was updated
+      - virt - The define action searchs for the domain name into the xml definition
+        to determine if the domain needs to be created or updated. The xml variable
+        contains the parsed definition but doesn't guarantee the existence of the
+        name tag. This change targets to fix the scenario where the xml var is not
+        empty but doesn't contain a name tag.
+      - virt_net - The name parameter is not required for the list_nets or facts command
+        so we adjust the module to allow for that.
+    fragments:
+    - 43-virt-define-fail.yml
+    - 48-virt-detect-domain-update.yml
+    - 54-virt_net-optional-name.yml
+    - 55-virt-message-property.yml
+    - 59-libvirt_qemu-import-error-handling.yml
+    - 61-libvirt_qemu-mitigate-cpu-spike.yml
+    release_date: '2021-03-05'
+  1.0.2:
+    changes:
+      bugfixes:
+      - libvirt inventory plugin - Use FQCN for the inventory plugin name for compatibility
+        with Ansible 2.10 and above (https://github.com/ansible-collections/community.libvirt/pull/73).
+      release_summary: 'This is the patch release of the ``community.libvirt`` collection.
+
+        This changelog contains all changes to the modules and plugins in this collection
+
+        that have been made after release 1.0.1.'
+    fragments:
+    - 1.0.2.yml
+    - 73-plugin-name-fqcn.yaml
+    release_date: '2021-07-22'
+  1.1.0:
+    changes:
+      bugfixes:
+      - replace deprecated ``distutils.spawn.find_executable`` with Ansible's ``get_bin_path``
+        in ``_search_executable`` function.
+      release_summary: 'This is the minor release of the ``community.mysql`` collection.
+
+        This changelog contains all changes to the modules and plugins in this collection
+
+        that have been made after the previous release 1.0.2.'
+    fragments:
+    - 1.1.0.yml
+    - 114_replace_distutils_spawn.yml
+    - 90_add_integration_test_for_virt_pool.yml
+    release_date: '2022-05-12'
+  1.2.0:
+    changes:
+      bugfixes:
+      - virt_net - fix modify function which was not idempotent, depending on whether
+        the network was active. See https://github.com/ansible-collections/community.libvirt/issues/107.
+      - virt_pool - crashed out if pool didn't contain a target path. Fix allows this
+        not to be set. (https://github.com/ansible-collections/community.libvirt/issues/129).
+      minor_changes:
+      - libvirt - add extra guest information to inventory (https://github.com/ansible-collections/community.libvirt/pull/113).
+      - libvirt - replace the calls to listDomainsID() and listDefinedDomains() with
+        listAllDomains() in find_vm() (https://github.com/ansible-collections/community.libvirt/pull/117)
+      release_summary: 'This is the minor release of the ``community.libvirt`` collection.
+
+        This changelog contains all changes to the modules and plugins in this collection
+
+        that have been made after the previous release.'
+    fragments:
+    - 1.2.0.yml
+    - 108_make_virt_net_modify_idempotent.yml
+    - 113_extra_inventory_info.yml
+    - 117_find_vms_update_calls.yml
+    - virt_pool_no_path.yml
+    release_date: '2022-08-04'

@@ -1,0 +1,69 @@
+argument_specs:
+
+  repositories:
+    short_description: Enable Sensu Go repos
+    description:
+      - Install required repository files on supported distributions.
+      - This entry point does not work on Windows because there is no
+        concept of repository there.
+
+    options:
+      channel: &channel
+        description:
+          - Repository channel that serves as a source of packages.
+          - Visit the packagecloud site to find all available channels.
+        type: str
+        default: stable
+
+  packages:
+    short_description: Install selected Sensu Go packages
+    description:
+      - Make sure selected packages are installed.
+      - By default, the role will install latest available package version.
+        This will change in the next major version of the collection where the
+        I(version) will become a required variable.
+
+    options:
+      components: &components
+        description:
+          - List of components to install.
+        type: list
+        elements: str
+        choices:
+          - sensu-go-backend
+          - sensu-go-agent
+          - sensu-go-cli
+        default:
+          - sensu-go-backend
+          - sensu-go-agent
+          - sensu-go-cli
+
+      version: &version
+        description:
+          - Package version to install.
+          - Can be any valid version string such as C(6.2.5) or special value
+            C(latest).
+        type: str
+        default: latest
+
+      build: &build
+        description:
+          - Package build to install.
+          - Can be any valid build string such as C(8290) or a special value
+            latest.
+          - If the I(version) variable is set to latest, this variable is
+            ignored and the latest available build is installed.
+        type: str
+        default: latest
+
+  main:
+    short_description: Enable Sensu Go repos and install selected packages
+    description:
+      - The main entry point just combines the repositories and packages entry
+        points.
+
+    options:
+      components: *components
+      channel: *channel
+      version: *version
+      build: *build

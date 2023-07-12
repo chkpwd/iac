@@ -1,0 +1,345 @@
+ancestor: null
+releases:
+  1.0.0:
+    modules:
+    - description: Manage API clients in Pure Storage Fusion
+      name: fusion_api_client
+      namespace: ''
+    - description: Manage arrays in Pure Storage Fusion
+      name: fusion_array
+      namespace: ''
+    - description: Create Availability Zones in Pure Storage Fusion
+      name: fusion_az
+      namespace: ''
+    - description: Manage host access policies in Pure Storage Fusion
+      name: fusion_hap
+      namespace: ''
+    - description: Create hardware types in Pure Storage Fusion
+      name: fusion_hw
+      namespace: ''
+    - description: Collect information from Pure Fusion
+      name: fusion_info
+      namespace: ''
+    - description: Manage Network Interface Groups in Pure Storage Fusion
+      name: fusion_nig
+      namespace: ''
+    - description: Manage placement groups in Pure Storage Fusion
+      name: fusion_pg
+      namespace: ''
+    - description: Manage protection policies in Pure Storage Fusion
+      name: fusion_pp
+      namespace: ''
+    - description: Manage role assignments in Pure Storage Fusion
+      name: fusion_ra
+      namespace: ''
+    - description: Manage storage classes in Pure Storage Fusion
+      name: fusion_sc
+      namespace: ''
+    - description: Manage storage services in Pure Storage Fusion
+      name: fusion_ss
+      namespace: ''
+    - description: Manage tenants in Pure Storage Fusion
+      name: fusion_tenant
+      namespace: ''
+    - description: Manage tenant networks in Pure Storage Fusion
+      name: fusion_tn
+      namespace: ''
+    - description: Manage tenant spaces in Pure Storage Fusion
+      name: fusion_ts
+      namespace: ''
+    - description: Manage volumes in Pure Storage Fusion
+      name: fusion_volume
+      namespace: ''
+    release_date: '2022-05-25'
+  1.0.1:
+    release_date: '2022-05-27'
+  1.0.2:
+    release_date: '2022-06-13'
+  1.0.3:
+    fragments:
+    - 27_review_fixes.yaml
+    release_date: '2022-06-27'
+  1.1.0:
+    changes:
+      bugfixes:
+      - Allow correct use of environmental variables for App ID and private file file
+      minor_changes:
+      - fusion_az - Add delete AZ option
+      - fusion_az - Allow any region to be specified instead of limited to a known
+        list
+      - fusion_pp - Add delete PP option
+      - fusion_sc - Add delete SC option
+      - fusion_ss - Add delete SS option
+    fragments:
+    - 27_review_fixes.yaml
+    - 28_any_region.yaml
+    - 29_use_env.yaml
+    - 31_add_delete_az.yaml
+    - 32_add_delete_pp.yaml
+    - 33_add_delete_sc.yaml
+    - 34_add_delete_ss.yaml
+    modules:
+    - description: Manage Regions in Pure Storage Fusion
+      name: fusion_region
+      namespace: ''
+    release_date: '2022-09-01'
+  1.1.1:
+    release_date: '2022-09-23'
+  1.2.0:
+    changes:
+      bugfixes:
+      - fusion_info - Fixed issue with storage endpoint dict formatting
+      minor_changes:
+      - fusion_info - Added API Client information
+    fragments:
+    - 39_fix_info.yaml
+    - 41_add_api_client.yaml
+    release_date: '2022-12-02'
+  1.3.0:
+    changes:
+      bugfixes:
+      - fusion_pg - Add missing 'region' parameter
+      - fusion_tn - Add missing 'region' parameter
+    fragments:
+    - 44_fix_missing_regions.yaml
+    release_date: '2022-12-21'
+  1.4.0:
+    changes:
+      bugfixes:
+      - fusion_api_client - error messages now mostly handled by errors_py
+      - fusion_hap - could not delete host access policy without iqn option. Now it
+        needs only name option for deletion
+      - fusion_hap - error messages now mostly handled by errors_py
+      - fusion_hap - uppercase names were not supported. Now uppercase names are allowed
+      - fusion_info - fixes typo in output 'appiiances' -> 'appliances'
+      - fusion_info - network_interface_groups subset returned nothing. Now it collects
+        the same information as nigs subset
+      - fusion_info - placements subset returned nothing. Now it collects the same
+        information as placement_groups subset
+      - fusion_nig - add missing 'availability_zone' format param in error message
+      - fusion_nig - error messages now mostly handled by errors_py
+      - fusion_pg - create_pg always broke runtime. Now it executes and creates placement
+        group successfully
+      - fusion_pg - error messages now mostly handled by errors_py
+      - fusion_pp - error messages now mostly handled by errors_py
+      - fusion_pp - fix call to parse_minutes where we were missing a required argument
+      - fusion_sc - error messages now mostly handled by errors_py
+      - fusion_se - add missing 'availability_zone' format param in error message
+      - fusion_se - error messages now mostly handled by errors_py
+      - fusion_se - fix call in get_nifg where provider_subnet was used instead of
+        network_interface_group_name
+      - fusion_ss - error messages now mostly handled by errors_py
+      - fusion_tenant - error messages now mostly handled by errors_py
+      - fusion_ts - add missing 'tenant' format param in error message
+      - fusion_ts - error messages now mostly handled by errors_py
+      - fusion_volume - error messages now mostly handled by errors_py
+      deprecated_features:
+      - fusion_hw - hardware module is being removed as changing hardware type has
+        never been supported by Pure Storage Fusion
+      - fusion_info - nigs subset is deprecated in favor of network_interface_groups
+        and will be removed in the version 1.7.0
+      - fusion_info - placements subset is deprecated in favor of placement_groups
+        and will be removed in the version 1.7.0
+      - fusion_pg - placement_engine option is deprecated because Fusion API does
+        not longer support this parameter It will be removed in the version 2.0.0
+      - fusion_se - parameters 'addresses', 'gateway' and 'network_interface_groups'
+        are deprecated in favor of 'iscsi' and will be removed in version 2.0.0
+      - fusion_tn - tenant networks are being replaced by storage endpoints ```fusion_se```
+        and Network Interface Groups ```fusion_nig```
+      major_changes:
+      - Patching of resource properties was brought to parity with underlying Python
+        SDK
+      - fusion_volume - fixed and reorganized, arguments changed
+      minor_changes:
+      - errors_py - added opt-in global exception handler which produces simpler and
+        cleaner messages on REST errors
+      - removed dependency on Python `netaddr` package
+    fragments:
+    - 46_deprecate fusion_tn.yaml
+    - 47_fix_volumes.yaml
+    - 63_update_resource_patching.yaml
+    - 67_deprecate fusion_hw.yaml
+    - 68_update_error_handling_for_ts_volume.yaml
+    - 69_use_exc_handler_in_most_modules.yaml
+    - 70_fix_typo_appiances.yaml
+    - 71_fix_few_missing_format_params.yaml
+    - 72_fix_typo_getnifg.yaml
+    - 73_fix_missing_module_params.yaml
+    - 88_deprecate parameters in fusion_se.yaml
+    - PR46_network_interface_groups.yaml
+    - PR53_create_pg.yaml
+    - PR55_host_access_policy.yaml
+    - PR62_fix_placements.yaml
+    release_date: '2023-03-16'
+  1.4.1:
+    release_date: '2023-03-17'
+  1.4.2:
+    changes:
+      bugfixes:
+      - fusion_array - correct required parameters
+      - fusion_hap - display name has now default value set to the value of name
+      - fusion_hw - correct required parameters
+      - fusion_pg - correct required parameters
+      - fusion_pp - correct required parameters
+      - fusion_sc - correct required parameters
+      - fusion_ss - allow updating hardware types, correct required parameters
+      - fusion_tn - fix attribute error
+      - fusion_volume - protection policy can now be unset by using '' as name
+      minor_changes:
+      - added Python package dependency checks in prerequisites.py
+      - fusion_hap - added missing 'windows' personality type
+    fragments:
+    - 102_set_hap_display_name_default_value.yaml
+    - 103_correct_required_parameters_in_all_modules.yaml
+    - 108_add_missing_hap_personality.yaml
+    - 114_fix_fusion_tn_error.yaml
+    - 1483_allow_to_unset_protection_policy.yaml
+    - 1538_improve_missing_python_deps_error.yaml
+    release_date: '2023-04-11'
+  1.5.0:
+    changes:
+      bugfixes:
+      - fusion_info - fix runtime errors caused when listing `interfaces`, `arrays`
+        and `snapshots` dicts
+      - fusion_pg - freshly created placement group is now moved to correct array
+      - fusion_pp - 'local_rpo' changed to accept same input as 'local_retention'
+      - fusion_pp - updated retention description
+      - fusion_ra - 'name' deprecated and aliased to 'role'
+      deprecated_features:
+      - fusion_api_client - 'app_id' and 'key_file' parameters are deprecated in favor
+        of 'issuer_id' and 'private_key_file' parameters and will be removed in the
+        version 2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated
+        in favor of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version
+        2.0.0
+      - fusion_array - 'app_id' and 'key_file' parameters are deprecated in favor
+        of 'issuer_id' and 'private_key_file' parameters and will be removed in the
+        version 2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated
+        in favor of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version
+        2.0.0
+      - fusion_az - 'app_id' and 'key_file' parameters are deprecated in favor of
+        'issuer_id' and 'private_key_file' parameters and will be removed in the version
+        2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated in favor
+        of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version 2.0.0
+      - fusion_hap - 'app_id' and 'key_file' parameters are deprecated in favor of
+        'issuer_id' and 'private_key_file' parameters and will be removed in the version
+        2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated in favor
+        of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version 2.0.0
+      - fusion_hap - parameters `nqn`, `wwns`, `host_password`, `host_user`, `target_password`and
+        `target_user` were deprecated
+      - fusion_hw - FUSION_APP_ID and FUSION_HOST env variables are deprecated in
+        favor of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version
+        2.0.0
+      - fusion_info - 'app_id' and 'key_file' parameters are deprecated in favor of
+        'issuer_id' and 'private_key_file' parameters and will be removed in the version
+        2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated in favor
+        of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version 2.0.0
+      - fusion_info - 'hosts' subset is deprecated in favor of 'host_access_policies'
+        and will be removed in the version 2.0.0
+      - fusion_info - 'interfaces' subset is deprecated in favor of 'network_interfaces'
+        and will be removed in the version 2.0.0
+      - fusion_info - 'zones' subset is deprecated in favor of 'availability_zones'
+        and will be removed in the version 2.0.0
+      - fusion_ni - 'app_id' and 'key_file' parameters are deprecated in favor of
+        'issuer_id' and 'private_key_file' parameters and will be removed in the version
+        2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated in favor
+        of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version 2.0.0
+      - fusion_nig - 'app_id' and 'key_file' parameters are deprecated in favor of
+        'issuer_id' and 'private_key_file' parameters and will be removed in the version
+        2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated in favor
+        of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version 2.0.0
+      - fusion_pg - 'app_id' and 'key_file' parameters are deprecated in favor of
+        'issuer_id' and 'private_key_file' parameters and will be removed in the version
+        2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated in favor
+        of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version 2.0.0
+      - fusion_pp - 'app_id' and 'key_file' parameters are deprecated in favor of
+        'issuer_id' and 'private_key_file' parameters and will be removed in the version
+        2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated in favor
+        of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version 2.0.0
+      - fusion_ra - 'app_id' and 'key_file' parameters are deprecated in favor of
+        'issuer_id' and 'private_key_file' parameters and will be removed in the version
+        2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated in favor
+        of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version 2.0.0
+      - fusion_region - 'app_id' and 'key_file' parameters are deprecated in favor
+        of 'issuer_id' and 'private_key_file' parameters and will be removed in the
+        version 2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated
+        in favor of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version
+        2.0.0
+      - fusion_sc - 'app_id' and 'key_file' parameters are deprecated in favor of
+        'issuer_id' and 'private_key_file' parameters and will be removed in the version
+        2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated in favor
+        of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version 2.0.0
+      - fusion_se - 'app_id' and 'key_file' parameters are deprecated in favor of
+        'issuer_id' and 'private_key_file' parameters and will be removed in the version
+        2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated in favor
+        of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version 2.0.0
+      - fusion_se - `endpoint_type` parameter is now deprecated and will be removed
+        in version 2.0.0
+      - fusion_ss - 'app_id' and 'key_file' parameters are deprecated in favor of
+        'issuer_id' and 'private_key_file' parameters and will be removed in the version
+        2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated in favor
+        of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version 2.0.0
+      - fusion_tenant - 'app_id' and 'key_file' parameters are deprecated in favor
+        of 'issuer_id' and 'private_key_file' parameters and will be removed in the
+        version 2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated
+        in favor of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version
+        2.0.0
+      - fusion_tn - FUSION_APP_ID and FUSION_HOST env variables are deprecated in
+        favor of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version
+        2.0.0
+      - fusion_ts - 'app_id' and 'key_file' parameters are deprecated in favor of
+        'issuer_id' and 'private_key_file' parameters and will be removed in the version
+        2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated in favor
+        of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version 2.0.0
+      - fusion_volume - 'app_id' and 'key_file' parameters are deprecated in favor
+        of 'issuer_id' and 'private_key_file' parameters and will be removed in the
+        version 2.0.0, FUSION_APP_ID and FUSION_HOST env variables are deprecated
+        in favor of FUSION_ISSUER_ID and FUSION_HOST and will be removed in the version
+        2.0.0
+      minor_changes:
+      - FUSION_API_HOST && FUSION_HOST - changed logic, now this variables require
+        host name without path
+      - Fusion authentication - add 'access_token' module's parameter and 'FUSION_ACCESS_TOKEN'
+        environment variable, as an alternative way of the authentication.
+      - fusion - added private key password, which is used to decrypt private key
+        files
+      - fusion_info - `array` is None if missing in `volume`
+      - fusion_info - `hardware_types` is None if missing in `storage_service`
+      - fusion_info - `network_interface_groups` is None if missing in `iscsi_interfaces`
+        in `storage_endpoint`
+      - fusion_info - introduce 'availability_zones' subset option
+      - fusion_info - introduce 'host_access_policies' subset option
+      - fusion_info - introduce 'network_interfaces' subset option
+      - fusion_info - introduce 'regions' subset option
+      - fusion_info - rename 'appliances' in default dict to 'arrays' for consistency
+      - fusion_info - rename 'hosts' dict to 'host_access_policies' for consistency
+      - fusion_info - rename 'interfaces' dict to 'network_interfaces' for consistency
+      - fusion_info - rename 'placements_groups' in default dict to 'placement_groups'
+        for consistency
+      - fusion_info - rename 'zones' dict to 'availability_zones' for consistency
+      - fusion_info - rename hardware to hardware_types in response for consistency
+      - fusion_info - rename storageclass to storage_classes in response for consistency
+      - fusion_pp - duration parsing improved. Supports combination of time units
+        (E.g 5H5M)
+      - fusion_ra - added `api_client_key` argument, which can be used instead of
+        `user` and `principal` argument
+      - fusion_ra - added `principal` argument, which is an ID of either API client
+        or User and can be used instead of `user` argument
+      - fusion_se - add support for CBS Storage Endpoint
+    fragments:
+    - 101_improve_duration_parsing.yml
+    - 109_unify_storage_classes_key_in_fusion_info.yml
+    - 112_unify_hardware_types_key_in_fusion_info.yml
+    - 121_unify_parameters_and_env_variables_across_different_clients.yml
+    - 127_change_logic_of_fusion_api_host.yml
+    - 129_add_access_token.yml
+    - 130_add_private_key_password.yml
+    - 132_deprecate_unused_parameters_in_hap_module.yml
+    - 134_add_cbs_storage_endpoint_support.yml
+    - 135_add_principal_to_fusion_ra.yml
+    - 138_add_api_client_key_to_fusion_ra.yml
+    - 139_fix_bugs_in_fusion_info.yml
+    - 142_add_missing_none_fields.yml
+    - 143_unify_keys_in_fusion_info.yml
+    - 3289_functests_pp_pg_ra.yml
+    - 99_update_protection_policy_retention_description.yaml
+    release_date: '2023-05-31'

@@ -1,0 +1,183 @@
+---
+- hosts: localhost
+  gather_facts: false
+  collections:
+    - infinidat.infinibox
+  tasks:
+
+    - name: POSITIVE test -> Stat mapping of volume {{ auto_prefix }}vol to host {{ auto_prefix }}host1
+      infini_map:
+        host: "{{ auto_prefix }}host1"
+        volume: "{{ auto_prefix }}vol"
+        state: stat
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+      register: host_stat
+      failed_when:
+        - '"vol is mapped to host" not in host_stat.msg'
+        - '"host1" not in host_stat.msg'
+        - host_stat.failed
+
+    - name: POSITIVE test -> Show map stat
+      ansible.builtin.debug:
+        msg: "Map stat: {{ host_stat }}"
+
+    - name: POSITIVE test -> Stat mapping of volume {{ auto_prefix }}vol to cluster {{ auto_prefix }}cluster
+      infini_map:
+        cluster: "{{ auto_prefix }}cluster"
+        volume: "{{ auto_prefix }}vol"
+        state: stat
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+      register: cluster_stat
+      failed_when:
+        - '"vol is mapped to cluster" not in cluster_stat.msg'
+        - cluster_stat.failed
+
+    - name: POSITIVE test -> Show map stat
+      ansible.builtin.debug:
+        msg: "Map stat: {{ cluster_stat }}"
+
+    # WARNING: Assume we have a vol mapped to a cluster with hosts host1 and host2.
+    # Then we unmap the vol from "host1" as shown below.
+    - name: POSITIVE test -> Remove mapping of volume {{ auto_prefix }}vol from host {{ auto_prefix }}host1
+      infini_map:
+        host: "{{ auto_prefix }}host1"
+        volume: "{{ auto_prefix }}vol"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    # This will UNMAP the vol from the entire CLUSTER!
+    - name: NEGATIVE test -> Stat removed mapping of volume {{ auto_prefix }}vol from host {{ auto_prefix }}host1
+      infini_map:
+        host: "{{ auto_prefix }}host1"
+        volume: "{{ auto_prefix }}vol"
+        state: stat
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+      register: host_stat
+      failed_when:
+        - '"mapped to neither" in host_stat.msg'
+        - not host_stat.failed
+
+    - name: POSITIVE test -> Show map stat
+      ansible.builtin.debug:
+        msg: "Map stat: {{ host_stat }}"
+
+    - name: NEGATIVE test -> Stat removed mapping of volume {{ auto_prefix }}vol from cluster {{ auto_prefix }}cluster
+      infini_map:
+        cluster: "{{ auto_prefix }}cluster"
+        volume: "{{ auto_prefix }}vol"
+        state: stat
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+      register: cluster_stat
+      failed_when:
+        - '"mapped to neither host nor cluster" in cluster_stat.msg'
+        - not cluster_stat.failed
+
+    - name: POSITIVE test -> Show map stat
+      ansible.builtin.debug:
+        msg: "Map stat: {{ cluster_stat }}"
+
+    - name: POSITIVE test -> Remove mapping of volume {{ auto_prefix }}vol from host {{ auto_prefix }}host3
+      infini_map:
+        host: "{{ auto_prefix }}host3"
+        volume: "{{ auto_prefix }}vol"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: IDEMPOTENT test -> Remove mapping of volume {{ auto_prefix }}vol from host {{ auto_prefix }}host3 again
+      infini_map:
+        host: "{{ auto_prefix }}host3"
+        volume: "{{ auto_prefix }}vol"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+      register: result
+      failed_when:
+        - '"was not mapped" not in result.msg'
+        - result.changed
+
+    - name: POSITIVE test -> Show map stat
+      ansible.builtin.debug:
+        msg: "result: {{ result.msg }}"
+
+    - name: POSITIVE test -> Remove mapping of volume {{ auto_prefix }}vol from cluster {{ auto_prefix }}cluster
+      infini_map:
+        cluster: "{{ auto_prefix }}cluster"
+        volume: "{{ auto_prefix }}vol"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: IDEMPOTENT test -> Remove mapping of volume {{ auto_prefix }}vol from cluster {{ auto_prefix }}cluster
+      infini_map:
+        cluster: "{{ auto_prefix }}cluster"
+        volume: "{{ auto_prefix }}vol"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+      failed_when:
+        - '"was not mapped" not in result.msg'
+        - result.changed
+
+    - name: POSITIVE test -> Remove cluster {{ auto_prefix }}cluster
+      infini_cluster:
+        name: "{{ auto_prefix }}cluster"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove host {{ auto_prefix }}host1
+      infini_host:
+        name: "{{ auto_prefix }}host1"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove host {{ auto_prefix }}host2
+      infini_host:
+        name: "{{ auto_prefix }}host2"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove host {{ auto_prefix }}host3
+      infini_host:
+        name: "{{ auto_prefix }}host3"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove thin volume {{ auto_prefix }}vol under pool {{ auto_prefix }}pool
+      infini_vol:
+        name: "{{ auto_prefix }}vol"
+        pool: "{{ auto_prefix }}pool"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove pool {{ auto_prefix }}pool
+      infini_pool:
+        name: "{{ auto_prefix }}pool"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"

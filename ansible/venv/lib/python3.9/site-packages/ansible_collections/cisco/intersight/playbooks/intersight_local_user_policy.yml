@@ -1,0 +1,55 @@
+---
+# Example Playbook: cisco.intersight.intersight_..._policy
+# Runs on localhost since policies are only configured once
+- hosts: localhost
+  connection: local
+  collections:
+    - cisco.intersight
+  gather_facts: false
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      # if api_key vars are omitted, INTERSIGHT_API_KEY_ID, INTERSIGHT_API_PRIVATE_KEY,
+      # and INTERSIGHT_API_URI environment variables used for API key data
+      api_private_key: "{{ api_private_key | default(omit) }}"
+      api_key_id: "{{ api_key_id | default(omit) }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+    #
+    # Example using vault:
+    # 1. Place the vault password into a plain text file (this is the password for vault access - do not check this into any repos!)
+    #    $ cat vault_password_file
+    #    ...
+    # 2. Encrypt a string (e.g., 'notagoodpassword').  You will later decrypt using your vault password file
+    #    $ ansible-vault encrypt_string --vault-id tme@vault_password_file 'notagoodpassword' --name 'vault_password'
+    #    (response is the encrypting string)
+    # 3. Place the vault variable in your playbook (example below):
+    # 4. Run the playbook and supply the vault password file (used to decrypt the vaulted password in the playbook)
+    #    $ ansible-playbook -i inventory --vault-id tme@vault_password_file intersight_local_user_policy.yml
+    #
+    vault_password: !vault |
+          $ANSIBLE_VAULT;1.2;AES256;tme
+          36656264656638646566313633353832396138616264313032303433656636643638363864653936
+          6532646363303435633965383432633630306566323838640a363566376234303366313064306162
+          39326331373231643333616335393232353633393834653161633032383539383537656336666639
+          3635306535366233660a356235393664653538386136626439646137626531663135363636326131
+          3538
+  tasks:
+    - name: Configure Local User policy
+      intersight_local_user_policy:
+        <<: *api_info
+        name: "{{ local_user_policy | default('guest-admin') }}"
+        tags:
+          - Key: username
+            Value: guest
+        description: Username guest with admin role
+        enforce_strong_password: true
+        enable_password_expiry: false
+        password_history: 5
+        purge: true
+        always_update_password: true
+        local_users:
+          - username: guest
+            role: admin
+            password: "{{ vault_password }}"

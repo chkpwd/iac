@@ -1,0 +1,18 @@
+- name: edit service test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "edit kvm"
+    inspur.sm.edit_service:
+      service_name: "kvm"
+      state: "active"
+      timeout: "1200"
+      provider: "{{ ism }}"

@@ -1,0 +1,147 @@
+- name: Using Spectrum Virtualize collection to migrate given volume
+  hosts: localhost
+  vars_files:
+     - vol_migration_vars.txt
+  collections:
+     - ibm.spectrum_virtualize
+     - brocade
+  gather_facts: no
+  vars:
+    brocade_credentials:
+      fos_ip_addr: "{{ brocade_switch_ip }}"
+      fos_user_name: "{{ brocade_switch_username }}"
+      fos_password: "{{ brocade_switch_password }}"
+      https: False
+    dest_vol_name: "{{ dest_vol_name if dest_vol_name is defined else src_vol_name }}"
+    dest_host_name: "{{ host_name }}"
+  connection: local
+  tasks:
+    - name: Fetch authorization token for source
+      register: src_token
+      ibm_svc_auth:
+        clustername: "{{ src_cluster_ip }}"
+        username:  "{{ src_cluster_username }}"
+        password: "{{ src_cluster_password }}"
+    - name: Fetch authorization token for destination
+      register: dest_token
+      ibm_svc_auth:
+        clustername: "{{ dest_cluster_ip }}"
+        username: "{{ dest_cluster_username }}"
+        password: "{{ dest_cluster_password }}"
+    - name: Get deatils of the given volume
+      register: volinfo
+      ibm.spectrum_virtualize.ibm_svc_info:
+        clustername: "{{ dest_cluster_ip }}"
+        token: "{{ dest_token.token }}"
+        gather_subset: [vol]
+        objectname: "{{ dest_vol_name }}"
+        log_path: /tmp/volinfo.debug
+    - name: Get the volume UID data
+      set_fact:
+        vol_uid: "{{ volinfo.Volume[0]['vdisk_UID'] | lower }}"
+      when: volinfo.Volume[0] is defined
+    - name: Get deatils of the targetportfc.
+      register: fcdetails
+      ibm.spectrum_virtualize.ibm_svc_info:
+        clustername: "{{ dest_cluster_ip }}"
+        token: "{{ dest_token.token }}"
+        gather_subset: [targetportfc]
+        log_path: /tmp/fcdetails.debug
+    - name: get the WWPN list from lstargetportfc for given fc_port_id
+      set_fact:
+        specv_wwpn: "{{ specv_wwpn|default([]) + [item['WWPN']]}}"
+      when: (item.protocol == 'scsi' and item.host_io_permitted == 'yes' and item.fc_io_port_id in dest_cluster_fcioportid)
+      loop: "{{ fcdetails.TargetPortFC  }}"
+    - name: modify svc wwpn the way switch want
+      set_fact:
+        specv_wwpn_switch_format: "{{ specv_wwpn_switch_format|default([]) +[item|map('join')|join(':')] }}"
+      loop: "{{ (specv_wwpn)|map('batch', 2)|map('list')|list|lower }}"
+    - name: get all zoning information from switch
+      brocade_facts:
+        credential: "{{brocade_credentials}}"
+        vfid: -1
+        gather_subset:
+          - brocade_zoning
+    - name: copy the active config in var active_switch_config
+      set_fact:
+        active_switch_config: "{{ ansible_facts.brocade_zoning['effective-configuration'].cfg_name }}"
+    - name: Create zones on Brocade switch
+      vars:
+        zone:
+          - name: "{{ application_host_zone_name }}"
+            members: "{{ application_host_wwpns + specv_wwpn_switch_format }}"
+      brocade.fos.brocade_zoning_zone:
+        credential: "{{ brocade_credentials }}"
+        vfid: -1
+        zones: "{{ zone }}"
+        members_add_only: True
+    - name: Add zone to active configuration
+      vars:
+        cfgs:
+          - name: "{{ active_switch_config }}"
+            members:
+              - "{{ application_host_zone_name }}"
+      brocade_zoning_cfg:
+        credential: "{{ brocade_credentials }}"
+        vfid: -1
+        members_add_only: True
+        cfgs: "{{ cfgs }}"
+        active_cfg: "{{ active_switch_config }}"
+    - name: map Vol to host
+      ibm_svc_vol_map:
+        clustername: "{{ dest_cluster_ip }}"
+        token: "{{ dest_token.token }}"
+        state: present
+        volname: "{{ dest_vol_name }}"
+        host: "{{ dest_host_name }}"
+        scsi: 0
+    - name: Rescan the paths on the host and run multipath 
+      shell: "ssh root@{{application_host_ip}} rescan-scsi-bus.sh -i --forcerescan;sleep 40;"
+    - shell: "ssh root@{{application_host_ip}} multipath -ll"
+      register: ps
+    - name: Separate facts
+      set_fact:
+       multipath_var: "{{ ps.stdout.split('mpath') }}"
+    - name: Find Vol UID present in host with path
+      set_fact:
+        dm_device: "{{item}}"
+      loop: "{{ multipath_var }}"
+      when:  vol_uid in item
+    - name:  Switch replication direction of a migration relationship when host is mapped
+      ibm_svc_manage_migration:
+        relationship_name: "{{ rel_name if rel_name is defined else src_vol_name }}"
+        clustername: "{{ src_cluster_ip }}"
+        token: "{{ src_token.token }}"
+        state: switch
+    - name: Rescan the scsi bus devices on the host
+      ansible.builtin.shell: "ssh root@{{application_host_ip}} rescan-scsi-bus.sh -i --forcerescan"
+    - shell:  "ssh root@{{application_host_ip}} multipath -ll"
+      register: ps
+    - name: Separate facts
+      set_fact:
+        multipath_var: "{{ ps.stdout.split('mpath') }}"
+    - name: Find Vol UID present in host with path
+      set_fact:
+        dm_device: "{{item}}"
+      loop: "{{ multipath_var }}"
+      when:  vol_uid in item
+    - name: Delete source volume and migration relationship
+      ibm_svc_manage_migration:
+        clustername: "{{ src_cluster_ip }}"
+        state: cleanup
+        source_volume: "{{ src_vol_name}}"
+        token: "{{ src_token.token }}"
+        log_path: /tmp/ansible.log
+    - shell: "ssh root@{{application_host_ip}} rescan-scsi-bus.sh -i --forcerescan; sleep 40;"
+    - shell:  "ssh root@{{application_host_ip}} multipath -ll"
+      register: ps
+    - name: Separate facts
+      set_fact:
+        multipath_var: "{{ ps.stdout.split('mpath') }}"
+    - name: Find Vol UID present in host with path
+      set_fact:
+        dm_device: "{{item}}"
+      loop: "{{ multipath_var }}"
+      when:  vol_uid in item
+    - debug:
+        msg: "{{ dm_device }}"

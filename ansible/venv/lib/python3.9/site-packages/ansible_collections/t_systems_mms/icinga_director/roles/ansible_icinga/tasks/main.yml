@@ -1,0 +1,90 @@
+---
+- name: icinga timeperiod configuration
+  include_tasks: icinga_timeperiod.yml
+  when: icinga_timeperiods is defined
+  tags: timeperiod
+
+- name: icinga user_template configuration
+  include_tasks: icinga_user_template.yml
+  when: icinga_user_templates is defined
+  tags: user_template
+
+- name: icinga user configuration
+  include_tasks: icinga_user.yml
+  when: icinga_users is defined
+  tags: user
+
+- name: icinga zone configuration
+  include_tasks: icinga_zone.yml
+  when: icinga_zones is defined
+  tags: zone
+
+- name: icinga endpoint configuration
+  include_tasks: icinga_endpoint.yml
+  when: icinga_endpoints is defined
+  tags: endpoint
+
+- name: icinga hostgroup configuration
+  include_tasks: icinga_hostgroup.yml
+  when: icinga_hostgroups is defined
+  tags: hostgroup
+
+- name: icinga host_template configuration
+  include_tasks: icinga_host_template.yml
+  when: icinga_host_templates is defined
+  tags: host_template
+
+- name: icinga host configuration
+  include_tasks: icinga_host.yml
+  when: icinga_hosts is defined
+  tags: host
+
+- name: icinga command_template configuration
+  include_tasks: icinga_command_template.yml
+  when: icinga_command_templates is defined
+  tags: command_template
+
+- name: icinga command configuration
+  include_tasks: icinga_command.yml
+  when: icinga_commands is defined
+  tags: command
+
+- name: icinga service_template configuration
+  include_tasks: icinga_service_template.yml
+  when: icinga_service_templates is defined
+  tags: service_template
+
+- name: icinga service_apply configuration
+  include_tasks: icinga_service_apply.yml
+  when: icinga_service_applies is defined
+  tags: service_apply
+
+- name: icinga servicegroup configuration
+  include_tasks: icinga_servicegroup.yml
+  when: icinga_servicegroups is defined
+  tags: servicegroup
+
+- name: icinga service configuration
+  include_tasks: icinga_service.yml
+  when: icinga_services is defined
+  tags: service
+
+- name: icinga serviceset configuration
+  include_tasks: icinga_serviceset.yml
+  when: icinga_servicesets is defined
+  tags: serviceset
+
+- name: icinga notification template configuration
+  include_tasks: icinga_notification_template.yml
+  when: icinga_notification_templates is defined
+  tags: notification_template
+
+- name: icinga notification configuration
+  include_tasks: icinga_notification.yml
+  when: icinga_notifications is defined
+  tags: notification
+
+- name: icinga downtime configuration
+  include_tasks: icinga_scheduled_downtime.yml
+  when: icinga_scheduled_downtimes is defined
+  tags: downtime

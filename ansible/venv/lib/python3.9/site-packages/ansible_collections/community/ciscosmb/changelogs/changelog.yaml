@@ -1,0 +1,176 @@
+ancestor: null
+releases:
+  0.0.2:
+    changes:
+      major_changes:
+      - ciscosmb_facts with default subset and unit tests
+  0.0.4:
+    changes:
+      minor_changes:
+      - uptime in seconds
+    release_date: '2021-01-29'
+  0.0.5:
+    changes:
+      major_changes:
+      - add ciscosmb_command
+    release_date: '2021-02-18'
+  0.0.6:
+    changes:
+      major_changes:
+      - add CBS350 support
+      - unit tests for CBS350
+      minor_changes:
+      - doc update
+    release_date: '2021-02-23'
+  0.1.0:
+    changes:
+      major_changes:
+      - added facts subset "interfaces"
+      minor_changes:
+      - remove mock warning
+    release_date: '2021-04-06'
+  0.1.1:
+    changes:
+      major_changes:
+      - Python 2.6, 2.7, 3.5 is required
+      - add antsibull-changelog support
+      minor_changes:
+      - add Code of conduct
+      - add Contribution
+      - add required files for community inclusion
+      - check tags and add tag switch
+      - cluter removed
+      - code cleaning
+    fragments:
+    - 0.1.1-code_cleaning.yml
+    - 0.1.1-prepare_for_community.yml
+    release_date: '2021-04-06'
+  0.8.0:
+    changes:
+      major_changes:
+      - add antsibull-changelog support
+      minor_changes:
+      - Python 2.6, 2.7, 3.5 compatibility
+      - add Code of conduct
+      - add Contribution
+      - add required files for community inclusion
+      - added ansible dev-guide manual test
+      - better tests requirements
+      - check tags and add tag switch
+      - cluter removed
+      - code cleaning
+      - update my tests
+    fragments:
+    - 0.8.0-code_cleaning.yml
+    - 0.8.0-prepare_for_community.yml
+    - 0.8.0-py27.yml
+    - 0.8.0-tests.yml
+    release_date: '2021-04-07'
+  0.9.0:
+    changes:
+      major_changes:
+      - interface name canonicalization
+    fragments:
+    - interface_canoticalization.yml
+    release_date: '2021-04-08'
+  0.9.1:
+    changes:
+      minor_changes:
+      - correct version bumping
+    fragments:
+    - correct_changelog.yml
+    release_date: '2021-04-08'
+  1.0.0:
+    changes:
+      major_changes:
+      - transform collection qaxi.ciscosmb to community.ciscosmb
+      - transform community.ciscosmb.ciscosmb_command to community.ciscosmb.command
+      - transform community.ciscosmb.ciscosmb_facts to community.ciscosmb.facts
+      minor_changes:
+      - setup standard Ansible CI
+    fragments:
+    - CI.yaml
+    - shorten_module_name.yaml
+    - transform2community.yml
+    release_date: '2021-06-04'
+  1.0.1:
+    changes:
+      minor_changes:
+      - Added Releasing, CoC and Contributing to README.md
+      - Added author
+      - Added license header
+      - Release policy, versioning, deprecation
+      - Updated CoC, added email address
+      - more descriptiove Release section on README.md
+      release_summary: Minor fixes for ansible collections inclusion
+    fragments:
+    - ansible_collections_inclusion.yml
+    release_date: '2021-07-20'
+  1.0.2:
+    changes:
+      bugfixes:
+      - solves issue
+      minor_changes:
+      - remove unnecersary parameters on function re.sub()
+      release_summary: 'Release Date: 2021-08-09 bugfix release'
+    fragments:
+    - release-1.0.2.yml
+    - unnecesary_re_M.yml
+    release_date: '2021-08-09'
+  1.0.3:
+    changes:
+      minor_changes:
+      - Add Py 3.6 to supported python versions (https://github.com/ansible-collections/community.ciscosmb/pull/44)
+      - Fix link to issue tracker in galaxy.yml (https://github.com/ansible-collections/community.ciscosmb/pull/42)
+      - Misc doc fixes for collection inclusion (https://github.com/ansible-collections/community.ciscosmb/pull/41)
+      release_summary: 'Release Date: 2019-10-31
+
+        Minor changes in documentation, adding Python 3.6 as a supported version
+
+        '
+    fragments:
+    - 41-doc_fixes.yml
+    - 42-fix_galaxy_issue_url.yml
+    - 44-add_py_36.yml
+    - release-1.0.3.yml
+    release_date: '2021-09-10'
+  1.0.4:
+    changes:
+      bugfixes:
+      - Module command does not support check_mode - https://github.com/ansible-collections/community.ciscosmb/pull/45
+      release_summary: 'Release Date: 2021-09-13
+
+        '
+    fragments:
+    - 45-no_check_mode.yml
+    release_date: '2021-09-13'
+  1.0.5:
+    changes:
+      minor_changes:
+      - CI  change <plugin_type> <name> to name <name> for validate-module
+      - CI - add ansible 2.13 to test matrix
+    fragments:
+    - CI-ansible-2.13.yml
+    - CI-validate-modules.yml
+    release_date: '2022-04-29'
+  1.0.6:
+    changes:
+      deprecated_features:
+      - support for Python 2.6 nad 2.7
+      - support for ansible 2.9
+      minor_changes:
+      - added Ansible playbook examples ``cismosmb_inventory_template.yml``, ``cismosmb_gather_facts.yml``,
+        ``cismosmb_commands.yml``
+      - no longer testing for ansible 2.9 and for Python 2.6 / 2.7
+      - removed unused portion of code in cliconf/ciscosmb.yml
+      - test Ansible 2.14
+      release_summary: "Code cleaning, better documentation   \n"
+      removed_features:
+      - remove testing for Python 2.6 nad 2.7
+      - remove testing for ansible 2.9
+    fragments:
+    - CIchanges.yml
+    - cliconf.yml
+    - playbook_examples.yml
+    - release-1.0.6.yml
+    release_date: '2023-05-23'

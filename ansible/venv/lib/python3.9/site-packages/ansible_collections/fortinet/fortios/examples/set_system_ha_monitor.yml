@@ -1,0 +1,21 @@
+---
+- hosts: localhost
+  collections:
+  - fortinet.fortios
+  vars:
+   host: "192.168.52.177"
+   username: "admin"
+   password: ""
+   vdom: "root"
+   ssl_verify: "False"
+  tasks:
+  - name: Configure HA monitor.
+    fortios_system_ha_monitor:
+      host:  "{{ host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      vdom:  "{{ vdom }}"
+      https: "True"
+      ssl_verify:  "{{ ssl_verify }}"
+      system_ha_monitor:
+        monitor_vlan: "disable"

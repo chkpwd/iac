@@ -1,0 +1,77 @@
+- name: ad test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+  
+  - name: "set active directory information"
+    inspur.sm.edit_ad:
+      enable: "enable"
+      name: "inspur"
+      code: "123456"
+      timeout: 120
+      domain: "inspur.com"
+      addr1: "100.2.2.2"
+      addr2: "100.2.2.3"
+      addr3: "100.2.2.4"
+      provider: "{{ ism }}"
+
+  - name: "get active directory information"
+    inspur.sm.ad_info:
+      provider: "{{ ism }}"
+
+  - name: "get active directory group information"
+    inspur.sm.ad_group_info:
+      provider: "{{ ism }}"
+      
+  - name: "add active directory group information"
+    inspur.sm.add_ad_group:
+      name: "wbs"
+      domain: "inspur.com"
+      pri: "administrator"
+      kvm: "enable"
+      vm: "disable"
+      provider: "{{ ism }}"
+
+  - name: "get active directory group information"
+    inspur.sm.ad_group_info:
+      provider: "{{ ism }}"
+      
+  - name: "edit active directory group information"
+    inspur.sm.edit_ad_group:
+      id: "1"
+      name: "Inspur"
+      domain: "www.inspur.com"
+      pri: "administrator"
+      kvm: "disable"
+      vm: "disable"
+      provider: "{{ ism }}"
+      
+  - name: "get active directory group information"
+    inspur.sm.ad_group_info:
+      provider: "{{ ism }}"
+
+  - name: "delete active directory group information"
+    inspur.sm.del_ad_group:
+      name: "Inspur"
+      provider: "{{ ism }}"
+      
+  - name: "get active directory group information"
+    inspur.sm.ad_group_info:
+      provider: "{{ ism }}"
+
+
+  - name: "set active directory information"
+    inspur.sm.edit_ad:
+      enable: "disable"
+      provider: "{{ ism }}"
+
+  - name: "get active directory information"
+    inspur.sm.ad_info:
+      provider: "{{ ism }}"

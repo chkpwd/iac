@@ -1,0 +1,72 @@
+ancestor: null
+releases:
+  20.5.0:
+    modules:
+    - description: NetApp Unified Manager list aggregates.
+      name: na_um_list_aggregates
+      namespace: ''
+    - description: NetApp Unified Manager list cluster.
+      name: na_um_list_clusters
+      namespace: ''
+    - description: NetApp Unified Manager list nodes.
+      name: na_um_list_nodes
+      namespace: ''
+    - description: NetApp Unified Manager list svms.
+      name: na_um_list_svms
+      namespace: ''
+    release_date: '2020-05-06'
+  20.6.0:
+    modules:
+    - description: NetApp Unified Manager list volumes.
+      name: na_um_list_volumes
+      namespace: ''
+    release_date: '2020-06-03'
+  20.7.0:
+    changes:
+      minor_changes:
+      - na_um_list_aggregates - Now sort by performance_capacity.used
+      - na_um_list_nodes - Now sort by performance_capacity.used
+    fragments:
+    - 20.7.0.yaml
+    release_date: '2020-06-24'
+  21.5.0:
+    changes:
+      minor_changes:
+      - minor changes to meet Red Hat requirements to be certified.
+    fragments:
+    - DEVOPS-3920.yaml
+    release_date: '2021-04-21'
+  21.6.0:
+    changes:
+      minor_changes:
+      - na_um_list_aggregates has been renamed na_um_aggregates_info.
+      - na_um_list_clusters has been renamed na_um_clusters_info.
+      - na_um_list_nodes has been renamed na_um_nodes_info.
+      - na_um_list_svms has been renamed na_um_svms_info.
+      - na_um_list_volumes has been renamed na_um_volumes_info.
+    fragments:
+    - DEVOPS-3962.yaml
+    release_date: '2021-05-06'
+  21.7.0:
+    changes:
+      bugfixes:
+      - all modules - report error when connecting to a server that does not run AIQUM.
+      - all modules - return all records rather than the first 1000 records (mostly
+        for volumes).
+      - rename na_um_list_volumes.p to na_um_list_volumes.py
+      minor_changes:
+      - all modules - ability to trace API calls and responses.
+      - all modules - new ``max_records`` option to limit the amount of data in a
+        single GET response.
+    fragments:
+    - DEVOPS-2952.yaml
+    - DEVOPS-4059.yaml
+    - DEVOPS-4087.yaml
+    release_date: '2021-07-14'
+  21.8.0:
+    changes:
+      minor_changes:
+      - PR1 - allow usage of Ansible module group defaults - for Ansible 2.12+.
+    fragments:
+    - DEVOPS-4416.yaml
+    release_date: '2021-11-03'

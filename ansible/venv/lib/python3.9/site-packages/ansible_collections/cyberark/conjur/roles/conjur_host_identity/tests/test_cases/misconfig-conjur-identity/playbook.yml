@@ -1,0 +1,22 @@
+---
+- name: Configuring Conjur identity on remote hosts fails when missing required variable
+  hosts: testapp
+  tasks:
+    - name: Attempt to configure Conjur identity
+      block:
+        - import_role:
+            name: "cyberark.conjur.conjur-host-identity"
+          vars:
+            conjur_account: cucumber
+            # conjur_appliance_url: "https://conjur-proxy-nginx"
+            conjur_host_factory_token: "{{lookup('env', 'HFTOKEN')}}"
+            conjur_host_name: "conjur_{{ ansible_hostname }}"
+            conjur_ssl_certificate: "{{lookup('file', '../../conjur.pem')}}"
+            conjur_validate_certs: yes
+      rescue:
+        - name: Confirm Role setup fails
+          assert:
+            that: ansible_failed_result.failed == true
+        - name: Confirm error message
+          assert:
+            that: ansible_failed_result.msg == "'conjur_appliance_url' is undefined"

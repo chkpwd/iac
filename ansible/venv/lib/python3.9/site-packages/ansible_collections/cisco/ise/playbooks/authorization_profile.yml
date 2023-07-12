@@ -1,0 +1,43 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Get Authorization profile
+      cisco.ise.authorization_profile_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        name: Cisco_Temporal_Onboard
+      register: result
+
+    - name: Print Authorization profiles
+      ansible.builtin.debug:
+        var: result
+
+    - name: Create or update Authorization profile
+      cisco.ise.authorization_profile:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        accessType: ACCESS_ACCEPT
+        authzProfileType: SWITCH
+        daclName: PERMIT_ALL_IPV4_TRAFFIC
+        description: Onboard the device with Cisco temp agent
+        easywiredSessionCandidate: false
+        id: 4e2e7a20-ea30-11ea-8b14-005056871e13
+        name: Cisco_Temporal_Onboard
+        profileName: Cisco
+        serviceTemplate: false
+        trackMovement: false
+        webRedirection:
+          WebRedirectionType: ClientProvisioning
+          acl: ACL_WEBAUTH_REDIRECT
+          portalName: Client Provisioning Portal (default)
+      register: result
+
+    - name: Print Authorization profile
+      ansible.builtin.debug:
+        var: result

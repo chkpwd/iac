@@ -1,0 +1,15 @@
+- name: ldap group test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "get ldap group information"
+    inspur.sm.ldap_group_info:
+      provider: "{{ ism }}"

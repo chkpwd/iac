@@ -1,0 +1,153 @@
+argument_specs:
+
+  configure:
+    short_description: Configure Sensu Go backend
+    description:
+      - Write the Sensu Go backend configuration file and optionally copy the
+        keys and certificates over.
+
+    options:
+      backend_config: &backend_config
+        description:
+          - Any option that is valid for the Sensu Go backend version we are
+            installing.
+          - All valid options are listed at
+            U(https://docs.sensu.io/sensu-go/latest/reference/backend/#configuration).
+          - Role copies the key-value pairs from the I(backend_config) variable
+            verbatim to the configuration file. This means that we must copy
+            the key names B(exactly) as they appear in the configuration
+            reference. In a way, the I(backend_config) variable should contain a
+            properly indented copy of the C(/etc/sensu/backend.yml) file.
+        type: dict
+
+      etcd_cert_file: &etcd_cert_file
+        description:
+          - Path to the certificate used for SSL/TLS connections B(to) etcd.
+            This is a client certificate.
+        type: str
+
+      etcd_key_file: &etcd_key_file
+        description:
+          - Path to the private key for the etcd client certificate file. Must
+            be unencrypted.
+        type: str
+
+      etcd_trusted_ca_file: &etcd_trusted_ca_file
+        description:
+          - Path to the trusted certificate authority for the etcd client
+            certificates.
+        type: str
+
+      etcd_peer_cert_file: &etcd_peer_cert_file
+        description:
+          - Path to the certificate used for SSL/TLS connections between peers.
+            This will be used both for listening on the peer address as well as
+            sending requests to other peers.
+        type: str
+
+      etcd_peer_key_file: &etcd_peer_key_file
+        description:
+          - Path to the peer certificate's key. Must be unencrypted.
+        type: str
+
+      etcd_peer_trusted_ca_file: &etcd_peer_trusted_ca_file
+        description:
+          - Path to the trusted certificate authority for the peer
+            certificates.
+        type: str
+
+      api_cert_file: &api_cert_file
+        description:
+          - Path to the certificate used to secure the Sensu Go API.
+        type: str
+
+      api_key_file: &api_key_file
+        description:
+          - Path to the private key corresponding to the Sensu Go API
+            certificate.  Must be unencrypted.
+        type: str
+
+      api_trusted_ca_file: &api_trusted_ca_file
+        description:
+          - Path to the trusted certificate authority for the Sensu Go API
+            certificates.
+        type: str
+
+      dashboard_cert_file: &dashboard_cert_file
+        description:
+          - Path to the certificate used for SSL/TLS connections to the
+            dashboard.
+        type: str
+
+      dashboard_key_file: &dashboard_key_file
+        description:
+          - Path to the private key corresponding to the dashboard certificate.
+            Must be unencrypted.
+        type: str
+
+  start:
+    short_description: Start Sensu Go backend
+    description:
+      - Start the Sensu Go backend service and initialize it on the first run.
+
+    options:
+      cluster_admin_username: &cluster_admin_username
+        description:
+          - Initial admin user to create when initializing backend for the
+            first time.
+        type: str
+        default: admin
+
+      cluster_admin_password: &cluster_admin_password
+        description:
+          - Initial admin password to create when initializing backend for the
+            first time.
+        type: str
+        default: P@ssw0rd!
+
+  main:
+    short_description: Install, configure, and start Sensu Go backend
+    description:
+      - Install, configure, and start the Sensu Go backend service and
+        initialize it on the first run.
+
+    options:
+      channel:
+        description:
+          - Repository channel that serves as a source of packages.
+          - Visit the packagecloud site to find all available channels.
+        type: str
+        default: stable
+
+      version: &version
+        description:
+          - Package version to install.
+          - Can be any valid version string such as C(6.2.5) or special value
+            C(latest).
+        type: str
+        default: latest
+
+      build:
+        description:
+          - Package build to install.
+          - Can be any valid build string such as C(8290) or a special value
+            latest.
+          - If the I(version) variable is set to latest, this variable is
+            ignored and the latest available build is installed.
+        type: str
+        default: latest
+
+      backend_config: *backend_config
+      etcd_cert_file: *etcd_cert_file
+      etcd_key_file: *etcd_key_file
+      etcd_trusted_ca_file: *etcd_trusted_ca_file
+      etcd_peer_cert_file: *etcd_peer_cert_file
+      etcd_peer_key_file: *etcd_peer_key_file
+      etcd_peer_trusted_ca_file: *etcd_peer_trusted_ca_file
+      api_cert_file: *api_cert_file
+      api_key_file: *api_key_file
+      api_trusted_ca_file: *api_trusted_ca_file
+      dashboard_cert_file: *dashboard_cert_file
+      dashboard_key_file: *dashboard_key_file
+      cluster_admin_username: *cluster_admin_username
+      cluster_admin_password: *cluster_admin_password

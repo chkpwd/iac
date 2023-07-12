@@ -1,0 +1,106 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+
+  vars:
+    ise_login: &ise_login
+      ise_hostname: "{{ ise_hostname }}"
+      ise_username: "{{ ise_username }}"
+      ise_password: "{{ ise_password }}"
+      ise_verify: "{{ ise_verify }}"
+      ise_debug: "{{ ise_debug }}"
+
+  tasks:
+    # - name: '[Get Nbar Apps]'
+    #   cisco.ise.trustsec_nbar_app_info:
+    #     <<: *ise_login
+    #     page: 1
+    #     size: 100
+    #   register: nbar_app_all
+
+    # - name: '[Print Nbar Apps]'
+    #   ansible.builtin.debug:
+    #     var: nbar_app_all
+
+    - name: Get Nbar App filtered by name
+      cisco.ise.trustsec_nbar_app_info:
+        <<: *ise_login
+        filter: name.EQ.hyperwave-isp
+      register: nbar_app_filtered
+
+    - name: Get Nbar App by id
+      cisco.ise.trustsec_nbar_app_info:
+        <<: *ise_login
+        id: "{{ nbar_app_filtered.ise_responses[0].id }}"
+      when:
+        - nbar_app_filtered is defined
+        - nbar_app_filtered.ise_responses is defined
+        - nbar_app_filtered.ise_responses | length > 0
+      register: nbar_app_by_id
+
+    - name: Print Nbar App by id
+      ansible.builtin.debug:
+        var: nbar_app_by_id
+
+    - name: Create Nbar App duplicate
+      cisco.ise.trustsec_nbar_app:
+        <<: *ise_login
+        state: present
+        name: "{{ nbar_app_by_id.ise_response[0].name}}-2"
+        description: "{{ nbar_app_by_id.ise_response[0].description|int + 1 }}"
+        networkIdentities:
+          - ports: "{{ nbar_app_by_id.ise_response[0].networkIdentities[0].ports|int +1 }}"
+            protocol: "{{ nbar_app_by_id.ise_response[0].networkIdentities[0].protocol }}"
+          - ports: "{{ nbar_app_by_id.ise_response[0].networkIdentities[1].ports|int +1 }}"
+            protocol: "{{ nbar_app_by_id.ise_response[0].networkIdentities[1].protocol }}"
+      when:
+        - nbar_app_by_id is defined
+        - nbar_app_by_id.ise_response is defined
+        - nbar_app_by_id.ise_response | length == 1
+      register: nbar_app_manage
+
+    - name: Print Create Nbar
+      ansible.builtin.debug:
+        var: nbar_app_manage
+
+    - name: Update Nbar App duplicate
+      cisco.ise.trustsec_nbar_app:
+        <<: *ise_login
+        state: present
+        name: "{{ nbar_app_by_id.ise_response[0].name}}-2"
+        description: "{{ nbar_app_by_id.ise_response[0].description|int + 1 }}"
+        networkIdentities:
+          - ports: "{{ nbar_app_by_id.ise_response[0].networkIdentities[0].ports|int +2 }}"
+            protocol: "{{ nbar_app_by_id.ise_response[0].networkIdentities[0].protocol }}"
+          - ports: "{{ nbar_app_by_id.ise_response[0].networkIdentities[1].ports|int +2 }}"
+            protocol: "{{ nbar_app_by_id.ise_response[0].networkIdentities[1].protocol }}"
+      when:
+        - nbar_app_by_id is defined
+        - nbar_app_by_id.ise_response is defined
+        - nbar_app_by_id.ise_response | length == 1
+      register: nbar_app_manage
+
+    - name: Print Update Nbar
+      ansible.builtin.debug:
+        var: nbar_app_manage
+
+    - name: Delete Nbar App duplicate
+      cisco.ise.trustsec_nbar_app:
+        <<: *ise_login
+        state: absent
+        name: "{{ nbar_app_by_id.ise_response[0].name}}-2"
+        description: "{{ nbar_app_by_id.ise_response[0].description|int + 1 }}"
+        networkIdentities:
+          - ports: "{{ nbar_app_by_id.ise_response[0].networkIdentities[0].ports|int +1 }}"
+            protocol: "{{ nbar_app_by_id.ise_response[0].networkIdentities[0].protocol }}"
+          - ports: "{{ nbar_app_by_id.ise_response[0].networkIdentities[1].ports|int +1 }}"
+            protocol: "{{ nbar_app_by_id.ise_response[0].networkIdentities[1].protocol }}"
+      when:
+        - nbar_app_by_id is defined
+        - nbar_app_by_id.ise_response is defined
+        - nbar_app_by_id.ise_response | length == 1
+      register: nbar_app_manage
+
+    - name: "Print Delete Nbar"
+      ansible.builtin.debug:
+        var: nbar_app_manage

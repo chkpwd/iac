@@ -1,0 +1,173 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Departments
+      cisco.ise.network_device_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Departments#Departments
+        description: All Departments
+        othername: Departments
+      register: result
+
+    - name: Departments#Finance
+      cisco.ise.network_device_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Departments#Departments#Finance
+        description: Finance
+        othername: Departments
+      register: result
+
+    - name: Departments#HR
+      cisco.ise.network_device_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Departments#Departments#HR
+        description: HR
+        othername: Departments
+      register: result
+
+    - name: Departments#IT
+      cisco.ise.network_device_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Departments#Departments#IT
+        description: IT
+        othername: Departments
+      register: result
+
+    - name: Departments#Management
+      cisco.ise.network_device_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Departments#Departments#Management
+        description: Management
+        othername: Departments
+      register: result
+
+    - name: Departments#Marketing
+      cisco.ise.network_device_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Departments#Departments#Marketing
+        description: Marketing
+        othername: Departments
+      register: result
+
+    - name: Departments#Product
+      cisco.ise.network_device_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Departments#Departments#Product
+        description: Product
+        othername: Departments
+      register: result
+
+    - name: Departments#Services
+      cisco.ise.network_device_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Departments#Departments#Services
+        description: Services
+        othername: Departments
+      register: result
+
+    - name: Departments#Sales
+      cisco.ise.network_device_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Departments#Departments#Sales
+        description: Sales
+        othername: Departments
+      register: result
+
+    - name: Departments#Vendors
+      cisco.ise.network_device_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Departments#Departments#Vendors
+        description: Vendors
+        othername: Departments
+      register: result
+
+    - name: Location#All Locations#SJC
+      cisco.ise.network_device_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Location#All Locations#SJC
+        description: San Jose
+        othername: Location
+      register: result
+
+    - name: Location#All Locations#HNB
+      cisco.ise.network_device_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Location#All Locations#HNB
+        description: Huntington Beach
+        othername: Location
+      register: result
+
+  # - name: Get all network device groups
+  #   cisco.ise.network_device_group_info:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #   register: result
+
+  # - name: Get a network device group by id
+  #   cisco.ise.network_device_group_info:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #     id: bcb32700-b04d-11eb-95af-f263cf05f605
+  #   register: result
+
+  # - name: Get a network device group by name
+  #   cisco.ise.network_device_group_info:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #     name: Department#Department#TEST5
+  #   register: result

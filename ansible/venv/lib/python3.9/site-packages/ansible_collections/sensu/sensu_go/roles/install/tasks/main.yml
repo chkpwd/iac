@@ -1,0 +1,7 @@
+---
+- name: Prepare package repositories
+  include_tasks: repositories.yml
+  when: ansible_facts.os_family != "Windows"  # No repo concept on Windows
+
+- name: Install selected packages
+  include_tasks: packages.yml

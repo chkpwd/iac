@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -euo pipefail
+
+TOP_LEVEL_DIR="$(cd "$(dirname "$BASH_SOURCE")"; pwd)/.."
+
+pushd "$TOP_LEVEL_DIR" >/dev/null
+  docker run --rm -t \
+    -v "$TOP_LEVEL_DIR:/collection" \
+    python:3 /bin/bash -c "
+      pip install ansible
+      ansible-galaxy collection build --force --output /collection/. /collection
+    "
+popd >/dev/null

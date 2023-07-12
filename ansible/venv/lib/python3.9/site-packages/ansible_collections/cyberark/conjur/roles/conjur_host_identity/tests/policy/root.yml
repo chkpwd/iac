@@ -1,0 +1,32 @@
+---
+- !policy
+  id: ansible
+  annotations:
+    description: Policy for Ansible master and remote hosts
+  body:
+
+  - !host
+    id: ansible-master
+    annotations:
+      description: Host for running Ansible on remote targets
+
+  - !layer &remote_hosts_layer
+    id: remote_hosts
+    annotations:
+      description: Layer for Ansible remote hosts
+
+  - !host-factory
+    id: ansible-factory
+    annotations:
+      description: Factory to create new hosts for ansible
+    layer: [ *remote_hosts_layer ]
+
+  - !variable
+    id: target-password
+    annotations:
+      description: Password needed by the Ansible remote machine
+
+  - !permit
+    role: *remote_hosts_layer
+    privileges: [ execute ]
+    resources: [ !variable target-password ]

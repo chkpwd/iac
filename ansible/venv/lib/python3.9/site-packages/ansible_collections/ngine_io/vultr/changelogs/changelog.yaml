@@ -1,0 +1,59 @@
+ancestor: null
+releases:
+  0.3.0:
+    changes:
+      bugfixes:
+      - vultr - Fixed the issue retry max delay param was ignored.
+      minor_changes:
+      - vultr_server_info, vultr_server - Improved handling of discontinued plans
+        (https://github.com/ansible/ansible/issues/66707).
+    fragments:
+    - 66792-vultr-improve-plan.yml
+    - 67437-vultr-fix-retry-max-delay-param.yml
+    modules:
+    - description: Gather information about the Vultr Bare Metal plans available.
+      name: vultr_plan_baremetal_info
+      namespace: ''
+    - description: Manages baremetal servers on Vultr.
+      name: vultr_server_baremetal
+      namespace: ''
+    release_date: '2020-07-03'
+  1.0.0:
+    release_date: '2020-08-16'
+  1.1.0:
+    changes:
+      minor_changes:
+      - vultr_block_storage - Included ability to resize, attach and detach Block
+        Storage Volumes.
+    fragments:
+    - 14-attach-detach-and-resize-volumes.yml
+    release_date: '2021-02-02'
+  1.1.1:
+    changes:
+      bugfixes:
+      - vultr_server - Fix user data not handled correctly (https://github.com/ngine-io/ansible-collection-vultr/pull/26).
+    fragments:
+    - 26-fix-user-data.yml
+    release_date: '2022-03-27'
+  1.1.2:
+    changes:
+      minor_changes:
+      - Documentation fixes.
+      release_summary: 'This collection has turned into maintenance mode. We encourage
+        you to add new features to its successor at https://galaxy.ansible.com/vultr/cloud.
+
+        '
+    fragments:
+    - sanity.yml
+    - summary.yml
+    release_date: '2022-06-08'
+  1.1.3:
+    changes:
+      bugfixes:
+      - iventory - Fixed ``allowed_bandwidth_gb`` to be returned as float (https://github.com/ngine-io/ansible-collection-vultr/pull/35).
+      - vultr_server - Fixed ``allowed_bandwidth_gb`` to be returned as float (https://github.com/ngine-io/ansible-collection-vultr/pull/35).
+      - vultr_server_baremetal - Fixed ``allowed_bandwidth_gb`` to be returned as
+        float (https://github.com/ngine-io/ansible-collection-vultr/pull/35).
+    fragments:
+    - allowed_bandwidth_gb.yml
+    release_date: '2023-01-23'

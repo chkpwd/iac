@@ -1,0 +1,31 @@
+---
+- name: "Configure Proxy Policy"
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+  intersight_rest_api:
+    <<: *api_info
+    resource_path: /hyperflex/ProxySettingPolicies
+    query_params:
+      $filter: "Name eq '{{ hx_proxy_setting_policy }}'"
+    api_body: {
+      "Organization": {
+        "Moid": "{{ intersight_org.api_response.Moid }}"
+      },
+      "Name":"{{ hx_proxy_setting_policy }}",
+      "Hostname":"{{ hx_proxy_setting_hostname }}",
+      "Port":"{{ hx_proxy_setting_port }}",
+      "ClusterProfiles": [
+        {
+        "Moid": "{{ cluster_profile.api_response.Moid }}"
+        }
+      ]
+    }
+  register: proxy_setting
+
+- debug: msg="HyperFlex Proxy Policy named {{ hx_proxy_setting_policy }} has been created successfully."

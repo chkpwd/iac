@@ -1,0 +1,46 @@
+---
+- name: ISE Deployment Playbook
+  hosts: localhost
+  connection: local
+  vars:
+    ise_deployment_type: single
+    ise_personas: ["pan-1", "pan-2", "mnt-1", "mnt-2", "psn-1", "psn-2"]
+    ise_base_hostname: ISE
+    ise_username: admin
+    ise_password: P@sbg1234
+    ise_ntp_server: 10.10.0.1
+    ise_dns_server: 208.67.220.220
+    ise_domain: sstcloud.com
+    ise_timezone: America/Costa_Rica
+
+
+    az_rg_name: ISE-RG-ANSIBLE
+    az_location: southcentralus
+    az_network_name: ISE-NETWORK
+    az_subnet_name: ISE-SUBNET
+    az_network_cidr:
+      - "10.1.0.0/16"
+      - "172.100.0.0/16"
+    az_network_dns:
+      - "127.0.0.1"
+      - "127.0.0.2"
+    az_subnet_cidr: 10.1.0.0/24
+    az_securitygroup_name: ISE-SECURITY-GROUP
+    az_public_access_cidr:
+      - '174.109.158.0/24'
+      - '174.109.159.0/24'
+    az_interface_name: ISE-INTERFACE
+    az_vm_username: ise-user
+    az_vm_name: ISE-VM
+    az_vm_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDOXXnPveNXDONNioMmDmS58OiKPG3vpHAbDSnpu0ZrXVR6xMdF9DrAIxdTTcCQVPcRmT92paAzL6qdNLG2b9aEAXZ6/0l73LKI2jKbE9jjQULNRxWkr6fRWr58Wza7MlR+mN/DUepxIieir5W9R6c7F+2gIVOSLRMOiymqo2v/WK5jCIk20SSUuh6TexxZu6nlj4eBYSmY91tb5aIG6E72fSfJ+VU2DuanN1qv4duLPYjb1nCG4LlxQQWDTig60AYTJ3h0CkqJtNhjazqUJrTCwEy3NsNthM9UTHxnKxl0ADNZ/hZUAcFI55k2CaTovBIIMAKItMt39b6NN5bSTCIUNw1QL4Q8CLd6vE7asYOkRXTrqm6to6VH+dzKSmIMHnAIkrGGQyAupABXbqsBOz1u2yP6d1YP8mN4/mDPCdVHWGuaz8XGe5K+w+i0a2LU26MEfzyVyJI0I6a/636zL7LV+WxRN1pTqy5M/4jCUoU4MdsUw5TIYAyG/Cx0LShUTxThblxnr9ms5VGn/wexoR/y+nMyqhR0Wm0VN8zEl4AsR+Gjyc2g6jpQlRcZTaMT358qw8VUsjhS6l59oO3bYH3qWFA3R2paL6fdmdTsSmhysWuPAm5Cy+22OkF6tD46mnNNoMfWv/LQBcswsIbuB1cEdLDqN02Je1opipJizy/bXw== root@Bryans-MacBook-Air.local"
+  roles:
+    - cisco.ise.ise_deployment_in_azure
+
+# tasks:
+#   - name: test
+#     ansible.builtin.set_fact:
+#       test: "{{a}}"
+#       test1: "{{(a|int)+2}}"
+#   - name: Output public IP
+#     debug:
+#       msg: "{{test}} - {{test1}}"

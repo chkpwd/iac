@@ -1,0 +1,25 @@
+---
+- name: AWS ISE Deployment Playbook
+  hosts: localhost
+  connection: local
+  vars:
+    ise_username: admin
+    ise_password: P@sbg1234
+    ise_domain: sstcloud.com
+    ise_ntp_server: 10.10.0.1
+    ise_dns_server: 208.67.220.220
+    ise_timezone: America/Costa_Rica
+
+    aws_ise_ami: ami-0ffd69a117dbcbb9e
+    aws_vpc_name: ISE VPC
+    aws_vpc_cidr: 10.10.0.0/16
+    aws_subnet_cidr: 10.10.1.0/24
+    aws_region: us-west-2
+    aws_public_access_cidr: 0.0.0.0/0
+    aws_keypair_name: ise-testing-ansible
+    aws_instance_type: c5.4xlarge
+    aws_cound: 1
+
+  roles:
+    - cisco.ise.aws_deployment
+      

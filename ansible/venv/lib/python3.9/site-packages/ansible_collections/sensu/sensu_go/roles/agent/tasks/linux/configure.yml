@@ -1,0 +1,22 @@
+---
+- name: Load Linux locations
+  include_vars: linux.yml
+
+- name: Install agent communication PKI
+  copy:
+    src: "{{ agent_trusted_ca_file }}"
+    dest: "{{ trusted_ca_file_path }}"
+    # Keep this in sync with what the backend service is running as from packager
+    owner: &sensu_user sensu
+    group: &sensu_group sensu
+    mode: "0644"
+  when: agent_trusted_ca_file is defined
+
+- name: Configure sensu-agent ({{ agent_config_path }})
+  template:
+    src: agent.yml.j2
+    dest: "{{ agent_config_path }}"
+    owner: *sensu_user
+    group: *sensu_group
+    mode: '0600'
+  notify: Restart Linux agent

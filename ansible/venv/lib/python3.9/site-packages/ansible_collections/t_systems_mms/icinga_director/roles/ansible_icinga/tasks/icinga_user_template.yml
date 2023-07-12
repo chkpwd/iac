@@ -1,0 +1,28 @@
+---
+# user_template.1 = user_template array
+# user_template.0 = icinga_user_template attribute
+- name: icinga_user_template
+  icinga_user_template:
+    url: "{{ icinga_url }}"
+    use_proxy: "{{ icinga_use_proxy | default(omit) }}"
+    validate_certs: "{{ icinga_validate_certs | default(omit) }}"
+    url_username: "{{ icinga_user }}"
+    url_password: "{{ icinga_pass }}"
+    force_basic_auth: "{{ icinga_force_basic_auth | default(omit) }}"
+    client_cert: "{{ icinga_client_cert | default(omit) }}"
+    client_key: "{{ icinga_client_key | default(omit) }}"
+    state: "{{ user_template.0.state | default(omit) }}"
+    object_name: "{{ user_template.1 }}"
+    imports: "{{ user_template.0.imports | default(omit) }}"
+    period: "{{ user_template.0.period | default(omit) }}"
+    enable_notifications: "{{ user_template.0.enable_notifications | default(omit) }}"
+    zone: "{{ user_template.0.zone | default(omit) }}"
+  retries: 3
+  delay: 3
+  register: result
+  until: result is succeeded
+  loop: "{{ icinga_user_templates|subelements('user_template_object') }}"
+  loop_control:
+    loop_var: user_template
+  tags: user_template
+  notify: config_deploy

@@ -1,0 +1,22 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Get cert
+      cisco.ise.endpoint_certificate:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        certTemplateName: CA_SERVICE_Certificate_Template
+        format: PKCS8
+        password: pa5Swor_4d
+        certificateRequest:
+          san: 11-22-33-44-55-66
+          cn: 1.1.1.1
+        dirPath: /tmp/certs
+      register: cert
+
+    - name: Print
+      ansible.builtin.debug:
+        var: cert

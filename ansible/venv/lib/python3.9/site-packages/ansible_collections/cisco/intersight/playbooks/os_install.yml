@@ -1,0 +1,142 @@
+---
+#
+# The hosts group used is provided by the group variable or defaulted to 'Intersight_Servers'.
+# You can specify a specific host (or host group) on the command line:
+#   ansible-playbook ... -e group=<your host group>
+#   e.g., ansible-playbook server_profiles.yml -e group=TME_Demo
+#
+- hosts: "{{ group | default('Intersight_Servers') }}"
+  connection: local
+  collections:
+    - cisco.intersight
+  gather_facts: false
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      # if api_key vars are omitted, INTERSIGHT_API_KEY_ID, INTERSIGHT_API_PRIVATE_KEY,
+      # and INTERSIGHT_API_URI environment variables used for API key data
+      api_private_key: "{{ api_private_key | default(omit) }}"
+      api_key_id: "{{ api_key_id | default(omit) }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+    # OS and SCU Versions
+    os_version: ESXi 7.0 U3
+    os_config: ESXi7.0ConfigFile
+    scu_version: 6.2.2a
+    org_name: default
+    #
+    # Example using vault:
+    # 1. Place the vault password into a plain text file (this is the password for vault access - do not check this into any repos!)
+    #    $ cat vault_password_file
+    #    ...
+    # 2. Encrypt a string (e.g., 'notagoodpassword').  You will later decrypt using your vault password file
+    #    $ ansible-vault encrypt_string --vault-id tme@vault_password_file 'notagoodpassword' --name 'vault_password'
+    #    (response is the encrypting string)
+    # 3. Place the vault variable in your playbook (example below):
+    # 4. Run the playbook and supply the vault password file (used to decrypt the vaulted password in the playbook)
+    #    $ ansible-playbook -i inventory --vault-id tme@vault_password_file os_install.yml
+    #
+    vault_password: !vault |
+          $ANSIBLE_VAULT;1.2;AES256;tme
+          36656264656638646566313633353832396138616264313032303433656636643638363864653936
+          6532646363303435633965383432633630306566323838640a363566376234303366313064306162
+          39326331373231643333616335393232353633393834653161633032383539383537656336666639
+          3635306535366233660a356235393664653538386136626439646137626531663135363636326131
+          3538
+  tasks:
+    # Get the Organization Moid
+    - name: "Get {{ org_name }} Organization Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /organization/Organizations
+        query_params:
+          $filter: "Name eq '{{ org_name }}'"
+      register: org_resp
+      delegate_to: localhost
+    # Get the OS File Moid
+    - name: "Get {{ os_version }} OS File Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /softwarerepository/OperatingSystemFiles
+        query_params:
+          $filter: "Version eq '{{ os_version }}' and PermissionResources.Moid eq '{{ org_resp.api_response.Moid }}'"
+      register: os_resp
+      delegate_to: localhost
+    # Get the SCU File Moid
+    - name: "Get {{ scu_version }} SCU File Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /firmware/ServerConfigurationUtilityDistributables
+        query_params:
+          $filter: "Version eq '{{ scu_version }}' and PermissionResources.Moid eq '{{ org_resp.api_response.Moid }}'"
+      register: scu_resp
+      delegate_to: localhost
+    # Get the OS Config File Moid
+    - name: "Get {{ os_config }} OS Config File Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /os/ConfigurationFiles
+        query_params:
+          $filter: "Name eq '{{ os_config }}'"
+      register: os_config_resp
+      delegate_to: localhost
+    # Install OS
+    - name: Install OS
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /bulk/Requests
+        update_method: post
+        api_body: {
+          "Verb": "POST",
+          "Uri": "/v1/os/Installs",
+          "Requests": [
+            {
+              "ObjectType": "bulk.RestSubRequest",
+              "Body": {
+                "InstallMethod": "vMedia",
+                "Image": {
+                  "Moid": "{{ os_resp.api_response.Moid }}",
+                  "ObjectType": "softwarerepository.OperatingSystemFile"
+                },
+                "OsduImage": {
+                  "ObjectType": "firmware.ServerConfigurationUtilityDistributable",
+                  "Moid": "{{ scu_resp.api_response.Moid }}"
+                },
+                "OverrideSecureBoot": true,
+                "Organization": {
+                  "Moid": "{{ org_resp.api_response.Moid }}"
+                },
+                "Answers": {
+                  "Hostname": "sjc07-r14-1-1-6",
+                  "IpConfigType": "DHCP",
+                  "RootPassword": "{{ vault_password }}",
+                  "IsRootPasswordCrypted": false,
+                  "Source": "Template",
+                  "IpConfiguration": {
+                    "ObjectType": "os.Ipv4Configuration"
+                  }
+                },
+                "ConfigurationFile": {
+                  "Moid": "{{ os_config_resp.api_response.Moid }}",
+                  "ObjectType": "os.ConfigurationFile"
+                },
+                "AdditionalParameters": null,
+                "InstallTarget": {
+                  "ObjectType": "os.PhysicalDisk",
+                  "Name": "Disk 1",
+                  "StorageControllerSlotId": "1",
+                  "SerialNumber": "99B0A05NFJXF"
+                },
+                "Server": {
+                  "ObjectType": "compute.{{ object_type }}",
+                  "Moid": "{{ server_moid }}"
+                }
+              }
+            }
+          ],
+          "Organization": {
+            "Moid": "{{ org_resp.api_response.Moid }}"
+          }
+        }
+      delegate_to: localhost
+      register: install_resp

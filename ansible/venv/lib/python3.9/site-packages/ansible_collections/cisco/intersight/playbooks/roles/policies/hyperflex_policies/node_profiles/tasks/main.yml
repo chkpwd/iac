@@ -1,0 +1,49 @@
+---
+# Get server Moids
+- name: Get server Moid
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+  cisco.intersight.intersight_info:
+    <<: *api_info
+    server_names:
+      - "{{ item }}"
+  loop: "{{ hx_servers }}"
+  register: inventory
+# Get Cluster Profile Attributes
+- name: "Get HyperFlex Cluster Profile"
+  intersight_rest_api:
+    <<: *api_info
+    resource_path: /hyperflex/ClusterProfiles
+    query_params:
+      $filter: "Name eq '{{ hx_cluster_name }}'"
+  register: profile
+# Assign servers and profile to node profile
+- name: "Configure Node Profile"
+  intersight_rest_api:
+    <<: *api_info
+    resource_path: /hyperflex/NodeProfiles
+    query_params:
+      $filter: "Name eq '{{ hx_node_profile_prefix }}-{{ '%02d' % (idx + 1) }}'"
+    api_body: {
+      "Name":"{{ hx_node_profile_prefix }}-{{ '%02d' % (idx + 1) }}",
+      "AssignedServer": {
+        "Moid": "{{ item.intersight_servers[0].Moid }}",
+        "ObjectType": "compute.RackUnit"
+      },
+      "ClusterProfile": {
+        "Moid": "{{ profile.api_response.Moid }}"
+      }
+    }
+  when: item.intersight_servers is not none
+  loop: "{{ inventory.results }}"
+  loop_control:
+    index_var: idx
+    label: "{{ item.intersight_servers[0].Name }}"
+
+- debug: msg="HyperFlex Node Profiles have been created successfully."

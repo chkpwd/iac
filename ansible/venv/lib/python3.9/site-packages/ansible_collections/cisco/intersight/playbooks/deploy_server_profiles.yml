@@ -1,0 +1,38 @@
+---
+#
+# Deploy Server Profiles
+#
+# The hosts group used is provided by the group variable or defaulted to 'Intersight_Servers'.
+# You can specify a specific host (or host group) on the command line:
+#   ansible-playbook ... -e group=<your host group>
+#   e.g., ansible-playbook server_profiles.yml -e group=TME_Demo
+#
+- hosts: "{{ group | default('Intersight_Servers') }}"
+  connection: local
+  gather_facts: false
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      # if api_key vars are omitted, INTERSIGHT_API_KEY_ID, INTERSIGHT_API_PRIVATE_KEY,
+      # and INTERSIGHT_API_URI environment variables used for API key data
+      api_private_key: "{{ api_private_key | default(omit) }}"
+      api_key_id: "{{ api_key_id | default(omit) }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+    # Server Profile name default
+    profile_name: "SP-{{ inventory_hostname }}"
+  tasks:
+    # Deploy (or perform other action)
+    # action can be given on the command line if needed, e.g., ansible-playbook ... -e action=Unassign
+    # to delete a profile (profile must 1st be unassigned): ansible-playbook ... -e state=absent -e action=No-op
+    - name: Deploy (or user defined action) Server Profile
+      cisco.intersight.intersight_rest_api:
+        <<: *api_info
+        resource_path: /server/Profiles
+        query_params:
+          $filter: "Name eq '{{ profile_name }}'"
+        api_body: {
+          "Action": "{{ profile_action | default('Deploy') }}"
+        }
+      delegate_to: localhost

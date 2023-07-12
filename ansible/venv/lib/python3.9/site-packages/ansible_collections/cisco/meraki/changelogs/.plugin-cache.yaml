@@ -1,0 +1,234 @@
+objects:
+  role: {}
+plugins:
+  become: {}
+  cache: {}
+  callback: {}
+  cliconf: {}
+  connection: {}
+  filter: {}
+  httpapi: {}
+  inventory: {}
+  lookup: {}
+  module:
+    meraki_action_batch:
+      description: Manage Action Batch jobs within the Meraki Dashboard.
+      name: meraki_action_batch
+      namespace: ''
+      version_added: null
+    meraki_admin:
+      description: Manage administrators in the Meraki cloud
+      name: meraki_admin
+      namespace: ''
+      version_added: 1.0.0
+    meraki_alert:
+      description: Manage alerts in the Meraki cloud
+      name: meraki_alert
+      namespace: ''
+      version_added: 2.1.0
+    meraki_config_template:
+      description: Manage configuration templates in the Meraki cloud
+      name: meraki_config_template
+      namespace: ''
+      version_added: 1.0.0
+    meraki_device:
+      description: Manage devices in the Meraki cloud
+      name: meraki_device
+      namespace: ''
+      version_added: null
+    meraki_firewalled_services:
+      description: Edit firewall policies for administrative network services
+      name: meraki_firewalled_services
+      namespace: ''
+      version_added: null
+    meraki_management_interface:
+      description: Configure Meraki management interfaces
+      name: meraki_management_interface
+      namespace: ''
+      version_added: 1.1.0
+    meraki_mr_l3_firewall:
+      description: Manage MR access point layer 3 firewalls in the Meraki cloud
+      name: meraki_mr_l3_firewall
+      namespace: ''
+      version_added: null
+    meraki_mr_l7_firewall:
+      description: Manage MR access point layer 7 firewalls in the Meraki cloud
+      name: meraki_mr_l7_firewall
+      namespace: ''
+      version_added: null
+    meraki_mr_radio:
+      description: Manage device radio settings for Meraki wireless networks
+      name: meraki_mr_radio
+      namespace: ''
+      version_added: null
+    meraki_mr_rf_profile:
+      description: Manage RF profiles for Meraki wireless networks
+      name: meraki_mr_rf_profile
+      namespace: ''
+      version_added: null
+    meraki_mr_settings:
+      description: Manage general settings for Meraki wireless networks
+      name: meraki_mr_settings
+      namespace: ''
+      version_added: null
+    meraki_mr_ssid:
+      description: Manage wireless SSIDs in the Meraki cloud
+      name: meraki_mr_ssid
+      namespace: ''
+      version_added: null
+    meraki_ms_access_list:
+      description: Manage access lists for Meraki switches in the Meraki cloud
+      name: meraki_ms_access_list
+      namespace: ''
+      version_added: 0.1.0
+    meraki_ms_access_policies:
+      description: Manage Switch Access Policies in the Meraki cloud
+      name: meraki_ms_access_policies
+      namespace: ''
+      version_added: null
+    meraki_ms_l3_interface:
+      description: Manage routed interfaces on MS switches
+      name: meraki_ms_l3_interface
+      namespace: ''
+      version_added: null
+    meraki_ms_link_aggregation:
+      description: Manage link aggregations on MS switches
+      name: meraki_ms_link_aggregation
+      namespace: ''
+      version_added: 1.2.0
+    meraki_ms_ospf:
+      description: Manage OSPF configuration on MS switches
+      name: meraki_ms_ospf
+      namespace: ''
+      version_added: null
+    meraki_ms_stack:
+      description: Modify switch stacking configuration in Meraki.
+      name: meraki_ms_stack
+      namespace: ''
+      version_added: 1.3.0
+    meraki_ms_stack_l3_interface:
+      description: Manage routed interfaces on MS switches
+      name: meraki_ms_stack_l3_interface
+      namespace: ''
+      version_added: null
+    meraki_ms_storm_control:
+      description: Manage storm control configuration on a switch in the Meraki cloud
+      name: meraki_ms_storm_control
+      namespace: ''
+      version_added: 0.0.1
+    meraki_ms_switchport:
+      description: Manage switchports on a switch in the Meraki cloud
+      name: meraki_ms_switchport
+      namespace: ''
+      version_added: null
+    meraki_mx_content_filtering:
+      description: Edit Meraki MX content filtering policies
+      name: meraki_mx_content_filtering
+      namespace: ''
+      version_added: null
+    meraki_mx_intrusion_prevention:
+      description: Manage intrustion prevention in the Meraki cloud
+      name: meraki_mx_intrusion_prevention
+      namespace: ''
+      version_added: null
+    meraki_mx_l2_interface:
+      description: Configure MX layer 2 interfaces
+      name: meraki_mx_l2_interface
+      namespace: ''
+      version_added: 2.1.0
+    meraki_mx_l3_firewall:
+      description: Manage MX appliance layer 3 firewalls in the Meraki cloud
+      name: meraki_mx_l3_firewall
+      namespace: ''
+      version_added: null
+    meraki_mx_l7_firewall:
+      description: Manage MX appliance layer 7 firewalls in the Meraki cloud
+      name: meraki_mx_l7_firewall
+      namespace: ''
+      version_added: null
+    meraki_mx_malware:
+      description: Manage Malware Protection in the Meraki cloud
+      name: meraki_mx_malware
+      namespace: ''
+      version_added: null
+    meraki_mx_nat:
+      description: Manage NAT rules in Meraki cloud
+      name: meraki_mx_nat
+      namespace: ''
+      version_added: null
+    meraki_mx_network_vlan_settings:
+      description: Manage VLAN settings for Meraki Networks
+      name: meraki_mx_network_vlan_settings
+      namespace: ''
+      version_added: null
+    meraki_mx_site_to_site_firewall:
+      description: Manage MX appliance firewall rules for site-to-site VPNs
+      name: meraki_mx_site_to_site_firewall
+      namespace: ''
+      version_added: 1.0.0
+    meraki_mx_site_to_site_vpn:
+      description: Manage AutoVPN connections in Meraki
+      name: meraki_mx_site_to_site_vpn
+      namespace: ''
+      version_added: 1.1.0
+    meraki_mx_static_route:
+      description: Manage static routes in the Meraki cloud
+      name: meraki_mx_static_route
+      namespace: ''
+      version_added: null
+    meraki_mx_third_party_vpn_peers:
+      description: Manage third party (IPSec) VPN peers for MX devices
+      name: meraki_mx_third_party_vpn_peers
+      namespace: ''
+      version_added: null
+    meraki_mx_uplink_bandwidth:
+      description: Manage uplinks on Meraki MX appliances
+      name: meraki_mx_uplink_bandwidth
+      namespace: ''
+      version_added: 1.1.0
+    meraki_mx_vlan:
+      description: Manage VLANs in the Meraki cloud
+      name: meraki_mx_vlan
+      namespace: ''
+      version_added: null
+    meraki_network:
+      description: Manage networks in the Meraki cloud
+      name: meraki_network
+      namespace: ''
+      version_added: null
+    meraki_network_settings:
+      description: Manage the settings of networks in the Meraki cloud
+      name: meraki_network_settings
+      namespace: ''
+      version_added: null
+    meraki_organization:
+      description: Manage organizations in the Meraki cloud
+      name: meraki_organization
+      namespace: ''
+      version_added: null
+    meraki_snmp:
+      description: Manage organizations in the Meraki cloud
+      name: meraki_snmp
+      namespace: ''
+      version_added: null
+    meraki_syslog:
+      description: Manage syslog server settings in the Meraki cloud.
+      name: meraki_syslog
+      namespace: ''
+      version_added: null
+    meraki_webhook:
+      description: Manage webhooks configured in the Meraki cloud
+      name: meraki_webhook
+      namespace: ''
+      version_added: null
+    meraki_webhook_payload_template:
+      description: Manage webhook payload templates for a network in the Meraki cloud
+      name: meraki_webhook_payload_template
+      namespace: ''
+      version_added: null
+  netconf: {}
+  shell: {}
+  strategy: {}
+  test: {}
+  vars: {}
+version: 2.15.1

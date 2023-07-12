@@ -1,0 +1,596 @@
+---
+requires_ansible: '>=2.9.10'
+plugin_routing:
+  modules:
+    azure_rm_aks_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_aks_info instead.
+    azure_rm_dnsrecordset_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_dnsrecordset_info instead.
+    azure_rm_dnszone_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_dnszone_info instead.
+    azure_rm_networkinterface_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_networkinterface_info instead.
+    azure_rm_publicipaddress_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_publicipaddress_info instead.
+    azure_rm_securitygroup_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_securitygroup_info instead.
+    azure_rm_storageaccount_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_storageaccount_info instead.
+    azure_rm_virtualmachine_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachine_info instead.
+    azure_rm_virtualnetwork_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualnetwork_info instead.
+    azure_rm_roledefinition_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_roledefinition_info instead.
+    azure_rm_autoscale_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_autoscale_info instead.
+    azure_rm_mysqldatabase_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mysqldatabase_info instead.
+    azure_rm_devtestlabschedule_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabschedule_info instead.
+    azure_rm_virtualmachinescaleset_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachinescaleset_info instead.
+    azure_rm_devtestlabcustomimage_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabcustomimage_info instead.
+    azure_rm_cosmosdbaccount_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_cosmosdbaccount_info instead.
+    azure_rm_subnet_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_subnet_info instead.
+    azure_rm_aksversion_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_aksversion_info instead.
+    azure_rm_hdinsightcluster_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_hdinsightcluster_info instead.
+    azure_rm_virtualmachinescalesetextension_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachinescalesetextension_info instead.
+    azure_rm_loadbalancer_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_loadbalancer_info instead.
+    azure_rm_roleassignment_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_roleassignment_info instead.
+    azure_rm_manageddisk_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_manageddisk_info instead.
+    azure_rm_mysqlserver_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mysqlserver_info instead.
+    azure_rm_servicebus_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_servicebus_info instead.
+    azure_rm_rediscache_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_rediscache_info instead.
+    azure_rm_resource_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_resource_info instead.
+    azure_rm_routetable_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_routetable_info instead.
+    azure_rm_virtualmachine_extension:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachineextension instead.
+    azure_rm_loganalyticsworkspace_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_loganalyticsworkspace_info instead.
+    azure_rm_sqldatabase_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_sqldatabase_info instead.
+    azure_rm_devtestlabartifactsource_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabartifactsource_info instead.
+    azure_rm_deployment_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_deployment_info instead.
+    azure_rm_virtualmachineextension_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachineextension_info instead.
+    azure_rm_applicationsecuritygroup_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_applicationsecuritygroup_info instead.
+    azure_rm_availabilityset_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_availabilityset_info instead.
+    azure_rm_mariadbdatabase_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mariadbdatabase_info instead.
+    azure_rm_devtestlabenvironment_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabenvironment_info instead.
+    azure_rm_appserviceplan_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_appserviceplan_info instead.
+    azure_rm_containerinstance_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_containerinstance_info instead.
+    azure_rm_devtestlabarmtemplate_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabarmtemplate_info instead.
+    azure_rm_devtestlabartifact_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabartifact_info instead.
+    azure_rm_virtualmachinescalesetinstance_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachinescalesetinstance_info instead.
+    azure_rm_cdnendpoint_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_cdnendpoint_info instead.
+    azure_rm_trafficmanagerprofile_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_trafficmanagerprofile_info instead.
+    azure_rm_functionapp_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_functionapp_info instead.
+    azure_rm_virtualmachineimage_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachineimage_info instead.
+    azure_rm_mariadbconfiguration_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mariadbconfiguration_info instead.
+    azure_rm_virtualnetworkpeering_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualnetworkpeering_info instead.
+    azure_rm_sqlserver_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_sqlserver_info instead.
+    azure_rm_mariadbfirewallrule_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mariadbfirewallrule_info instead.
+    azure_rm_mysqlconfiguration_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mysqlconfiguration_info instead.
+    azure_rm_mysqlfirewallrule_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mysqlfirewallrule_info instead.
+    azure_rm_postgresqlfirewallrule_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_postgresqlfirewallrule_info instead.
+    azure_rm_mariadbserver_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mariadbserver_info instead.
+    azure_rm_postgresqldatabase_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_postgresqldatabase_info instead.
+    azure_rm_devtestlabvirtualnetwork_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabvirtualnetwork_info instead.
+    azure_rm_devtestlabpolicy_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabpolicy_info instead.
+    azure_rm_trafficmanagerendpoint_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_trafficmanagerendpoint_info instead.
+    azure_rm_sqlfirewallrule_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_sqlfirewallrule_info instead.
+    azure_rm_containerregistry_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_containerregistry_info instead.
+    azure_rm_postgresqlconfiguration_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_postgresqlconfiguration_info instead.
+    azure_rm_postgresqlserver_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_postgresqlserver_info instead.
+    azure_rm_devtestlab_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlab_info instead.
+    azure_rm_cdnprofile_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_cdnprofile_info instead.
+    azure_rm_virtualmachine_scaleset:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachinescaleset instead.
+    azure_rm_webapp_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_webapp_info instead.
+    azure_rm_devtestlabvirtualmachine_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabvirtualmachine_info instead.
+    azure_rm_image_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_image_info instead.
+    azure_rm_managed_disk:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_manageddisk instead.
+    azure_rm_automationaccount_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_automationaccount_info instead.
+    azure_rm_lock_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_lock_info instead.
+    azure_rm_managed_disk_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_manageddisk_info instead.
+    azure_rm_resourcegroup_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_resourcegroup_info instead.
+    azure_rm_virtualmachine_scaleset_facts:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachinescaleset_info instead.
+    azure_rm_virtualmachineextension:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachineextension instead.
+    azure_rm_virtualmachinescaleset:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachinescaleset instead.
+    azure_rm_mariadbserver_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mariadbserver_info instead.
+    azure_rm_devtestlabartifactsource_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabartifactsource_info instead.
+    azure_rm_autoscale_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_autoscale_info instead.
+    azure_rm_postgresqlconfiguration_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_postgresqlconfiguration_info instead.
+    azure_rm_securitygroup_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_securitygroup_info instead.
+    azure_rm_functionapp_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_functionapp_info instead.
+    azure_rm_resourcegroup_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_resourcegroup_info instead.
+    azure_rm_manageddisk_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_manageddisk_info instead.
+    azure_rm_manageddisk:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_manageddisk instead.
+    azure_rm_devtestlabschedule_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabschedule_info instead.
+    azure_rm_containerinstance_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_containerinstance_info instead.
+    azure_rm_networkinterface_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_networkinterface_info instead.
+    azure_rm_devtestlabvirtualnetwork_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabvirtualnetwork_info instead.
+    azure_rm_devtestlabcustomimage_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabcustomimage_info instead.
+    azure_rm_resource_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_resource_info instead.
+    azure_rm_mariadbfirewallrule_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mariadbfirewallrule_info instead.
+    azure_rm_roleassignment_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_roleassignment_info instead.
+    azure_rm_trafficmanagerendpoint_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_trafficmanagerendpoint_info instead.
+    azure_rm_mysqlconfiguration_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mysqlconfiguration_info instead.
+    azure_rm_mysqlserver_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mysqlserver_info instead.
+    azure_rm_postgresqldatabase_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_postgresqldatabase_info instead.
+    azure_rm_subnet_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_subnet_info instead.
+    azure_rm_virtualnetworkpeering_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualnetworkpeering_info instead.
+    azure_rm_containerregistry_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_containerregistry_info instead.
+    azure_rm_routetable_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_routetable_info instead.
+    azure_rm_devtestlabvirtualmachine_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabvirtualmachine_info instead.
+    azure_rm_virtualmachineimage_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachineimage_info instead.
+    azure_rm_aksversion_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_aksversion_info instead.
+    azure_rm_mysqldatabase_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mysqldatabase_info instead.
+    azure_rm_availabilityset_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_availabilityset_info instead.
+    azure_rm_automationaccount_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_automationaccount_info instead.
+    azure_rm_virtualmachine_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachine_info instead.
+    azure_rm_virtualnetwork_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualnetwork_info instead.
+    azure_rm_virtualmachinescalesetinstance_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachinescalesetinstance_info instead.
+    azure_rm_rediscache_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_rediscache_info instead.
+    azure_rm_deployment_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_deployment_info instead.
+    azure_rm_devtestlabenvironment_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabenvironment_info instead.
+    azure_rm_dnszone_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_dnszone_info instead.
+    azure_rm_applicationsecuritygroup_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_applicationsecuritygroup_info instead.
+    azure_rm_postgresqlfirewallrule_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_postgresqlfirewallrule_info instead.
+    azure_rm_webapp_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_webapp_info instead.
+    azure_rm_devtestlabartifact_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabartifact_info instead.
+    azure_rm_cdnprofile_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_cdnprofile_info instead.
+    azure_rm_lock_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_lock_info instead.
+    azure_rm_cdnendpoint_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_cdnendpoint_info instead.
+    azure_rm_loadbalancer_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_loadbalancer_info instead.
+    azure_rm_publicipaddress_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_publicipaddress_info instead.
+    azure_rm_image_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_image_info instead.
+    azure_rm_postgresqlserver_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_postgresqlserver_info instead.
+    azure_rm_appserviceplan_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_appserviceplan_info instead.
+    azure_rm_devtestlab_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlab_info instead.
+    azure_rm_devtestlabpolicy_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabpolicy_info instead.
+    azure_rm_dnsrecordset_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_dnsrecordset_info instead.
+    azure_rm_roledefinition_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_roledefinition_info instead.
+    azure_rm_virtualmachinescaleset_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachinescaleset_info instead.
+    azure_rm_mysqlfirewallrule_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mysqlfirewallrule_info instead.
+    azure_rm_cosmosdbaccount_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_cosmosdbaccount_info instead.
+    azure_rm_sqlfirewallrule_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_sqlfirewallrule_info instead.
+    azure_rm_sqldatabase_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_sqldatabase_info instead.
+    azure_rm_sqlserver_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_sqlserver_info instead.
+    azure_rm_servicebus_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_servicebus_info instead.
+    azure_rm_virtualmachineextension_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachineextension_info instead.
+    azure_rm_trafficmanagerprofile_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_trafficmanagerprofile_info instead.
+    azure_rm_virtualmachinescalesetextension_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_virtualmachinescalesetextension_info instead.
+    azure_rm_mariadbconfiguration_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mariadbconfiguration_info instead.
+    azure_rm_storageaccount_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_storageaccount_info instead.
+    azure_rm_mariadbdatabase_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_mariadbdatabase_info instead.
+    azure_rm_aks_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_aks_info instead.
+    azure_rm_loganalyticsworkspace_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_loganalyticsworkspace_info instead.
+    azure_rm_devtestlabarmtemplate_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_devtestlabarmtemplate_info instead.
+    azure_rm_hdinsightcluster_info:
+      tombstone:
+        removal_version: 2.0.0
+        warning_text: Use azure.azcollection.azure_rm_hdinsightcluster_info instead.

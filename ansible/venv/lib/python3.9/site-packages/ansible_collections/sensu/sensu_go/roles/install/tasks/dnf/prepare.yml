@@ -1,0 +1,31 @@
+---
+- name: Include distro-specific vars ({{ ansible_distribution }})
+  include_vars: file='{{ ansible_distribution }}.yml'
+
+- name: Add yum repository
+  yum_repository:
+    name: sensu_{{ channel }}
+    description: sensu_{{ channel }}
+    file: sensu
+    baseurl: https://{{ packagecloud_auth }}packagecloud.io/sensu/{{ channel }}/{{ os }}/{{ dist }}/$basearch
+    gpgkey: https://{{ packagecloud_auth }}packagecloud.io/sensu/{{ channel }}/gpgkey
+    gpgcheck: false
+    repo_gpgcheck: true
+    enabled: true
+    sslverify: true
+    sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+    metadata_expire: '300'
+
+- name: Add yum source repository
+  yum_repository:
+    name: sensu_{{ channel }}-source
+    description: sensu_{{ channel }}-source
+    file: sensu
+    baseurl: https://{{ packagecloud_auth }}packagecloud.io/sensu/{{ channel }}/{{ os }}/{{ dist }}/SRPMS
+    gpgkey: https://{{ packagecloud_auth }}packagecloud.io/sensu/{{ channel }}/gpgkey
+    gpgcheck: false
+    repo_gpgcheck: true
+    enabled: true
+    sslverify: true
+    sslcacert: /etc/pki/tls/certs/ca-bundle.crt
+    metadata_expire: '300'

@@ -1,0 +1,41 @@
+- hosts: dnac_servers
+  vars_files:
+    - credentials_245.yml 
+    - image_details.yml #Contains image and device details  
+  gather_facts: false
+  connection: local
+  tasks:
+#
+# Project Info  Section
+#
+
+    - name: Import an image, tag it as golden and load it on device      
+      cisco.dnac.swim_intent:
+        dnac_host: "{{ dnac_host }}"
+        dnac_port: "{{ dnac_port }}"
+        dnac_username: "{{ dnac_username }}"
+        dnac_password: "{{ dnac_password }}"
+        dnac_verify: "{{ dnac_verify }}"
+        dnac_debug: "{{ dnac_debug }}"
+        dnac_log: true
+        config:
+        - importImageDetails:
+            type: "{{ item.import_type }}"       
+            urlDetails:
+              payload:
+              - sourceURL: "{{ item.url_source }}" 
+                isThirdParty: false
+          taggingDetails:       
+            deviceRole: "{{ item.device_role }}"
+            deviceFamilyName: "{{ item.device_family_name }}"
+            tagging: true
+          imageDistributionDetails:
+            deviceSerialNumber: "{{ item.device_serial_number }}"
+          imageActivationDetails:
+            scehduleValidate: false
+            activateLowerImageVersion: true
+            deviceSerialNumber: "{{ item.device_serial_number }}"
+            distributeIfNeeded: true
+      with_items: '{{ image_details }}'
+      tags:
+        - swim 

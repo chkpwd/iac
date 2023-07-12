@@ -1,7 +1,7 @@
 ---
 common_user: hyoga
 code_server_bin_dir: /usr/lib/code-server/lib/vscode/bin/remote-cli/code-server
-code_config_file: "/home/{{ ansible_user }}/.config/code-server/config.yaml"
+code_config_file: "/home/{{ common_user }}/.config/code-server/config.yaml"
 ansible_dest: /home/hyoga/code/boilerplates/ansible
 template_path: "{{ ansible_dest }}/roles/code-server/templates"
 zsh_custom: "/home/{{ common_user }}/.oh-my-zsh/custom"

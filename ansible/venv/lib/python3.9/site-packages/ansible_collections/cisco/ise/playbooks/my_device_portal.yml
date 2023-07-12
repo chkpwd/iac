@@ -1,0 +1,19 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Create
+      cisco.ise.my_device_portal:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Devices Portal
+        description: Test portal used by developers to register and manage their personal devices
+        portalType: MYDEVICE
+      register: my_device_portal
+
+    - name: Print
+      ansible.builtin.debug:
+        var: my_device_portal

@@ -1,0 +1,9 @@
+---
+# Why did we kill the package-latest check? Because we really do want to be
+# able to upgrade the packages to the latest stable version.
+- name: Install component
+  dnf:
+    name: "{{ 'yum' | sensu.sensu_go.package_name(item, version, build) }}"
+    state: latest  # noqa package-latest
+    allow_downgrade: true
+  loop: "{{ components }}"

@@ -1,0 +1,64 @@
+---
+- name: Setup Fusion resources
+  hosts: localhost
+  tasks:
+
+    - name: Create new region
+      purestorage.fusion.fusion_region:
+        issuer_id: "{{ ansible_env.FUSION_ISSUER_ID }}"
+        private_key_file: "{{ ansible_env.FUSION_PRIVATE_KEY_FILE }}"
+        state: present  # or absent
+        name: region1
+        display_name: "region1"
+
+    - name: Create new Availability Zone
+      purestorage.fusion.fusion_az:
+        issuer_id: "{{ ansible_env.FUSION_ISSUER_ID }}"
+        private_key_file: "{{ ansible_env.FUSION_PRIVATE_KEY_FILE }}"
+        state: present  # or absent
+        name: az1
+        region: region1
+        display_name: "az1"
+
+    - name: Create new network interface group
+      purestorage.fusion.fusion_nig:
+        issuer_id: "{{ ansible_env.FUSION_ISSUER_ID }}"
+        private_key_file: "{{ ansible_env.FUSION_PRIVATE_KEY_FILE }}"
+        state: present  # or absent
+        name: "interface_group1"
+        availability_zone: "az1"
+        region: region1
+        mtu: 1500
+        gateway: 172.17.1.1
+        prefix: 172.17.1.0/24
+
+    - name: Create new Storage Endpoint
+      purestorage.fusion.fusion_se:
+        issuer_id: "{{ ansible_env.FUSION_ISSUER_ID }}"
+        private_key_file: "{{ ansible_env.FUSION_PRIVATE_KEY_FILE }}"
+        state: present  # or absent
+        region: region1
+        name: default
+        display_name: default
+        availability_zone: az1
+        endpoint_type: iscsi
+        iscsi:
+          - address: "172.17.1.2/24"
+            gateway: "172.17.1.1"
+            network_interface_groups: ["interface_group1"]
+          - address: "172.17.1.1/24"
+            gateway: "172.17.1.1"
+            network_interface_groups: ["interface_group1"]
+
+    - name: Register new array
+      purestorage.fusion.fusion_array:
+        issuer_id: "{{ ansible_env.FUSION_ISSUER_ID }}"
+        private_key_file: "{{ ansible_env.FUSION_PRIVATE_KEY_FILE }}"
+        state: present  # or absent
+        name: flasharray1
+        display_name: "flasharray1"
+        az: az1
+        hardware_type: flash-array-x
+        appliance_id: 1187351-242133817-5976825671211737520
+        region: region1
+        host_name: flasharray1

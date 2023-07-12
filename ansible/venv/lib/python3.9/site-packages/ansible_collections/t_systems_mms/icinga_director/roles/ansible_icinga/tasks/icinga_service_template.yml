@@ -1,0 +1,45 @@
+---
+# service_template.1 = service_template array
+# service_template.0 = icinga_service_template attribute
+- name: icinga_service_template
+  icinga_service_template:
+    url: "{{ icinga_url }}"
+    use_proxy: "{{ icinga_use_proxy | default(omit) }}"
+    validate_certs: "{{ icinga_validate_certs | default(omit) }}"
+    url_username: "{{ icinga_user }}"
+    url_password: "{{ icinga_pass }}"
+    force_basic_auth: "{{ icinga_force_basic_auth | default(omit) }}"
+    client_cert: "{{ icinga_client_cert | default(omit) }}"
+    client_key: "{{ icinga_client_key | default(omit) }}"
+    state: "{{ service_template.0.state | default(omit) }}"
+    object_name: "{{ service_template.1 }}"
+    display_name: "{{ service_template.0.display_name | default(omit) }}"
+    disabled: "{{ service_template.0.disabled | default(omit) }}"
+    check_command: "{{ service_template.0.check_command | default(omit) }}"
+    check_interval: "{{ service_template.0.check_interval | default(omit) }}"
+    check_period: "{{ service_template.0.check_period | default(omit) }}"
+    check_timeout: "{{ service_template.0.check_timeout | default(omit) }}"
+    enable_active_checks: "{{ service_template.0.enable_active_checks | default(omit) }}"
+    enable_event_handler: "{{ service_template.0.enable_event_handler | default(omit) }}"
+    enable_notifications: "{{ service_template.0.enable_notifications | default(omit) }}"
+    enable_passive_checks: "{{ service_template.0.enable_passive_checks | default(omit) }}"
+    enable_perfdata: "{{ service_template.0.enable_perfdata | default(omit) }}"
+    groups: "{{ service_template.0.groups | default(omit) }}"
+    imports: "{{ service_template.0.imports | default(omit) }}"
+    max_check_attempts: "{{ service_template.0.max_check_attempts | default(omit) }}"
+    notes: "{{ service_template.0.notes | default(omit) }}"
+    notes_url: "{{ service_template.0.notes_url | default(omit) }}"
+    retry_interval: "{{ service_template.0.retry_interval | default(omit) }}"
+    use_agent: "{{ service_template.0.use_agent | default(omit) }}"
+    vars: "{{ service_template.0.vars | default(omit) }}"
+    volatile: "{{ service_template.0.volatile | default(omit) }}"
+    event_command: "{{ service_template.0.event_command | default(omit) }}"
+  retries: 3
+  delay: 3
+  register: result
+  until: result is succeeded
+  loop: "{{ icinga_service_templates|subelements('service_template_object') }}"
+  loop_control:
+    loop_var: service_template
+  tags: service_template
+  notify: config_deploy

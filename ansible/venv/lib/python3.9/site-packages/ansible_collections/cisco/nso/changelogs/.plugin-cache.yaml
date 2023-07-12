@@ -1,0 +1,40 @@
+plugins:
+  become: {}
+  cache: {}
+  callback: {}
+  cliconf: {}
+  connection: {}
+  httpapi: {}
+  inventory: {}
+  lookup: {}
+  module:
+    nso_action:
+      description: Executes Cisco NSO actions and verifies output.
+      name: nso_action
+      namespace: ''
+      version_added: null
+    nso_config:
+      description: Manage Cisco NSO configuration and service synchronization.
+      name: nso_config
+      namespace: ''
+      version_added: null
+    nso_query:
+      description: Query data from Cisco NSO.
+      name: nso_query
+      namespace: ''
+      version_added: null
+    nso_show:
+      description: Displays data from Cisco NSO.
+      name: nso_show
+      namespace: ''
+      version_added: null
+    nso_verify:
+      description: Verifies Cisco NSO configuration.
+      name: nso_verify
+      namespace: ''
+      version_added: null
+  netconf: {}
+  shell: {}
+  strategy: {}
+  vars: {}
+version: 1.0.3

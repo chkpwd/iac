@@ -1,0 +1,16 @@
+- name: Screen test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "Set auto capture screen"
+    inspur.sm.edit_auto_capture:
+      status: "enable"
+      provider: "{{ ism }}"

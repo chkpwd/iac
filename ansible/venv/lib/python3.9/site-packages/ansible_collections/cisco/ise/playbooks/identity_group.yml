@@ -1,0 +1,32 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Get All
+      cisco.ise.identity_group_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        id: 9efe2310-8c01-11e6-996c-525400b48521
+      register: identity_group_info
+
+    - name: Print
+      ansible.builtin.debug:
+        var: identity_group_info
+
+    - name: Create
+      cisco.ise.identity_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: NewGroup
+        description: NewGroup
+        parent: NAC Group:NAC:IdentityGroups:User Identity Groups
+      register: identity_group
+
+    - name: Print
+      ansible.builtin.debug:
+        var: identity_group

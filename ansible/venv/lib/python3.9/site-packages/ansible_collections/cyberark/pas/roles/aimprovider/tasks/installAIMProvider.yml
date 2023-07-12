@@ -1,0 +1,152 @@
+---
+- name: Validating Role Parameters
+  assert:
+    that:
+      - zip_file_name != ''
+      - vault_address != ''
+      - api_base_url != ''
+      - folder_name != ''
+      - app_provider_user_location != ''
+      - state == "present"
+      - (not use_shared_logon_authentication|default(false) and password_object is defined) or
+        (use_shared_logon_authentication|default(false) and password_object is not defined)
+
+
+- debug: msg="Installation params => zip_file_name = {{zip_file_name}}  folder_name={{folder_name}}"
+
+- block:
+
+  - name: Copy provider zip to target and unzip
+    unarchive: src="{{zip_file_name}}" dest=/tmp
+
+  - name: Rename aimparms and copy to var/tmp
+    command: cp "/tmp/{{folder_name}}/aimparms.sample" /var/tmp/aimparms
+
+  - name: Replace parameters" in /var/tmp/aimparms
+    replace:
+      dest: /var/tmp/aimparms
+      regexp: "{{item.regexp}}"
+      replace: "{{item.replace}}"
+    with_items:
+      - {regexp: '^AcceptCyberArkEULA=.*$', replace: 'AcceptCyberArkEULA=Yes'}
+      - {regexp: '^LicensedProducts=.*$', replace: 'LicensedProducts=AIM'}
+      - {regexp: '^.?CreateVaultEnvironment=.*$', replace: 'CreateVaultEnvironment=no'}
+      - {regexp: '^VaultFilePath=.*$', replace: 'VaultFilePath=/tmp/{{folder_name}}/Vault.ini'}
+
+
+  - name: Change Vault.ini to the right address
+    replace:
+      dest: "/tmp/{{folder_name}}/Vault.ini"
+      regexp: '^ADDRESS=.*$'
+      replace: 'ADDRESS={{vault_address}}'
+
+  - name: Change permission on createcredfile
+    file:
+      path: "/tmp/{{folder_name}}/CreateCredFile"
+      mode: 0755
+
+  - find:
+      paths: "/tmp/{{folder_name}}"
+      patterns: "CARKaim-*.rpm"
+    register: aimrpm
+
+  # debug: msg="{{aimrpm.files[0].path}}"
+
+  - name: Install Provider
+    package: name='{{aimrpm.files[0].path}}' state=present
+
+  - name: Verify status of service after installing Provider
+    command: service aimprv status
+    register: command_result
+    ignore_errors: true
+    args:
+      warn: false
+
+  # debug: msg="status of service RC={{command_result.rc}}"
+
+  - name: Logon to CyberArk Vault using PAS Web Services SDK - use_shared_logon_authentication
+    cyberark.pas.cyberark_authentication:
+      api_base_url: "{{ api_base_url }}"
+      use_shared_logon_authentication: true
+      validate_certs: "{{ validate_certs }}"
+    changed_when: false
+    when: (command_result.rc != 0 and use_shared_logon_authentication|default(false))
+
+  - name: Logon to CyberArk Vault using PAS Web Services SDK - Not use_shared_logon_authentication
+    cyberark.pas.cyberark_authentication:
+      api_base_url: "{{ api_base_url }}"
+      username: "{{ password_object.password }}"
+      password: "{{ password_object.passprops.username }}"
+      validate_certs: "{{ validate_certs }}"
+    changed_when: false
+    when: (command_result.rc != 0 and not use_shared_logon_authentication|default(false))
+
+  # name: Debug message
+  #  debug:
+  #    msg: "{{ cyberark_session.token }}"
+  #  when: (command_result.rc != 0)
+
+  - name: Create provider user
+    cyberark.pas.cyberark_user:
+      username: "Prov_{{ ansible_hostname }}"
+      initial_password: "Cyberark1"
+      user_type_name: "AppProvider"
+      location: "{{ app_provider_user_location }}"
+      group_name: "{{ app_provider_user_group }}"
+      change_password_on_the_next_logon: false
+      state: present
+      cyberark_session: "{{ cyberark_session }}"
+    register: cyberarkaction
+    when: (command_result.rc != 0)
+
+  # debug:
+  #    msg: "USERCREATED => {{cyberarkaction}}"
+  #  when: (command_result.rc != 0 and cyberarkaction.status_code == 201)
+
+  - name: Reset provider user credential
+    cyberark.pas.cyberark_user:
+      username: "Prov_{{ ansible_hostname }}"
+      new_password: "Cyberark1"
+      disabled: false
+      state: present
+      cyberark_session: "{{ cyberark_session }}"
+    register: cyberarkaction
+    when: (command_result.rc != 0 and cyberarkaction.status_code == 200)
+
+  - name: Logoff from CyberArk Vault
+    cyberark.pas.cyberark_authentication:
+      state: absent
+      cyberark_session: "{{ cyberark_session }}"
+    changed_when: false
+    when: (command_result.rc != 0)
+
+  - name: Create Provider Initial Cred File
+    command: /opt/CARKaim/bin/createcredfile /etc/opt/CARKaim/vault/appprovideruser.cred Password -Username Prov_{{ ansible_hostname }} -Password Cyberark1
+    when: (command_result.rc != 0)
+
+  - name: Set vault.ini Into Place
+    command: cp "/tmp/{{folder_name}}/Vault.ini" /etc/opt/CARKaim/vault/vault.ini
+
+  - name: Start Provider Service
+    service: name=aimprv state=started
+    when: (command_result.rc != 0)
+
+  - name: Remove /tmp/{{folder_name}}
+    file:
+      path: '/tmp/{{folder_name}}'
+      state: absent
+
+  - name: Remove /var/tmp/aimparms
+    file:
+      path: '/var/tmp/aimparms'
+      state: absent
+
+  rescue:
+
+    - name: Remove /tmp/{{folder_name}}
+      file:
+        path: '/tmp/{{folder_name}}'
+        state: absent
+
+    - fail:
+        msg: "AIM Credential Provider Installation failed!"

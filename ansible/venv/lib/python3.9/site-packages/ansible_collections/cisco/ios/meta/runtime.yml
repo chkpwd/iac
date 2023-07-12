@@ -1,0 +1,220 @@
+---
+plugin_routing:
+  action:
+    acl_interfaces:
+      redirect: cisco.ios.ios
+    acls:
+      redirect: cisco.ios.ios
+    banner:
+      redirect: cisco.ios.ios
+    bgp:
+      redirect: cisco.ios.ios
+    bgp_global:
+      redirect: cisco.ios.ios
+    command:
+      redirect: cisco.ios.ios
+    config:
+      redirect: cisco.ios.ios
+    facts:
+      redirect: cisco.ios.ios
+    hostname:
+      redirect: cisco.ios.ios
+    interfaces:
+      redirect: cisco.ios.ios
+    ios_acl_interfaces:
+      redirect: cisco.ios.ios
+    ios_acls:
+      redirect: cisco.ios.ios
+    ios_banner:
+      redirect: cisco.ios.ios
+    ios_bgp:
+      redirect: cisco.ios.ios
+    ios_bgp_global:
+      redirect: cisco.ios.ios
+    ios_command:
+      redirect: cisco.ios.ios
+    ios_config:
+      redirect: cisco.ios.ios
+    ios_facts:
+      redirect: cisco.ios.ios
+    ios_hostname:
+      redirect: cisco.ios.ios
+    ios_linkagg:
+      redirect: cisco.ios.ios
+    ios_lldp:
+      redirect: cisco.ios.ios
+    ios_logging:
+      redirect: cisco.ios.ios
+    ios_logging_global:
+      redirect: cisco.ios.ios
+    ios_ntp:
+      redirect: cisco.ios.ios
+    ios_ntp_global:
+      redirect: cisco.ios.ios
+    ios_ospfv2:
+      redirect: cisco.ios.ios
+    ios_ping:
+      redirect: cisco.ios.ios
+    ios_prefix_lists:
+      redirect: cisco.ios.ios
+    ios_route_maps:
+      redirect: cisco.ios.ios
+    ios_snmp_server:
+      redirect: cisco.ios.ios
+    ios_static_routes:
+      redirect: cisco.ios.ios
+    ios_system:
+      redirect: cisco.ios.ios
+    l2_interfaces:
+      redirect: cisco.ios.ios
+    l3_interfaces:
+      redirect: cisco.ios.ios
+    lacp:
+      redirect: cisco.ios.ios
+    lacp_interfaces:
+      redirect: cisco.ios.ios
+    lag_interfaces:
+      redirect: cisco.ios.ios
+    linkagg:
+      redirect: cisco.ios.ios
+    lldp:
+      redirect: cisco.ios.ios
+    lldp_global:
+      redirect: cisco.ios.ios
+    lldp_interfaces:
+      redirect: cisco.ios.ios
+    logging:
+      redirect: cisco.ios.ios
+    logging_global:
+      redirect: cisco.ios.ios
+    ntp:
+      redirect: cisco.ios.ios
+    ntp_global:
+      redirect: cisco.ios.ios
+    ospfv2:
+      redirect: cisco.ios.ios
+    ping:
+      redirect: cisco.ios.ios
+    prefix_lists:
+      redirect: cisco.ios.ios
+    route_maps:
+      redirect: cisco.ios.ios
+    service:
+      redirect: cisco.ios.ios
+    snmp_server:
+      redirect: cisco.ios.ios
+    static_routes:
+      redirect: cisco.ios.ios
+    system:
+      redirect: cisco.ios.ios
+    user:
+      redirect: cisco.ios.ios
+    vlans:
+      redirect: cisco.ios.ios
+    vrf:
+      redirect: cisco.ios.ios
+  modules:
+    acl_interfaces:
+      redirect: cisco.ios.ios_acl_interfaces
+    acls:
+      redirect: cisco.ios.ios_acls
+    banner:
+      redirect: cisco.ios.ios_banner
+    bgp:
+      deprecation:
+        removal_date: "2023-08-24"
+        warning_text: See the plugin documentation for more details
+      redirect: cisco.ios.ios_bgp
+    bgp_global:
+      redirect: cisco.ios.ios_bgp_global
+    command:
+      redirect: cisco.ios.ios_command
+    config:
+      redirect: cisco.ios.ios_config
+    facts:
+      redirect: cisco.ios.ios_facts
+    hostname:
+      redirect: cisco.ios.ios_hostname
+    interfaces:
+      redirect: cisco.ios.ios_interfaces
+    ios_bgp:
+      deprecation:
+        removal_date: "2023-08-24"
+        warning_text: See the plugin documentation for more details
+    ios_linkagg:
+      deprecation:
+        removal_date: "2024-06-01"
+        warning_text: See the plugin documentation for more details
+    ios_lldp:
+      deprecation:
+        removal_date: "2024-06-01"
+        warning_text: See the plugin documentation for more details
+    ios_logging:
+      deprecation:
+        removal_date: "2023-06-01"
+        warning_text: See the plugin documentation for more details
+    ios_ntp:
+      deprecation:
+        removal_date: "2024-01-01"
+        warning_text: See the plugin documentation for more details
+    l2_interfaces:
+      redirect: cisco.ios.ios_l2_interfaces
+    l3_interfaces:
+      redirect: cisco.ios.ios_l3_interfaces
+    lacp:
+      redirect: cisco.ios.ios_lacp
+    lacp_interfaces:
+      redirect: cisco.ios.ios_lacp_interfaces
+    lag_interfaces:
+      redirect: cisco.ios.ios_lag_interfaces
+    linkagg:
+      deprecation:
+        removal_date: "2024-06-01"
+        warning_text: See the plugin documentation for more details
+      redirect: cisco.ios.ios_linkagg
+    lldp:
+      deprecation:
+        removal_date: "2024-06-01"
+        warning_text: See the plugin documentation for more details
+      redirect: cisco.ios.ios_lldp
+    lldp_global:
+      redirect: cisco.ios.ios_lldp_global
+    lldp_interfaces:
+      redirect: cisco.ios.ios_lldp_interfaces
+    logging:
+      deprecation:
+        removal_date: "2023-06-01"
+        warning_text: See the plugin documentation for more details
+      redirect: cisco.ios.ios_logging
+    logging_global:
+      redirect: cisco.ios.ios_logging_global
+    ntp:
+      deprecation:
+        removal_date: "2024-01-01"
+        warning_text: See the plugin documentation for more details
+      redirect: cisco.ios.ios_ntp
+    ntp_global:
+      redirect: cisco.ios.ios_ntp_global
+    ospfv2:
+      redirect: cisco.ios.ios_ospfv2
+    ping:
+      redirect: cisco.ios.ios_ping
+    prefix_lists:
+      redirect: cisco.ios.ios_prefix_lists
+    route_maps:
+      redirect: cisco.ios.ios_route_maps
+    service:
+      redirect: cisco.ios.ios_service
+    snmp_server:
+      redirect: cisco.ios.ios_snmp_server
+    static_routes:
+      redirect: cisco.ios.ios_static_routes
+    system:
+      redirect: cisco.ios.ios_system
+    user:
+      redirect: cisco.ios.ios_user
+    vlans:
+      redirect: cisco.ios.ios_vlans
+    vrf:
+      redirect: cisco.ios.ios_vrf
+requires_ansible: ">=2.9.10"

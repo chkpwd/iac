@@ -1,0 +1,16 @@
+- name: ad group test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "delete active directory group information"
+    inspur.sm.del_ad_group:
+      name: "inspur"
+      provider: "{{ ism }}"

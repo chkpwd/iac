@@ -1,0 +1,37 @@
+---
+driver:
+  name: docker
+
+platforms:
+  - name: zabbix-server-${MY_MOLECULE_CONTAINER:-centos}
+    image: geerlingguy/docker-${MY_MOLECULE_IMAGE:-"centos8"}-ansible:latest
+    privileged: true
+    pre_build_image: true
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    networks:
+      - name: zabbix
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    groups:
+      - ${MY_MOLECULE_VERSION:-62}
+      - ${MY_MOLECULE_INTERPRETER:-python3}
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_COLLECTIONS_PATHS: $HOME/.ansible/collections/ansible_collections/community/zabbix
+    ANSIBLE_ROLES_PATH: $HOME/.ansible/collections/ansible_collections/community/zabbix/roles
+  inventory:
+    group_vars:
+      python3:
+        ansible_python_interpreter: /usr/bin/python3
+      python:
+        ansible_python_interpreter: /usr/bin/python
+      v64:
+        zabbix_javagateway_version: 6.4
+      v62:
+        zabbix_javagateway_version: 6.2
+      v60:
+        zabbix_javagateway_version: 6.0
+
+verifier:
+  name: testinfra

@@ -1,0 +1,68 @@
+ancestor: null
+releases:
+  1.0.0:
+    changes:
+      release_summary: This is the first release of the ``microsoft.ad`` Ansible collection
+        which contains modules that can be used to managed a Microsoft Active Directory
+        environment.
+    fragments:
+    - release-summary.yml
+    release_date: '2023-02-15'
+  1.1.0:
+    changes:
+      bugfixes:
+      - microsoft.ad.user - Fix setting ``password_expired`` when creating a new user
+        - https://github.com/ansible-collections/microsoft.ad/issues/25
+      release_summary: 'This release includes the new ``microsoft.ad.ldap`` inventory
+        plugin which can be used to generate an Ansible
+
+        inventory from an LDAP/AD source.
+
+        '
+    fragments:
+    - release-1.1.0.yml
+    - user-password-expired.yml
+    modules:
+    - description: Get host information for debugging LDAP connections
+      name: debug_ldap_client
+      namespace: ''
+    plugins:
+      filter:
+      - description: Converts an LDAP value to a datetime string
+        name: as_datetime
+        namespace: null
+      - description: Converts an LDAP value to a GUID string
+        name: as_guid
+        namespace: null
+      - description: Converts an LDAP value to a Security Identifier string
+        name: as_sid
+        namespace: null
+      inventory:
+      - description: Inventory plugin for Active Directory
+        name: ldap
+        namespace: null
+    release_date: '2023-05-02'
+  1.2.0:
+    changes:
+      bugfixes:
+      - 'group - Fix idempotency check when ``scope: domainlocal`` is set - https://github.com/ansible-collections/microsoft.ad/issues/31'
+      - microsoft.ad.group - ensure the ``scope`` and ``category`` values are checked
+        as case insensitive to avoid changes when not needed - https://github.com/ansible-collections/microsoft.ad/issues/31
+      deprecated_features:
+      - Deprecating support for Server 2012 and Server 2012 R2. These OS versions
+        are reaching End of Life status from Microsoft and support for using them
+        in Ansible are nearing its end.
+      minor_changes:
+      - microsoft.ad.debug_ldap_client - Add ``dpapi_ng`` to list of packages checked
+      - microsoft.ad.ldap - Add support for decrypting LAPS encrypted password
+      - microsoft.ad.ldap - Allow setting LDAP connection and authentication options
+        through environment variables - https://github.com/ansible-collections/microsoft.ad/issues/34
+      release_summary: Release summary for v1.2.0
+    fragments:
+    - group-case-sensitivity-check.yml
+    - group-domainlocal-scopeinfo.yml
+    - ldap-env-var.yml
+    - ldap-laps-decryption.yml
+    - release_summary.yml
+    - server2012.yml
+    release_date: '2023-06-14'

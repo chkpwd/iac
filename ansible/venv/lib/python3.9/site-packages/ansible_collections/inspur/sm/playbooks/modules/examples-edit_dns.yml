@@ -1,0 +1,41 @@
+- name: dns test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "set dns information"
+    inspur.sm.edit_dns:
+      dns_status: "disable"
+      provider: "{{ ism }}"
+
+  - name: "set dns information"
+    inspur.sm.edit_dns:
+      dns_status: "enable"
+      host_cfg: "manual"
+      host_name: "123456789"
+      domain_manual: "auto"
+      domain_iface: "eth0_v4"
+      dns_manual: "manual"
+      dns_server1: "100.2.2.2"
+      dns_server2: "100.2.2.3"
+      dns_server3: "100.2.2.4"
+      provider: "{{ ism }}"
+      
+  - name: "set dns information"
+    edit_dns:
+      dns_status: "enable"
+      host_cfg: "manual"
+      host_name: "123456789"
+      domain_manual: "manual"
+      domain_name: "inspur.com"
+      dns_manual: "auto"
+      dns_iface: "eth0"
+      dns_priority: "4"
+      provider: "{{ ism }}"

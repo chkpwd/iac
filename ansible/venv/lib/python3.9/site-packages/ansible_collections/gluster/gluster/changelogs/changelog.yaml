@@ -1,0 +1,31 @@
+ancestor: null
+releases:
+  1.0.0:
+    changes:
+      major_changes:
+      - geo_rep - Added the independent module of geo rep with other gluster modules
+        (https://github.com/gluster/gluster-ansible-collection/pull/2).
+    fragments:
+    - 2-geo_rep.py
+    modules:
+    - description: Manage geo-replication sessions
+      name: geo_rep
+      namespace: ''
+    - description: Gather facts about either self-heal or rebalance status
+      name: gluster_heal_info
+      namespace: ''
+    - description: Attach/Detach peers to/from the cluster
+      name: gluster_peer
+      namespace: ''
+    - description: Manage GlusterFS volumes
+      name: gluster_volume
+      namespace: ''
+    release_date: '2020-06-29'
+  1.0.1:
+    release_date: '2020-08-18'
+  1.0.2:
+    changes:
+      major_changes:
+        - enable client.ssl,server.ssl before starting the gluster volume 
+          (https://github.com/gluster/gluster-ansible-collection/pull/19)
+    release_date: '2021-09-17'  

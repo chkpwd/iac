@@ -1,0 +1,35 @@
+- name: Ldap group test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "Add ldap group information"
+    inspur.sm.ldap_group:
+      state: "present"
+      name: "wbs"
+      base: "cn=manager"
+      pri: "administrator"
+      kvm: "enable"
+      vm: "disable"
+      provider: "{{ ism }}"
+
+  - name: "Set ldap group information"
+    inspur.sm.ldap_group:
+      state: "present"
+      name: "wbs"
+      pri: "user"
+      kvm: "disable"
+      provider: "{{ ism }}"
+
+  - name: "Delete ldap group information"
+    inspur.sm.ldap_group:
+      state: "absent"
+      name: "wbs"
+      provider: "{{ ism }}"

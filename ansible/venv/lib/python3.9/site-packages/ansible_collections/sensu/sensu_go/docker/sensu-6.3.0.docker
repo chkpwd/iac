@@ -1,0 +1,8 @@
+FROM sensu/sensu:6.3.0
+RUN apk update \
+    && apk add --no-cache python3 py3-bcrypt py3-six py3-cffi bash
+CMD [ \
+  "sensu-backend", "start", \
+  "--state-dir", "/var/lib/sensu/sensu-backend", \
+  "--log-level", "debug" \
+]

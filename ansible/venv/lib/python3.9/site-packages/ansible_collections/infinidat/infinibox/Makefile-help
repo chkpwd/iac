@@ -1,0 +1,82 @@
+# ##@ Help Group Name
+# .PHONY: recipe_name
+# To pick up the recipe name, use:
+# recipe_name:  ## Recipe help.
+#   @echo -e $(_begin)
+#   ...works...
+#   @echo -e $(_finish)
+
+# Use color in Makefiles.
+_USE_COLOR ?= true
+
+.DEFAULT_GOAL := help
+
+# Color vars
+_help_padding = 30
+_black    = \033[0;30m
+_red      = \033[0;31m
+_green    = \033[0;32m
+_orange   = \033[0;33m
+_blue     = \033[0;34m
+_purple   = \033[0;35m
+_cyan     = \033[0;36m
+_lt_gray  = \033[0;37m
+_gray     = \033[1;30m
+_lt_rd    = \033[1;31m
+_lt_green = \033[1;32m
+_yellow   = \033[1;33m
+_lt_blue  = \033[1;34m
+_lt_purple= \033[1;35m
+_lt_cyan  = \033[1;36m
+_white    = \033[1;37m
+_reset    = \033[0m
+
+# Customize colors for 'make help'
+_group    = $(_lt_blue)
+_recipe   = $(_orange)
+# Customize colors for make leaders/followers
+_heading  = $(_yellow)
+
+# Use _make to execute make with consistent options
+_make = make --no-print-directory
+_watch = watch -n 1 --no-title
+
+# Other vars
+_LEADER =   "================ ["
+_FOLLOWER = "\] ================"
+
+ifneq ($(_USE_COLOR),true)
+    # No color
+    _group =
+    _recipe =
+    _heading =
+    _reset =
+endif
+
+_begin = "$(_heading)$(_LEADER) Begin $@ $(_FOLLOWER)$(_reset)"
+_finish = "$(_heading)$(_LEADER) Completed $@ $(_FOLLOWER)$(_reset)"
+
+##@ General
+.PHONY: help
+help:  ## Display this help.
+	@echo "$(_purpose)"
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make $(_recipe)<recipe>$(_reset)\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "$(_recipe)%-$(_help_padding)s$(_reset) %s\n", $$1, $$2 } /^##@/ { printf "\n$(_group)%s$(_reset)\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+
+.PHONY: color-help
+color-help:  ## Edit Makefile-help to change color schemes.
+	@echo -e $(_begin)
+	@echo "To enable colors in make output, 'export _USE_COLOR=true' with the leading underscore"
+	@echo "Edit Makefile-help to change color schemes"
+ifeq ($(_USE_COLOR),true)
+	@printf "\n\tColor is currently enabled\n\n"
+else
+	@printf "\n\tColor is currently disabled\n\n"
+endif
+	@echo -e $(_finish)
+
+_find_ignore=.git|test|log
+.PHONY: ansfind
+ansfind:  ## Search project files using: f='search term' make ansfind
+	@echo -e $(_begin)
+	find . -name "*" -type=f | xargs grep -n "$$f" | egrep -v '$(_find_ignore)'
+	@echo -e $(_finish)

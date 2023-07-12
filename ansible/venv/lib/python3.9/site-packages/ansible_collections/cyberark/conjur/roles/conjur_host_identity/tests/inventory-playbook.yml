@@ -1,0 +1,6 @@
+---
+- name: Compile inventory template locally
+  hosts: localhost
+  tasks:
+    - name: compile inventory template
+      template: src=inventory.j2 dest=/cyberark/tests/inventory.tmp

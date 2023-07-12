@@ -1,0 +1,55 @@
+---
+# host_template.1 = host_template array
+# host_template.0 = icinga_host_template attribute
+- name: icinga_host_template
+  icinga_host_template:
+    client_cert: "{{ icinga_client_cert | default(omit) }}"
+    client_key: "{{ icinga_client_key | default(omit) }}"
+    force_basic_auth: "{{ icinga_force_basic_auth | default(omit) }}"
+    state: "{{ host.0.state | default(omit) }}"
+    url_password: "{{ icinga_pass }}"
+    url_username: "{{ icinga_user }}"
+    url: "{{ icinga_url }}"
+    use_proxy: "{{ icinga_use_proxy | default(omit) }}"
+    validate_certs: "{{ icinga_validate_certs | default(omit) }}"
+    accept_config: "{{ host_template.0.accept_config | default(omit) }}"
+    address: "{{ host_template.0.address | default(omit) }}"
+    address6: "{{ host_template.0.address6 | default(omit) }}"
+    check_command: "{{ host_template.0.check_command | default(omit) }}"
+    check_interval: "{{ host_template.0.check_interval | default(omit) }}"
+    check_period: "{{ host_template.0.check_period | default(omit) }}"
+    check_timeout: "{{ host_template.0.check_timeout | default(omit) }}"
+    disabled: "{{ host_template.0.disabled | default(omit) }}"
+    display_name: "{{ host_template.0.display_name | default(omit) }}"
+    enable_active_checks: "{{ host_template.0.enable_active_checks | default(omit) }}"
+    enable_event_handler: "{{ host_template.0.enable_event_handler | default(omit) }}"
+    enable_flapping: "{{ host_template.0.enable_flapping | default(omit) }}"
+    enable_notifications: "{{ host_template.0.enable_notifications | default(omit) }}"
+    enable_passive_checks: "{{ host_template.0.enable_passive_checks | default(omit) }}"
+    enable_perfdata: "{{ host_template.0.enable_perfdata | default(omit) }}"
+    event_command: "{{ host_template.0.event_command | default(omit) }}"
+    flapping_threshold_high: "{{ host_template.0.flapping_threshold_high | default(omit) }}"
+    flapping_threshold_low: "{{ host_template.0.flapping_threshold_low | default(omit) }}"
+    groups: "{{ host_template.0.address | default(omit) }}"
+    has_agent: "{{ host_template.0.has_agent | default(omit) }}"
+    icon_image_alt: "{{ host_template.0.icon_image_alt | default(omit) }}"
+    icon_image: "{{ host_template.0.icon_image | default(omit) }}"
+    imports: "{{ host_template.0.imports | default(omit) }}"
+    master_should_connect: "{{ host_template.0.master_should_connect | default(omit) }}"
+    max_check_attempts: "{{ host_template.0.max_check_attempts | default(omit) }}"
+    notes_url: "{{ host_template.0.notes_url | default(omit) }}"
+    notes: "{{ host_template.0.notes | default(omit) }}"
+    object_name: "{{ host_template.1 }}"
+    retry_interval: "{{ host_template.0.retry_interval | default(omit) }}"
+    vars: "{{ host_template.0.vars | default(omit) }}"
+    volatile: "{{ host_template.0.volatile | default(omit) }}"
+    zone: "{{ host_template.0.zone | default(omit) }}"
+  retries: 3
+  delay: 3
+  register: result
+  until: result is succeeded
+  loop: "{{ icinga_host_templates|subelements('host_template_object') }}"
+  loop_control:
+    loop_var: host_template
+  tags: host_template
+  notify: config_deploy

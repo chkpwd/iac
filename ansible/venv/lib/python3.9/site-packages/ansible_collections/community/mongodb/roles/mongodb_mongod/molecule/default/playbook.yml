@@ -1,0 +1,31 @@
+---
+- name: Converge
+  hosts: all
+  roles:
+    - role: mongodb_repository
+      tags: molecule-idempotence-notest
+    - role: mongodb_mongod
+
+  tasks:
+
+    - name: Install pymongo
+      pip:
+        name: "{{ 'pymongo==3.12.*' if ansible_python_version[0:3] | float < 3.6 else 'pymongo' }}"
+      when: ansible_hostname == "fedora"
+
+    - name: Install MongoDB Shell
+      package:
+        name: mongodb-mongosh
+
+    - name: Initialise replicaset
+      community.mongodb.mongodb_replicaset:
+        login_host: localhost
+        replica_set: rs0
+        validate: yes
+        members:
+          - almalinux_8:27017
+          - fedora:27017
+          - ubuntu_18:27017
+          - debian_bullseye:27017
+          - ubuntu_22:27017
+      when: ansible_hostname == "fedora"

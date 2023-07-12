@@ -1,0 +1,84 @@
+version: '3'
+services:
+  ansible:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ANSIBLE_VERSION: ${ANSIBLE_VERSION}
+    command: /bin/sleep 1d
+    environment:
+      CONJUR_APPLIANCE_URL: ${CONJUR_APPLIANCE_URL}
+      CONJUR_ACCOUNT: ${CONJUR_ACCOUNT}
+      CONJUR_AUTHN_LOGIN: ${CONJUR_AUTHN_LOGIN}
+      CONJUR_AUTHN_API_KEY: ${ANSIBLE_CONJUR_AUTHN_API_KEY}
+      CONJUR_CUSTOM_AUTHN_API_KEY: ${CUSTOM_CONJUR_AUTHN_API_KEY}
+      COMPOSE_PROJECT_NAME: ${COMPOSE_PROJECT_NAME}
+      # NOTE: Explicitly setting the ANSIBLE_CONFIG envvar avoids Ansible ignoring
+      # the configuration because it is in a world-writable working directory,
+      # see https://docs.ansible.com/ansible/latest/reference_appendices/config.html#avoiding-security-risks-with-ansible-cfg-in-the-current-directory.
+      ANSIBLE_CONFIG: ./ansible.cfg
+    networks:
+      - "${DOCKER_NETWORK}"
+    volumes:
+      - ..:/cyberark/cyberark.conjur.conjur-host-identity/
+      - .:/cyberark/tests/
+      - /var/run/docker.sock:/var/run/docker.sock
+  pg:
+    image: postgres:9.3
+
+  conjur:
+    image: cyberark/conjur
+    command: server -a cucumber -p 3000
+    environment:
+      CONJUR_APPLIANCE_URL: http://localhost:3000
+      DATABASE_URL: postgres://postgres@pg/postgres
+      CONJUR_DATA_KEY: "W0BuL8iTr/7QvtjIluJbrb5LDAnmXzmcpxkqihO3dXA="
+    networks:
+      - default
+    links:
+      - pg
+
+  conjur_cli:
+    image: cyberark/conjur-cli:5-latest
+    entrypoint: []
+    command: sleep infinity
+    environment:
+      CONJUR_APPLIANCE_URL: http://conjur:3000
+      CONJUR_ACCOUNT: cucumber
+      CONJUR_AUTHN_LOGIN: admin
+      CONJUR_AUTHN_API_KEY: ${CLI_CONJUR_AUTHN_API_KEY}
+    volumes:
+      - ./policy:/policy
+    links:
+      - conjur
+
+  test_app_ubuntu:
+    build: ./test_app_ubuntu
+    entrypoint: sleep
+    command: infinity
+    networks:
+      - "${DOCKER_NETWORK}"
+
+  test_app_centos:
+    build: ./test_app_centos
+    entrypoint: sleep
+    command: infinity
+    networks:
+      - "${DOCKER_NETWORK}"
+
+  conjur-proxy-nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile_nginx
+    entrypoint: nginx-debug -g 'daemon off;'
+    environment:
+        TERM: xterm
+    depends_on:
+      - conjur
+      - conjur_cli
+
+networks:
+  dap_net:
+    name: dap_net
+    external: true

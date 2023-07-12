@@ -1,0 +1,17 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Create endpoint group
+      cisco.ise.endpoint_group:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        name: Sony-Device-X
+        description: "Identity Group for Profile: Sony-Device-X"
+      register: endpoint_group
+
+    - name: Print endpoint group
+      ansible.builtin.debug:
+        var: endpoint_group

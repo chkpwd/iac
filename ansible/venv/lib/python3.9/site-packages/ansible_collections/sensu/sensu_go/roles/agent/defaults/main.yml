@@ -1,0 +1,5 @@
+---
+# Related to /etc/sensu/backend.yml, see
+# https://docs.sensu.io/sensu-go/latest/reference/agent/#configuration-summary
+agent_backend_urls: "{{ hostvars | sensu.sensu_go.backends(groups) }}"
+agent_config:

@@ -1,0 +1,62 @@
+ancestor: null
+releases:
+  1.0.0:
+    modules:
+      - description: Configure global BGP settings on Free Range Routing(FRR).
+        name: frr_bgp
+        namespace: ""
+      - description: Collect facts from remote devices running Free Range Routing (FRR).
+        name: frr_facts
+        namespace: ""
+    plugins:
+      cliconf:
+        - description: Use frr cliconf to run command on Free Range Routing platform
+          name: frr
+          namespace: null
+    release_date: "2020-06-23"
+  1.0.1:
+    changes:
+      bugfixes:
+        - Makes sure that docstring and argspec are in sync and removes sanity ignores
+          (https://github.com/ansible-collections/frr.frr/pull/23).
+        - Update docs after sanity fixes to modules.
+    fragments:
+      - remove_ignores.yaml
+      - update_docs.yaml
+    release_date: "2020-08-03"
+  1.0.2:
+    changes:
+      release_summary: Rereleased 1.0.1 with updated changelog.
+    fragments:
+      - 1.0.2.yaml
+    release_date: "2020-08-07"
+  1.0.3:
+    changes:
+      minor_changes:
+        - Regenerated docs, add description to galaxy.yml and linked changelog to README
+          (https://github.com/ansible-collections/frr.frr/pull/28)
+    fragments:
+      - fixes_to_readme_and_doc.yaml
+    release_date: "2020-08-28"
+  1.0.4:
+    changes:
+      release_summary:
+        This release includes sanity fixes that are needed for this
+        collection to be included in Ansible 6.
+    fragments:
+      - sanity_fixes.yaml
+    release_date: "2022-05-04"
+  2.0.0:
+    changes:
+      major_changes:
+        - Minimum required ansible.netcommon version is 2.5.1.
+        - Updated base plugin references to ansible.netcommon.
+    fragments:
+      - netcommon_ref_update.yaml
+    release_date: "2022-05-05"
+  2.0.2:
+    changes:
+      release_summary: This release includes README update and assorted sanity fixes.
+    fragments:
+      - gha_sanity_fix.yml
+    release_date: "2023-04-14"

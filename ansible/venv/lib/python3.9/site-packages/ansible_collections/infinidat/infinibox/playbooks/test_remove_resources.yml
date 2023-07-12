@@ -1,0 +1,234 @@
+---
+- hosts: localhost
+  gather_facts: false
+  collections:
+    - infinidat.infinibox
+  tasks:
+
+    - name: POSITIVE test -> Remove cluster {{ auto_prefix }}cluster
+      infini_cluster:
+        name: "{{ auto_prefix }}cluster"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: IDEMPOTENT test -> Remove cluster {{ auto_prefix }}cluster again
+      infini_cluster:
+        name: "{{ auto_prefix }}cluster"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove mapping of volume {{ auto_prefix }}vol from host {{ auto_prefix }}host
+      infini_map:
+        host: "{{ auto_prefix }}host"
+        volume: "{{ auto_prefix }}vol"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Rescan with remove option after removing mapping
+      shell: |
+        rescan-scsi-bus.sh --remove
+      become: True
+      register: rescan
+      failed_when: "rescan.rc != 0 and 'not found' not in rescan.stderr"
+
+    - name: IDEMPOTENT test -> Remove mapping of volume {{ auto_prefix }}vol from host {{ auto_prefix }}host again
+      infini_map:
+        host: "{{ auto_prefix }}host"
+        volume: "{{ auto_prefix }}vol"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove host {{ auto_prefix }}host
+      infini_host:
+        name: "{{ auto_prefix }}host"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove host {{ auto_prefix }}host2
+      infini_host:
+        name: "{{ auto_prefix }}host2"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: IDEMPOTENT test -> Remove host {{ auto_prefix }}host again
+      infini_host:
+        name: "{{ auto_prefix }}host"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove export client for export /{{ auto_prefix }}export
+      infini_export_client:
+        client: 20.20.20.20
+        state: absent
+        access_mode: "RO"
+        export: "/{{ auto_prefix }}export"
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: IDEMPOTENT test -> Remove export client for export /{{ auto_prefix }}export again
+      infini_export_client:
+        client: 20.20.20.20
+        state: absent
+        access_mode: "RO"
+        export: "/{{ auto_prefix }}export"
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove export {{ auto_prefix }}export of file system {{ auto_prefix }}fs
+      infini_export:
+        name: "/{{ auto_prefix }}export"
+        filesystem: "{{ auto_prefix }}fs"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: IDEMPOTENT test -> Remove export {{ auto_prefix }}export of file system {{ auto_prefix }}fs again
+      infini_export:
+        name: "/{{ auto_prefix }}export"
+        filesystem: "{{ auto_prefix }}fs"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove file system named {{ auto_prefix }}fs_default under pool {{ auto_prefix }}pool
+      infini_fs:
+        name: "{{ auto_prefix }}fs_default"
+        size: 1GB
+        pool: "{{ auto_prefix }}pool"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove file system named {{ auto_prefix }}fs_thick under pool {{ auto_prefix }}pool
+      infini_fs:
+        name: "{{ auto_prefix }}fs_thick"
+        size: 1GB
+        pool: "{{ auto_prefix }}pool"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove file system named {{ auto_prefix }}fs under pool {{ auto_prefix }}pool
+      infini_fs:
+        name: "{{ auto_prefix }}fs"
+        size: 1GB
+        pool: "{{ auto_prefix }}pool"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: IDEMPOTENT test -> Remove file system named {{ auto_prefix }}fs under pool {{ auto_prefix }}pool again
+      infini_fs:
+        name: "{{ auto_prefix }}fs"
+        size: 1GB
+        pool: "{{ auto_prefix }}pool"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove thin volume {{ auto_prefix }}vol under pool {{ auto_prefix }}pool
+      infini_vol:
+        name: "{{ auto_prefix }}vol"
+        pool: "{{ auto_prefix }}pool"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove thick volume {{ auto_prefix }}vol_thick under pool {{ auto_prefix }}pool
+      infini_vol:
+        name: "{{ auto_prefix }}vol_thick"
+        pool: "{{ auto_prefix }}pool"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: IDEMPOTENT test -> Remove volume {{ auto_prefix }}vol under pool {{ auto_prefix }}pool again
+      infini_vol:
+        name: "{{ auto_prefix }}vol"
+        pool: "{{ auto_prefix }}pool"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove pool {{ auto_prefix }}pool
+      infini_pool:
+        name: "{{ auto_prefix }}pool"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove snapshot {{ auto_prefix }}vol_snap
+      infini_vol:
+        name: "{{ auto_prefix }}vol_snap"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: IDEMPOTENT test -> Remove file system named {{ auto_prefix }}fs again from now missing pool {{ auto_prefix }}pool
+      infini_fs:
+        name: "{{ auto_prefix }}fs"
+        size: 1GB
+        pool: "{{ auto_prefix }}pool"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove user {{ auto_prefix }}read_only_user
+      infini_user:
+        user_name: "{{ auto_prefix }}read_only_user"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove user {{ auto_prefix }}admin_user
+      infini_user:
+        user_name: "{{ auto_prefix }}admin_user"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: POSITIVE test -> Remove user {{ auto_prefix }}pool_admin_user
+      infini_user:
+        user_name: "{{ auto_prefix }}pool_admin_user"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"
+
+    - name: IDEMPOTENT test -> Remove user {{ auto_prefix }}pool_admin_user again
+      infini_user:
+        user_name: "{{ auto_prefix }}pool_admin_user"
+        state: absent
+        user: "{{ user }}"
+        password: "{{ password }}"
+        system: "{{ system }}"

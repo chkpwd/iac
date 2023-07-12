@@ -1,0 +1,27 @@
+- name: Media test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "Set local media"
+    inspur.sm.edit_virtual_media:
+      local_media_support: "Enable"
+      provider: "{{ ism }}"
+
+  - name: "Set remote media"
+    inspur.sm.edit_virtual_media:
+      remote_media_support: "Enable"
+      mount_type: 0
+      same_settings: 0
+      mount: "Enable"
+      remote_server_address: "100.2.28.203"
+      remote_source_path: "/data/nfs/server/"
+      remote_share_type: "nfs"
+      provider: "{{ ism }}"

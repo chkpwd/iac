@@ -1,0 +1,42 @@
+---
+- name: "Configure Node Configuration Policy"
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+  intersight_rest_api:
+    <<: *api_info
+    resource_path: /hyperflex/NodeConfigPolicies
+    query_params:
+      $filter: "Name eq '{{ hx_node_config_policy }}'"
+    api_body: {
+      "Organization": {
+        "Moid": "{{ intersight_org.api_response.Moid }}"
+      },
+      "Name":"{{ hx_node_config_policy }}",
+      "NodeNamePrefix":"{{ hx_node_profile_prefix }}",
+      "MgmtIpRange":{
+        "StartAddr":"{{ esx_mgmt_ip_start }}",
+        "EndAddr":"{{ esx_mgmt_ip_end }}",
+        "Netmask":"{{ hx_mgmt_netmask }}",
+        "Gateway":"{{ hx_mgmt_gateway }}"
+      },
+      "HxdpIpRange":{
+        "StartAddr":"{{ hx_mgmt_vm_ip_start }}",
+        "EndAddr":"{{ hx_mgmt_vm_ip_end }}",
+        "Netmask":"{{ hx_mgmt_netmask }}",
+        "Gateway":"{{ hx_mgmt_gateway }}"
+      },
+      "ClusterProfiles": [
+        {
+        "Moid": "{{ cluster_profile.api_response.Moid }}"
+        }
+      ]
+    }
+  register: node_config
+
+- debug: msg="HyperFlex Node Configuration Policy named {{ hx_node_config_policy }} has been created successfully."

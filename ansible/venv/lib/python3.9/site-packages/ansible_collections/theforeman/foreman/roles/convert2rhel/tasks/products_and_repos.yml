@@ -1,0 +1,88 @@
+---
+- name: Check /etc/rhsm/ca/redhat-uep.pem
+  ansible.builtin.stat:
+    path: "/etc/rhsm/ca/redhat-uep.pem"
+  register: __foreman_ct
+
+- name: "Create 'Convert2RHEL' credentials"
+  theforeman.foreman.content_credential:
+    username: "{{ foreman_username }}"
+    password: "{{ foreman_password }}"
+    server_url: "{{ foreman_server_url }}"
+    validate_certs: "{{ foreman_validate_certs | default(omit) }}"
+    organization: "{{ foreman_organization }}"
+    name: "Convert2RHEL CA"
+    content_type: cert
+    content: "{{ __foreman_ct.stat.exists | ternary(lookup('file', '/etc/rhsm/ca/redhat-uep.pem', errors='ignore', rstrip=False),
+      lookup('url', 'https://ftp.redhat.com/redhat/convert2rhel/redhat-uep.pem', split_lines=False)) }}"
+    state: present
+
+- name: "Create product and repositories '{{ foreman_convert2rhel_rhel7_product }}'"
+  ansible.builtin.include_role:
+    name: theforeman.foreman.repositories
+  vars:
+    foreman_products:
+      - name: "{{ foreman_convert2rhel_rhel7_product }}"
+        repositories:
+          - name: "{{ foreman_convert2rhel_rhel7_repo }}"
+            content_type: "yum"
+            product: "{{ foreman_convert2rhel_rhel7_product }}"
+            url: "https://cdn.redhat.com/content/public/convert2rhel/7/x86_64/os/"
+            mirror_on_sync: true
+            verify_ssl_on_sync: true
+            download_policy: immediate
+            ssl_ca_cert: "Convert2RHEL CA"
+            state: present
+  when: foreman_content_rhel_enable_rhel7
+
+- name: "Create product and repositories '{{ foreman_convert2rhel_rhel8_product }}'"
+  ansible.builtin.include_role:
+    name: theforeman.foreman.repositories
+  vars:
+    foreman_products:
+      - name: "{{ foreman_convert2rhel_rhel8_product }}"
+        repositories:
+          - name: "{{ foreman_convert2rhel_rhel8_repo }}"
+            content_type: "yum"
+            product: "{{ foreman_convert2rhel_rhel8_product }}"
+            url: "https://cdn.redhat.com/content/public/convert2rhel/8/x86_64/os/"
+            mirror_on_sync: true
+            verify_ssl_on_sync: true
+            download_policy: immediate
+            ssl_ca_cert: "Convert2RHEL CA"
+            state: present
+  when: foreman_content_rhel_enable_rhel8
+
+- name: "Create product and repositories '{{ foreman_convert2rhel_oracle7_product }}'"
+  ansible.builtin.include_role:
+    name: theforeman.foreman.repositories
+  vars:
+    foreman_products:
+      - name: "{{ foreman_convert2rhel_oracle7_product }}"
+        repositories:
+          - name: "{{ foreman_convert2rhel_oracle7_repo }}"
+            content_type: "yum"
+            product: "{{ foreman_convert2rhel_oracle7_product }}"
+            url: "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi/server/7/7Server/x86_64/os"
+            mirror_on_sync: true
+            verify_ssl_on_sync: true
+            download_policy: immediate
+            state: present
+  when: foreman_convert2rhel_enable_oracle7
+
+- name: "Create product and repositories '{{ foreman_convert2rhel_oracle8_product }}'"
+  ansible.builtin.include_role:
+    name: theforeman.foreman.repositories
+  vars:
+    foreman_products:
+      - name: "{{ foreman_convert2rhel_oracle8_product }}"
+        repositories:
+          - name: "{{ foreman_convert2rhel_oracle8_repo }}"
+            content_type: "yum"
+            product: "{{ foreman_convert2rhel_oracle8_product }}"
+            url: "https://cdn-ubi.redhat.com/content/public/ubi/dist/ubi8/8/x86_64/baseos/os/"
+            mirror_on_sync: true
+            verify_ssl_on_sync: true
+            download_policy: immediate
+            state: present
+  when: foreman_convert2rhel_enable_oracle8

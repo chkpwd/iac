@@ -1,0 +1,87 @@
+- name: Check if all nodes are in STANDALONE state
+  cisco.ise.personas_check_standalone:
+    ip: "{{ item.ip }}"
+    username: "{{ ise_username }}"
+    password: "{{ ise_password }}"
+    hostname: "{{ item.hostname }}"
+  loop:
+    # ISE PAN Server 1
+    # - ip: "{{ pan1_ip }}"
+    #   hostname: "{{ ise_base_hostname | lower }}-pan-server-1"
+    # ISE PAN Server 2
+    - ip: "{{ pan2_ip }}"
+      hostname: "{{ ise_base_hostname | lower }}-pan-server-2"
+    # ISE PSN Server 1
+    - ip: "{{ psn1_ip }}"
+      hostname: "{{ ise_base_hostname | lower }}-psn-server-1"
+    # ISE PSN Server 2
+    - ip: "{{ psn2_ip }}"
+      hostname: "{{ ise_base_hostname | lower }}-psn-server-2"
+
+- name: Export trusted certificates into primary node
+  cisco.ise.personas_export_certs:
+    primary_ip: "{{ pan1_ip }}"
+    primary_username: "{{ ise_username }}"
+    primary_password: "{{ ise_password }}"
+    name: "{{ item.name }}"
+    ip: "{{ item.ip }}"
+    hostname: "{{ item.hostname }}"
+    username: "{{ ise_username }}"
+    password: "{{ ise_password }}"
+  loop:
+    - name: ISE PAN Server 2
+      ip: "{{ pan2_ip }}"
+      hostname: "{{ ise_base_hostname | lower }}-pan-server-2"
+    - name: ISE PSN Server 1
+      ip: "{{ psn1_ip }}"
+      hostname: "{{ ise_base_hostname | lower }}-psn-server-1"
+    - name: ISE PSN Server 2
+      ip: "{{ psn2_ip }}"
+      hostname: "{{ ise_base_hostname | lower }}-psn-server-2"
+
+- name: Promote primary node
+  cisco.ise.personas_promote_primary:
+    ip: "{{ pan1_ip }}"
+    username: "{{ ise_username }}"
+    password: "{{ ise_password }}"
+
+- name: Register the nodes to the cluster
+  cisco.ise.personas_register_node:
+    primary_ip: "{{ pan1_ip }}"
+    primary_username: "{{ ise_username }}"
+    primary_password: "{{ ise_password }}"
+    fqdn: "{{ item.fqdn }}"
+    username: "{{ ise_username }}"
+    password: "{{ ise_password }}"
+    roles: "{{ item.roles }}"
+    services: "{{ item.services }}"
+  loop:
+    # ISE PAN Server 2
+    - fqdn: "{{ ise_base_hostname | lower }}-pan-server-2.{{ ise_domain }}"
+      roles:
+        - SecondaryAdmin
+        - SecondaryMonitoring
+      services: []
+    # ISE PSN Server 1
+    - fqdn: "{{ ise_base_hostname | lower }}-psn-server-1.{{ ise_domain }}"
+      roles: []
+      services:
+        - Session
+        - Profiler 
+    # ISE PSN Server 2
+    - fqdn: "{{ ise_base_hostname | lower }}-psn-server-2.{{ ise_domain }}"
+      roles: []
+      services:
+        - Session
+        - Profiler
+  
+- name: Remove the Session and Profiler services from the primary node
+  cisco.ise.personas_update_roles_services:
+    ip: "{{ pan1_ip }}"
+    username: "{{ ise_username }}"
+    password: "{{ ise_password }}"
+    hostname: "{{ ise_base_hostname | lower }}-pan-server-1"
+    roles:
+      - PrimaryAdmin
+      - PrimaryMonitoring
+    services: []

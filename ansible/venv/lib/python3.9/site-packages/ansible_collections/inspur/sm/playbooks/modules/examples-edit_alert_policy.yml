@@ -1,0 +1,26 @@
+- name: alert policy test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "set alert policy"
+    inspur.sm.edit_alert_policy:
+      id: 1
+      status: "enable"
+      type: "snmp"
+      destination: "100.2.2.2"
+      channel: "shared"
+      provider: "{{ ism }}"
+
+  - name: "set alert policy"
+    inspur.sm.edit_alert_policy:
+      id: 1
+      status: "disable"
+      provider: "{{ ism }}"

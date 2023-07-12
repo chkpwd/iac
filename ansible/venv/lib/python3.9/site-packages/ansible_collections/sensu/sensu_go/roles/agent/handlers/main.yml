@@ -1,0 +1,35 @@
+---
+- name: Restart Linux agent
+  service:
+    name: sensu-agent
+    state: restarted
+  when: manage_sensu_agent_service | default(False)
+
+- name: Restart Windows agent
+  action:
+    module: win_service
+    name: SensuAgent
+    state: restarted
+  when: manage_sensu_agent_service | default(False)
+
+# You probably noticed that we use some black magic in the previous handler.
+# Let us explain what it does and why did we bring it into the daylight.
+#
+# Under normal circumstances, we would write the previous handler as
+#
+# - name: Restart Windows agent
+#   win_service:
+#     name: SensuAgent
+#     state: restarted
+#
+# When Ansible loads this handler, it makes sure it can find the win_service
+# module. And this is where things start to go downhill for us. Because we do
+# not have a guarantee that win_service module will be available (win_service
+# is not part of a certified collection), this eagerness prevents operating in
+# certain situations where win_service module is not even needed.
+#
+# And this is why we use the alternative form that forces Ansible to lazy-load
+# the module at the task/handler execution time.
+#
+# Of course, it would be much easier if we could declare ansible.windows as our
+# dependency, but this is not possible at the moment.

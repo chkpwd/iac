@@ -1,0 +1,8 @@
+---
+# Write VLANs to file
+- lineinfile:
+    path: "{{ filename }}"
+    line: "{{ item.EthNetworkPolicy.Name }},{{ item.IsNative }},{{ item.Name }},{{ item.VlanId  }}"
+  loop: "{{ outer_item.api_response }}"
+  loop_control:
+    label: "{{ item.EthNetworkPolicy.Name }}"

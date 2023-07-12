@@ -1,0 +1,13 @@
+---
+- name: Create folder for Summon-Conjur to be installed into
+  file:
+    path: /usr/local/lib/summon
+    state: directory
+    recurse: yes
+
+- name: Download and unpack Summon-Conjur
+  unarchive:
+    src: https://github.com/cyberark/summon-conjur/releases/download/v{{ summon_conjur.version }}/summon-conjur-{{ summon_conjur.os }}.tar.gz
+    dest: /usr/local/lib/summon
+    remote_src: yes
+    creates: /usr/local/lib/summon/summon-conjur

@@ -1,0 +1,24 @@
+---
+- hosts: localhost
+  collections:
+  - fortinet.fortios
+  vars:
+   host: "192.168.52.177"
+   username: "admin"
+   password: ""
+   vdom: "root"
+   ssl_verify: "False"
+  tasks:
+  - name: Configure HA.
+    fortios_system_ha:
+      host:  "{{ host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+      vdom:  "{{ vdom }}"
+      https: "True"
+      ssl_verify:  "{{ ssl_verify }}"
+      system_ha:
+        group_name: "testgroup"
+        mode: "standalone"
+        multicast_ttl: "38"
+        override: "enable"

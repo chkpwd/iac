@@ -1,0 +1,30 @@
+---
+- name: icinga_scheduled_downtime
+  t_systems_mms.icinga_director.icinga_scheduled_downtime:
+    url: "{{ icinga_url }}"
+    use_proxy: "{{ icinga_use_proxy | default(omit) }}"
+    validate_certs: "{{ icinga_validate_certs | default(omit) }}"
+    url_username: "{{ icinga_user }}"
+    url_password: "{{ icinga_pass }}"
+    force_basic_auth: "{{ icinga_force_basic_auth | default(omit) }}"
+    client_cert: "{{ icinga_client_cert | default(omit) }}"
+    client_key: "{{ icinga_client_key | default(omit) }}"
+    state: "{{ downtime.0.state | default(omit) }}"
+    object_name: "{{ downtime.1 }}"
+    author: "{{ downtime.0.author }}"
+    comment: "{{ downtime.0.comment }}"
+    fixed: "{{ downtime.0.fixed }}"
+    with_services: "{{ downtime.0.with_services | default(omit) }}"
+    apply_to: "{{ downtime.0.apply_to }}"
+    assign_filter: "{{ downtime.0.assign_filter | default(omit) }}"
+    duration: "{{ downtime.0.duration | default(omit) }}"
+    ranges: "{{ downtime.0.ranges| default(omit) }}"
+  retries: 3
+  delay: 3
+  register: result
+  until: result is succeeded
+  loop: "{{ icinga_scheduled_downtimes|subelements('scheduled_downtime_object') }}"
+  loop_control:
+    loop_var: downtime
+  tags: downtime
+  notify: config_deploy

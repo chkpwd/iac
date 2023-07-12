@@ -1,0 +1,23 @@
+[Intersight_HX]
+# Note: at least one host (e.g., sjc07-r13-501) must be present for update_*_inventory.yml to work
+sjc07-r13-501
+sjc07-r13-503
+
+[Intersight_Servers]
+C220M5-WZP23230LJ6 server_moid=5f0736dc6176752d37dbe9f4 model=UCSC-C220-M5SX
+C220M5-WZP23230LJC server_moid=5ec59a786176752d377205f1 model=UCSC-C220-M5SX
+C240M4-FCH1906V37P server_moid=5e8c974d6176752d332f44c9 model=UCSC-C240-M4S2
+C220-FCH2050V0LB server_moid=5dee9ce46176752d332eb867 model=UCSC-C220-M4L
+
+[Intersight:children]
+Intersight_HX
+Intersight_Servers
+
+[all:vars]
+api_private_key=~/Downloads/DevNetSecretKey.txt
+api_key_id=596cc79e5d91b400010d15ad/5db71f977564612d30cc3860/5f0f42d47564612d3363b87b
+organization=DevNet
+boot_order_policy=COS-Boot
+local_user_policy=devnet-guest-admin
+ntp_policy=lab-ntp
+virtual_media_policy=COS-VM

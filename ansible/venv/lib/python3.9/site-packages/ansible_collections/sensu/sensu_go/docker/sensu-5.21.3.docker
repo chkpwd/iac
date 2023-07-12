@@ -1,0 +1,9 @@
+FROM sensu/sensu:5.21.3
+RUN apk update \
+    && apk add --no-cache python sudo bash ca-certificates \
+                          py-bcrypt py-six py-cffi
+CMD [ \
+  "sensu-backend", "start", \
+  "--state-dir", "/var/lib/sensu/sensu-backend", \
+  "--log-level", "debug" \
+]

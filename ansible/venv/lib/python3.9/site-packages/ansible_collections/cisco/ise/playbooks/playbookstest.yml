@@ -1,0 +1,183 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  vars:
+    itemTest:
+      name: "Cisco_Ansible_Test_09_12"
+      accessType: "ACCESS_ACCEPT"
+      description: "Test"
+      authzProfileType: "SWITCH"
+      vlan:
+        nameID: "172_28_1_0-VN_IOT"
+        tagID: 1
+      trackMovement: false
+      agentlessPosture: false
+      serviceTemplate: false
+      profileName: "Cisco"
+  tasks:
+  ## https://github.com/CiscoISE/ansible-ise/issues/72
+  ## post 400
+  # - name: Get all Network Access Authorization Rules
+  #   cisco.ise.network_access_authorization_rules:
+  #     state: present
+  #     policyId: acd4b55d-dca3-4b93-a160-8a2d01669827
+  #     rule:
+  #       default: false
+  #       #id: d9e67664-799d-4ad9-a407-8365117c18e5
+  #       name: Ansible B TEST
+  #       hitCounts: 0
+  #       rank: 0
+  #       state: enabled
+  #       condition:
+  #         conditionType: ConditionAndBlock
+  #         isNegate: false
+  #         children:
+  #           - conditionType: ConditionReference
+  #             isNegate: false
+  #             name: Wireless_Access
+  #             id: ff6008e0-5c35-48a3-9fab-e0e709983369
+  #             # description: >-
+  #             #   Default condition used to match any authentication request from Cisco
+  #             #   Wireless LAN Controller.
+  #           - conditionType: ConditionAttributes
+  #             isNegate: false
+  #             dictionaryName: IdentityGroup
+  #             attributeName: Name
+  #             operator: equals
+  #             #dictionaryValue: null
+  #             attributeValue: 'Endpoint Identity Groups:Blocked List'
+  #     profile:
+  #       - Blackhole_Wireless_Access
+  #     #securityGroup: null
+  #   register: result
+
+  # - name: Get all Network Access Authorization Rules
+  #   cisco.ise.network_access_authorization_rules_info:
+  #     policyId: acd4b55d-dca3-4b93-a160-8a2d01669827
+  #   register: result
+
+  ## https://github.com/CiscoISE/ansible-ise/issues/74
+
+  # - name: Create or update Authorization profile
+  #   cisco.ise.authorization_profile:
+  #     name: "{{  itemTest.name  }}"
+  #     accessType: "{{  itemTest.accessType  }}"
+  #     description:  "{{ itemTest.description  }}"
+  #     authzProfileType:  "{{  itemTest.authzProfileType  }}"
+  #     vlan:
+  #       nameID: "{{  itemTest.vlan.nameID  }}"
+  #       tagID:
+  #         "{{itemTest.vlan.tagID|int}}"
+  #     trackMovement:  "{{ itemTest.trackMovement  }}"
+  #     agentlessPosture:  "{{ itemTest.agentlessPosture  }}"
+  #     serviceTemplate:  "{{  itemTest.serviceTemplate  }}"
+  #     profileName:  "{{  itemTest.profileName  }}"
+  #   register: result
+  
+  # - name: Get all Authorization Profile
+  #   cisco.ise.authorization_profile_info:
+  #     name: Cisco_Temporal_Onboard
+  #   register: result
+
+  # - name: debug
+  #   debug:
+  #      msg: "{{ itemTest.vlan.tagID | int == 0 }}"
+
+  # - name: debug
+  #   debug:
+  #      msg: |
+  #        {{ item.vlanID | int }}
+  #   loop:
+  #     - { "vlanID": "1" }
+  #     - { "vlanID": "2" }
+  #     - { "vlanID": 2 }
+
+  # - name: debug
+  #   debug:
+  #      var: |-
+  #         {{ item.vlanID | int }}
+  #   loop:
+  #     - { "vlanID": 1 }
+  #     - { "vlanID": "2" }
+
+  ## https://github.com/CiscoISE/ansible-ise/issues/76
+  ## Node group creation is not idempotent
+  ## fatal: [localhost]: FAILED! => {"changed": false, "msg": "An error occured when executing operation. The error was: [409] - The request could not be processed because it conflicts with some established rule of the system.\n{\n  \"error\" : {\n    \"message\" : \"NodeGroup 'TestGroup1' already exist.\"\n  },\n  \"version\" : \"1.0.0\"\n}"}
+  # - name: Create test node group.
+  #   cisco.ise.node_group:
+  #     state: present
+  #     description: "Testing creation and idempotency"
+  #     name: "TesAnsible76"
+  #     nodeGroupName: "TesAnsible76"
+  #     forceDelete: true
+  #   register: result
+
+  # - name: Get all Node Group
+  #   cisco.ise.node_group_info:
+  #     nodeGroupName: "NodeGroup2"
+  #   register: result
+
+  ##https://github.com/CiscoISE/ansible-ise/issues/79
+  ## Cannot update
+  # - name: Create or update an network_access_authentication_rules
+  #   cisco.ise.network_access_authentication_rules:
+  #     state: present
+  #     rule:
+  #       default: false
+  #       name: TestAnsibleIssue79
+  #       hitCounts: 00
+  #       rank: 0
+  #       state: enabled
+  #       #id: b086e85e-6118-4b67-8efc-05d692423afb
+  #       condition:
+  #         conditionType: ConditionReference
+  #         isNegate: false
+  #         dictionaryName: Network Access
+  #         attributeName: EapAuthentication
+  #         operator: equals
+  #         attributeValue: EAP-MSCHAPv2
+  #         name: EAP-MSCHAPv2
+  #         id: c456a490-0429-4fd4-91d7-efd1eb1f855a
+  #     ifAuthFail: REJECT
+  #     ifUserNotFound: REJECT
+  #     ifProcessFail: DROP
+  #     policyId: acd4b55d-dca3-4b93-a160-8a2d01669827
+  #   register: result
+
+  
+  ##https://github.com/CiscoISE/ansible-ise/issues/77
+  ## Get error
+  ## node_group_node_info
+  # - name: Get all Node Group Node
+  #   cisco.ise.node_group_node_info:
+  #     nodeGroupName: TesAnsible76
+  #   register: result
+
+  ##https://github.com/CiscoISE/ansible-ise/issues/81
+  ## Unable to update Authorization Policies
+  ##network_access_authorization_rules
+  - name: CRUD
+    cisco.ise.network_access_authorization_rules:
+      state: present
+      #state: absent
+      rule:
+        default: false
+        name: TestAnsibleIssue81
+        rank: 0
+        state: enabled
+        condition:
+          conditionType: ConditionAttributes
+          isNegate: false
+          dictionaryName: IdentityGroup
+          attributeName: Name
+          operator: equals
+          attributeValue: 'Endpoint Identity Groups:IAC_Lab1'
+      profile:
+        - Blackhole_Wireless_Access
+      #securityGroup: BYOD
+      policyId: acd4b55d-dca3-4b93-a160-8a2d01669827
+    register: result
+
+  - name: Print Authorization profile
+    ansible.builtin.debug:
+      var: result

@@ -1,0 +1,21 @@
+- name: ad group test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "edit active directory group information"
+    inspur.sm.edit_ad_group:
+      id: "1"
+      name: "wbs"
+      domain: "inspur.com"
+      pri: "administrator"
+      kvm: "enable"
+      vm: "disable"
+      provider: "{{ ism }}"

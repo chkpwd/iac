@@ -1,0 +1,10 @@
+---
+all:
+  hosts:
+    windows:
+      ansible_host: 192.168.50.90
+      ansible_port: 5985
+      ansible_user: vagrant
+      ansible_password: vagrant
+      ansible_connection: winrm
+      ansible_winrm_transport: basic

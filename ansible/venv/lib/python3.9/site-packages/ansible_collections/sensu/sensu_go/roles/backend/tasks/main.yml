@@ -1,0 +1,16 @@
+---
+- name: Install sensu-go-backend binary
+  include_role:
+    name: install
+  vars:
+    components: [sensu-go-backend]
+
+- name: Inform restart handler that we are in charge of the backend service
+  set_fact:
+    manage_sensu_backend_service: true
+
+- name: Configure the backend
+  include_tasks: configure.yml
+
+- name: Start the backend
+  include_tasks: start.yml

@@ -1,0 +1,94 @@
+---
+#
+# Configure Server Profile Templates
+#
+- hosts: localhost
+  connection: local
+  collections:
+    - cisco.intersight
+  gather_facts: false
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      # if api_key vars are omitted, INTERSIGHT_API_KEY_ID, INTERSIGHT_API_PRIVATE_KEY,
+      # and INTERSIGHT_API_URI environment variables used for API key data
+      api_private_key: "{{ api_private_key | default(omit) }}"
+      api_key_id: "{{ api_key_id | default(omit) }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+    # Server Profile Template name
+    template_name: sp-devnet
+    org_name: dsoper-DevNet
+    imc_access_policy: access-devnet
+    ntp_policy: LabNTP
+    uuid_pool: uuid-devnet
+    num_profiles: 3
+  tasks:
+    # Get the Organization Moid
+    - name: "Get {{ org_name }} Organization Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /organization/Organizations
+        query_params:
+          $filter: "Name eq '{{ org_name }}'"
+      register: org_resp
+    # Get the Access Policy
+    - name: "Get {{ imc_access_policy }} Access Policy Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /access/Policies
+        query_params:
+          $filter: "Name eq '{{ imc_access_policy }}'"
+      register: access_resp
+    # Get the NTP Policy
+    - name: "Get {{ ntp_policy }} NTP Policy Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /ntp/Policies
+        query_params:
+          $filter: "Name eq '{{ ntp_policy }}'"
+      register: ntp_resp
+    # Get the UUID Pool
+    - name: "Get {{ uuid_pool }} UUID Pool Moid"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /uuidpool/Pools
+        query_params:
+          $filter: "Name eq '{{ uuid_pool }}'"
+      register: uuid_resp
+    # Config SP Template using Policy Buckets
+    - name: "Configure {{ template_name }} Server Profile Template"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /server/ProfileTemplates
+        query_params:
+          $filter: "Name eq '{{ template_name }}'"
+        api_body: {
+          "Name": "{{ template_name }}",
+          "Organization": {
+            "Moid": "{{ org_resp.api_response.Moid }}"
+          },
+          "PolicyBucket": [
+            {
+              "Moid": "{{ ntp_resp.api_response.Moid }}",
+              "ObjectType": "ntp.Policy"
+            },
+            {
+              "Moid": "{{ access_resp.api_response.Moid }}",
+              "ObjectType": "access.Policy"
+            }
+          ],
+          "Tags": [],
+          "TargetPlatform": "FIAttached",
+          "UuidAddressType": "POOL",
+          "UuidPool": {
+            "Moid": "{{ uuid_resp.api_response.Moid }}",
+            "ObjectType": "uuidpool.Pool"
+          }
+        }
+      register: template_resp
+    # Derive profiles from template (if profiles don't already exist)
+    - name: "Derive Profiles from {{ template_name}}"
+      include_tasks: derive_profiles.yml
+      loop: "{{ range(1, num_profiles+1) | list }}"

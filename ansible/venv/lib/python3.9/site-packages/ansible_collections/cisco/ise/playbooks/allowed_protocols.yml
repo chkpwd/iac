@@ -1,0 +1,62 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    # - name: Get allowed protocols, skip first one
+    #   cisco.ise.allowed_protocols_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     page: 2
+    #     size: 1
+    #   register: result
+
+    # - name: Get allowed protocols by name
+    #   cisco.ise.allowed_protocols_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     name: "Default Network Access"
+    #   register: result
+
+    # - name: Get allowed protocols by id
+    #   cisco.ise.allowed_protocols_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     id: "92613980-8c01-11e6-996c-525400b48521"
+    #   register: result
+
+    - name: Create or update allowed protocols
+      cisco.ise.allowed_protocols:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: Test Device Admin
+        description: Test Allowed Protocol Service Device Admin
+        processHostLookup: false
+        allowPapAscii: true
+        allowChap: true
+        allowMsChapV1: true
+        allowMsChapV2: false
+        allowEapMd5: false
+        allowLeap: false
+        allowEapTls: false
+        allowEapTtls: false
+        allowEapFast: false
+        allowPeap: false
+        allowTeap: false
+        allowPreferredEapProtocol: false
+        eapTlsLBit: false
+        allowWeakCiphersForEap: false
+        requireMessageAuth: false
+      register: result
+
+    - name: Print Allowed Protocol
+      ansible.builtin.debug:
+        var: result

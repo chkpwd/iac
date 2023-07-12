@@ -1,0 +1,27 @@
+---
+#
+# {{ managed }}
+#
+
+##
+# Sensu agent configuration
+##
+{% if not agent_config or "backend-url" not in agent_config %}
+backend-url:
+{{ agent_backend_urls | to_nice_yaml }}
+{% endif -%}
+
+{% if agent_trusted_ca_file is defined and
+      not (agent_config and "trusted-ca-file" in agent_config) %}
+trusted-ca-file: {{ trusted_ca_file_path }}
+{% endif -%}
+
+{% if agent_trusted_ca_file is defined or agent_config and
+      ("trusted-ca-file" in agent_config and
+       not "insecure-skip-tls-verify" in agent_config) %}
+insecure-skip-tls-verify: false
+{% endif -%}
+
+{% if agent_config %}
+{{ agent_config | to_nice_yaml }}
+{% endif %}

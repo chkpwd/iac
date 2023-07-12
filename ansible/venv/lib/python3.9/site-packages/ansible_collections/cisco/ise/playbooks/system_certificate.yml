@@ -1,0 +1,67 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    # - name: Get all
+    #   cisco.ise.system_certificate_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #   register: result
+
+    # - name: Print all
+    #   ansible.builtin.debug:
+    #     var: result
+
+    # - name: Get by id
+    #   cisco.ise.system_certificate_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     id: d704e911-a916-11eb-8830-2ec507028ea8
+    #   register: result
+
+    - name: Get System Certificate by name
+      cisco.ise.system_certificate_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        ise_debug: "{{ ise_debug }}"
+        hostName: ise
+      register: result
+
+    - name: Print result
+      ansible.builtin.debug:
+        var: result
+
+  # - name: Update a system_certificate
+  #   cisco.ise.system_certificate:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #     state: present
+  #     admin: false
+  #     allowReplacementOfPortalGroupTag: false
+  #     description: ISE
+  #     eap: false
+  #     expirationTTLPeriod: 5
+  #     expirationTTLUnits: years
+  #     hostName: ise
+  #     ims: false
+  #     name: OU=Certificate Services System Certificate,CN=ise.securitydemo.net#Certificate
+  #       Services Endpoint Sub CA - ise#00002
+  #     portal: false
+  #     portalGroupTag: Default Portal Certificate Group
+  #     pxgrid: false
+  #     radius: false
+  #     renewSelfSignedCertificate: false
+  #     saml: false
+  #   register: result
+
+  # - name: Print result
+  #   ansible.builtin.debug:
+  #     var: result

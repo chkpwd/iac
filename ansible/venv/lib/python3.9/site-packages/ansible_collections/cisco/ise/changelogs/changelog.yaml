@@ -1,0 +1,922 @@
+releases:
+  0.0.1:
+    release_date: "2021-04-20"
+    changes:
+      release_summary: This is the initial beta release of the collection.
+  0.0.2:
+    release_date: "2021-05-25"
+    changes:
+      release_summary: Added all idempotent modules. Most modules are still untested against a live ISE.
+      minor_changes:
+        - device_administration_authorization_exception_rules - new module.
+        - device_administration_authorization_exception_rules_info - new module.
+        - device_administration_authorization_global_exception_rules - new module.
+        - device_administration_authorization_global_exception_rules_info - new module.
+        - import_trust_cert - new module.
+        - network_access_authorization_exception_rules - new module.
+        - network_access_authorization_exception_rules_info - new module.
+        - network_access_authorization_global_exception_rules - new module.
+        - network_access_authorization_global_exception_rules_info - new module.
+        - active_directory_info - new module.
+        - allowed_protocols - new module.
+        - allowed_protocols_info - new module.
+        - anc_policy - new module.
+        - anc_policy_bulk_monitor_status_info - new module.
+        - anc_policy_info - new module.
+        - authorization_profile - new module.
+        - authorization_profile_info - new module.
+        - backup_last_status_info - new module.
+        - csr_export_info - new module.
+        - csr_info - new module.
+        - device_administration_authentication_rules - new module.
+        - device_administration_authentication_rules_info - new module.
+        - device_administration_authorization_rules - new module.
+        - device_administration_authorization_rules_info - new module.
+        - device_administration_command_set_info - new module.
+        - device_administration_conditions - new module.
+        - device_administration_conditions_for_authentication_rule_info - new module.
+        - device_administration_conditions_for_authorization_rule_info - new module.
+        - device_administration_conditions_for_policy_set_info - new module.
+        - device_administration_conditions_info - new module.
+        - device_administration_dictionary_attributes_authentication_info - new module.
+        - device_administration_dictionary_attributes_authorization_info - new module.
+        - device_administration_dictionary_attributes_policy_set_info - new module.
+        - device_administration_identity_stores_info - new module.
+        - device_administration_network_conditions - new module.
+        - device_administration_network_conditions_info - new module.
+        - device_administration_policy_set - new module.
+        - device_administration_policy_set_info - new module.
+        - device_administration_profiles_info - new module.
+        - device_administration_service_names_info - new module.
+        - device_administration_time_date_conditions - new module.
+        - device_administration_time_date_conditions_info - new module.
+        - downloadable_acl - new module.
+        - downloadable_acl_info - new module.
+        - egress_matrix_cell - new module.
+        - egress_matrix_cell_bulk_monitor_status_info - new module.
+        - egress_matrix_cell_info - new module.
+        - endpoint - new module.
+        - endpoint_bulk_monitor_status_info - new module.
+        - endpoint_get_rejected_endpoints_info - new module.
+        - endpoint_group - new module.
+        - endpoint_group_info - new module.
+        - endpoint_info - new module.
+        - external_radius_server - new module.
+        - external_radius_server_info - new module.
+        - filter_policy - new module.
+        - filter_policy_info - new module.
+        - guest_location_info - new module.
+        - guest_smtp_notification_settings_info - new module.
+        - guest_ssid - new module.
+        - guest_ssid_info - new module.
+        - guest_type - new module.
+        - guest_type_info - new module.
+        - guest_user - new module.
+        - guest_user_bulk_monitor_status_info - new module.
+        - guest_user_info - new module.
+        - hotspot_portal - new module.
+        - hotspot_portal_info - new module.
+        - id_store_sequence - new module.
+        - id_store_sequence_info - new module.
+        - identity_group - new module.
+        - identity_group_info - new module.
+        - internal_user - new module.
+        - internal_user_info - new module.
+        - network_access_authentication_rules - new module.
+        - network_access_authentication_rules_info - new module.
+        - network_access_authorization_rules - new module.
+        - network_access_authorization_rules_info - new module.
+        - network_access_conditions_for_authentication_rule_info - new module.
+        - network_access_conditions_for_authorization_rule_info - new module.
+        - network_access_conditions_for_policy_set_info - new module.
+        - network_access_conditions_info - new module.
+        - network_access_dictionary - new module.
+        - network_access_dictionary_attribute - new module.
+        - network_access_dictionary_attribute_info - new module.
+        - network_access_dictionary_attributes_authentication_info - new module.
+        - network_access_dictionary_attributes_authorization_info - new module.
+        - network_access_dictionary_attributes_policy_set_info - new module.
+        - network_access_dictionary_info - new module.
+        - network_access_identity_stores_info - new module.
+        - network_access_network_condition - new module.
+        - network_access_network_condition_info - new module.
+        - network_access_policy_set - new module.
+        - network_access_policy_set_info - new module.
+        - network_access_profiles_info - new module.
+        - network_access_security_groups_info - new module.
+        - network_access_service_name_info - new module.
+        - network_access_time_date_conditions - new module.
+        - network_access_time_date_conditions_info - new module.
+        - network_device - new module.
+        - network_device_bulk_monitor_status_info - new module.
+        - network_device_group - new module.
+        - network_device_group_info - new module.
+        - network_device_info - new module.
+        - node_deployment - new module.
+        - node_deployment_info - new module.
+        - node_group - new module.
+        - node_group_info - new module.
+        - node_replication_status_info - new module.
+        - pan_ha_info - new module.
+        - portal_global_setting_info - new module.
+        - portal_info - new module.
+        - portal_theme - new module.
+        - portal_theme_info - new module.
+        - radius_server_sequence - new module.
+        - radius_server_sequence_info - new module.
+        - rest_id_store - new module.
+        - rest_id_store_info - new module.
+        - self_registered_portal - new module.
+        - self_registered_portal_info - new module.
+        - sg_acl - new module.
+        - sg_acl_bulk_monitor_status_info - new module.
+        - sg_acl_info - new module.
+        - sgt - new module.
+        - sgt_bulk_monitor_status_info - new module.
+        - sgt_info - new module.
+        - sms_provider_info - new module.
+        - sponsor_group - new module.
+        - sponsor_group_info - new module.
+        - sponsor_group_member_info - new module.
+        - sponsor_portal - new module.
+        - sponsor_portal_info - new module.
+        - sponsored_guest_portal - new module.
+        - sponsored_guest_portal_info - new module.
+        - system_certificate_info - new module.
+        - tacacs_command_sets - new module.
+        - tacacs_command_sets_info - new module.
+        - tacacs_external_servers - new module.
+        - tacacs_external_servers_info - new module.
+        - tacacs_profile - new module.
+        - tacacs_profile_info - new module.
+        - tacacs_server_sequence - new module.
+        - tacacs_server_sequence_info - new module.
+        - trusted_certificate_export_info - new module.
+        - trusted_certificate_info - new module.
+  0.0.3:
+    release_date: "2021-06-04"
+    changes:
+      release_summary: Added other modules and playbooks. Most modules are still untested against a live ISE.
+      bugfixes:
+        - Improve the documentation of the modules.
+      major_changes:
+        - import_trust_cert - removed module.
+      minor_changes:
+        - guest_user_reinstante - new module.
+        - system_certificate_export - new module.
+        - active_directory - new module.
+        - active_directory_add_groups - new module.
+        - active_directory_groups_by_domain_info - new module.
+        - active_directory_is_user_member_of_group_info - new module.
+        - active_directory_join_domain - new module.
+        - active_directory_join_domain_with_all_nodes - new module.
+        - active_directory_leave_domain - new module.
+        - active_directory_leave_domain_with_all_nodes - new module.
+        - active_directory_trusted_domains_info - new module.
+        - active_directory_user_groups_info - new module.
+        - anc_policy_bulk_request - new module.
+        - backup_cancel - new module.
+        - backup_config - new module.
+        - backup_restore - new module.
+        - backup_schedule_config - new module.
+        - bind_signed_certificate - new module.
+        - csr_delete - new module.
+        - csr_generate - new module.
+        - csr_generate_intermediate_ca - new module.
+        - egress_matrix_cell_bulk_request - new module.
+        - egress_matrix_cell_clear_all - new module.
+        - egress_matrix_cell_clone - new module.
+        - egress_matrix_cell_set_all_status - new module.
+        - endpoint_bulk_request - new module.
+        - endpoint_deregister - new module.
+        - endpoint_register - new module.
+        - endpoint_release_rejected_endpoint - new module.
+        - guest_smtp_notification_settings - new module.
+        - guest_type_email - new module.
+        - guest_type_sms - new module.
+        - guest_user_approve - new module.
+        - guest_user_bulk_request - new module.
+        - guest_user_change_sponsor_password - new module.
+        - guest_user_deny - new module.
+        - guest_user_email - new module.
+        - guest_user_reset_password - new module.
+        - guest_user_sms - new module.
+        - guest_user_suspend - new module.
+        - ise_root_ca_regenerate - new module.
+        - network_device_bulk_request - new module.
+        - node_promotion - new module.
+        - node_sync - new module.
+        - pan_ha - new module.
+        - portal_global_setting - new module.
+        - renew_certificate - new module.
+        - repository - new module.
+        - repository_files_info - new module.
+        - repository_info - new module.
+        - sg_acl_bulk_request - new module.
+        - sgt_bulk_request - new module.
+        - system_certificate - new module.
+        - system_certificate_import - new module.
+        - trusted_certificate - new module.
+        - trusted_certificate_import - new module.
+  0.0.4:
+    release_date: "2021-06-08"
+    changes:
+      release_summary: Added network_access_conditions module. Most modules are still untested against a live ISE.
+      minor_changes:
+        - network_access_conditions - new module.
+  0.0.5:
+    release_date: "2021-06-11"
+    changes:
+      release_summary: Update sorting params for info_ modules.
+      bugfixes:
+        - Changes sortdec to sortdsc query param for _info modules.
+  0.0.6:
+    release_date: "2021-06-18"
+    changes:
+      release_summary: Fix README playbook example.
+  0.0.7:
+    release_date: "2021-07-01"
+    changes:
+      release_summary: >
+        Adds more playbooks. Changes credentials.yml to group_vars. Adds ISE ER S modules.
+        Compares requested object to found object before updating to only update if necessary.
+      bugfixes:
+        - Removes unneeded imports.
+        - Updates the `params` dictionary values on sdk call execution.
+        - Introduces comparison to see if it requires an update.
+      minor_changes:
+        - service_info - new module.
+        - telemetry_info_info - new module.
+        - aci_bindings_info - new module.
+        - aci_settings - new module.
+        - aci_settings_info - new module.
+        - aci_test_connectivity - new module.
+        - admin_user_info - new module.
+        - anc_endpoint_apply - new module.
+        - anc_endpoint_bulk_monitor_status_info - new module.
+        - anc_endpoint_bulk_request - new module.
+        - anc_endpoint_clear - new module.
+        - anc_endpoint_info - new module.
+        - byod_portal - new module.
+        - byod_portal_info - new module.
+        - certificate_profile - new module.
+        - certificate_profile_info - new module.
+        - certificate_template_info - new module.
+        - deployment_info - new module.
+        - endpoint_certificate - new module.
+        - my_device_portal - new module.
+        - my_device_portal_info - new module.
+        - native_supplicant_profile - new module.
+        - native_supplicant_profile_info - new module.
+        - node_info - new module.
+        - profiler_profile_info - new module.
+        - px_grid_node_approve - new module.
+        - px_grid_node_info - new module.
+        - px_grid_settings_auto_approve - new module.
+        - session_service_node_info - new module.
+        - sg_mapping - new module.
+        - sg_mapping_deploy - new module.
+        - sg_mapping_deploy_all - new module.
+        - sg_mapping_deploy_status_info - new module.
+        - sg_mapping_group - new module.
+        - sg_mapping_group_bulk_monitor_status_info - new module.
+        - sg_mapping_group_bulk_request - new module.
+        - sg_mapping_group_deploy - new module.
+        - sg_mapping_group_deploy_all - new module.
+        - sg_mapping_group_deploy_status_info - new module.
+        - sg_mapping_group_info - new module.
+        - sg_mapping_info - new module.
+        - sg_to_vn_to_vlan - new module.
+        - sg_to_vn_to_vlan_bulk_monitor_status_info - new module.
+        - sg_to_vn_to_vlan_bulk_request - new module.
+        - sg_to_vn_to_vlan_info - new module.
+        - support_bundle - new module.
+        - support_bundle_download - new module.
+        - support_bundle_status_info - new module.
+        - sxp_connections - new module.
+        - sxp_connections_bulk_monitor_status_info - new module.
+        - sxp_connections_bulk_request - new module.
+        - sxp_connections_info - new module.
+        - sxp_local_bindings - new module.
+        - sxp_local_bindings_bulk_monitor_status_info - new module.
+        - sxp_local_bindings_bulk_request - new module.
+        - sxp_local_bindings_info - new module.
+        - sxp_vpns - new module.
+        - sxp_vpns_bulk_monitor_status_info - new module.
+        - sxp_vpns_bulk_request - new module.
+        - sxp_vpns_info - new module.
+        - system_certificate_create - new module.
+        - system_config_version_info - new module.
+        - threat_vulnerabilities_clear - new module.
+  0.0.8:
+    release_date: "2021-07-09"
+    changes:
+      release_summary: Fix Indentity Group modules.
+      bugfixes:
+        - Fixes Identity Group parameters.
+        - Fixes Identity Group response recollection.
+  0.0.9:
+    release_date: "2021-07-12"
+    changes:
+      release_summary: Adds an Ansible role for the deployment of ISE to AWS as well as four modules for the deployment of personas to the ISE nodes.
+      major_changes:
+        - Adds a 'aws_deployment' role that allows the deployment of an arbitrary large ISE cluster to AWS.
+        - personas_check_standalone - Adds module for the deployment of personas to existing nodes in an ISE cluster.
+        - personas_export_certs - Adds module for the deployment of personas to existing nodes in an ISE cluster.
+        - personas_promote_primary - Adds module for the deployment of personas to existing nodes in an ISE cluster.
+        - personas_update_roles - Adds module for the deployment of personas to existing nodes in an ISE cluster.
+  1.0.0:
+    release_date: "2021-07-21"
+    changes:
+      release_summary: Update to use ciscoisesdk v1.0.0 or newer
+      minor_changes:
+        - Added ise_debug parameter
+        - device_administration_authentication_reset_hitcount - new module.
+        - device_administration_authorization_reset_hitcount - new module.
+        - device_administration_global_exception_rules - new module.
+        - device_administration_global_exception_rules_info - new module.
+        - device_administration_global_exception_rules_reset_hitcount - new module.
+        - device_administration_local_exception_rules - new module.
+        - device_administration_local_exception_rules_info - new module.
+        - device_administration_local_exception_rules_reset_hitcount - new module.
+        - device_administration_policy_set_reset_hitcount - new module.
+        - guest_user_reinstate - new module.
+        - mnt_account_status_info - new module.
+        - mnt_athentication_status_info - new module.
+        - mnt_failure_reasons_info - new module.
+        - mnt_session_active_count_info - new module.
+        - mnt_session_active_list_info - new module.
+        - mnt_session_auth_list_info - new module.
+        - mnt_session_by_ip_info - new module.
+        - mnt_session_by_mac_info - new module.
+        - mnt_session_by_nas_ip_info - new module.
+        - mnt_session_by_username_info - new module.
+        - mnt_session_delete_all - new module.
+        - mnt_session_disconnect_info - new module.
+        - mnt_session_posture_count_info - new module.
+        - mnt_session_profiler_count_info - new module.
+        - mnt_session_reauthentication_info - new module.
+        - mnt_sessions_by_session_id_info - new module.
+        - mnt_version_info - new module.
+        - network_access_authentication_rules_reset_hitcount - new module.
+        - network_access_authorization_rules_reset_hitcount - new module.
+        - network_access_global_exception_rules - new module.
+        - network_access_global_exception_rules_info - new module.
+        - network_access_global_exception_rules_reset_hitcount - new module.
+        - network_access_local_exception_rules - new module.
+        - network_access_local_exception_rules_info - new module.
+        - network_access_local_exception_rules_reset_hitcounts - new module.
+        - network_access_policy_set_reset_hitcount - new module.
+        - px_grid_node_delete - new module.
+        - pxgrid_access_secret - new module.
+        - pxgrid_account_activate - new module.
+        - pxgrid_account_create - new module.
+        - pxgrid_authorization - new module.
+        - pxgrid_bindings_info - new module.
+        - pxgrid_egress_matrices_info - new module.
+        - pxgrid_egress_policies_info - new module.
+        - pxgrid_endpoint_by_mac_info - new module.
+        - pxgrid_endpoints_by_os_type_info - new module.
+        - pxgrid_endpoints_by_type_info - new module.
+        - pxgrid_endpoints_info - new module.
+        - pxgrid_failures_info - new module.
+        - pxgrid_healths_info - new module.
+        - pxgrid_performances_info - new module.
+        - pxgrid_profiles_info - new module.
+        - pxgrid_security_group_acls_info - new module.
+        - pxgrid_security_groups_info - new module.
+        - pxgrid_service_lookup - new module.
+        - pxgrid_service_register - new module.
+        - pxgrid_service_reregister - new module.
+        - pxgrid_service_unregister - new module.
+        - pxgrid_session_by_ip_info - new module.
+        - pxgrid_session_by_mac_info - new module.
+        - pxgrid_session_for_recovery_info - new module.
+        - pxgrid_sessions_info - new module.
+        - pxgrid_user_group_by_username_info - new module.
+        - pxgrid_user_groups_info - new module.
+        - resource_version_info - new module.
+        - sg_mapping_bulk_monitor_status_info - new module.
+        - sg_mapping_bulk_request - new module.
+        - system_certificate_export_info - new module.
+        - tasks_info - new module.
+        - telemetry_info - new module.
+      major_changes:
+        - Updates sdk parameters for previous modules
+        - device_administration_authorization_exception_rules - removed module.
+        - device_administration_authorization_exception_rules_info - removed module.
+        - device_administration_authorization_global_exception_rules - removed module.
+        - device_administration_authorization_global_exception_rules_info - removed module.
+        - guest_user_reinstante - removed module.
+        - network_access_authorization_exception_rules - removed module.
+        - network_access_authorization_exception_rules_info - removed module.
+        - network_access_authorization_global_exception_rules - removed module.
+        - network_access_authorization_global_exception_rules_info - removed module.
+        - service_info - removed module.
+        - system_certificate_export - removed module.
+        - telemetry_info_info - removed module.
+        - Updates options required for modules.
+        - Renamed module device_administration_authorization_exception_rules to device_administration_local_exception_rules.
+        - Renamed module network_access_authorization_exception_rules to network_access_local_exception_rules.
+        - Renamed module network_access_authorization_global_exception_rules to network_access_global_exception_rules.
+        - Renamed module device_administration_authorization_global_exception_rules to device_administration_global_exception_rules.
+        - Fixes inner logic of modules that have no get by name and have not working filter.
+  1.0.1:
+    release_date: "2021-07-25"
+    changes:
+      release_summary: Migrated the Personas Deployment playbooks to a role
+      minor_changes:
+        - Migrated the Personas Deployment playbooks to a role.
+        - telemetry_info - fixes EXAMPLES documentation.
+  1.0.2:
+    release_date: "2021-08-13"
+    changes:
+      release_summary: Fix response of csr_info, system_certificate_info and trusted_certificate_info by accessing each page `response` property.
+    bugfixes:
+      - Updates exception handling.
+      - csr_info - fixes response recollection.
+      - system_certificate_info - fixes response recollection.
+      - trusted_certificate_info - fixes response recollection.
+  1.0.3:
+    release_date: "2021-08-17"
+    changes:
+      release_summary: Added backup & restore and certificate management sample playbooks
+      minor_changes:
+        - Improve the documentation for MacOS users.
+        - Added backup_create sample playbook.
+        - Added backup_restore sample playbook.
+        - Added backup_schedule sample playbook.
+        - Added certificate_management sample playbook.
+  1.1.0:
+    release_date: "2021-10-22"
+    changes:
+      release_summary: Adds mnt_authentication_status_info module
+      bugfixes:
+        - Improves the changelog.
+        - Improves the documentation of modules.
+        - Fixes check_mode behavior for non-info modules.
+      minor_changes:
+        - mnt_authentication_status_info - new module.
+  1.2.0:
+    release_date: "2021-10-22"
+    changes:
+      release_summary: Adds ise_responses, ise_update_response values
+      major_changes:
+        - Adds ise_responses to return values of info modules.
+        - Adds ise_update_response to return values of non-info modules.
+        - Adds ``ise_uses_api_gateway`` to module options.
+      minor_changes:
+        - Update requirements.
+  1.2.1:
+    release_date: "2021-10-25"
+    changes:
+      release_summary: Fixes check_mode behavior
+      bugfixes:
+        - On regular modules additional comparison of check_mode was removed as Ansible already handles it.
+        - On info modules comparison was removed, because info modules should always run.
+  2.0.0:
+    release_date: "2021-11-24"
+    changes:
+      release_summary: Updates ISE responses and adds Trust_Sec modules
+      minor_changes:
+        - trustsec_nbarapp - new playbook.
+        - trustsec_sg_vn_mapping - new playbook.
+        - trustsec_vn - new playbook.
+        - trustsec_vn_vlan_mapping - new playbook.
+        - backup_schedule_config_update - new module.
+        - trustsec_nbar_app - new module.
+        - trustsec_nbar_app_info - new module.
+        - trustsec_sg_vn_mapping - new module.
+        - trustsec_sg_vn_mapping_bulk_create - new module.
+        - trustsec_sg_vn_mapping_bulk_delete - new module.
+        - trustsec_sg_vn_mapping_bulk_update - new module.
+        - trustsec_sg_vn_mapping_info - new module.
+        - trustsec_vn - new module.
+        - trustsec_vn_bulk_create - new module.
+        - trustsec_vn_bulk_delete - new module.
+        - trustsec_vn_bulk_update - new module.
+        - trustsec_vn_info - new module.
+        - trustsec_vn_vlan_mapping - new module.
+        - trustsec_vn_vlan_mapping_bulk_create - new module.
+        - trustsec_vn_vlan_mapping_bulk_delete - new module.
+        - trustsec_vn_vlan_mapping_bulk_update - new module.
+        - trustsec_vn_vlan_mapping_info - new module.
+        - aci_bindings_info - change default response to [].
+        - active_directory_info - change default response to [].
+        - admin_user_info - change default response to [].
+        - allowed_protocols_info - change default response to [].
+        - anc_endpoint_info - change default response to [].
+        - anc_policy_info - change default response to [].
+        - authorization_profile_info - change default response to [].
+        - byod_portal_info - change default response to [].
+        - certificate_profile_info - change default response to [].
+        - certificate_template_info - change default response to [].
+        - csr_info - change default response to [].
+        - downloadable_acl_info - change default response to [].
+        - egress_matrix_cell_info - change default response to [].
+        - endpoint_bulk_monitor_status_info - change default response to [].
+        - radius_server_sequence_info - change default response to [].
+        - rest_id_store_info - change default response to [].
+        - self_registered_portal_info - change default response to [].
+        - sg_acl_info - change default response to [].
+        - sg_to_vn_to_vlan_info - change default response to [].
+        - sgt_info - change default response to [].
+        - sponsor_group_info - change default response to [].
+        - sponsor_portal_info - change default response to [].
+        - sponsored_guest_portal_info - change default response to [].
+        - support_bundle_status_info - change default response to [].
+        - sxp_connections_info - change default response to [].
+        - sxp_local_bindings_info - change default response to [].
+        - sxp_vpns_info - change default response to [].
+        - tacacs_command_sets_info - change default response to [].
+        - tacacs_external_servers_info - change default response to [].
+        - tacacs_profile_info - change default response to [].
+        - tacacs_server_sequence_info - change default response to [].
+        - telemetry_info - change default response to [].
+        - trusted_certificate - change default response to [].
+      major_changes:
+        - Update ciscoisesdk requirement to 1.2.0
+        - anc_endpoint_bulk_monitor_status_info - change return value, it returns BulkStatus content.
+        - anc_policy_bulk_monitor_status_info - change return value, it returns BulkStatus content.
+        - egress_matrix_cell_bulk_monitor_status_info - change return value, it returns BulkStatus content.
+        - sg_acl_bulk_monitor_status_info - change return value, it returns BulkStatus content.
+        - sg_mapping_group_info - change return value, it returns BulkStatus content.
+        - sg_mapping_bulk_monitor_status_info - change return value, it returns BulkStatus content.
+        - sg_mapping_group_bulk_monitor_status_info - change return value, it returns BulkStatus content.
+        - sg_to_vn_to_vlan_bulk_monitor_status_info - change return value, it returns BulkStatus content.
+        - sgt_bulk_monitor_status_info - change return value, it returns BulkStatus content.
+        - sxp_connections_bulk_monitor_status_info - change return value, it returns BulkStatus content.
+        - sxp_local_bindings_bulk_monitor_status_info - change return value, it returns BulkStatus content.
+        - sxp_vpns_bulk_monitor_status_info - change return value, it returns BulkStatus content.
+        - sgt - change generationId type from int to str.
+        - system_certificate - new parameters portalTagTransferForSameSubject and roleTransferForSameSubject.
+        - system_certificate_import - new parameters portalTagTransferForSameSubject and roleTransferForSameSubject.
+        - backup_last_status_info - change return value, it returns response content.
+        - device_administration_authentication_rules_info - change return value, it returns response content.
+        - device_administration_authorization_rules_info - change return value, it returns response content.
+        - device_administration_conditions_for_authentication_rule_info - change return value, it returns response content.
+        - device_administration_conditions_for_authorization_rule_info - change return value, it returns response content.
+        - device_administration_conditions_for_policy_set_info - change return value, it returns response content.
+        - device_administration_conditions_info - change return value, it returns response content.
+        - device_administration_dictionary_attributes_authentication_info - change return value, it returns response content.
+        - device_administration_dictionary_attributes_authorization_info - change return value, it returns response content.
+        - device_administration_dictionary_attributes_policy_set_info - change return value, it returns response content.
+        - device_administration_global_exception_rules_info - change return value, it returns response content.
+        - device_administration_network_conditions_info - change return value, it returns response content.
+        - device_administration_time_date_conditions_info - change return value, it returns response content.
+        - repository_files_info - change return value, it returns response content.
+        - repository_info - change return value, it returns response content.
+        - device_administration_authentication_rules - deletes parameter identitySourceId.
+        - network_access_authentication_rules - deletes parameter identitySourceId.
+        - device_administration_conditions - deletes parameter attributeId.
+        - device_administration_time_date_conditions - deletes parameter attributeId.
+        - network_access_conditions - deletes parameter attributeId.
+        - network_access_time_date_conditions - deletes parameter attributeId.
+      bugfixes:
+        - Update documentation of the modules.
+        - Update ISE version to 3.1.0 on vars example
+  2.1.0:
+    release_date: "2021-12-13"
+    changes:
+      release_summary: Update to use ciscoisesdk v1.3.0 or newer
+      minor_changes:
+        - hotpatch_info - new module.
+        - hotpatch_install - new module.
+        - hotpatch_rollback - new module.
+        - licensing_connection_type_info - new module.
+        - licensing_eval_license_info - new module.
+        - licensing_feature_to_tier_mapping_info - new module.
+        - licensing_registration_create - new module.
+        - licensing_registration_info - new module.
+        - licensing_smart_state_create - new module.
+        - licensing_smart_state_info - new module.
+        - licensing_tier_state_create - new module.
+        - licensing_tier_state_info - new module.
+        - node_deployment_sync - new module.
+        - node_group_node_create - new module.
+        - node_group_node_delete - new module.
+        - node_group_node_info - new module.
+        - node_primary_to_standalone - new module.
+        - node_secondary_to_primary - new module.
+        - node_services_interfaces_info - new module.
+        - node_services_profiler_probe_config_info - new module.
+        - node_services_profiler_probe_config - new module.
+        - node_services_sxp_interfaces_info - new module.
+        - node_services_sxp_interfaces - new module.
+        - node_standalone_to_primary - new module.
+        - pan_ha_update - new module.
+        - patch_info - new module.
+        - patch_install - new module.
+        - patch_rollback - new module.
+        - proxy_connection_settings_info - new module.
+        - proxy_connection_settings - new module.
+        - selfsigned_certificate_generate - new module.
+        - transport_gateway_settings_info - new module.
+        - transport_gateway_settings - new module.
+      major_changes:
+        - node_deployment - update parameters.
+        - node_deployment_info - add filter and filterType parameters.
+        - node_group - fixes response recollection.
+        - node_group_info - fixes response recollection.
+        - system_certificate - portalTagTransferForSameSubject parameter renamed to allowPortalTagTransferForSameSubject.
+        - system_certificate - roleTransferForSameSubject parameter renamed to allowRoleTransferForSameSubject.
+        - system_certificate_import - portalTagTransferForSameSubject parameter renamed to allowPortalTagTransferForSameSubject.
+        - system_certificate_import - roleTransferForSameSubject parameter renamed to allowRoleTransferForSameSubject.
+        - trustsec_nbar_app_info - change type from str to list.
+        - trustsec_vn_info - change type from str to list.
+  2.1.1:
+    release_date: "2021-12-16"
+    changes:
+      release_summary: Fixes on trustsec and node_group modules
+      bugfixes:
+        - trustsec_sg_vn_mapping - fix version_added to 2.0.0
+        - trustsec_sg_vn_mapping_bulk_create - fix version_added to 2.0.0
+        - trustsec_sg_vn_mapping_bulk_delete - fix version_added to 2.0.0
+        - trustsec_sg_vn_mapping_bulk_update - fix version_added to 2.0.0
+        - trustsec_sg_vn_mapping_info - fix version_added to 2.0.0
+        - trustsec_vn_vlan_mapping - fix version_added to 2.0.0
+        - trustsec_vn_vlan_mapping_bulk_create - fix version_added to 2.0.0
+        - trustsec_vn_vlan_mapping_bulk_delete - fix version_added to 2.0.0
+        - trustsec_vn_vlan_mapping_bulk_update - fix version_added to 2.0.0
+        - trustsec_vn_vlan_mapping_info - fix version_added to 2.0.0
+        - trustsec_sg_vn_mapping_info - change filter param type from str to list
+        - trustsec_vn_vlan_mapping_info - change filter param type from str to list
+        - node_group_node_create - fix family execution call from Node Deployment to Node Group.
+        - node_group_node_delete - fix family execution call from Node Deployment to Node Group.
+        - node_group_node_info - fix family execution call from Node Deployment to Node Group.
+  2.1.2:
+    release_date: "2021-12-22"
+    changes:
+      release_summary: Fixes params used for modules
+      bugfixes:
+        - node_services_profiler_probe_config - fixes params used for module.
+        - node_services_sxp_interfaces - fixes params used for module.
+        - repository - fixes params used for modules. Fix for issue 19.
+        - repository_files_info - fixes params used for module.
+  2.2.0:
+    release_date: "2022-01-18"
+    changes:
+      release_summary: Update module doc & fix licensing_tier_state_create
+      minor_changes:
+        - licensing_tier_state_create - fix function call.
+        - Update requirements to use ciscoisesdk >= 1.4.0.
+      bugfixes:
+        - plugin/modules - update documentation block.
+        - update README.
+  2.2.1:
+    release_date: "2022-02-09"
+    changes:
+      release_summary: Update README links in galaxy
+      bugfixes:
+        - update README links in galaxy from relative to absolute links.
+  2.2.2:
+    release_date: "2022-02-18"
+    changes:
+      release_summary: Update README recommended SDK version and module documentation
+      bugfixes:
+        - Update README recommended SDK version in compatibility matrix
+        - trustsec_sg_vn_mapping_bulk_create - update EXAMPLES block of module documentation
+        - trustsec_sg_vn_mapping_bulk_delete - update EXAMPLES block of module documentation
+        - trustsec_sg_vn_mapping_bulk_update - update EXAMPLES block of module documentation
+        - trustsec_vn_bulk_create - update EXAMPLES block of module documentation
+        - trustsec_vn_bulk_delete - update EXAMPLES block of module documentation
+        - trustsec_vn_bulk_update - update EXAMPLES block of module documentation
+        - trustsec_vn_vlan_mapping_bulk_create - update EXAMPLES block of module documentation
+        - trustsec_vn_vlan_mapping_bulk_delete - update EXAMPLES block of module documentation
+        - trustsec_vn_vlan_mapping_bulk_update - update EXAMPLES block of module documentation
+  2.2.3:
+    release_date: "2022-03-15"
+    changes:
+      release_summary: Update README, add ISE API Versioning and ISE 3.1 + Patch 1 notes
+      bugfixes:
+        - Update README, add ISE 3.1 + Patch 1 and ISE API Versioning notes
+        - Update README, update Compatibility matrix.
+  2.3.0:
+    release_date: "2022-03-24"
+    changes:
+      release_summary: Add ISE CSRF Check support & change download modules response to include file details
+      bugfixes:
+        - Update recommended SDK version in modules from 1.4.0 to 1.5.0
+        - Update README recommended SDK version in compatibility matrix
+        - Update README, update Compatibility matrix.
+      minor_changes:
+        - Add ise_uses_csrf_token parameter to modules
+        - csr_export_info - Instead of returning the data string, it now returns a dictionary. The dictionary has property data with the previous string value.
+        - csr_export_info - add parameter filename.
+        - endpoint_certificate - Instead of returning the data string, it now returns a dictionary. The dictionary has property data with the previous string value.
+        - endpoint_certificate - add parameter filename.
+        - support_bundle_download - Instead of returning the data string, it now returns a dictionary. The dictionary has property data with the previous string value.
+        - support_bundle_download - add parameter filename.
+        - system_certificate_export_info - Instead of returning the data string, it now returns a dictionary. The dictionary has property data with the previous string value.
+        - system_certificate_export_info - add parameter filename.
+        - trusted_certificate_export_info - Instead of returning the data string, it now returns a dictionary. The dictionary has property data with the previous string value.
+        - trusted_certificate_export_info - add parameter filename.
+  2.3.1:
+    release_date: "2022-04-19"
+    changes:
+      release_summary: Added a validation
+      bugfixes:
+        - network_access_authorization_rules - added a validation when reading the data
+  2.3.2:
+    release_date: "2022-04-29"
+    changes:
+      release_summary: Added a validation
+      bugfixes:
+        - device_administration_authentication_rules - added a validation reading the data
+        - device_administration_authorization_rules - added a validation reading the data
+        - device_administration_global_exception_rules - added a validation reading the data
+        - device_administration_local_exception_rules - added a validation reading the data
+        - network_access_authentication_rules - added a validation reading the data
+        - network_access_authorization_rules - added a validation reading the data
+        - network_access_global_exception_rules - added a validation reading the data
+        - network_access_local_exception_rules - added a validation reading the data
+  2.4.0:
+    release_date: "2022-05-10"
+    changes:
+      release_summary: Add pxGrid modules & changes some module descriptions.
+      minor_changes:
+        - pxGrid_node_approve - new module
+        - pxGrid_node_delete - new module
+        - pxGrid_node_info - new module
+        - pxGrid_settings_auto_approve - new module
+      bugfixes:
+        - node_services_interfaces_info - change the validation.
+        - Change description from Aci to ACI
+        - Change description from Anc to ANC
+        - Change description from Csr to CSR
+        - Change description from Byod to BYOD
+        - Change description from Ca to CA
+        - Change description from Acl to ACL
+        - Change description from Radius to RADIUS
+        - Change description from Smtp to SMTP
+        - Change description from Ssid to SSID
+        - Change description from Mnt to MNT
+        - Change description from Rest to REST
+        - Change description from Sg to SG
+        - Change description from Sgt to SGT
+        - Change description from Sg Acl to SGACL
+        - Change description from Sms to SMS
+        - Change description from Vn to VN
+        - Change description from Vlan to VLAN
+        - Change description from Sxp to SXP
+        - Change description from Vpns to VPNs
+        - Change description from Tacacs to TACACS
+        - Change description from Nbar to NBAR
+        - Change description from Pxgrid to pxGrid
+  2.4.1:
+    release_date: "2022-05-24"
+    changes:
+      release_summary: Change path parameter.
+      bugfixes:
+        - repository_files_info - change path parameter from name to repositoryName
+        - repository_info - change path parameter from name to repositoryName
+        - repository - change path parameter from name to repositoryName
+  2.5.0:
+    release_date: "2022-06-08"
+    changes:
+      release_summary: Update Cisco ISE requirementes and fix some repository issues.
+      minor_changes:
+        - Update requirements to use ciscoisesdk >= 2.0.3.
+      bugfixes:
+        - repository_files_info - Fixed a bug that did not make the get call.
+        - repository - Fixed a bug, now repositoryName and name are used to perform the search.
+        - Fixed ISE version 3.1.1 to 3.1_Patch_1 which is the correct version name.
+  2.5.1:
+    release_date: "2022-08-29"
+    changes:
+      release_summary: Update example of module documentation and added a new validation.
+      bugfixes:
+        - downloadable_acl - update EXAMPLES block of module documentation.
+        - sgt - added new validation when updating a stg auto generated.
+  2.5.2:
+    release_date: "2022-08-29"
+    changes:
+      release_summary: Fixed galaxy publication
+      bugfixes:
+        - An error was corrected in galaxy publication
+  2.5.3:
+    release_date: "2022-08-31"
+    changes:
+      release_summary: Fixed ansible status msg and unnecessary parameter was removed.
+      bugfixes:
+        - personas_update_roles_services - fixed ansible status msg.
+        - endpoint - an unnecessary parameter name has been removed because it is automatically generated by the api.
+  2.5.4:
+    release_date: "2022-10-04"
+    changes:
+      release_summary: A validation has been added to the update method and warning message removed.
+      bugfixes:
+        - aci_settings - A validation has been added to the update method.
+        - allowed_protocols - A validation has been added to the update method.
+        - anc_policy - A validation has been added to the update method.
+        - authorization_profile - A validation has been added to the update method.
+        - byod_portal - A validation has been added to the update method.
+        - certificate_profile - A validation has been added to the update method.
+        - downloadable_acl - A validation has been added to the update method.
+        - egress_matrix_cell - A validation has been added to the update method.
+        - endpoint_group - A validation has been added to the update method.
+        - endpoint - A validation has been added to the update method.
+        - external_radius_server - A validation has been added to the update method.
+        - filter_policy - A validation has been added to the update method.
+        - guest_smtp_notification_settings - A validation has been added to the update method.
+        - guest_ssid - A validation has been added to the update method.
+        - guest_type - A validation has been added to the update method.
+        - guest_user - A validation has been added to the update method.
+        - hotspot_portal - A validation has been added to the update method.
+        - id_store_sequence - A validation has been added to the update method.
+        - identity_group - A validation has been added to the update method.
+        - my_device_portal - A validation has been added to the update method.
+        - native_supplicant_profile - A validation has been added to the update method.
+        - network_device_group - A validation has been added to the update method.
+        - portal_global_setting - A validation has been added to the update method.
+        - portal_theme - A validation has been added to the update method.
+        - radius_server_sequence - A validation has been added to the update method.
+        - rest_id_store - A validation has been added to the update method.
+        - self_registered_portal - A validation has been added to the update method.
+        - sg_acl - A validation has been added to the update method.
+        - sg_mapping_group - A validation has been added to the update method.
+        - sg_mapping - A validation has been added to the update method.
+        - sg_to_vn_to_vlan - A validation has been added to the update method.
+        - sgt - A validation has been added to the update method.
+        - sponsor_group - A validation has been added to the update method.
+        - sponsor_portal - A validation has been added to the update method.
+        - sponsored_guest_portal - A validation has been added to the update method.
+        - sxp_connections - A validation has been added to the update method.
+        - sxp_local_bindings - A validation has been added to the update method.
+        - tacacs_command_sets - A validation has been added to the update method.
+        - tacacs_external_servers - A validation has been added to the update method.
+        - tacacs_profile - A validation has been added to the update method.
+        - tacacs_server_sequence - A validation has been added to the update method.
+        - network_device - A validation has been added to the update method.
+        - personas_utils - Warning message removed.
+  2.5.5:
+    release_date: "2022-10-07"
+    changes:
+      release_summary: A check has been added to identify if there really are any changes
+      bugfixes: personas_update_roles_services - is now idempotent.
+  2.5.6:
+    release_date: "2022-10-13"
+    changes:
+      release_summary: Update to use ciscoisesdk v2.0.5 or newer, fixed a request body
+      bugfixes:
+        - network_access_network_condition -  fixed a request body of the post and put method.
+        - filter_policy - removed the required id when it is a post method.
+        - guest_smtp_notification_settings - removed the required id when it is a post method.
+        - sxp_connections - removed the required id when it is a post method.
+        - sxp_vpns - removed the required id when it is a post method.
+  2.5.7:
+    release_date: "2022-10-25"
+    changes:
+      release_summary: New method to compare changes
+      bugfixes:
+        - A new method to compare changes for specific cases has been added.
+        - node_services_profiler_probe_config - Used a new method to compare changes.
+        - sgt - Updated the fields required for creation.
+        - network_access_network_condition - Updated description of deviceGroupList.
+  2.5.8:
+    release_date: "2022-10-27"
+    changes:
+      release_summary: Added the ability to export Cisco ISE credentials as environment variables and rennamed some vars.
+      bugfixes:
+        - Cisco ISE credentials can now be exported and used as env vars.
+        - mnt_athentication_status_info - the following variable was renamed from rec_ord_s to records.
+        - mnt_athentication_status_info - the following variable was renamed from sec_ond_s to seconds.
+        - mnt_authentication_status_info - the following variable was renamed from rec_ord_s to records.
+        - mnt_authentication_status_info - the following variable was renamed from sec_ond_s to seconds.
+        - mnt_session_disconnect_info - the following variable was renamed from end_poi_nti_p to endpoint_ip.
+        - mnt_session_disconnect_info - the following variable was renamed from psn_nam_e to psn_name.
+        - mnt_session_disconnect_info - the following variable was renamed from dis_con_nec_tty_pe to disconnect_type.
+        - mnt_session_reauthentication_info - the following variable was renamed from end_poi_ntm_ac to endpoint_mac.
+        - mnt_session_reauthentication_info - the following variable was renamed from rea_uth_typ_e to reauth_type.
+        - mnt_session_reauthentication_info - the following variable was renamed from psn_nam_e to psn_name.
+  2.5.9:
+    release_date: "2022-11-07"
+    changes:
+      release_summary: Fixed some ansible statuses, added a missing parameter and corrected a response.
+      bugfixes:
+        - licensing_eval_license_info - corrected the response
+        - system_certificate - a missing parameter was added allowWildcardDelete
+        - node_standalone_to_primary - fixed ansible changed response
+        - node_primary_to_standalone - fixed ansible changed response
+        - node_secondary_to_primary - fixed ansible changed response
+  2.5.10:
+    release_date: "2022-12-09"
+    changes:
+      release_summary: A check has been added to identify if there really are any changes
+      bugfixes:
+        - network_access_authorization_rules - is now idempotent.
+  2.5.11:
+    release_date: "2023-01-05"
+    changes:
+      release_summary: Some errors have been corrected when reading the playbook and a validation was removed.
+      bugfixes:
+        - network_access_authentication_rules - now read the ID correctly.
+        - network_access_authorization_rules - now read the ID correctly.
+        - node_group_node_info - removed a validation that caused a failure.
+        - node_group - search was repaired.
+  2.5.12:
+    release_date: "2023-01-09"
+    changes:
+      release_date: Change is detected in a better way.
+      bugfixes:
+        - network_access_authorization_rules - recognizes when there are changes.

@@ -1,0 +1,86 @@
+- name: user test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "get user group information"
+    inspur.sm.user_group_info:
+      provider: "{{ ism }}"
+
+  - name: "add user group information"
+    inspur.sm.add_user_group:
+      name: "test"
+      pri: "administrator"
+      provider: "{{ ism }}"
+
+  - name: "get user group information"
+    inspur.sm.user_group_info:
+      provider: "{{ ism }}"
+
+  - name: "set user group"
+    inspur.sm.edit_user_group:
+      name: "test"
+      pri: "user"
+      provider: "{{ ism }}"
+      
+  - name: "get user group information"
+    inspur.sm.user_group_info:
+      provider: "{{ ism }}"
+      
+  - name: get user information
+    inspur.sm.user_info:
+      provider: "{{ ism }}"
+      
+  - name: "add user"
+    inspur.sm.add_user:
+      uname: "wbs"
+      upass: "admin"
+      role_id: "test"
+      priv: "kvm,sol"
+      provider: "{{ ism }}"
+      
+  - name: get user information
+    inspur.sm.user_info:
+      provider: "{{ ism }}"
+      
+  - name: "change user password"
+    inspur.sm.edit_pass_user:
+      uname: "wbs"
+      upass: "admin1"
+      provider: "{{ ism }}"  
+      
+  - name: "change user privilege"
+    inspur.sm.edit_priv_user:
+      uname: "wbs"
+      role_id: "Administrator"
+      priv: "kvm,sol"
+      provider: "{{ ism }}"
+      
+  - name: get user information
+    inspur.sm.user_info:
+      provider: "{{ ism }}"
+      
+  - name: "delete user"
+    inspur.sm.del_user:
+      uname: "wbs"
+      provider: "{{ ism }}"
+      
+  - name: get user information
+    inspur.sm.user_info:
+      provider: "{{ ism }}"
+      
+  - name: "delete user group"
+    inspur.sm.del_user_group:
+      name: "test"
+      provider: "{{ ism }}"
+      
+  - name: "get user group information"
+    inspur.sm.user_group_info:
+      provider: "{{ ism }}"

@@ -1,0 +1,100 @@
+---
+#
+# ISE Internal User
+#
+- name: Create Internal User(s) Play
+  hosts: ise_servers
+  vars:
+    - default_password: C1sco1234!5
+    - users:
+
+  gather_facts: false
+  tasks:
+    # - name: internal_user
+    #   cisco.ise.internal_user:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     state: present
+    #     name: '{{ item.name }}'
+    #     description: '{{ item.description | default() }}'
+    #     enabled: '{{ item.enabled | default(true) }}'
+    #     password: '{{ item.password | default(default_password) }}'
+    #     # ▼▼▼ optional attributes ▼▼▼
+    #     # changePassword: '{{ item.changePassword | default(false) }}'
+    #     # passwordIDStore: '{{ item.idStore | default(Internal Users) }}'
+    #     # identityGroups: a1740510-8c01-11e6-996c-525400b48521
+    #     # customAttributes:
+    #     #   Created:
+    #     #   Expired:
+    #   register: results
+
+    # - name: Debug results
+    #   ansible.builtin.debug: var=results
+    - name: internal_user thomas
+      cisco.ise.internal_user:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        ise_debug: "{{ ise_debug }}"
+        state: present
+        name: thomas
+        # password: "{{ default_password }}"
+        changePassword: false
+        enabled: true
+        expiryDateEnabled: false
+        passwordIDStore: Internal Users
+        identityGroups: a1740510-8c01-11e6-996c-525400b48521 # Employee
+      register: result
+
+    - name: Print result
+      ansible.builtin.debug:
+        var: result
+
+  # - name: internal_user employee
+  #   cisco.ise.internal_user:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #     ise_debug: "{{ ise_debug }}"
+  #     state: present
+  #     name: employee
+  #     password: "{{ default_password }}"
+  #     changePassword: false
+  #     enabled: true
+  #     expiryDateEnabled: false
+  #     passwordIDStore: Internal Users
+  #     identityGroups: a1740510-8c01-11e6-996c-525400b48521  # Employee
+
+  # - name: internal_user radius-probe
+  #   cisco.ise.internal_user:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #     state: present
+  #     name: radius-probe
+  #     password: "{{ default_password }}"
+  #     changePassword: false
+  #     enabled: true
+  #     expiryDateEnabled: false
+  #     passwordIDStore: Internal Users
+  #     identityGroups: a1740510-8c01-11e6-996c-525400b48521  # Employee
+
+  # - name: internal_user meraki_8021x_test
+  #   cisco.ise.internal_user:
+  #     ise_hostname: "{{ ise_hostname }}"
+  #     ise_username: "{{ ise_username }}"
+  #     ise_password: "{{ ise_password }}"
+  #     ise_verify: "{{ ise_verify }}"
+  #     state: present
+  #     name: meraki_8021x_test
+  #     password: "{{ default_password }}"
+  #     changePassword: false
+  #     enabled: true
+  #     expiryDateEnabled: false
+  #     passwordIDStore: Internal Users
+  #     identityGroups: a1740510-8c01-11e6-996c-525400b48521  # Employee

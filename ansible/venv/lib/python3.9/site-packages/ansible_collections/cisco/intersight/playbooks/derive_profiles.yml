@@ -1,0 +1,72 @@
+---
+#
+# include_tasks for deriving profiles from a template
+#
+# Get the Organization Moid
+- name: "Get {{ template_name }}_DERIVED-{{ item }} Profile Moid"
+  intersight_rest_api:
+    api_private_key: "{{ api_private_key | default(omit) }}"
+    api_key_id: "{{ api_key_id | default(omit) }}"
+    api_uri: "{{ api_uri | default(omit) }}"
+    validate_certs: "{{ validate_certs | default(omit) }}"
+    state: "{{ state | default(omit) }}"
+    resource_path: /server/Profiles
+    query_params:
+      $filter: "Name eq '{{ template_name }}_DERIVED-{{ item }}'"
+  register: profile_resp
+# Derive profiles from template (if profiles don't already exist)
+- name: "POST to derive {{ template_name }}_DERIVED-{{ item }}"
+  intersight_rest_api:
+    api_private_key: "{{ api_private_key | default(omit) }}"
+    api_key_id: "{{ api_key_id | default(omit) }}"
+    api_uri: "{{ api_uri | default(omit) }}"
+    validate_certs: "{{ validate_certs | default(omit) }}"
+    state: "{{ state | default(omit) }}"
+    resource_path: /bulk/MoCloners
+    update_method: post
+    api_body: {
+      "Sources": [
+        {
+          "ClassId": "mo.MoRef",
+          "ObjectType": "server.ProfileTemplate",
+          "Moid": "{{ template_resp.api_response.Moid }}"
+        }
+      ],
+      "Targets": [
+        {
+          "Name": "{{ template_name }}_DERIVED-{{ item }}",
+          "ObjectType": "server.Profile",
+          "Organization": {
+            "Moid": "{{ org_resp.api_response.Moid }}"
+          },
+          "ClassId": "server.Profile"
+        }
+      ]
+    }
+  when: profile_resp.api_response is not defined or not profile_resp.api_response
+# POST updates to derived profiles if template was changed
+- name: "POST to update {{ template_name }}_DERIVED-{{ item }}"
+  intersight_rest_api:
+    api_private_key: "{{ api_private_key | default(omit) }}"
+    api_key_id: "{{ api_key_id | default(omit) }}"
+    api_uri: "{{ api_uri | default(omit) }}"
+    validate_certs: "{{ validate_certs | default(omit) }}"
+    state: "{{ state | default(omit) }}"
+    resource_path: /bulk/MoMergers
+    update_method: post
+    api_body: {
+      "Sources": [
+        {
+          "ObjectType": "server.ProfileTemplate",
+          "Moid": "{{ template_resp.api_response.Moid }}"
+        }
+      ],
+      "Targets": [
+        {
+          "ObjectType": "server.Profile",
+          "Moid": "{{ profile_resp.api_response.Moid }}"
+        }
+      ],
+      "MergeAction":"Replace"
+    }
+  when: profile_resp.api_response and template_resp.changed

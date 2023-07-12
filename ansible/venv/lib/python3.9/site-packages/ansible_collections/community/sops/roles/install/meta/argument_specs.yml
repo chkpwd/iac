@@ -1,0 +1,72 @@
+---
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: 2022, Felix Fontein
+
+argument_specs:
+  main:
+    short_description: Install Mozilla sops
+    version_added: 1.5.0
+    description:
+      - This role installs L(Mozilla sops,https://github.com/mozilla/sops) and Gnu Privacy Guard (GPG).
+      - >-
+        This role supports the following operating systems:
+        Alpine (new enough),
+        Arch Linux,
+        CentOS 7, Stream 8, or newer,
+        Debian 10 (Buster) or newer,
+        Fedora (new enough),
+        RHEL 7 or newer,
+        Ubuntu 16.04 or newer LTS versions
+      - The Ansible facts C(ansible_facts.architecture), C(ansible_facts.distribution), C(ansible_facts.distribution_major_version),
+        C(ansible_facts.distribution_version), and C(ansible_facts.os_family) are expected to be present if I(sops_install_on_localhost) is C(false).
+    author:
+      - Felix Fontein (@felixfontein)
+    options:
+      sops_version:
+        default: latest
+        description:
+          - The version of sops to install.
+          - Should be a version like C(3.7.2). The special value C(latest) will select the latest version available form the given source.
+        type: str
+      sops_source:
+        default: auto
+        description:
+          - Determines the source from where sops is installed.
+          - The value C(github) will install sops from the Mozilla sops releases on GitHub (U(https://github.com/mozilla/sops/releases/)).
+          - The value C(system) will install sops from the system packages. Note that not all system package repositories support sops.
+          - The value C(auto) will determine the best source to install sops from. Here, system package repositories are preferred over GitHub.
+        type: str
+        choices:
+          - auto
+          - github
+          - system
+      sops_install_on_localhost:
+        default: false
+        description:
+          - Installs sops on the Ansible controller (C(localhost)) instead of the remote host.
+        type: bool
+      sops_become_on_install:
+        default: true
+        description:
+          - 'Whether the role should use C(become: true) when installing packages.'
+        type: bool
+      sops_github_latest_detection:
+        description:
+          - When installing the latest sops version from GitHub, configures how the latest release is detected.
+          - C(auto) tries C(api) first and then uses C(latest-release).
+          - C(api) asks the GitHub API for a list of recent releases and picks the highest version.
+          - C(latest-release) uses a not fully documented URL to retrieve the release marked as "latest" by the repository maintainers.
+        type: str
+        choices:
+          - auto
+          - api
+          - latest-release
+        version_added: 1.6.0
+      sops_github_token:
+        description:
+          - Token to provide when querying the GitHub API for the latest release. Without the token
+            there are rather strict rate limits.
+          - Should mainly be used in GitHub Actions.
+        type: str
+        version_added: 1.6.0

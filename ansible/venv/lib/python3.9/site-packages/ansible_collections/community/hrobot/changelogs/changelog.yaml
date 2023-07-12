@@ -1,0 +1,212 @@
+ancestor: null
+releases:
+  1.0.0:
+    changes:
+      breaking_changes:
+      - firewall - now requires the `ipaddress <https://pypi.org/project/ipaddress/>`_
+        library (https://github.com/ansible-collections/community.hrobot/pull/2).
+      release_summary: 'The ``community.hrobot`` continues the work on the Hetzner
+        Robot modules from their state in ``community.general`` 1.2.0. The changes
+        listed here are thus relative to the modules ``community.general.hetzner_*``.
+
+        '
+    fragments:
+    - 1.0.0.yml
+    - firewall-add-ipaddress.yml
+    release_date: '2020-11-23'
+  1.1.0:
+    changes:
+      release_summary: Release with a new inventory plugin.
+    fragments:
+    - 1.1.0.yml
+    plugins:
+      inventory:
+      - description: Hetzner Robot inventory source
+        name: robot
+        namespace: null
+    release_date: '2020-12-11'
+  1.1.1:
+    changes:
+      bugfixes:
+      - robot - force HTTP basic authentication to reduce number of HTTPS requests
+        (https://github.com/ansible-collections/community.hrobot/pull/9).
+      release_summary: Bugfix release which reduces the number of HTTPS queries for
+        the modules and plugins.
+    fragments:
+    - 1.1.1.yml
+    - 9-force-basic-auth.yaml
+    release_date: '2021-02-24'
+  1.2.0:
+    changes:
+      minor_changes:
+      - Avoid internal ansible-core module_utils in favor of equivalent public API
+        available since at least Ansible 2.9 (https://github.com/ansible-collections/community.hrobot/pull/18).
+      - firewall - rename option ``whitelist_hos`` to ``allowlist_hos``, keep old
+        name as alias (https://github.com/ansible-collections/community.hrobot/pull/15).
+      - firewall, firewall_info - add return value ``allowlist_hos``, which contains
+        the same value as ``whitelist_hos``. The old name ``whitelist_hos`` will be
+        removed eventually (https://github.com/ansible-collections/community.hrobot/pull/15).
+      - robot module utils - add ``allow_empty_result`` parameter to ``plugin_open_url_json``
+        and ``fetch_url_json`` (https://github.com/ansible-collections/community.hrobot/pull/16).
+      release_summary: Feature release with multiple new modules.
+    fragments:
+    - 1.2.0.yml
+    - 15-firewall-allowlist_hos.yml
+    - 16-module_utils-allow_empty_result.yml
+    - ansible-core-_text.yml
+    modules:
+    - description: Set boot configuration
+      name: boot
+      namespace: ''
+    - description: Reset a dedicated server
+      name: reset
+      namespace: ''
+    - description: Set or remove reverse DNS entry for IP
+      name: reverse_dns
+      namespace: ''
+    - description: Update server information
+      name: server
+      namespace: ''
+    - description: Query information on one or more servers
+      name: server_info
+      namespace: ''
+    - description: Add, remove or update SSH key
+      name: ssh_key
+      namespace: ''
+    - description: Query information on SSH keys
+      name: ssh_key_info
+      namespace: ''
+    release_date: '2021-10-20'
+  1.2.1:
+    changes:
+      minor_changes:
+      - Generic module HTTP support code - fix usage of ``fetch_url`` with changes
+        in latest ansible-core ``devel`` branch (https://github.com/ansible-collections/community.hrobot/pull/30).
+      release_summary: Maintenance release.
+    fragments:
+    - 1.2.1.yml
+    - fetch_url-devel.yml
+    release_date: '2021-11-17'
+  1.2.2:
+    changes:
+      bugfixes:
+      - boot - fix incorrect handling of SSH authorized keys (https://github.com/ansible-collections/community.hrobot/issues/32,
+        https://github.com/ansible-collections/community.hrobot/pull/33).
+      release_summary: Bugfix release.
+    fragments:
+    - 1.2.2.yml
+    - 33-fix-boot-ssh-key-setting.yaml
+    release_date: '2022-01-04'
+  1.2.3:
+    changes:
+      release_summary: Docs update release.
+    fragments:
+    - 1.2.3.yml
+    release_date: '2022-03-22'
+  1.3.0:
+    changes:
+      bugfixes:
+      - robot inventory plugin - do not crash if a server neither has name or primary
+        IP set. Instead, fall back to using the server's number as the name. This
+        can happen if unnamed rack reservations show up in your server list (https://github.com/ansible-collections/community.hrobot/issues/40,
+        https://github.com/ansible-collections/community.hrobot/pull/47).
+      minor_changes:
+      - Prepare collection for inclusion in an Execution Environment by declaring
+        its dependencies (https://github.com/ansible-collections/community.hrobot/pull/45).
+      release_summary: Feature and bugfix release.
+    fragments:
+    - 1.3.0.yml
+    - 45-ee.yml
+    - 47-inventory-crash.yml
+    release_date: '2022-04-21'
+  1.3.1:
+    changes:
+      bugfixes:
+      - Include ``simplified_bsd.txt`` license file for the ``robot`` and ``failover``
+        module utils.
+      release_summary: Maintenance release.
+    fragments:
+    - 1.3.1.yml
+    - simplified-bsd-license.yml
+    release_date: '2022-06-02'
+  1.4.0:
+    changes:
+      minor_changes:
+      - robot inventory plugin - allow to template ``hetzner_user`` and ``hetzner_password``
+        (https://github.com/ansible-collections/community.hrobot/pull/49).
+      release_summary: Feature release.
+    fragments:
+    - 1.4.0.yml
+    - 49-inventory-templated.yml
+    release_date: '2022-06-03'
+  1.5.0:
+    changes:
+      minor_changes:
+      - All software licenses are now in the ``LICENSES/`` directory of the collection
+        root. Moreover, ``SPDX-License-Identifier:`` is used to declare the applicable
+        license for every file that is not automatically generated (https://github.com/ansible-collections/community.hrobot/pull/52).
+      release_summary: Maintenance release changing the way licenses are declared.
+        No functional changes.
+    fragments:
+    - 1.5.0.yml
+    - 52-licenses.yml
+    release_date: '2022-07-23'
+  1.5.1:
+    changes:
+      release_summary: Maintenance release with small documentation fixes.
+    fragments:
+    - 1.5.1.yml
+    release_date: '2022-08-04'
+  1.5.2:
+    changes:
+      minor_changes:
+      - The collection repository conforms to the `REUSE specification <https://reuse.software/spec/>`__
+        except for the changelog fragments (https://github.com/ansible-collections/community.hrobot/pull/60).
+      release_summary: Maintenance release with a documentation improvement.
+    fragments:
+    - 1.5.2.yml
+    - licenses.yml
+    release_date: '2022-08-21'
+  1.6.0:
+    changes:
+      minor_changes:
+      - Added a ``community.hrobot.robot`` module defaults group / action group. Use
+        with ``group/community.hrobot.robot`` to provide options for all Hetzner Robot
+        modules (https://github.com/ansible-collections/community.hrobot/pull/65).
+      release_summary: Feature release with improved documentation.
+    fragments:
+    - 1.6.0.yml
+    - action_group.yml
+    release_date: '2022-11-06'
+  1.7.0:
+    changes:
+      release_summary: Feature release.
+    fragments:
+    - 1.7.0.yml
+    modules:
+    - description: Manage Hetzner's vSwitch
+      name: v_switch
+      namespace: ''
+    release_date: '2023-01-27'
+  1.8.0:
+    changes:
+      major_changes:
+      - firewall - Hetzner added output rules support to the firewall. This change
+        unfortunately means that using old versions of the firewall module will always
+        set the output rule list to empty, thus disallowing the server to send out
+        packets (https://github.com/ansible-collections/community.hrobot/issues/75,
+        https://github.com/ansible-collections/community.hrobot/pull/76).
+      minor_changes:
+      - firewall, firewall_info - add ``filter_ipv6`` and ``rules.output`` output
+        to support the new IPv6 filtering and output rules features (https://github.com/ansible-collections/community.hrobot/issues/75,
+        https://github.com/ansible-collections/community.hrobot/pull/76).
+      - firewall, firewall_info - add ``server_number`` option that can be used instead
+        of ``server_ip`` to identify the server. Hetzner deprecated configuring the
+        firewall by ``server_ip``, so using ``server_ip`` will stop at some point
+        in the future (https://github.com/ansible-collections/community.hrobot/pull/77).
+      release_summary: Feature release for the Hetzner firewall changes.
+    fragments:
+    - 1.8.0.yml
+    - 76-firewall-ipv6-output.yml
+    - 77-firewall-server_number.yml
+    release_date: '2023-03-15'

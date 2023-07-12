@@ -1,0 +1,145 @@
+ancestor: null
+releases:
+  1.0.2:
+    release_date: '2020-10-06'
+  1.1.0:
+    changes:
+      bugfixes:
+      - Ensure the background service starts properly on MacOS (https://github.com/ansible-collections/cloud.common/pull/16)
+      - do not silently skip parameters when the value is ``False``
+      minor_changes:
+      - ansible_module.turbo - the cache is now associated with the collection, if
+        two collections use a cache, two background services will be started.
+    fragments:
+    - dont_ignore_parameters_when_val_is_False.yaml
+    - macos_fix.yaml
+    - one_cache_per_collection.yaml
+    release_date: '2020-10-23'
+  2.0.0:
+    changes:
+      bugfixes:
+      - the debug mode now work as expected. The ``_ansible_*`` variables are properly
+        passed to the module.
+      minor_changes:
+      - The ``EmbeddedModuleFailure`` and ``EmbeddedModuleUnexpectedFailure`` exceptions
+        now handle the ``__repr__`` and ``__str__`` method. This means Python is able
+        to print a meaningful output.
+      - The modules must now set the ``collection_name`` of the ``AnsibleTurboModule``
+        class. The content of this attribute is used to build the path of the UNIX
+        socket.
+      - When the background service is started in a console without the ``--daemon``
+        flag, it now prints information what it runs.
+      - '``argument_spec`` is now evaluated server-side.'
+      - fail_json now accept and collect extra named arguments.
+      - raise an exception if the output of module execution cannot be parsed.
+      - the ``turbo_demo`` module now return the value of counter.
+      - the user get an error now an error if a module don't raise ``exit_json()``
+        or ``fail_json()``.
+    fragments:
+    - Set-the-_ansible_-variables_13334.yaml
+    - argument_spec_server_side.yaml
+    - exception_returns_a_printable_content.yaml
+    - fail_json_accept_extra_kwargs.yaml
+    - fork_mode_print_information_about_the_module.yaml
+    - get_the_collection_name_from_an_attribute.yaml
+    - improve-the-demo-module_5397.yaml
+    - raise-an-error-if-exit_json-or-fail_json-not-called_13453.yaml
+    - raise_exception_if_output_parsing_fails.yaml
+    release_date: '2021-04-20'
+  2.0.1:
+    changes:
+      bugfixes:
+      - The profiler is now properly initialized.
+      - Use the argument_spec values to determine which option should actually be
+        used.
+      - fix exception messages containing extra single quotes (https://github.com/ansible-collections/cloud.common/pull/46).
+    fragments:
+    - 46-fix-error-message-string.yaml
+    - actually_enable_the_profiler.yaml
+    - filter_argument_with_argument_spec.yaml
+    release_date: '2021-04-22'
+  2.0.2:
+    changes:
+      bugfixes:
+      - Introduces a fix for the future Python 3.10 (#53)
+      - fail_json method should honor kwargs now when running embedded in server.
+    fragments:
+    - modulefailure_fix_result.yaml
+    - py3.10-fix.yaml
+    release_date: '2021-06-02'
+  2.0.3:
+    changes:
+      bugfixes:
+      - Introduces a fix for the future Python 3.10 (#53)
+      - turbo - make sure socket doesn't close prematurely, preventing issues with
+        large amounts of data passed as module parameters (https://github.com/ansible-collections/cloud.common/issues/61)
+    fragments:
+    - py3.10-fix.yaml
+    - socket-closure-fix.yaml
+    release_date: '2021-06-22'
+  2.0.4:
+    changes:
+      bugfixes:
+      - add exception handler to main async loop (https://github.com/ansible-collections/cloud.common/pull/67).
+      - pass current task's environment through to execution (https://github.com/ansible-collections/cloud.common/pull/69).
+      - turbo - AnsibleTurboModule was missing some _ansible_facts variable like _diff,
+        _ansible_tmpdir. (https://github.com/ansible-collections/cloud.common/issues/65)
+      - turbo - honor the ``remote_tmp`` configuration key.
+      major_changes:
+      - turbo - enable turbo mode for lookup plugins
+    fragments:
+    - 67-add-exception-handler.yaml
+    - 69-pass-envvar.yaml
+    - Respect_the_remote_tmp_setting.yaml
+    - reading-common-variable.yaml
+    - turbo-for-lookup-plugin.yaml
+    release_date: '2021-07-29'
+  2.1.0:
+    changes:
+      minor_changes:
+      - Cosmetic changes in the documentation for the inclusion in the Ansible collection.
+      - turbo - Extend the unit-test coverage.
+      - turbo - Use a BSD license for the module_utils and plugin_utils files.
+      - turbo - add support for coroutine for lookup plugins (https://github.com/ansible-collections/cloud.common/pull/75).
+    fragments:
+    - 0-copy_ignore_txt.yml
+    - 75-lookup-add-support-for-coroutine.yaml
+    - cosmetic_changes.yaml
+    release_date: '2021-10-07'
+  2.1.1:
+    changes:
+      bugfixes:
+      - fix parameters with aliases not being passed through (https://github.com/ansible-collections/cloud.common/issues/91).
+      - fix turbo mode loading incorrect module (https://github.com/ansible-collections/cloud.common/pull/102).
+      - turbo - Ensure we don't call the module with duplicated aliased parameters.
+      minor_changes:
+      - Move the content of README_ansible_turbo.module.rst in the main README.md
+        to get visibility on Ansible Galaxy.
+    fragments:
+    - 0-ignore.yml
+    - 102-fix-incorrect-module-loading.yaml
+    - 92-fix-params-with-aliases.yml
+    - remove_README_ansible_turbo.module.rst.yaml
+    - remove_aliased_parameters.yaml
+    release_date: '2022-04-11'
+  2.1.2:
+    changes:
+      bugfixes:
+      - Ensure we don't shutdown the server when we've still got some ongoing tasks
+        (https://github.com/ansible-collections/cloud.common/pull/109).
+    fragments:
+    - graceful_shutdown.yaml
+    release_date: '2022-06-23'
+  2.1.3:
+    changes:
+      bugfixes:
+      - module_utils/turbo/server - import needed library into the right place (https://github.com/ansible-collections/cloud.common/pull/120)
+      minor_changes:
+      - sanity - fix sanity errors (https://github.com/ansible-collections/cloud.common/issues/106)
+      - units - ensure tests/units follow the Ansible-defined unit tests structure
+        (https://github.com/ansible-collections/cloud.common/issues/89)
+    fragments:
+    - improvements.yml
+    - pin_black_version.yml
+    - update_booleans.yml
+    release_date: '2023-03-15'

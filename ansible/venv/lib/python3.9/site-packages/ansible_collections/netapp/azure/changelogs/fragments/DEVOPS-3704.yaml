@@ -1,0 +1,5 @@
+minor_changes:
+  - azure_rm_netapp_account - new suboptions ``ad_name``, ``kdc_ip``, ``service_root_ca_certificate``` for Active Directory.
+
+bugfixes:
+  - azure_rm_netapp_account - wait for job completion for asynchroneous requests, and report belated errors.

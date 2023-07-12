@@ -1,0 +1,18 @@
+botocore
+boto3
+
+coverage==4.5.4
+placebo
+mock
+pytest
+pytest-forked
+pytest-mock
+pytest-xdist
+pytest-ansible-units ; python_version > '3.8'
+
+# Needed for ansible.utils.ipaddr in tests
+netaddr
+# Sometimes needed where we don't have features we need in modules
+awscli
+# Used for comparing SSH Public keys to the Amazon fingerprints
+cryptography

@@ -1,0 +1,71 @@
+---
+- name: Install etcd communication PKI
+  copy:
+    src: "{{ item.source }}"
+    dest: "/etc/sensu/{{ item.filename }}"
+    # Keep this in sync with what the backend service is running as from packager
+    owner: &sensu_user sensu
+    group: &sensu_group sensu
+    mode: "{{ item.mode | default('0644') }}"
+  loop:
+    - source: "{{ etcd_cert_file }}"
+      filename: etcd-client.crt
+    - source: "{{ etcd_key_file }}"
+      filename: etcd-client.key
+      mode: '0400'
+    - source: "{{ etcd_trusted_ca_file }}"
+      filename: etcd-client-ca.crt
+    - source: "{{ etcd_peer_cert_file }}"
+      filename: etcd-peer.crt
+    - source: "{{ etcd_peer_key_file }}"
+      filename: etcd-peer.key
+      mode: '0400'
+    - source: "{{ etcd_peer_trusted_ca_file }}"
+      filename: etcd-peer-ca.crt
+  when: etcd_trusted_ca_file is defined or etcd_cert_file is defined or
+        etcd_key_file is defined or etcd_peer_cert_file is defined or
+        etcd_peer_key_file is defined
+
+- name: Install API communication PKI
+  copy:
+    src: "{{ item.source }}"
+    dest: "/etc/sensu/{{ item.filename }}"
+    owner: *sensu_user
+    group: *sensu_group
+    mode: "{{ item.mode | default('0644') }}"
+  loop:
+    - source: "{{ api_cert_file }}"
+      filename: api.crt
+    - source: "{{ api_key_file }}"
+      filename: api.key
+      mode: '0400'
+    - source: "{{ api_trusted_ca_file }}"
+      filename: api-ca.crt
+  when: api_cert_file is defined or api_key_file is defined or
+        api_trusted_ca_file is defined
+
+- name: Install dashboard communication PKI
+  copy:
+    src: "{{ item.source }}"
+    dest: "/etc/sensu/{{ item.filename }}"
+    owner: *sensu_user
+    group: *sensu_group
+    mode: "{{ item.mode }}"
+  loop:
+    - source: "{{ dashboard_cert_file }}"
+      filename: dashboard.crt
+      mode: '0644'
+    - source: "{{ dashboard_key_file }}"
+      filename: dashboard.key
+      mode: '0400'
+  when: dashboard_cert_file is defined or dashboard_key_file is defined
+
+- name: Configure sensu-backend (/etc/sensu/backend.yml)
+  template:
+    src: backend.yml.j2
+    dest: /etc/sensu/backend.yml
+    owner: *sensu_user
+    group: *sensu_group
+    mode: '0600'
+  notify: Restart backend
+  register: configure_result

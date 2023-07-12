@@ -1,0 +1,29 @@
+requires_ansible: '>=2.10'
+plugin_routing:
+  modules:
+    meraki_vlan:
+      redirect: cisco.meraki.meraki_mx_vlan
+    meraki_switchport:
+      redirect: cisco.meraki.meraki_ms_switchport
+    meraki_content_filtering:
+      redirect: cisco.meraki.meraki_mx_content_filtering
+    meraki_intrusion_prevention:
+      redirect: cisco.meraki.meraki_mx_intrusion_prevention
+    meraki_malware:
+      redirect: cisco.meraki.meraki_mx_malware
+    meraki_mx_uplink:
+      redirect: cisco.meraki.meraki_mx_uplink_bandwidth
+    meraki_nat:
+      redirect: cisco.meraki.meraki_mx_nat
+    meraki_site_to_site_vpn:
+      redirect: cisco.meraki.meraki_mx_site_to_site_vpn
+    meraki_ssid:
+      redirect: cisco.meraki.meraki_mr_ssid
+    meraki_static_route:
+      redirect: cisco.meraki.meraki_mx_static_route
+    meraki_switch_access_list:
+      redirect: cisco.meraki.meraki_ms_access_list
+    meraki_switch_stack:
+      redirect: cisco.meraki.meraki_ms_stack
+    meraki_switch_storm_control:
+      redirect: cisco.meraki.meraki_ms_storm_control

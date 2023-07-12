@@ -8,7 +8,7 @@
 
 - name: Restart code-server
   ansible.builtin.service:
-    name: code-server@{{ ansible_user }}.service
+    name: code-server@{{ common_user }}.service
     state: restarted
   become: true
   when: ansible_host != 'localhost'

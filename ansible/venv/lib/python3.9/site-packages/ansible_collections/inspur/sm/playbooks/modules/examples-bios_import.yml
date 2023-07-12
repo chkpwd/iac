@@ -1,0 +1,16 @@
+- name: bios test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "import bios config"
+    inspur.sm.bios_import:
+      file_url: "/home/wbs/bios.conf"
+      provider: "{{ ism }}"

@@ -1,0 +1,71 @@
+---
+- name: Setup workloads
+  hosts: localhost
+  # This playbook create:
+
+  # *- Tenant space: db_tenant_space
+  # *- Placement Group: pg1
+  # *- AIX host access policy: customer_host_access
+  # *- volume: data_vol1
+  # *- volume: data_vol2
+
+  # require:
+  # *- Storage class: db_high_performance
+  # *- Tenant: oracle_dbas
+  # *- Region: region1
+
+  tasks:
+    - name: Create new tenant space db_tenant_space for oracle_dbas
+      purestorage.fusion.fusion_ts:
+        issuer_id: "{{ ansible_env.FUSION_ISSUER_ID }}"
+        private_key_file: "{{ ansible_env.FUSION_PRIVATE_KEY_FILE }}"
+        name: "db_tenant_space"
+        tenant: "oracle_dbas"
+        state: "present"  # or absent
+
+    - name: Create new placement group named pg1
+      purestorage.fusion.fusion_pg:
+        issuer_id: "{{ ansible_env.FUSION_ISSUER_ID }}"
+        private_key_file: "{{ ansible_env.FUSION_PRIVATE_KEY_FILE }}"
+        name: "pg1"
+        tenant: "oracle_dbas"
+        tenant_space: "db_tenant_space"
+        region: "region1"
+        availability_zone: "az1"
+        storage_service: "db_xl"
+        state: "present"  # or absent
+
+    - name: Create new host access policy
+      purestorage.fusion.fusion_hap:
+        issuer_id: "{{ ansible_env.FUSION_ISSUER_ID }}"
+        private_key_file: "{{ ansible_env.FUSION_PRIVATE_KEY_FILE }}"
+        name: "customer_host_access"
+        personality: "linux"
+        iqn: "iqn.1994-05.com.redhat:9dd57693efb"
+        state: "present"  # or absent
+
+    - name: Create new volume data_vol1 in storage_class db_high_performance
+      purestorage.fusion.fusion_volume:
+        issuer_id: "{{ ansible_env.FUSION_ISSUER_ID }}"
+        private_key_file: "{{ ansible_env.FUSION_PRIVATE_KEY_FILE }}"
+        name: "data_vol1"
+        storage_class: "db_high_performance"
+        size: "500G"  # Volume size in M, G, T or P units.
+        tenant: "oracle_dbas"
+        tenant_space: "db_tenant_space"
+        placement_group: "pg1"
+        host_access_policies: "customer_host_access"
+        state: "present"  # or absent
+
+    - name: Create new volume data_vol2 in storage_class db_high_performance
+      purestorage.fusion.fusion_volume:
+        issuer_id: "{{ ansible_env.FUSION_ISSUER_ID }}"
+        private_key_file: "{{ ansible_env.FUSION_PRIVATE_KEY_FILE }}"
+        name: "data_vol2"
+        storage_class: "db_high_performance"
+        size: "500G"  # Volume size in M, G, T or P units.
+        tenant: "oracle_dbas"
+        tenant_space: "db_tenant_space"
+        placement_group: "pg1"
+        host_access_policies: "customer_host_access"
+        state: "present"  # or absent

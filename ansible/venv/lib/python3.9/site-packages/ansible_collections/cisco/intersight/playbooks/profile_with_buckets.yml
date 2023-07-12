@@ -1,0 +1,28 @@
+---
+# Server profile config using policy buckets
+- hosts: localhost
+  gather_facts: false
+  vars:
+    profile_name: SP-SJC07-R14-FI-1-1-6
+  tasks:
+    - name: "Get {{ profile_name }}"
+      cisco.intersight.intersight_rest_api:
+        resource_path: /server/Profiles
+        query_params:
+          $filter: "Name eq '{{ profile_name }}'"
+      register: results
+    - debug:
+        msg: "{{ results.api_response.PolicyBucket | selectattr('ObjectType', 'eq', 'access.Policy') }}"
+    - name: "Config {{ profile_name }}"
+      cisco.intersight.intersight_rest_api:
+        resource_path: "/server/Profiles/{{ results.api_response.Moid }}/PolicyBucket"
+        # should be moid for tf-k8s-SJC07-R14-15-access
+        list_body:
+          [
+            {
+              "Moid": "60a6e26f6275722d31f8e278",
+              "ObjectType": "access.Policy",
+            },
+          ]
+        update_method: post
+      when: not (results.api_response.PolicyBucket | selectattr('ObjectType', 'eq', 'access.Policy') | selectattr('Moid', 'eq', '60a6e26f6275722d31f8e278'))

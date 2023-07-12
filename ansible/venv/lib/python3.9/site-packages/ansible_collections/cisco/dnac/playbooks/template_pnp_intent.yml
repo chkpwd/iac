@@ -1,0 +1,61 @@
+- hosts: dnac_servers
+  vars_files:
+    - credentials.yml
+    - device_details.yml
+  gather_facts: false
+  connection: local
+  tasks:
+#
+# Project Info  Section
+#
+    - name: Test project template      
+      cisco.dnac.template_intent:
+        dnac_host: "{{ dnac_host }}"
+        dnac_port: "{{ dnac_port }}"
+        dnac_username: "{{ dnac_username }}"
+        dnac_password: "{{ dnac_password }}"
+        dnac_verify: "{{ dnac_verify }}"
+        dnac_debug: "{{ dnac_debug }}"
+        dnac_log: true
+        state: "merged"
+        #ignore_errors: true        #Enable this to continue execution even the task fails
+        config:
+        - projectName: "{{ item.proj_name }}"
+          templateContent: "{{ item.device_config }}"
+          language: "{{ item.language }}"
+          deviceTypes:
+          - productFamily: "{{ item.family }}"
+          softwareType: "{{ item.type }}"
+          softwareVariant: "{{ item.variant }}"
+          templateName: "{{ item.temp_name }}"
+          versionDescription: "{{ item.description }}"
+      register: template_result
+      with_items: '{{ template_details }}'
+      tags:
+        - template
+
+
+    - name: Create pnp
+      cisco.dnac.pnp_intent:
+        dnac_host: "{{dnac_host}}"
+        dnac_username: "{{dnac_username}}"
+        dnac_password: "{{dnac_password}}"
+        dnac_verify: "{{dnac_verify}}"
+        dnac_port: "{{dnac_port}}"
+        dnac_debug: "{{dnac_debug}}"
+        dnac_log: true
+        config:
+        - site_name: "{{ item.site_name }}"
+          project_name: "{{ item.proj_name }}"
+          template_name: "{{ item.temp_name }}"
+          image_name: "{{ item.image_name }}"
+          device_version: "{{ item.device_version }}"
+          deviceInfo:
+            serialNumber: "{{ item.device_number }}"
+            hostname: "{{ item.device_name}}"
+            state: "{{ item.device_state }}"
+            pid: "{{ item.device_id }}"
+      register: pnp_result
+      with_items: '{{ device_details }}'
+      tags:
+        - pnp

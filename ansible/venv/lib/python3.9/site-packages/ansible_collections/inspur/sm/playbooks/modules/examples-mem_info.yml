@@ -1,0 +1,15 @@
+- name: memory test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "get memory information"
+    inspur.sm.mem_info:
+      provider: "{{ ism }}"

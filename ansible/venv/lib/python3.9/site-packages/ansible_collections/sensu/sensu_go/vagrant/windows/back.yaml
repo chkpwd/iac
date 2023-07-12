@@ -1,0 +1,18 @@
+---
+- name: Install backend
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Install cli
+      include_role:
+        name: sensu.sensu_go.install
+      vars:
+        version: latest
+        components: [ sensu-go-cli ]
+
+    - name: Install backend
+      include_role:
+        name: sensu.sensu_go.backend
+      vars:
+        version: latest

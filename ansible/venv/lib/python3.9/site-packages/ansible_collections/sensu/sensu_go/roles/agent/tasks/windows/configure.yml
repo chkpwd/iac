@@ -1,0 +1,15 @@
+---
+- name: Load Windows locations
+  include_vars: windows.yml
+
+- name: Install agent communication PKI
+  win_copy:
+    src: "{{ agent_trusted_ca_file }}"
+    dest: "{{ trusted_ca_file_path }}"
+  when: agent_trusted_ca_file is defined
+
+- name: Configure sensu-agent ({{ agent_config_path }})
+  win_template:
+    src: agent.yml.j2
+    dest: "{{ agent_config_path }}"
+  notify: Restart Windows agent

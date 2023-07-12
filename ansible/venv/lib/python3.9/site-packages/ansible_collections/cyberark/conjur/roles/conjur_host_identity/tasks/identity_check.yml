@@ -1,0 +1,53 @@
+---
+- name: Check if /etc/conjur.identity already exists
+  stat:
+    path: /etc/conjur.identity
+  register: identity_file
+
+- name: Set fact "conjurized"
+  set_fact:
+    conjurized: "{{ identity_file.stat.exists|bool }}"
+
+- name: Ensure all required variables are set
+  fail: msg="Variable '{{ item }}' is not set!"
+  when: item is undefined
+  with_items:
+    - "{{ conjur_account }}"
+    - "{{ conjur_appliance_url }}"
+    - "{{ conjur_host_name }}"
+
+- name: Set fact "ssl_configuration"
+  set_fact:
+    ssl_configuration: "{{ 'https' in conjur_appliance_url }}"
+
+- block:
+  - name: Ensure all required ssl variables are set
+    fail: msg="Variable '{{ item }}' is not set!"
+    when: item is undefined
+    with_items:
+      - "{{ conjur_ssl_certificate }}"
+      - "{{ conjur_validate_certs }}"
+
+  - name: Set fact "ssl file path"
+    set_fact:
+      conjur_ssl_certificate_path: "/etc/conjur.pem"
+  when: ssl_configuration
+
+- block:
+  - name: Set fact "non ssl configuration"
+    set_fact:
+      conjur_ssl_certificate_path: ""
+      conjur_validate_certs: no
+
+  - name: Warn against using insecure connection schemes
+    debug:
+      msg: "[WARNING]: Provided Conjur URL uses insecure connection scheme. Please consider using HTTPS."
+  when: not ssl_configuration
+
+- block:
+  - name: Ensure "conjur_host_factory_token" is set (if node is not already conjurized)
+    fail: msg="Variable '{{ item }}' is not set!"
+    when: item is undefined
+    with_items:
+      - "{{ conjur_host_factory_token }}"
+  when: not conjurized

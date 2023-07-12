@@ -1,0 +1,8 @@
+---
+requires_ansible: ">=2.9.10"
+action_groups:
+  netapp_azure:
+    - azure_rm_netapp_account
+    - azure_rm_netapp_capacity_pool
+    - azure_rm_netapp_snapshot
+    - azure_rm_netapp_volume

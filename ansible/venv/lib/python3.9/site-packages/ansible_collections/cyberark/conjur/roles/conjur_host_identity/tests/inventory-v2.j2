@@ -1,0 +1,6 @@
+[testapp]
+{{ lookup('env','COMPOSE_PROJECT_NAME') }}-test_app_ubuntu-[1:2] ansible_connection=docker
+{{ lookup('env','COMPOSE_PROJECT_NAME') }}-test_app_centos-[1:2] ansible_connection=docker
+
+[ansible]
+{{ lookup('env','COMPOSE_PROJECT_NAME') }}-ansible-1 ansible_connection=docker

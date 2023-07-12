@@ -1,0 +1,14 @@
+[Intersight_HX]
+# Note: at least one host (e.g., sjc07-r13-501) must be present for update_*_inventory.yml to work
+sjc07-r13-501
+sjc07-r13-503
+
+[Intersight_Servers]
+
+[Intersight:children]
+Intersight_HX
+Intersight_Servers
+
+[all:vars]
+api_private_key=~/Downloads/SecretKey.txt
+api_key_id=596cc79e5d91b400010d15ad/5f0ce0ad7564612d3311a1f3/5f0ea8eb7564612d334ccb5a

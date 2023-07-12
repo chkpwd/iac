@@ -1,0 +1,72 @@
+---
+#
+# Configure Server Profiles
+#
+# The hosts group used is provided by the group variable or defaulted to 'Intersight_Servers'.
+# You can specify a specific host (or host group) on the command line:
+#   ansible-playbook ... -e group=<your host group>
+#   e.g., ansible-playbook server_profiles.yml -e group=TME_Demo
+#
+- hosts: "{{ group | default('Intersight_Servers') }}"
+  connection: local
+  collections:
+    - cisco.intersight
+  gather_facts: false
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      # Key can be directly specified, and vault should be used to encrypt:
+      # Ex. ansible-vault encrypt_string --vault-id tme@/Users/dsoper/Documents/vault_password_file '-----BEGIN EC PRIVATE KEY-----
+      #     <your private key data>
+      #     -----END EC PRIVATE KEY-----'
+      # To use with vault:
+      #     ansible-playbook -i inventory --vault-id tme@vault_password_file intersight_server_profile.yml
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+    # Server Profile name default
+    profile_name: "{{ inventory_hostname | regex_replace('-r$', '') }}"
+  tasks:
+    #
+    # Configure profiles specific to server (run for each server in the inventory)
+    #
+    - set_fact:
+        mode: Standalone
+      when: mode is not defined or mode == 'IntersightStandalone'
+    - set_fact:
+        mode: FIAttached
+      when: mode == 'Intersight'
+    # Get server moid when not defined in inventory
+    - block:
+        - name: "Get {{ inventory_hostname }} Server Moid"
+          intersight_info:
+            <<: *api_info
+            server_names: "{{ inventory_hostname }}"
+          register: server
+        - set_fact:
+            server_moid: "{{ server.intersight_servers[0].Moid }}"
+      when: server_moid is not defined
+      delegate_to: localhost
+    - name: "Get current profile assignment"
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /server/Profiles
+        query_params:
+          $filter: "AssignedServer.Moid eq '{{ server_moid }}' or AssociatedServer.Moid eq '{{ server_moid }}'"
+      when: server_moid is defined
+      register: profile
+      delegate_to: localhost
+    - name: "Configure {{ profile_name }} Server Profile"
+      intersight_server_profile:
+        <<: *api_info
+        organization: "{{ organization | default(omit) }}"
+        name: "{{ profile_name }}"
+        target_platform: "{{ mode | default(omit) }}"
+        description: "Updated Profile for server name {{ inventory_hostname }}"
+        assigned_server: "{{ server_moid }}"
+      when:
+        - server_moid is defined
+        - profile is not defined or profile.api_response.Moid is not defined
+      delegate_to: localhost

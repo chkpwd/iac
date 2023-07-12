@@ -1,0 +1,16 @@
+- name: power status test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "Set power status information"
+    inspur.sm.edit_power_status:
+      state: "On"
+      provider: "{{ ism }}"

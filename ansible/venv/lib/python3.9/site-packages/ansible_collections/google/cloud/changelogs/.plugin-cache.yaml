@@ -1,0 +1,871 @@
+objects:
+  role: {}
+plugins:
+  become: {}
+  cache: {}
+  callback: {}
+  cliconf: {}
+  connection: {}
+  httpapi: {}
+  inventory:
+    gcp_compute:
+      description: Google Cloud Compute Engine inventory source
+      name: gcp_compute
+      version_added: null
+  lookup: {}
+  module:
+    gcp_appengine_firewall_rule:
+      description: Creates a GCP FirewallRule
+      name: gcp_appengine_firewall_rule
+      namespace: ''
+      version_added: null
+    gcp_appengine_firewall_rule_info:
+      description: Gather info for GCP FirewallRule
+      name: gcp_appengine_firewall_rule_info
+      namespace: ''
+      version_added: null
+    gcp_bigquery_dataset:
+      description: Creates a GCP Dataset
+      name: gcp_bigquery_dataset
+      namespace: ''
+      version_added: null
+    gcp_bigquery_dataset_info:
+      description: Gather info for GCP Dataset
+      name: gcp_bigquery_dataset_info
+      namespace: ''
+      version_added: null
+    gcp_bigquery_table:
+      description: Creates a GCP Table
+      name: gcp_bigquery_table
+      namespace: ''
+      version_added: null
+    gcp_bigquery_table_info:
+      description: Gather info for GCP Table
+      name: gcp_bigquery_table_info
+      namespace: ''
+      version_added: null
+    gcp_bigtable_instance:
+      description: Creates a GCP Instance
+      name: gcp_bigtable_instance
+      namespace: ''
+      version_added: null
+    gcp_bigtable_instance_info:
+      description: Gather info for GCP Instance
+      name: gcp_bigtable_instance_info
+      namespace: ''
+      version_added: null
+    gcp_cloudbuild_trigger:
+      description: Creates a GCP Trigger
+      name: gcp_cloudbuild_trigger
+      namespace: ''
+      version_added: null
+    gcp_cloudbuild_trigger_info:
+      description: Gather info for GCP Trigger
+      name: gcp_cloudbuild_trigger_info
+      namespace: ''
+      version_added: null
+    gcp_cloudfunctions_cloud_function:
+      description: Creates a GCP CloudFunction
+      name: gcp_cloudfunctions_cloud_function
+      namespace: ''
+      version_added: null
+    gcp_cloudfunctions_cloud_function_info:
+      description: Gather info for GCP CloudFunction
+      name: gcp_cloudfunctions_cloud_function_info
+      namespace: ''
+      version_added: null
+    gcp_cloudscheduler_job:
+      description: Creates a GCP Job
+      name: gcp_cloudscheduler_job
+      namespace: ''
+      version_added: null
+    gcp_cloudscheduler_job_info:
+      description: Gather info for GCP Job
+      name: gcp_cloudscheduler_job_info
+      namespace: ''
+      version_added: null
+    gcp_cloudtasks_queue:
+      description: Creates a GCP Queue
+      name: gcp_cloudtasks_queue
+      namespace: ''
+      version_added: null
+    gcp_cloudtasks_queue_info:
+      description: Gather info for GCP Queue
+      name: gcp_cloudtasks_queue_info
+      namespace: ''
+      version_added: null
+    gcp_compute_address:
+      description: Creates a GCP Address
+      name: gcp_compute_address
+      namespace: ''
+      version_added: null
+    gcp_compute_address_info:
+      description: Gather info for GCP Address
+      name: gcp_compute_address_info
+      namespace: ''
+      version_added: null
+    gcp_compute_autoscaler:
+      description: Creates a GCP Autoscaler
+      name: gcp_compute_autoscaler
+      namespace: ''
+      version_added: null
+    gcp_compute_autoscaler_info:
+      description: Gather info for GCP Autoscaler
+      name: gcp_compute_autoscaler_info
+      namespace: ''
+      version_added: null
+    gcp_compute_backend_bucket:
+      description: Creates a GCP BackendBucket
+      name: gcp_compute_backend_bucket
+      namespace: ''
+      version_added: null
+    gcp_compute_backend_bucket_info:
+      description: Gather info for GCP BackendBucket
+      name: gcp_compute_backend_bucket_info
+      namespace: ''
+      version_added: null
+    gcp_compute_backend_service:
+      description: Creates a GCP BackendService
+      name: gcp_compute_backend_service
+      namespace: ''
+      version_added: null
+    gcp_compute_backend_service_info:
+      description: Gather info for GCP BackendService
+      name: gcp_compute_backend_service_info
+      namespace: ''
+      version_added: null
+    gcp_compute_disk:
+      description: Creates a GCP Disk
+      name: gcp_compute_disk
+      namespace: ''
+      version_added: null
+    gcp_compute_disk_info:
+      description: Gather info for GCP Disk
+      name: gcp_compute_disk_info
+      namespace: ''
+      version_added: null
+    gcp_compute_external_vpn_gateway:
+      description: Creates a GCP ExternalVpnGateway
+      name: gcp_compute_external_vpn_gateway
+      namespace: ''
+      version_added: null
+    gcp_compute_external_vpn_gateway_info:
+      description: Gather info for GCP ExternalVpnGateway
+      name: gcp_compute_external_vpn_gateway_info
+      namespace: ''
+      version_added: null
+    gcp_compute_firewall:
+      description: Creates a GCP Firewall
+      name: gcp_compute_firewall
+      namespace: ''
+      version_added: null
+    gcp_compute_firewall_info:
+      description: Gather info for GCP Firewall
+      name: gcp_compute_firewall_info
+      namespace: ''
+      version_added: null
+    gcp_compute_forwarding_rule:
+      description: Creates a GCP ForwardingRule
+      name: gcp_compute_forwarding_rule
+      namespace: ''
+      version_added: null
+    gcp_compute_forwarding_rule_info:
+      description: Gather info for GCP ForwardingRule
+      name: gcp_compute_forwarding_rule_info
+      namespace: ''
+      version_added: null
+    gcp_compute_global_address:
+      description: Creates a GCP GlobalAddress
+      name: gcp_compute_global_address
+      namespace: ''
+      version_added: null
+    gcp_compute_global_address_info:
+      description: Gather info for GCP GlobalAddress
+      name: gcp_compute_global_address_info
+      namespace: ''
+      version_added: null
+    gcp_compute_global_forwarding_rule:
+      description: Creates a GCP GlobalForwardingRule
+      name: gcp_compute_global_forwarding_rule
+      namespace: ''
+      version_added: null
+    gcp_compute_global_forwarding_rule_info:
+      description: Gather info for GCP GlobalForwardingRule
+      name: gcp_compute_global_forwarding_rule_info
+      namespace: ''
+      version_added: null
+    gcp_compute_health_check:
+      description: Creates a GCP HealthCheck
+      name: gcp_compute_health_check
+      namespace: ''
+      version_added: null
+    gcp_compute_health_check_info:
+      description: Gather info for GCP HealthCheck
+      name: gcp_compute_health_check_info
+      namespace: ''
+      version_added: null
+    gcp_compute_http_health_check:
+      description: Creates a GCP HttpHealthCheck
+      name: gcp_compute_http_health_check
+      namespace: ''
+      version_added: null
+    gcp_compute_http_health_check_info:
+      description: Gather info for GCP HttpHealthCheck
+      name: gcp_compute_http_health_check_info
+      namespace: ''
+      version_added: null
+    gcp_compute_https_health_check:
+      description: Creates a GCP HttpsHealthCheck
+      name: gcp_compute_https_health_check
+      namespace: ''
+      version_added: null
+    gcp_compute_https_health_check_info:
+      description: Gather info for GCP HttpsHealthCheck
+      name: gcp_compute_https_health_check_info
+      namespace: ''
+      version_added: null
+    gcp_compute_image:
+      description: Creates a GCP Image
+      name: gcp_compute_image
+      namespace: ''
+      version_added: null
+    gcp_compute_image_info:
+      description: Gather info for GCP Image
+      name: gcp_compute_image_info
+      namespace: ''
+      version_added: null
+    gcp_compute_instance:
+      description: Creates a GCP Instance
+      name: gcp_compute_instance
+      namespace: ''
+      version_added: null
+    gcp_compute_instance_group:
+      description: Creates a GCP InstanceGroup
+      name: gcp_compute_instance_group
+      namespace: ''
+      version_added: null
+    gcp_compute_instance_group_info:
+      description: Gather info for GCP InstanceGroup
+      name: gcp_compute_instance_group_info
+      namespace: ''
+      version_added: null
+    gcp_compute_instance_group_manager:
+      description: Creates a GCP InstanceGroupManager
+      name: gcp_compute_instance_group_manager
+      namespace: ''
+      version_added: null
+    gcp_compute_instance_group_manager_info:
+      description: Gather info for GCP InstanceGroupManager
+      name: gcp_compute_instance_group_manager_info
+      namespace: ''
+      version_added: null
+    gcp_compute_instance_info:
+      description: Gather info for GCP Instance
+      name: gcp_compute_instance_info
+      namespace: ''
+      version_added: null
+    gcp_compute_instance_template:
+      description: Creates a GCP InstanceTemplate
+      name: gcp_compute_instance_template
+      namespace: ''
+      version_added: null
+    gcp_compute_instance_template_info:
+      description: Gather info for GCP InstanceTemplate
+      name: gcp_compute_instance_template_info
+      namespace: ''
+      version_added: null
+    gcp_compute_interconnect_attachment:
+      description: Creates a GCP InterconnectAttachment
+      name: gcp_compute_interconnect_attachment
+      namespace: ''
+      version_added: null
+    gcp_compute_interconnect_attachment_info:
+      description: Gather info for GCP InterconnectAttachment
+      name: gcp_compute_interconnect_attachment_info
+      namespace: ''
+      version_added: null
+    gcp_compute_network:
+      description: Creates a GCP Network
+      name: gcp_compute_network
+      namespace: ''
+      version_added: null
+    gcp_compute_network_endpoint_group:
+      description: Creates a GCP NetworkEndpointGroup
+      name: gcp_compute_network_endpoint_group
+      namespace: ''
+      version_added: null
+    gcp_compute_network_endpoint_group_info:
+      description: Gather info for GCP NetworkEndpointGroup
+      name: gcp_compute_network_endpoint_group_info
+      namespace: ''
+      version_added: null
+    gcp_compute_network_info:
+      description: Gather info for GCP Network
+      name: gcp_compute_network_info
+      namespace: ''
+      version_added: null
+    gcp_compute_node_group:
+      description: Creates a GCP NodeGroup
+      name: gcp_compute_node_group
+      namespace: ''
+      version_added: null
+    gcp_compute_node_group_info:
+      description: Gather info for GCP NodeGroup
+      name: gcp_compute_node_group_info
+      namespace: ''
+      version_added: null
+    gcp_compute_node_template:
+      description: Creates a GCP NodeTemplate
+      name: gcp_compute_node_template
+      namespace: ''
+      version_added: null
+    gcp_compute_node_template_info:
+      description: Gather info for GCP NodeTemplate
+      name: gcp_compute_node_template_info
+      namespace: ''
+      version_added: null
+    gcp_compute_region_autoscaler:
+      description: Creates a GCP RegionAutoscaler
+      name: gcp_compute_region_autoscaler
+      namespace: ''
+      version_added: null
+    gcp_compute_region_autoscaler_info:
+      description: Gather info for GCP RegionAutoscaler
+      name: gcp_compute_region_autoscaler_info
+      namespace: ''
+      version_added: null
+    gcp_compute_region_backend_service:
+      description: Creates a GCP RegionBackendService
+      name: gcp_compute_region_backend_service
+      namespace: ''
+      version_added: null
+    gcp_compute_region_backend_service_info:
+      description: Gather info for GCP RegionBackendService
+      name: gcp_compute_region_backend_service_info
+      namespace: ''
+      version_added: null
+    gcp_compute_region_disk:
+      description: Creates a GCP RegionDisk
+      name: gcp_compute_region_disk
+      namespace: ''
+      version_added: null
+    gcp_compute_region_disk_info:
+      description: Gather info for GCP RegionDisk
+      name: gcp_compute_region_disk_info
+      namespace: ''
+      version_added: null
+    gcp_compute_region_health_check:
+      description: Creates a GCP RegionHealthCheck
+      name: gcp_compute_region_health_check
+      namespace: ''
+      version_added: null
+    gcp_compute_region_health_check_info:
+      description: Gather info for GCP RegionHealthCheck
+      name: gcp_compute_region_health_check_info
+      namespace: ''
+      version_added: null
+    gcp_compute_region_instance_group_manager:
+      description: Creates a GCP RegionInstanceGroupManager
+      name: gcp_compute_region_instance_group_manager
+      namespace: ''
+      version_added: null
+    gcp_compute_region_instance_group_manager_info:
+      description: Gather info for GCP RegionInstanceGroupManager
+      name: gcp_compute_region_instance_group_manager_info
+      namespace: ''
+      version_added: null
+    gcp_compute_region_target_http_proxy:
+      description: Creates a GCP RegionTargetHttpProxy
+      name: gcp_compute_region_target_http_proxy
+      namespace: ''
+      version_added: null
+    gcp_compute_region_target_http_proxy_info:
+      description: Gather info for GCP RegionTargetHttpProxy
+      name: gcp_compute_region_target_http_proxy_info
+      namespace: ''
+      version_added: null
+    gcp_compute_region_target_https_proxy:
+      description: Creates a GCP RegionTargetHttpsProxy
+      name: gcp_compute_region_target_https_proxy
+      namespace: ''
+      version_added: null
+    gcp_compute_region_target_https_proxy_info:
+      description: Gather info for GCP RegionTargetHttpsProxy
+      name: gcp_compute_region_target_https_proxy_info
+      namespace: ''
+      version_added: null
+    gcp_compute_region_url_map:
+      description: Creates a GCP RegionUrlMap
+      name: gcp_compute_region_url_map
+      namespace: ''
+      version_added: null
+    gcp_compute_region_url_map_info:
+      description: Gather info for GCP RegionUrlMap
+      name: gcp_compute_region_url_map_info
+      namespace: ''
+      version_added: null
+    gcp_compute_reservation:
+      description: Creates a GCP Reservation
+      name: gcp_compute_reservation
+      namespace: ''
+      version_added: null
+    gcp_compute_reservation_info:
+      description: Gather info for GCP Reservation
+      name: gcp_compute_reservation_info
+      namespace: ''
+      version_added: null
+    gcp_compute_resource_policy:
+      description: Creates a GCP ResourcePolicy
+      name: gcp_compute_resource_policy
+      namespace: ''
+      version_added: null
+    gcp_compute_resource_policy_info:
+      description: Gather info for GCP ResourcePolicy
+      name: gcp_compute_resource_policy_info
+      namespace: ''
+      version_added: null
+    gcp_compute_route:
+      description: Creates a GCP Route
+      name: gcp_compute_route
+      namespace: ''
+      version_added: null
+    gcp_compute_route_info:
+      description: Gather info for GCP Route
+      name: gcp_compute_route_info
+      namespace: ''
+      version_added: null
+    gcp_compute_router:
+      description: Creates a GCP Router
+      name: gcp_compute_router
+      namespace: ''
+      version_added: null
+    gcp_compute_router_info:
+      description: Gather info for GCP Router
+      name: gcp_compute_router_info
+      namespace: ''
+      version_added: null
+    gcp_compute_snapshot:
+      description: Creates a GCP Snapshot
+      name: gcp_compute_snapshot
+      namespace: ''
+      version_added: null
+    gcp_compute_snapshot_info:
+      description: Gather info for GCP Snapshot
+      name: gcp_compute_snapshot_info
+      namespace: ''
+      version_added: null
+    gcp_compute_ssl_certificate:
+      description: Creates a GCP SslCertificate
+      name: gcp_compute_ssl_certificate
+      namespace: ''
+      version_added: null
+    gcp_compute_ssl_certificate_info:
+      description: Gather info for GCP SslCertificate
+      name: gcp_compute_ssl_certificate_info
+      namespace: ''
+      version_added: null
+    gcp_compute_ssl_policy:
+      description: Creates a GCP SslPolicy
+      name: gcp_compute_ssl_policy
+      namespace: ''
+      version_added: null
+    gcp_compute_ssl_policy_info:
+      description: Gather info for GCP SslPolicy
+      name: gcp_compute_ssl_policy_info
+      namespace: ''
+      version_added: null
+    gcp_compute_subnetwork:
+      description: Creates a GCP Subnetwork
+      name: gcp_compute_subnetwork
+      namespace: ''
+      version_added: null
+    gcp_compute_subnetwork_info:
+      description: Gather info for GCP Subnetwork
+      name: gcp_compute_subnetwork_info
+      namespace: ''
+      version_added: null
+    gcp_compute_target_http_proxy:
+      description: Creates a GCP TargetHttpProxy
+      name: gcp_compute_target_http_proxy
+      namespace: ''
+      version_added: null
+    gcp_compute_target_http_proxy_info:
+      description: Gather info for GCP TargetHttpProxy
+      name: gcp_compute_target_http_proxy_info
+      namespace: ''
+      version_added: null
+    gcp_compute_target_https_proxy:
+      description: Creates a GCP TargetHttpsProxy
+      name: gcp_compute_target_https_proxy
+      namespace: ''
+      version_added: null
+    gcp_compute_target_https_proxy_info:
+      description: Gather info for GCP TargetHttpsProxy
+      name: gcp_compute_target_https_proxy_info
+      namespace: ''
+      version_added: null
+    gcp_compute_target_instance:
+      description: Creates a GCP TargetInstance
+      name: gcp_compute_target_instance
+      namespace: ''
+      version_added: null
+    gcp_compute_target_instance_info:
+      description: Gather info for GCP TargetInstance
+      name: gcp_compute_target_instance_info
+      namespace: ''
+      version_added: null
+    gcp_compute_target_pool:
+      description: Creates a GCP TargetPool
+      name: gcp_compute_target_pool
+      namespace: ''
+      version_added: null
+    gcp_compute_target_pool_info:
+      description: Gather info for GCP TargetPool
+      name: gcp_compute_target_pool_info
+      namespace: ''
+      version_added: null
+    gcp_compute_target_ssl_proxy:
+      description: Creates a GCP TargetSslProxy
+      name: gcp_compute_target_ssl_proxy
+      namespace: ''
+      version_added: null
+    gcp_compute_target_ssl_proxy_info:
+      description: Gather info for GCP TargetSslProxy
+      name: gcp_compute_target_ssl_proxy_info
+      namespace: ''
+      version_added: null
+    gcp_compute_target_tcp_proxy:
+      description: Creates a GCP TargetTcpProxy
+      name: gcp_compute_target_tcp_proxy
+      namespace: ''
+      version_added: null
+    gcp_compute_target_tcp_proxy_info:
+      description: Gather info for GCP TargetTcpProxy
+      name: gcp_compute_target_tcp_proxy_info
+      namespace: ''
+      version_added: null
+    gcp_compute_target_vpn_gateway:
+      description: Creates a GCP TargetVpnGateway
+      name: gcp_compute_target_vpn_gateway
+      namespace: ''
+      version_added: null
+    gcp_compute_target_vpn_gateway_info:
+      description: Gather info for GCP TargetVpnGateway
+      name: gcp_compute_target_vpn_gateway_info
+      namespace: ''
+      version_added: null
+    gcp_compute_url_map:
+      description: Creates a GCP UrlMap
+      name: gcp_compute_url_map
+      namespace: ''
+      version_added: null
+    gcp_compute_url_map_info:
+      description: Gather info for GCP UrlMap
+      name: gcp_compute_url_map_info
+      namespace: ''
+      version_added: null
+    gcp_compute_vpn_tunnel:
+      description: Creates a GCP VpnTunnel
+      name: gcp_compute_vpn_tunnel
+      namespace: ''
+      version_added: null
+    gcp_compute_vpn_tunnel_info:
+      description: Gather info for GCP VpnTunnel
+      name: gcp_compute_vpn_tunnel_info
+      namespace: ''
+      version_added: null
+    gcp_container_cluster:
+      description: Creates a GCP Cluster
+      name: gcp_container_cluster
+      namespace: ''
+      version_added: null
+    gcp_container_cluster_info:
+      description: Gather info for GCP Cluster
+      name: gcp_container_cluster_info
+      namespace: ''
+      version_added: null
+    gcp_container_node_pool:
+      description: Creates a GCP NodePool
+      name: gcp_container_node_pool
+      namespace: ''
+      version_added: null
+    gcp_container_node_pool_info:
+      description: Gather info for GCP NodePool
+      name: gcp_container_node_pool_info
+      namespace: ''
+      version_added: null
+    gcp_dns_managed_zone:
+      description: Creates a GCP ManagedZone
+      name: gcp_dns_managed_zone
+      namespace: ''
+      version_added: null
+    gcp_dns_managed_zone_info:
+      description: Gather info for GCP ManagedZone
+      name: gcp_dns_managed_zone_info
+      namespace: ''
+      version_added: null
+    gcp_dns_resource_record_set:
+      description: Creates a GCP ResourceRecordSet
+      name: gcp_dns_resource_record_set
+      namespace: ''
+      version_added: null
+    gcp_dns_resource_record_set_info:
+      description: Gather info for GCP ResourceRecordSet
+      name: gcp_dns_resource_record_set_info
+      namespace: ''
+      version_added: null
+    gcp_filestore_instance:
+      description: Creates a GCP Instance
+      name: gcp_filestore_instance
+      namespace: ''
+      version_added: null
+    gcp_filestore_instance_info:
+      description: Gather info for GCP Instance
+      name: gcp_filestore_instance_info
+      namespace: ''
+      version_added: null
+    gcp_iam_role:
+      description: Creates a GCP Role
+      name: gcp_iam_role
+      namespace: ''
+      version_added: null
+    gcp_iam_role_info:
+      description: Gather info for GCP Role
+      name: gcp_iam_role_info
+      namespace: ''
+      version_added: null
+    gcp_iam_service_account:
+      description: Creates a GCP ServiceAccount
+      name: gcp_iam_service_account
+      namespace: ''
+      version_added: null
+    gcp_iam_service_account_info:
+      description: Gather info for GCP ServiceAccount
+      name: gcp_iam_service_account_info
+      namespace: ''
+      version_added: null
+    gcp_iam_service_account_key:
+      description: Creates a GCP ServiceAccountKey
+      name: gcp_iam_service_account_key
+      namespace: ''
+      version_added: null
+    gcp_kms_crypto_key:
+      description: Creates a GCP CryptoKey
+      name: gcp_kms_crypto_key
+      namespace: ''
+      version_added: null
+    gcp_kms_crypto_key_info:
+      description: Gather info for GCP CryptoKey
+      name: gcp_kms_crypto_key_info
+      namespace: ''
+      version_added: null
+    gcp_kms_key_ring:
+      description: Creates a GCP KeyRing
+      name: gcp_kms_key_ring
+      namespace: ''
+      version_added: null
+    gcp_kms_key_ring_info:
+      description: Gather info for GCP KeyRing
+      name: gcp_kms_key_ring_info
+      namespace: ''
+      version_added: null
+    gcp_logging_metric:
+      description: Creates a GCP Metric
+      name: gcp_logging_metric
+      namespace: ''
+      version_added: null
+    gcp_logging_metric_info:
+      description: Gather info for GCP Metric
+      name: gcp_logging_metric_info
+      namespace: ''
+      version_added: null
+    gcp_mlengine_model:
+      description: Creates a GCP Model
+      name: gcp_mlengine_model
+      namespace: ''
+      version_added: null
+    gcp_mlengine_model_info:
+      description: Gather info for GCP Model
+      name: gcp_mlengine_model_info
+      namespace: ''
+      version_added: null
+    gcp_mlengine_version:
+      description: Creates a GCP Version
+      name: gcp_mlengine_version
+      namespace: ''
+      version_added: null
+    gcp_mlengine_version_info:
+      description: Gather info for GCP Version
+      name: gcp_mlengine_version_info
+      namespace: ''
+      version_added: null
+    gcp_pubsub_subscription:
+      description: Creates a GCP Subscription
+      name: gcp_pubsub_subscription
+      namespace: ''
+      version_added: null
+    gcp_pubsub_subscription_info:
+      description: Gather info for GCP Subscription
+      name: gcp_pubsub_subscription_info
+      namespace: ''
+      version_added: null
+    gcp_pubsub_topic:
+      description: Creates a GCP Topic
+      name: gcp_pubsub_topic
+      namespace: ''
+      version_added: null
+    gcp_pubsub_topic_info:
+      description: Gather info for GCP Topic
+      name: gcp_pubsub_topic_info
+      namespace: ''
+      version_added: null
+    gcp_redis_instance:
+      description: Creates a GCP Instance
+      name: gcp_redis_instance
+      namespace: ''
+      version_added: null
+    gcp_redis_instance_info:
+      description: Gather info for GCP Instance
+      name: gcp_redis_instance_info
+      namespace: ''
+      version_added: null
+    gcp_resourcemanager_project:
+      description: Creates a GCP Project
+      name: gcp_resourcemanager_project
+      namespace: ''
+      version_added: null
+    gcp_resourcemanager_project_info:
+      description: Gather info for GCP Project
+      name: gcp_resourcemanager_project_info
+      namespace: ''
+      version_added: null
+    gcp_runtimeconfig_config:
+      description: Creates a GCP Config
+      name: gcp_runtimeconfig_config
+      namespace: ''
+      version_added: null
+    gcp_runtimeconfig_config_info:
+      description: Gather info for GCP Config
+      name: gcp_runtimeconfig_config_info
+      namespace: ''
+      version_added: null
+    gcp_runtimeconfig_variable:
+      description: Creates a GCP Variable
+      name: gcp_runtimeconfig_variable
+      namespace: ''
+      version_added: null
+    gcp_runtimeconfig_variable_info:
+      description: Gather info for GCP Variable
+      name: gcp_runtimeconfig_variable_info
+      namespace: ''
+      version_added: null
+    gcp_serviceusage_service:
+      description: Creates a GCP Service
+      name: gcp_serviceusage_service
+      namespace: ''
+      version_added: null
+    gcp_serviceusage_service_info:
+      description: Gather info for GCP Service
+      name: gcp_serviceusage_service_info
+      namespace: ''
+      version_added: null
+    gcp_sourcerepo_repository:
+      description: Creates a GCP Repository
+      name: gcp_sourcerepo_repository
+      namespace: ''
+      version_added: null
+    gcp_sourcerepo_repository_info:
+      description: Gather info for GCP Repository
+      name: gcp_sourcerepo_repository_info
+      namespace: ''
+      version_added: null
+    gcp_spanner_database:
+      description: Creates a GCP Database
+      name: gcp_spanner_database
+      namespace: ''
+      version_added: null
+    gcp_spanner_database_info:
+      description: Gather info for GCP Database
+      name: gcp_spanner_database_info
+      namespace: ''
+      version_added: null
+    gcp_spanner_instance:
+      description: Creates a GCP Instance
+      name: gcp_spanner_instance
+      namespace: ''
+      version_added: null
+    gcp_spanner_instance_info:
+      description: Gather info for GCP Instance
+      name: gcp_spanner_instance_info
+      namespace: ''
+      version_added: null
+    gcp_sql_database:
+      description: Creates a GCP Database
+      name: gcp_sql_database
+      namespace: ''
+      version_added: null
+    gcp_sql_database_info:
+      description: Gather info for GCP Database
+      name: gcp_sql_database_info
+      namespace: ''
+      version_added: null
+    gcp_sql_instance:
+      description: Creates a GCP Instance
+      name: gcp_sql_instance
+      namespace: ''
+      version_added: null
+    gcp_sql_instance_info:
+      description: Gather info for GCP Instance
+      name: gcp_sql_instance_info
+      namespace: ''
+      version_added: null
+    gcp_sql_ssl_cert:
+      description: Creates a GCP SslCert
+      name: gcp_sql_ssl_cert
+      namespace: ''
+      version_added: null
+    gcp_sql_user:
+      description: Creates a GCP User
+      name: gcp_sql_user
+      namespace: ''
+      version_added: null
+    gcp_sql_user_info:
+      description: Gather info for GCP User
+      name: gcp_sql_user_info
+      namespace: ''
+      version_added: null
+    gcp_storage_bucket:
+      description: Creates a GCP Bucket
+      name: gcp_storage_bucket
+      namespace: ''
+      version_added: null
+    gcp_storage_bucket_access_control:
+      description: Creates a GCP BucketAccessControl
+      name: gcp_storage_bucket_access_control
+      namespace: ''
+      version_added: null
+    gcp_storage_default_object_acl:
+      description: Creates a GCP DefaultObjectACL
+      name: gcp_storage_default_object_acl
+      namespace: ''
+      version_added: null
+    gcp_storage_object:
+      description: Creates a GCP Object
+      name: gcp_storage_object
+      namespace: ''
+      version_added: null
+    gcp_tpu_node:
+      description: Creates a GCP Node
+      name: gcp_tpu_node
+      namespace: ''
+      version_added: null
+    gcp_tpu_node_info:
+      description: Gather info for GCP Node
+      name: gcp_tpu_node_info
+      namespace: ''
+      version_added: null
+  netconf: {}
+  shell: {}
+  strategy: {}
+  vars: {}
+version: 1.1.3

@@ -1,0 +1,48 @@
+---
+- name: Testing the IBM Spectrum Virtualize collection ibm_svc_vol_map
+  hosts: localhost
+  vars:
+    - clustername: clustername
+    - username: username
+    - password: password
+    - domain: domain
+    - test_vdisk: vdisk_name
+    - pool: pool
+    - test_host: host_name
+    - fcwwpn1: fcwwpn
+  collections:
+    - ibm.spectrum_virtualize
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: Create vdisk
+      ibm_svc_vdisk:
+        clustername: "{{clustername}}"
+        domain: "{{domain}}"
+        username: "{{username}}"
+        password: "{{password}}"
+        name: "{{test_vdisk}}"
+        state: present
+        mdiskgrp: "{{pool}}"
+        easytier: 'off'
+        size: "1024"
+        unit: "mb"
+    - name: Creating Host
+      ibm_svc_host:
+        clustername: "{{clustername}}"
+        domain: "{{domain}}"
+        username: "{{username}}"
+        password: "{{password}}"
+        name: "{{test_host}}"
+        state: present
+        fcwwpn: "{{ fcwwpn1 }}"
+    - name: map Host to Vdisk
+      ibm_svc_vol_map:
+        clustername: "{{clustername}}"
+        domain: "{{domain}}"
+        username: "{{username}}"
+        password: "{{password}}"
+        volname: "{{test_vdisk}}"
+        host: "{{test_host}}"
+        state: present
+        scsi: 0

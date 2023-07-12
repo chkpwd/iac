@@ -1,0 +1,86 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+
+  vars:
+    ise_login: &ise_login
+      ise_hostname: "{{ ise_hostname }}"
+      ise_username: "{{ ise_username }}"
+      ise_password: "{{ ise_password }}"
+      ise_verify: "{{ ise_verify }}"
+      ise_debug: "{{ ise_debug }}"
+
+  tasks:
+    - name: "Create VN 1"
+      cisco.ise.trustsec_vn:
+        <<: *ise_login
+        state: present
+        name: vn1
+        additionalAttributes: '{"Created": "1616961914"}'
+      register: vn_manage
+    - name: "Create VN 2"
+      cisco.ise.trustsec_vn:
+        <<: *ise_login
+        state: present
+        name: vn2
+        additionalAttributes: '{"Created": "1616961914"}'
+      register: vn_manage
+
+    - name: "Create VN_VLAN_Mapping"
+      cisco.ise.trustsec_vn_vlan_mapping:
+        <<: *ise_login
+        state: present
+        isData: true
+        isDefaultVlan: true
+        maxValue: 12
+        name: vlan1
+        vnName: vn1
+      register: vn_vlan_mapping_manage
+
+    - name: "Print Create vn_vlan_mapping_manage"
+      ansible.builtin.debug:
+        var: vn_vlan_mapping_manage
+
+    - name: "Update VN_VLAN_Mapping"
+      cisco.ise.trustsec_vn_vlan_mapping:
+        <<: *ise_login
+        state: present
+        isData: true
+        isDefaultVlan: true
+        maxValue: 10
+        name: vlan1
+        vnName: vn1
+      register: vn_vlan_mapping_manage
+    - name: "Print Update vn_vlan_mapping_manage"
+      ansible.builtin.debug:
+        var: vn_vlan_mapping_manage
+
+    - name: "Delete VN_VLAN_Mapping"
+      cisco.ise.trustsec_vn_vlan_mapping:
+        <<: *ise_login
+        state: absent
+        isData: true
+        isDefaultVlan: true
+        maxValue: 10
+        name: vlan1
+        vnName: vn1
+      register: vn_vlan_mapping_manage
+    - name: "Print Delete vn_vlan_mapping_manage"
+      ansible.builtin.debug:
+        var: vn_vlan_mapping_manage
+
+    - name: "Delete VN 1"
+      cisco.ise.trustsec_vn:
+        <<: *ise_login
+        state: absent
+        name: vn1
+        additionalAttributes: '{"Created": "1616961914"}'
+      register: vn_manage
+
+    - name: "Delete VN 2"
+      cisco.ise.trustsec_vn:
+        <<: *ise_login
+        state: absent
+        name: vn2
+        additionalAttributes: '{"Created": "1616961914"}'
+      register: vn_manage

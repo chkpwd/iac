@@ -1,0 +1,5 @@
+- include_tasks: fetch_hosts.yml
+  when: fetch_hosts
+
+- include_tasks: remove_mpath_device.yml
+  when: not fetch_hosts

@@ -1,0 +1,40 @@
+---
+# Example Playbook: cisco.intersight.intersight_boot_order_policy
+# Runs on localhost since policies are only configured once
+# Author: Tse Kai "Kevin" Chan (@BrightScale)
+- hosts: localhost
+  connection: local
+  collections:
+    - cisco.intersight
+  gather_facts: false
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      # if api_key vars are omitted, INTERSIGHT_API_KEY_ID, INTERSIGHT_API_PRIVATE_KEY,
+      # and INTERSIGHT_API_URI environment variables used for API key data
+      api_private_key: "{{ api_private_key | default(omit) }}"
+      api_key_id: "{{ api_key_id | default(omit) }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default('present') }}"
+    # Organization name
+    org_name: dsoper-DevNet
+  tasks:
+    - name: Configure Boot Order Policy with PXE
+      intersight_boot_order_policy:
+        <<: *api_info
+        organization: "{{ org_name }}"
+        name: PXE-Boot
+        description: Boot Order policy with PXE for lab use
+        tags:
+          - Key: Site
+            Value: RCDN
+        configured_boot_mode: Legacy
+        boot_devices:
+          - device_type: PXE
+            device_name: LAN1
+            enabled: true
+            port: -1
+            network_slot: 1
+            interface_source: port
+            ip_type: IPv4

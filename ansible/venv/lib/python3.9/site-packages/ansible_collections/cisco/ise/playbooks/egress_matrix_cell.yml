@@ -1,0 +1,66 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Get sgt src
+      cisco.ise.sgt_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        filter: name.EQ.Quarantined_Systems
+      register: sgt_src
+
+    - name: Get sgt dest
+      cisco.ise.sgt_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        filter: name.EQ.Guests
+      register: sgt_dest
+
+    - name: Print sgt_src
+      ansible.builtin.debug:
+        var: sgt_src['ise_response'][0]
+
+    - name: Print sgt_dest
+      ansible.builtin.debug:
+        var: sgt_dest['ise_response'][0]
+
+    # - name: Get by id
+    #   cisco.ise.egress_matrix_cell_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     id: d704e911-a916-11eb-8830-2ec507028ea8
+    #   register: result
+
+    - name: Create or update an egress_matrix_cell
+      cisco.ise.egress_matrix_cell:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: "{{ sgt_src['ise_response'][0]['name']}}-{{sgt_dest['ise_response'][0]['name']}}"
+        description: Updated by import utility (3).
+        sourceSgtId: "{{ sgt_src['ise_response'][0]['id']}}"
+        destinationSgtId: "{{ sgt_dest['ise_response'][0]['id']}}"
+        matrixCellStatus: ENABLED
+        defaultRule: DENY_IP
+      when:
+        - sgt_src['ise_response'] is defined
+        - sgt_dest['ise_response'] is defined
+        - sgt_src['ise_response']|length == 1
+        - sgt_dest['ise_response']|length == 1
+        - sgt_src['ise_response'][0] is defined
+        - sgt_dest['ise_response'][0] is defined
+        - sgt_src['ise_response'][0]['id'] is defined
+        - sgt_dest['ise_response'][0]['id'] is defined
+      register: result
+
+    - name: Print result
+      ansible.builtin.debug:
+        var: result

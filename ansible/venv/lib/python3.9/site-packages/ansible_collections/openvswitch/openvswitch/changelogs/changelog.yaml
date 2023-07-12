@@ -1,0 +1,114 @@
+ancestor: null
+releases:
+  1.0.0:
+    modules:
+      - description: Manage Open vSwitch bridges
+        name: openvswitch_bridge
+        namespace: ""
+      - description: Configure open vswitch database.
+        name: openvswitch_db
+        namespace: ""
+      - description: Manage Open vSwitch ports
+        name: openvswitch_port
+        namespace: ""
+    release_date: "2020-06-23"
+  1.0.1:
+    changes:
+      bugfixes:
+        - Makes sure that docstring and argspec are in sync and removes sanity ignores
+          (https://github.com/ansible-collections/openvswitch.openvswitch/pull/46).
+        - Update docs after sanity fixes to modules.
+    fragments:
+      - remove_ignores.yaml
+      - update_docs.yaml
+    release_date: "2020-08-03"
+  1.0.2:
+    changes:
+      release_summary: Rereleased 1.0.1 with updated changelog.
+    fragments:
+      - 1.0.2.yaml
+    release_date: "2020-08-07"
+  1.0.3:
+    changes:
+      release_summary: Released for testing.
+    fragments:
+      - 1.0.3.yaml
+    release_date: "2020-08-07"
+  1.0.4:
+    changes:
+      release_summary: Rereleased 1.0.3 with updated changelog.
+    fragments:
+      - 1.0.4.yaml
+    release_date: "2020-08-08"
+  1.0.5:
+    changes:
+      minor_changes:
+        - Regenerated docs, add description to galaxy.yml and linked changelog to README
+          (https://github.com/ansible-collections/openvswitch.openvswitch/pull/53).
+    fragments:
+      - fixes_to_readme_and_doc.yaml
+    release_date: "2020-08-28"
+  1.1.0:
+    changes:
+      bugfixes:
+        - Add version key to galaxy.yaml to work around ansible-galaxy bug (https://github.com/ansible-collections/openvswitch.openvswitch/issues/59)
+      minor_changes:
+        - openvswitch_bond - New module for managing Open vSwitch bonds (https://github.com/ansible-collections/openvswitch.openvswitch/pull/58).
+    fragments:
+      - 1-openvswitch_bond-new-module.yaml
+      - fix_download_git.yaml
+    release_date: "2020-11-26"
+  1.2.0:
+    changes:
+      bugfixes:
+        - Allow deleting key from table without specifying value (https://github.com/ansible-collections/openvswitch.openvswitch/issues/64).
+      minor_changes:
+        - Allow setting multiple properties on a port (https://github.com/ansible-collections/openvswitch.openvswitch/issues/63).
+    fragments:
+      - fix_openvswitch_db.yaml
+      - fix_openvswitch_port.yaml
+    release_date: "2021-02-24"
+  2.0.0:
+    changes:
+      major_changes:
+        - There is no major changes for this particular release and it was tagged by
+          mistake and cannot be reverted.
+    release_date: "2021-02-24"
+  2.0.1:
+    changes:
+      major_changes:
+        - By mistake we tagged the repo to 2.0.0 and as it wasn't intended and cannot
+          be reverted we're releasing 2.0.1 to make the community aware of the major
+          version update.
+    release_date: "2021-03-03"
+  2.0.2:
+    changes:
+      bugfixes:
+        - "`openvswitch_bridge` - Fix idempotency for VLAN bridges"
+    fragments:
+      - 69-remove_tests_sanity_requirements.yml
+      - fix_validate_modules.yaml
+      - fix_vlan_bridge_idempotency.yaml
+      - pylint_fixes.yaml
+    release_date: "2021-09-24"
+  2.1.0:
+    changes:
+      minor_changes:
+        - Allows read operation in openvswitch_db module(https://github.com/ansible-collections/openvswitch.openvswitch/pull/88)
+        - openvswitch modules got support for database socket parameter.
+    fragments:
+      - 84-ovs-modules-database-socket.yaml
+      - openvswitch_db_read.yaml
+    release_date: "2021-12-07"
+  2.1.1:
+    changes:
+      bugfixes:
+        - Fix galaxy version issue when installing this collection.
+      doc_changes:
+        - Update module documentation and examples.
+    fragments:
+      - black.yaml
+      - fix.yaml
+      - galaxy.yml
+      - gha.yaml
+    release_date: "2023-04-27"

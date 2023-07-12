@@ -1,0 +1,40 @@
+---
+- name: "SELinux | RedHat | Install related SELinux package to fix issues"
+  yum:
+    name: "{{ selinux_pkgs[ansible_distribution_major_version] }}"
+    state: present
+  environment:
+    http_proxy: "{{ zabbix_http_proxy | default(None) | default(omit) }}"
+    https_proxy: "{{ zabbix_https_proxy | default(None) | default(omit) }}"
+  register: zabbix_proxy_dependencies_installed
+  until: zabbix_proxy_dependencies_installed is succeeded
+  become: true
+  tags:
+    - zabbix-proxy
+
+- name: "SELinux | RedHat | Add SEmodule to fix SELinux issue: zabbix_proxy_alerter.sock"
+  script:
+    cmd: files/install_semodule.bsx
+  args:
+    creates: /etc/selinux/targeted/active/modules/400/zabbix_proxy_add/cil
+  become: true
+  tags:
+    - zabbix-proxy
+
+- name: "Allow zabbix-proxy to open connections (SELinux)"
+  ansible.posix.seboolean:
+    name: zabbix_can_network
+    persistent: true
+    state: true
+  become: true
+  when: ansible_selinux.status == "enabled"
+  tags: selinux
+
+- name: "Allow zabbix-proxy to connect to zabbix_proxy_preprocessing.sock (SELinux)"
+  ansible.posix.seboolean:
+    name: daemons_enable_cluster_mode
+    persistent: true
+    state: true
+  become: true
+  when: ansible_selinux.status == "enabled"
+  tags: selinux

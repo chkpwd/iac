@@ -1,0 +1,16 @@
+---
+- name: Install sensu-go-agent binary
+  include_role:
+    name: install
+  vars:
+    components: [sensu-go-agent]
+
+- name: Inform restart handler that we are in charge of the agent service
+  set_fact:
+    manage_sensu_agent_service: true
+
+- name: Configure the agent
+  include_tasks: configure.yml
+
+- name: Start the agent
+  include_tasks: start.yml

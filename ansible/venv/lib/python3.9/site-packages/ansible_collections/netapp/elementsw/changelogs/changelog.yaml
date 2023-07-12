@@ -1,0 +1,221 @@
+ancestor: null
+releases:
+  19.10.0:
+    changes:
+      minor_changes:
+      - refactor existing modules as a collection
+    fragments:
+    - 2019.10.0.yaml
+    release_date: '2019-11-14'
+  2.7.0:
+    modules:
+    - description: NetApp Element Software Manage Access Groups
+      name: na_elementsw_access_group
+      namespace: ''
+    - description: NetApp Element Software Manage Accounts
+      name: na_elementsw_account
+      namespace: ''
+    - description: NetApp Element Software Manage Admin Users
+      name: na_elementsw_admin_users
+      namespace: ''
+    - description: NetApp Element Software Create Backups
+      name: na_elementsw_backup
+      namespace: ''
+    - description: NetApp Element Software Check connectivity to MVIP and SVIP.
+      name: na_elementsw_check_connections
+      namespace: ''
+    - description: NetApp Element Software Create Cluster
+      name: na_elementsw_cluster
+      namespace: ''
+    - description: NetApp Element Software Manage Cluster Pair
+      name: na_elementsw_cluster_pair
+      namespace: ''
+    - description: NetApp Element Software Manage Node Drives
+      name: na_elementsw_drive
+      namespace: ''
+    - description: NetApp Element Software Manage ldap admin users
+      name: na_elementsw_ldap
+      namespace: ''
+    - description: NetApp Element Software Configure Node Network Interfaces
+      name: na_elementsw_network_interfaces
+      namespace: ''
+    - description: NetApp Element Software Node Operation
+      name: na_elementsw_node
+      namespace: ''
+    - description: NetApp Element Software Manage Snapshots
+      name: na_elementsw_snapshot
+      namespace: ''
+    - description: NetApp Element Software Restore Snapshot
+      name: na_elementsw_snapshot_restore
+      namespace: ''
+    - description: NetApp Element Software Snapshot Schedules
+      name: na_elementsw_snapshot_schedule
+      namespace: ''
+    - description: NetApp Element Software Manage VLAN
+      name: na_elementsw_vlan
+      namespace: ''
+    - description: NetApp Element Software Manage Volumes
+      name: na_elementsw_volume
+      namespace: ''
+    - description: NetApp Element Software Create Volume Clone
+      name: na_elementsw_volume_clone
+      namespace: ''
+    - description: NetApp Element Software Volume Pair
+      name: na_elementsw_volume_pair
+      namespace: ''
+    release_date: '2018-09-21'
+  2.8.0:
+    modules:
+    - description: Configure Element SW Cluster
+      name: na_elementsw_cluster_config
+      namespace: ''
+    - description: Configure Element SW Cluster SNMP
+      name: na_elementsw_cluster_snmp
+      namespace: ''
+    - description: Manage Element SW initiators
+      name: na_elementsw_initiators
+      namespace: ''
+    release_date: '2019-04-11'
+  20.1.0:
+    modules:
+    - description: NetApp Element Software Add/Remove Volumes to/from Access Group
+      name: na_elementsw_access_group_volumes
+      namespace: ''
+    release_date: '2020-01-08'
+  20.10.0:
+    changes:
+      minor_changes:
+      - na_elementsw_cluster - add new options ``encryption``, ``order_number``, and
+        ``serial_number``.
+      - na_elementsw_network_interfaces - make all options not required, so that only
+        bond_1g can be set for example.
+      - na_elementsw_network_interfaces - restructure options into 2 dictionaries
+        ``bond_1g`` and ``bond_10g``, so that there is no shared option.  Disallow
+        all older options.
+    fragments:
+    - DEVOPS-3117.yaml
+    - DEVOPS-3196.yaml
+    - DEVOPS-3235.yaml
+    modules:
+    - description: NetApp Element Software Info
+      name: na_elementsw_info
+      namespace: ''
+    release_date: '2020-10-08'
+  20.11.0:
+    changes:
+      bugfixes:
+      - na_elementsw_drive - Object of type 'dict_values' is not JSON serializable.
+      minor_changes:
+      - na_elementsw_snapshot_schedule - Add ``retention`` in examples.
+    fragments:
+    - DEVOPS-3310.yml
+    - DEVOPS-3324.yaml
+    release_date: '2020-11-05'
+  20.2.0:
+    changes:
+      bugfixes:
+      - galaxy.yml - fix path to github repository.
+      - netapp.py - report error in case of connection error rather than raising a
+        generic exception by default.
+    fragments:
+    - 20.2.0.yaml
+    release_date: '2020-02-05'
+  20.6.0:
+    changes:
+      bugfixes:
+      - galaxy.yml - fix repository and homepage links.
+    fragments:
+    - 20.6.0.yaml
+    release_date: '2020-06-03'
+  20.8.0:
+    changes:
+      bugfixes:
+      - na_elementsw_access_group - fix check_mode so that no action is taken.
+      - na_elementsw_admin_users - fix check_mode so that no action is taken.
+      - na_elementsw_cluster - create cluster if it does not exist.  Do not expect
+        MVIP or SVIP to exist before create.
+      - na_elementsw_cluster_snmp - double exception because of AttributeError.
+      - na_elementsw_drive - node_id or drive_id were not handled properly when using
+        numeric ids.
+      - na_elementsw_initiators - volume_access_group_id was ignored.  volume_access_groups
+        was ignored and redundant.
+      - na_elementsw_ldap - double exception because of AttributeError.
+      - na_elementsw_snapshot_schedule - ignore schedules being deleted (idempotency),
+        remove default values and fix documentation.
+      - na_elementsw_vlan - AttributeError if VLAN already exists.
+      - na_elementsw_vlan - change in attributes was ignored.
+      - na_elementsw_vlan - fix check_mode so that no action is taken.
+      - na_elementsw_volume - Argument '512emulation' in argument_spec is not a valid
+        python identifier - renamed to enable512emulation.
+      - na_elementsw_volume - double exception because of AttributeError.
+      minor_changes:
+      - add "required:true" where missing.
+      - add "type:str" (or int, dict) where missing in documentation section.
+      - na_elementsw_drive - add all drives in a cluster, allow for a list of nodes
+        or a list of drives.
+      - remove "required:true" for state and use present as default.
+      - use a three group format for ``version_added``.  So 2.7 becomes 2.7.0.  Same
+        thing for 2.8 and 2.9.
+    fragments:
+    - 20.8.0.yaml
+    release_date: '2020-08-05'
+  20.9.0:
+    changes:
+      bugfixes:
+      - na_elementsw_node - fix check_mode so that no action is taken.
+      minor_changes:
+      - na_elementsw_node - ``cluster_name`` to set the cluster name on new nodes.
+      - na_elementsw_node - ``preset_only`` to only set the cluster name before creating
+        a cluster with na_elementsw_cluster.
+      - na_elementsw_volume - ``qos_policy_name`` to provide a QOS policy name or
+        ID.
+    fragments:
+    - 20.9.0.yaml
+    modules:
+    - description: NetApp Element Software create/modify/rename/delete QOS Policy
+      name: na_elementsw_qos_policy
+      namespace: ''
+    release_date: '2020-09-02'
+  20.9.1:
+    changes:
+      bugfixes:
+      - na_elementsw_node - improve error reporting when cluster name cannot be set
+        because node is already active.
+      - na_elementsw_schedule - missing imports TimeIntervalFrequency, Schedule, ScheduleInfo
+        have been added back
+    fragments:
+    - DEVOPS-3174.yaml
+    - DEVOPS-3188.yaml
+    release_date: '2020-09-08'
+  21.3.0:
+    changes:
+      bugfixes:
+      - na_elementsw_drive - lastest SDK does not accept ``force_during_bin_sync``
+        and ``force_during_upgrade``.
+      - na_elementsw_qos_policy - loop would convert `minIOPS`, `maxIOPS`, `burstIOPS`
+        to str, causing type mismatch issues in comparisons.
+      - na_elementsw_snapshot_schedule - change of interface in SDK ('ScheduleInfo'
+        object has no attribute 'minutes')
+      minor_changes:
+      - na_elementsw_info - add ``cluster_nodes`` and ``cluster_drives``.
+      - na_elementsw_qos_policy - explicitly define ``minIOPS``, ``maxIOPS``, ``burstIOPS``
+        as int.
+    fragments:
+    - DEVOPS-3731.yaml
+    - DEVOPS-3733.yaml
+    - DEVOPS-3734.yaml
+    release_date: '2021-03-03'
+  21.6.1:
+    changes:
+      bugfixes:
+      - requirements.txt - point to the correct python dependency
+    fragments:
+    - DEVOPS-3800.yaml
+    release_date: '2021-05-18'
+  21.7.0:
+    changes:
+      minor_changes:
+      - PR1 - allow usage of Ansible module group defaults - for Ansible 2.12+.
+    fragments:
+    - DEVOPS-4416.yaml
+    release_date: '2021-11-03'

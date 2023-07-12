@@ -1,0 +1,3 @@
+- name: Execute AWS tasks
+  import_tasks: aws/aws.yml
+  when: cloud_provider|lower == 'aws'

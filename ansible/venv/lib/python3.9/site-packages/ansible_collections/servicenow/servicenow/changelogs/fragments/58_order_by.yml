@@ -1,0 +1,10 @@
+---
+major_changes:
+- auth field now required for anything other than Basic authentication, but, if client_id specified without auth, defaults to OAuth
+- refactored client to inherit from AnsibleModule
+- supports OpenID Connect authentication protocol
+- supports bearer tokens for authentication
+minor_changes:
+- standardized invocation output
+bugfixes:
+- order_by again working by locally sorting return list of records

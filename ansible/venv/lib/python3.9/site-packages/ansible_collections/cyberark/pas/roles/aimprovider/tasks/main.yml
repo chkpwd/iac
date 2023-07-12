@@ -1,0 +1,24 @@
+---
+- name: Validating Role Parameters
+  assert:
+    that:
+      - api_base_url != ''
+      - state in ["present", "absent"]
+      - (not use_shared_logon_authentication|default(false) and password_object is defined) or
+        (use_shared_logon_authentication|default(false) and password_object is not defined)
+
+- name: Verify status of aimprv service initially
+  command: service aimprv status
+  register: service_already_running
+  ignore_errors: true
+  changed_when: false
+  args:
+    warn: false
+
+- debug: msg="status of service RC={{service_already_running.rc}}"
+
+- import_tasks: installAIMProvider.yml
+  when: (state == "present" and service_already_running.rc != 0)
+
+- import_tasks: uninstallAIMProvider.yml
+  when: (state == "absent" and service_already_running.rc == 0)

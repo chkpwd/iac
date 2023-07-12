@@ -1,0 +1,35 @@
+---
+- block:
+  - name: Clean Summon binary
+    file:
+      path: /usr/local/bin/summon
+      state: absent
+  - name: Clean Summon library
+    file:
+      path: /usr/local/lib/summon/
+      state: absent
+
+- name: Clean conjur.identity
+  file:
+    path: /etc/conjur.identity
+    state: absent
+
+- name: Clean conjur.conf
+  file:
+    path: /etc/conjur.conf
+    state: absent
+
+- name: Clean Conjur SSL certificate Symlink
+  file:
+    path: /etc/ssl/certs/conjur.crt
+    state: absent
+
+- name: Clean Conjur SSL certificate
+  file:
+    path: /etc/conjur.pem
+    state: absent
+
+- name: Remove group conjur
+  group:
+    name: conjur
+    state: absent

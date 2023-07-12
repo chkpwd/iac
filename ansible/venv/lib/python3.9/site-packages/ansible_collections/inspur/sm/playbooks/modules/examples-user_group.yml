@@ -1,0 +1,31 @@
+- name: User group test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "Add user group"
+    inspur.sm.user_group:
+      state: "present"
+      name: "test"
+      pri: "administrator"
+      provider: "{{ ism }}"
+
+  - name: "Set user group"
+    inspur.sm.user_group:
+      state: "present"
+      name: "test"
+      pri: "user"
+      provider: "{{ ism }}"
+
+  - name: "Delete user group"
+    inspur.sm.user_group:
+      state: "absent"
+      name: "test"
+      provider: "{{ ism }}"

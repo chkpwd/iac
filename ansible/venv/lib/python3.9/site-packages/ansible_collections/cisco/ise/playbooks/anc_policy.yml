@@ -1,0 +1,30 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Get ANC policies
+      cisco.ise.anc_policy_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+      register: result
+
+    - name: Print ANC policy
+      ansible.builtin.debug:
+        var: result
+
+    - name: Create or update ANC policy
+      cisco.ise.anc_policy:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: policy1
+        actions: [SHUTDOWN]
+      register: result
+
+    - name: Print ANC policy
+      ansible.builtin.debug:
+        var: result

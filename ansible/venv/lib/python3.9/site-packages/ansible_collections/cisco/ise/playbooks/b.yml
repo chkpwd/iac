@@ -1,0 +1,130 @@
+---
+- hosts: ise_servers
+  vars_files:
+    - credentials.yml
+  vars:
+    ise_login: &ise_login
+      ise_hostname: "{{ ise_hostname }}"
+      ise_username: "{{ ise_username }}"
+      ise_password: "{{ ise_password }}"
+      ise_verify: "{{ ise_verify }}"
+      ise_version: "{{ ise_version }}"
+      ise_debug: "{{ ise_debug }}"
+  gather_facts: false
+  tasks:
+    - name: Create Endpoint
+      cisco.ise.endpoint:
+        <<: *ise_login
+        state: present
+        #state: absent
+        description:  ansible test
+        mac: "50:00:00:01:00:16"
+        name: "Ansible name"
+        #mac: "50-00-00-04-C3-95"
+      register: result
+
+    #- name: Get all Endpoint
+    #  cisco.ise.endpoint_info:
+    #    <<: *ise_login
+    #    page: 1
+    #    size: 20
+        #sortasc: string
+    #  register: result
+
+    # - name: Get Endpoint by id
+    #   cisco.ise.endpoint_info:
+    #     <<: *ise_login
+    #     id: 69142550-2576-11ed-990e-4a16cf330648
+    #   register: result
+
+    # - name: Get all SGt
+    #   cisco.ise.sgt_info:
+    #     <<: *ise_login
+    #     size: 5
+    #     sortasc: name
+    #   register: result
+
+    # - name: Get SGt by id
+    #   cisco.ise.sgt_info:
+    #     <<: *ise_login
+    #     id: 4d482be5-2863-4015-8ea4-46c00d9e199b
+    #   register: result
+
+    # - name: STG
+    #   cisco.ise.sgt:
+    #     <<: *ise_login
+    #   # ise_uses_api_gateway: "{{ise_uses_api_gateway}}"
+    #   # ise_uses_csrf_token: "{{ise_uses_csrf_token}}"
+    #     state: present
+    #     name: teststg_ansible
+    #     value: -1
+    #     description: teststg description ANSIBLE number 2
+    #   register: result
+
+# - name: Create STG
+#   hosts: ise
+#   vars_files:
+#     - credentials.yml
+#   gather_facts: false
+#   tasks:
+#     - name: Create STG
+#       cisco.ise.sgt:
+#         <<: *ise_login
+#       # ise_uses_api_gateway: "{{ise_uses_api_gateway}}"
+#       # ise_uses_csrf_token: "{{ise_uses_csrf_token}}"
+#         state: present
+#         name: teststg ->teststg3
+#         value: -1
+#         description: teststg description -> teststg3 description
+#       register: result
+
+    # - name: Create network device 
+    #   loop_control:
+    #     loop_var: device
+    #   cisco.ise.network_device:
+    #     <<: *ise_login
+    #     state: present
+    #     name: "{{device.name}}"
+    #     description: "{{device.description}}"
+    #     coaPort: "{{device.coa_port}}"
+    #     NetworkDeviceGroupList: "{{device.network_device_group_list}}"
+    #     NetworkDeviceIPList: "{{device.network_device_ip_list}}"
+    #     authenticationSettings:
+    #       radiusSharedSecret: "{{device.shared_secret}}"
+    #     loop: "{{network_devices}}"
+    #     when: "network_devices is defined"
+    #   register: result
+
+
+    # - name: Create network device single
+    #   cisco.ise.network_device:
+    #     <<: *ise_login
+    #     state: present
+    #     #state: absent
+    #     name: "ISE_EST_Local_Host_TEST"
+    #     description: "example nd"
+    #     coaPort: "0"
+    #     NetworkDeviceGroupList:
+    #       - "Location#All Locations"
+    #       - "Device Type#All Device Types"
+    #     #  - "IPSEC#Is IPSEC Device"
+    #     NetworkDeviceIPList:
+    #       - ipaddress: "127.0.0.1"
+    #         mask: 0
+    #     authenticationSettings:
+    #       radiusSharedSecret: "RADIUS"
+    #   register: result
+
+    # - name: Get all Node Deployment
+    #   cisco.ise.node_deployment_info:
+    #     <<: *ise_login
+    #     #hostname: ise
+    #   register: result
+
+    - name: Debug result.
+      ansible.builtin.debug:
+        var: result
+
+
+
+#authorization_profile        

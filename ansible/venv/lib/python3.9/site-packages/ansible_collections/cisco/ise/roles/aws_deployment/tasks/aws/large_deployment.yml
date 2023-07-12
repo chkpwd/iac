@@ -1,0 +1,53 @@
+- name: Provision ISE PAN Servers
+  amazon.aws.ec2:
+    key_name: "{{ aws_keypair_name }}"
+    instance_type: "{{ aws_instance_type }}"
+    image: "{{ aws_ise_ami }}"
+    wait: yes
+    group: "ISE Public Access"
+    count: 1
+    vpc_subnet_id: "{{ subnet.subnet.id }}"
+    assign_public_ip: yes
+    region: "{{ aws_region }}"
+    instance_tags:
+      Name: "{{ ise_base_hostname }} PAN Server {{item}}"
+      Roles: 
+        - PAN
+    user_data: "hostname={{ ise_base_hostname | lower }}-pan-server-{{ item }}\nprimarynameserver={{ ise_dns_server }}\ndnsdomain={{ ise_domain }}\nntpserver={{ ise_ntp_server }}\ntimezone={{ ise_timezone }}\nusername={{ ise_username }}\npassword={{ ise_password }}"
+  with_sequence: count=2
+
+- name: Provision ISE MNT Servers
+  amazon.aws.ec2:
+    key_name: "{{ aws_keypair_name }}"
+    instance_type: "{{ aws_instance_type }}"
+    image: "{{ aws_ise_ami }}"
+    wait: yes
+    group: "ISE Public Access"
+    count: 1
+    vpc_subnet_id: "{{ subnet.subnet.id }}"
+    assign_public_ip: yes
+    region: "{{ aws_region }}"
+    instance_tags:
+      Name: "{{ ise_base_hostname }} MNT Server {{ item }}"
+      Roles: 
+        - MNT
+    user_data: "hostname={{ ise_base_hostname | lower }}-mnt-server-{{ item }}\nprimarynameserver={{ ise_dns_server }}\ndnsdomain={{ ise_domain }}\nntpserver={{ ise_ntp_server }}\ntimezone={{ ise_timezone }}\nusername={{ ise_username }}\npassword={{ ise_password }}"
+  with_sequence: count=2
+
+- name: "Provision ISE {{ise_psn_instances}} Servers"
+  amazon.aws.ec2:
+    key_name: "{{ aws_keypair_name }}"
+    instance_type: "{{ aws_instance_type }}"
+    image: "{{ aws_ise_ami }}"
+    wait: yes
+    group: "ISE Public Access"
+    count: 1
+    vpc_subnet_id: "{{ subnet.subnet.id }}"
+    assign_public_ip: yes
+    region: "{{ aws_region }}"
+    instance_tags:
+      Name: "{{ ise_base_hostname}} PSN Server {{ item }}"
+      Roles: 
+        - PSN
+    user_data: "hostname={{ ise_base_hostname | lower }}-psn-server-{{ item }}\nprimarynameserver={{ ise_dns_server }}\ndnsdomain={{ ise_domain }}\nntpserver={{ ise_ntp_server }}\ntimezone={{ ise_timezone }}\nusername={{ ise_username }}\npassword={{ ise_password }}"
+  with_sequence: count="{{ise_psn_instances}}"

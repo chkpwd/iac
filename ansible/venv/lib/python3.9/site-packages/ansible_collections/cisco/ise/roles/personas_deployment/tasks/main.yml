@@ -1,0 +1,8 @@
+- include_tasks: small_deployment.yml
+  when: ise_deployment_type == "small"
+
+- include_tasks: medium_deployment.yml
+  when: ise_deployment_type == "medium"
+
+- include_tasks: large_deployment.yml
+  when: ise_deployment_type == "large"

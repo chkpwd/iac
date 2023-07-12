@@ -1,0 +1,16 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Get all Deployment
+      cisco.ise.deployment_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        timeout: 300
+      register: result
+
+    - name: Print deployment info
+      ansible.builtin.debug:
+        var: result

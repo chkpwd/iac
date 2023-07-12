@@ -1,0 +1,45 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  name: Backup configuration
+  tasks:
+    - name: Create a repository
+      cisco.ise.repository:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        name: myRepo
+        password: MyP@ssworD
+        path: /
+        protocol: DISK
+
+    - name: Create backup
+      cisco.ise.backup_config:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        backupEncryptionKey: My3ncryptionkey
+        backupName: myBackup
+        repositoryName: myRepo
+      register: result
+
+    - name: Get Tasks by id
+      cisco.ise.tasks_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        taskId: "{{ result.ise_response.response.id }}"
+      when:
+        - result is defined
+        - result['ise_response'] is defined
+        - result['ise_response']['response']
+        - result['ise_response']['response']['id'] is defined
+      register: task_status
+
+    - name: Show task status
+      ansible.builtin.debug:
+        msg: "{{ task_status }}"

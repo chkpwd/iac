@@ -1,0 +1,45 @@
+---
+# service_apply.1 = service_apply array
+# service_apply.0 = icinga_service_apply attribute
+- name: icinga_service_apply
+  icinga_service_apply:
+    url: "{{ icinga_url }}"
+    use_proxy: "{{ icinga_use_proxy | default(omit) }}"
+    validate_certs: "{{ icinga_validate_certs | default(omit) }}"
+    url_username: "{{ icinga_user }}"
+    url_password: "{{ icinga_pass }}"
+    force_basic_auth: "{{ icinga_force_basic_auth | default(omit) }}"
+    client_cert: "{{ icinga_client_cert | default(omit) }}"
+    client_key: "{{ icinga_client_key | default(omit) }}"
+    state: "{{ service_apply.0.state | default(omit) }}"
+    object_name: "{{ service_apply.1 }}"
+    display_name: "{{ service_apply.0.display_name | default(service_apply.1) }}"
+    groups: "{{ service_apply.0.groups | default(omit) }}"
+    apply_for: "{{ service_apply.0.apply_for | default(omit) }}"
+    assign_filter: "{{ service_apply.0.assign_filter | default(omit) }}"
+    imports: "{{ service_apply.0.imports | default(omit) }}"
+    command_endpoint: "{{ service_apply.0.command_endpoint | default(omit) }}"
+    vars: "{{ service_apply.0.vars | default(omit) }}"
+    notes: "{{ service_apply.0.notes | default(omit) }}"
+    notes_url: "{{ service_apply.0.notes_url | default(omit) }}"
+    check_interval: "{{ service_apply.0.check_interval | default(omit) }}"
+    check_period: "{{ service_apply.0.check_period | default(omit) }}"
+    check_timeout: "{{ service_apply.0.check_timeout | default(omit) }}"
+    check_command: "{{ service_apply.0.check_command | default(omit) }}"
+    enable_active_checks: "{{ service_apply.0.enable_active_checks | default(omit) }}"
+    enable_event_handler: "{{ service_apply.0.enable_event_handler | default(omit) }}"
+    enable_notifications: "{{ service_apply.0.enable_notifications | default(omit) }}"
+    enable_passive_checks: "{{ service_apply.0.enable_passive_checks | default(omit) }}"
+    enable_perfdata: "{{ service_apply.0.enable_perfdata | default(omit) }}"
+    event_command: "{{ service_apply.0.event_command | default(omit) }}"
+    max_check_attempts: "{{ service_apply.0.max_check_attempts | default(omit) }}"
+    retry_interval: "{{ service_apply.0.retry_interval | default(omit) }}"
+  retries: 3
+  delay: 3
+  register: result
+  until: result is succeeded
+  loop: "{{ icinga_service_applies|subelements('service_apply_object') }}"
+  loop_control:
+    loop_var: service_apply
+  tags: service_apply
+  notify: config_deploy

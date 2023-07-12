@@ -1,0 +1,55 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    # - name: Get all
+    #   cisco.ise.device_administration_global_exception_rules_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #   register: result
+
+    # - name: Print all
+    #   ansible.builtin.debug:
+    #     var: result
+
+    # - name: Get by id
+    #   cisco.ise.device_administration_global_exception_rules_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     id: 4642f81a-0878-4722-975a-e1fd19f2d5ae
+    #   register: result
+
+    - name: Create or update an device_administration_global_exception_rules
+      cisco.ise.device_administration_global_exception_rules:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        rule:
+          default: false
+          name: Test2
+          hitCounts: 00
+          rank: 00
+          state: disabled
+          condition:
+            conditionType: ConditionReference
+            isNegate: false
+            dictionaryName: Network Access
+            attributeName: EapAuthentication
+            operator: equals
+            attributeValue: EAP-MSCHAPv2
+            name: EAP-MSCHAPv2
+            id: c456a490-0429-4fd4-91d7-efd1eb1f855a
+        commands:
+          - DenyAllCommands
+        profile: Default Shell Profile
+      register: result
+
+    - name: Print result
+      ansible.builtin.debug:
+        var: result

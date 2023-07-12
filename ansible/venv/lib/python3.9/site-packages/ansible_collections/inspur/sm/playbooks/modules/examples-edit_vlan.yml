@@ -1,0 +1,25 @@
+- name: vlan test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "set vlan information"
+    inspur.sm.edit_vlan:
+      interface_name: "eth0"
+      vlan_status: "disable"
+      provider: "{{ ism }}"
+
+  - name: "set vlan information"
+    inspur.sm.edit_vlan:
+      interface_name: "eth0"
+      vlan_status: "enable"
+      vlan_id: 2
+      vlan_priority: 1
+      provider: "{{ ism }}"

@@ -1,0 +1,48 @@
+---
+- name: Include distro-specific vars ({{ ansible_distribution }})
+  include_vars: file='{{ ansible_distribution }}.yml'
+
+- name: Update apt cache (ensure we have package index)
+  apt:
+    update_cache: true
+  # Updating the APT cache does not change the system so we never report a
+  # change here (helps keep the role idempotent).
+  changed_when: false
+
+- name: Install utility packages
+  apt:
+    name:
+      - gnupg
+      - debian-archive-keyring
+      - apt-transport-https
+    state: present
+
+- name: Fetch the apt repository key
+  uri:
+    url: https://{{ packagecloud_auth }}packagecloud.io/sensu/{{ channel }}/gpgkey
+    force_basic_auth: true
+    return_content: true
+  register: apt_key_download
+  # Fetching resource into memory does not change the system at all, so we
+  # never report a change here (helps keep the role idempotent). And by the
+  # same line of reasoning, we are also safe to run in check mode (the uri
+  # module does not support check mode and would cause us grief when it would
+  # be skipped).
+  changed_when: false
+  check_mode: false
+
+- name: Add apt key
+  apt_key:
+    data: "{{ apt_key_download.content }}"
+
+- name: Add apt repository
+  apt_repository:
+    repo: deb https://{{ packagecloud_auth }}packagecloud.io/sensu/{{ channel }}/{{ os }}/ {{ dist }} main
+    filename: /etc/apt/sources.list.d/sensu_{{ channel }}
+    validate_certs: true
+
+- name: Add apt source repository
+  apt_repository:
+    repo: deb-src https://{{ packagecloud_auth }}packagecloud.io/sensu/{{ channel }}/{{ os }}/ {{ dist }} main
+    filename: /etc/apt/sources.list.d/sensu_{{ channel }}
+    validate_certs: true

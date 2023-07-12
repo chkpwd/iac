@@ -1,0 +1,24 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Create
+      cisco.ise.certificate_profile:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        id: 925b6d20-8c01-11e6-996c-525400b48521
+        name: Preloaded_Certificate_Profile
+        description: Pre-created Certificate Authorization Profile.
+        externalIdentityStoreName: "[not applicable]"
+        certificateAttributeName: SUBJECT_COMMON_NAME
+        allowedAsUserName: false
+        matchMode: NEVER
+        usernameFrom: CERTIFICATE
+      register: certificate_profile
+
+    - name: Print
+      ansible.builtin.debug:
+        var: certificate_profile

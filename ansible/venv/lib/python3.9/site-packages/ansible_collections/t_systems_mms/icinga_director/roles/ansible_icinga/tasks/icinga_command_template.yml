@@ -1,0 +1,33 @@
+---
+# command_template.1 = command_template array
+# command_template.0 = icinga_command_template attribute
+- name: icinga_command_template
+  icinga_command_template:
+    url: "{{ icinga_url }}"
+    use_proxy: "{{ icinga_use_proxy | default(omit) }}"
+    validate_certs: "{{ icinga_validate_certs | default(omit) }}"
+    url_username: "{{ icinga_user }}"
+    url_password: "{{ icinga_pass }}"
+    force_basic_auth: "{{ icinga_force_basic_auth | default(omit) }}"
+    client_cert: "{{ icinga_client_cert | default(omit) }}"
+    client_key: "{{ icinga_client_key | default(omit) }}"
+    state: "{{ command_template.0.state | default(omit) }}"
+    object_name: "{{ command_template.1 }}"
+    display_name: "{{ command_template.0.display_name | default(omit) }}"
+    command: "{{ command_template.0.command | default(omit) }}"
+    command_type: "{{ command_template.0.command_type | default(icinga_command_template_command_type) }}"
+    timeout: "{{ command_template.0.timeout | default(omit) }}"
+    imports: "{{ command_template.0.imports | default(omit) }}"
+    disabled: "{{ command_template.0.disabled | default(omit) }}"
+    zone: "{{ command_template.0.zone | default(omit) }}"
+    vars: "{{ command_template.0.vars | default(omit) }}"
+    arguments: "{{ command_template.0.arguments | default(omit) }}"
+  retries: 3
+  delay: 3
+  register: result
+  until: result is succeeded
+  loop: "{{ icinga_command_templates|subelements('command_template_object') }}"
+  loop_control:
+    loop_var: command_template
+  tags: command_template
+  notify: config_deploy

@@ -1,0 +1,15 @@
+- name: boot test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "get bios boot option"
+    inspur.sm.boot_option_info:
+      provider: "{{ ism }}"

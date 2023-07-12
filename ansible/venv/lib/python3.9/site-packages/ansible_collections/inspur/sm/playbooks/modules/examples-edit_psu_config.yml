@@ -1,0 +1,17 @@
+- name: psu config test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "set psu config information"
+    inspur.sm.edit_psu_config:
+      id: 1
+      switch: "active"
+      provider: "{{ ism }}"

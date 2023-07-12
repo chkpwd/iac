@@ -1,0 +1,52 @@
+---
+- name: "Configure External FC Storage Policy"
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+  intersight_rest_api:
+    <<: *api_info
+    resource_path: /hyperflex/ExtFcStoragePolicies
+    query_params:
+      $filter: "Name eq '{{ hx_fc_setting_policy }}'"
+    api_body: {
+      "Organization": {
+        "Moid": "{{ intersight_org.api_response.Moid }}"
+      },
+      "AdminState":"{{ hx_fc_setting_enable }}",
+      "Name":"{{ hx_fc_setting_policy }}",
+      "ExtaTraffic":{
+        "Name":"{{ hx_vsan_a_name }}",
+        "VsanId":"{{ hx_vsan_a_id }}"
+      },
+      "ExtbTraffic":{
+        "Name":"{{ hx_vsan_b_name }}",
+        "VsanId":"{{ hx_vsan_b_id }}"
+      },
+      "WwxnPrefixRange":{
+        "StartAddr":"{{ hx_fc_wwxn_range_start }}",
+        "EndAddr":"{{ hx_fc_wwxn_range_end }}"
+      },
+      "ClusterProfiles": [
+        {
+        "Moid": "{{ cluster_profile.api_response.Moid }}"
+        }
+      ]
+    }
+  register: fc_settings
+# Set WWXN prefix for the cluster profile when additional FC HBAs are configured
+- name: "Perform Action on {{ hx_profile_name }} Profile"
+  intersight_rest_api:
+    <<: *api_info
+    resource_path: /hyperflex/ClusterProfiles
+    query_params:
+      $filter: "Name eq '{{ hx_cluster_name }}'"
+    api_body: {
+      "WwxnPrefix": "{{ hx_fc_wwxn_range_start }}"
+    }
+
+- debug: msg="HyperFlex External FC Storage Policy named {{ hx_fc_setting_policy }} has been created successfully."

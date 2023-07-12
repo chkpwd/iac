@@ -1,0 +1,17 @@
+---
+version: 1
+dependencies:
+  system: bindep.txt
+  galaxy: requirements.yml
+  python: requirements.txt
+
+additional_build_steps:
+  prepend:
+    - RUN pip3 install --upgrade pip setuptools
+    # Workaround for https://bugzilla.redhat.com/2024629
+    # - RUN dnf copr enable -y ovirt/ovirt-master-snapshot
+    - RUN rpm --import https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/pubkey.gpg
+    - RUN dnf --repofrompath=ovirt-master-snapshot,https://download.copr.fedorainfracloud.org/results/ovirt/ovirt-master-snapshot/centos-stream-8-x86_64/ install -y ovirt-release-master
+    - RUN yum install ovirt-ansible-collection -y
+  append:
+    - RUN ls -la /usr/share/ansible/collections/ansible_collections/

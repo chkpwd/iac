@@ -1,0 +1,16 @@
+- name: Delete session test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "Delete session"
+    inspur.sm.del_session:
+      sid: "223"
+      provider: "{{ ism }}"

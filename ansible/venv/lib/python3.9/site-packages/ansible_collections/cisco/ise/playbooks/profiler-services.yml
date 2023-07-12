@@ -1,0 +1,40 @@
+---
+# profiler_config:
+#   # - netflow:
+#   - dhcp:
+#       interfaces:
+#         - interface: 'GigabitEthernet0'
+#       port: 67
+#   # - dhcpSpan:
+#   # - http:
+#   - radius: {}
+#   - nmap: {}
+#   # - dns:
+#   - snmpQuery:
+#       retries: 2
+#       timeout: 1000
+#       eventTimeout: 30
+#   # - snmpTrap:
+#   - activeDirectory:
+#       daysBeforeRescan: 1
+#   # - pxgrid: {}
+
+profiler_config:
+  #netflow: null
+  dhcp:
+    interfaces:
+      - interface: GigabitEthernet 0
+    port: 67
+  #dhcpSpan: null
+  #http: null
+  radius: []
+  nmap: []
+  #dns: null
+  snmpQuery:
+    retries: 2
+    timeout: 1000
+    eventTimeout: 30
+  #snmpTrap: null
+  activeDirectory:
+    daysBeforeRescan: 1
+  #pxgrid: null

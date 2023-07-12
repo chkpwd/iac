@@ -1,0 +1,196 @@
+ancestor: null
+releases:
+  1.0.0:
+    modules:
+      - description:
+          (deprecated, removed after 2022-06-01) Manage access-lists on a
+          Cisco ASA
+        name: asa_acl
+        namespace: ""
+      - description: Access-Lists resource module
+        name: asa_acls
+        namespace: ""
+      - description: Run arbitrary commands on Cisco ASA devices
+        name: asa_command
+        namespace: ""
+      - description: Manage configuration sections on Cisco ASA devices
+        name: asa_config
+        namespace: ""
+      - description: Collect facts from remote devices running Cisco ASA
+        name: asa_facts
+        namespace: ""
+      - description:
+          (deprecated, removed after 2022-06-01) Manage object groups on
+          a Cisco ASA
+        name: asa_og
+        namespace: ""
+      - description: Object Group resource module
+        name: asa_ogs
+        namespace: ""
+    plugins:
+      cliconf:
+        - description: Use asa cliconf to run command on Cisco ASA platform
+          name: asa
+          namespace: null
+    release_date: "2020-06-23"
+  1.0.1:
+    changes:
+      bugfixes:
+        - Make `src`, `backup` and `backup_options` in asa_config work when module alias
+          is used (https://github.com/ansible-collections/cisco.asa/pull/61).
+      minor_changes:
+        - Removes Cisco ASA sanity ignores and sync for argspec and docstring (https://github.com/ansible-collections/cisco.asa/pull/59).
+        - Updated docs.
+    fragments:
+      - 48-add-change-log-1.0.0.yaml
+      - 1.1.0_update_docs.yaml
+      - fix_config_module_src_backup.yaml
+      - remove_asa_ignore.yaml
+    release_date: "2020-08-03"
+  1.0.2:
+    changes:
+      release_summary: Re-releasing 1.0.1 with updated changelog.
+    fragments:
+      - 1.0.2.yaml
+    release_date: "2020-08-07"
+  1.0.3:
+    changes:
+      bugfixes:
+        - Unexpected set of CMDs fired when source and destination were both set to
+          hosts acl (https://github.com/ansible-collections/cisco.asa/pull/69).
+    fragments:
+      - 69-asa-acls-bugfix.yaml
+    release_date: "2020-08-28"
+  1.0.4:
+    changes:
+      bugfixes:
+        - Add version key to galaxy.yaml to work around ansible-galaxy bug
+        - To fix ASA OGs module where delete by name was not resulting to an expected
+          behaviour (https://github.com/ansible-collections/cisco.asa/pull/77).
+        - Update asa acls RM to use newer RM design approach and addeed support for
+          any4/any6 feature (https://github.com/ansible-collections/cisco.asa/pull/64).
+    fragments:
+      - 56_acl_any4_ay6_feature_update_use_rm_approach.yaml
+      - galaxy-version.yaml
+      - 76_asa_og_state_delete_not_working_as_expected.yaml
+    release_date: "2020-11-26"
+  2.0.0:
+    changes:
+      bugfixes:
+        - To fix ASA acls module where replace wasn't working as expected (https://github.com/ansible-collections/cisco.asa/pull/92).
+      major_changes:
+        - Please refer to ansible.netcommon `changelog <https://github.com/ansible-collections/ansible.netcommon/blob/main/changelogs/CHANGELOG.rst#ansible-netcommon-collection-release-notes>`
+          for more details.
+        - Requires ansible.netcommon v2.0.0+ to support `ansible_network_single_user_mode`
+          and `ansible_network_import_modules`.
+      minor_changes:
+        - Adds support for single_user_mode command output caching. (https://github.com/ansible-collections/cisco.ios/pull/204).
+    release_date: "2021-03-01"
+  2.0.1:
+    changes:
+      bugfixes:
+        - Added save_when param support in asa_config module (https://github.com/ansible-collections/cisco.asa/pull/75).
+        - To fix Cisco ASA network_object object config which wasn't working as expected
+          (https://github.com/ansible-collections/cisco.asa/pull/103).
+      minor_changes:
+        - Add ignore-2.12.txt (https://github.com/ansible-collections/cisco.asa/pull/102).
+        - Remove tests/sanity/requirements.txt (https://github.com/ansible-collections/cisco.asa/pull/94).
+    release_date: "2021-04-27"
+  2.0.2:
+    changes:
+      bugfixes:
+        - To fix Cisco ASA network_object object config which wasn't working as expected.
+        - To fix asa_acls where ipv6 with host wasn't getting rendered as expected and
+          facts was skipping.
+    fragments:
+      - 105_asa_acls_where_host_ipv6_wasn't_rendered_as_expected.yaml
+      - 107_asa_ogs_group_object_implementation.yaml
+      - black.yaml
+      - changelog_doc_path_update.yaml
+    release_date: "2021-05-17"
+  2.0.3:
+    changes:
+      bugfixes:
+        - Fix TypeError argument of type 'NoneType' is not iterable in service-group
+          when service-group does not exists.
+        - Fixes asa_ogs protocol object to except protocol number as input (https://github.com/ansible-collections/cisco.asa/issues/116).
+        - Fixes description for "passwords" parameter in documentation (https://github.com/ansible-collections/cisco.asa/issues/132).
+        - Implement the replace block mode that is described in the docs for asa_acl
+          (https://github.com/ansible-collections/cisco.asa/issues/97).
+        - To fix asa_acls port range implementation, (https://github.com/ansible-collections/cisco.asa/issues/120,
+          https://github.com/ansible-collections/cisco.asa/issues/121, https://github.com/ansible-collections/cisco.asa/issues/122).
+        - To fix asa_ogs for empty object traceback failure, (https://github.com/ansible-collections/cisco.asa/issues/124).
+        - To fix asa_ogs for parsing network object with ipv6 host address as expected
+          (https://github.com/ansible-collections/cisco.asa/issues/128).
+    fragments:
+      - 116_ogs_protocol_object_fix.yaml
+      - 120_fix_asa_acls_port_range_implementation.yaml
+      - 124_asa_ogs_empty_object_traceback_failure.yaml
+      - 128_fix_asa_ogs_networkobject_host_with_ipv6.yaml
+      - 129_sanity_test_cleanup_for_pylint.yml
+      - 132_fix_parameter_documentation.yml
+      - 71_fix_NoneType_in_service_group.yaml
+      - 97_implement_replace_block_asa_acl.yaml
+      - readme_freenode_to_liberachat.yml
+    release_date: "2021-08-31"
+  2.1.0:
+    changes:
+      release_summary: Releasing 2.1.0 with updated readme with changelog link, minor change, and bugfix.
+      bugfixes:
+        - Fixes asa_acls to add the support for service object group under destination
+          option ((https://github.com/ansible-collections/cisco.asa/issues/100).
+      minor_changes:
+        - Fixes asa_ogs service object where complete params were not supported and
+          added with the PR ((https://github.com/ansible-collections/cisco.asa/issues/100).
+    fragments:
+      - 0-copy_ignore_txt.yml
+      - 100_fix_asa_ogs_services_object_param.yaml
+      - fix_asa_acls_for_service_object_gp.yaml
+    release_date: "2021-10-06"
+  3.0.0:
+    changes:
+      bugfixes:
+        - Fixes asa_ogs services object and port object issue ((https://github.com/ansible-collections/cisco.asa/issues/152).
+      major_changes:
+        - Minimum required ansible.netcommon version is 2.5.1.
+        - Updated base plugin references to ansible.netcommon.
+    fragments:
+      - fix_for_the_ogs_bug_asa_152.yaml
+    release_date: "2022-05-05"
+  3.1.0:
+    changes:
+      release_summary: Releasing 3.1.0 with bugfix.
+      bugfixes:
+        - Fix service-object port range rendering
+        - Fixes asa_ogs port object range issue and duplicate service cmd (https://github.com/ansible-collections/cisco.asa/issues/165,
+          https://github.com/ansible-collections/cisco.asa/issues/166).
+        - Unit TC for svc src/dst port range
+    fragments:
+      - fix_asa_ogs_bug_165_166.yaml
+    release_date: "2022-06-28"
+  4.0.0:
+    changes:
+      major_changes:
+        - Please use either of the following connection types - network_cli, httpapi
+          or netconf.
+        - "This release drops support for `connection: local` and provider dictionary."
+        - "Use of connection: local and the provider option are no longer valid on any
+          modules in this collection."
+        - This release removes all deprecated plugins that have reached their end-of-life.
+        - "This includes the following modules:"
+        - asa_acl
+        - asa_og
+    fragments:
+      - github_actions.yaml
+      - remove_deprecated_modules.yaml
+      - remove_provider.yaml
+    release_date: "2022-10-13"
+  4.0.1:
+    changes:
+      release_summary: Release with bugfix fixing the import path coming from utils and netcommon lib.
+    fragments:
+      - cleanup.yaml
+      - pre-commit.yaml
+      - rm_base.yaml
+      - rm_base_plus.yaml
+    release_date: "2023-06-13"

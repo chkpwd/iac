@@ -1,0 +1,21 @@
+minor_changes:
+  - na_elementsw_drive - add all drives in a cluster, allow for a list of nodes or a list of drives.
+  - use a three group format for ``version_added``.  So 2.7 becomes 2.7.0.  Same thing for 2.8 and 2.9.
+  - add "type:str" (or int, dict) where missing in documentation section.
+  - add "required:true" where missing.
+  - remove "required:true" for state and use present as default.
+
+bugfixes:
+  - na_elementsw_access_group - fix check_mode so that no action is taken.
+  - na_elementsw_admin_users - fix check_mode so that no action is taken.
+  - na_elementsw_cluster - create cluster if it does not exist.  Do not expect MVIP or SVIP to exist before create.
+  - na_elementsw_cluster_snmp - double exception because of AttributeError.
+  - na_elementsw_drive - node_id or drive_id were not handled properly when using numeric ids.
+  - na_elementsw_initiators - volume_access_group_id was ignored.  volume_access_groups was ignored and redundant.
+  - na_elementsw_ldap - double exception because of AttributeError.
+  - na_elementsw_snapshot_schedule - ignore schedules being deleted (idempotency), remove default values and fix documentation.
+  - na_elementsw_vlan - AttributeError if VLAN already exists.
+  - na_elementsw_vlan - fix check_mode so that no action is taken.
+  - na_elementsw_vlan - change in attributes was ignored.
+  - na_elementsw_volume - double exception because of AttributeError.
+  - na_elementsw_volume - Argument '512emulation' in argument_spec is not a valid python identifier - renamed to enable512emulation.

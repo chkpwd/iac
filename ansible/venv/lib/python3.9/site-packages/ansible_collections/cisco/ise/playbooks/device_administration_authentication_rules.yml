@@ -1,0 +1,64 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Get all
+      cisco.ise.device_administration_authentication_rules_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        policyId: cb32c3bc-c720-40c3-83e4-8897f9dd6943
+      register: result
+
+    - name: Print all
+      ansible.builtin.debug:
+        var: result
+
+    - name: Get by id
+      cisco.ise.device_administration_authentication_rules_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        ise_debug: "{{ ise_debug }}"
+        id: 31f8299a-13af-4836-8179-7f28a4d03e58
+        policyId: cb32c3bc-c720-40c3-83e4-8897f9dd6943
+      register: result
+
+    - name: Print id
+      ansible.builtin.debug:
+        var: result
+
+    - name: Create or update an device_administration_authentication_rules
+      cisco.ise.device_administration_authentication_rules:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: absent
+        rule:
+          default: false
+          # id: fc67fb89-7611-4e8c-b3fa-7ea18e62d44f
+          name: Test2
+          hitCounts: 00
+          rank: 00
+          state: disabled
+          condition:
+            conditionType: ConditionReference
+            isNegate: false
+            dictionaryName: Network Access
+            attributeName: EapAuthentication
+            operator: equals
+            attributeValue: EAP-MSCHAPv2
+            name: EAP-MSCHAPv2
+            id: c456a490-0429-4fd4-91d7-efd1eb1f855a
+        ifAuthFail: REJECT
+        ifUserNotFound: REJECT
+        ifProcessFail: DROP
+        policyId: cb32c3bc-c720-40c3-83e4-8897f9dd6943
+      register: result
+
+    - name: Print result
+      ansible.builtin.debug:
+        var: result

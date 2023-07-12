@@ -1,0 +1,58 @@
+argument_specs:
+
+  configure:
+    short_description: Configure Sensu Go agent
+    description:
+      - Write the Sensu Go agent configuration file.
+
+    options:
+      agent_config: &agent_config
+        description:
+          - Any option that is valid for the Sensu Go agent version we are
+            installing.
+          - All valid options are listed at
+            U(https://docs.sensu.io/sensu-go/latest/reference/agent/#configuration).
+          - Role copies the key-value pairs from the I(agent_config) variable
+            verbatim to the configuration file. This means that we must copy
+            the key names B(exactly) as they appear in the configuration
+            reference. In a way, the I(agent_config) variable should contain a
+            properly indented copy of the C(/etc/sensu/agent.yml) file.
+        type: dict
+
+  start:
+    short_description: Start Sensu Go agent
+    description:
+      - Start the Sensu Go agent service.
+
+  main:
+    short_description: Install, configure, and start Sensu Go agent
+    description:
+      - Install, configure, and start the Sensu Go agent service.
+
+    options:
+      channel:
+        description:
+          - Repository channel that serves as a source of packages.
+          - Visit the packagecloud site to find all available channels.
+        type: str
+        default: stable
+
+      version: &version
+        description:
+          - Package version to install.
+          - Can be any valid version string such as C(6.2.5) or special value
+            C(latest).
+        type: str
+        default: latest
+
+      build:
+        description:
+          - Package build to install.
+          - Can be any valid build string such as C(8290) or a special value
+            latest.
+          - If the I(version) variable is set to latest, this variable is
+            ignored and the latest available build is installed.
+        type: str
+        default: latest
+
+      agent_config: *agent_config

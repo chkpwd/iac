@@ -1,0 +1,38 @@
+---
+- name: "Configure Cluster Network Policy"
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+  intersight_rest_api:
+    <<: *api_info
+    resource_path: /hyperflex/ClusterNetworkPolicies
+    query_params:
+      $filter: "Name eq '{{ hx_cluster_network_policy }}'"
+    api_body: {
+      "Organization": {
+        "Moid": "{{ intersight_org.api_response.Moid }}"
+      },
+      "Name":"{{ hx_cluster_network_policy }}",
+      "JumboFrame":"{{ hx_jumbo_frames }}",
+      "MacPrefixRange":{
+        "StartAddr":"{{ hx_mac_start }}",
+        "EndAddr":"{{ hx_mac_end }}"
+      },
+      "MgmtVlan":{
+        "VlanId":"{{ hx_mgmt_vlan_id }}"
+      },
+      "UplinkSpeed":"{{ hx_uplink_speed }}",
+      "ClusterProfiles": [
+        {
+        "Moid": "{{ cluster_profile.api_response.Moid }}"
+        }
+      ]
+    }
+  register: cluster_network
+
+- debug: msg="HyperFlex Cluster Network Policy named {{ hx_cluster_network_policy }} has been created successfully."

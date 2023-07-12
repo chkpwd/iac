@@ -1,0 +1,51 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    - name: Get Aci Settings
+      cisco.ise.aci_settings_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+      register: aci_settings_info
+
+    - name: Print
+      ansible.builtin.debug:
+        var: aci_settings_info['ise_response']
+
+    - name: Update by id
+      cisco.ise.aci_settings:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        state: present
+        id: "{{ aci_settings_info['ise_response']['id']}}"
+        enableAci: false
+        ipAddressHostName: 10.0.0.1
+        adminName: admin name
+        tenantName: ISE
+        l3RouteNetwork: L3_ROUTE
+        suffixToEpg: SGT
+        suffixToSgt: EPG
+        allSxpDomain: false
+        specificSxpDomain: true
+        specifixSxpDomainList:
+          - default
+        enableDataPlane: false
+        untaggedPacketIepgName: Untagged
+        defaultSgtName: Unknown
+        enableElementsLimit: true
+        maxNumIepgFromAci: 1000
+        maxNumSgtToAci: 500
+        aci50: false
+        aci51: false
+      when:
+        - aci_settings_info['ise_response'] is defined
+        - aci_settings_info['ise_response']['id'] is defined
+      register: result
+
+    - name: Print update response
+      ansible.builtin.debug:
+        var: result

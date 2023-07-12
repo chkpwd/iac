@@ -1,0 +1,44 @@
+---
+- name: restart apache
+  service:
+    name: "{{ _apache_service }}"
+    state: restarted
+    enabled: true
+  become: true
+  when:
+    - zabbix_web_http_server == 'apache'
+
+- name: test nginx config
+  listen: restart nginx
+  command: nginx -t
+  register: zabbix_nginx_cfg_check
+  notify: restart nginx tested
+  become: true
+  when:
+    - zabbix_web_http_server == 'nginx'
+
+- name: restart nginx tested
+  service:
+    name: nginx
+    state: restarted
+    enabled: true
+  become: true
+  when:
+    - zabbix_web_http_server == 'nginx'
+    - zabbix_nginx_cfg_check.rc == 0
+
+- name: restart php-fpm-version
+  service:
+    name: php{{ zabbix_web_php_installed_version }}-fpm
+    state: restarted
+    enabled: true
+  become: true
+  when:
+    - zabbix_web_version is version('5.0', '>=')
+
+- name: "clean repo files from proxy creds"
+  shell: ls /etc/yum.repos.d/zabbix* && sed -i 's/^proxy =.*//' /etc/yum.repos.d/zabbix* || true
+  become: true
+  when:
+    - ansible_os_family == 'RedHat'
+    - zabbix_http_proxy is defined or zabbix_https_proxy is defined

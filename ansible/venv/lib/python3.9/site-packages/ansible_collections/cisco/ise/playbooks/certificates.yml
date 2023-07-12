@@ -1,0 +1,49 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    # - name: Get All
+    #   cisco.ise.trusted_certificate_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     page: 1
+    #     size: 1
+    #     # id: 7865ac6a-64c6-4e65-865e-d1b093ee0b10
+    #   register: trusted_certificate_info
+
+    # - name: Print
+    #   ansible.builtin.debug:
+    #     var: trusted_certificate_info['ise_response']
+
+    # - name: Get All
+    #   cisco.ise.system_certificate_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     page: 1
+    #     size: 1
+    #     hostName: ise
+    #     # id: 7db89470-0015-4563-9bb9-c2b1bfb14833
+    #   register: system_certificate_info
+
+    # - name: Print
+    #   ansible.builtin.debug:
+    #     var: system_certificate_info['ise_response']
+
+    - name: Get All
+      cisco.ise.csr_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        ise_debug: "{{ ise_debug }}"
+        page: 1
+        size: 1
+      register: csr_info
+
+    - name: Print
+      ansible.builtin.debug:
+        var: csr_info['ise_response']

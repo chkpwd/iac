@@ -9,8 +9,9 @@
   ansible.builtin.pip:
     name: "{{ item }}"
     virtualenv: "{{ virtualenv }}"
-    virtualenv_command: "/usr/bin/python3 -m venv"
+    virtualenv_command: "sudo -u {{ common_user }} /usr/bin/python3 -m venv"
   loop: "{{ pip_tools }}"
+  become: false
 
 - name: Install sops on remote hosts
   ansible.builtin.include_role:
@@ -38,8 +39,8 @@
   ansible.builtin.get_url:
     url: "{{ item.browser_download_url }}"
     dest: /tmp/flux.tar.gz
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: '0755'
   no_log: true # * Removes output of the API call
 
@@ -54,8 +55,8 @@
   ansible.builtin.copy:
     src: /tmp/flux
     dest: "/usr/local/bin/"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: '0755'
     remote_src: true
 
@@ -71,8 +72,8 @@
   ansible.builtin.get_url:
     url: "{{ item.browser_download_url }}"
     dest: /tmp/pulumi.tar.gz
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: '0755'
   no_log: true # * Removes output of the API call
 
@@ -87,8 +88,8 @@
   ansible.builtin.copy:
     src: /tmp/pulumi/
     dest: "/usr/local/bin/"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: '0755'
     remote_src: true
 
@@ -104,8 +105,8 @@
   ansible.builtin.get_url:
     url: "{{ item.browser_download_url }}"
     dest: /tmp/pet_amd64.tar.gz
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0644
   no_log: true
 
@@ -119,8 +120,8 @@
   ansible.builtin.copy:
     src: "/tmp/pet"
     dest: "/usr/local/bin/"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0755
     remote_src: true
 
@@ -136,8 +137,8 @@
   ansible.builtin.get_url:
     url: "{{ item.browser_download_url }}"
     dest: /tmp/k9s_amd64.tar.gz
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0644
   no_log: true
 
@@ -151,8 +152,8 @@
   ansible.builtin.copy:
     src: "/tmp/k9s"
     dest: "/usr/local/bin/"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0755
     remote_src: true
 
@@ -160,8 +161,8 @@
   ansible.builtin.get_url:
     url: https://go.dev/dl/go1.20.4.linux-amd64.tar.gz
     dest: /tmp/go.tar.gz
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0755
 
 - name: Unarchive the 'go' tar file
@@ -174,8 +175,8 @@
   ansible.builtin.copy:
     src: "/tmp/go/bin/go"
     dest: "/usr/local/bin"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0755
     remote_src: true
 
@@ -189,8 +190,8 @@
   ansible.builtin.get_url:
     url: "https://get.helm.sh/helm-{{ json_reponse.json.tag_name }}-linux-amd64.tar.gz"
     dest: /tmp/helm_amd64.tar.gz
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0644
   no_log: false
 
@@ -204,8 +205,8 @@
   ansible.builtin.copy:
     src: "/tmp/linux-amd64/helm"
     dest: "/usr/local/bin/"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0755
     remote_src: true
 
@@ -221,8 +222,8 @@
   ansible.builtin.get_url:
     url: "{{ item.browser_download_url }}"
     dest: /tmp/viddy_amd64.tar.gz
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0644
   no_log: true
 
@@ -236,8 +237,8 @@
   ansible.builtin.copy:
     src: "/tmp/viddy"
     dest: "/usr/local/bin/"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0755
     remote_src: true
 

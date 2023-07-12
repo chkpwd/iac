@@ -1,0 +1,59 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    # - name: CSR Generate
+    #   cisco.ise.csr_generate_intermediate_ca:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     ise_debug: "{{ ise_debug }}"
+    #   register: csr_generate_result
+
+    - name: CSR Info
+      cisco.ise.csr_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        ise_debug: "{{ ise_debug }}"
+      register: csr_info_result
+
+    - name: CSR Export (already present)
+      cisco.ise.csr_export_info:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        ise_debug: "{{ ise_debug }}"
+        hostname: ise
+        id: "{{ csr_info_result.ise_responses[0]['id']}}"
+        dirPath: /tmp/certificates/
+        saveFile: true
+      when:
+        - csr_info_result['ise_responses']|length >= 1
+      register: csr_export_info_result
+
+    - name: Print generate result
+      ansible.builtin.debug:
+        var: csr_export_info_result
+      when: csr_export_info_result
+
+    # - name: CSR Delete
+    #   cisco.ise.csr_delete:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     ise_debug: "{{ ise_debug }}"
+    #     id: "{{ csr_info_result['ise_response'][0]['response'][0]['id']}}"
+    #   when:
+    #     - csr_info_result['ise_response']|length == 1
+    #     - csr_info_result['ise_response'][0]['response']|length == 1
+    #   register: csr_delete_result
+
+    # - name: Print delete result
+    #   ansible.builtin.debug:
+    #     var: csr_delete_result
+    #   when: csr_delete_result

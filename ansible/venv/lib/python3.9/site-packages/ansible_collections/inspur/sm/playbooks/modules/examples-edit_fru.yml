@@ -1,0 +1,17 @@
+- name: Fru test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "Set Fru"
+    inspur.sm.edit_fru:
+      attribute: "CP"
+      value: "Inspur"
+      provider: "{{ ism }}"

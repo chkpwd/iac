@@ -1,0 +1,28 @@
+- name: ldap test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "set ldap information"
+    inspur.sm.edit_ldap:
+      enable: "disable"
+      provider: "{{ ism }}"
+
+  - name: "set ldap information"
+    inspur.sm.edit_ldap:
+      enable: "enable"
+      encry: "SSL"
+      address: "100.2.2.2"
+      server_port: 389
+      dn: "cn=manager,ou=login,dc=domain,dc=com"
+      code: "123456"
+      base: "cn=manager"
+      attr: "uid"
+      provider: "{{ ism }}"

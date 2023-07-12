@@ -1,0 +1,33 @@
+---
+- name: "Configure Local Credential Policy"
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+  intersight_rest_api:
+    <<: *api_info
+    resource_path: /hyperflex/LocalCredentialPolicies
+    query_params:
+      $filter: "Name eq '{{ hx_local_credential_policy }}'"
+    api_body: {
+      "Organization": {
+        "Moid": "{{ intersight_org.api_response.Moid }}"
+      },
+      "Name": "{{ hx_local_credential_policy }}",
+      "HypervisorAdmin":"{{ hx_hypervisor_admin }}",
+      "FactoryHypervisorPassword":"{{ hx_hypervisor_factory_password }}",
+      "HypervisorAdminPwd":"{{ hx_hypervisor_password | default(omit) }}",
+      "HxdpRootPwd":"{{ hx_dp_root_password | default(omit) }}",
+      "ClusterProfiles": [
+        {
+        "Moid": "{{ cluster_profile.api_response.Moid }}"
+        }
+      ]
+    }
+  register: local_credential
+
+- debug: msg="HyperFlex Local Credential Policy named {{ hx_local_credential_policy }} has been created successfully."

@@ -1,0 +1,31 @@
+---
+- name: "Configure Cluster Storage Policy"
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+  intersight_rest_api:
+    <<: *api_info
+    resource_path: /hyperflex/ClusterStoragePolicies
+    query_params:
+      $filter: "Name eq '{{ hx_cluster_storage_policy }}'"
+    api_body: {
+      "Organization": {
+        "Moid": "{{ intersight_org.api_response.Moid }}"
+      },
+      "Name":"{{ hx_cluster_storage_policy }}",
+      "VdiOptimization":"{{ hx_vdi_optimization }}",
+      "DiskPartitionCleanup":"{{ hx_disk_cleanup }}",
+      "ClusterProfiles": [
+        {
+        "Moid": "{{ cluster_profile.api_response.Moid }}"
+        }
+      ]
+    }
+  register: storage_setting
+
+- debug: msg="HyperFlex Cluster Storage Policy named {{ hx_cluster_storage_policy }} has been created successfully."

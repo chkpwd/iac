@@ -1,0 +1,15 @@
+- name: Media test
+  hosts: ism
+  connection: local
+  gather_facts: no
+  vars:
+    ism:
+      host: "{{ ansible_ssh_host }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+
+  - name: "Get Virtual Media information"
+    inspur.sm.virtual_media_info:
+      provider: "{{ ism }}"

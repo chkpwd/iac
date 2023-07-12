@@ -1,0 +1,30 @@
+---
+# Example Playbook: cisco.intersight.intersight_virtual_media_policy
+# Runs on localhost since policies are only configured once
+- hosts: localhost
+  connection: local
+  collections:
+    - cisco.intersight
+  gather_facts: false
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+  tasks:
+    - name: Configure Virtual Media Policy
+      intersight_virtual_media_policy:
+        <<: *api_info
+        organization: DevNet
+        name: COS-VM
+        description: Virtual Media policy for lab use
+        tags:
+          - Key: Site
+            Value: RCDN
+        cdd_virtual_media:
+          mount_type: nfs
+          volume: nfs-cdd
+          remote_hostname: 172.28.224.77
+          remote_path: /mnt/SHARE/ISOS/CENTOS
+          remote_file: CentOS7.iso

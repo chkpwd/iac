@@ -1,0 +1,8 @@
+---
+requires_ansible: ">=2.9.10"
+plugin_routing:
+  modules:
+    bgp:
+      redirect: frr.frr.frr_bgp
+    facts:
+      redirect: frr.frr.frr_facts

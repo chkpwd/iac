@@ -1,0 +1,235 @@
+objects:
+  role: {}
+plugins:
+  become: {}
+  cache: {}
+  callback: {}
+  cliconf:
+    sonic:
+      description: Use sonic cliconf to run command on Dell OS10 platform
+      name: sonic
+      version_added: null
+  connection: {}
+  httpapi:
+    sonic:
+      description: HttpApi Plugin for devices supporting Restconf SONIC API
+      name: sonic
+      version_added: 1.0.0
+  inventory: {}
+  lookup: {}
+  module:
+    sonic_aaa:
+      description: Manage AAA and its parameters
+      name: sonic_aaa
+      namespace: ''
+      version_added: 1.1.0
+    sonic_acl_interfaces:
+      description: Manage access control list (ACL) to interface binding on SONiC
+      name: sonic_acl_interfaces
+      namespace: ''
+      version_added: 2.1.0
+    sonic_api:
+      description: Manages REST operations on devices running Enterprise SONiC
+      name: sonic_api
+      namespace: ''
+      version_added: 1.0.0
+    sonic_bfd:
+      description: Manage BFD configuration on SONiC
+      name: sonic_bfd
+      namespace: ''
+      version_added: 2.1.0
+    sonic_bgp:
+      description: Manage global BGP and its parameters
+      name: sonic_bgp
+      namespace: ''
+      version_added: 1.0.0
+    sonic_bgp_af:
+      description: Manage global BGP address-family and its parameters
+      name: sonic_bgp_af
+      namespace: ''
+      version_added: 1.0.0
+    sonic_bgp_as_paths:
+      description: Manage BGP autonomous system path (or as-path-list) and its parameters
+      name: sonic_bgp_as_paths
+      namespace: ''
+      version_added: 1.0.0
+    sonic_bgp_communities:
+      description: Manage BGP community and its parameters
+      name: sonic_bgp_communities
+      namespace: ''
+      version_added: 1.0.0
+    sonic_bgp_ext_communities:
+      description: Manage BGP extended community-list and its parameters
+      name: sonic_bgp_ext_communities
+      namespace: ''
+      version_added: 1.0.0
+    sonic_bgp_neighbors:
+      description: Manage a BGP neighbor and its parameters
+      name: sonic_bgp_neighbors
+      namespace: ''
+      version_added: 1.0.0
+    sonic_bgp_neighbors_af:
+      description: Manage the BGP neighbor address-family and its parameters
+      name: sonic_bgp_neighbors_af
+      namespace: ''
+      version_added: 1.0.0
+    sonic_command:
+      description: Runs commands on devices running Enterprise SONiC
+      name: sonic_command
+      namespace: ''
+      version_added: 1.0.0
+    sonic_config:
+      description: Manages configuration sections on devices running Enterprise SONiC
+      name: sonic_config
+      namespace: ''
+      version_added: 1.0.0
+    sonic_copp:
+      description: Manage CoPP configuration on SONiC
+      name: sonic_copp
+      namespace: ''
+      version_added: 2.1.0
+    sonic_dhcp_relay:
+      description: Manage DHCP and DHCPv6 relay configurations on SONiC
+      name: sonic_dhcp_relay
+      namespace: ''
+      version_added: 2.1.0
+    sonic_facts:
+      description: Collects facts on devices running Enterprise SONiC
+      name: sonic_facts
+      namespace: ''
+      version_added: 1.0.0
+    sonic_interfaces:
+      description: Configure Interface attributes on interfaces such as, Eth, LAG,
+        VLAN, and loopback. (create a loopback interface if it does not exist.)
+      name: sonic_interfaces
+      namespace: ''
+      version_added: 1.0.0
+    sonic_ip_neighbor:
+      description: Manage IP neighbor global configuration on SONiC.
+      name: sonic_ip_neighbor
+      namespace: ''
+      version_added: 2.1.0
+    sonic_l2_acls:
+      description: Manage Layer 2 access control lists (ACL) configurations on SONiC
+      name: sonic_l2_acls
+      namespace: ''
+      version_added: 2.1.0
+    sonic_l2_interfaces:
+      description: Configure interface-to-VLAN association that is based on access
+        or trunk mode
+      name: sonic_l2_interfaces
+      namespace: ''
+      version_added: 1.0.0
+    sonic_l3_acls:
+      description: Manage Layer 3 access control lists (ACL) configurations on SONiC
+      name: sonic_l3_acls
+      namespace: ''
+      version_added: 2.1.0
+    sonic_l3_interfaces:
+      description: Configure the IPv4 and IPv6 parameters on Interfaces such as, Eth,
+        LAG, VLAN, and loopback
+      name: sonic_l3_interfaces
+      namespace: ''
+      version_added: 1.0.0
+    sonic_lag_interfaces:
+      description: Manage link aggregation group (LAG) interface parameters
+      name: sonic_lag_interfaces
+      namespace: ''
+      version_added: 1.0.0
+    sonic_lldp_global:
+      description: Manage Global LLDP configurations on SONiC
+      name: sonic_lldp_global
+      namespace: ''
+      version_added: 2.1.0
+    sonic_logging:
+      description: Manage logging configuration on SONiC.
+      name: sonic_logging
+      namespace: ''
+      version_added: 2.1.0
+    sonic_mac:
+      description: Manage MAC configuration on SONiC
+      name: sonic_mac
+      namespace: ''
+      version_added: 2.1.0
+    sonic_mclag:
+      description: Manage multi chassis link aggregation groups domain (MCLAG) and
+        its parameters
+      name: sonic_mclag
+      namespace: ''
+      version_added: 1.0.0
+    sonic_ntp:
+      description: Manage NTP configuration on SONiC.
+      name: sonic_ntp
+      namespace: ''
+      version_added: 2.0.0
+    sonic_port_breakout:
+      description: Configure port breakout settings on physical interfaces
+      name: sonic_port_breakout
+      namespace: ''
+      version_added: 1.0.0
+    sonic_port_group:
+      description: Manages port group configuration on SONiC.
+      name: sonic_port_group
+      namespace: ''
+      version_added: 2.1.0
+    sonic_prefix_lists:
+      description: prefix list configuration handling for SONiC
+      name: sonic_prefix_lists
+      namespace: ''
+      version_added: 2.0.0
+    sonic_radius_server:
+      description: Manage RADIUS server and its parameters
+      name: sonic_radius_server
+      namespace: ''
+      version_added: 1.0.0
+    sonic_route_maps:
+      description: route map configuration handling for SONiC
+      name: sonic_route_maps
+      namespace: ''
+      version_added: 2.1.0
+    sonic_static_routes:
+      description: Manage static routes configuration on SONiC
+      name: sonic_static_routes
+      namespace: ''
+      version_added: 2.0.0
+    sonic_system:
+      description: Configure system parameters
+      name: sonic_system
+      namespace: ''
+      version_added: 1.0.0
+    sonic_tacacs_server:
+      description: Manage TACACS server and its parameters
+      name: sonic_tacacs_server
+      namespace: ''
+      version_added: 1.1.0
+    sonic_users:
+      description: Manage users and its parameters
+      name: sonic_users
+      namespace: ''
+      version_added: 1.1.0
+    sonic_vlan_mapping:
+      description: Configure vlan mappings on SONiC.
+      name: sonic_vlan_mapping
+      namespace: ''
+      version_added: 2.1.0
+    sonic_vlans:
+      description: Manage VLAN and its parameters
+      name: sonic_vlans
+      namespace: ''
+      version_added: 1.0.0
+    sonic_vrfs:
+      description: Manage VRFs and associate VRFs to interfaces such as, Eth, LAG,
+        VLAN, and loopback
+      name: sonic_vrfs
+      namespace: ''
+      version_added: 1.0.0
+    sonic_vxlans:
+      description: Manage VxLAN EVPN and its parameters
+      name: sonic_vxlans
+      namespace: ''
+      version_added: 1.0.0
+  netconf: {}
+  shell: {}
+  strategy: {}
+  vars: {}
+version: 2.2.0

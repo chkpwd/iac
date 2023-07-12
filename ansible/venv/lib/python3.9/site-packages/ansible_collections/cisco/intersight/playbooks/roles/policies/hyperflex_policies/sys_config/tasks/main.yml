@@ -1,0 +1,33 @@
+---
+- name: "Configure System Config Policy"
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+  intersight_rest_api:
+    <<: *api_info
+    resource_path: /hyperflex/SysConfigPolicies
+    query_params:
+      $filter: "Name eq '{{ hx_sys_config_policy }}'"
+    api_body: {
+      "Organization": {
+        "Moid": "{{ intersight_org.api_response.Moid }}"
+      },
+      "Name": "{{ hx_sys_config_policy }}",
+      "Timezone":"{{ hx_sys_config_timezone }}",
+      "DnsServers":"{{ hx_sys_config_dns_servers }}",
+      "NtpServers":"{{ hx_sys_config_ntp_servers }}",
+      "DnsDomainName":"{{ hx_sys_config_dns_domain }}",
+      "ClusterProfiles": [
+        {
+        "Moid": "{{ cluster_profile.api_response.Moid }}"
+        }
+      ]
+    }
+  register: sys_config
+
+- debug: msg="HyperFlex System Config Policy named {{ hx_sys_config_policy }} has been created successfully."

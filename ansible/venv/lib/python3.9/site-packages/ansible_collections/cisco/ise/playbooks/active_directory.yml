@@ -1,0 +1,85 @@
+---
+- hosts: ise_servers
+  gather_facts: false
+  tasks:
+    # - name: Get active directory
+    #   cisco.ise.active_directory_info:
+    #     ise_hostname: "{{ ise_hostname }}"
+    #     ise_username: "{{ ise_username }}"
+    #     ise_password: "{{ ise_password }}"
+    #     ise_verify: "{{ ise_verify }}"
+    #     page: 1
+    #     size: 1
+    #   register: result
+
+    # - name: Print Active Directories
+    #   ansible.builtin.debug:
+    #     var: result
+
+    - name: Create or update active directory
+      cisco.ise.active_directory:
+        ise_hostname: "{{ ise_hostname }}"
+        ise_username: "{{ ise_username }}"
+        ise_password: "{{ ise_password }}"
+        ise_verify: "{{ ise_verify }}"
+        ise_debug: "{{ ise_debug }}"
+        state: present
+        name: cisco.com
+        description: ""
+        domain: cisco.com
+        adgroups:
+          groups:
+            - name: cisco.com/operators
+              sid: S-1-5-32-548
+              type: GLOBAL
+        advancedSettings:
+          enablePassChange: true
+          enableMachineAuth: true
+          enableMachineAccess: true
+          agingTime: 5
+          enableDialinPermissionCheck: false
+          enableCallbackForDialinClient: false
+          plaintextAuth: false
+          identityNotInAdBehaviour: SEARCH_JOINED_FOREST
+          unreachableDomainsBehaviour: PROCEED
+          enableRewrites: false
+          rewriteRules:
+            - rowId: 00
+              rewriteMatch: host/[HOSTNAME].[DOMAIN]
+              rewriteResult: host/[HOSTNAME].[DOMAIN]
+            - rowId: 1
+              rewriteMatch: host/[HOSTNAME]
+              rewriteResult: host/[HOSTNAME]
+            - rowId: 2
+              rewriteMatch: "[DOMAIN]\\[IDENTITY]"
+              rewriteResult: "[DOMAIN]\\[IDENTITY]"
+            - rowId: 3
+              rewriteMatch: "[IDENTITY]@[DOMAIN]"
+              rewriteResult: "[IDENTITY]@[DOMAIN]"
+            - rowId: 4
+              rewriteMatch: "[IDENTITY]"
+              rewriteResult: "[IDENTITY]"
+          firstName: givenName
+          department: department
+          lastName: sn
+          organizationalUnit: company
+          jobTitle: title
+          locality: l
+          email: mail
+          stateOrProvince: st
+          telephone: telephoneNumber
+          country: co
+          streetAddress: streetAddress
+          schema: ACTIVE_DIRECTORY
+        adAttributes:
+          attributes:
+            - name: name1
+              type: STRING
+              defaultValue: defaultString
+              internalName: internalName1
+        adScopesNames: Default_Scope
+      register: result
+
+    - name: Print Active Directory
+      ansible.builtin.debug:
+        var: result

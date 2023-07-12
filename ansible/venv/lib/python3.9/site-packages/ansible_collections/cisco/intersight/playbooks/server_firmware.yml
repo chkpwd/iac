@@ -1,0 +1,115 @@
+---
+#
+# The hosts group used is provided by the group variable or defaulted to 'Intersight_Servers'.
+# You can specify a specific host (or host group) on the command line:
+#   ansible-playbook ... -e group=<your host group>
+#   e.g., ansible-playbook server_profiles.yml -e group=TME_Demo
+#
+- hosts: "{{ group | default('Intersight_Servers') }}"
+  connection: local
+  gather_facts: false
+  vars:
+    # Create an anchor for api_info that can be used throughout the file
+    api_info: &api_info
+      api_private_key: "{{ api_private_key }}"
+      api_key_id: "{{ api_key_id }}"
+      api_uri: "{{ api_uri | default(omit) }}"
+      validate_certs: "{{ validate_certs | default(omit) }}"
+      state: "{{ state | default(omit) }}"
+    fw_version: 4.1(2b)
+    file_share: 172.28.224.77/mnt/SHARE/ISOS/HUU
+  tasks:
+    # Edit FW to be used as needed for server type below
+    - set_fact:
+        file_name: "ucs-c220m4-huu-{{ fw_version | replace('(','.') | replace(')','') }}.iso"
+        supported_models:
+          - UCSC-C220-M4L
+          - UCSC-C220-M4S
+      when: model is search("UCSC-C220-M4.*")
+    - set_fact:
+        file_name: "ucs-c240m4-huu-{{ fw_version | replace('(','.') | replace(')','') }}.iso"
+        supported_models:
+          - UCSC-C240-M4L
+          - UCSC-C240-M4S
+          - UCSC-C240-M4SX
+          - UCSC-C240-M4SNEBS
+          - UCSC-C240-M4S2
+      when: model is search("UCSC-C240-M4.*")
+    - set_fact:
+        file_name: "ucs-c240m5-huu-{{ fw_version | replace('(','.') | replace(')','') }}.iso"
+        supported_models:
+          - UCSC-C240-M5S
+          - UCSC-C240-M5L
+          - UCSC-C240-M5SX
+          - UCSC-C240-M5SN
+          - UCSC-C240-M5SD
+          - HX240C-M5SX
+          - HXAF240C-M5SX
+          - HX240C-M5L
+          - HX240C-M5SD
+          - HXAF240C-M5SD
+      when: model is search("UCSC-C240-M5.*")
+    - set_fact:
+        file_name: "ucs-c220m5-huu-{{ fw_version | replace('(','.') | replace(')','') }}.iso"
+        supported_models:
+          - UCSC-C220-M5SX
+          - UCSC-C220-M5L
+          - UCSC-C220-M5SN
+          - HX220C-M5SX
+          - HXAF220C-M5SX
+      when: model is search("UCSC-C220-M5.*")
+    - set_fact:
+        file_location: "{{ file_share }}/{{ file_name }}"
+    # Set the distributable type based on the management mode and server type
+    - set_fact:
+        dist_type: STANDALONE
+      when: mode == 'Intersight' or mode == 'IntersightStandalone'
+    # Get a user defined FW version
+    - name: Get Moid of user defined FW version
+      intersight_rest_api:
+        <<: *api_info
+        resource_path: /firmware/Distributables
+        query_params:
+          $filter: "FileLocation eq '{{ file_location }}'"
+        update_method: post
+        api_body: {
+          "Catalog": {
+            "Moid": "5cd993686567612d30aaa762"
+          },
+          "ImportAction": "None",
+          "Name": "{{ file_name }}",
+          "Origin": "User",
+          "Source": {
+            "ObjectType": "softwarerepository.NfsServer",
+            "FileLocation": "{{ file_location }}"
+          },
+          "SupportedModels": "{{ supported_models }}",
+          "Version": "{{ fw_version }}"
+        }
+      delegate_to: localhost
+      register: fw_resp
+    - name: Update server firmware
+      cisco.intersight.intersight_rest_api:
+        <<: *api_info
+        resource_path: /firmware/Upgrades
+        query_params:
+          $filter: "Server.Moid eq '{{ server_moid }}'"
+        update_method: post
+        # nw_upgrade_full supported in UI, nw_upgrade_mount_only has partial API support
+        api_body: {
+          "UpgradeType": "network_upgrade",
+          "Distributable": {
+            "Moid": "{{ fw_resp.api_response.Moid }}"
+          },
+          "DirectDownload": {},
+          "NetworkShare": {
+            "Upgradeoption": "nw_upgrade_mount_only",
+            "MapType":"nfs"
+          },
+          "Server": {
+            "ObjectType": "compute.{{ object_type }}",
+            "Moid": "{{ server_moid }}"
+          }
+        }
+      delegate_to: localhost
+      when: server_moid is defined

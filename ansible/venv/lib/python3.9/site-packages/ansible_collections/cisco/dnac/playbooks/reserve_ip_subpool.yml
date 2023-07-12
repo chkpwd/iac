@@ -1,0 +1,48 @@
+---
+- hosts: dnac_servers
+  vars_files:
+    - credentials.yml
+  gather_facts: false
+  vars:
+    site: bb25cdaf-3f5a-45b9-bdd6-0f63fdf6c83e
+
+  tasks:
+    - name: Create reservation
+      cisco.dnac.reserve_ip_subpool:
+        dnac_host: "{{ dnac_host }}"
+        dnac_username: "{{ dnac_username }}"
+        dnac_password: "{{ dnac_password }}"
+        dnac_verify: "{{ dnac_verify }}"
+        dnac_port: "{{ dnac_port }}"
+        dnac_version: "{{ dnac_version }}"
+        dnac_debug: "{{ dnac_debug }}"
+        state: present
+        ipv4DhcpServers:
+          - 55.66.55.55
+        ipv4DnsServers:
+          - 33.33.33.3
+        ipv4GateWay: 10.0.10.1
+        ipv4GlobalPool: 10.0.0.0/8
+        ipv4Prefix: true
+        ipv4PrefixLength: 24
+        ipv4Subnet: 10.0.10.0/24
+        name: IP Pool 1
+        siteId: "{{ site }}"
+        slaacSupport: true
+        type: LAN
+
+    - name: Get Reservations
+      cisco.dnac.reserve_ip_subpool_info:
+        dnac_host: "{{ dnac_host }}"
+        dnac_username: "{{ dnac_username }}"
+        dnac_password: "{{ dnac_password }}"
+        dnac_verify: "{{ dnac_verify }}"
+        dnac_port: "{{ dnac_port }}"
+        dnac_version: "{{ dnac_version }}"
+        dnac_debug: "{{ dnac_debug }}"
+        siteId: "{{ site }}"
+      register: ip_pool
+
+    - name: Print Reservations
+      ansible.builtin.debug:
+        var: ip_pool

@@ -1,0 +1,19 @@
+- name: Deploying ISE Servers
+  amazon.aws.ec2:
+    key_name: "{{ aws_keypair_name }}"
+    instance_type: "{{ aws_instance_type }}"
+    image: "{{ aws_ise_ami }}"
+    wait: yes
+    group: "ISE Public Access"
+    count: 1
+    vpc_subnet_id: "{{ subnet.subnet.id }}"
+    assign_public_ip: yes
+    region: "{{ aws_region }}"
+    instance_tags:
+      Name: "{{ise_base_hostname}} Server {{ item }}"
+      Roles:
+        - PAN
+        - MNT
+        - PSN
+    user_data: "hostname={{ ise_base_hostname | lower}}-server-{{ item }}\nprimarynameserver={{ ise_dns_server }}\ndnsdomain={{ ise_domain }}\nntpserver={{ ise_ntp_server }}\ntimezone={{ ise_timezone }}\nusername={{ ise_username }}\npassword={{ ise_password }}"
+  with_sequence: count=2

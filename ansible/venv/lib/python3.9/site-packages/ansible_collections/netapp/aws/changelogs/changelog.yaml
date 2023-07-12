@@ -1,0 +1,81 @@
+ancestor: null
+releases:
+  19.10.0:
+    changes:
+      minor_changes:
+      - refactor existing modules as a collection
+    fragments:
+    - 2019.10.0.yaml
+    release_date: '2019-11-14'
+  2.9.0:
+    modules:
+    - description: NetApp AWS CloudVolumes Service Manage Active Directory.
+      name: aws_netapp_cvs_active_directory
+      namespace: ''
+    - description: NetApp AWS Cloud Volumes Service Manage FileSystem.
+      name: aws_netapp_cvs_filesystems
+      namespace: ''
+    - description: NetApp AWS Cloud Volumes Service Manage Pools.
+      name: aws_netapp_cvs_pool
+      namespace: ''
+    - description: NetApp AWS Cloud Volumes Service Manage Snapshots.
+      name: aws_netapp_cvs_snapshots
+      namespace: ''
+    release_date: '2019-11-13'
+  20.2.0:
+    changes:
+      bugfixes:
+      - galaxy.yml - fix path to github repository.
+    fragments:
+    - 20.2.0.yaml
+    release_date: '2020-02-05'
+  20.6.0:
+    changes:
+      bugfixes:
+      - galaxy.yml - fix repository and homepage links.
+    fragments:
+    - 20.6.0.yaml
+    release_date: '2020-06-03'
+  20.8.0:
+    changes:
+      minor_changes:
+      - add "elements:" and update "required:" to match module requirements.
+      - use a three group format for version_added. So 2.7 becomes 2.7.0. Same thing
+        for 2.8 and 2.9.
+    fragments:
+    - 20.8.0.yaml
+    release_date: '2020-08-05'
+  20.9.0:
+    changes:
+      minor_changes:
+      - Fix pylint or flake8 warnings reported by galaxy importer.
+    fragments:
+    - 20.9.0.yaml
+    release_date: '2020-09-02'
+  21.2.0:
+    changes:
+      bugfixes:
+      - all modules - disable logging for ``api_key`` and ``secret_key`` values.
+      - all modules - prevent infinite loop when asynchronous action fails.
+      - all modules - report error if response does not contain valid JSON.
+      - aws_netapp_cvs_filesystems - fix KeyError when exportPolicy is not present.
+    fragments:
+    - DEVOPS-3644.yaml
+    release_date: '2021-02-04'
+  21.6.0:
+    changes:
+      bugfixes:
+      - all modules - fix traceback TypeError 'NoneType' object is not subscriptable
+        when URL points to a web server.
+      minor_changes:
+      - all modules - ability to trace API calls and responses.
+    fragments:
+    - DEVOPS-3569.yaml
+    release_date: '2021-07-14'
+  21.7.0:
+    changes:
+      minor_changes:
+      - PR1 - allow usage of Ansible module group defaults - for Ansible 2.12+.
+    fragments:
+    - DEVOPS-4416.yaml
+    release_date: '2021-11-03'
