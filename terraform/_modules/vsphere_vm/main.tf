@@ -3,7 +3,7 @@
 #===============================================================================
 
 resource "vsphere_virtual_machine" "linux" {
-  count  = var.spec.os_type == "linux" ? var.instance_count : 0
+  count  = var.spec.os_type == "linux" ? 1 : 0
   tags   = var.spec.tags
   #folder = folder.value.path
 
@@ -72,7 +72,7 @@ resource "vsphere_virtual_machine" "linux" {
 }
 
 resource "vsphere_virtual_machine" "windows" {
-  count = var.spec.os_type == "windows" ? var.instance_count : 0
+  count = var.spec.os_type == "windows" ? 1 : 0
   tags   = var.spec.tags
   #folder = var.spec.folder
 
