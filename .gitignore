@@ -4,6 +4,9 @@ ansible/roles/veeam_deploy_v11/files
 # Exclude templates used by the code-server role
 ansible/roles/code-server/templates
 
+# Exclude virtualenv for python
+ansible/venv
+
 # Prevent sensitive auto-generated Packer variable files from being tracked
 **/secrets.auto.pkrvars.hcl
 
