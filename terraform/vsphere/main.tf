@@ -102,6 +102,11 @@ module "homeassistant" {
     cpu                     = 2
     memory                  = 2048
     disk_size               = 16
+    additional_disks = [ 
+      {
+        size                = 25
+      } 
+    ]
   }
 }
 
