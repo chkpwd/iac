@@ -39,6 +39,12 @@ spec:
         enable: false
 
     defaultSettings:
+      backupstorePollInterval: 300
+      backupTarget: nfs://cockpit.${LOCAL_DOMAIN}:/mnt/data/backup/longhorn
+      createDefaultDiskLabeledNodes: true
+      defaultDataLocality: best-effort
+      defaultReplicaCount: 2
+      defaultLonghornStaticStorageClass: longhorn
       storageOverProvisioningPercentage: 100
       storageMinimalAvailablePercentage: 10
       nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
