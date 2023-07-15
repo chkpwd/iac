@@ -1,4 +1,7 @@
 ---
+- name: Gather facts
+  ansible.builtin.gather_facts:
+
 - name: Check Docker Present
   ansible.builtin.stat:
     path: /usr/bin/docker
