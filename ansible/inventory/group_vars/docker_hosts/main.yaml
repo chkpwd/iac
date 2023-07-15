@@ -1,5 +1,5 @@
 ---
-ansible_user: "hyoga"
+common_user: "hyoga"
 docker_path: "/opt/docker-confs"
 docker_confs_dir: "/mnt/data"
 docker_confs_nfs: "172.16.16.16"
@@ -8,3 +8,10 @@ media_nfs: "172.16.16.15"
 configuration_path: /opt/docker-confs
 hotio_image: cr.hotio.dev/hotio
 linuxserver_image: ghcr.io/linuxserver
+docker_daemon_path: /mnt/data/docker
+temp_docker_daemon_file: "/home/{{ common_user }}/code/boilerplates/ansible/templates/daemon.json.j2"
+docker_services: 
+  - name: Docker Service
+    value: docker.service
+  - name: Docker Socket
+    value: docker.socket
