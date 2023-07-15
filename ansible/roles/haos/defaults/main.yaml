@@ -1,3 +1,16 @@
+haos_ipv4_addr: "172.16.16.11"
+haos_gateway: "172.16.16.1"
+haos_dns: "172.16.16.1"
+haos_domain: "local.chkpwd.com"
+
+haos_pkgs:
+  - name: OS Agent
+    release: os-agent
+    release_name: os-agent_[0-9]+.deb
+  - name: Supervised
+    release: supervised-installer
+    release_name: homeassistant-supervised
+
 packages:
   - apparmor
   - wget
