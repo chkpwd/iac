@@ -1,2 +1,42 @@
-- name: "Run Home Assistant Supervised Configuration tasks"
-  ansible.builtin.include_tasks: install_hasupervised.yaml
+---
+- name: Install the necessary packages
+  ansible.builtin.apt:
+    update_cache: true
+    name: "{{ packages }}"
+    state: present
+
+- name: Check Docker Present
+  ansible.builtin.stat:
+    path: /usr/bin/docker
+  register: docker_installed
+
+- name: Docker Install
+  ansible.builtin.include_role:
+    name: geerlingguy.docker
+  vars:
+    pip_install_packages:
+      - name: docker
+    docker_edition: 'ce'
+    docker_package_state: latest
+    docker_users: "{{ common_user }}"
+  when: not docker_installed.stat.exists
+
+- name: Get HAOS pkgs
+  community.general.github_release:
+    user: home-assistant
+    repo: "{{ item.release }}"
+    action: latest_release
+  loop: "{{ haos_pkgs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: pkg_release
+
+- name: Installing Packages
+  ansible.builtin.apt:
+    deb: "https://github.com/home-assistant/{{ item.item.release }}/releases/download/{{ item.tag }}/{{ 'os-agent_' ~ item.tag ~ '_linux_x86_64.deb' if item.item.name == 'OS Agent' else 'homeassistant-supervised.deb'}}"
+  loop: "{{ pkg_release.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+
+- name: Reboot HAOS
+  ansible.builtin.reboot:
