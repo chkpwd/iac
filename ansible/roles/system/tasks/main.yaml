@@ -28,7 +28,7 @@
 
 - name: Apply secondary disk partitioning
   ansible.builtin.include_tasks: disk.yaml
-  when: ansible_facts['devices'] | length > 1
+  when: ansible_facts['devices'] | dict2items | list | length > 1
 
 - name: Apply user configurations for {{ common_user }}
   ansible.builtin.include_tasks: user.yaml
