@@ -1,8 +1,8 @@
 ---
 - name: Dynamic Role Playbook
   hosts: "{{ onhosts | default('localhost') }}"
-
   gather_facts: true
+  
   pre_tasks:
     - name: Warn if localhost
       ansible.builtin.pause:
