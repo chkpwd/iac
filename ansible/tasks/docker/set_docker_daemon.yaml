@@ -1,18 +1,42 @@
 ---
+- name: Stop Docker Services
+  ansible.builtin.service:
+    name: "{{ item.value }}"
+    state: stopped
+  loop: "{{ docker_services }}"
+  loop_control:
+    label: "{{ item.name }}"
+
 - name: Configure Docker Daemon
   ansible.builtin.file:
     path: /etc/docker
-    owner: "root"
-    group: "root"
-    mode: 0755
+    owner: root
+    group: root
+    mode: '0755'
     state: directory
+  notify: Stop Docker Services 
+
+- name: Gather Facts
+  ansible.builtin.gather_facts:
 
 - name: Set Docker Daemon Config file
   ansible.builtin.template:
-    src: ../../templates/daemon.json.j2
+    src: "{{ temp_docker_daemon_file }}"
     dest: /etc/docker/daemon.json
-    owner: "root"
-    group: "root"
-    mode: 0644
-  notify: Restart Docker Service
-  when: ansible_facts['devices'] | length > 1
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_facts['devices'] | dict2items | list | length > 1
+
+- name: Start Docker Services
+  ansible.builtin.service:
+    name: "{{ item.value }}"
+    state: started
+  loop: "{{ docker_services }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Delete Docker Data
+  ansible.builtin.file:
+    path: /var/lib/docker
+    state: absent
