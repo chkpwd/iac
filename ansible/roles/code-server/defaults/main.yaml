@@ -5,7 +5,6 @@ code_config_file: "/home/{{ common_user }}/.config/code-server/config.yaml"
 ansible_dest: /home/hyoga/code/boilerplates/ansible
 template_path: "{{ ansible_dest }}/roles/code-server/templates"
 zsh_custom: "/home/{{ common_user }}/.oh-my-zsh/custom"
-virtualenv: "{{ ansible_dest }}/env"
 
 keyrings_dir: /etc/apt/keyrings
 

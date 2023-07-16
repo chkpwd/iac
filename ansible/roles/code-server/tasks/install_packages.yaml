@@ -8,7 +8,7 @@
 - name: Install Pip Tools
   ansible.builtin.pip:
     name: "{{ item }}"
-    virtualenv: "{{ virtualenv }}"
+    virtualenv: "{{ virtualenv_location }}"
     virtualenv_command: "sudo -u {{ common_user }} /usr/bin/python3 -m venv"
   loop: "{{ pip_tools }}"
   become: false
