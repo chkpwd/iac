@@ -2,18 +2,6 @@
 - name: Gather facts
   ansible.builtin.gather_facts:
 
-- name: Check Docker Present
-  ansible.builtin.stat:
-    path: /usr/bin/docker
-  register: docker_installed
-
 - name: Docker Install
   ansible.builtin.include_role:
     name: geerlingguy.docker
-  vars:
-    pip_install_packages:
-      - name: docker
-    docker_edition: 'ce'
-    docker_package_state: latest
-    docker_users: "{{ common_user }}"
-  when: not docker_installed.stat.exists
