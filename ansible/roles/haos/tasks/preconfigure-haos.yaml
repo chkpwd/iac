@@ -1,0 +1,49 @@
+- name: Install the necessary packages
+  ansible.builtin.apt:
+    update_cache: true
+    name: "{{ packages }}"
+    state: present
+
+- name: Install Pip Tools
+  ansible.builtin.pip:
+    name: github3.py
+    virtualenv: "{{ virtualenv_location }}"
+    virtualenv_command: "sudo /usr/bin/python3 -m venv"
+  become: true
+
+- name: Docker Install
+  ansible.builtin.include_role:
+    name: geerlingguy.docker
+
+- name: NetworkManager | Static IP configuration
+  community.general.nmcli:
+    conn_name: HAOS_NET
+    ifname: ens192
+    type: ethernet
+    ip4: "{{ haos_ipv4_addr }}/24"
+    gw4: "{{ haos_gateway }}"
+    dns4:
+      - "{{ haos_dns }}"
+    state: present
+  retries: 3
+
+- name: Configure NetworkManager dns settings
+  ansible.builtin.lineinfile:
+    path: /etc/resolv.conf
+    line: '{{ item }}'
+  with_items:
+    - "search {{ haos_domain }}"
+    - "nameserver {{ haos_dns }}"
+  notify: Restart Networking service
+
+- name: Restart Networking service
+  ansible.builtin.meta: flush_handlers
+
+- name: Configure HAOS daemon options
+  ansible.builtin.copy:
+    content: "{{ hassio_daemon_options | to_nice_json }}"
+    dest: /etc/hassio.json
+    owner: root
+    group: root
+    mode: '0644'
+  when: hassio_daemon_options.keys() | length > 0
