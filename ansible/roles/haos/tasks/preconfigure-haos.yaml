@@ -24,7 +24,7 @@
   ansible.builtin.lineinfile:
     path: /etc/resolv.conf
     line: '{{ item }}'
-  with_items:
+  loop:
     - "search {{ haos_domain }}"
     - "nameserver {{ haos_dns }}"
   notify: Restart Networking service
