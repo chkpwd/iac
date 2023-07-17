@@ -4,6 +4,8 @@
 
 - name: Get HAOS pkgs
   delegate_to: localhost
+  vars:
+    ansible_python_interpreter: "/home/{{ common_user }}/code/boilerplates/.venv/bin/python3"
   community.general.github_release:
     user: home-assistant
     repo: "{{ item.release }}"
