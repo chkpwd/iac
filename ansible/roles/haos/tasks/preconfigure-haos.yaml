@@ -4,13 +4,6 @@
     name: "{{ packages }}"
     state: present
 
-- name: Install Pip Tools
-  ansible.builtin.pip:
-    name: github3.py
-    virtualenv: "{{ virtualenv_location }}"
-    virtualenv_command: "sudo /usr/bin/python3 -m venv"
-  become: true
-
 - name: Docker Install
   ansible.builtin.include_role:
     name: geerlingguy.docker

@@ -3,8 +3,7 @@
   ansible.builtin.include_tasks: preconfigure-haos.yaml
 
 - name: Get HAOS pkgs
-  vars:
-    ansible_python_interpreter: /var/venv/bin/python3
+  delegate_to: localhost
   community.general.github_release:
     user: home-assistant
     repo: "{{ item.release }}"
