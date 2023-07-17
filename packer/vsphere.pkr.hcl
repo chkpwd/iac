@@ -79,7 +79,7 @@ source "vsphere-iso" "windows" {
   vcenter_server      = var.vcenter_server
   username            = var.vcenter_username
   password            = var.vcenter_password
-  insecure_connection = true #TODO: Add ca to docker
+  insecure_connection = true
   cluster             = var.vcenter_cluster
   datacenter          = var.vcenter_datacenter
   host                = var.vcenter_host
