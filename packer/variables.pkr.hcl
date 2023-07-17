@@ -36,7 +36,9 @@ variable "vm_hardware_version" {
   default = "15"
 }
 variable "iso_checksum" {}
-variable "os_version" {}
+variable "os_version" {
+  default = ""
+}
 variable "os_iso_path" {
   default = ""
 }
