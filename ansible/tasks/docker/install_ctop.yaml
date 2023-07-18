@@ -14,7 +14,6 @@
     mode: 0644
   register: add_apt_key
   become: true
-  # Potentially use tags
 
 - name: Add ctop repository
   ansible.builtin.apt_repository:
