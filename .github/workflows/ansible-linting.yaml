@@ -1,35 +1,27 @@
----
-name: CI
-'on':
+name: Ansible Lint
+on:
   push:
     branches:
       - master
+
 jobs:
-  molecule:
+  lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        distro:
-          - debian11
-          
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set up Python3
-        uses: actions/setup-python@v4
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
           python-version: '3.x'
-        
-      - name: Install test dependencies.
-        run: pip3 install ansible molecule[docker] docker yamllint ansible-lint
 
-      - name: Run Molecule tests.
-        run: "cd ansible/roles/code-server && molecule test"
-        # with:
-        #   ansible_creds: '${{ secrets.VAULT_KEY }}'
-        #   keyvault_name: my-keyvault-name
-        env:
-          PY_COLORS: '1'
-          ANSIBLE_FORCE_COLOR: '1'
-          MOLECULE_DISTRO: ${{ matrix.distro }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r ansible/requirements.txt
+        working-directory: ${{ github.workspace }}
+
+      - name: Run Ansible Lint
+        run: ansible-lint ansible/.
