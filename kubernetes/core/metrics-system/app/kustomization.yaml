@@ -4,6 +4,3 @@ kind: Kustomization
 namespace: metrics-system
 resources:
   - helm-release.yaml
-labels:
-  - pairs:
-      kustomize.toolkit.fluxcd.io/prune: disabled
