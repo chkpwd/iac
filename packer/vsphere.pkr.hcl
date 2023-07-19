@@ -132,9 +132,9 @@ build {
     inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_password={{ .Password }} ansible_become_password={{ .Password }}"
     ansible_env_vars        = [
       "ANSIBLE_CONFIG=/home/hyoga/code/boilerplates/ansible/ansible.cfg", 
-      "ANSIBLE_SSH_ARGS='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PubkeyAuthentication=no'",
+      "ANSIBLE_HOST_KEY_CHECKING=False",
       "ANSIBLE_VERBOSITY=2"
-      ]
+    ]
   }
 
 }
