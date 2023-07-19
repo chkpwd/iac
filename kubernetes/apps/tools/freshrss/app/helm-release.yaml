@@ -33,7 +33,7 @@ spec:
 
     env:
       TZ: "America/New_York"
-      DOMAIN: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+      DOMAIN: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
 
     hostname: *app
 
