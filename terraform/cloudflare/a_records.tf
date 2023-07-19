@@ -1,4 +1,4 @@
-resource "cloudflare_record" "zone_a_record" {
+resource "cloudflare_record" "main" {
   name    = "chkpwd.com"
   proxied = true
   ttl     = 1
@@ -7,7 +7,7 @@ resource "cloudflare_record" "zone_a_record" {
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
 
-resource "cloudflare_record" "www_a_record" {
+resource "cloudflare_record" "www_main" {
   name    = "www"
   proxied = true
   ttl     = 1
