@@ -23,7 +23,7 @@ module "ct-01-aarch64" {
       ip                         = "${data.sops_file.oci-secrets.data["public_address"]}/32"
     }
   ]
-  oci_availability_domain_number = 2
+  oci_availability_domain_number = var.availability_domain
 }
 
 module "ct-01-x86" {
