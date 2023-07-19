@@ -35,7 +35,7 @@ resource "cloudflare_record" "kavita_cname" {
 }
 
 resource "cloudflare_record" "freshrss_cname" {
-  name    = "rss"
+  name    = "freshrss"
   proxied = true
   ttl     = 1
   type    = "CNAME"
