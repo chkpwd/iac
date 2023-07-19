@@ -20,15 +20,3 @@ common_env:
     TZ: America/New_York
     PUID: '{{ arr_uid }}'
     PGID: '{{ arr_gid }}'
-service_definitions:
-    - name: watchtower
-      image: containrrr/watchtower
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-      env:
-        WATCHTOWER_CLEANUP: "true"
-        WATCHTOWER_NOTIFICATION_TITLE_TAG: Horizon
-        WATCHTOWER_SCHEDULE: 0 7 */10 * *
-        WATCHTOWER_NOTIFICATION_URL: '{{ discord_webhook }}'
-        WATCHTOWER_MONITOR_ONLY: "false"
-        WATCHTOWER_NOTIFICATIONS: shoutrrr
