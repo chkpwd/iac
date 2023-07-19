@@ -112,18 +112,23 @@ module "homeassistant" {
 
 module "bloodhound" {
   source                    = "../_modules/vsphere_vm"
-  count                     = 0
+  count                     = 1
   vm_name                   = "bloodhound"
-  vm_template               = "WinSrv22-template-DE"
+  vm_template               = "WSrv22-DE-Temp"
   network_spec = {
     network_id              = "LAN"
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
     os_type                 = "windows"
-    cpu                     = 2
+    cpu                     = 4
     memory                  = 8192
     disk_size               = 48
+    additional_disks = [
+      {
+        size                = 100
+      }
+    ]
   }
 }
 
