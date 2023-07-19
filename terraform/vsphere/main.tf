@@ -2,28 +2,6 @@
 # vSphere Modules
 #===============================================================================
 
-module "horizon" {
-  source                    = "../_modules/vsphere_vm"
-  vm_name                   = "horizon"
-  vm_template               = "deb-12-template"
-  network_spec = {
-    network_id              = "LAN"
-  }
-  spec = {
-    #folder                  = data.vsphere_folder.cattles.path
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
-    os_type                 = "linux"
-    cpu                     = 2
-    memory                  = 5120
-    disk_size               = 16
-    additional_disks = [
-      {
-        size                = 25
-      }
-    ]
-  }
-}
-
 module "cockpit" {
   source                    = "../_modules/vsphere_vm"
   vm_name                   = "cockpit"
