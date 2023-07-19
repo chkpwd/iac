@@ -1,0 +1,216 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: kube-prometheus-stack
+      version: 48.1.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 5
+  upgrade:
+    remediation:
+      retries: 5
+  values:
+    nameOverride: prometheus
+
+    defaultRules:
+      create: true
+      rules:
+        alertmanager: true
+        etcd: true
+        configReloaders: true
+        general: true
+        k8s: true
+        kubeApiserverAvailability: true
+        kubeApiserverBurnrate: true
+        kubeApiserverHistogram: true
+        kubeApiserverSlos: true
+        kubelet: true
+        kubeProxy: true
+        kubePrometheusGeneral: true
+        kubePrometheusNodeRecording: true
+        kubernetesApps: true
+        kubernetesResources: true
+        kubernetesStorage: true
+        kubernetesSystem: true
+        kubeScheduler: true
+        kubeStateMetrics: true
+        network: true
+        node: true
+        nodeExporterAlerting: true
+        nodeExporterRecording: true
+        prometheus: true
+        prometheusOperator: true
+
+    alertmanager:
+      nameOverride: alertmanager
+      enabled: true
+      ingress:
+        enabled: false
+        ingressClassName: "nginx"
+        hosts:
+          - alertmanager.${LOCAL_DOMAIN}
+        tls:
+          - hosts:
+              - alertmanager.${LOCAL_DOMAIN}
+
+    grafana:
+      enabled: true
+      nameOverride: grafana
+      forceDeployDatasources: false
+      forceDeployDashboards: false
+      defaultDashboardsEnabled: true
+      defaultDashboardsTimezone: ${TZ}
+      serviceMonitor:
+        enabled: true
+      admin:
+        existingSecret: grafana-secrets
+        userKey: admin-user
+        passwordKey: admin-password
+      ingress:
+        enabled: true
+        ingressClassName: "nginx"
+        hosts:
+          - monitoring.${LOCAL_DOMAIN}
+        tls:
+          - hosts:
+              - monitoring.${LOCAL_DOMAIN}
+
+    kubeApiServer:
+      enabled: true
+
+    kubelet:
+      enabled: true
+      serviceMonitor:
+        metricRelabelings:
+          - action: replace
+            sourceLabels:
+              - node
+            targetLabel: instance
+
+    kubeControllerManager:
+      enabled: false
+      endpoints: ${CP_NODES}
+
+    coreDns:
+      enabled: true
+
+    kubeDns:
+      enabled: false
+
+    kubeEtcd:
+      enabled: false
+      endpoints: ${CP_NODES}
+      service:
+        enabled: true
+        port: 2381
+        targetPort: 2381
+
+    kubeScheduler:
+      enabled: false
+      endpoints: ${CP_NODES}
+
+    kubeProxy:
+      enabled: false
+      endpoints: []
+
+    kubeStateMetrics:
+      enabled: true
+
+    kube-state-metrics:
+      nameOverride: kube-state-metrics
+      selfMonitor:
+        enabled: true
+      prometheus:
+        monitor:
+          enabled: true
+          relabelings:
+            - action: replace
+              regex: (.*)
+              replacement: $1
+              sourceLabels:
+                - __meta_kubernetes_pod_node_name
+              targetLabel: kubernetes_node
+
+    nodeExporter:
+      enabled: true
+      serviceMonitor:
+        relabelings:
+          - action: replace
+            regex: (.*)
+            replacement: $1
+            sourceLabels:
+              - __meta_kubernetes_pod_node_name
+            targetLabel: kubernetes_node
+
+    prometheus-node-exporter:
+      nameOverride: node-exporter
+      podLabels:
+        jobLabel: node-exporter
+      extraArgs:
+        - --collector.filesystem.mount-points-exclude=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/.+)($|/)
+        - --collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|configfs|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|iso9660|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$
+      service:
+        portName: http-metrics
+      prometheus:
+        monitor:
+          enabled: true
+          relabelings:
+            - action: replace
+              regex: (.*)
+              replacement: $1
+              sourceLabels:
+                - __meta_kubernetes_pod_node_name
+              targetLabel: kubernetes_node
+      resources:
+        requests:
+          memory: 512Mi
+          cpu: 250m
+        limits:
+          memory: 2048Mi
+
+    prometheusOperator:
+      enabled: true
+      prometheusConfigReloader:
+        resources:
+          requests:
+            cpu: 200m
+            memory: 50Mi
+          limits:
+            memory: 100Mi
+
+    prometheus:
+      enabled: true
+      prometheusSpec:
+        replicas: 1
+        replicaExternalLabelName: "replica"
+        ruleSelectorNilUsesHelmValues: false
+        serviceMonitorSelectorNilUsesHelmValues: false
+        podMonitorSelectorNilUsesHelmValues: false
+        probeSelectorNilUsesHelmValues: false
+        retention: 14d
+        retentionSize: 45GB
+        enableAdminAPI: true
+        walCompression: true
+        storageSpec:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: "longhorn"
+              resources:
+                requests:
+                  storage: 10Gi
+
+    thanosRuler:
+      enabled: true
