@@ -18,10 +18,10 @@ spec:
 
   install:
     remediation:
-      retries: 5
+      retries: 3
   upgrade:
     remediation:
-      retries: 5
+      retries: 3
   values:
     nameOverride: prometheus
 
@@ -58,7 +58,7 @@ spec:
       nameOverride: alertmanager
       enabled: true
       ingress:
-        enabled: false
+        enabled: true
         ingressClassName: "nginx"
         hosts:
           - alertmanager.${LOCAL_DOMAIN}
@@ -101,7 +101,7 @@ spec:
             targetLabel: instance
 
     kubeControllerManager:
-      enabled: false
+      enabled: true
       endpoints: ${CP_NODES}
 
     coreDns:
@@ -111,7 +111,7 @@ spec:
       enabled: false
 
     kubeEtcd:
-      enabled: false
+      enabled: true
       endpoints: ${CP_NODES}
       service:
         enabled: true
