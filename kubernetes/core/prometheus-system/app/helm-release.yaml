@@ -102,7 +102,10 @@ spec:
 
     kubeControllerManager:
       enabled: true
-      endpoints: ${CP_NODES}
+      endpoints: &endpoints
+        - 172.16.16.201
+        - 172.16.16.202
+        - 172.16.16.203
 
     coreDns:
       enabled: true
@@ -112,7 +115,7 @@ spec:
 
     kubeEtcd:
       enabled: true
-      endpoints: ${CP_NODES}
+      endpoints: *endpoints
       service:
         enabled: true
         port: 2381
@@ -120,7 +123,7 @@ spec:
 
     kubeScheduler:
       enabled: false
-      endpoints: ${CP_NODES}
+      endpoints: *endpoints
 
     kubeProxy:
       enabled: false
