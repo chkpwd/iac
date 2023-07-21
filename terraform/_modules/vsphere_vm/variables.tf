@@ -53,7 +53,6 @@ variable "spec" {
     cpu       = number
     memory    = number
     disk_size = number
-    os_type   = optional(string)
     linked_clone = optional(bool)
     additional_network = optional(list(object({
       network = string

@@ -11,7 +11,6 @@ module "cockpit" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id ]
-    os_type                 = "linux"
     cpu                     = 2
     memory                  = 4096
     disk_size               = 48
@@ -34,7 +33,6 @@ module "crypto" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.dev.id ]
-    os_type                 = "linux"
     cpu                     = 4
     memory                  = 4096
     disk_size               = 16
@@ -55,7 +53,6 @@ module "mirage" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id, vsphere_tag.docker.id ]
-    os_type                 = "linux"
     cpu                     = 4
     memory                  = 8192
     disk_size               = 16
@@ -76,7 +73,6 @@ module "homeassistant" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
-    os_type                 = "linux"
     cpu                     = 2
     memory                  = 2048
     disk_size               = 16
@@ -90,7 +86,6 @@ module "homeassistant" {
 
 module "bloodhound" {
   source                    = "../_modules/vsphere_vm"
-  count                     = 1
   vm_name                   = "bloodhound"
   vm_template               = "WSrv22-DE-Temp"
   network_spec = {
@@ -98,7 +93,6 @@ module "bloodhound" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
-    os_type                 = "windows"
     cpu                     = 4
     memory                  = 8192
     disk_size               = 48
@@ -122,7 +116,6 @@ module "kube-ops" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.kubernetes.id ]
-    os_type                 = "linux"
     enable_hv               = true
     cpu                     = 4
     memory                  = 10240
@@ -137,7 +130,6 @@ module "kube-ops" {
 
 module "traefik" {
   source                    = "../_modules/vsphere_vm"
-  count                     = 1
   vm_name                   = "node-01"
   vm_template               = "deb-12-template"
   network_spec = {
@@ -145,9 +137,23 @@ module "traefik" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
-    os_type                 = "linux"
     cpu                     = 2
     memory                  = 2048
     disk_size               = 60
+  }
+}
+
+module "casaos" {
+  source                    = "../_modules/vsphere_vm"
+  vm_name                   = "casa-os"
+  vm_template               = "deb-12-template"
+  network_spec = {
+    network_id              = "Lab"
+  }
+  spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
+    cpu                     = 2
+    memory                  = 2048
+    disk_size               = 16
   }
 }
