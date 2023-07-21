@@ -72,7 +72,7 @@ spec:
           gethomepage.dev/widget.type: "zipline"
           gethomepage.dev/widget.url: "http://zipline.tools.svc.cluster.local"
         hosts:
-          - host: *host
+          - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
         tls:
