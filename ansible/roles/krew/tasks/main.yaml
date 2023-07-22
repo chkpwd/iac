@@ -1,0 +1,22 @@
+- name: Get Krew pkgs
+  delegate_to: localhost
+  vars:
+    ansible_python_interpreter: "/home/{{ common_user }}/code/boilerplates/.venv/bin/python3"
+  community.general.github_release:
+    user: "{{ krew_repo_owner }}"
+    repo: "{{ krew_repo }}"
+    action: latest_release
+  register: krew_release
+
+- name: Download and Unarchive the 'krew' tar file
+  ansible.builtin.unarchive:
+    src: "https://github.com/{{ krew_repo_owner }}/{{ krew_repo }}/releases/download/{{ krew_release.tag }}/krew-linux_amd64.tar.gz"
+    dest: "/tmp"
+    remote_src: true
+
+- name: Install 'krew' plugins
+  command: "/tmp/krew-linux_amd64 install {{ krew_plugins }} {{ krew_extra_plugins | join(' ') }}"
+  args:
+    chdir: "/tmp"
+  register: krew_cmd_output
+  changed_when: krew_cmd_output.rc != 0
