@@ -31,7 +31,7 @@ spec:
       tag: 0.7.3
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
 
     hostname: *app
 
@@ -71,6 +71,13 @@ spec:
         server: "cockpit.${LOCAL_DOMAIN}"
         path: /mnt/data/reading
         mountPath: /data
+
+    podSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      fsGroupChangePolicy: "OnRootMismatch"
+      supplementalGroups: [568]
 
     resources:
       requests:
