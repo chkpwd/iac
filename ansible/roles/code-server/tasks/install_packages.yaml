@@ -27,6 +27,10 @@
         #- powershell
   become: true
 
+- name: Install GO
+  ansible.builtin.include_role:
+    name: go
+
 - name: Grab latest tar file from flux Github
   ansible.builtin.uri:
     url: https://api.github.com/repos/fluxcd/flux2/releases/latest
@@ -157,29 +161,6 @@
     mode: 0755
     remote_src: true
 
-- name: Install Go binary
-  ansible.builtin.get_url:
-    url: https://go.dev/dl/go1.20.4.linux-amd64.tar.gz
-    dest: /tmp/go.tar.gz
-    owner: "{{ common_user }}"
-    group: "{{ common_user }}"
-    mode: 0755
-
-- name: Unarchive the 'go' tar file
-  ansible.builtin.unarchive:
-    src: /tmp/go.tar.gz
-    dest: "/tmp"
-    remote_src: true
-
-- name: Move GO binary to "/usr/local/bin/"
-  ansible.builtin.copy:
-    src: "/tmp/go/bin/go"
-    dest: "/usr/local/bin"
-    owner: "{{ common_user }}"
-    group: "{{ common_user }}"
-    mode: 0755
-    remote_src: true
-
 - name: Grab latest 'helm' release from github
   ansible.builtin.uri:
     url: https://api.github.com/repos/helm/helm/releases/latest
@@ -242,32 +223,10 @@
     mode: 0755
     remote_src: true
 
-- name: Grab latest 'krew' release from github
-  ansible.builtin.uri:
-    url: https://api.github.com/repos/kubernetes-sigs/krew/releases/latest
-    return_content: true
-  register: json_reponse
-
-- name: "Downloading 'krew' {{ json_reponse.json.tag_name }}"
-  loop: "{{ json_reponse.json.assets }}"
-  when: "'linux_amd64.tar.gz' in item.name"
-  ansible.builtin.get_url:
-    url: "{{ item.browser_download_url }}"
-    dest: /tmp/krew_amd64.tar.gz
-    owner: "{{ common_user }}"
-    group: "{{ common_user }}"
-    mode: 0644
-  no_log: true
-
-- name: Unarchive the 'krew' tar file
-  ansible.builtin.unarchive:
-    src: /tmp/krew_amd64.tar.gz
-    dest: "/tmp"
-    remote_src: true
-
-- name: Install 'krew'
-  command: "/tmp/krew-linux_amd64 install krew"
-  args:
-    chdir: "/tmp"
-  register: krew_cmd_output
-  changed_when: krew_cmd_output.rc != 0
+- name: Install Krew
+  vars:
+    krew_extra_plugins:
+      - ctx
+      - virt
+  ansible.builtin.include_role:
+    name: krew
