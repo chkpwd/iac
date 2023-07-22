@@ -1,0 +1,10 @@
+- name: Unarchive the 'go' tar file
+  ansible.builtin.unarchive:
+    src: "{{ go_binary_url }}"
+    dest: "{{ go_unarchive_path }}"
+    remote_src: true
+
+- name: Verify 'go' was installed correctly
+  ansible.builtin.stat:
+    path: "{{ go_installation_path }}"
+  register: path
