@@ -31,7 +31,7 @@ spec:
       tag: 4.6.4.7568
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
       RADARR__INSTANCE_NAME: Radarr
       RADARR__PORT: &port 7878
       RADARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"

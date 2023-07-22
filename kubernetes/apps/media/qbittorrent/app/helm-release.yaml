@@ -31,7 +31,7 @@ spec:
       tag: 4.5.4
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
       QBITTORRENT__PORT: &port 80
 
     hostname: *app

@@ -31,7 +31,7 @@ spec:
       tag: 4.0.2
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
       SABNZBD__API_KEY: ${API_KEY_SABNZBD}
       SABNZBD__NZB_KEY: ${API_KEY_NZBGEEK}
       SABNZBD__HOST_WHITELIST_ENTRIES: >-

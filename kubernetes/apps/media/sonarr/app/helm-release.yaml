@@ -31,7 +31,7 @@ spec:
       tag: 4.0.0.552
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
       SONARR__INSTANCE_NAME: Sonarr
       SONARR__PORT: &port 8989
       SONARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
@@ -54,11 +54,11 @@ spec:
         ingressClassName: "nginx"
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: "Sonarr"
-          gethomepage.dev/group: "Media Automation"
-          gethomepage.dev/icon: "sonarr"
-          gethomepage.dev/description: "TV Show automation tool."
-          gethomepage.dev/widget.type: "sonarr"
+          gethomepage.dev/name: Sonarr
+          gethomepage.dev/group: Media Automation
+          gethomepage.dev/icon: sonarr
+          gethomepage.dev/description: TV Show automation tool
+          gethomepage.dev/widget.type: sonarr
           gethomepage.dev/widget.url: "http://sonarr.media.svc.cluster.local"
           gethomepage.dev/widget.key: "${API_KEY_SONARR}"
         hosts:

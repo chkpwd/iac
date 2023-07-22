@@ -32,7 +32,7 @@ spec:
       tag: 1.21.0
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
       DOMAIN: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
 
     hostname: *app

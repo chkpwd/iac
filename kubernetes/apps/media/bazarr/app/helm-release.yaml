@@ -31,7 +31,7 @@ spec:
       tag: 1.2.2
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
       BAZARR__INSTANCE_NAME: *app
       BAZARR__PORT: &port 6767
       BAZARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"

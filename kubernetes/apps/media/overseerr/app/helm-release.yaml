@@ -32,7 +32,7 @@ spec:
       tag: 1.33.0
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
       LOG_LEVEL: info
       PORT: &port 5055
 
@@ -69,7 +69,6 @@ spec:
       runAsGroup: 568
       fsGroup: 568
       fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups: [65534]
 
     persistence:
       config:
