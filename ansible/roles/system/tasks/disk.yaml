@@ -66,7 +66,7 @@
 
 - name: Mount device by UUID
   ansible.posix.mount:
-    path: /mnt/data
+    path: "{{ mount_dir }}"
     src: UUID={{ ansible_facts['devices']['sdb']['partitions']['sdb1']['uuid'] }}
     fstype: ext4
     opts: defaults
@@ -76,7 +76,7 @@
 
 - name: Set permissions on mount
   ansible.builtin.file:
-    path: /mnt/data
+    path: "{{ mount_dir }}"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
     mode: '755'
