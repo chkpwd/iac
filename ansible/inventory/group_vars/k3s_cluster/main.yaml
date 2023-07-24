@@ -17,6 +17,5 @@ k3s_server_pod_manifests_templates:
 
 k3s_registration_address: "{{ kube_vip_address }}"
 
-systemd_dir: /etc/systemd/system
-
-ansible_user: 'hyoga'
+common_user: 'hyoga'
+mount_dir: /var/lib/longhorn
