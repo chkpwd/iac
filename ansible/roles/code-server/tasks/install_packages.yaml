@@ -226,6 +226,7 @@
 - name: Install Krew
   vars:
     krew_extra_plugins:
+      - get-all
       - ctx
       - virt
   ansible.builtin.include_role:
