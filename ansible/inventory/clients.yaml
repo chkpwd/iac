@@ -23,7 +23,7 @@ all:
       children:
         docker_hosts:
         media_server:
-        k3s:
+        k3s_cluster:
       hosts:
         cockpit:
 
@@ -57,10 +57,10 @@ all:
     
     k3s_cluster:
       children:
-        master:
+        k3s_master:
         #workers:
 
-    master:
+    k3s_master:
       hosts:
         kubes-cp-1:
           ansible_host: 172.16.16.201
