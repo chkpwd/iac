@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-settings
+  namespace: flux-system
+data:
+  LOCAL_DOMAIN: local.chkpwd.com
+  EXTERNAL_DOMAIN: chkpwd.com
+  KUBE_VIP_ADDRESS: 172.16.16.200
+  TZ: "America/New_York"
+  CP_NODES: "172.16.16.201,172.16.16.202,172.16.16.203"
