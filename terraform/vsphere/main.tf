@@ -143,17 +143,18 @@ module "traefik" {
   }
 }
 
-module "casaos" {
+module "testing" {
   source                    = "../_modules/vsphere_vm"
-  vm_name                   = "casa-os"
+  count			    = 2
+  vm_name                   = "testing-vm${count.index + 1}"
   vm_template               = "deb-12-template"
   network_spec = {
     network_id              = "Lab"
   }
   spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
-    cpu                     = 2
-    memory                  = 2048
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id ]
+    cpu                     = 1
+    memory                  = 512
     disk_size               = 16
   }
 }
