@@ -48,14 +48,6 @@
     boot: true
     state: mounted
 
-- name: Set permissions on mount
-  ansible.builtin.file:
-    path: "{{ mount_dir }}"
-    owner: "{{ common_user }}"
-    group: "{{ common_user }}"
-    mode: '755'
-    state: directory
-
 - name: Include | logrotate
   ansible.builtin.include_role:
     name: arillso.logrotate

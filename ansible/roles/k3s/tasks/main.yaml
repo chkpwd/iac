@@ -57,8 +57,9 @@
         group: "{{ common_user }}"
         mode: "0600"
 
-- name: Bootstrap Flux Namespace
+- name: Create Flux Namespace
   delegate_to: localhost
+  run_once: true
   kubernetes.core.k8s:
     name: "{{ flux_namespace }}"
     api_version: v1
@@ -69,8 +70,20 @@
 
 - name: Create SOPs secret
   delegate_to: localhost
+  run_once: true
   kubernetes.core.k8s:
     state: present
     template: templates/age.sops.yaml.j2 
+    kubeconfig: "/home/{{ common_user }}/.kube/config"
   become: false
   retries: 3
+
+- name: Bootstrap flux
+  delegate_to: localhost
+  run_once: true
+  command: kubectl apply --server-side --kustomize {{ role_path }}/files/bootstrap_flux
+
+- name: Apply flux config
+  delegate_to: localhost
+  run_once: true
+  command: kubectl apply --server-side --kustomize {{ role_path }}/files/apply_flux
