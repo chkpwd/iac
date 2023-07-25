@@ -29,24 +29,34 @@ spec:
       host: longhorn.${LOCAL_DOMAIN}
       tls: true
       annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-production
+        gethomepage.dev/enabled: "true"
+        gethomepage.dev/name: Longhorn
+        gethomepage.dev/group: Storage
+        gethomepage.dev/icon: longhorn.png
+        gethomepage.dev/description: Storage Manager
+        gethomepage.dev/widget.type: longhorn
+        gethomepage.dev/widget.url: "http://longhorn.longhorn-system.svc.cluster.local"
 
     persistence:
       defaultClass: true
-      defaultClassReplicaCount: 2
+      defaultClassReplicaCount: 3
       reclaimPolicy: Retain
       recurringJobSelector:
         enable: false
 
+    monitoring:
+      enabled: true
+      createPrometheusRules: true
+
     defaultSettings:
-      backupstorePollInterval: 300
+      defaultReplicaCount: 3
       backupTarget: nfs://cockpit.${LOCAL_DOMAIN}:/mnt/data/backup/longhorn
-      createDefaultDiskLabeledNodes: true
+      backupstorePollInterval: 60
+      orphanAutoDeletion: true
+      concurrentAutomaticEngineUpgradePerNodeLimit: 3
       defaultDataLocality: best-effort
-      defaultReplicaCount: 2
       defaultLonghornStaticStorageClass: longhorn
       storageOverProvisioningPercentage: 100
       storageMinimalAvailablePercentage: 10
       nodeDownPodDeletionPolicy: delete-both-statefulset-and-deployment-pod
       restoreVolumeRecurringJobs: true
-      concurrentAutomaticEngineUpgradePerNodeLimit: 1
