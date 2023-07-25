@@ -32,11 +32,11 @@ spec:
     provider: sops
     secretRef:
       name: age-secret
-  postBuild:
-    substituteFrom:
-      - kind: ConfigMap
-        name: global-vars
-        optional: false
-      - kind: Secret
-        name: sops-secrets
-        optional: false
+  # postBuild:
+  #   substituteFrom:
+  #     - kind: ConfigMap
+  #       name: global-vars
+  #       optional: false
+  #     - kind: Secret
+  #       name: sops-secrets
+  #       optional: false
