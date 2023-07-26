@@ -1,0 +1,20 @@
+plugin: vmware_vm_inventory
+strict: False
+hostname: "ronin.local.chkpwd.com"
+username: "administrator@vsphere.local.chkpwd.com"
+validate_certs: False
+with_tags: True
+hostnames:
+  - 'config.name+"."+guest.ipStack.0.dnsConfig.domainName'
+properties:
+  - "config.name"
+  - "config.guestId"
+  - "guest.ipAddress"
+  - "summary.runtime.powerState"
+  - "guest.ipStack"
+keyed_groups:
+  - key: tags
+    separator: ""
+filters:
+  - "'guest_machines' in tag_category"
+with_nested_properties: true
