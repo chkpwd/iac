@@ -40,11 +40,6 @@ variable "vm_name" {
   description = "The name of the vSphere virtual machines and the hostname of the machine"
 }
 
-variable "folder_id" {
-  type    = string
-  default = ""
-}
-
 variable "spec" {
   type = object({
     folder    = optional(string)

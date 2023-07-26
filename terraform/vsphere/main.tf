@@ -11,6 +11,7 @@ module "cockpit" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id ]
+    folder                  = vsphere_folder.media.path
     cpu                     = 2
     memory                  = 4096
     disk_size               = 48
@@ -33,6 +34,7 @@ module "crypto" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.dev.id ]
+    folder                  = vsphere_folder.dev.path
     cpu                     = 4
     memory                  = 4096
     disk_size               = 16
@@ -53,6 +55,7 @@ module "mirage" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id, vsphere_tag.docker.id ]
+    folder                  = vsphere_folder.media.path
     cpu                     = 4
     memory                  = 8192
     disk_size               = 16
@@ -73,6 +76,7 @@ module "homeassistant" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
+    folder                  = vsphere_folder.personal_linux.path
     cpu                     = 2
     memory                  = 2048
     disk_size               = 16
@@ -93,6 +97,7 @@ module "bloodhound" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
+    folder                  = vsphere_folder.gaming_windows.path
     cpu                     = 4
     memory                  = 8192
     disk_size               = 48
@@ -116,6 +121,7 @@ module "kube-ops" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.kubernetes.id ]
+    folder                  = vsphere_folder.kubernetes.path
     enable_hv               = true
     cpu                     = 4
     memory                  = 10240
@@ -137,24 +143,9 @@ module "traefik" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
+    folder                  = vsphere_folder.dev.path
     cpu                     = 2
     memory                  = 2048
     disk_size               = 60
-  }
-}
-
-module "testing" {
-  source                    = "../_modules/vsphere_vm"
-  count			    = 2
-  vm_name                   = "testing-vm${count.index + 1}"
-  vm_template               = "deb-12-template"
-  network_spec = {
-    network_id              = "Lab"
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id ]
-    cpu                     = 1
-    memory                  = 512
-    disk_size               = 16
   }
 }

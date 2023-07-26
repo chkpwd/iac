@@ -4,7 +4,7 @@
 
 resource "vsphere_virtual_machine" "main" {
   tags   = var.spec.tags
-  #folder = folder.value.path
+  folder = var.spec.folder
 
   name             = var.vm_name
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
