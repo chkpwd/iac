@@ -1,0 +1,36 @@
+---
+- name: Configure SWAG instance
+  hosts: cloud
+  become: true
+
+  tasks:
+    - name: Create swag directories
+      delegate_to: ct-01-x86
+      ansible.builtin.file: # noqa risky-file-permissions
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - "{{ configuration_path }}/swag/dns-conf"
+        - "{{ configuration_path }}/swag/nginx/site-confs"
+
+    - name: Template NGINX config
+      delegate_to: ct-01-x86
+      ansible.builtin.template:
+        src: ../../files/nginx.conf.j2
+        dest: "{{ configuration_path }}/swag/nginx/site-confs/default.conf"
+        mode: '664'
+
+    - name: Copy Cloudflare config
+      delegate_to: ct-01-x86
+      ansible.builtin.copy:
+        content: |
+          dns_cloudflare_api_token = "{{ CF_API_TOKEN }}"
+        dest: "{{ configuration_path }}/swag/dns-conf/cloudflare.ini"
+        mode: '400'
+
+    - name: Configure CouchDB
+      delegate_to: ct-02-x86
+      ansible.builtin.copy:
+        src: ../../files/local.ini
+        dest: "{{ configuration_path }}/couchdb/local.ini"
+        mode: '644'

@@ -1,0 +1,10 @@
+sites:
+  - url: couchdb.{{ remote_domain }}
+    name: ct-02-x86.{{ oci_dns_domain }}
+    port: 5984
+  - url: uptime.{{ remote_domain }}
+    name: ct-01-x86.{{ oci_dns_domain }}
+    port: 3001
+
+remote_domain: remote.chkpwd.com
+oci_dns_domain: remote.chkpwd.oraclevcn.com
