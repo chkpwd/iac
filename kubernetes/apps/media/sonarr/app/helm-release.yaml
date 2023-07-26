@@ -26,6 +26,10 @@ spec:
   values:
     global:
       nameOverride: *app
+
+    controller:
+        type: statefulset
+
     image:
       repository: ghcr.io/onedr0p/sonarr-develop
       tag: 4.0.0.552
@@ -70,23 +74,26 @@ spec:
           - hosts:
               - *host
 
+    podSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      fsGroupChangePolicy: "OnRootMismatch"
+
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
+
     persistence:
-      config:
-        enabled: true
-        existingClaim: sonarr-config
       media:
         enabled: true
         type: nfs
         server: "cockpit.${LOCAL_DOMAIN}"
         path: /mnt/data/
         mountPath: /data
-
-    podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-      fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups: [568]
 
     resources:
       requests:
