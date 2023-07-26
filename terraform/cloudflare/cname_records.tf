@@ -1,3 +1,21 @@
+resource "cloudflare_record" "uptime-kuma" {
+  name    = "uptime"
+  proxied = true
+  ttl     = 1
+  type    = "CNAME"
+  value   = "remote.chkpwd.com"
+  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
+}
+
+resource "cloudflare_record" "couchdb" {
+  name    = "couchdb"
+  proxied = true
+  ttl     = 1
+  type    = "CNAME"
+  value   = "remote.chkpwd.com"
+  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
+}
+
 resource "cloudflare_record" "zipline" {
   name    = "zipline"
   proxied = true
