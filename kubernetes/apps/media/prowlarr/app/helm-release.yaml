@@ -27,6 +27,9 @@ spec:
     global:
       nameOverride: *app
 
+    controller:
+        type: statefulset
+
     image:
       repository: ghcr.io/onedr0p/prowlarr-nightly
       tag: 1.7.1.3656
@@ -71,17 +74,18 @@ spec:
           - hosts:
               - *host
 
-    persistence:
-      config:
-        enabled: true
-        existingClaim: prowlarr-config
-
     podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
+      runAsUser: &context 568
+      runAsGroup: *context
+      fsGroup: *context
       fsGroupChangePolicy: "OnRootMismatch"
 
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
 
     resources:
       requests:
