@@ -5,29 +5,12 @@ metadata:
   name: media-kavita
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: media-kavita-config
   path: ./kubernetes/apps/media/kavita/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
   wait: true
-  interval: 30m
-  retryInterval: 1m
-  timeout: 5m
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: media-kavita-config
-  namespace: flux-system
-spec:
-  path: ./kubernetes/apps/media/kavita/config
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: chkpwd-ops
   interval: 30m
   retryInterval: 1m
   timeout: 5m

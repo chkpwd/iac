@@ -26,6 +26,10 @@ spec:
   values:
     global:
       nameOverride: *app
+
+    controller:
+        type: statefulset
+    
     image:
       repository: kizaing/kavita
       tag: 0.7.3
@@ -47,10 +51,11 @@ spec:
         ingressClassName: "nginx"
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: "Kavita"
-          gethomepage.dev/group: "Media Automation"
-          gethomepage.dev/icon: "https://wiki.kavitareader.com/user/pages/01.home/kavita-logo3.png"
-          gethomepage.dev/description: "Cross platform reading server"
+          gethomepage.dev/name: Kavita
+          gethomepage.dev/group: Media Automation
+          gethomepage.dev/icon: kavita.png
+          gethomepage.dev/description: Cross platform reading server
+          gethomepage.dev/widget.type: kavita
           gethomepage.dev/widget.url: "http://kavita.media.svc.cluster.local"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
@@ -61,23 +66,26 @@ spec:
           - hosts:
               - *host
 
+    podSecurityContext:
+      runAsUser: &context 1000
+      runAsGroup: *context
+      fsGroup: *context
+      fsGroupChangePolicy: "OnRootMismatch"
+
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /kavita/config 
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
+
     persistence:
-      config:
-        enabled: true
-        existingClaim: kavita-config
       media:
         enabled: true
         type: nfs
         server: "cockpit.${LOCAL_DOMAIN}"
         path: /mnt/data/reading
         mountPath: /data
-
-    podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-      fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups: [568]
 
     resources:
       requests:
