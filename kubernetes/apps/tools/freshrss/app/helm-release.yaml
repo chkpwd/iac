@@ -27,6 +27,9 @@ spec:
     global:
       nameOverride: *app
 
+    controller:
+        type: statefulset
+
     image:
       repository: freshrss/freshrss
       tag: 1.21.0
@@ -65,11 +68,18 @@ spec:
           - hosts:
               - *host
 
-    persistence:
-      config:
-        enabled: true
+    podSecurityContext:
+      runAsUser: &context 1000
+      runAsGroup: *context
+      fsGroup: *context
+      fsGroupChangePolicy: "OnRootMismatch"
+
+    volumeClaimTemplates:
+      - name: config
         mountPath: /var/www/FreshRSS/data
-        existingClaim: freshrss-config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
 
     resources:
       requests:
