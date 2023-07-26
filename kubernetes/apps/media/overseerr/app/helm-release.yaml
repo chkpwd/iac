@@ -27,6 +27,9 @@ spec:
     global:
       nameOverride: *app
 
+    controller:
+        type: statefulset
+
     image:
       repository: ghcr.io/sct/overseerr
       tag: 1.33.0
@@ -65,16 +68,25 @@ spec:
               - *host
 
     podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
+      runAsUser: &context 1000
+      runAsGroup: *context
+      fsGroup: *context
       fsGroupChangePolicy: "OnRootMismatch"
 
-    persistence:
-      config:
-        enabled: true
-        existingClaim: overseerr-config
+    volumeClaimTemplates:
+      - name: config
         mountPath: /app/config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
+
+    persistence:
+      media:
+        enabled: true
+        type: nfs
+        server: "cockpit.${LOCAL_DOMAIN}"
+        path: /mnt/data/
+        mountPath: /data
 
     resources:
       requests:
