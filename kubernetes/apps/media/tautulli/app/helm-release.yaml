@@ -27,6 +27,9 @@ spec:
     global:
       nameOverride: *app
 
+    controller:
+        type: statefulset
+
     image:
       repository: ghcr.io/onedr0p/tautulli
       tag: 2.12.4
@@ -50,11 +53,11 @@ spec:
         ingressClassName: "nginx"
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: "Tautulli"
-          gethomepage.dev/group: "Media Automation"
-          gethomepage.dev/icon: "tautulli"
-          gethomepage.dev/description: "Media and activity statistics monitoring tool"
-          gethomepage.dev/widget.type: "tautulli"
+          gethomepage.dev/name: Tautulli
+          gethomepage.dev/group: Media Automation
+          gethomepage.dev/icon: tautulli.png
+          gethomepage.dev/description: Media and activity statistics monitoring tool
+          gethomepage.dev/widget.type: tautulli
           gethomepage.dev/widget.url: "http://tautulli.media.svc.cluster.local"
           gethomepage.dev/widget.key: "${API_KEY_TAUTULLI}"
         hosts:
@@ -65,16 +68,18 @@ spec:
           - hosts:
               - *host
 
-    persistence:
-      config:
-        enabled: true
-        existingClaim: tautulli-config
-
     podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
+      runAsUser: &context 568
+      runAsGroup: *context
+      fsGroup: *context
       fsGroupChangePolicy: "OnRootMismatch"
+
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
 
     resources:
       requests:
