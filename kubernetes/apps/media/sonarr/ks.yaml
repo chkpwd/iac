@@ -5,29 +5,12 @@ metadata:
   name: media-sonarr
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: media-sonarr-config
   path: ./kubernetes/apps/media/sonarr/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
   wait: true
-  interval: 30m
-  retryInterval: 1m
-  timeout: 5m
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: media-sonarr-config
-  namespace: flux-system
-spec:
-  path: ./kubernetes/apps/media/sonarr/config
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: chkpwd-ops
   interval: 30m
   retryInterval: 1m
   timeout: 5m

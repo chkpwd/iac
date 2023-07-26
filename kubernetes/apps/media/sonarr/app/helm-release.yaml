@@ -60,7 +60,7 @@ spec:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/name: Sonarr
           gethomepage.dev/group: Media Automation
-          gethomepage.dev/icon: sonarr
+          gethomepage.dev/icon: sonarr.png
           gethomepage.dev/description: TV Show automation tool
           gethomepage.dev/widget.type: sonarr
           gethomepage.dev/widget.url: "http://sonarr.media.svc.cluster.local"
@@ -75,9 +75,9 @@ spec:
               - *host
 
     podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
+      runAsUser: &context 1000
+      runAsGroup: *context
+      fsGroup: *context
       fsGroupChangePolicy: "OnRootMismatch"
 
     volumeClaimTemplates:
