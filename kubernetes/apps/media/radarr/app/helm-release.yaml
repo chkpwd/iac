@@ -26,6 +26,10 @@ spec:
   values:
     global:
       nameOverride: *app
+
+    controller:
+        type: statefulset
+
     image:
       repository: ghcr.io/onedr0p/radarr-develop
       tag: 4.6.4.7568
@@ -54,11 +58,11 @@ spec:
         ingressClassName: "nginx"
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: "Radarr"
-          gethomepage.dev/group: "Media Automation"
-          gethomepage.dev/icon: "radarr"
-          gethomepage.dev/description: "Movie automation tool."
-          gethomepage.dev/widget.type: "radarr"
+          gethomepage.dev/name: Radarr
+          gethomepage.dev/group: Media Automation
+          gethomepage.dev/icon: radarr
+          gethomepage.dev/description: Movie automation tool
+          gethomepage.dev/widget.type: radarr
           gethomepage.dev/widget.url: "http://radarr.media.svc.cluster.local"
           gethomepage.dev/widget.key: "${API_KEY_RADARR}"
         hosts:
@@ -69,23 +73,26 @@ spec:
           - hosts:
               - *host
 
+    podSecurityContext:
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      fsGroupChangePolicy: "OnRootMismatch"
+
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
+
     persistence:
-      config:
-        enabled: true
-        existingClaim: radarr-config
       media:
         enabled: true
         type: nfs
         server: "cockpit.${LOCAL_DOMAIN}"
         path: /mnt/data/
         mountPath: /data
-
-    podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-      fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups: [568]
 
     resources:
       requests:
