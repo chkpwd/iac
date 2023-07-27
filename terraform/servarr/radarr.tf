@@ -2,7 +2,7 @@ resource "radarr_download_client_sabnzbd" "sabnzbd" {
   enable            = true
   priority          = 1
   name              = "sabnzbd"
-  host              = var.media_host_ip
+  host              = "sabnzbd.${var.media_domain}"
   url_base          = "/"
   port              = var.ports["sabnzbd"]
   movie_category    = "movies"
@@ -15,7 +15,7 @@ resource "radarr_download_client_qbittorrent" "qbittorrent" {
   enable         = true
   priority       = 1
   name           = "qbittorrent"
-  host           = var.media_host_ip
+  host           = "qbittorrent.${var.media_domain}"
   url_base       = "/"
   movie_category = "radarr"
   port           = var.ports["qbittorrent"]
