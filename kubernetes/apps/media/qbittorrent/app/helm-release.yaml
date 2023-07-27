@@ -61,7 +61,8 @@ spec:
           gethomepage.dev/description: BitTorrent client written in native C++
           gethomepage.dev/widget.type: qbittorrent
           gethomepage.dev/widget.url: "http://qbittorrent.media.svc.cluster.local"
-          gethomepage.dev/widget.key: "${API_KEY_QBITTORRENT}"
+          gethomepage.dev/widget.username: "admin"
+          gethomepage.dev/widget.password: "${APP_PWD_QBITTORRENT}"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
