@@ -1,0 +1,10 @@
+---
+- name: Set up OCI Instances
+  ansible.builtin.import_playbook: setup_instances.yaml
+    
+- name: Preconfigure services
+  ansible.builtin.import_playbook: configure_services.yaml
+
+- hosts: cloud
+  roles:
+    - name: compose
