@@ -23,7 +23,7 @@ spec:
     remediation:
       retries: 3
   values:
-    nameOverride: prometheus
+    fullnameOverride: prometheus
 
     defaultRules:
       create: true
@@ -55,7 +55,7 @@ spec:
         prometheusOperator: true
 
     alertmanager:
-      nameOverride: alertmanager
+      fullnameOverride: alertmanager
       enabled: true
       ingress:
         enabled: true
@@ -68,7 +68,7 @@ spec:
 
     grafana:
       enabled: true
-      nameOverride: grafana
+      fullnameOverride: grafana
       forceDeployDatasources: false
       forceDeployDashboards: false
       defaultDashboardsEnabled: true
@@ -133,7 +133,7 @@ spec:
       enabled: true
 
     kube-state-metrics:
-      nameOverride: kube-state-metrics
+      fullnameOverride: kube-state-metrics
       selfMonitor:
         enabled: true
       prometheus:
@@ -159,7 +159,7 @@ spec:
             targetLabel: kubernetes_node
 
     prometheus-node-exporter:
-      nameOverride: node-exporter
+      fullnameOverride: node-exporter
       podLabels:
         jobLabel: node-exporter
       extraArgs:
