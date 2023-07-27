@@ -28,9 +28,17 @@
         dest: "{{ configuration_path }}/swag/dns-conf/cloudflare.ini"
         mode: '400'
 
+    - name: Create couchdb directories
+      delegate_to: ct-02-x86
+      ansible.builtin.file: # noqa risky-file-permissions
+        path: "{{ configuration_path }}/couchdb"
+        state: directory
+
     - name: Configure CouchDB
       delegate_to: ct-02-x86
       ansible.builtin.copy:
         src: ../../files/local.ini
         dest: "{{ configuration_path }}/couchdb/local.ini"
+        owner: "{{ common_user }}"
+        group: "{{ common_user }}"
         mode: '644'
