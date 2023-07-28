@@ -1,13 +1,7 @@
 media_path: /home/{{ ansible_user }}/media
 container_path: /data
-opts_options: rw,sync,hard
-docker_network:
-    - media
 discord_webhook: "{{ DISCORD_TOKEN }}"
 claim_token: "{{ PLEX_TOKEN }}"
-cname_records:
-    - requests
-    - wizarr
 
 common_env: &common_env
     TZ: 'America/New_York'
@@ -15,84 +9,6 @@ common_env: &common_env
     PGID: '1000'
 
 service_definitions:
-    - name: buildarr
-      image: callum027/buildarr:latest
-      volumes:
-        - '{{ configuration_path }}/buildarr:/config'
-      env: '{{ common_env }}'
-      networks:
-        - name: media
-      state: absent
-    - name: overseerr
-      image: '{{ hotio_image }}/overseerr'
-      ports:
-        - 5055:5055
-      env: '{{ common_env }}'
-      volumes:
-        - '{{ configuration_path }}/overseerr:/config'
-      networks:
-        - name: media
-      state: stopped
-    - name: sonarr
-      image: '{{ hotio_image }}/sonarr:v4'
-      ports:
-        - 8989:8989
-      # * Check for docs.theme-park.dev integration to v4
-      env: '{{ common_env }}'
-      volumes:
-        - '{{ configuration_path }}/sonarr:/config'
-        - '{{ media_path }}:{{ container_path }}'
-      networks:
-        - name: media
-      state: stopped
-    - name: radarr
-      image: '{{ hotio_image }}/radarr:latest'
-      ports:
-        - 7878:7878
-      env: '{{ common_env }}'
-      volumes:
-        - '{{ configuration_path }}/radarr:/config'
-        - '{{ media_path }}:{{ container_path }}'
-      networks:
-        - name: media
-      state: stopped
-    - name: qbittorrent
-      image: '{{ hotio_image }}/qbittorrent'
-      ports:
-        - 6881:6881
-        - 6881:6881/udp
-        - 8280:8080
-      env: '{{ common_env }}'
-      volumes:
-        - '{{ configuration_path }}/qbittorrent:/config'
-        # yamllint disable-line rule:line-length
-        - '{{ media_path }}/downloads/torrents:{{ container_path }}/downloads/torrents'
-      networks:
-        - name: media
-      state: stopped
-    - name: sabnzbd
-      image: '{{ hotio_image }}/sabnzbd'
-      ports:
-        - 8180:8080
-        - 9090:9090
-      env: '{{ common_env }}'
-      volumes:
-        - '{{ configuration_path }}/sabnzbd:/config'
-        - '{{ media_path }}/downloads/nzb:{{ container_path }}/downloads/nzb'
-      networks:
-        - name: media
-      state: stopped
-    - name: tautulli
-      image: '{{ hotio_image }}/tautulli'
-      ports:
-        - 8181:8181
-      env: '{{ common_env }}'
-      volumes:
-        - '{{ configuration_path }}/tautulli:/config'
-        - '{{ configuration_path }}/tautulli/logs:/logs:ro'
-      networks:
-        - name: media
-      state: stopped
     - name: plex
       image: '{{ hotio_image }}/plex:latest'
       ports:
@@ -108,56 +24,7 @@ service_definitions:
         - '{{ configuration_path }}/plex:/config'
         - '{{ media_path }}:{{ container_path }}/media'
         - '/tmp/plex:/transcode'
-    - name: bazarr
-      image: '{{ hotio_image }}/bazarr'
-      ports:
-        - 6767:6767
-      env:
-        <<: *common_env
-        UMASK: "002"
-      volumes:
-        - '{{ configuration_path }}/bazarr:/config'
-        - '{{ media_path }}:{{ container_path }}'
-      networks:
-        - name: media
-      state: stopped
-    - name: prowlarr
-      image: '{{ hotio_image }}/prowlarr'
-      ports:
-        - 9696:9696
-      env:
-        <<: *common_env
-        UMASK: "002"
-      volumes:
-        - '{{ configuration_path }}/prowlarr:/config'
-      networks:
-        - name: media
-      state: stopped
-    - name: recyclarr
-      image: ghcr.io/recyclarr/recyclarr
-      init: true
-      env:
-        <<: *common_env
-        CRON_SCHEDULE: 5 4 * * sun
-        TINI_SUBREAPER: "1"
-      volumes:
-        - "{{ configuration_path }}/recyclarr/recyclarr.yml:/config/recyclarr.yml"
-      networks:
-        - name: media
-    - name: wizarr
-      image: ghcr.io/wizarrrr/wizarr
-      ports:
-        - 5690:5690
-      volumes:
-        - '{{ configuration_path }}/wizarr:/data/database'
-      env:
-        <<: *common_env
-        APP_URL: https://wizarr.chkpwd.com
-        # * Set to true ONLY if you are using another auth provider (Authelia, Authentik, etc)
-        DISABLE_BUILTIN_AUTH: "false"
-      networks:
-        - name: media
-      state: stopped
+
     - name: watchtower
       image: containrrr/watchtower
       volumes:
