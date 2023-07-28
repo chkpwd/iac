@@ -128,7 +128,7 @@ module "kube-ops" {
     disk_size               = 16
     additional_disks = [
       {
-        size                = 25
+        size                = 75
       }
     ]
   }
