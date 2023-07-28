@@ -10,11 +10,12 @@ spec:
     spec:
       chart: ingress-nginx
       version: 4.7.1
+      interval: 30m
       sourceRef:
         kind: HelmRepository
         name: ingress-nginx
         namespace: flux-system
-      interval: 15m
+
   values:
     controller:
       replicaCount: 1
@@ -24,6 +25,7 @@ spec:
           maxSurge: 1
       extraArgs:
         default-ssl-certificate: cert-manager/chkpwd-cert # * The tls secret name for every CR. This will allow every ingress resource to use the default.
+
       service:
         enabled: true
         type: LoadBalancer
@@ -33,6 +35,7 @@ spec:
         enabled: true # * If not set, it will report back the status and what IP address
       ingressClassResource:
         default: true
+
       config:
         client-header-timeout: 120
         client-body-buffer-size: "100M"
