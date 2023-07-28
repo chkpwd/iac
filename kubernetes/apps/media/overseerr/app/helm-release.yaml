@@ -80,14 +80,6 @@ spec:
         size: 1Gi
         storageClass: longhorn
 
-    persistence:
-      media:
-        enabled: true
-        type: nfs
-        server: "cockpit.${LOCAL_DOMAIN}"
-        path: /mnt/data/
-        mountPath: /data
-
     resources:
       requests:
         cpu: 10m
