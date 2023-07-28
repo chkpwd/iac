@@ -2,11 +2,11 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: dnsutils
-  namespace: ${NAMESPACE}
+  name: net-utils
+  namespace: $NAMESPACE
 spec:
   containers:
-  - name: dnsutils
+  - name: net-utils
     image: registry.k8s.io/e2e-test-images/jessie-dnsutils:1.3
     command:
       - sleep
