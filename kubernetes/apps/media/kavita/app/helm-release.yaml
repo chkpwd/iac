@@ -57,6 +57,8 @@ spec:
           gethomepage.dev/description: Cross platform reading server
           gethomepage.dev/widget.type: kavita
           gethomepage.dev/widget.url: "http://kavita.media.svc.cluster.local"
+          gethomepage.dev/widget.username: chkpwd
+          gethomepage.dev/widget.password: ${APP_PWD_KAVITA}
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
