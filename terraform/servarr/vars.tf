@@ -1,7 +1,13 @@
-variable media_domain {
+variable local_domain {
   type = string
   default = "local.chkpwd.com"
   description = "Media Host IP Address"
+}
+
+variable cluster_media_domain {
+  type = string
+  default = "media.svc.cluster.local"
+  description = "Cluster Media Namespace Domain"
 }
 
 variable "ports" {
