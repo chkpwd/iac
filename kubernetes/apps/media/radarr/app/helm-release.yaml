@@ -64,6 +64,7 @@ spec:
           gethomepage.dev/widget.type: radarr
           gethomepage.dev/widget.url: "http://radarr.media.svc.cluster.local"
           gethomepage.dev/widget.key: "${API_KEY_RADARR}"
+          gethomepage.dev/widget.enableQueue: "true"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:

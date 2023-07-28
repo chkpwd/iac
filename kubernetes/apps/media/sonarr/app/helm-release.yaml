@@ -65,6 +65,7 @@ spec:
           gethomepage.dev/widget.type: sonarr
           gethomepage.dev/widget.url: "http://sonarr.media.svc.cluster.local"
           gethomepage.dev/widget.key: "${API_KEY_SONARR}"
+          gethomepage.dev/widget.enableQueue: "true"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
