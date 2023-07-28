@@ -41,8 +41,7 @@ spec:
       RADARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
       RADARR__LOG_LEVEL: info
       RADARR__API_KEY: ${API_KEY_RADARR}
-      RADARR__AUTHENTICATION_METHOD: External
-      RADARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
+      RADARR__AUTHENTICATION_METHOD: None
 
     hostname: *app
 
