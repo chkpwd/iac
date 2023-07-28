@@ -40,7 +40,7 @@ spec:
       SONARR__PORT: &port 8989
       SONARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
       SONARR__API_KEY: ${API_KEY_SONARR}
-      SONARR__AUTHENTICATION_METHOD: Forms
+      SONARR__AUTHENTICATION_METHOD: External
       SONARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
       SONARR__LOG_LEVEL: info
 

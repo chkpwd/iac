@@ -40,7 +40,7 @@ spec:
       BAZARR__PORT: &port 6767
       BAZARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
       BAZARR__API_KEY: ${API_KEY_BAZARR}
-      BAZARR__AUTHENTICATION_METHOD: Forms
+      BAZARR__AUTHENTICATION_METHOD: External
       BAZARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
       BAZARR__LOG_LEVEL: info
 

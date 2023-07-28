@@ -41,7 +41,7 @@ spec:
       PROWLARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
       PROWLARR__LOG_LEVEL: info
       PROWLARR__API_KEY: ${API_KEY_PROWLARR}
-      PROWLARR__AUTHENTICATION_METHOD: Forms
+      PROWLARR__AUTHENTICATION_METHOD: External
       PROWLARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
 
     hostname: *app
