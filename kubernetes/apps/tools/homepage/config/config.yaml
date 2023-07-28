@@ -13,7 +13,7 @@ data:
     title: Dashboard
     favicon: https://kubernetes.io/images/favicon.png
     theme: dark
-    color: sky
+    color: slate
     target: _self
     layout:
       Media Management:
@@ -42,7 +42,7 @@ data:
     - Developer:
         - Github:
             - abbr: GH
-              href: https://github.com/
+              href: https://github.com/chkpwd
 
     - Social:
         - Reddit:
@@ -55,6 +55,16 @@ data:
               href: https://youtube.com/
   services.yaml: |
     ---
+    - Infra:
+      - OPNsense:
+          href: https://opnsense.${LOCAL_DOMAIN}
+          icon: opnsense.png
+          description: Firewall and router
+          widget:
+            type: opnsense
+            url: https://192.168.1.1
+            username: ${SECRET_OPNSENSE_USERNAME}
+            password: ${SECRET_OPNSENSE_PASSWORD}
   widgets.yaml: |
     ---
     - search:
@@ -63,7 +73,7 @@ data:
         target: _blank
     - greeting:
         text_size: xl
-        text: "Heya!"
+        text: "Chk's Lab!"
     - kubernetes:
         cluster:
           show: false
@@ -77,20 +87,14 @@ data:
           memory: true
           showLabel: true
           label: Control Plane
-    - openweathermap:
-      label: Weather
-      units: metric
-      provider: openweathermap
-      apiKey: "27e8c6700ff4e29b00929ca81650419c"
-      cache: 5
+    - openmeteo:
+        label: North Miami
+        timezone: ${TZ}
+        units: Imperial
+        cache: 5
     - datetime:
       text_size: x1
       format:
         dateStyle: long
         timeStyle: short
-    # - unifi_console:
-    #   url: https://unifi.host.or.ip:port
-    #   username: user
-    #   password: pass
-    #   site: Site Name # optional
   docker.yaml: ""
