@@ -64,6 +64,7 @@ spec:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
+                pathType: Prefix
         tls:
           - hosts:
               - *host
