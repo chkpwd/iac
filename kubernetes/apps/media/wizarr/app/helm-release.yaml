@@ -53,11 +53,11 @@ spec:
         ingressClassName: "nginx"
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: wizarr
+          gethomepage.dev/name: Wizarr
           gethomepage.dev/group: Media Automation
-          gethomepage.dev/icon: "https://github.com/Wizarrrr/wizarr/blob/master/screenshots/wizard.png"
+          gethomepage.dev/icon: "https://raw.githubusercontent.com/Wizarrrr/wizarr/master/screenshots/wizard.png"
           gethomepage.dev/description: Plex Registration Tool
-          gethomepage.dev/widget.url: "http://wizarr.media.svc.cluster.local"
+          gethomepage.dev/href: "http://wizarr.local.chkpwd.com"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
