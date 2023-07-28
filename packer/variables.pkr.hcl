@@ -24,7 +24,7 @@ variable "vcenter_datastore" {
 }
 variable "vcenter_folder" {
   description = "The vcenter folder to store the template"
-  default = "Templates"
+  default = "cattle/templates"
 }
 variable "connection_username" {
   default = "Administrator"
