@@ -149,3 +149,19 @@ module "traefik" {
     disk_size               = 60
   }
 }
+
+module "casa-os" {
+  source                    = "../_modules/vsphere_vm"
+  vm_name                   = "casa-os"
+  vm_template               = "deb-12-template"
+  network_spec = {
+    network_id              = "Lab"
+  }
+  spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
+    folder                  = vsphere_folder.linux.path
+    cpu                     = 2
+    memory                  = 2048
+    disk_size               = 16
+  }
+}
