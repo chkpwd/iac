@@ -38,7 +38,7 @@ spec:
       initdb:
         scripts:
           init-zipline.sql: |
-            CREATE ROLE "zipline" WITH LOGIN PASSWORD '${ZIPLINE_POSTGRES_PASSWORD}';
+            CREATE ROLE "zipline" WITH LOGIN PASSWORD '${DB_PWD_ZIPLINE}';
             CREATE DATABASE zipline WITH OWNER 'zipline' ENCODING 'UTF8' TEMPLATE template0;
 
       resources:
