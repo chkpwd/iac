@@ -1,0 +1,86 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app miniflux
+  namespace: default
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    image:
+      repository: ghcr.io/miniflux/miniflux
+      tag: 2.0.46
+    env:
+      BASE_URL: https://miniflux.${EXTERNAL_DOMAIN}
+      CREATE_ADMIN: "1"
+      DEBUG: "1"
+      LOG_DATE_TIME: "1"
+      RUN_MIGRATIONS: "1"
+      METRICS_COLLECTOR: "1"
+      METRICS_ALLOWED_NETWORKS: "10.42.0.0/16"
+      POLLING_SCHEDULER: entry_frequency
+      POLLING_FREQUENCY: "15"
+      # OAUTH2_PROVIDER: oidc
+      # OAUTH2_CLIENT_ID: miniflux
+      # OAUTH2_USER_CREATION: "1"
+      # OAUTH2_OIDC_DISCOVERY_ENDPOINT: "https://auth.${LOCAL_DOMAIN}"
+      # OAUTH2_REDIRECT_URL: "https://miniflux.${CLUSTER_DOMAIN}/oauth2/oidc/callback"
+    envFrom:
+      - secretRef:
+          name: miniflux-secrets
+
+    service:
+      main:
+        ipFamilyPolicy: PreferDualStack
+        ports:
+          http:
+            port: 8080
+
+    serviceMonitor:
+      main:
+        enabled: true
+
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: Miniflux
+          gethomepage.dev/group: Tools
+          gethomepage.dev/icon: miniflux.png
+          gethomepage.dev/description: RSS Feed Aggregator
+          gethomepage.dev/widget.type: "miniflux"
+          gethomepage.dev/widget.url: "http://miniflux.tools.svc.cluster.local"
+        hosts:
+          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - *host
+
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100Mi
+      limits:
+        memory: 350Mi
