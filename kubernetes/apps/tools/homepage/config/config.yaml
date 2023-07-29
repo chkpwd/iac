@@ -62,9 +62,18 @@ data:
           description: Firewall and router
           widget:
             type: opnsense
-            url: https://192.168.1.1
+            url: https://opnsense.${LOCAL_DOMAIN}
             username: ${SECRET_OPNSENSE_USERNAME}
             password: ${SECRET_OPNSENSE_PASSWORD}
+      - Adguard-Home:
+          href: https://opnsense.${LOCAL_DOMAIN}:8080
+          icon: adguard.png
+          description: DNS and Blocklist Provider
+          widget:
+            type: adguard
+            url: https://opnsense.${LOCAL_DOMAIN}:8080
+            username: ${APP_USER_ADGUARD}
+            password: ${APP_PWD_ADGUARD}
   widgets.yaml: |
     ---
     - search:
