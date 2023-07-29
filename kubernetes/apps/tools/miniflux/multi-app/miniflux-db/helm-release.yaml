@@ -36,7 +36,7 @@ spec:
         scripts:
           init-miniflux.sql: |
             CREATE ROLE "miniflux" WITH LOGIN PASSWORD '${DB_PWD_MINIFLUX}';
-            CREATE DATABASE miniflux WITH OWNER miniflux ENCODING 'UTF8' TEMPLATE template0;
+            CREATE DATABASE miniflux WITH OWNER 'miniflux' ENCODING 'UTF8' TEMPLATE template0;
 
       resources:
         requests:
