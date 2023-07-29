@@ -73,6 +73,9 @@ spec:
           - hosts:
               - *host
 
+    podannotations:      
+      secret.reloader.stakater.com/reload: homepage
+
     podSecurityContext:
       runAsUser: &context 1000
       runAsGroup: *context
