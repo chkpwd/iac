@@ -57,9 +57,9 @@ spec:
           gethomepage.dev/group: Media Automation
           gethomepage.dev/icon: "https://raw.githubusercontent.com/Wizarrrr/wizarr/master/screenshots/wizard.png"
           gethomepage.dev/description: Plex Registration Tool
-          gethomepage.dev/href: "http://wizarr.local.chkpwd.com"
+          gethomepage.dev/href: "http://wizarr.${EXTERNAL_DOMAIN}"
         hosts:
-          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
         tls:
