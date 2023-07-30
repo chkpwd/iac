@@ -69,7 +69,7 @@ spec:
           gethomepage.dev/widget.type: "miniflux"
           gethomepage.dev/widget.url: "http://miniflux.tools.svc.cluster.local"
         hosts:
-          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
