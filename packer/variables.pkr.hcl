@@ -83,3 +83,7 @@ variable "domain" {
 variable "machine_name" {
   default = ""
 }
+variable "preseed" {
+  description = "The preseed file to use"
+  default     = ""
+}
