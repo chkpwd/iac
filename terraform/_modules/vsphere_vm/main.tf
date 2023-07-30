@@ -67,7 +67,9 @@ resource "vsphere_virtual_machine" "main" {
       firmware,
       clone[0].template_uuid,
       clone[0].customize,
-      pci_device_id
+      pci_device_id,
+      ept_rvi_mode,
+      hv_mode
     ]
   }
 }
