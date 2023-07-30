@@ -59,6 +59,8 @@
           - logs:
               - /var/log/syslog.log
               - /var/log/messages
+              - /var/log/pods
+              - /var/lib/rancher/k3s/agent/containerd/containerd.log
             options:
               - daily
               - size 20M
