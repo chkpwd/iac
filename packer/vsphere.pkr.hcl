@@ -1,11 +1,12 @@
 locals {
   preseed_config = {
-    "/preseed.cfg" = templatefile("${abspath(path.root)}/files/preseed.pkrtpl.hcl", {
-      user_fullname = var.connection_username
-      user_name     = var.connection_username
+    "/preseed.cfg" = templatefile("${abspath(path.root)}/files/${var.preseed}.pkrtpl.hcl", {
+      user_fullname = var.connection_username,
+      user_name     = var.connection_username,
       user_password = var.connection_password
     })
   }
+  ansible_path = "/home/hyoga/code/boilerplates/ansible"
 }
 
 source "vsphere-iso" "linux" {
@@ -126,7 +127,7 @@ build {
   ]
 
   provisioner "ansible" {
-    playbook_file           = "/home/hyoga/code/boilerplates/ansible/playbooks/packer.yaml"
+    playbook_file           = "${local.ansible_path}/playbooks/packer.yaml"
     use_proxy               = false
     max_retries             = 3
     inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_password={{ .Password }} ansible_become_password={{ .Password }}"
