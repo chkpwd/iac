@@ -8,7 +8,17 @@ spec:
   certificateRotateStrategy: {}
   configuration:
     developerConfiguration:
-      featureGates: []
+      # List of features documented --- https://github.com/kubevirt/kubevirt/blob/main/pkg/virt-config/feature-gates.go#L26
+      featureGates:
+        - LiveMigration # https://kubevirt.io/user-guide/operations/live_migration/#limitations
+        - VMLiveUpdateFeatures
+        - CPUManager
+        - GPU
+        - HotplugVolumes
+        - ExpandDisks
+        - HotplugNICs
+        - HostDevices
+        - VMPersistentState
   customizeComponents: {}
   imagePullPolicy: IfNotPresent
   workloadUpdateStrategy: {}
