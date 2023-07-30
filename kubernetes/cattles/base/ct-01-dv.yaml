@@ -1,0 +1,35 @@
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: &name ct-01-dv
+spec:
+  running: false
+  dataVolumeTemplates:
+  - metadata:
+      name: *name
+    spec:
+      sourceRef:
+        kind: DataSource
+        name: fedora
+        namespace: cattles
+      storage:
+        resources: {}
+  template:
+    spec:
+      terminationGracePeriodSeconds: 180
+      domain:
+        devices:
+          rng: {}
+        memory:
+          guest: 512M
+      volumes:
+      - dataVolume:
+          name: *name
+        name: *name
+      - cloudInitNoCloud:
+          userData: |-
+            #cloud-config
+            user: hyoga
+            password: hyoga
+            chpasswd: { expire: False }
+        name: cloudinitdisk
