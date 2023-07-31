@@ -88,32 +88,32 @@ module "homeassistant" {
   }
 }
 
-module "bloodhound" {
-  source                    = "../_modules/vsphere_vm"
-  vm_name                   = "bloodhound"
-  vm_template               = "WSrv22-DE-Temp"
-  network_spec = {
-    network_id              = "LAN"
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
-    folder                  = vsphere_folder.gaming_windows.path
-    cpu                     = 4
-    memory                  = 8192
-    disk_size               = 48
-    additional_disks = [
-      {
-        size                = 100
-      }
-    ]
-  }
-}
+# module "bloodhound" {
+#   source                    = "../_modules/vsphere_vm"
+#   vm_name                   = "bloodhound"
+#   vm_template               = "WSrv22-DE-Temp"
+#   network_spec = {
+#     network_id              = "LAN"
+#   }
+#   spec = {
+#     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
+#     folder                  = vsphere_folder.gaming_windows.path
+#     cpu                     = 4
+#     memory                  = 8192
+#     disk_size               = 48
+#     additional_disks = [
+#       {
+#         size                = 100
+#       }
+#     ]
+#   }
+# }
 
 module "kube-ops" {
   source                    = "../_modules/vsphere_vm"
   count                     = 3
   vm_name                   = "kubes-cp-${count.index + 1}"
-  vm_template               = "deb-12-template"
+  vm_template               = "k3s-deb12"
   network_spec = {
     network_id              = "LAN"
     mac_address             = ["00:50:56:93:8a:b9", "00:50:56:93:35:60", "00:50:56:93:fa:88"][count.index]
@@ -124,8 +124,8 @@ module "kube-ops" {
     folder                  = vsphere_folder.kubernetes.path
     enable_hv               = true
     cpu                     = 4
-    memory                  = 10240
-    disk_size               = 16
+    memory                  = 16384
+    disk_size               = 32
     additional_disks = [
       {
         size                = 75
