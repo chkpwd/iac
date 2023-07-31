@@ -1,4 +1,4 @@
-machine_name = "W10-22H2-Temp"
+machine_name = "W11-22H2-Temp"
 os_version = "22H2"
 os_family = "windows"
 guest_os_type = "windows9_64Guest"
