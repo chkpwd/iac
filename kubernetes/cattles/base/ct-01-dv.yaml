@@ -2,6 +2,7 @@ apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
   name: &name ct-01-dv
+  namespace: cattles
 spec:
   running: false
   dataVolumeTemplates:
