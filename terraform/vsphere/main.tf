@@ -35,8 +35,8 @@ module "crypto" {
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.dev.id ]
     folder                  = vsphere_folder.dev.path
-    cpu                     = 4
-    memory                  = 4096
+    cpu                     = 8
+    memory                  = 8192
     disk_size               = 16
     additional_disks = [
       {
