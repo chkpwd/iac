@@ -45,7 +45,7 @@ service_definitions:
       - 80:80
     env:
       <<: *common_env
-      URL: remote.chkpwd.com
+      URL: chkpwd.com
       SUBDOMAINS: wildcard
       VALIDATION: dns
       DNSPLUGIN: cloudflare
