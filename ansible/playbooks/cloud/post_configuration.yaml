@@ -1,0 +1,114 @@
+---
+- name: Uptime Kuma Configuration
+  hosts: ct-01-x86
+  connection: local
+
+  vars:
+    ansible_python_interpreter: "/home/hyoga/code/boilerplates/.venv/bin/python3"
+    uptime_kuma_url: "https://uptime.{{ domain }}"
+
+  tasks:
+    - name: Wait for Uptime Kuma to be available
+      ansible.builtin.uri:
+        url: "{{ uptime_kuma_url }}"
+        follow_redirects: all
+      register: result
+      until: result.status == 200
+      retries: 3
+      delay: 1
+
+    - name: Initial setup/auth
+      module_defaults:
+        lucasheld.uptime_kuma.setup: &uptimekuma_passwd_defaults
+          api_url: "{{ uptime_kuma_url }}"
+          api_username: uptime
+          api_password: "{{ UPTIME_KUMA_PASSWORD }}"
+        lucasheld.uptime_kuma.login: *uptimekuma_passwd_defaults
+      block:
+        - name: Set credentials
+          lucasheld.uptime_kuma.setup:
+          register: set_credentials
+          retries: 3
+          until: set_credentials is success
+
+        - name: Get bearer token
+          lucasheld.uptime_kuma.login:
+          register: auth
+          tags: always
+
+    - name: Config provisioning
+      module_defaults:
+        lucasheld.uptime_kuma.settings: &uptimekuma_api_defaults
+          api_url: "{{ uptime_kuma_url }}"
+          api_token: "{{ auth.token }}"
+        lucasheld.uptime_kuma.notification: *uptimekuma_api_defaults
+        lucasheld.uptime_kuma.monitor: *uptimekuma_api_defaults
+        lucasheld.uptime_kuma.status_page: *uptimekuma_api_defaults
+        lucasheld.uptime_kuma.maintenance: *uptimekuma_api_defaults
+      block:
+        - name: Set config
+          lucasheld.uptime_kuma.settings:
+            primaryBaseURL: "{{ uptime_kuma_url }}"
+            searchEngineIndex: false
+            trustProxy: true
+            keepDataPeriodDays: 365
+            serverTimezone: "{{ timezone }}"
+            entryPage: statusPage-default
+
+        - name: Set notifiers
+          lucasheld.uptime_kuma.notification:
+            name: Discord
+            type: discord
+            isDefault: true
+            discordWebhookUrl: "{{ DISCORD_UPTIME_KUMA_WEBHOOK }}"
+            state: present
+          tags: notifiers
+
+        - name: Set monitors
+          lucasheld.uptime_kuma.monitor:
+            name: "{{ item.name }}"
+            parent_name: "{{ item.parent if item.parent is defined else omit }}"
+            type: "{{ item.type | default('http') }}"
+            url: "{{ item.url if item.type | default('http') == 'http' else omit }}"
+            hostname: "{{ item.url if item.type | default('http') in ['ping', 'port'] else omit }}"
+            port: "{{ item.port if item.type | default('http') == 'port' else omit }}"
+            notification_names: "{{ 'Discord' if item.type | default('http') != 'group' else omit }}"
+            state: "{{ item.state | default('present') }}"
+          loop: "{{ uptime_kuma_monitors }}"
+          loop_control:
+            label: "{{ item.name }} [{{ item.type | default('http') }}]"
+          tags: monitors
+
+        - name: Set status pages
+          lucasheld.uptime_kuma.status_page:
+            slug: "{{ item.slug }}"
+            title: "{{ item.title }}"
+            description: "{{ item.description | default(omit) }}"
+            publicGroupList: "{{ item.publicGroupList | default(omit) }}"
+            showPoweredBy: "{{ item.showPoweredBy | default(false) }}"
+            published: "{{ item.published | default(true) }}"
+            icon: "{{ item.icon | default(omit) }}"
+            state: "{{ item.state | default('present') }}"
+          loop: "{{ uptime_kuma_status_pages }}"
+          loop_control:
+            label: "{{ item.title }}"
+          tags: pages
+
+        # - name: Set maintenance schedules
+        #   lucasheld.uptime_kuma.maintenance:
+        #     title: "{{ item.title }}"
+        #     description: "{{ item.description }}"
+        #     strategy: "{{ item.strategy }}"
+        #     active: "{{ item.active | default(true) }}"
+        #     intervalDay: "{{ item.intervalDay | default(omit) }}"
+        #     dateRange: "{{ item.dateRange | default(omit) }}"
+        #     timeRange: "{{ item.timeRange | default(omit) }}"
+        #     weekdays: "{{ item.weekdays | default(omit) }}"
+        #     timezoneOption: "{{ item.timezoneOption | default('America/New_York') }}"
+        #     monitors: "{{ item.monitors | default(omit) }}"
+        #     status_pages: "{{ item.status_pages | default(omit) }}"
+        #     state: "{{ item.state | default('present') }}"
+        #   loop: "{{ uptime_kuma_maintenance_schedules }}"
+        #   loop_control:
+        #     label: "{{ item.title }}"
+        #   tags: maintenance

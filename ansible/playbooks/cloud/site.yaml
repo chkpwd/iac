@@ -3,8 +3,11 @@
   ansible.builtin.import_playbook: setup_instances.yaml
     
 - name: Preconfigure services
-  ansible.builtin.import_playbook: configure_services.yaml
+  ansible.builtin.import_playbook: pre_configuration.yaml
 
 - hosts: cloud
   roles:
     - name: compose
+
+- name: Postconfigure services
+  ansible.builtin.import_playbook: post_configuration.yaml

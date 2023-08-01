@@ -27,16 +27,21 @@ service_definitions:
     volumes:
       - '{{ configuration_path }}/wireguard:/config'
       - /lib/modules:/lib/modules
-    sysctls: net.ipv4.conf.all.src_valid_mark=1
-    network_mode: host
-    state: present # Only added to easily be able to delete afterwards
+    sysctls: 
+      "net.ipv4.conf.all.src_valid_mark=1"
+    networks:
+      - name: net_wireguard
+        ipv4_address: 172.23.27.2
   
   - name: uptime-kuma
     image: louislam/uptime-kuma:1.22.1
     volumes:
       - "{{ configuration_path }}/uptime-kuma:/app/data" 
     ports: [3001:3001]
-    state: present # Only added to easily be able to delete afterwards
+    networks:
+      - name: net_wireguard
+        ipv4_address: 172.23.27.3
+        links: wireguard
 
   - name: swag
     image: "{{ linuxserver_image }}/swag:latest"

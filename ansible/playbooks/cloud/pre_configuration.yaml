@@ -34,7 +34,7 @@
         path: "{{ configuration_path }}/couchdb"
         state: directory
 
-    - name: Configure CouchDB
+    - name: Configure CouchDB # noqa no-relative-paths
       delegate_to: ct-02-x86
       ansible.builtin.copy:
         src: ../../files/local.ini
@@ -42,3 +42,11 @@
         owner: "{{ common_user }}"
         group: "{{ common_user }}"
         mode: '644'
+
+    - name: Create a network
+      community.docker.docker_network:
+        name: net_wireguard
+        ipam_config:
+          - subnet: 172.23.27.0/24
+            gateway: 172.23.27.1
+            iprange: 172.23.27.0/26

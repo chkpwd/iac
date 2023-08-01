@@ -8,3 +8,42 @@ sites:
 
 remote_domain: chkpwd.com
 oci_dns_domain: remote.chkpwd.oraclevcn.com
+
+uptime_kuma_monitors:
+  # Groups
+  - name: Site Ping
+    type: group
+
+  - name: Services Ping
+    type: group
+
+  # Sites
+  - name: Winxuu
+    type: ping
+    url: winxuu.chkpwd.com
+    parent: Site Ping
+
+uptime_kuma_status_pages:
+  - title: "Default"
+    description: "[Click here to access {{ common_user | title }}'s Plex](https://plex.{{ domain }})"
+    slug: default
+    publicGroupList:
+      - name: Sites
+        weight: 1
+        monitorList:
+          - name: Site Test
+
+# uptime_kuma_maintenance_schedules:
+#   - title: Backup - Plex
+#     description: Plex Server Backup
+#     strategy: recurring-weekday
+#     intervalDay: 1
+#     weekdays: [2, 3, 4, 5, 6, 7, 0]
+#     timeRange:
+#       - hours: 7
+#         minutes: 0
+#       - hours: 7
+#         minutes: 30
+#     monitors:
+#       - name: Bristol Plex Media Server
+#       - name: Plex Media Server
