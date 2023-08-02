@@ -24,24 +24,18 @@ service_definitions:
       - net_admin # Allows modifications of net utils
       - sys_module # Allows privileged operations on non-root systems
     env: "{{ common_env }}"
+    ports: [3001:3001]
     volumes:
-      - '{{ configuration_path }}/wireguard:/config'
+      - "{{ configuration_path }}/wireguard:/config"
       - /lib/modules:/lib/modules
-    sysctls: 
-      "net.ipv4.conf.all.src_valid_mark=1"
-    networks:
-      - name: net_wireguard
-        ipv4_address: 172.23.27.2
-  
+    sysctls:
+      net.ipv4.conf.all.src_valid_mark: 1
+
   - name: uptime-kuma
     image: louislam/uptime-kuma:1.22.1
     volumes:
       - "{{ configuration_path }}/uptime-kuma:/app/data" 
-    ports: [3001:3001]
-    networks:
-      - name: net_wireguard
-        ipv4_address: 172.23.27.3
-        links: wireguard
+    network_mode: container:wireguard
 
   - name: swag
     image: "{{ linuxserver_image }}/swag:latest"
@@ -55,7 +49,7 @@ service_definitions:
       VALIDATION: dns
       DNSPLUGIN: cloudflare
       EMAIL: "{{ CF_EMAIL }}"
-      STAGING: "true"
+      STAGING: "false"
       DOCKER_MODS: linuxserver/mods:swag-auto-reload
     volumes:
       - "{{ configuration_path }}/swag:/config"
