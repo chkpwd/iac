@@ -129,9 +129,6 @@ RUN \
     apt-get update && \
     apt-get install --no-install-recommends -y powershell && \
     rm -f packages-microsoft-prod.deb && \
-# code-server
-    curl -fsSL https://code-server.dev/install.sh | sh -s --
-
 # Copy Commands for Various Tools
 COPY --from=vmware/govc:v0.30.5 /govc /usr/bin/govc
 COPY --from=istio/istioctl:1.18.2 /usr/local/bin/istioctl /usr/bin/istioctl
