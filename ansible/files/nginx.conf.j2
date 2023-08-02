@@ -3,6 +3,9 @@
 {% for site in sites %}
 error_page 502 /502.html;
 
+access_log /dev/stdout;
+error_log /dev/stdout;
+
 # redirect all traffic to https
 server {
     listen 80;
