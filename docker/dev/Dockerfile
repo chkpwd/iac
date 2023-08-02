@@ -1,0 +1,162 @@
+ARG BASE_IMAGE_TAG=23.10
+
+FROM ubuntu:${BASE_IMAGE_TAG}
+
+USER root
+
+ENV DEBIAN_FRONTEND=noninteractive \
+	ZSH_CUSTOM=/etc/oh-my-zsh \
+	DEV=chk
+
+# Base System Configuration
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+		# Core Utilities
+        bash curl sudo man-db bash-completion wget unzip less locales gnupg apt-transport-https \
+        # Development Tools
+        build-essential file pwgen git vim htop jq yq ldap-utils rsync tmate rclone software-properties-common \
+        pkg-config libxmlsec1-dev golang-go npm nodejs \
+        # SSH Tools
+        openssh-server openssh-client sshpass \
+        # Network Tools
+        nmap mtr-tiny host net-tools iputils-ping traceroute dnsutils \
+        # Disk Utilities
+        genisoimage \
+        # Text Processing and Viewing
+        bat fzf tree \
+        # Python Tools
+        pipx python3-dev python3-pip python3-venv python3-setuptools \
+        # Zsh and Plugins
+        zsh zsh-autosuggestions zsh-syntax-highlighting \
+        # Miscellaneous Tools
+        direnv age hugo && \
+	# SSH Config
+    ssh-keygen -A && \
+    mkdir -p /run/sshd && \
+	# Elavation Setup
+    echo "%sudo ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+	# Locale Setup
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
+    locale-gen && \
+	# Python
+    pipx ensurepath && \
+    pipx install poetry && \
+	# Ansible Modules
+	pipx install ansible-base && \
+    # Perform clean-up
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# ZSH Setup 
+RUN curl -L https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh > install.sh && \
+	chmod +x install.sh && \
+	yes | ./install.sh && \
+	rm install.sh && \
+	mkdir -p "$ZSH_CUSTOM"/completions && \
+	mkdir -p "$ZSH_CUSTOM"/plugins && \
+	chmod -R 755 $ZSH_CUSTOM/completions && \
+	curl -L https://raw.githubusercontent.com/agkozak/zsh-z/master/zsh-z.plugin.zsh > $ZSH_CUSTOM/plugins/zsh-z
+
+# Download and Install Various Tools
+RUN \
+# Pet Snippet
+	curl -L https://github.com/knqyf263/pet/releases/download/v0.5.0/pet_0.5.0_linux_amd64.deb > pet.deb && \
+    dpkg -i pet.deb && \
+	rm -f pet.deb && \
+# Teller
+    curl -L https://github.com/tellerops/teller/releases/download/v1.5.6/teller_1.5.6_Linux_x86_64.tar.gz | tar xvzf - -C /tmp && \
+    mv /tmp/teller /usr/bin/teller && \
+# chezmoi
+    curl -L https://github.com/twpayne/chezmoi/releases/download/v2.27.0/chezmoi_2.27.0_linux_amd64.deb > chezmoi.deb && \
+    dpkg -i chezmoi.deb && \
+    rm -f chezmoi.deb && \
+# Korb
+    curl -L https://github.com/BeryJu/korb/releases/latest/download/korb_linux_amd64 > korb && \
+    mv korb /usr/bin/korb && \
+    chmod +x /usr/bin/korb && \
+# kubectl
+    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
+    echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list && \
+    apt-get update && \
+    apt-get install --no-install-recommends -y kubectl && \
+# kubectx && kubens
+    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx > /usr/local/bin/kubectx && \
+    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens > /usr/local/bin/kubens && \
+    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/completion/_kubectx.zsh > $ZSH_CUSTOM/completions/_kubectx.zsh && \
+    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/completion/_kubens.zsh > $ZSH_CUSTOM/completions/_kubens.zsh && \
+    chmod +x /usr/local/bin/kubectx && \
+    chmod +x /usr/local/bin/kubens && \
+# Kubernetes stern
+    curl -L https://github.com/stern/stern/releases/download/v1.19.0/stern_1.19.0_linux_amd64.tar.gz | tar xvzf - --strip-components=1 && \
+    mv stern /usr/bin/stern && \
+    chmod +x /usr/bin/stern && \
+# krew
+	curl -L https://github.com/kubernetes-sigs/krew/releases/download/v0.4.4/krew-linux_amd64.tar.gz | tar xvzf - -C /tmp && \
+	mv /tmp/krew-linux_amd64 /usr/bin/krew && \
+# viddy
+	curl -L https://github.com/sachaos/viddy/releases/download/v0.3.6/viddy_0.3.6_Linux_x86_64.tar.gz | tar xvzf - -C /tmp && \
+	mv /tmp/viddy /usr/bin && \
+# k9s
+	curl -L https://github.com/derailed/k9s/releases/download/v0.27.4/k9s_Linux_amd64.tar.gz | tar xvzf - -C /tmp && \
+	mv /tmp/k9s /usr/bin && \
+# helm 3
+    curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash && \
+    helm completion zsh > $ZSH_CUSTOM/completions/helm.zsh && \
+# AWS CLI
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
+    unzip awscliv2.zip && \
+    sudo ./aws/install && \
+    rm awscliv2.zip && \
+# infrahq
+    echo 'deb [trusted=yes] https://apt.fury.io/infrahq/ /' | tee /etc/apt/sources.list.d/infrahq.list && \
+    apt-get update && \
+    apt-get install -y infra && \
+# pulumi
+	curl -L https://get.pulumi.com/releases/sdk/pulumi-v3.76.1-linux-x64.tar.gz | tar xvzf - -C /tmp --strip-components=1 && \
+	mv /tmp/pulumi* /usr/bin && \
+# terraform, vault, and packer
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && \
+    echo "deb [arch=amd64] https://apt.releases.hashicorp.com focal main" > /etc/apt/sources.list.d/hashicorp.list && \
+    apt-get update && \
+    apt-get install -y terraform vault packer && \
+    setcap cap_ipc_lock= /usr/bin/vault && \
+# SOPs
+    curl -L https://github.com/getsops/sops/releases/download/v3.7.3/sops_3.7.3_amd64.deb > /tmp/sops_amd64.deb && \
+    dpkg -i /tmp/sops_amd64.deb && \
+# powershell
+    curl -L https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb > packages-microsoft-prod.deb && \
+    dpkg -i packages-microsoft-prod.deb && \
+    apt-get update && \
+    apt-get install --no-install-recommends -y powershell && \
+    rm -f packages-microsoft-prod.deb && \
+# code-server
+    curl -fsSL https://code-server.dev/install.sh | sh -s --
+
+# Copy Commands for Various Tools
+COPY --from=vmware/govc:v0.30.5 /govc /usr/bin/govc
+COPY --from=istio/istioctl:1.18.2 /usr/local/bin/istioctl /usr/bin/istioctl
+COPY --from=digitalocean/doctl:1.97.1 /app/doctl /usr/bin/doctl
+COPY --from=fluxcd/flux-cli:v2.0.1 /usr/local/bin/flux /usr/bin/flux
+COPY --from=klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bin/hugo
+COPY --from=gcr.io/kaniko-project/executor:v1.13.0 /kaniko/executor /usr/bin/kaniko
+COPY --from=quay.io/coreos/etcd:v3.5.9 /usr/local/bin/etcdctl /usr/bin/etcdctl
+
+# Configure Completions for FluxCD and Hugo
+RUN flux completion zsh > $ZSH_CUSTOM/completions/flux.zsh && \
+    hugo completion zsh > $ZSH_CUSTOM/completions/hugo.zsh
+
+COPY ./app/sshd_config /etc/ssh/sshd_config
+
+# User chk
+RUN useradd -m -s /bin/zsh -G sudo $DEV && \
+	su -c "ssh-keygen -b 2048 -f /home/$DEV/.ssh/id_rsa -t rsa -q -N ''" $DEV && \
+	passwd -d $DEV && \
+	chmod 700 /home/$DEV/.ssh && \
+	curl -L https://github.com/$DEVpwd.keys > /home/$DEV/.ssh/authorized_keys && \
+	chown $DEV: /home/$DEV/.ssh/authorized_keys && \
+	chmod 600 /home/$DEV/.ssh/authorized_keys && \
+	chown root: /etc/ssh/sshd_config
+
+RUN rm -rf /tmp/*
+
+CMD ["/usr/sbin/sshd", "-D", "-e"]
