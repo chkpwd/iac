@@ -17,6 +17,67 @@ uptime_kuma_monitors:
   - name: Services Ping
     type: group
 
+  # Services
+  - name: OPNsense
+    type: ping
+    url: 172.16.16.1
+    parent: Services Ping
+
+  - name: Switch
+    type: ping
+    url: 172.16.16.2
+    parent: Services Ping
+
+  - name: ESXi-1
+    type: ping
+    url: 172.16.16.3
+    parent: Services Ping
+
+  - name: vCenter
+    type: ping
+    url: 172.16.16.6
+    parent: Services Ping
+
+  - name: Unifi AP
+    type: ping
+    url: 172.16.16.9
+    parent: Services Ping
+
+  - name: Home Assistant
+    type: ping
+    url: 172.16.16.11
+    parent: Services Ping
+
+  - name: 3D Printer
+    type: ping
+    url: 172.16.16.13
+    parent: Services Ping
+
+  - name: NAS
+    type: ping
+    url: 172.16.16.15
+    parent: Services Ping
+
+  - name: Kube-VIP LoadBalancer
+    type: ping
+    url: 172.16.16.200
+    parent: Services Ping
+
+  - name: Kubernetes Node 1
+    type: ping
+    url: 172.16.16.201
+    parent: Services Ping
+
+  - name: Kubernetes Node 2
+    type: ping
+    url: 172.16.16.202
+    parent: Services Ping
+
+  - name: Kubernetes Node 3
+    type: ping
+    url: 172.16.16.203
+    parent: Services Ping
+
   # Sites
   - name: Winxuu
     type: ping
