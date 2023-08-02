@@ -43,10 +43,13 @@
         group: "{{ common_user }}"
         mode: '644'
 
-    - name: Create a network
+    - name: Create network(s)
       community.docker.docker_network:
-        name: net_wireguard
+        name: "{{ item.name }}"
         ipam_config:
-          - subnet: 172.23.27.0/24
-            gateway: 172.23.27.1
-            iprange: 172.23.27.0/26
+          - subnet: "172.23.{{ item.octet }}.0/24"
+            gateway: "172.23.{{ item.octet }}.1"
+            iprange: "172.23.{{ item.octet }}.0/26"
+      loop:
+        - name: net_swag
+          octet: 28

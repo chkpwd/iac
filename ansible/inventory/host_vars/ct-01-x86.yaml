@@ -30,6 +30,8 @@ service_definitions:
       - /lib/modules:/lib/modules
     sysctls:
       net.ipv4.conf.all.src_valid_mark: 1
+    networks:
+      - name: net_swag
 
   - name: uptime-kuma
     image: louislam/uptime-kuma:1.22.1
@@ -53,3 +55,5 @@ service_definitions:
       DOCKER_MODS: linuxserver/mods:swag-auto-reload
     volumes:
       - "{{ configuration_path }}/swag:/config"
+    networks:
+      - name: net_swag

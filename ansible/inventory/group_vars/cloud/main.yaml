@@ -1,9 +1,9 @@
 sites:
   - url: couchdb.{{ remote_domain }}
-    name: ct-02-x86.{{ oci_dns_domain }}
+    name: wireguard
     port: 5984
   - url: uptime.{{ remote_domain }}
-    name: ct-01-x86.{{ oci_dns_domain }}
+    name: wireguard
     port: 3001
 
 remote_domain: chkpwd.com
@@ -86,13 +86,17 @@ uptime_kuma_monitors:
 
 uptime_kuma_status_pages:
   - title: "Default"
-    description: "[Click here to access {{ common_user | title }}'s Plex](https://plex.{{ domain }})"
+    description: "Hosted Products"
     slug: default
     publicGroupList:
-      - name: Sites
+      - name: Site Ping
         weight: 1
         monitorList:
-          - name: Site Test
+          - name: Site Ping
+      - name: Servies Ping
+        weight: 2
+        monitorList:
+          - name: Services Ping
 
 # uptime_kuma_maintenance_schedules:
 #   - title: Backup - Plex
