@@ -1,9 +1,0 @@
----
-- name: Copy SSH Keys to remote host
-  ansible.builtin.copy:
-    src: "{{ ansible_dest }}/roles/code-server/templates/ssh_contents/"
-    dest: "/home/{{ common_user }}/.ssh"
-    owner: "{{ common_user }}"
-    group: "{{ common_user }}"
-    mode: preserve
-  notify: Restart ssh daemon
