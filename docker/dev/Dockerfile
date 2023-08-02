@@ -152,7 +152,7 @@ RUN useradd -m -s /bin/zsh -G sudo $DEV && \
 	su -c "ssh-keygen -b 2048 -f /home/$DEV/.ssh/id_rsa -t rsa -q -N ''" $DEV && \
 	passwd -d $DEV && \
 	chmod 700 /home/$DEV/.ssh && \
-	curl -L https://github.com/$DEVpwd.keys > /home/$DEV/.ssh/authorized_keys && \
+	curl -L https://github.com/chkpwd.keys > /home/$DEV/.ssh/authorized_keys && \
 	chown $DEV: /home/$DEV/.ssh/authorized_keys && \
 	chmod 600 /home/$DEV/.ssh/authorized_keys && \
 	chown root: /etc/ssh/sshd_config
