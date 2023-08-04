@@ -4,9 +4,9 @@ FROM ubuntu:${BASE_IMAGE_TAG}
 
 USER root
 
-ENV DEBIAN_FRONTEND=noninteractive \
-	ZSH_CUSTOM=/etc/oh-my-zsh \
-	DEV=chk
+ENV DEBIAN_FRONTEND=noninteractive
+
+ENV DEV=chk
 
 # Base System Configuration
 RUN apt-get update && \
@@ -38,24 +38,9 @@ RUN apt-get update && \
 	# Locale Setup
     echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
     locale-gen && \
-	# Python
-    pipx ensurepath && \
-    pipx install poetry && \
-	# Ansible Modules
-	pipx install ansible-base && \
     # Perform clean-up
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-# ZSH Setup 
-RUN curl -L https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh > install.sh && \
-	chmod +x install.sh && \
-	yes | ./install.sh && \
-	rm install.sh && \
-	mkdir -p "$ZSH_CUSTOM"/completions && \
-	mkdir -p "$ZSH_CUSTOM"/plugins && \
-	chmod -R 755 $ZSH_CUSTOM/completions && \
-	curl -L https://raw.githubusercontent.com/agkozak/zsh-z/master/zsh-z.plugin.zsh > $ZSH_CUSTOM/plugins/zsh-z
 
 # Download and Install Various Tools
 RUN \
@@ -82,8 +67,6 @@ RUN \
 # kubectx && kubens
     curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx > /usr/local/bin/kubectx && \
     curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens > /usr/local/bin/kubens && \
-    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/completion/_kubectx.zsh > $ZSH_CUSTOM/completions/_kubectx.zsh && \
-    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/completion/_kubens.zsh > $ZSH_CUSTOM/completions/_kubens.zsh && \
     chmod +x /usr/local/bin/kubectx && \
     chmod +x /usr/local/bin/kubens && \
 # Kubernetes stern
@@ -101,7 +84,6 @@ RUN \
 	mv /tmp/k9s /usr/bin && \
 # helm 3
     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash && \
-    helm completion zsh > $ZSH_CUSTOM/completions/helm.zsh && \
 # AWS CLI
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
@@ -129,6 +111,9 @@ RUN \
     apt-get update && \
     apt-get install --no-install-recommends -y powershell && \
     rm -f packages-microsoft-prod.deb
+
+RUN bash -c "rm -rf /tmp/*"
+
 # Copy Commands for Various Tools
 COPY --from=vmware/govc:v0.30.5 /govc /usr/bin/govc
 COPY --from=istio/istioctl:1.18.2 /usr/local/bin/istioctl /usr/bin/istioctl
@@ -137,10 +122,6 @@ COPY --from=fluxcd/flux-cli:v2.0.1 /usr/local/bin/flux /usr/bin/flux
 COPY --from=klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bin/hugo
 COPY --from=gcr.io/kaniko-project/executor:v1.13.0 /kaniko/executor /usr/bin/kaniko
 COPY --from=quay.io/coreos/etcd:v3.5.9 /usr/local/bin/etcdctl /usr/bin/etcdctl
-
-# Configure Completions for FluxCD and Hugo
-RUN flux completion zsh > $ZSH_CUSTOM/completions/flux.zsh && \
-    hugo completion zsh > $ZSH_CUSTOM/completions/hugo.zsh
 
 COPY ./app/sshd_config /etc/ssh/sshd_config
 
@@ -154,6 +135,47 @@ RUN useradd -m -s /bin/zsh -G sudo $DEV && \
 	chmod 600 /home/$DEV/.ssh/authorized_keys && \
 	chown root: /etc/ssh/sshd_config
 
-RUN rm -rf /tmp/*
+# User Setup
+USER $DEV
+
+# Python
+RUN \
+    pipx install poetry && \
+	# Ansible Modules
+	pipx install ansible-base && \
+    pipx install molecule
+
+# Set ZSH Custom Dir
+ENV ZSH_CUSTOM=/home/$DEV/.oh-my-zsh/custom
+
+# ZSH Setup
+RUN \
+    # Install ZSH
+    curl -L https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh > /tmp/install.sh && \
+	chmod +x /tmp/install.sh && \
+	yes | ./tmp/install.sh && \
+	rm /tmp/install.sh && \
+    echo $ZSH_CUSTOM && \
+    mkdir -p $ZSH_CUSTOM/completions && \
+	chmod -R 755 $ZSH_CUSTOM/completions && \
+    curl -L https://gist.githubusercontent.com/raw/88d7f239615905dcad6b74e8e4b0fbbf -o $HOME/.zshrc && \
+	curl -L https://raw.githubusercontent.com/agkozak/zsh-z/master/zsh-z.plugin.zsh > $ZSH_CUSTOM/plugins/zsh-z && \
+    # Set Settings
+    curl -L https://gist.githubusercontent.com/raw/daf73a0d596179e74ba8a42f0e01453a -o $ZSH_CUSTOM/devops.zsh && \
+    curl -L https://gist.githubusercontent.com/raw/c078ab9da9cf8465dee808cd9058c760 -o $ZSH_CUSTOM/settings.zsh && \
+    curl -L https://gist.githubusercontent.com/raw/b4562691407d16aa2319b07b1ea7b36b -o $ZSH_CUSTOM/path.zsh && \
+    curl -L https://gist.githubusercontent.com/raw/b1d162fe0171f65d27c95d2ee56a5b15 -o $ZSH_CUSTOM/functions.zsh && \
+    curl -L https://gist.githubusercontent.com/raw/5181fb70d0a43559878a34eea76214c1 -o $ZSH_CUSTOM/dir.zsh && \
+    curl -L https://gist.githubusercontent.com/raw/bbd1f0cb096146ce6736c44059c59249 -o $ZSH_CUSTOM/aliases.zsh && \
+    # Auto Complete for Tools
+    helm completion zsh > $ZSH_CUSTOM/completions/helm.zsh && \
+    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/completion/_kubectx.zsh > $ZSH_CUSTOM/completions/_kubectx.zsh && \
+    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/completion/_kubens.zsh > $ZSH_CUSTOM/completions/_kubens.zsh && \
+    flux completion zsh > $ZSH_CUSTOM/completions/flux.zsh && \
+    hugo completion zsh > $ZSH_CUSTOM/completions/hugo.zsh && \
+    echo 'autoload -U bashcompinit && \
+          bashcompinit && \
+          eval "$(register-python-argcomplete pipx)"' > $ZSH_CUSTOM/completions/pipx.zsh
+
 
 CMD ["/usr/sbin/sshd", "-D", "-e"]
