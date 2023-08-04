@@ -7,22 +7,34 @@ Welcome to Bryan Jones's repository dedicated to **Infrastructure as Code (IaC)*
 This repository is a collection of tools, scripts, and configurations that demonstrate the power of automation in managing and provisioning infrastructure. It includes various components such as:
 
 ### 🧰 Ansible
-- **Playbooks and Roles**: A comprehensive set of playbooks and roles for automating tasks across different environments.
+
+#### Playbooks and Roles
+A comprehensive set of playbooks and roles for automating tasks across different environments.
 
 ### 🐳 Docker
-- **Configurations**: Containerized applications and services, including custom Nginx configurations.
+
+#### Configurations
+Containerized applications and services, including custom Nginx configurations.
 
 ### ☸️ Kubernetes
-- **Manifests**: A wide range of Kubernetes applications, tools, and core components.
+
+#### Manifests
+A wide range of Kubernetes applications, tools, and core components.
 
 ### 🏗️ Terraform
-- **Modules**: Infrastructure provisioning using Terraform for different cloud providers and platforms.
+
+#### Modules
+Infrastructure provisioning using Terraform for different cloud providers and platforms.
 
 ### 📦 Packer
-- **Scripts**: Automated machine image creation for different operating systems.
+
+#### Scripts
+Automated machine image creation for different operating systems.
 
 ### 🛠️ Vagrant
-- **Files**: Development environments using Vagrant for both Hyper-V and KVM.
+
+#### Files
+Development environments using Vagrant for both Hyper-V and KVM.
 
 ## 🚀 Getting Started
 
