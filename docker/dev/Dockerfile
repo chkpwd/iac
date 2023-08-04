@@ -87,7 +87,7 @@ RUN \
 # AWS CLI
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && \
-    sudo ./aws/install && \
+    ./aws/install && \
     rm awscliv2.zip && \
 # infrahq
     echo 'deb [trusted=yes] https://apt.fury.io/infrahq/ /' | tee /etc/apt/sources.list.d/infrahq.list && \
@@ -97,7 +97,7 @@ RUN \
 	curl -L https://get.pulumi.com/releases/sdk/pulumi-v3.76.1-linux-x64.tar.gz | tar xvzf - -C /tmp --strip-components=1 && \
 	mv /tmp/pulumi* /usr/bin && \
 # terraform, vault, and packer
-    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add - && \
+    curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - && \
     echo "deb [arch=amd64] https://apt.releases.hashicorp.com focal main" > /etc/apt/sources.list.d/hashicorp.list && \
     apt-get update && \
     apt-get install -y terraform vault packer && \
