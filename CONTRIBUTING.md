@@ -4,7 +4,6 @@
 
 - Although I do my best to keep up with the latest changes and releases, but if you find something that needs to update, please contribute.
 
-
 ## Project overview
 
 To get an overview of the project, read the [README](https://github.com/chkpwd/iac#readme).
