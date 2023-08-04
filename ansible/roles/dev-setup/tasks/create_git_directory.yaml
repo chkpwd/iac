@@ -1,7 +1,7 @@
 ---
 - name: Create Git directory
   ansible.builtin.file:
-    path: "/home/{{ common_user }}/code/boilerplates"
+    path: "/home/{{ common_user }}/code/iac"
     state: directory
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
@@ -11,12 +11,12 @@
 
 - name: Check if the directory exists
   ansible.builtin.stat:
-    path: /home/{{ common_user }}/code/boilerplates/ansible
+    path: /home/{{ common_user }}/code/iac/ansible
   register: repo_directory
 
 - name: Clone a repo with separate git directory
   ansible.builtin.git:
-    repo: https://github.com/chkpwd/boilerplates.git
-    dest: /home/{{ common_user }}/code/boilerplates
+    repo: https://github.com/chkpwd/iac.git
+    dest: /home/{{ common_user }}/code/iac
   when: not repo_directory.stat.exists
   become: false

@@ -7,7 +7,7 @@
 
 ## Project overview
 
-To get an overview of the project, read the [README](https://github.com/chkpwd/boilerplates#readme).
+To get an overview of the project, read the [README](https://github.com/chkpwd/iac#readme).
 
 ## Issues
 

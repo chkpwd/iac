@@ -25,7 +25,7 @@ data "sops_file" "fluxcd-secrets" {
 
 locals {
   github_org        = "chkpwd"
-  github_repository = "boilerplates"
+  github_repository = "iac"
 }
 
 provider "flux" {

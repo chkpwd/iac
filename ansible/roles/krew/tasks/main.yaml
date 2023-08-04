@@ -1,7 +1,7 @@
 - name: Get Krew pkgs
   delegate_to: localhost
   vars:
-    ansible_python_interpreter: "/home/{{ common_user }}/code/boilerplates/.venv/bin/python3"
+    ansible_python_interpreter: "/home/{{ common_user }}/code/iac/.venv/bin/python3"
   community.general.github_release:
     user: "{{ krew_repo_owner }}"
     repo: "{{ krew_repo }}"

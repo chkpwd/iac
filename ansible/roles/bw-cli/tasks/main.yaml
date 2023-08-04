@@ -2,7 +2,7 @@
 - name: Get Bitwarden CLI
   delegate_to: localhost
   vars:
-    ansible_python_interpreter: "/home/{{ common_user }}/code/boilerplates/.venv/bin/python3"
+    ansible_python_interpreter: "/home/{{ common_user }}/code/iac/.venv/bin/python3"
   community.general.github_release:
     user: bitwarden
     repo: clients

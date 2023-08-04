@@ -6,7 +6,7 @@ locals {
       user_password = var.connection_password
     })
   }
-  ansible_path = "/home/hyoga/code/boilerplates/ansible"
+  ansible_path = "/home/hyoga/code/iac/ansible"
 }
 
 source "vsphere-iso" "linux" {
@@ -132,7 +132,7 @@ build {
     max_retries             = 3
     inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_password={{ .Password }} ansible_become_password={{ .Password }}"
     ansible_env_vars        = [
-      "ANSIBLE_CONFIG=/home/hyoga/code/boilerplates/ansible/ansible.cfg", 
+      "ANSIBLE_CONFIG=/home/hyoga/code/iac/ansible/ansible.cfg", 
       "ANSIBLE_HOST_KEY_CHECKING=False",
       "ANSIBLE_VERBOSITY=2"
     ]

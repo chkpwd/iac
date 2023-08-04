@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Set working dir
-WORKDIR="/home/hyoga/code/boilerplates/kubernetes/infrastructure"
+WORKDIR="/home/hyoga/code/iac/kubernetes/infrastructure"
 
 # Change into kubernetes infra dir
 cd $WORKDIR
