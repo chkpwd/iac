@@ -107,6 +107,11 @@ data:
           memory: true
           showLabel: true
           label: Control Plane
+    - unifi_console:
+      url: https://unifi-controller.local.chkpwd.com
+      username: bjonesr3
+      password: ${APP_PWD_UNIFI}
+      site: chkpwd
     - openmeteo:
         label: North Miami
         timezone: ${TZ}
