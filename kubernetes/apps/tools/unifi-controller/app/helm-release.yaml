@@ -40,6 +40,9 @@ spec:
 
     service:
       main:
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        loadBalancerIP: ${UNIFI_LB_ADDRESS}
         ports:
           http:
             port: 8443
