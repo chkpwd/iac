@@ -44,6 +44,7 @@
         mode: '644'
 
     - name: Create network(s)
+      delegate_to: ct-01-x86
       community.docker.docker_network:
         name: "{{ item.name }}"
         ipam_config:
