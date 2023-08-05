@@ -1,0 +1,18 @@
+---
+http:
+  services:
+    opnsense:
+      loadBalancer:
+        servers:
+          - url: "http://172.16.16.1"
+        passHostHeader: true
+    haos:
+      loadBalancer:
+        servers:
+          - url: "http://172.16.16.11:8123"
+        passHostHeader: true
+    adguard:
+      loadBalancer:
+        servers:
+          - url: "http://172.16.16.1:8080"
+        passHostHeader: true

@@ -1,3 +1,6 @@
+log:
+  level: DEBUG
+
 api:
   dashboard: true
   debug: true
@@ -18,7 +21,8 @@ providers:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
   file:
-    filename: /config.yaml
+    directory: /providers
+    watch: true
 certificatesResolvers:
   cloudflare:
     acme:

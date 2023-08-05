@@ -1,0 +1,30 @@
+http:
+  routers:
+    opnsense:
+      entryPoints:
+        - "https"
+      rule: "Host(`opnsense.{{ local_domain }}`)"
+      middlewares:
+        - https-redirectscheme
+      tls:
+        certResolver: cloudflare
+      service: opnsense
+    haos:
+      entryPoints:
+        - "https"
+      rule: "Host(`haos.{{ local_domain }}`)"
+      middlewares:
+        - https-redirectscheme
+      tls:
+        certResolver: cloudflare
+      service: haos
+    adguard:
+      entryPoints:
+        - "https"
+      rule: "Host(`adguard.{{ local_domain }}`)"
+      middlewares:
+        - https-redirectscheme
+      tls:
+        certResolver: cloudflare
+      service: adguard
+
