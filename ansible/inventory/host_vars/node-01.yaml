@@ -19,6 +19,7 @@ service_definitions:
         - /var/run/docker.sock:/var/run/docker.sock:ro
         - "{{ docker_path }}/traefik/traefik.yaml/:/traefik.yaml:ro"
         - "{{ docker_path }}/traefik/acme.json:/acme.json"
+        - "{{ docker_path }}/traefik/config.yaml:/config.yaml:ro"
         - "{{ docker_path }}/traefik/providers:/providers:ro"
       ports:
         - 80:80
