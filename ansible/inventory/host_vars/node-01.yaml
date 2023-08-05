@@ -9,16 +9,16 @@ common_env: &common_env
 
 service_definitions:
     - name: traefik
-      image: traefik:latest
+      image: traefik:2.10.4
       env:
         <<: *common_env
         CF_API_EMAIL: '{{ CF_EMAIL }}'
-        CF_DNS_API_TOKEN: '{{ CF_API_TOKEN }}'
+        CF_DNS_API_TOKEN: '{{ TRAEFIK_CF_API_TOKEN }}'
       volumes:
         - /etc/localtime:/etc/localtime:ro
         - /var/run/docker.sock:/var/run/docker.sock:ro
         - "{{ docker_path }}/traefik/traefik.yaml/:/traefik.yaml:ro"
-        - "{{ docker_path }}/traefik/acme.json/:/acme.json"
+        - "{{ docker_path }}/traefik/acme.json:/acme.json"
         - "{{ docker_path }}/traefik/providers:/providers:ro"
       ports:
         - 80:80
