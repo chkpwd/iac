@@ -177,5 +177,4 @@ RUN \
           bashcompinit && \
           eval "$(register-python-argcomplete pipx)"' > $ZSH_CUSTOM/completions/pipx.zsh
 
-
-CMD ["/usr/sbin/sshd", "-D", "-e"]
+CMD ["sudo", "/usr/sbin/sshd", "-D", "-e"]
