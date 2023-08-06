@@ -42,9 +42,6 @@ spec:
       main:
         annotations:
           metallb.universe.tf/allow-shared-ip: 'true'
-        type: LoadBalancer
-        externalTrafficPolicy: Local
-        loadBalancerIP: ${UNIFI_LB_ADDRESS}
         ports:
           http:
             port: 8443
@@ -76,9 +73,6 @@ spec:
       secondary:
         annotations:
           metallb.universe.tf/allow-shared-ip: 'true'
-        type: LoadBalancer
-        externalTrafficPolicy: Local
-        loadBalancerIP: ${UNIFI_LB_ADDRESS}
         ports:
           inform:
             enabled: true
