@@ -65,10 +65,6 @@ spec:
             enabled: true
             port: 6789
             protocol: TCP
-          stun:
-            enabled: true
-            port: 3478
-            protocol: UDP
           syslog:
             enabled: true
             port: 5514
@@ -98,6 +94,11 @@ spec:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
+            backend:
+              service:
+                name: unifi-controller
+                port:
+                  number: 8443
         tls:
           - hosts:
               - *host
