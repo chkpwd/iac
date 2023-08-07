@@ -19,10 +19,12 @@ spec:
   values:
     controller:
       replicaCount: 3
+
       updateStrategy:
         type: RollingUpdate
         rollingUpdate:
           maxSurge: 1
+
       extraArgs:
         default-ssl-certificate: cert-manager/chkpwd-cert-production
 
@@ -31,8 +33,10 @@ spec:
         type: LoadBalancer
         loadBalancerIP: 172.16.16.204
         externalTrafficPolicy: Cluster
+
       publishService:
-        enabled: true # * If not set, it will report back the status and what IP address
+        enabled: true
+
       ingressClassResource:
         default: true
 
