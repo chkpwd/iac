@@ -47,8 +47,9 @@ spec:
         externalTrafficPolicy: Local
         ports:
           http:
-            port: 8443
-            protocol: TCP
+            port: 80
+            targetPort: 8443
+            protocol: HTTPS
           controller:
             enabled: true
             port: 8080
