@@ -36,6 +36,7 @@ spec:
       SCREEGO_EXTERNAL_IP: ${PUBLIC_IP}
       SCREEGO_SERVER_TLS: "false"
       SCREEGO_AUTH_MODE: all
+      SCREEGO_USERS_FILE: /config
       SCREEGO_LOG_LEVEL: info
       SCREEGO_PROMETHEUS: "true"
       SCREEGO_CLOSE_ROOM_WHEN_OWNER_LEAVES: "true"
@@ -61,6 +62,13 @@ spec:
         tls:
           - hosts:
               - *host
+
+    persistence:
+      config:
+        enabled: true
+        type: secret
+        name: screego-secrets
+        mountPath: /config
 
     resources:
       requests:
