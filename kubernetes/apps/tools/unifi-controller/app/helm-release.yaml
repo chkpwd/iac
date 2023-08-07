@@ -94,11 +94,6 @@ spec:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
-            backend:
-              service:
-                name: unifi-controller
-                port:
-                  number: 8443
         tls:
           - hosts:
               - *host
