@@ -41,10 +41,10 @@ spec:
     service:
       main:
         annotations:
-          metallb.universe.tf/allow-shared-ip: 'true'
+          metallb.universe.tf/allow-shared-ip: *app
+          metallb.universe.tf/loadBalancerIPs: ${UNIFI_LB_ADDRESS}
         type: LoadBalancer
         externalTrafficPolicy: Local
-        loadBalancerIP: ${UNIFI_LB_ADDRESS}
         ports:
           http:
             port: 8443
@@ -75,10 +75,10 @@ spec:
             protocol: UDP
       secondary:
         annotations:
-          metallb.universe.tf/allow-shared-ip: 'true'
+          metallb.universe.tf/allow-shared-ip: *app
+          metallb.universe.tf/loadBalancerIPs: ${UNIFI_LB_ADDRESS}
         type: LoadBalancer
         externalTrafficPolicy: Local
-        loadBalancerIP: ${UNIFI_LB_ADDRESS}
         ports:
           inform:
             port: 3478

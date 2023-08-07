@@ -30,8 +30,9 @@ spec:
 
       service:
         enabled: true
+        annotations:
+          metallb.universe.tf/loadBalancerIPs: 172.16.16.204
         type: LoadBalancer
-        loadBalancerIP: 172.16.16.204
         externalTrafficPolicy: Cluster
 
       publishService:
