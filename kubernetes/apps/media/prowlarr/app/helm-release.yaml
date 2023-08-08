@@ -63,7 +63,7 @@ spec:
           gethomepage.dev/icon: "prowlarr"
           gethomepage.dev/description: "Indexer manager for Sonarr and Radarr."
           gethomepage.dev/widget.type: "prowlarr"
-          gethomepage.dev/widget.url: "http://prowlarr.media.svc.cluster.local"
+          gethomepage.dev/widget.url: "http://prowlarr.media.${CLUSTER_DOMAIN}"
           gethomepage.dev/widget.key: "${API_KEY_PROWLARR}"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"

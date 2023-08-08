@@ -55,7 +55,7 @@ spec:
           gethomepage.dev/group: Media Management
           gethomepage.dev/icon: kavita.png
           gethomepage.dev/description: Cross platform reading server
-          gethomepage.dev/href: "http://kavita.media.svc.cluster.local"
+          gethomepage.dev/href: "http://kavita.media.${CLUSTER_DOMAIN}"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:

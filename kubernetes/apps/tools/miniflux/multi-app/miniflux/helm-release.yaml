@@ -68,7 +68,7 @@ spec:
           gethomepage.dev/icon: miniflux.png
           gethomepage.dev/description: RSS Feed Aggregator
           gethomepage.dev/widget.type: "miniflux"
-          gethomepage.dev/widget.url: "http://miniflux.tools.svc.cluster.local"
+          gethomepage.dev/widget.url: "http://miniflux.tools.${CLUSTER_DOMAIN}"
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:

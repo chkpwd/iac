@@ -63,7 +63,7 @@ spec:
           gethomepage.dev/icon: bazarr
           gethomepage.dev/description: Subtitles Automation Tool
           gethomepage.dev/widget.type: bazarr
-          gethomepage.dev/widget.url: "http://bazarr.media.svc.cluster.local"
+          gethomepage.dev/widget.url: "http://bazarr.media.${CLUSTER_DOMAIN}"
           gethomepage.dev/widget.key: "${API_KEY_BAZARR}"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"

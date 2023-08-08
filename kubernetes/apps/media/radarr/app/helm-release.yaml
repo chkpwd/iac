@@ -62,7 +62,7 @@ spec:
           gethomepage.dev/icon: radarr
           gethomepage.dev/description: Movie automation tool
           gethomepage.dev/widget.type: radarr
-          gethomepage.dev/widget.url: "http://radarr.media.svc.cluster.local"
+          gethomepage.dev/widget.url: "http://radarr.media.${CLUSTER_DOMAIN}"
           gethomepage.dev/widget.key: "${API_KEY_RADARR}"
           gethomepage.dev/widget.enableQueue: "true"
         hosts:
