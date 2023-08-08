@@ -1,0 +1,78 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app authentik
+  namespace: security
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: authentik
+      version: 2023.6.3
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: authentik
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    image: 
+    authentik:
+      secret_key: ${APP_PWD_AUTHENTIK}
+
+      error_reporting:
+        enabled: true
+
+      email:
+        from: ocid@chkpwd.com
+        host: smtp.gmail.com
+        port: 465
+        use_ssl: false
+
+      postgresql:
+        password: ${DB_PWD_AUTHENTIK}
+
+    ingress:
+      enabled: true
+      ingressClassName: "nginx"
+      annotations:
+        gethomepage.dev/enabled: "true"
+        gethomepage.dev/name: Authentik
+        gethomepage.dev/group: Security
+        gethomepage.dev/icon: authentik.png
+        gethomepage.dev/description: Authentication and authorization management
+        gethomepage.dev/widget.type: authentik
+        gethomepage.dev/widget.url: "http://authentik.security.svc.cluster.local"
+        gethomepage.dev/widget.key: "${API_KEY_AUTHENTIK}"
+        gethomepage.dev/widget.enableQueue: "true"
+      hosts:
+        - host: &host "{{ .Release.Name }}.{{EXTERNAL_DOMAIN}}"
+          paths:
+            - path: /
+              pathType: Prefix
+
+    postgresql:
+      enabled: true
+      postgresqlPassword: ${DB_PWD_AUTHENTIK}
+
+    redis:
+      enabled: false
+
+    prometheus:
+      serviceMonitor:
+        create: true
+
+    resources:
+      server:
+        requests:
+          cpu: 200m
+        limits:
+          memory: 500Mi
