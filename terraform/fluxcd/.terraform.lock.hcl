@@ -17,8 +17,8 @@ provider "registry.terraform.io/carlpett/sops" {
 }
 
 provider "registry.terraform.io/fluxcd/flux" {
-  version     = "1.0.0-rc.5"
-  constraints = "1.0.0-rc.5"
+  version     = "1.0.1"
+  constraints = "1.0.1"
   hashes = [
     "h1:+PpTOInF6IV4iI+eXMVJilgwQrDTw+h2TTIAWrNCLZ4=",
     "h1:FMiaceP9nPV5SJrkbd3So8J3nsOexxbXrq5PGA8xlkg=",
