@@ -53,10 +53,13 @@ spec:
         gethomepage.dev/widget.key: "${API_KEY_AUTHENTIK}"
         gethomepage.dev/widget.enableQueue: "true"
       hosts:
-        - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+        - host: &host "authentik.${EXTERNAL_DOMAIN}"
           paths:
             - path: /
               pathType: Prefix
+      tls:
+        - hosts:
+            - *host
 
     postgresql:
       enabled: true
