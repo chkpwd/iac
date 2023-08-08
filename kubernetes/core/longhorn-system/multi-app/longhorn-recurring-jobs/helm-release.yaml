@@ -38,25 +38,6 @@ spec:
         backup:
           - interval: 12h
             retain: 2
-      "Gameserver":
-        options:
-          parameters:
-            numberOfReplicas: "2"
-        snapshot:
-          - interval: 10m
-            retain: 6
-          - interval: 1h
-            retain: 6
-        backup:
-          - interval: 12h
-            retain: 4
-      "Plex":
-        snapshot:
-          - interval: 10m
-            retain: 6
-        backup:
-          - interval: 24h
-            retain: 2
       "Config":
         snapshot:
           - interval: 10m
@@ -64,3 +45,10 @@ spec:
         backup:
           - interval: 24h
             retain: 7
+      "Media":
+        snapshot:
+          - interval: 10m
+            retain: 6
+        backup:
+          - interval: 24h
+            retain: 2
