@@ -31,10 +31,12 @@ spec:
         enabled: true
 
       email:
-        from: ocid@chkpwd.com
+        from: "authentik <ocid@chkpwd.com>"
         host: smtp.gmail.com
         port: 465
         use_ssl: false
+        username: ${APP_AUTHENTIK_SMTP_USER}
+        password: ${APP_AUTHENTIK_SMTP_PWD}
 
       postgresql:
         password: ${DB_PWD_AUTHENTIK}
@@ -51,7 +53,6 @@ spec:
         gethomepage.dev/widget.type: authentik
         gethomepage.dev/widget.url: "http://authentik.security.${CLUSTER_DOMAIN}"
         gethomepage.dev/widget.key: "${API_KEY_AUTHENTIK}"
-        gethomepage.dev/widget.enableQueue: "true"
       hosts:
         - host: &host "authentik.${EXTERNAL_DOMAIN}"
           paths:
