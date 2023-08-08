@@ -1,0 +1,25 @@
+---
+- name: Get Bitwarden CLI
+  delegate_to: localhost
+  vars:
+    ansible_python_interpreter: "/home/{{ common_user }}/code/iac/.venv/bin/python3"
+  community.general.github_release:
+    user: bitwarden
+    repo: clients
+    action: latest_release
+  register: pkg_release
+
+- name: Installing Bitwarden CLI
+  ansible.builtin.get_url:
+    url: https://github.com/bitwarden/clients/releases/download/{{ pkg_release.tag }}/bw-linux-{{ pkg_release.tag | replace('cli-v', '') }}.zip
+    dest: /tmp/bw-cli.zip
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: '0755'
+
+- name: Unarchive the 'bw-cli' zip file
+  ansible.builtin.unarchive:
+    src: /tmp/bw-cli.zip
+    dest: "/usr/local/bin/"
+    remote_src: true
+

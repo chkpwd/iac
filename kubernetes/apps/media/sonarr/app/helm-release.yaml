@@ -25,18 +25,22 @@ spec:
 
   values:
     global:
-      nameOverride: *app
+      fullnameOverride: *app
+
+    controller:
+        type: statefulset
+
     image:
       repository: ghcr.io/onedr0p/sonarr-develop
       tag: 4.0.0.552
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
       SONARR__INSTANCE_NAME: Sonarr
       SONARR__PORT: &port 8989
       SONARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
       SONARR__API_KEY: ${API_KEY_SONARR}
-      SONARR__AUTHENTICATION_METHOD: Forms
+      SONARR__AUTHENTICATION_METHOD: External
       SONARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
       SONARR__LOG_LEVEL: info
 
@@ -54,13 +58,14 @@ spec:
         ingressClassName: "nginx"
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: "Sonarr"
-          gethomepage.dev/group: "Media Automation"
-          gethomepage.dev/icon: "sonarr"
-          gethomepage.dev/description: "TV Show automation tool."
-          gethomepage.dev/widget.type: "sonarr"
-          gethomepage.dev/widget.url: "http://sonarr.media.svc.cluster.local"
+          gethomepage.dev/name: Sonarr
+          gethomepage.dev/group: Media Automation
+          gethomepage.dev/icon: sonarr.png
+          gethomepage.dev/description: TV Show automation tool
+          gethomepage.dev/widget.type: sonarr
+          gethomepage.dev/widget.url: "http://sonarr.media.${CLUSTER_DOMAIN}"
           gethomepage.dev/widget.key: "${API_KEY_SONARR}"
+          gethomepage.dev/widget.enableQueue: "true"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
@@ -70,23 +75,26 @@ spec:
           - hosts:
               - *host
 
+    podSecurityContext:
+      runAsUser: &context 1000
+      runAsGroup: *context
+      fsGroup: *context
+      fsGroupChangePolicy: "OnRootMismatch"
+
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
+
     persistence:
-      config:
-        enabled: true
-        existingClaim: sonarr-config
       media:
         enabled: true
         type: nfs
         server: "cockpit.${LOCAL_DOMAIN}"
         path: /mnt/data/
         mountPath: /data
-
-    podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-      fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups: [568]
 
     resources:
       requests:

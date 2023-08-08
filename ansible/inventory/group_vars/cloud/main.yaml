@@ -1,0 +1,114 @@
+sites:
+  - url: couchdb.{{ remote_domain }}
+    name: ct-02-x86.{{ oci_dns_domain }}
+    port: 5984
+  - url: uptime.{{ remote_domain }}
+    name: wireguard
+    port: 3001
+
+remote_domain: chkpwd.com
+oci_dns_domain: remote.chkpwd.oraclevcn.com
+
+uptime_kuma_monitors:
+  # Groups
+  - name: Site Ping
+    type: group
+
+  - name: Services Ping
+    type: group
+
+  # Services
+  - name: OPNsense
+    type: ping
+    url: 172.16.16.1
+    parent: Services Ping
+
+  - name: Switch
+    type: ping
+    url: 172.16.16.2
+    parent: Services Ping
+
+  - name: ESXi-1
+    type: ping
+    url: 172.16.16.3
+    parent: Services Ping
+
+  - name: vCenter
+    type: ping
+    url: 172.16.16.6
+    parent: Services Ping
+
+  - name: Unifi AP
+    type: ping
+    url: 172.16.16.9
+    parent: Services Ping
+
+  - name: Home Assistant
+    type: ping
+    url: 172.16.16.11
+    parent: Services Ping
+
+  - name: 3D Printer
+    type: ping
+    url: 172.16.16.13
+    parent: Services Ping
+
+  - name: NAS
+    type: ping
+    url: 172.16.16.15
+    parent: Services Ping
+
+  - name: Kube-VIP LoadBalancer
+    type: ping
+    url: 172.16.16.200
+    parent: Services Ping
+
+  - name: Kubernetes Node 1
+    type: ping
+    url: 172.16.16.201
+    parent: Services Ping
+
+  - name: Kubernetes Node 2
+    type: ping
+    url: 172.16.16.202
+    parent: Services Ping
+
+  - name: Kubernetes Node 3
+    type: ping
+    url: 172.16.16.203
+    parent: Services Ping
+
+  # Sites
+  - name: Winxuu
+    type: ping
+    url: winxuu.chkpwd.com
+    parent: Site Ping
+
+uptime_kuma_status_pages:
+  - title: "Default"
+    description: "Hosted Products"
+    slug: default
+    publicGroupList:
+      - name: Site Ping
+        weight: 1
+        monitorList:
+          - name: Site Ping
+      - name: Servies Ping
+        weight: 2
+        monitorList:
+          - name: Services Ping
+
+# uptime_kuma_maintenance_schedules:
+#   - title: Backup - Plex
+#     description: Plex Server Backup
+#     strategy: recurring-weekday
+#     intervalDay: 1
+#     weekdays: [2, 3, 4, 5, 6, 7, 0]
+#     timeRange:
+#       - hours: 7
+#         minutes: 0
+#       - hours: 7
+#         minutes: 30
+#     monitors:
+#       - name: Bristol Plex Media Server
+#       - name: Plex Media Server

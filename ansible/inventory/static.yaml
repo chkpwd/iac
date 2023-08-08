@@ -1,0 +1,115 @@
+---
+all:
+  hosts:
+    localhost:
+      ansible_connection: local
+  children:
+    vsphere:
+      children:
+        esxi_hosts:
+        vcenter:
+
+    vcenter:
+      hosts:
+        ronin:
+
+    esxi_hosts:
+      hosts:
+        # esx[1:3]:
+        octane:
+        caustic:
+
+    guests:
+      children:
+        docker_hosts:
+        media_server:
+        k3s_cluster:
+      hosts:
+        cockpit:
+
+    linux:
+      hosts:
+        mirage:
+        valkyrie:
+        crypto:
+        node-01:
+        cockpit:
+        kubes-cp-1:
+        kubes-cp-2:
+        kubes-cp-3:
+
+    windows:
+      hosts:
+        loba:
+        bloodhound:
+      vars:
+        ansible_become_method: runas
+        ansible_become_user: "{{ ansible_user }}"
+
+    docker_hosts:
+      hosts:
+        mirage:
+        valkyrie:
+        crypto:
+        node-01:
+        ct-01-x86:
+        ct-02-x86:
+    
+    k3s_cluster:
+      children:
+        k3s_master:
+        #workers:
+
+    k3s_master:
+      hosts:
+        kubes-cp-1:
+          ansible_host: 172.16.16.201
+        kubes-cp-2:
+          ansible_host: 172.16.16.202
+        kubes-cp-3:
+          ansible_host: 172.16.16.203
+
+    printers:
+      hosts:
+        rampart:
+      vars:
+        ansible_user: pi
+        ansible_become_user: pi
+
+    media_server:
+      hosts:
+        mirage:
+    
+    devops:
+      hosts:
+        crypto:
+
+    dev:
+      children:
+        staging:
+
+    staging:
+      hosts:
+        jumpbox-dev: 
+          ansible_host: 172.16.16.232
+
+    cloud:
+      vars:
+        ansible_remote_user: ubuntu
+        ansible_ssh_user: ubuntu
+        ansible_ssh_private_key_file: ~/.ssh/oci
+        common_user: ubuntu
+      hosts:
+        ct-01-x86:
+          ansible_host:	129.80.241.202
+        ct-02-x86:
+          ansible_host: 150.136.245.5
+
+    onprem:
+      children:
+        vsphere:
+
+    datacenter:
+      children:
+        cloud:
+        onprem:

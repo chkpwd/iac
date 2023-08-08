@@ -1,26 +1,16 @@
 ---
-- name: "Install the essentials on the target"
-  hosts: default #* Add this to your inventory file and manually --limit within provisioner
+- name: Install the essentials on the target
+  hosts: all
   become: true
 
   vars:
-    ansible_user: "hyoga"
-    packages: [zsh,vim,htop,ranger]
+    packages: [vim,htop]
 
   tasks:
     - name: Install essential packages # noqa package-latest
       ansible.builtin.apt:
         name: "{{ packages }}"
         state: latest
-
-    - name: Set permissions for the home directory
-      ansible.builtin.file:
-        path: "/home/{{ ansible_user }}"
-        state: directory
-        mode: 0755
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
-        recurse: false
 
     - name: Allow sudo group to have passwordless sudo
       ansible.builtin.lineinfile:
@@ -30,45 +20,11 @@
         line: '%sudo ALL=(ALL) NOPASSWD: ALL'
         validate: '/usr/sbin/visudo -cf %s'
 
-    - name: Set the ZSH_CUSTOM shell var if not present
-      ansible.builtin.set_fact:
-        zsh_custom: "{{ ansible_env.ZSH_CUSTOM | default('/home/' ~ ansible_user ~ '/.oh-my-zsh/custom', true) }}"
-
-    - name: Run ZSH configs
-      ansible.builtin.include_role:
-        name: gantsign.oh-my-zsh
-      vars:
-        oh_my_zsh_plugins:
-          - git
-          - zsh-autosuggestions
-          - sudo
-        users:
-          - username: "{{ ansible_user }}"
-            oh_my_zsh:
-              theme: bira
-              update_mode: auto
-              update_frequency: 3
-              write_zshrc: true
-              plugins:
-                - git
-                - zsh-autosuggestions
-                - sudo
-
-    - name: Clone a zsh-autosuggestions repo
-      ansible.builtin.git:
-        repo: https://github.com/zsh-users/zsh-autosuggestions
-        dest: "{{ zsh_custom }}/plugins/zsh-autosuggestions"
-
-    - name: Clone a zsh-syntax-highlighting repo
-      ansible.builtin.git:
-        repo: https://github.com/zsh-users/zsh-syntax-highlighting.git
-        dest: "{{ zsh_custom }}/plugins/zsh-syntax-highlighting"
-
     - name: Copy the public SSH key
       ansible.posix.authorized_key:
         user: "{{ ansible_user }}"
         state: present
-        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
+        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa main"
       become: true
 
     - name: Disable SSH password auth
@@ -77,16 +33,17 @@
         regexp: "^#PasswordAuthentication yes"
         line: "PasswordAuthentication no"
 
-    - name: Logrotate setup
+    - name: Include | logrotate
       ansible.builtin.include_role:
         name: arillso.logrotate
       vars:
         logrotate_global_config: false
         logrotate_applications:
-          - name: rsyslog
+          - name: custom_logging
             definitions:
               - logs:
-                  - /var/log/*.log
+                  - /var/log/syslog.log
+                  - /var/log/messages
                 options:
                   - daily
                   - size 20M
@@ -96,4 +53,5 @@
                   - delaycompress
                   - notifempty
                   - create 640 root adm
+                  - sharedscripts
                   - sharedscripts

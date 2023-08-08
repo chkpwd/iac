@@ -1,0 +1,118 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage
+  namespace: tools
+data:
+  kubernetes.yaml: |
+    ---
+    mode: cluster
+  settings.yaml: |
+    ---
+    title: Dashboard
+    favicon: https://kubernetes.io/images/favicon.png
+    theme: dark
+    color: slate
+    target: _self
+    layout:
+      Observability:
+        style: column
+        columns: 1
+      Media Automation:
+        style: row
+        columns: 4
+      Media Management:
+        style: row
+        columns: 4
+      Storage:
+        style: row
+        columns: 1
+      Infra:
+        style: row
+        columns: 2
+      Tools:
+        style: row
+        columns: 2
+      Security:
+        style: row
+        columns: 2
+      Downloaders:
+        style: row
+        columns: 2
+  bookmarks.yaml: |
+    ---
+    - Developer:
+        - Github:
+            - abbr: GH
+              href: https://github.com/chkpwd
+
+    - Social:
+        - Reddit:
+            - abbr: RE
+              href: https://reddit.com/
+
+    - Entertainment:
+        - YouTube:
+            - abbr: YT
+              href: https://youtube.com/
+  services.yaml: |
+    ---
+    - Infra:
+      - OPNsense:
+          href: https://opnsense.${LOCAL_DOMAIN}
+          icon: opnsense.png
+          description: Firewall and router
+          widget:
+            type: opnsense
+            url: https://opnsense.${LOCAL_DOMAIN}
+            username: ${APP_KEY_OPNSENSE}
+            password: ${APP_SECRET_OPNSENSE}
+      - Adguard-Home:
+          href: https://adguard.${LOCAL_DOMAIN}
+          icon: adguard-home.png
+          description: DNS and Blocklist Provider
+          widget:
+            type: adguard
+            url: https://adguard.${LOCAL_DOMAIN}
+            username: admin
+            password: ${APP_PWD_ADGUARD}
+      - Home-Assistant:
+          href: https://valkyrie.${LOCAL_DOMAIN}:8123
+          icon: home-assistant.png
+          description: Home Automation
+  widgets.yaml: |
+    ---
+    - search:
+        provider: [google, duckduckgo]
+        focus: false
+        target: _blank
+    - kubernetes:
+        cluster:
+          show: false
+          cpu: true
+          memory: true
+          showLabel: true
+          label: "K3s"
+        nodes:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+          label: Control Plane
+    - unifi_console:
+        url: https://unifi-controller.local.chkpwd.com
+        username: homepage
+        password: ${APP_PWD_UNIFI}
+        site: Default
+    - openmeteo:
+        label: North Miami
+        timezone: ${TZ}
+        units: Imperial
+        cache: 5
+    - datetime:
+      text_size: x1
+      format:
+        dateStyle: long
+        timeStyle: short
+  docker.yaml: ""

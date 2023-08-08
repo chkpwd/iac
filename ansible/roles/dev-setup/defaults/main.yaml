@@ -1,0 +1,43 @@
+---
+common_user: hyoga
+ansible_dest: /home/hyoga/code/iac/ansible
+template_path: "{{ ansible_dest }}/roles/code-server/templates"
+zsh_custom: "/home/{{ common_user }}/.oh-my-zsh/custom"
+
+keyrings_dir: /etc/apt/keyrings
+
+pip_tools:
+  - ansible-base
+  # - ansible-lint
+  # - molecule
+  # - molecule-docker
+  # - molecule-vagrant
+
+dependecies:
+  - gpg
+  - git
+  - python3
+  - python3-venv
+  - python3-pip
+  - apt-transport-https
+  - curl
+  - openssh-server
+  - gnupg
+  - rsync
+  - jq
+  - lsb-release
+  - ca-certificates
+  - yamllint
+  - mkisofs
+  - age
+  - direnv
+  - tmate
+  - tree
+  - golang
+  - rclone
+  - hugo
+  - fzf
+  - python3-kubernetes
+  - yq
+  - python3-pyvmomi
+  - sshpass

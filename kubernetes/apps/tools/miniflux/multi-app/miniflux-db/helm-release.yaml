@@ -1,0 +1,52 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app miniflux-db
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: postgresql
+      version: 12.5.9
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami-chart
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    global:
+      fullnameOverride: *app
+
+    primary:
+      persistence:
+        enabled: true
+        existingClaim: miniflux-db-pvc
+
+      initdb:
+        scripts:
+          init-miniflux.sql: |
+            CREATE ROLE "miniflux" WITH LOGIN PASSWORD '${DB_PWD_MINIFLUX}';
+            CREATE DATABASE miniflux WITH OWNER 'miniflux' ENCODING 'UTF8' TEMPLATE template0;
+
+      resources:
+        requests:
+          cpu: 15m
+          memory: 226M
+        limits:
+          memory: 226M
+
+  valuesFrom:
+    - kind: Secret
+      name: miniflux-secrets
+      valuesKey: POSTGRESQL_PASSWORD
+      targetPath: auth.postgresPassword

@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: postgresql
-      version: 12.6.2
+      version: 12.6.5
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -24,7 +24,7 @@ spec:
       retries: 3
 
   values:
-    nameOverride: postgresql
+    fullnameOverride: postgresql
     auth:
       database: awx
       username: awx

@@ -31,6 +31,6 @@ provisioner:
       jammy-jellyfish:
         ansible_user: ansible
   env:
-    #ANSIBLE_VAULT_PASSWORD_FILE: $HOME/code/boilerplates/ansible/vault-password
+    #ANSIBLE_VAULT_PASSWORD_FILE: $HOME/code/iac/ansible/vault-password
     ANSIBLE_ROLES_PATH: ../../../ansible/roles
     ANSIBLE_STDOUT_CALLBACK: yaml

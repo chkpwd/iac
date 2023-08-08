@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: awx-operator
-      version: 2.3.0
+      version: 2.4.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -24,10 +24,10 @@ spec:
       retries: 3
 
   values:
-    nameOverride: awx
+    fullnameOverride: &app awx
     AWX:
       enabled: true
-      name: awx
+      name: *app
       spec:
         admin_user: admin
         admin_email: ${AWX_ADMIN_EMAIL}

@@ -2,8 +2,8 @@
   ansible.builtin.file:
     path: "{{ traefik_config_path }}"
     state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0755
   become: true
 
@@ -11,8 +11,8 @@
   ansible.builtin.copy:
     src: "templates/"
     dest: "{{ traefik_config_path }}/traefik.yaml"
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0644
   become: true
 
@@ -20,8 +20,8 @@
   ansible.builtin.file:
     path: "{{ traefik_config_path }}/acme.json"
     state: file
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: 0600
   become: true
 

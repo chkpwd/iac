@@ -24,7 +24,7 @@ resource "flux_bootstrap_git" "kubernetes-cluster" {
   depends_on = [github_repository_deploy_key.github_secret]
 
   path = "./kubernetes/infrastructure"
-  namespace = "flux-system"
+  namespace = "chkpwd-ops"
   components_extra = [ "image-reflector-controller", "image-automation-controller" ]
   version = "v2.0.0-rc.3"
 }

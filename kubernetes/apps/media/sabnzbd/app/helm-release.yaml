@@ -25,13 +25,18 @@ spec:
 
   values:
     global:
-      nameOverride: *app
+      fullnameOverride: *app
+
+    controller:
+        type: statefulset
+
     image:
       repository: ghcr.io/onedr0p/sabnzbd
-      tag: 4.0.2
+      tag: 4.0.3
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
+      SABNZBD__PORT: &port 8080
       SABNZBD__API_KEY: ${API_KEY_SABNZBD}
       SABNZBD__NZB_KEY: ${API_KEY_NZBGEEK}
       SABNZBD__HOST_WHITELIST_ENTRIES: >-
@@ -39,7 +44,7 @@ spec:
         {{ .Release.Name }}.media,
         {{ .Release.Name }}.media.svc,
         {{ .Release.Name }}.media.svc.cluster,
-        {{ .Release.Name }}.media.svc.cluster.local,
+        {{ .Release.Name }}.media.${CLUSTER_DOMAIN},
         {{ .Release.Name }}.local.chkpwd.com
 
     hostname: *app
@@ -48,7 +53,7 @@ spec:
       main:
         ports:
           http:
-            port: 80
+            port: *port
 
     ingress:
       main:
@@ -56,12 +61,12 @@ spec:
         ingressClassName: "nginx"
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: "Sabnzbd"
-          gethomepage.dev/group: "Media Automation"
-          gethomepage.dev/icon: "sabnzbd"
-          gethomepage.dev/description: "Binary Newsreader"
-          gethomepage.dev/widget.type: "sabnzbd"
-          gethomepage.dev/widget.url: "http://sabnzbd.media.svc.cluster.local"
+          gethomepage.dev/name: Sabnzbd
+          gethomepage.dev/group: Media Automation
+          gethomepage.dev/icon: sabnzbd.png
+          gethomepage.dev/description: Binary Newsreader
+          gethomepage.dev/widget.type: sabnzbd
+          gethomepage.dev/widget.url: "http://sabnzbd.media.${CLUSTER_DOMAIN}"
           gethomepage.dev/widget.key: "${API_KEY_SABNZBD}"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
@@ -72,23 +77,26 @@ spec:
           - hosts:
               - *host
 
+    podSecurityContext:
+      runAsUser: &context 1000
+      runAsGroup: *context
+      fsGroup: *context
+      fsGroupChangePolicy: "OnRootMismatch"
+
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
+
     persistence:
-      config:
-        enabled: true
-        existingClaim: sabnzbd-config
       media:
         enabled: true
         type: nfs
         server: "cockpit.${LOCAL_DOMAIN}"
         path: /mnt/data/
         mountPath: /data
-
-    podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-      fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups: [568]
 
     resources:
       requests:

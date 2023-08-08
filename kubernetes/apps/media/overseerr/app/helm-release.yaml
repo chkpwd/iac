@@ -25,14 +25,17 @@ spec:
 
   values:
     global:
-      nameOverride: *app
+      fullnameOverride: *app
+
+    controller:
+        type: statefulset
 
     image:
       repository: ghcr.io/sct/overseerr
       tag: 1.33.0
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
       LOG_LEVEL: info
       PORT: &port 5055
 
@@ -47,16 +50,15 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: nginx
+        ingressClassName: "nginx"
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: "overseerr"
-          gethomepage.dev/group: "Media Automation"
-          gethomepage.dev/icon: "overseerr"
-          gethomepage.dev/description: "User requests management"
+          gethomepage.dev/description: User requests management
+          gethomepage.dev/group: Media Automation
+          gethomepage.dev/icon: overseerr.png
+          gethomepage.dev/name: Overseerr
           gethomepage.dev/widget.type: "overseerr"
-          gethomepage.dev/widget.url: "http://overseerr.media.svc.cluster.local"
-          gethomepage.dev/widget.key: "${API_KEY_OVERSEERR}"
+          gethomepage.dev/widget.url: "http://overseerr.media.${CLUSTER_DOMAIN}"
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
@@ -66,17 +68,17 @@ spec:
               - *host
 
     podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
+      runAsUser: &context 1000
+      runAsGroup: *context
+      fsGroup: *context
       fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups: [65534]
 
-    persistence:
-      config:
-        enabled: true
-        existingClaim: overseerr-config
+    volumeClaimTemplates:
+      - name: config
         mountPath: /app/config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
 
     resources:
       requests:

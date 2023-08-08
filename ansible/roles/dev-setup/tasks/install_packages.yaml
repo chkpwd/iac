@@ -1,0 +1,235 @@
+---
+- name: Install necessary dependecies for the base system
+  ansible.builtin.apt:
+    update_cache: true
+    pkg: "{{ dependecies }}"
+  become: true
+
+- name: Install Pip Tools
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    virtualenv: "{{ virtualenv_location }}"
+    virtualenv_command: "/usr/bin/python3 -m venv"
+  loop: "{{ pip_tools }}"
+  become: false
+
+- name: Install sops on remote hosts
+  ansible.builtin.include_role:
+    name: community.sops.install
+
+- name: Install packages
+  ansible.builtin.apt:
+    update_cache: true
+    pkg:
+      - terraform
+      - packer
+      - vagrant
+        #- powershell
+  become: true
+
+- name: Install GO
+  ansible.builtin.include_role:
+    name: go
+
+- name: Grab latest tar file from flux Github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/fluxcd/flux2/releases/latest
+    return_content: true
+  register: latest_tar
+
+- name: Download the tar
+  loop: "{{ latest_tar.json.assets }}"
+  when: "'linux_amd64.tar.gz' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/flux.tar.gz
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: '0755'
+  no_log: true # * Removes output of the API call
+
+- name: Unarchive the flux tar file
+  ansible.builtin.unarchive:
+    src: /tmp/flux.tar.gz
+    dest: "/tmp"
+    remote_src: true
+  # changed_when: "{{ flux_tar }}" # TODO Fixme: maybe remove
+
+- name: Move the flux commands to a specific dest
+  ansible.builtin.copy:
+    src: /tmp/flux
+    dest: "/usr/local/bin/"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: '0755'
+    remote_src: true
+
+- name: Grab latest tar file from Pulumi Github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/pulumi/pulumi/releases/latest
+    return_content: true
+  register: latest_tar
+
+- name: "Download the tar"
+  loop: "{{ latest_tar.json.assets }}"
+  when: "'linux-x64.tar.gz' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/pulumi.tar.gz
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: '0755'
+  no_log: true # * Removes output of the API call
+
+- name: Unarchive the Pulumi tar file
+  ansible.builtin.unarchive:
+    src: /tmp/pulumi.tar.gz
+    dest: "/tmp"
+    remote_src: true
+  # changed_when: "{{ pulumi_tar }}" # TODO Fixme: maybe remove
+
+- name: Move the Pulumi commands to a specific dest
+  ansible.builtin.copy:
+    src: /tmp/pulumi/
+    dest: "/usr/local/bin/"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: '0755'
+    remote_src: true
+
+- name: Grab latest 'Pet' release from github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/knqyf263/pet/releases/latest
+    return_content: true
+  register: json_reponse
+
+- name: "Downloading 'Pet' {{ json_reponse.json.tag_name }}"
+  loop: "{{ json_reponse.json.assets }}"
+  when: "'linux_amd64.tar.gz' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/pet_amd64.tar.gz
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0644
+  no_log: true
+
+- name: Unarchive the 'Pet' tar file
+  ansible.builtin.unarchive:
+    src: /tmp/pet_amd64.tar.gz
+    dest: "/tmp"
+    remote_src: true
+
+- name: Move the 'Pet' binary to local bin
+  ansible.builtin.copy:
+    src: "/tmp/pet"
+    dest: "/usr/local/bin/"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0755
+    remote_src: true
+
+- name: Grab latest 'k9s' release from github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/derailed/k9s/releases/latest
+    return_content: true
+  register: json_reponse
+
+- name: "Downloading 'k9s' {{ json_reponse.json.tag_name }}"
+  loop: "{{ json_reponse.json.assets }}"
+  when: "'Linux_amd64.tar.gz' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/k9s_amd64.tar.gz
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0644
+  no_log: true
+
+- name: Unarchive the 'k9s' tar file
+  ansible.builtin.unarchive:
+    src: /tmp/k9s_amd64.tar.gz
+    dest: "/tmp"
+    remote_src: true
+
+- name: Move the 'k9s' binary to local bin
+  ansible.builtin.copy:
+    src: "/tmp/k9s"
+    dest: "/usr/local/bin/"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0755
+    remote_src: true
+
+- name: Grab latest 'helm' release from github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/helm/helm/releases/latest
+    return_content: true
+  register: json_reponse
+
+- name: "Downloading 'helm'"
+  ansible.builtin.get_url:
+    url: "https://get.helm.sh/helm-{{ json_reponse.json.tag_name }}-linux-amd64.tar.gz"
+    dest: /tmp/helm_amd64.tar.gz
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0644
+  no_log: false
+
+- name: Unarchive the 'helm' tar file
+  ansible.builtin.unarchive:
+    src: /tmp/helm_amd64.tar.gz
+    dest: "/tmp"
+    remote_src: true
+
+- name: Move the 'helm' binary to local bin
+  ansible.builtin.copy:
+    src: "/tmp/linux-amd64/helm"
+    dest: "/usr/local/bin/"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0755
+    remote_src: true
+
+- name: Grab latest 'viddy' release from github
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/sachaos/viddy/releases/latest
+    return_content: true
+  register: json_reponse
+
+- name: "Downloading 'viddy' {{ json_reponse.json.tag_name }}"
+  loop: "{{ json_reponse.json.assets }}"
+  when: "'Linux_x86_64.tar.gz' in item.name"
+  ansible.builtin.get_url:
+    url: "{{ item.browser_download_url }}"
+    dest: /tmp/viddy_amd64.tar.gz
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0644
+  no_log: true
+
+- name: Unarchive the 'viddy' tar file
+  ansible.builtin.unarchive:
+    src: /tmp/viddy_amd64.tar.gz
+    dest: "/tmp"
+    remote_src: true
+
+- name: Move the 'viddy' binary to local bin
+  ansible.builtin.copy:
+    src: "/tmp/viddy"
+    dest: "/usr/local/bin/"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0755
+    remote_src: true
+
+- name: Install Krew
+  vars:
+    krew_extra_plugins:
+      - get-all
+      - ctx
+      - virt
+      - change-ns
+      - modify-secrets
+  ansible.builtin.include_role:
+    name: krew

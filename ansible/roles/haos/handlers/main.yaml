@@ -1,5 +1,21 @@
 ---
+- name: Restart Docker Services
+  ansible.builtin.service:
+    name: "{{ item.value }}"
+    state: restarted
+  loop: "{{ docker_services }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Restart HAOS Services
+  ansible.builtin.service:
+    name: "{{ item.value }}"
+    state: restarted
+  loop: "{{ haos_services }}"
+  loop_control:
+    label: "{{ item.name }}"
+
 - name: Restart Networking service
   ansible.builtin.service:
-    name: networking.service
+    name: NetworkManager.service
     state: restarted

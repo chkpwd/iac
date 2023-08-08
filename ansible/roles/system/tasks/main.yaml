@@ -28,7 +28,7 @@
 
 - name: Apply secondary disk partitioning
   ansible.builtin.include_tasks: disk.yaml
-  when: ansible_facts['devices'] | length > 1
+  when: ansible_facts['devices'] | dict2items | list | length > 1
 
 - name: Apply user configurations for {{ common_user }}
   ansible.builtin.include_tasks: user.yaml
@@ -64,7 +64,7 @@
 
 - name: Clone all ZSH settings
   ansible.builtin.get_url:
-    url: "https://gist.githubusercontent.com/unix-chkpwd/{{ item.id }}/raw"
+    url: "https://gist.githubusercontent.com/chkpwd/{{ item.id }}/raw"
     dest: "{{ zsh_custom }}/{{ item.name }}"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"

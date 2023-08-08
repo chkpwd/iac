@@ -25,7 +25,7 @@ spec:
 
   values:
     global:
-      nameOverride: *app
+      fullnameOverride: *app
 
     image:
       repository: ghcr.io/benphelps/homepage
@@ -40,7 +40,7 @@ spec:
     enableRbac: true
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
       PORT: &port 3000
 
     service:
@@ -68,7 +68,6 @@ spec:
       runAsGroup: 568
       fsGroup: 568
       fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups: [65534]
 
     config:
       useExistingConfigMap: *app

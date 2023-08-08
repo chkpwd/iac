@@ -25,18 +25,22 @@ spec:
 
   values:
     global:
-      nameOverride: *app
+      fullnameOverride: *app
+
+    controller:
+        type: statefulset
+
     image:
       repository: ghcr.io/onedr0p/bazarr
       tag: 1.2.2
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
       BAZARR__INSTANCE_NAME: *app
       BAZARR__PORT: &port 6767
       BAZARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
       BAZARR__API_KEY: ${API_KEY_BAZARR}
-      BAZARR__AUTHENTICATION_METHOD: Forms
+      BAZARR__AUTHENTICATION_METHOD: External
       BAZARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
       BAZARR__LOG_LEVEL: info
 
@@ -54,12 +58,12 @@ spec:
         ingressClassName: "nginx"
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: "Bazarr"
-          gethomepage.dev/group: "Media Automation"
-          gethomepage.dev/icon: "bazarr"
-          gethomepage.dev/description: "Subtitles Automation Tool."
-          gethomepage.dev/widget.type: "bazarr"
-          gethomepage.dev/widget.url: "http://bazarr.media.svc.cluster.local"
+          gethomepage.dev/name: Bazarr
+          gethomepage.dev/group: Media Automation
+          gethomepage.dev/icon: bazarr
+          gethomepage.dev/description: Subtitles Automation Tool
+          gethomepage.dev/widget.type: bazarr
+          gethomepage.dev/widget.url: "http://bazarr.media.${CLUSTER_DOMAIN}"
           gethomepage.dev/widget.key: "${API_KEY_BAZARR}"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
@@ -69,23 +73,29 @@ spec:
           - hosts:
               - *host
 
+    podannotations:      
+      secret.reloader.stakater.com/reload: homepage
+
+    podSecurityContext:
+      runAsUser: &context 1000
+      runAsGroup: *context
+      fsGroup: *context
+      fsGroupChangePolicy: "OnRootMismatch"
+
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
+
     persistence:
-      config:
-        enabled: true
-        existingClaim: bazarr-config
       media:
         enabled: true
         type: nfs
         server: "cockpit.${LOCAL_DOMAIN}"
         path: /mnt/data/
         mountPath: /data
-
-    podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-      fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups: [568]
 
     resources:
       requests:

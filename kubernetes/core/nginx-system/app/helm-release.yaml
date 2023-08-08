@@ -10,29 +10,37 @@ spec:
     spec:
       chart: ingress-nginx
       version: 4.7.1
+      interval: 30m
       sourceRef:
         kind: HelmRepository
         name: ingress-nginx
         namespace: flux-system
-      interval: 15m
+
   values:
     controller:
-      replicaCount: 1
+      replicaCount: 3
+
       updateStrategy:
-        type: RollingUpdate # * Spins up a new pod before the old pod
+        type: RollingUpdate
         rollingUpdate:
           maxSurge: 1
+
       extraArgs:
-        default-ssl-certificate: cert-manager/chkpwd-cert # * The tls secret name for every CR. This will allow every ingress resource to use the default.
+        default-ssl-certificate: cert-manager/chkpwd-cert-production
+
       service:
         enabled: true
+        annotations:
+          metallb.universe.tf/loadBalancerIPs: 172.16.16.204
         type: LoadBalancer
-        loadBalancerIP: 172.16.16.204
-        externalTrafficPolicy: Cluster # * With 'Local' set - Finds the source of the response and stops hopping afterwards
+        externalTrafficPolicy: Cluster
+
       publishService:
-        enabled: true # * If not set, it will report back the status and what IP address
+        enabled: true
+
       ingressClassResource:
         default: true
+
       config:
         client-header-timeout: 120
         client-body-buffer-size: "100M"
@@ -47,3 +55,10 @@ spec:
         proxy-buffer-size: "16k"
         ssl-protocols: "TLSv1.3 TLSv1.2"
         use-forwarded-headers: "true"
+
+      resources:
+        requests:
+          cpu: 100m
+          memory: 250Mi
+        limits:
+          memory: 500Mi

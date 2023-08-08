@@ -24,16 +24,16 @@ data "sops_file" "servarr-secrets" {
 }
 
 provider "sonarr" {
-  url     = "http://${var.media_host_ip}:${var.ports["sonarr"]}"
+  url     = "http://sonarr.${var.local_domain}"
   api_key = "${data.sops_file.servarr-secrets.data["sonarr_api_key"]}"
 }
 
 provider "radarr" {
-  url     = "http://${var.media_host_ip}:${var.ports["radarr"]}"
+  url     = "http://radarr.${var.local_domain}"
   api_key = "${data.sops_file.servarr-secrets.data["radarr_api_key"]}"
 }
 
 provider "prowlarr" {
-  url     = "http://${var.media_host_ip}:${var.ports["prowlarr"]}"
+  url     = "http://prowlarr.${var.local_domain}"
   api_key = "${data.sops_file.servarr-secrets.data["prowlarr_api_key"]}"
 }

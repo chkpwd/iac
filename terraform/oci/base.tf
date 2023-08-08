@@ -1,4 +1,4 @@
-resource "oci_core_vcn" "oci" {
+resource "oci_core_vcn" "main" {
     compartment_id = "${data.sops_file.oci-secrets.data["oci_tenancy_ocid"]}"
     display_name  = "OCI-VCN"
     dns_label     = "chkpwd"
@@ -9,14 +9,14 @@ resource "oci_core_vcn" "oci" {
 
 resource "oci_core_internet_gateway" "oci_ig" {
     compartment_id  = "${data.sops_file.oci-secrets.data["oci_tenancy_ocid"]}"
-    vcn_id          = oci_core_vcn.oci.id
+    vcn_id          = oci_core_vcn.main.id
     display_name    = "OCI-IG"
     enabled         = true
 }
 
 resource "oci_core_route_table" "oci_routes" {
     compartment_id  = "${data.sops_file.oci-secrets.data["oci_tenancy_ocid"]}"
-    vcn_id          = oci_core_vcn.oci.id
+    vcn_id          = oci_core_vcn.main.id
     display_name    = "OCI-RouteTable"
     route_rules {
         network_entity_id = oci_core_internet_gateway.oci_ig.id
@@ -29,7 +29,7 @@ resource "oci_core_route_table" "oci_routes" {
 resource "oci_core_subnet" "homelab" {
     cidr_block      = "10.53.20.0/24"
     compartment_id  = "${data.sops_file.oci-secrets.data["oci_tenancy_ocid"]}"
-    vcn_id          = oci_core_vcn.oci.id
+    vcn_id          = oci_core_vcn.main.id
     display_name    = "OCI-Subnet"
     dns_label       = "remote"
     route_table_id  = oci_core_route_table.oci_routes.id

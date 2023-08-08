@@ -2,28 +2,6 @@
 # vSphere Modules
 #===============================================================================
 
-module "horizon" {
-  source                    = "../_modules/vsphere_vm"
-  vm_name                   = "horizon"
-  vm_template               = "deb-12-template"
-  network_spec = {
-    network_id              = "LAN"
-  }
-  spec = {
-    #folder                  = data.vsphere_folder.cattles.path
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
-    os_type                 = "linux"
-    cpu                     = 2
-    memory                  = 5120
-    disk_size               = 16
-    additional_disks = [
-      {
-        size                = 25
-      }
-    ]
-  }
-}
-
 module "cockpit" {
   source                    = "../_modules/vsphere_vm"
   vm_name                   = "cockpit"
@@ -33,7 +11,7 @@ module "cockpit" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id ]
-    os_type                 = "linux"
+    folder                  = vsphere_folder.media.path
     cpu                     = 2
     memory                  = 4096
     disk_size               = 48
@@ -56,9 +34,9 @@ module "crypto" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.dev.id ]
-    os_type                 = "linux"
-    cpu                     = 4
-    memory                  = 4096
+    folder                  = vsphere_folder.dev.path
+    cpu                     = 8
+    memory                  = 8192
     disk_size               = 16
     additional_disks = [
       {
@@ -77,7 +55,7 @@ module "mirage" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id, vsphere_tag.docker.id ]
-    os_type                 = "linux"
+    folder                  = vsphere_folder.media.path
     cpu                     = 4
     memory                  = 8192
     disk_size               = 16
@@ -98,35 +76,44 @@ module "homeassistant" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
-    os_type                 = "linux"
+    folder                  = vsphere_folder.personal_linux.path
     cpu                     = 2
     memory                  = 2048
     disk_size               = 16
+    additional_disks = [ 
+      {
+        size                = 25
+      } 
+    ]
   }
 }
 
-module "bloodhound" {
-  source                    = "../_modules/vsphere_vm"
-  count                     = 0
-  vm_name                   = "bloodhound"
-  vm_template               = "WinSrv22-template-DE"
-  network_spec = {
-    network_id              = "LAN"
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
-    os_type                 = "windows"
-    cpu                     = 2
-    memory                  = 8192
-    disk_size               = 48
-  }
-}
+# module "bloodhound" {
+#   source                    = "../_modules/vsphere_vm"
+#   vm_name                   = "bloodhound"
+#   vm_template               = "WSrv22-DE-Temp"
+#   network_spec = {
+#     network_id              = "LAN"
+#   }
+#   spec = {
+#     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
+#     folder                  = vsphere_folder.gaming_windows.path
+#     cpu                     = 4
+#     memory                  = 8192
+#     disk_size               = 48
+#     additional_disks = [
+#       {
+#         size                = 100
+#       }
+#     ]
+#   }
+# }
 
 module "kube-ops" {
   source                    = "../_modules/vsphere_vm"
   count                     = 3
   vm_name                   = "kubes-cp-${count.index + 1}"
-  vm_template               = "deb-12-template"
+  vm_template               = "k3s-deb12"
   network_spec = {
     network_id              = "LAN"
     mac_address             = ["00:50:56:93:8a:b9", "00:50:56:93:35:60", "00:50:56:93:fa:88"][count.index]
@@ -134,14 +121,14 @@ module "kube-ops" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.kubernetes.id ]
-    os_type                 = "linux"
+    folder                  = vsphere_folder.kubernetes.path
     enable_hv               = true
     cpu                     = 4
-    memory                  = 10240
-    disk_size               = 16
+    memory                  = 16384
+    disk_size               = 32
     additional_disks = [
       {
-        size                = 25
+        size                = 75
       }
     ]
   }
@@ -149,7 +136,6 @@ module "kube-ops" {
 
 module "traefik" {
   source                    = "../_modules/vsphere_vm"
-  count                     = 1
   vm_name                   = "node-01"
   vm_template               = "deb-12-template"
   network_spec = {
@@ -157,9 +143,25 @@ module "traefik" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
-    os_type                 = "linux"
+    folder                  = vsphere_folder.dev.path
     cpu                     = 2
     memory                  = 2048
     disk_size               = 60
+  }
+}
+
+module "casa-os" {
+  source                    = "../_modules/vsphere_vm"
+  vm_name                   = "casa-os"
+  vm_template               = "deb-12-template"
+  network_spec = {
+    network_id              = "Lab"
+  }
+  spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
+    folder                  = vsphere_folder.linux.path
+    cpu                     = 2
+    memory                  = 2048
+    disk_size               = 16
   }
 }

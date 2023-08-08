@@ -2,6 +2,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  # - freshrss/ks.yaml
   - homepage/ks.yaml
+  # - zipline/ks.yaml
+  - miniflux/ks.yaml
   # - immich/ks.yaml
+  - unifi-controller/ks.yaml
+  # - screego/ks.yaml

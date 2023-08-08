@@ -1,0 +1,26 @@
+---
+configuration_path: /opt/docker-confs
+swag_app_dir: /opt/docker-confs/swag
+
+common_env: &common_env
+  TZ: America/New_York
+  PUID: "1000"
+  PGID: "1000"
+
+service_definitions:
+  - name: swag
+    image: "{{ linuxserver_image }}/swag:latest"
+    ports:
+      - 443:443
+      - 80:80
+    env:
+      <<: *common_env
+      URL: chkpwd.com
+      SUBDOMAINS: wildcard
+      VALIDATION: dns
+      DNSPLUGIN: cloudflare
+      EMAIL: "{{ CF_EMAIL }}"
+      STAGING: "false"
+      DOCKER_MODS: linuxserver/mods:swag-auto-reload
+    volumes:
+      - "{{ configuration_path }}/swag:/config"

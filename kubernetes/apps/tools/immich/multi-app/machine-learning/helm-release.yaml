@@ -34,7 +34,7 @@ spec:
       strategy: RollingUpdate
 
     global:
-      nameOverride: *app
+      fullnameOverride: *app
     image:
       repository: ghcr.io/immich-app/immich-machine-learning
       tag: v1.66.1

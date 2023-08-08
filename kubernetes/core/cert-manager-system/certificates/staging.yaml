@@ -1,0 +1,15 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: staging
+  namespace: cert-manager
+spec:
+  secretName: chkpwd-cert-staging
+  dnsNames:
+    - "chkpwd.com"
+    - "*.chkpwd.com"
+    - "*.local.chkpwd.com" # Wildcard doesn't recurse
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer

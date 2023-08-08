@@ -25,29 +25,39 @@ spec:
 
   values:
     global:
-      nameOverride: *app
+      fullnameOverride: *app
+
     controller:
       type: cronjob
       cronjob:
         schedule: '@daily'
+
     image:
       repository: ghcr.io/recyclarr/recyclarr
       tag: 5.1.1
     command: ['/app/recyclarr/recyclarr']
     args: ['sync']
 
+    env:
+      TZ: ${TZ}
+
     service:
       main:
         enabled: false
 
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn-config
+
     persistence:
       config:
         enabled: true
-        existingClaim: recyclarr-config
-        mountPath: /config/recyclarr.yml
-        subPath: recyclarr.yml
-        defaultMode: 775
-        readOnly: true
+        type: configMap
+        name: recyclarr-cm
+        mountPath: "-"
 
     resources:
       requests:

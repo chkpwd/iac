@@ -12,6 +12,10 @@ terraform {
       source  = "carlpett/sops"
       version = "0.7.2"
     }
+    tfe = {
+      source = "hashicorp/tfe"
+      version = "~> 0.47.0"
+    }
   }
 }
 

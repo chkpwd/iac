@@ -1,0 +1,28 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: podinfo
+  namespace: misc
+spec:
+  releaseName: podinfo
+  chart:
+    spec:
+      chart: podinfo
+      version: 6.4.0
+      sourceRef:
+        kind: HelmRepository
+        name: podinfo
+        namespace: flux-system
+  interval: 5m
+  values:
+    ingress:
+      enabled: true
+      className: "nginx"
+      hosts:
+        - host: pod.${LOCAL_DOMAIN}
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - hosts:
+            - pod.${LOCAL_DOMAIN}

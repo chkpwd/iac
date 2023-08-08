@@ -1,0 +1,50 @@
+- name: Install parted
+  ansible.builtin.apt:
+    name: parted
+    state: present
+
+- name: Prepare secondary disk
+  community.general.parted:
+    device: /dev/sdb
+    number: 1
+    name: data
+    label: gpt
+    state: present
+  register: parted_result
+  failed_when: parted_result.failed
+  delegate_to: "{{ inventory_hostname }}"
+
+- name: Reboot machine if partitioning failed
+  reboot:
+  when: parted_result.failed
+  delegate_to: "{{ inventory_hostname }}"
+  notify: Reboot machines
+
+- name: Create ext4 fs on partition
+  community.general.filesystem:
+    dev: /dev/sdb1
+    fstype: ext4
+    state: present
+
+- name: Get the devices ansible_facts
+  ansible.builtin.setup:
+    gather_subset:
+      - devices 
+
+- name: Mount device by UUID
+  ansible.posix.mount:
+    path: /mnt/data
+    src: UUID={{ ansible_facts['devices']['sdb']['partitions']['sdb1']['uuid'] }}
+    fstype: ext4
+    opts: defaults
+    passno: 2
+    boot: true
+    state: mounted
+
+- name: Set permissions on mount
+  ansible.builtin.file:
+    path: /mnt/data
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: '755'
+    state: directory

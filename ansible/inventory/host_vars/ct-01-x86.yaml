@@ -1,5 +1,16 @@
 ---
-configuration_path: /opt/docker-confs
+# Set the user
+common_user: ubuntu
+
+# Docker Configurations
+docker_edition: 'ce'
+docker_package_state: latest
+docker_users: "{{ common_user }}"
+docker_services: 
+  - name: Docker Service
+    value: docker.service
+  - name: Docker Socket
+    value: docker.socket
 
 common_env: &common_env
   TZ: America/New_York
@@ -13,16 +24,36 @@ service_definitions:
       - net_admin # Allows modifications of net utils
       - sys_module # Allows privileged operations on non-root systems
     env: "{{ common_env }}"
+    ports: [3001:3001]
     volumes:
-      - '{{ configuration_path }}/wireguard:/config'
+      - "{{ configuration_path }}/wireguard:/config"
       - /lib/modules:/lib/modules
-    sysctls: net.ipv4.conf.all.src_valid_mark=1
-    network_mode: host
-    state: present # Only added to easily be able to delete afterwards
-  
+    sysctls:
+      net.ipv4.conf.all.src_valid_mark: 1
+    networks:
+      - name: net_swag
+
   - name: uptime-kuma
     image: louislam/uptime-kuma:1.22.1
     volumes:
       - "{{ configuration_path }}/uptime-kuma:/app/data" 
-    ports: [3001:3001]
-    state: present # Only added to easily be able to delete afterwards
+    network_mode: container:wireguard
+
+  - name: swag
+    image: "{{ linuxserver_image }}/swag:latest"
+    ports:
+      - 443:443
+      - 80:80
+    env:
+      <<: *common_env
+      URL: chkpwd.com
+      SUBDOMAINS: wildcard
+      VALIDATION: dns
+      DNSPLUGIN: cloudflare
+      EMAIL: "{{ CF_EMAIL }}"
+      STAGING: "false"
+      DOCKER_MODS: linuxserver/mods:swag-auto-reload
+    volumes:
+      - "{{ configuration_path }}/swag:/config"
+    networks:
+      - name: net_swag

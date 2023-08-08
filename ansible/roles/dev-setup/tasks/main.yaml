@@ -1,0 +1,12 @@
+---
+# - name: "Configure user for code"
+#   ansible.builtin.include_tasks: user_configs.yaml
+
+- name: "Configure Repositories for necessary packages"
+  ansible.builtin.include_tasks: add_repos.yaml
+
+- name: "Configure Git directory"
+  ansible.builtin.include_tasks: create_git_directory.yaml
+
+- name: "Configure all needed packages"
+  ansible.builtin.include_tasks: install_packages.yaml

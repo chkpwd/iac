@@ -1,3 +1,21 @@
+resource "cloudflare_record" "authentik" {
+  name    = "authentik"
+  proxied = true
+  ttl     = 1
+  type    = "CNAME"
+  value   = "chkpwd.com"
+  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
+}
+
+resource "cloudflare_record" "miniflux" {
+  name    = "miniflux"
+  proxied = true
+  ttl     = 1
+  type    = "CNAME"
+  value   = "chkpwd.com"
+  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
+}
+
 resource "cloudflare_record" "overseerr" {
   name    = "overseerr"
   proxied = true
@@ -7,16 +25,7 @@ resource "cloudflare_record" "overseerr" {
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
 
-resource "cloudflare_record" "zipline_cname" {
-  name    = "zipline"
-  proxied = true
-  ttl     = 1
-  type    = "CNAME"
-  value   = "chkpwd.com"
-  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
-}
-
-resource "cloudflare_record" "winxuu_cname" {
+resource "cloudflare_record" "winxuu" {
   name    = "winxuu"
   proxied = true
   ttl     = 1
@@ -25,7 +34,7 @@ resource "cloudflare_record" "winxuu_cname" {
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
 
-resource "cloudflare_record" "kavita_cname" {
+resource "cloudflare_record" "kavita" {
   name    = "kavita"
   proxied = true
   ttl     = 1
@@ -34,8 +43,8 @@ resource "cloudflare_record" "kavita_cname" {
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
 
-resource "cloudflare_record" "freshrss_cname" {
-  name    = "rss"
+resource "cloudflare_record" "freshrss" {
+  name    = "freshrss"
   proxied = true
   ttl     = 1
   type    = "CNAME"
@@ -43,7 +52,7 @@ resource "cloudflare_record" "freshrss_cname" {
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
 
-resource "cloudflare_record" "vaultwarden_cname" {
+resource "cloudflare_record" "vaultwarden" {
   name    = "vault"
   proxied = true
   ttl     = 1
@@ -52,7 +61,7 @@ resource "cloudflare_record" "vaultwarden_cname" {
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
 
-resource "cloudflare_record" "wizarr_cname" {
+resource "cloudflare_record" "wizarr" {
   name    = "wizarr"
   proxied = true
   ttl     = 1
@@ -61,7 +70,7 @@ resource "cloudflare_record" "wizarr_cname" {
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
 
-resource "cloudflare_record" "homeassistant_cname" {
+resource "cloudflare_record" "homeassistant" {
   name    = "zeal"
   proxied = true
   ttl     = 1
@@ -70,7 +79,7 @@ resource "cloudflare_record" "homeassistant_cname" {
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
 
-resource "cloudflare_record" "blog_cname" {
+resource "cloudflare_record" "blog" {
   name    = "blog"
   proxied = true
   ttl     = 1

@@ -1,3 +1,5 @@
+mount_dir: /mnt/data
+
 ssh_public_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa crypto"
 zsh_custom: "/home/{{ common_user }}/.oh-my-zsh/custom"
 
@@ -15,6 +17,7 @@ packages:
   - ranger
   - nfs-common
   - screen
+  - python3-venv
 
-ansible_dest: /home/hyoga/code/boilerplates/ansible
+ansible_dest: /home/hyoga/code/iac/ansible
 template_path: "{{ ansible_dest }}/roles/code-server/templates"

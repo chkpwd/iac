@@ -25,21 +25,24 @@ spec:
 
   values:
     global:
-      nameOverride: *app
+      fullnameOverride: *app
+
+    controller:
+        type: statefulset
 
     image:
-      repository: ghcr.io/onedr0p/prowlarr-nightly
-      tag: 1.7.1.3656
+      repository: ghcr.io/onedr0p/prowlarr
+      tag: 1.7.4.3769
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
       PROWLARR__INSTANCE_NAME: Prowlarr
       PROWLARR__PORT: &port 9696
-      RADARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
+      PROWLARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
       PROWLARR__LOG_LEVEL: info
-      RADARR__API_KEY: ${API_KEY_PROWLARR}
-      RADARR__AUTHENTICATION_METHOD: Forms
-      RADARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
+      PROWLARR__API_KEY: ${API_KEY_PROWLARR}
+      PROWLARR__AUTHENTICATION_METHOD: External
+      PROWLARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
 
     hostname: *app
 
@@ -60,7 +63,7 @@ spec:
           gethomepage.dev/icon: "prowlarr"
           gethomepage.dev/description: "Indexer manager for Sonarr and Radarr."
           gethomepage.dev/widget.type: "prowlarr"
-          gethomepage.dev/widget.url: "http://prowlarr.media.svc.cluster.local"
+          gethomepage.dev/widget.url: "http://prowlarr.media.${CLUSTER_DOMAIN}"
           gethomepage.dev/widget.key: "${API_KEY_PROWLARR}"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
@@ -71,17 +74,18 @@ spec:
           - hosts:
               - *host
 
-    persistence:
-      config:
-        enabled: true
-        existingClaim: prowlarr-config
-
     podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
+      runAsUser: &context 568
+      runAsGroup: *context
+      fsGroup: *context
       fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups: [568]
+
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
 
     resources:
       requests:

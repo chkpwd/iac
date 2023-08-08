@@ -5,11 +5,11 @@ metadata:
   name: core-longhorn
   namespace: flux-system
 spec:
-  path: ./kubernetes/core/longhorn-system/app
+  path: ./kubernetes/core/longhorn-system/multi-app
   prune: true
   sourceRef:
     kind: GitRepository
-    name: flux-system
+    name: chkpwd-ops
   wait: true
   interval: 30m
   retryInterval: 1m

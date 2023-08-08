@@ -1,0 +1,34 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: chkpwd-ops 
+  namespace: flux-system
+spec:
+  interval: 30m
+  url: https://github.com/chkpwd/iac
+  ref:
+    branch: main
+  ignore: |
+    # exclude all
+    /*
+    # include kubernetes directory
+    !/kubernetes
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: k3s-onprem
+  namespace: flux-system
+spec:
+  interval: 30m
+  path: ./kubernetes/infra
+  prune: true
+  wait: false
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  decryption:
+    provider: sops
+    secretRef:
+      name: age-secret

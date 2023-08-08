@@ -4,6 +4,9 @@ ansible/roles/veeam_deploy_v11/files
 # Exclude templates used by the code-server role
 ansible/roles/code-server/templates
 
+# Exclude virtualenv for python
+**/.venv
+
 # Prevent sensitive auto-generated Packer variable files from being tracked
 **/secrets.auto.pkrvars.hcl
 
@@ -19,5 +22,5 @@ ansible/.dependencies
 # Exclude Ansible fact cache to prevent outdated data from being versioned
 .fact_cache/
 
-# Don't track encrypted configuration files for age (a file encryption tool)
-**/age.sops.yaml.j2
+# Ignore Packer File
+**/.pkrtpl.hcl

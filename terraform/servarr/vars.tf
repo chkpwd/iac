@@ -1,7 +1,13 @@
-variable media_host_ip {
+variable local_domain {
   type = string
-  default = "172.16.10.20"
+  default = "local.chkpwd.com"
   description = "Media Host IP Address"
+}
+
+variable cluster_media_domain {
+  type = string
+  default = "media.svc.cluster.local"
+  description = "Cluster Media Namespace Domain"
 }
 
 variable "ports" {
@@ -10,8 +16,8 @@ variable "ports" {
     "sonarr"      = "8989"
     "prowlarr"    = "9696"
     "radarr"      = "7878"
-    "sabnzbd"     = "8180"
-    "qbittorrent" = "8280"
+    "sabnzbd"     = "8080"
+    "qbittorrent" = "8080"
   }
   description = "Mapping of services to their respective ports"
 }

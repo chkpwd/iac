@@ -1,4 +1,7 @@
 ---
+- name: Pre-configure Nodes
+  ansible.builtin.include_tasks: preconfigure-nodes.yaml
+
 - name: Check if cluster is installed
   check_mode: false
   ansible.builtin.stat:
@@ -30,14 +33,14 @@
 
 - name: Control remote_user escalation
   vars: 
-    ansible_user_dir: "/home/{{ ansible_user }}"
+    common_user_dir: "/home/{{ common_user }}"
   block:
     - name: Copy kubeconfig file
       become: false
       run_once: true
       ansible.builtin.fetch:
         src: "/etc/rancher/k3s/k3s.yaml"
-        dest: "{{ ansible_user_dir }}/.kube/config"
+        dest: "{{ common_user_dir }}/.kube/config"
         flat: true
       when:
         - k3s_control_node | default(false)
@@ -47,25 +50,40 @@
       become: false
       run_once: true
       ansible.builtin.replace:
-        path: "{{ ansible_user_dir }}/.kube/config"
+        path: "{{ common_user_dir }}/.kube/config"
         regexp: "https://127.0.0.1:6443"
         replace: "https://{{ kube_vip_address }}:6443"
-        owner: "{{ ansible_user }}"
-        group: "{{ ansible_user }}"
+        owner: "{{ common_user }}"
+        group: "{{ common_user }}"
         mode: "0600"
 
-- name: Bootstrap Flux Namespace
+- name: Create Flux Namespace
   delegate_to: localhost
+  run_once: true
   kubernetes.core.k8s:
-    name: flux-system
+    name: "{{ flux_namespace }}"
     api_version: v1
     kind: Namespace
     state: present
     kubeconfig: "/home/{{ common_user }}/.kube/config"
+  retries: 3
 
 - name: Create SOPs secret
   delegate_to: localhost
+  run_once: true
   kubernetes.core.k8s:
     state: present
     template: templates/age.sops.yaml.j2 
+    kubeconfig: "/home/{{ common_user }}/.kube/config"
   become: false
+  retries: 3
+
+- name: Bootstrap flux
+  delegate_to: localhost
+  run_once: true
+  command: kubectl apply --server-side --kustomize {{ role_path }}/files/bootstrap_flux
+
+- name: Apply flux config
+  delegate_to: localhost
+  run_once: true
+  command: kubectl apply --server-side --kustomize {{ role_path }}/files/apply_flux

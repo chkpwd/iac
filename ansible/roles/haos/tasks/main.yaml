@@ -1,2 +1,23 @@
-- name: "Run Home Assistant Supervised Configuration tasks"
-  ansible.builtin.include_tasks: install_hasupervised.yaml
+---
+- name: Preconfigure HAOS
+  ansible.builtin.include_tasks: preconfigure-haos.yaml
+
+- name: Get HAOS pkgs
+  delegate_to: localhost
+  vars:
+    ansible_python_interpreter: "/home/{{ common_user }}/code/iac/.venv/bin/python3"
+  community.general.github_release:
+    user: home-assistant
+    repo: "{{ item.release }}"
+    action: latest_release
+  loop: "{{ haos_pkgs }}"
+  loop_control:
+    label: "{{ item.name }}"
+  register: pkg_release
+
+- name: Installing Packages
+  ansible.builtin.apt:
+    deb: "https://github.com/home-assistant/{{ item.item.release }}/releases/download/{{ item.tag }}/{{ 'os-agent_' ~ item.tag ~ '_linux_x86_64.deb' if item.item.name == 'OS Agent' else 'homeassistant-supervised.deb'}}"
+  loop: "{{ pkg_release.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"

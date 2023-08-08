@@ -24,12 +24,18 @@ spec:
       retries: 3
 
   values:
+    global:
+      fullnameOverride: *app
+
     image:
       repository: ghcr.io/wizarrrr/wizarr
-      tag: 2.2.0
+      tag: dev
+
+    controller:
+        type: statefulset
 
     env:
-      TZ: "America/New_York"
+      TZ: "${TZ}"
       APP_URL: https://{{ .Release.Name }}.${LOCAL_DOMAIN}
       DISABLE_BUILTIN_AUTH: "true"
 
@@ -47,31 +53,31 @@ spec:
         ingressClassName: "nginx"
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: "wizarr"
-          gethomepage.dev/group: "Media Automation"
-          gethomepage.dev/icon: "https://github.com/Wizarrrr/wizarr/blob/master/screenshots/wizard.png"
-          gethomepage.dev/description: "Plex Registration Tool"
-          gethomepage.dev/widget.url: "http://wizarr.media.svc.cluster.local"
+          gethomepage.dev/name: Wizarr
+          gethomepage.dev/group: Media Management
+          gethomepage.dev/icon: "https://raw.githubusercontent.com/Wizarrrr/wizarr/master/screenshots/wizard.png"
+          gethomepage.dev/description: Plex Registration Tool
+          gethomepage.dev/href: "http://wizarr.${EXTERNAL_DOMAIN}"
         hosts:
-          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
         tls:
           - hosts:
               - *host
 
-    persistence:
-      config:
-        enabled: true
-        existingClaim: wizarr-config
-        mountPath: /data/database
-
     podSecurityContext:
-      runAsUser: 568
-      runAsGroup: 568
-      fsGroup: 568
+      runAsUser: &context 1000
+      runAsGroup: *context
+      fsGroup: *context
       fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups: [65534]
+
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /data/database
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn
 
     resources:
       requests:

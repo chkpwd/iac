@@ -1,0 +1,32 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app reloader
+  namespace: &namespace tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: reloader
+      version: 1.0.32
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: stakater
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    fullnameOverride: *app
+
+    reloader:
+      podMonitor:
+        enabled: false
+        namespace: *namespace

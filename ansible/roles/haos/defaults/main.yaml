@@ -1,3 +1,33 @@
+haos_ipv4_addr: "172.16.16.11"
+haos_gateway: "172.16.16.1"
+haos_dns: "172.16.16.1"
+haos_domain: "local.chkpwd.com"
+
+haos_pkgs:
+  - name: OS Agent
+    release: os-agent
+    release_name: os-agent_[0-9]+.deb
+  - name: Supervised
+    release: supervised-installer
+    release_name: homeassistant-supervised
+
+haos_services: 
+  - name: OS Agent
+    value: haos-agent.service 
+  - name: HAOS Apparmor
+    value: hassio-apparmor.service
+  - name: HAOS Supervisor
+    value: hassio-supervisor.service
+
+hassio_daemon_options:
+  supervisor: "ghcr.io/home-assistant/amd64-hassio-supervisor"
+  machine: "qemux86-64"
+  data: "/mnt/data/hassio"
+
+docker_daemon_options:
+  exec-opt: "native.cgroupdriver=cgroupfs" # HAOS hasn't updated to cgroup v2
+  data-root: "/mnt/data/docker"
+
 packages:
   - apparmor
   - wget
@@ -10,3 +40,4 @@ packages:
   - curl
   - avahi-daemon
   - usbutils
+  - python3-venv

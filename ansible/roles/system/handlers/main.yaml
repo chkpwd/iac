@@ -3,7 +3,3 @@
   ansible.builtin.service:
     name: sshd
     state: restarted
-
-- name: Reboot machines
-  reboot:
-  become: true
