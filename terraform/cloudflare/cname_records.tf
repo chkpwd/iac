@@ -1,5 +1,5 @@
-resource "cloudflare_record" "screego" {
-  name    = "screego"
+resource "cloudflare_record" "authentik" {
+  name    = "authentik"
   proxied = true
   ttl     = 1
   type    = "CNAME"
