@@ -58,7 +58,7 @@ spec:
           gethomepage.dev/icon: overseerr.png
           gethomepage.dev/name: Overseerr
           gethomepage.dev/widget.type: "overseerr"
-          gethomepage.dev/widget.url: "http://overseerr.media.svc.cluster.local"
+          gethomepage.dev/widget.url: "http://overseerr.media.${CLUSTER_DOMAIN}"
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:

@@ -6,16 +6,16 @@ metadata:
   namespace: tools
 data:
   DB_PORT: "5432"
-  IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning.tools.svc.cluster.local:3003
-  IMMICH_SERVER_URL: http://immich-server.tools.svc.cluster.local:3001
-  IMMICH_WEB_URL: http://immich-web.tools.svc.cluster.local:3000
+  IMMICH_MACHINE_LEARNING_URL: http://immich-machine-learning.tools.${CLUSTER_DOMAIN}:3003
+  IMMICH_SERVER_URL: http://immich-server.tools.${CLUSTER_DOMAIN}:3001
+  IMMICH_WEB_URL: http://immich-web.tools.${CLUSTER_DOMAIN}:3000
   DISABLE_REVERSE_GEOCODING: "true"
   ENABLE_MAPBOX: "false"
   REDIS_DBINDEX: "10"
-  REDIS_HOSTNAME: immich-redis.tools.svc.cluster.local
+  REDIS_HOSTNAME: immich-redis.tools.${CLUSTER_DOMAIN}
   REDIS_PORT: "6379"
   TYPESENSE_DATA_DIR: /config
-  TYPESENSE_HOST: immich-typesense.tools.svc.cluster.local
+  TYPESENSE_HOST: immich-typesense.tools.${CLUSTER_DOMAIN}
   TYPESENSE_PORT: "8108"
   TYPESENSE_PROTOCOL: http
   NODE_ENV: production

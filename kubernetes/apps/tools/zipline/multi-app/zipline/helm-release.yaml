@@ -70,7 +70,7 @@ spec:
           gethomepage.dev/icon: zipline.png
           gethomepage.dev/description: Upload Server
           gethomepage.dev/widget.type: "zipline"
-          gethomepage.dev/widget.url: "http://zipline.tools.svc.cluster.local"
+          gethomepage.dev/widget.url: "http://zipline.tools.${CLUSTER_DOMAIN}"
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
