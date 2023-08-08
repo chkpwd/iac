@@ -40,9 +40,14 @@ spec:
       SCREEGO_LOG_LEVEL: info
       SCREEGO_PROMETHEUS: "true"
       SCREEGO_CLOSE_ROOM_WHEN_OWNER_LEAVES: "true"
+      SCREEGO_TRUST_PROXY_HEADERS: "true"
 
     service:
       main:
+        annotations:
+          metallb.universe.tf/loadBalancerIPs: 172.16.16.206
+        type: LoadBalancer
+        externalTrafficPolicy: Local
         ports:
           http:
             port: 5050
@@ -69,7 +74,7 @@ spec:
         type: secret
         name: screego-secrets
         mountPath: /var/screego
-        
+
     resources:
       requests:
         cpu: 35m
