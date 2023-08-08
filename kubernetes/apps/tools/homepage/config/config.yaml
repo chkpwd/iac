@@ -66,8 +66,8 @@ data:
           widget:
             type: opnsense
             url: https://opnsense.${LOCAL_DOMAIN}
-            username: root
-            password: ${APP_PWD_OPNSENSE}
+            username: ${APP_KEY_OPNSENSE}
+            password: ${APP_SECRET_OPNSENSE}
       - Adguard-Home:
           href: https://opnsense.${LOCAL_DOMAIN}:8080
           icon: adguard.png
