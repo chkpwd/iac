@@ -69,12 +69,12 @@ data:
             username: ${APP_KEY_OPNSENSE}
             password: ${APP_SECRET_OPNSENSE}
       - Adguard-Home:
-          href: https://opnsense.${LOCAL_DOMAIN}:8080
+          href: https://adguard.${LOCAL_DOMAIN}
           icon: adguard-home.png
           description: DNS and Blocklist Provider
           widget:
             type: adguard
-            url: https://opnsense.${LOCAL_DOMAIN}:8080
+            url: https://adguard.${LOCAL_DOMAIN}
             username: admin
             password: ${APP_PWD_ADGUARD}
       - Unifi-Controller:
