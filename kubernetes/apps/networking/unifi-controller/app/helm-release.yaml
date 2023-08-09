@@ -1,0 +1,120 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app unifi-controller
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    controller:
+      type: statefulset
+
+    image:
+      repository: jacobalberty/unifi
+      tag: v7.4.162
+
+    env:
+      RUNAS_UID0: "false"
+      UNIFI_UID: "999"
+      UNIFI_GID: "999"
+      UNIFI_STDOUT: "true"
+      JVM_MAX_HEAP_SIZE: 1024M
+
+    service:
+      main:
+        annotations:
+          metallb.universe.tf/allow-shared-ip: *app
+          metallb.universe.tf/loadBalancerIPs: ${UNIFI_LB_ADDRESS}
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        ports:
+          http:
+            port: 80
+            targetPort: 8443
+            protocol: HTTPS
+          controller:
+            enabled: true
+            port: 8080
+            protocol: TCP
+          portal-http:
+            enabled: false
+            port: 8880
+            protocol: HTTP
+          portal-https:
+            enabled: false
+            port: 8843
+            protocol: HTTPS
+          speedtest:
+            enabled: true
+            port: 6789
+            protocol: TCP
+          syslog:
+            enabled: true
+            port: 5514
+            protocol: UDP
+          discovery:
+            enabled: true
+            port: 10001
+            protocol: UDP
+      secondary:
+        annotations:
+          metallb.universe.tf/allow-shared-ip: *app
+          metallb.universe.tf/loadBalancerIPs: ${UNIFI_LB_ADDRESS}
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        ports:
+          inform:
+            port: 3478
+            protocol: UDP
+
+    ingress:
+      main:
+        annotations:
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        enabled: true
+        ingressClassName: "nginx"
+        hosts:
+          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+            paths:
+              - path: /
+        tls:
+          - hosts:
+              - *host
+    
+    podSecurityContext:
+      runAsUser: &context 999
+      runAsGroup: *context
+      fsGroup: *context
+      fsGroupChangePolicy: "OnRootMismatch"
+
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /unifi
+        accessMode: ReadWriteOnce
+        size: 2Gi
+        storageClass: longhorn
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 500M
+      limits:
+        memory: 1000M
