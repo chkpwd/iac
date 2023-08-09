@@ -33,12 +33,3 @@ resource "cloudflare_record" "couchdb" {
   value   = data.tfe_outputs.oci.values.ct-02-x86_public_ip
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
-
-resource "cloudflare_record" "zipline" {
-  name    = "zipline.chkpwd.com"
-  proxied = true
-  ttl     = 1
-  type    = "A"
-  value   = data.tfe_outputs.oci.values.ct-02-x86_public_ip
-  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
-}
