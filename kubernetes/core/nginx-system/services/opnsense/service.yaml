@@ -6,4 +6,9 @@ metadata:
   namespace: ingress-nginx-system
 spec:
   type: ExternalName
-  externalName: opnsense.${LOCAL_DOMAIN}
+  externalName: router.${LOCAL_DOMAIN}
+  ports:
+    - name: http
+      port: &port 80
+      protocol: TCP
+      targetPort: *port
