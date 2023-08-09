@@ -88,26 +88,26 @@ module "homeassistant" {
   }
 }
 
-# module "bloodhound" {
-#   source                    = "../_modules/vsphere_vm"
-#   vm_name                   = "bloodhound"
-#   vm_template               = "WSrv22-DE-Temp"
-#   network_spec = {
-#     network_id              = "LAN"
-#   }
-#   spec = {
-#     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
-#     folder                  = vsphere_folder.gaming_windows.path
-#     cpu                     = 4
-#     memory                  = 8192
-#     disk_size               = 48
-#     additional_disks = [
-#       {
-#         size                = 100
-#       }
-#     ]
-#   }
-# }
+module "gaming-vm-01" {
+  source                    = "../_modules/vsphere_vm"
+  vm_name                   = "gaming-vm-01"
+  vm_template               = "WSrv22-DE-Temp"
+  network_spec = {
+    network_id              = "LAN"
+  }
+  spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
+    folder                  = vsphere_folder.gaming_windows.path
+    cpu                     = 4
+    memory                  = 8192
+    disk_size               = 48
+    additional_disks = [
+      {
+        size                = 100
+      }
+    ]
+  }
+}
 
 module "kube-ops" {
   source                    = "../_modules/vsphere_vm"
@@ -131,22 +131,6 @@ module "kube-ops" {
         size                = 75
       }
     ]
-  }
-}
-
-module "traefik" {
-  source                    = "../_modules/vsphere_vm"
-  vm_name                   = "node-01"
-  vm_template               = "deb-12-template"
-  network_spec = {
-    network_id              = "LAN"
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
-    folder                  = vsphere_folder.dev.path
-    cpu                     = 2
-    memory                  = 2048
-    disk_size               = 60
   }
 }
 
