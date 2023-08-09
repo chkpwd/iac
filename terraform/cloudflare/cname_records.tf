@@ -1,3 +1,12 @@
+resource "cloudflare_record" "zipline" {
+  name    = "zipline"
+  proxied = true
+  ttl     = 1
+  type    = "CNAME"
+  value   = "chkpwd.com"
+  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
+}
+
 resource "cloudflare_record" "authentik" {
   name    = "authentik"
   proxied = true

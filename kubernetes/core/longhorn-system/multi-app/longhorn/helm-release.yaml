@@ -26,8 +26,10 @@ spec:
     ingress:
       enabled: true
       ingressClassName: "nginx"
-      host: longhorn.${LOCAL_DOMAIN}
+      host: &host longhorn.${LOCAL_DOMAIN}
       tls: true
+      tlsSecret: *host
+      path: /
       annotations:
         gethomepage.dev/enabled: "true"
         gethomepage.dev/name: Longhorn
