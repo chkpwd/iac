@@ -1,9 +1,6 @@
 # Ignore binary files used for Veeam deployment
 ansible/roles/veeam_deploy_v11/files
 
-# Exclude templates used by the code-server role
-ansible/roles/code-server/templates
-
 # Exclude virtualenv for python
 **/.venv
 
@@ -18,6 +15,9 @@ ansible/.dependencies
 
 # Omit local .terraform directories as they contain environment-specific data
 **/.terraform
+
+# Omit .terraform.lock.hcl files
+**/.terraform.lock.hcl
 
 # Exclude Ansible fact cache to prevent outdated data from being versioned
 .fact_cache/
