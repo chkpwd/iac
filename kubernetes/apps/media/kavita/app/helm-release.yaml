@@ -57,7 +57,7 @@ spec:
           gethomepage.dev/description: Cross platform reading server
           gethomepage.dev/href: "http://kavita.media.${CLUSTER_DOMAIN}"
         hosts:
-          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
