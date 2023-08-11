@@ -61,10 +61,10 @@ spec:
         enabled: true
         ingressClassName: "nginx"
         hosts:
-          - alertmanager.${LOCAL_DOMAIN}
+          - &alertmanager_host alertmanager.${LOCAL_DOMAIN}
         tls:
           - hosts:
-              - alertmanager.${LOCAL_DOMAIN}
+              - *alertmanager_host
 
     grafana:
       enabled: true
@@ -83,10 +83,10 @@ spec:
         enabled: true
         ingressClassName: "nginx"
         hosts:
-          - monitoring.${LOCAL_DOMAIN}
+          - &grafana_host monitoring.${LOCAL_DOMAIN}
         tls:
           - hosts:
-              - monitoring.${LOCAL_DOMAIN}
+              - *grafana_host
 
     kubeApiServer:
       enabled: true
@@ -179,8 +179,8 @@ spec:
               targetLabel: kubernetes_node
       resources:
         requests:
-          memory: 512Mi
           cpu: 250m
+          memory: 512Mi
         limits:
           memory: 2048Mi
 
@@ -210,10 +210,12 @@ spec:
         storageSpec:
           volumeClaimTemplate:
             spec:
-              storageClassName: "longhorn"
+              storageClassName: longhorn-database
               resources:
                 requests:
+                  storage: 5Gi
+                limits:
                   storage: 10Gi
 
     thanosRuler:
-      enabled: true
+      enabled: false
