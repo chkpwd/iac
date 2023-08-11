@@ -36,7 +36,8 @@ spec:
       UNIFI_UID: "999"
       UNIFI_GID: "999"
       UNIFI_STDOUT: "true"
-      JVM_MAX_HEAP_SIZE:
+      JVM_INIT_HEAP_SIZE:
+      JVM_MAX_HEAP_SIZE: "1024M"
 
     service:
       main:
