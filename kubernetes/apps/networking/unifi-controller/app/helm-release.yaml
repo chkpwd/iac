@@ -46,14 +46,13 @@ spec:
         externalTrafficPolicy: Local
         ports:
           http:
-            port: 80
-            targetPort: 8443
+            port: 8443
             protocol: HTTPS
           controller:
             enabled: true
             port: 8080
             protocol: TCP
-          inform:
+          stun:
             port: 3478
             protocol: UDP
 
@@ -67,6 +66,9 @@ spec:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
+                backend:
+                  serviceName: unifi-controller
+                  servicePort: 8443
         tls:
           - hosts:
               - *host
