@@ -41,7 +41,6 @@ spec:
     service:
       main:
         annotations:
-          metallb.universe.tf/allow-shared-ip: *app
           metallb.universe.tf/loadBalancerIPs: ${UNIFI_LB_ADDRESS}
         type: LoadBalancer
         externalTrafficPolicy: Local
@@ -54,33 +53,6 @@ spec:
             enabled: true
             port: 8080
             protocol: TCP
-          portal-http:
-            enabled: false
-            port: 8880
-            protocol: HTTP
-          portal-https:
-            enabled: false
-            port: 8843
-            protocol: HTTPS
-          speedtest:
-            enabled: true
-            port: 6789
-            protocol: TCP
-          syslog:
-            enabled: true
-            port: 5514
-            protocol: UDP
-          discovery:
-            enabled: true
-            port: 10001
-            protocol: UDP
-      secondary:
-        annotations:
-          metallb.universe.tf/allow-shared-ip: *app
-          metallb.universe.tf/loadBalancerIPs: ${UNIFI_LB_ADDRESS}
-        type: LoadBalancer
-        externalTrafficPolicy: Local
-        ports:
           inform:
             port: 3478
             protocol: UDP
@@ -110,11 +82,11 @@ spec:
         mountPath: /unifi
         accessMode: ReadWriteOnce
         size: 2Gi
-        storageClass: longhorn
+        storageClass: longhorn-config
 
     resources:
       requests:
         cpu: 100m
         memory: 500M
       limits:
-        memory: 1000M
+        memory: 0M
