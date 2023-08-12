@@ -21,8 +21,8 @@ data "sops_file" "unifi-secrets" {
 
 provider "unifi" {
   username = "terraform"
-  password = "Porridge-Overplant2-Flagstone"
-  api_url  = "https://unifi-controller.local.chkpwd.com:8443"
+  password = data.sops_file.unifi-secrets.data["tf_svc_unifi_pwd"]
+  api_url  = "http://172.16.16.205:8443"
 
   allow_insecure = true
 
