@@ -8,7 +8,7 @@ resource "unifi_network" "lab" {
 }
 
 resource "unifi_network" "iot" {
-  name    = "IOT"
+  name    = "IoT"
   purpose = "vlan-only"
 
   vlan_id      = var.vlans["iot"]
