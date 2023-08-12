@@ -1,0 +1,95 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app pyload
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    global:
+      fullnameOverride: *app
+
+    image:
+      repository: lscr.io/linuxserver/pyload-ng
+      tag: 0.5.0
+
+    env:
+      TZ: ${TZ}
+      PUID: &context 1000
+      PGID: *context
+
+    service:
+      main:
+        ports:
+          http:
+            port: 8000
+
+    hostname: *app
+
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: Pyload
+          gethomepage.dev/group: Tools
+          gethomepage.dev/icon: pyload
+          gethomepage.dev/description: Fast Web Based Download Manager
+          gethomepage.dev/widget.type: pyload
+          gethomepage.dev/widget.url: "http://pyload.tools.${CLUSTER_DOMAIN}"
+          gethomepage.dev/widget.username: pyload
+          gethomepage.dev/widget.password: ${APP_PWD_PYLOAD}
+        hosts:
+          - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+            paths:
+              - path: /
+        tls:
+          - hosts:
+              - *host
+
+    podSecurityContext:
+      runAsUser: *context
+      runAsGroup: *context
+      fsGroup: *context
+      fsGroupChangePolicy: "OnRootMismatch"
+
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn-media
+
+    persistence:
+      media:
+        enabled: true
+        type: nfs
+        server: "cockpit.${LOCAL_DOMAIN}"
+        path: /mnt/data/pyload
+        mountPath: /data
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 100Mi
+      limits:
+        memory: 200Mi
