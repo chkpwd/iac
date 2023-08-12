@@ -1,8 +1,6 @@
-data "unifi_ap_group" "default" {
-}
+data "unifi_ap_group" "default" {}
 
-data "unifi_user_group" "default" {
-}
+data "unifi_user_group" "default" {}
 
 data "unifi_network" "lan" {
   name = "Default"
