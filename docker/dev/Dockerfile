@@ -161,12 +161,8 @@ RUN \
     curl -L https://gist.githubusercontent.com/raw/88d7f239615905dcad6b74e8e4b0fbbf -o $HOME/.zshrc && \
 	curl -L https://raw.githubusercontent.com/agkozak/zsh-z/master/zsh-z.plugin.zsh > $ZSH_CUSTOM/plugins/zsh-z && \
     # Set Settings
-    curl -L https://gist.githubusercontent.com/raw/daf73a0d596179e74ba8a42f0e01453a -o $ZSH_CUSTOM/devops.zsh && \
-    curl -L https://gist.githubusercontent.com/raw/c078ab9da9cf8465dee808cd9058c760 -o $ZSH_CUSTOM/settings.zsh && \
-    curl -L https://gist.githubusercontent.com/raw/b4562691407d16aa2319b07b1ea7b36b -o $ZSH_CUSTOM/path.zsh && \
-    curl -L https://gist.githubusercontent.com/raw/b1d162fe0171f65d27c95d2ee56a5b15 -o $ZSH_CUSTOM/functions.zsh && \
-    curl -L https://gist.githubusercontent.com/raw/5181fb70d0a43559878a34eea76214c1 -o $ZSH_CUSTOM/dir.zsh && \
-    curl -L https://gist.githubusercontent.com/raw/bbd1f0cb096146ce6736c44059c59249 -o $ZSH_CUSTOM/aliases.zsh && \
+    sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply chkpwd && \
+    #chezmoi execute-template --init --promptString bw-pass=somepass < ~/.local/share/chezmoi/.chezmoi.toml.tmpl && \
     # Auto Complete for Tools
     helm completion zsh > $ZSH_CUSTOM/completions/helm.zsh && \
     curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/completion/_kubectx.zsh > $ZSH_CUSTOM/completions/_kubectx.zsh && \
