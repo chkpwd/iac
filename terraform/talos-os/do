@@ -1,0 +1,90 @@
+#!/bin/bash
+set -euo pipefail
+
+export TALOSCONFIG=$PWD/talosconfig.yml
+export KUBECONFIG=$PWD/kubeconfig.yml
+
+
+function step {
+  echo "### $* ###"
+}
+
+package() {
+  source <(sops -d talos.secrets.sops.sh)
+
+  local ova_filename="talos-$talos_version-vmware-amd64.ova"
+  local ova_url="https://github.com/siderolabs/talos/releases/download/v$talos_version/vmware-amd64.ova"
+  local json_filename="talos-$talos_version-vmware-amd64.ova.json"
+
+  wget -O $ova_filename $ova_url || { echo "Failed to download OVA"; return 1; }
+
+  govc import.spec $ova_filename | jq \
+    --arg network "$TF_VAR_vsphere_network" \
+    '.NetworkMapping[0].Network = $network' > $json_filename
+
+  local vm_folder="//$TF_VAR_vsphere_datacenter/vm/$(dirname $TF_VAR_vsphere_talos_template)"
+  local vm_name=$(basename $TF_VAR_vsphere_talos_template)
+  local vm_ipath="//$TF_VAR_vsphere_datacenter/vm/$TF_VAR_vsphere_talos_template"
+
+  if ! govc vm.info $(basename $TF_VAR_vsphere_talos_template); then
+    govc import.ova \
+      -ds $TF_VAR_vsphere_datastore \
+      -folder "$vm_folder" \
+      -name "$vm_name" \
+      -options $json_filename \
+      $ova_filename
+
+    govc vm.upgrade -vm.ipath "$vm_ipath"
+    govc vm.change -vm.ipath "$vm_ipath" \
+      -g other5xLinux64Guest \
+      -e disk.enableUUID=TRUE
+
+    govc vm.info -vm.ipath "$vm_ipath" -json > "talos-$talos_version-amd64.json"
+    govc vm.markastemplate -vm.ipath "$vm_ipath"
+
+    rm -f disk.raw $ova_filename $json_filename
+  else
+    govc vm.destroy "$vm_name"
+    package
+  fi
+}
+
+function build {
+  step 'provision cluster'
+  terraform plan -out=tfplan
+  terraform apply tfplan
+  terraform output -raw talosconfig >talosconfig.yml
+  terraform output -raw kubeconfig >kubeconfig.yml
+  info
+}
+
+function info {
+  step 'talosctl health'
+  local controllers="$(terraform output -raw controllers)"
+  local workers="$(terraform output -raw workers)"
+  local c0="$(echo $controllers | cut -d , -f 1)"
+  while true; do
+    talosctl -e $c0 -n $c0 \
+      health \
+      --control-plane-nodes $controllers \
+      --worker-nodes $workers
+  break
+  done
+}
+
+case $1 in
+  package)
+    package
+    ;;
+  build)
+    package
+    build
+    ;;
+  info)
+    info
+    ;;
+  *)
+    echo $"Usage: $0 {package|build|info}"
+    exit 1
+    ;;
+esac
