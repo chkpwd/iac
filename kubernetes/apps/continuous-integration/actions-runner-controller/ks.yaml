@@ -5,7 +5,7 @@ metadata:
   name: actions-runner-controller
   namespace: flux-system
 spec:
-  path: ./kubernetes/apps/continuous-intergration/actions-runner-controller/app
+  path: ./kubernetes/apps/continuous-integration/actions-runner-controller/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -21,7 +21,7 @@ metadata:
   name: actions-runners
   namespace: flux-system
 spec:
-  path: ./kubernetes/apps/continuous-intergration/actions-runner-controller/runners
+  path: ./kubernetes/apps/continuous-integration/actions-runner-controller/runners
   prune: true
   sourceRef:
     kind: GitRepository
