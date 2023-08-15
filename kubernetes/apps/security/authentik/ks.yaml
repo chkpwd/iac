@@ -5,7 +5,25 @@ metadata:
   name: security-authentik
   namespace: flux-system
 spec:
+  dependsOn:
+    - name: security-authentik-config
   path: ./kubernetes/apps/security/authentik/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: security-authentik-config
+  namespace: flux-system
+spec:
+  path: ./kubernetes/apps/security/authentik/config
   prune: true
   sourceRef:
     kind: GitRepository

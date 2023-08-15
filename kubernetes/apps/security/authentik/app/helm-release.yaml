@@ -23,24 +23,11 @@ spec:
     remediation:
       retries: 3
 
+  envFrom:
+    secretRef:
+      name: authentik-secrets
+
   values:
-    authentik:
-      secret_key: ${APP_PWD_AUTHENTIK}
-
-      error_reporting:
-        enabled: true
-
-      email:
-        from: "authentik <ocid@chkpwd.com>"
-        host: smtp.gmail.com
-        port: 465
-        use_ssl: false
-        username: ${APP_AUTHENTIK_SMTP_USER}
-        password: ${APP_AUTHENTIK_SMTP_PWD}
-
-      postgresql:
-        password: ${DB_PWD_AUTHENTIK}
-
     ingress:
       enabled: true
       ingressClassName: "nginx"
@@ -61,10 +48,18 @@ spec:
       tls:
         - hosts:
             - *host
+    authentik:
+      error_reporting:
+        enabled: true
+
+      email:
+        from: "authentik <ocid@chkpwd.com>"
+        host: smtp.gmail.com
+        port: 465
+        use_ssl: false
 
     postgresql:
       enabled: true
-      postgresqlPassword: ${DB_PWD_AUTHENTIK}
 
     redis:
       enabled: true
