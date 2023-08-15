@@ -1,0 +1,68 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app linkding
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    image:
+      repository: sissbruecker/linkding
+      tag: 1.19.1
+
+    enableServiceLinks: false
+
+    env:
+      LD_SUPERUSER_NAME: chkpwd
+      LD_CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+
+    service:
+      main:
+        ports:
+          http:
+            port: 9090
+
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: "nginx"
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: Linkding
+          gethomepage.dev/group: Tools
+          gethomepage.dev/icon: linkding.png
+          gethomepage.dev/description: Link Sharing Tool
+          gethomepage.dev/href: "http://linkding.tools.${CLUSTER_DOMAIN}"
+        hosts:
+          - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+        tls:
+          - hosts:
+              - *host
+
+    resources:
+      requests:
+        cpu: 13m
+        memory: 64Mi
+      limits:
+        memory: 256Mi
