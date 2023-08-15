@@ -23,10 +23,6 @@ spec:
     remediation:
       retries: 3
 
-  envFrom:
-    secretRef:
-      name: authentik-secrets
-
   values:
     ingress:
       enabled: true
@@ -48,6 +44,11 @@ spec:
       tls:
         - hosts:
             - *host
+
+    envFrom:
+      secretRef:
+      name: authentik-secrets
+
     authentik:
       error_reporting:
         enabled: true
