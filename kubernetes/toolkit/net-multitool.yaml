@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: net-multitool
+  namespace: $NAMESPACE  # Note: Substitute this with your desired namespace
+spec:
+  containers:
+  - name: net-utils
+    image: wbitt/network-multitool:fedora
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Never
