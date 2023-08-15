@@ -31,8 +31,13 @@ spec:
     enableServiceLinks: false
 
     env:
-      LD_SUPERUSER_NAME: chkpwd
-      LD_CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+      - LD_SUPERUSER_NAME: chkpwd
+      - name: LD_SUPERUSER_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: linkding-secrets
+            key: LD_SUPERUSER_PASSWORD
+      - LD_CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
 
     service:
       main:
