@@ -38,6 +38,7 @@ spec:
             name: linkding-secrets
             key: LD_SUPERUSER_PASSWORD
       LD_CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+      LD_DISABLE_URL_VALIDATION: true
 
     service:
       main:
