@@ -27,13 +27,17 @@ spec:
     fullnameOverride: *app
     
     provider: cloudflare
+
+    cloudflare:
+      email: ${CLOUDFLARE_EMAIL}
+      proxied: true
+
     env:
-      CF_API_TOKEN: ${CLOUDFLARE_API_TOKEN}
+      - name: CF_API_TOKEN
+        value: ${CLOUDFLARE_API_TOKEN}
 
     extraArgs:
       - --ingress-class=nginx
-      - --zone-id-filter=${CLOUDFLARE_ZONE_ID}
-      - --cloudflare-proxied
       - --crd-source-apiversion=externaldns.k8s.io/v1alpha1
       - --crd-source-kind=DNSEndpoint
 
@@ -41,10 +45,10 @@ spec:
 
     sources: ["crd", "ingress"]
     
-    txtPrefix: k8s.
+    txtPrefix: k3s.
     txtOwnerId: default
     
-    domainFilters: ["${EXTERNAL_DOMAIN}"]
+    domainFilters: [ "${EXTERNAL_DOMAIN}" ]
 
     serviceMonitor:
       enabled: true
