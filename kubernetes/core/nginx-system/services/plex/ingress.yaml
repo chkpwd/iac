@@ -1,0 +1,22 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: &app plex
+  namespace: ingress-nginx-system
+spec:
+  ingressClassName: "nginx"
+  rules:
+    - host: &host plex.${EXTERNAL_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: *app
+                port:
+                  number: 32400
+  tls:
+    - hosts:
+        - *host
