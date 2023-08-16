@@ -36,8 +36,8 @@ spec:
 
     env:
       TZ: "${TZ}"
-      APP_URL: https://{{ .Release.Name }}.${LOCAL_DOMAIN}
-      DISABLE_BUILTIN_AUTH: "true"
+      APP_URL: https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}
+      DISABLE_BUILTIN_AUTH: "false"
 
     hostname: *app
 
