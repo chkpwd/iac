@@ -50,14 +50,16 @@ spec:
         mountPath: /config
         accessMode: ReadWriteOnce
         size: 1Gi
-        storageClass: longhorn-media-config
+        storageClass: longhorn-config
 
     persistence:
       config:
         enabled: true
         type: configMap
         name: recyclarr-cm
-        mountPath: "-"
+        mountPath: /config/recyclarr.yml
+        subPath: ../config/recyclarr.yml
+        readOnly: true
 
     resources:
       requests:
