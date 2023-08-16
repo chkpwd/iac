@@ -6,7 +6,7 @@ metadata:
   namespace: ingress-nginx-system
 spec:
   type: ExternalName
-  externalName: router.${LOCAL_DOMAIN}
+  externalName: 172.16.16.1
   ports:
     - name: http
       port: &port 80
