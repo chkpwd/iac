@@ -3,8 +3,8 @@
 sonarr:
   anime:
     # Set the URL/API Key to your actual instance
-    base_url: http://soanrr.media.${CLUSTER_DOMAIN}:8989
-    api_key: ${API_KEY_SONARR}
+    base_url: http://soanrr.media.svc.cluster.local:8989
+    api_key: !env_var API_KEY_SONARR
 
     # Quality definitions from the guide to sync to Sonarr. Choices: series, anime
     quality_definition:
@@ -27,8 +27,8 @@ sonarr:
             score: 2000
   series:
     # Set the URL/API Key to your actual instance
-    base_url: http://sonarr.media.${CLUSTER_DOMAIN}:8989
-    api_key: ${API_KEY_SONARR}
+    base_url: http://sonarr.media.svc.cluster.local:8989
+    api_key: !env_var API_KEY_SONARR
 
     # Quality definitions from the guide to sync to Sonarr. Choices: series, anime
     quality_definition:
@@ -82,8 +82,8 @@ sonarr:
 radarr:
   movies:
     # Set the URL/API Key to your actual instance
-    base_url: http://radarr.media.${CLUSTER_DOMAIN}:7878
-    api_key: ${API_KEY_RADARR}
+    base_url: http://radarr.media.svc.cluster.local:7878
+    api_key: !env_var API_KEY_RADARR
 
     # Which quality definition in the guide to sync to Radarr. Only choice right now is 'movie'
     quality_definition:

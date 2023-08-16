@@ -40,17 +40,20 @@ spec:
 
     env:
       TZ: ${TZ}
+      API_KEY_SONARR:
+        valueFrom:
+          secretKeyRef:
+            name: sops-secret
+            key: API_KEY_SONARR
+      API_KEY_RADARR:
+        valueFrom:
+          secretKeyRef:
+            name: sops-secret
+            key: API_KEY_RADARR
 
     service:
       main:
         enabled: false
-
-    volumeClaimTemplates:
-      - name: config
-        mountPath: /config
-        accessMode: ReadWriteOnce
-        size: 1Gi
-        storageClass: longhorn-config
 
     persistence:
       config:
