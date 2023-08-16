@@ -79,24 +79,6 @@ resource "cloudflare_record" "kavita" {
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
 
-resource "cloudflare_record" "freshrss" {
-  name    = "freshrss"
-  proxied = true
-  ttl     = 1
-  type    = "CNAME"
-  value   = "chkpwd.com"
-  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
-}
-
-resource "cloudflare_record" "vaultwarden" {
-  name    = "vault"
-  proxied = true
-  ttl     = 1
-  type    = "CNAME"
-  value   = "chkpwd.com"
-  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
-}
-
 resource "cloudflare_record" "wizarr" {
   name    = "wizarr"
   proxied = true
