@@ -2,12 +2,12 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: &app home-assistant
-  namespace: ingress-nginx-system
+  name: &app plex
+  namespace: networking
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: ext-ingress
   rules:
-    - host: &host home-assistant.${LOCAL_DOMAIN}
+    - host: &host plex.${EXTERNAL_DOMAIN}
       http:
         paths:
           - path: /
@@ -16,7 +16,7 @@ spec:
               service:
                 name: *app
                 port:
-                  number: 8123
+                  number: 32400
   tls:
     - hosts:
         - *host

@@ -2,13 +2,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: plex
-  namespace: ingress-nginx-system
+  name: home-assistant
+  namespace: networking
 spec:
   type: ExternalName
-  externalName: media.${LOCAL_DOMAIN}
+  externalName: haos.${LOCAL_DOMAIN}
   ports:
     - name: http
-      port: &port 32400
+      port: &port 8123
       protocol: TCP
       targetPort: *port

@@ -3,9 +3,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: &app opnsense
-  namespace: ingress-nginx-system
+  namespace: networking
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: int-ingress
   rules:
     - host: &host opnsense.${LOCAL_DOMAIN}
       http:

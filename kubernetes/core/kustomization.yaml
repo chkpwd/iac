@@ -3,8 +3,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - namespaces
+  - networking
   - longhorn-system/ks.yaml
-  - nginx-system/ks.yaml
   - metallb-system/ks.yaml
   - cert-manager-system/ks.yaml
   - metrics-system/ks.yaml
@@ -12,4 +12,3 @@ resources:
   - weave-gitops-system/ks.yaml
   - reloader-system/ks.yaml
   # - kubevirt-system/ks.yaml
-  - external-dns-system/ks.yaml

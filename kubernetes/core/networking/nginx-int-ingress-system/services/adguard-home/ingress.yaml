@@ -2,12 +2,12 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: &app plex
-  namespace: ingress-nginx-system
+  name: &app adguard-home
+  namespace: networking
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: int-ingress
   rules:
-    - host: &host plex.${EXTERNAL_DOMAIN}
+    - host: &host adguard.${LOCAL_DOMAIN}
       http:
         paths:
           - path: /
@@ -16,7 +16,7 @@ spec:
               service:
                 name: *app
                 port:
-                  number: 32400
+                  number: 8080
   tls:
     - hosts:
         - *host
