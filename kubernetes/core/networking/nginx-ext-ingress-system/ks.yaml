@@ -2,10 +2,10 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-nginx
+  name: core-external-nginx
   namespace: flux-system
 spec:
-  path: ./kubernetes/core/networking/nginx-ext-ingress/app
+  path: ./kubernetes/core/networking/nginx-ext-ingress-system/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -18,11 +18,11 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-nginx-services
+  name: core-external-nginx-services
   namespace: flux-system
 spec:
   dependsOn:
-    - name: core-nginx
+    - name: core-external-nginx
   path: ./kubernetes/core/networking/nginx-ext-ingress/services
   prune: true
   sourceRef:
