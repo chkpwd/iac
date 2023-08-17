@@ -1,0 +1,63 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app it-tools
+  namespace: personal
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    image:
+      repository: ghcr.io/corentinth/it-tools
+      tag: 2023.8.16-9bd4ad4
+
+    service:
+      main:
+        ports:
+          http:
+            port: &port 80
+
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: ext-ingress
+        annotations:
+          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+        hosts:
+          - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+            paths:
+              - path: /
+        tls:
+          - hosts:
+              - *host
+
+    podSecurityContext:
+      runAsUser: &context 0
+      runAsGroup: *context
+      fsGroup: *context
+      fsGroupChangePolicy: "OnRootMismatch"
+      allowPrivilegeEscalation: false
+
+    resources:
+      requests:
+        cpu: 10m
+        memory: 50M
+      limits:
+        memory: 50M
