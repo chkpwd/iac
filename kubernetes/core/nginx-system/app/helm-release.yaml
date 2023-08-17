@@ -31,7 +31,6 @@ spec:
       service:
         enabled: true
         annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
           metallb.universe.tf/loadBalancerIPs: 172.16.16.204
         type: LoadBalancer
         externalTrafficPolicy: Cluster
