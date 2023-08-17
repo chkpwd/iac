@@ -39,7 +39,7 @@ spec:
         value: ${CLOUDFLARE_API_TOKEN}
 
     extraArgs:
-      - --ingress-class=nginx
+      - --ingress-class=ext-ingress
       - --crd-source-apiversion=externaldns.k8s.io/v1alpha1
       - --crd-source-kind=DNSEndpoint
 
