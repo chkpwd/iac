@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: home-assistant
-  namespace: ingress-nginx-system
+  namespace: networking
 spec:
   type: ExternalName
   externalName: haos.${LOCAL_DOMAIN}

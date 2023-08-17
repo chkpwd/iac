@@ -3,7 +3,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: &app home-assistant
-  namespace: ingress-nginx-system
+  namespace: networking
 spec:
   ingressClassName: "nginx"
   rules:

@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: plex
-  namespace: ingress-nginx-system
+  namespace: networking
 spec:
   type: ExternalName
   externalName: media.${LOCAL_DOMAIN}
