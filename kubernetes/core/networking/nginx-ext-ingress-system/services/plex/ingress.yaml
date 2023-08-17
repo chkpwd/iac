@@ -4,10 +4,10 @@ kind: Ingress
 metadata:
   name: &app plex
   namespace: networking
-spec:
-  ingressClassName: ext-ingress
   annotations:
     external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+spec:
+  ingressClassName: ext-ingress
   rules:
     - host: &host plex.${EXTERNAL_DOMAIN}
       http:

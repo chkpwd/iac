@@ -4,6 +4,8 @@ kind: Ingress
 metadata:
   name: &app home-assistant
   namespace: networking
+  annotations:
+    external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
 spec:
   ingressClassName: ext-ingress
   annotations:
