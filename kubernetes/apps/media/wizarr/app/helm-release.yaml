@@ -58,6 +58,7 @@ spec:
           gethomepage.dev/icon: "https://raw.githubusercontent.com/Wizarrrr/wizarr/master/screenshots/wizard.png"
           gethomepage.dev/description: Plex Registration Tool
           gethomepage.dev/href: "http://wizarr.${EXTERNAL_DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:

@@ -6,6 +6,8 @@ metadata:
   namespace: networking
 spec:
   ingressClassName: ext-ingress
+  annotations:
+    external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
   rules:
     - host: &host plex.${EXTERNAL_DOMAIN}
       http:

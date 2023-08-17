@@ -58,6 +58,7 @@ spec:
           gethomepage.dev/widget.url: "http://pyload.tools.${CLUSTER_DOMAIN}"
           gethomepage.dev/widget.username: pyload
           gethomepage.dev/widget.password: ${APP_PWD_PYLOAD}
+          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
