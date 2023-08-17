@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: ingress-nginx
+  name: ingress-nginx-internal
   namespace: ingress-nginx-system
 spec:
   interval: 15m
@@ -31,7 +31,7 @@ spec:
       service:
         enabled: true
         annotations:
-          metallb.universe.tf/loadBalancerIPs: 172.16.16.204
+          metallb.universe.tf/loadBalancerIPs: ${NGINX_LB_INT_ADDRESS}
         type: LoadBalancer
         externalTrafficPolicy: Cluster
 
@@ -39,6 +39,7 @@ spec:
         enabled: true
 
       ingressClassResource:
+        name: int-ingress
         default: true
 
       config:
@@ -47,7 +48,6 @@ spec:
         client-body-timeout: 120
         enable-brotli: "true" # * Compression Algorithym
         enable-real-ip: "true"
-        # forwarded-for-header: "CF-Connecting-IP"
         hsts-max-age: "31449600"
         keep-alive: 120
         keep-alive-requests: 10000
@@ -58,7 +58,7 @@ spec:
 
       resources:
         requests:
-          cpu: 100m
+          cpu: 50m
           memory: 250Mi
         limits:
-          memory: 500Mi
+          memory: 300Mi
