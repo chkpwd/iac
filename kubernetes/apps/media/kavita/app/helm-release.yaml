@@ -56,7 +56,6 @@ spec:
           gethomepage.dev/icon: kavita.png
           gethomepage.dev/description: Cross platform reading server
           gethomepage.dev/href: "http://kavita.media.${CLUSTER_DOMAIN}"
-          external-dns.alpha.kubernetes.io/hostname: "overseerr.${EXTERNAL_DOMAIN}"
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
