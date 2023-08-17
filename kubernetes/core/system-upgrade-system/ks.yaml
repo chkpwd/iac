@@ -1,0 +1,34 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: core-system-upgrade
+  namespace: flux-system
+spec:
+  path: ./kubernetes/core/system-upgrade-system/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: core-system-upgrade-plan
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: core-system-upgrade
+  path: ./kubernetes/core/system-upgrade-system/plan
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
