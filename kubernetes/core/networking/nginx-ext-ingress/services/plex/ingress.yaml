@@ -5,7 +5,7 @@ metadata:
   name: &app plex
   namespace: networking
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: ext-ingress
   rules:
     - host: &host plex.${EXTERNAL_DOMAIN}
       http:

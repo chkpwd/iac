@@ -5,7 +5,7 @@ metadata:
   name: &app home-assistant
   namespace: networking
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: int-ingress
   rules:
     - host: &host home-assistant.${LOCAL_DOMAIN}
       http:

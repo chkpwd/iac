@@ -5,9 +5,9 @@ metadata:
   name: &app home-assistant
   namespace: networking
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: ext-ingress
   rules:
-    - host: &host home-assistant.${LOCAL_DOMAIN}
+    - host: &host home-assistant.${EXTERNAL_DOMAIN}
       http:
         paths:
           - path: /

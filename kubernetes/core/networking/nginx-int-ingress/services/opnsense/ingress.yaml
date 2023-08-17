@@ -5,7 +5,7 @@ metadata:
   name: &app opnsense
   namespace: networking
 spec:
-  ingressClassName: "nginx"
+  ingressClassName: int-ingress
   rules:
     - host: &host opnsense.${LOCAL_DOMAIN}
       http:
