@@ -50,7 +50,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: "nginx"
+        ingressClassName: ext-ingress
         annotations:
           gethomepage.dev/enabled: "true"
           gethomepage.dev/description: User requests management
@@ -60,6 +60,7 @@ spec:
           gethomepage.dev/widget.type: "overseerr"
           gethomepage.dev/widget.url: "http://overseerr.media.${CLUSTER_DOMAIN}"
           external-dns.alpha.kubernetes.io/hostname: "overseerr.${EXTERNAL_DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
           external-dns.alpha.kubernetes.io/cloudflare-proxied: "true"
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"

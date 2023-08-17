@@ -59,7 +59,7 @@ spec:
       enabled: true
       ingress:
         enabled: true
-        ingressClassName: "nginx"
+        ingressClassName: int-ingress
         hosts:
           - &alertmanager_host alertmanager.${LOCAL_DOMAIN}
         tls:
@@ -81,7 +81,7 @@ spec:
         passwordKey: admin-password
       ingress:
         enabled: true
-        ingressClassName: "nginx"
+        ingressClassName: int-ingress
         hosts:
           - &grafana_host monitoring.${LOCAL_DOMAIN}
         tls:

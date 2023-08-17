@@ -25,7 +25,7 @@ spec:
   values:
     ingress:
       enabled: true
-      ingressClassName: "nginx"
+      ingressClassName: int-ingress
       host: &host longhorn.${LOCAL_DOMAIN}
       tls: true
       tlsSecret: *host
