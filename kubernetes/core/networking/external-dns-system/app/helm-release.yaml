@@ -32,7 +32,6 @@ spec:
 
     cloudflare:
       email: ${CLOUDFLARE_EMAIL}
-      proxied: true
 
     env:
       - name: CF_API_TOKEN
@@ -40,6 +39,7 @@ spec:
 
     extraArgs:
       - --ingress-class=ext-ingress
+      - --cloudflare-proxied
       - --crd-source-apiversion=externaldns.k8s.io/v1alpha1
       - --crd-source-kind=DNSEndpoint
 
