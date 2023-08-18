@@ -34,7 +34,7 @@ spec:
     env:
       PLEX_URL: http://media.local.chkpwd.com:32400
       REFRESH_LIBRARY_ON_SCAN: false
-      PLEX_TOKEN: "{{ PLEX_MEDIA_SERVER_TOKEN }}"
+      PLEX_TOKEN: "{{ APP_PLEX_TOKEN }}"
 
     hostname: *app
 
