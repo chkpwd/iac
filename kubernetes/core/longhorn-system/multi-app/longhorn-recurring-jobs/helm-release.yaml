@@ -32,30 +32,18 @@ spec:
 
     groups:
       "Database":
-        snapshot:
-          - interval: 10m
-            retain: 6
         backup:
           - interval: 12h
             retain: 2
       "Config":
-        snapshot:
-          - interval: 10m
-            retain: 6
         backup:
           - interval: 24h
             retain: 7
       "Media":
-        snapshot:
-          - interval: 10m
-            retain: 6
         backup:
           - interval: 24h
             retain: 2
       "Clusters":
-        snapshot:
-          - interval: 10m
-            retain: 1
         backup:
           - interval: 24h
             retain: 1
