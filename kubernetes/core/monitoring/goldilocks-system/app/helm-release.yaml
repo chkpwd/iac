@@ -1,0 +1,57 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app goldilocks
+  namespace: monitoring
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: goldilocks
+      version: 7.1.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: fairwinds-charts
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    controller:
+      resources:
+        requests:
+          cpu: 15m
+          memory: 94M
+        limits:
+          memory: 270M
+
+    dashboard:
+      replicaCount: 1
+      resources:
+        requests:
+          cpu: 15m
+          memory: 64Mi
+        limits:
+          memory: 105M
+
+      ingress:
+        enabled: true
+        ingressClassName: int-ingress
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: Goldilocks
+          gethomepage.dev/group: Monitoring
+          gethomepage.dev/icon: goldilocks
+          gethomepage.dev/description: Resource Management
+        hosts:
+          - host: "goldilocks.${LOCAL_DOMAIN}"
+            paths:
+              - path: /
+                type: Prefix
