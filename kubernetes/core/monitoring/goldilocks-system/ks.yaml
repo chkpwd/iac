@@ -2,10 +2,10 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-management-goldilocks
+  name: core-monitoring-goldilocks
   namespace: flux-system
 spec:
-  path: ./kubernetes/core/management/goldilocks/app
+  path: ./kubernetes/core/monitoring/goldilocks-system/app
   prune: true
   sourceRef:
     kind: GitRepository
