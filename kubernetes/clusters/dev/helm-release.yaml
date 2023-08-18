@@ -1,0 +1,116 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app dev-cluster
+  namespace: clusters
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: vcluster
+      version: 0.15.5
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: loft-sh
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    enableHA: false
+
+    vcluster:
+      image: rancher/k3s:v1.27.4-k3s1
+      command:
+        - /bin/k3s
+      baseArgs:
+        - server
+        - --write-kubeconfig=/data/k3s-config/kube-config.yaml
+        - --data-dir=/data
+        - --disable=traefik,servicelb,metrics-server,local-storage,coredns
+        - --disable-network-policy
+        - --disable-agent
+        - --disable-cloud-controller
+        - --flannel-backend=none
+      extraArgs: []
+      volumeMounts:
+        - mountPath: /data
+          name: data
+      env: []
+      resources:
+        limits:
+          memory: 1Gi
+        requests:
+          cpu: 200m
+          memory: 256Mi
+
+    isolation:
+      enabled: true
+      namespace: clusters
+
+      podSecurityStandard: baseline
+
+      resourceQuota:
+        enabled: false
+
+      limitRange:
+        enabled: false
+
+    securityContext:
+      runAsUser: 1000
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - all
+      readOnlyRootFilesystem: true
+
+    fsGroup: 1000
+
+    fallbackHostDns: true
+
+    proxy:
+      metricsServer:
+        nodes:
+          enabled: true
+        pods:
+          enabled: true
+
+    storage:
+      # If this is disabled, vcluster will use an emptyDir instead
+      persistence: true
+      size: 5Gi
+      className: longhorn-clusters
+
+    # The amount of replicas to run the statefulset with
+    replicas: 1
+
+    # Configure the ingress resource that allows you to access the vcluster
+    ingress:
+      # Enable ingress record generation
+      enabled: true
+      # Ingress path type
+      pathType: ImplementationSpecific
+      apiVersion: networking.k8s.io/v1
+      ingressClassName: int-ingress
+      host: vcluster.local
+      annotations:
+        nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+        nginx.ingress.kubernetes.io/ssl-passthrough: "true"
+        nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+    # manifests to setup when initializing a vcluster
+    init:
+      manifests: |-
+        ---
+      # The contents of manifests-template will be templated using helm
+      # this allows you to use helm values inside, e.g.: {{ .Release.Name }}
+      manifestsTemplate: ''
+      helm: []
