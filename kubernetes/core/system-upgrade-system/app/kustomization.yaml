@@ -13,3 +13,10 @@ labels:
     pairs:
       app.kubernetes.io/instance: system-upgrade-controller
       app.kubernetes.io/name: system-upgrade-controller
+patches:
+  - patch: |
+      $patch: delete
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: system-upgrade
