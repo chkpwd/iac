@@ -34,7 +34,7 @@ service_definitions:
       - name: net_swag
 
   - name: uptime-kuma
-    image: louislam/uptime-kuma:1.22.1
+    image: louislam/uptime-kuma:1.23.0
     volumes:
       - "{{ configuration_path }}/uptime-kuma:/app/data" 
     network_mode: container:wireguard
