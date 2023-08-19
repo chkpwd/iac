@@ -2,7 +2,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: databases-cloudnative-pg
+  name: core-databases-cloudnative-pg
   namespace: flux-system
 spec:
   path: ./kubernetes/core/databases/cloudnative-pg/operator
@@ -18,11 +18,11 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: databases-cloudnative-pg-config
+  name: core-databases-cloudnative-pg-config
   namespace: flux-system
 spec:
   dependsOn:
-    - name: databases-cloudnative-pg
+    - name: core-databases-cloudnative-pg
   path: ./kubernetes/core/databases/cloudnative-pg/config
   prune: true
   sourceRef:
