@@ -2,12 +2,12 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-monitoring-prometheus-stack
+  name: core-monitoring-prometheus-system
   namespace: flux-system
 spec:
   dependsOn:
-    - name: core-monitoring-prometheus-stack-config
-  path: ./kubernetes/core/monitoring/prometheus-stack/app
+    - name: core-monitoring-prometheus-system-config
+  path: ./kubernetes/core/monitoring/prometheus-system/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -20,10 +20,10 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-monitoring-prometheus-stack-config
+  name: core-monitoring-prometheus-system-config
   namespace: flux-system
 spec:
-  path: ./kubernetes/core/monitoring/prometheus-stack/config
+  path: ./kubernetes/core/monitoring/prometheus-system/config
   prune: true
   sourceRef:
     kind: GitRepository
