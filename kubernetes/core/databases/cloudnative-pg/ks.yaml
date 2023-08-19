@@ -5,8 +5,6 @@ metadata:
   name: databases-cloudnative-pg
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: databases-cloudnative-pg-config
   path: ./kubernetes/core/databases/cloudnative-pg/operator
   prune: true
   sourceRef:
@@ -23,6 +21,8 @@ metadata:
   name: databases-cloudnative-pg-config
   namespace: flux-system
 spec:
+  dependsOn:
+    - name: databases-cloudnative-pg
   path: ./kubernetes/core/databases/cloudnative-pg/config
   prune: true
   sourceRef:
