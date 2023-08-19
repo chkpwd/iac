@@ -39,6 +39,32 @@ spec:
             key: LD_SUPERUSER_PASSWORD
       LD_CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
       LD_DISABLE_URL_VALIDATION: true
+      LD_DB_ENGINE: "postgres"
+      LD_DB_HOST:
+        valueFrom:
+          secretKeyRef:
+            name: linkding-pguser-linkding
+            key: host
+      LD_DB_PORT:
+        valueFrom:
+          secretKeyRef:
+            name: linkding-pguser-linkding
+            key: port
+      LD_DB_DATABASE:
+        valueFrom:
+          secretKeyRef:
+            name: linkding-pguser-linkding
+            key: dbname
+      LD_DB_USER:
+        valueFrom:
+          secretKeyRef:
+            name: linkding-pguser-linkding
+            key: user
+      LD_DB_PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: linkding-pguser-linkding
+            key: password
 
     service:
       main:

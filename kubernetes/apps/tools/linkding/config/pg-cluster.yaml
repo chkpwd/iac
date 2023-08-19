@@ -1,0 +1,38 @@
+---
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: linkding
+  namespace: tools
+spec:
+  postgresVersion: 15
+  instances:
+    - dataVolumeClaimSpec:
+        storageClassName: longhorn-database
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+
+  users:
+    - name: linkding
+      databases:
+        - linkding
+      options: "SUPERUSER"
+
+  backups:
+    pgbackrest:
+      manual:
+        repoName: repo1
+        options:
+          - --type=full
+      repos:
+        - name: repo1
+          volume:
+            volumeClaimSpec:
+              accessModes:
+              - "ReadWriteOnce"
+              resources:
+                requests:
+                  storage: 1Gi
