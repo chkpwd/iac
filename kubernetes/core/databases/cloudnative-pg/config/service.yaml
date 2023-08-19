@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-loadBalancer
+  name: cnpg-postgres-lb
   namespace: databases
   annotations:
     metallb.universe.tf/loadBalancerIPs: ${CNPG_LB_ADDRESS}
