@@ -38,7 +38,8 @@ spec:
 
     envFrom:
       - secretRef:
-          name: *app
+          name: minio-secrets
+
     args: ["server", "/data", "--console-address", ":9001"]
 
     service:
@@ -58,13 +59,13 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
-          - host: &host-console "{{ .Release.Name }}.${SECRET_DOMAIN}"
+          - host: &host-console "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
                 service:
                   port: *port-console
-          - host: &host-api "s3.${SECRET_DOMAIN}"
+          - host: &host-api "s3.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
