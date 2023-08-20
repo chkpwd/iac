@@ -82,7 +82,7 @@ spec:
           gethomepage.dev/group: Tools
           gethomepage.dev/icon: linkding.png
           gethomepage.dev/description: Link Sharing Tool
-          gethomepage.dev/href: "http://linkding.tools.${CLUSTER_DOMAIN}"
+          gethomepage.dev/href: "http://linkding.tools.${EXTERNAL_DOMAIN}"
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
