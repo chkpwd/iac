@@ -57,6 +57,13 @@ spec:
       main:
         enabled: true
         ingressClassName: int-ingress
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: Minio
+          gethomepage.dev/group: Storage
+          gethomepage.dev/icon: minio
+          gethomepage.dev/description: High-Performance Object Storage
+          gethomepage.dev/href: "https://minio.${LOCAL_DOMAIN}"
         hosts:
           - host: &console-host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
