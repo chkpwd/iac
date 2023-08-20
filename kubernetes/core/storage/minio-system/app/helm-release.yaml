@@ -56,25 +56,37 @@ spec:
       main:
         enabled: true
         ingressClassName: int-ingress
-        annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
-          - host: &host-console "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+          - host: &console-host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
                 service:
-                  port: *port-console
-          - host: &host-api "s3.${EXTERNAL_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  port: *port-api
+                  port: *console-port
         tls:
           - hosts:
-              - *host-console
-              - *host-api
+              - *console-host
+
+      s3:
+        enabled: true
+        ingressClassName: ext-ingress
+        annotations:
+          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          nginx.ingress.kubernetes.io/proxy-connect-timeout: "180"
+          nginx.ingress.kubernetes.io/proxy-body-size: 1024m
+          nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+          nginx.ingress.kubernetes.io/configuration-snippet: |
+            chunked_transfer_encoding off;
+        hosts:
+          - host: &api-host s3.${EXTERNAL_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  port: *api-port
+        tls:
+          - hosts:
+              - *api-host
 
     podSecurityContext:
       runAsUser: &context 568
