@@ -62,7 +62,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  port: *console-port
+                  port: *port-console
         tls:
           - hosts:
               - *console-host
@@ -83,7 +83,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  port: *api-port
+                  port: *port-api
         tls:
           - hosts:
               - *api-host
