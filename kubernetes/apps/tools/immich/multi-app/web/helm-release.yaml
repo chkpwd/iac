@@ -56,7 +56,7 @@ spec:
           gethomepage.dev/icon: "immich"
           gethomepage.dev/description: "Self-Hosted Photo App"
           gethomepage.dev/widget.type: "immich"
-          gethomepage.dev/widget.url: "http://immich.tools.${CLUSTER_DOMAIN}"
+          gethomepage.dev/widget.url: "http://immich.tools.${CLUSTER_DOMAIN}:3000"
           gethomepage.dev/widget.key: "${API_KEY_IMMICH}"
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
