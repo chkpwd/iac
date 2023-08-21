@@ -45,3 +45,15 @@ spec:
         ingress_path: /
         ingress_path_type: Prefix
         ingress_tls_secret: *host
+        postgres_resource_requirements:
+          requests:
+            cpu: 100m
+            memory: 1Gi
+          limits:
+            memory: 2Gi
+        postgres_storage_requirements:
+          requests:
+            storage: 2Gi
+          limits:
+            storage: 5Gi
+        postgres_storage_class: longhorn-database
