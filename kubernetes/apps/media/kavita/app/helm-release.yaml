@@ -56,7 +56,7 @@ spec:
           gethomepage.dev/icon: kavita.png
           gethomepage.dev/description: Cross platform reading server
           gethomepage.dev/widget.type: kavita
-          gethomepage.dev/widget.url: "http://kavita.media.${EXTERNAL_DOMAIN}"
+          gethomepage.dev/widget.url: "http://kavita.media.${CLUSTER_DOMAIN}:5000"
           gethomepage.dev/widget.username: chkpwd
           gethomepage.dev/widget.password: ${APP_PWD_KAVITA}
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
