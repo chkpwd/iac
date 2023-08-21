@@ -82,6 +82,14 @@ spec:
       ingress:
         enabled: true
         ingressClassName: int-ingress
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: Grafana
+          gethomepage.dev/group: Monitoring
+          gethomepage.dev/icon: grafana
+          gethomepage.dev/description: Analytics and interactive visualization
+          gethomepage.dev/widget.type: grafana
+          gethomepage.dev/widget.url: "http://grafana.monitoring.${CLUSTER_DOMAIN}:80"
         hosts:
           - &grafana_host monitoring.${LOCAL_DOMAIN}
         tls:
