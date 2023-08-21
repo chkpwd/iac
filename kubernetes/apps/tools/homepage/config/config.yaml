@@ -78,9 +78,13 @@ data:
             username: admin
             password: ${APP_PWD_ADGUARD}
       - Home-Assistant:
-          href: https://valkyrie.${LOCAL_DOMAIN}:8123
+          href: http://172.16.16.11:8123
           icon: home-assistant.png
           description: Home Automation
+          widget:
+            type: homeassistant
+            url: http://172.16.16.11:8123
+            key: ${API_TOKEN_HAOS}
   widgets.yaml: |
     ---
     - search:
