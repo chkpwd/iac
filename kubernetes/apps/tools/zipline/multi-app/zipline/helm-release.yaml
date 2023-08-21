@@ -69,7 +69,7 @@ spec:
           gethomepage.dev/group: Tools
           gethomepage.dev/icon: zipline.png
           gethomepage.dev/description: Upload Server
-          gethomepage.dev/href: "http://zipline.tools.${CLUSTER_DOMAIN}"
+          gethomepage.dev/href: "https://zipline.${EXTERNAL_DOMAIN}"
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
