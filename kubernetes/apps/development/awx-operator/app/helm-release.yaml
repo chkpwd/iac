@@ -42,6 +42,6 @@ spec:
           gethomepage.dev/icon: awx
           gethomepage.dev/description: "Ansible Automation Platform"
           gethomepage.dev/href: "https://awx.${LOCAL_DOMAIN}"
-        ingress_path: '/'
-        ingress_path_type: 'Prefix'
+        ingress_path: /
+        ingress_path_type: Prefix
         ingress_tls_secret: *host
