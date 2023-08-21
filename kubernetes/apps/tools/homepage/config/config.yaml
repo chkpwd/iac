@@ -85,6 +85,14 @@ data:
             type: homeassistant
             url: http://172.16.16.11:8123
             key: ${API_TOKEN_HAOS}
+      - Plex:
+          href: https://plex.chkpwd.com
+          icon: plex.png
+          description: Plex Media Server
+          widget:
+            type: plex
+            url: http://172.16.10.20:32400
+            key: ${APP_PLEX_TOKEN}
   widgets.yaml: |
     ---
     - search:
