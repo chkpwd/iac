@@ -26,17 +26,17 @@ spec:
     ingress:
       enabled: true
       ingressClassName: int-ingress
-      host: &host longhorn.${LOCAL_DOMAIN}
-      tls: true
-      tlsSecret: *host
-      path: /
       annotations:
         gethomepage.dev/enabled: "true"
         gethomepage.dev/name: Longhorn
         gethomepage.dev/group: Storage
         gethomepage.dev/icon: longhorn.png
         gethomepage.dev/description: Storage Manager
-        gethomepage.dev/href: "http://longhorn.local.chkpwd.com"
+        gethomepage.dev/href: "https://longhorn.local.chkpwd.com"
+      host: &host longhorn.${LOCAL_DOMAIN}
+      tls: true
+      tlsSecret: *host
+      path: /
 
     persistence:
       defaultClass: true
