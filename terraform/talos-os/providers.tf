@@ -11,7 +11,7 @@ terraform {
     }
     vsphere = {
       source  = "hashicorp/vsphere"
-      version = "2.3.1"
+      version = "2.4.2"
     }
     talos = {
       source  = "siderolabs/talos"
