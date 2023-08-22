@@ -1,0 +1,109 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app jitsi-meet
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: jitsi-meet
+      interval: 30m
+      version: 1.3.6
+      sourceRef:
+        kind: HelmRepository
+        name: jitsi
+        namespace: flux-system
+  values:
+    fullnameOverride: *app
+
+    enableAuth: true
+    enableGuests: true
+
+    tz: ${TZ}
+    publicURL: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+
+    web:
+      image:
+        repository: jitsi/web
+
+      service:
+        main:
+          ports:
+            http:
+              port: 80
+
+      extraEnvs:
+        ENABLE_XMPP_WEBSOCKET: "false"
+
+      ingress:
+        enabled: true
+        ingressClassName: int-ingress
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: Jitsi-meet
+          gethomepage.dev/group: Tools
+          gethomepage.dev/icon: jitsi-meet
+          gethomepage.dev/description: Video Conferencing
+          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+        hosts:
+          - host: &host jitsi.${EXTERNAL_DOMAIN}
+            paths: ['/']
+        tls:
+          - secretName: *app
+            hosts:
+              - *host
+
+      resources:
+        requests:
+          cpu: 100m
+          memory: 500Mi
+        limits:
+          memory: 1000Mi
+
+    jicofo:
+      extraEnvs:
+        ENABLE_XMPP_WEBSOCKET: "false"
+
+      resources:
+        requests:
+          cpu: 100m
+          memory: 500Mi
+        limits:
+          memory: 1000Mi
+
+    jvb:
+      stunServers: 'stun.l.google.com:19302,stun1.l.google.com:19302,stun2.l.google.com:19302'
+      UDPPort: 30300
+      publicIP: ${PUBLIC_IP}
+
+      service:
+        type: LoadBalancer
+        annotations:
+          metallb.universe.tf/loadBalancerIPs: 172.16.16.208
+
+      metrics:
+        enabled: false
+
+      extraEnvs:
+        ENABLE_XMPP_WEBSOCKET: "false"
+    
+    octo:
+      enabled: false
+    
+    prosody:
+      enabled: true
+      image:
+        repository: jitsi/prosody
+        tag: 'stable-8719'
+
+      persistence:
+        storageClassName: longhorn-config
+
+      resources:
+        requests:
+          cpu: 100m
+          memory: 500Mi
+        limits:
+          memory: 1000Mi
