@@ -45,6 +45,24 @@ spec:
         ingress_path: /
         ingress_path_type: Prefix
         ingress_tls_secret: *host
+        web_resource_requirements:
+          requests:
+            cpu: 250m
+            memory: 2Gi
+          limits:
+            memory: 300Mi
+        task_resource_requirements:
+          requests:
+            cpu: 250m
+            memory: 1Gi
+          limits:
+            memory: 2Gi
+        ee_resource_requirements:
+          requests:
+            cpu: 250m
+            memory: 100Mi
+          limits:
+            memory: 1Gi
         postgres_resource_requirements:
           requests:
             cpu: 100m
@@ -57,3 +75,4 @@ spec:
           limits:
             storage: 5Gi
         postgres_storage_class: longhorn-database
+        ipv6_disabled: true # https://github.com/ansible/awx-operator/blob/devel/docs/user-guide/advanced-configuration/disable-ipv6.md
