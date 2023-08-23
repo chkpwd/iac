@@ -13,9 +13,16 @@ data:
     title: Dashboard
     favicon: https://kubernetes.io/images/favicon.png
     theme: dark
-    background: https://source.unsplash.com/random/1920x1080/\?nature,technology,dogs,cats
+    background:
+      image: https://source.unsplash.com/random/1920x1080/\?nature,technology,dogs,cats
+      blur: md
+      opacity: 30
+    headerStyle: boxed
     color: slate
     target: _blank
+    providers:
+      longhorn:
+        url: http://longhorn.longhorn-system.${CLUSTER_DOMAIN}
     layout:
       Monitoring:
         style: column
