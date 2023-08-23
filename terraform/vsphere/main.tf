@@ -56,8 +56,8 @@ module "mirage" {
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id, vsphere_tag.docker.id ]
     folder                  = vsphere_folder.media.path
-    cpu                     = 4
-    memory                  = 8192
+    cpu                     = 2
+    memory                  = 2048
     disk_size               = 16
     additional_disks = [
       {
