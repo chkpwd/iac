@@ -36,8 +36,6 @@ spec:
 
     env:
       TZ: "${TZ}"
-      PUID: &context 1000
-      PGID: *context
 
     hostname: *app
 
@@ -74,7 +72,7 @@ spec:
               - *host
 
     podSecurityContext:
-      runAsUser: *context
+      runAsUser: &context 1000
       runAsGroup: *context
       fsGroup: *context
       fsGroupChangePolicy: "OnRootMismatch"
