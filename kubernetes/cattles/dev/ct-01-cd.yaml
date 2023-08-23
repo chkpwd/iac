@@ -2,6 +2,7 @@ apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
   name: &name testing-01
+  namespace: cattles
 spec:
   runStrategy: RerunOnFailure
   template:
