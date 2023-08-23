@@ -25,16 +25,15 @@ spec:
 
   dependsOn:
     - name: immich-server
-      namespace: tools
-    - name: immich-redis
-      namespace: tools
 
   values:
-    controller:
-      strategy: RollingUpdate
-
     global:
       fullnameOverride: *app
+
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
+
     image:
       repository: ghcr.io/immich-app/immich-machine-learning
       tag: v1.74.0
@@ -44,6 +43,34 @@ spec:
         ports:
           http:
             port: 3003
+
+    env:
+      DB_DATABASE_NAME:
+        valueFrom: 
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: dbname
+      DB_HOSTNAME:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: host
+      DB_USERNAME:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: user
+      DB_PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: password
+
+    envFrom:
+      - secretRef:
+          name: immich-secret
+      - configMapRef:
+          name: immich-cm
 
     persistence:
       cache:
@@ -65,13 +92,9 @@ spec:
       failureThreshold: 30
       successThreshold: 1
 
-    envFrom:
-      - secretRef:
-          name: immich-secret
-      - configMapRef:
-          name: immich-cm
-
     resources:
       requests:
-        cpu: 100m
-        memory: 250Mi
+        cpu: 5m
+        memory: 274Mi
+      limits:
+        memory: 2000Mi

@@ -5,12 +5,14 @@ metadata:
   name: tools-immich
   namespace: flux-system
 spec:
-  path: ./kubernetes/apps/default/immich/multi-app
+  dependsOn:
+    - name: tools-immich-config
+  path: ./kubernetes/apps/tools/immich/multi-app
   prune: true
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
-  wait: false # no flux ks dependents
+  wait: true
   interval: 30m
   retryInterval: 1m
   timeout: 5m

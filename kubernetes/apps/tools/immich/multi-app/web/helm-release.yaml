@@ -26,18 +26,20 @@ spec:
 
   dependsOn:
     - name: immich-server
-      namespace: tools
-    - name: immich-redis
-      namespace: tools
 
   values:
+    global:
+      fullnameOverride: *app
+
     controller:
-      replicas: 2
-      strategy: RollingUpdate
+      annotations:
+        reloader.stakater.com/auto: "true"
 
     image:
       repository: ghcr.io/immich-app/immich-web
       tag: v1.74.0
+    args: ["./entrypoint.sh"]
+    command: /bin/sh
 
     service:
       main:
@@ -51,16 +53,19 @@ spec:
         ingressClassName: ext-ingress
         annotations:
           gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: "Immich"
-          gethomepage.dev/group: "Collaboration"
-          gethomepage.dev/icon: "immich"
+          gethomepage.dev/name: Immich
+          gethomepage.dev/group: Collaboration
+          gethomepage.dev/icon: immich
           gethomepage.dev/description: "Self-Hosted Photo App"
-          gethomepage.dev/widget.type: "immich"
-          gethomepage.dev/widget.url: "http://immich.tools.${CLUSTER_DOMAIN}:3000"
-          gethomepage.dev/widget.key: "${API_KEY_IMMICH}"
+          gethomepage.dev/widget.type: immich
+          gethomepage.dev/widget.url: "http://immich-web.tools.${CLUSTER_DOMAIN}:3000"
+          gethomepage.dev/widget.key: ${API_KEY_IMMICH}
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          nginx.ingress.kubernetes.io/configuration-snippet: rewrite /api/(.*) /$1 break;
+          nignx.ingress.kubernetes.io/force-ssl-redirect: "true"
+          nginx.ingress.kubernetes.io/proxy-body-size: "0"
         hosts:
-          - host: &host photos.${LOCAL_DOMAIN}
+          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
@@ -89,5 +94,7 @@ spec:
 
     resources:
       requests:
-        cpu: 100m
-        memory: 250Mi
+        cpu: 5m
+        memory: 64M
+      limits:
+        memory: 64M

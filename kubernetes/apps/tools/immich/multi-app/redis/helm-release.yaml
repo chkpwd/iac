@@ -24,25 +24,28 @@ spec:
       retries: 3
 
   values:
+    global:
+      fullnameOverride: *app
+
     image:
       repository: public.ecr.aws/docker/library/redis
       tag: 7.2.0
 
     env:
       REDIS_REPLICATION_MODE: master
-    envFrom:
-      - secretRef:
-          name: immich-secret
 
-    command: ["redis-server", "--requirepass", "$(REDIS_PASSWORD)"]
     service:
       main:
         ports:
           http:
+            enabled: false
+          redis:
+            enabled: true
             port: 6379
 
     resources:
       requests:
-        memory: 64M
+        cpu: 5m
+        memory: 10M
       limits:
-        memory: 64M
+        memory: 10M

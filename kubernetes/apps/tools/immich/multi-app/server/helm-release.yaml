@@ -25,24 +25,43 @@ spec:
 
   dependsOn:
     - name: immich-typesense
-      namespace: tools
-    - name: immich-redis
-      namespace: tools
 
   values:
-    initContainers:
-      01-init-db:
-        image: ghcr.io/onedr0p/postgres-initdb:14.8
-        imagePullPolicy: IfNotPresent
-        envFrom:
-          - secretRef:
-              name: immich-secret
+    global:
+      fullnameOverride: *app
+    
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
 
     image:
       repository: ghcr.io/immich-app/immich-server
       tag: v1.74.0
     args: ["start-server.sh"]
     command: /bin/sh
+
+    env:
+      DB_DATABASE_NAME:
+        valueFrom: 
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: dbname
+      DB_HOSTNAME:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: host
+      DB_USERNAME:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: user
+      DB_PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: password
+
     envFrom:
       - secretRef:
           name: immich-secret
@@ -65,5 +84,7 @@ spec:
 
     resources:
       requests:
-        cpu: 100m
-        memory: 250Mi
+        cpu: 5m
+        memory: 150Mi
+      limits:
+        memory: 390Mi
