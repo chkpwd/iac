@@ -41,7 +41,7 @@ spec:
     command: /bin/sh
 
     env:
-      DB_DATABASE_NAME:
+      DB_DATABASE:
         valueFrom: 
           secretKeyRef:
             name: immich-pguser-immich
@@ -61,6 +61,11 @@ spec:
           secretKeyRef:
             name: immich-pguser-immich
             key: password
+      DB_URL:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: uri
 
     envFrom:
       - secretRef:
