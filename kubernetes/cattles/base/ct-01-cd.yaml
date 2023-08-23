@@ -1,14 +1,14 @@
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
-  name: &vm_name testing-01
+  name: &name testing-01
 spec:
   runStrategy: RerunOnFailure
   template:
     metadata:
       labels:
         kubevirt.io/size: small
-        kubevirt.io/domain: &domain local.chkpwd.com
+        kubevirt.io/domain: *name
     spec:
       domain:
         devices:

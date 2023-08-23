@@ -1,0 +1,55 @@
+---
+apiVersion: kubevirt.io/v1 # KubeVirt's API version
+kind: VirtualMachine # The type of Kubernetes resource to create
+metadata:
+labels:
+  kubevirt.io/domain: &name testing-01
+name: *name # Name of the VM
+namespace: &namespace cattles # Namespace where the VM will be created
+spec:
+running: true # Starts the VM after creation
+template:
+  metadata:
+    labels:
+      kubevirt.io/domain: *name # Labels for the VM's template
+  spec:
+    domain:
+      devices:
+        disks:
+          - disk:
+              bus: virtio # Type of disk bus
+            name: containerdisk # Name of the container disk
+          - disk:
+              bus: virtio # Type of disk bus
+            name: cloudinitdisk # Name of the cloud-init disk
+          - name: emptydisk # Name of the empty disk
+            disk:
+              bus: virtio # Type of disk bus
+      resources:
+        requests:
+          memory: 1Gi # Amount of memory requested for the VM
+    volumes:
+      - name: emptydisk
+        emptyDisk:
+          capacity: 2Gi # Capacity of the empty ephemeral disk
+      - containerDisk:
+          image: quay.io/kubevirt/cirros-container-disk-demo # The image used for the container disk
+        name: containerdisk
+      - cloudInitNoCloud: # Cloud-init configuration
+          userData: | # User-data script
+            #cloud-config
+            preserve_hostname: true
+            hostname: *name  # Sets the hostname
+            fqdn: *name      # Fully Qualified Domain Name
+            prefer_fqdn_over_hostname: true
+            users:
+              - default
+              - name: {{ vm.ansible_user }}
+                lock_passwd: true   # Locks the password
+                ssh_authorized_keys:
+                  - "{{ temporary_ssh_public_key }}"  # SSH public key
+            runcmd:
+              - [ sh, -c, "hostnamectl set-hostname *name" ]  # Sets the hostname
+              - [ sudo, yum, install, -y, qemu-guest-agent ]  # Installs qemu-guest-agent
+              - [ sudo, systemctl, start, qemu-guest-agent ]  # Starts qemu-guest-agent
+        name: cloudinitdisk
