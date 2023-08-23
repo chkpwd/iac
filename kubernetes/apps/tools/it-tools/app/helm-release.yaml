@@ -39,6 +39,12 @@ spec:
         enabled: true
         ingressClassName: ext-ingress
         annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/name: "it-tools"
+          gethomepage.dev/group: Tools
+          gethomepage.dev/icon: "it-tools"
+          gethomepage.dev/description: Collections of IT Tools
+          gethomepage.dev/href: https://it-tools.${EXTERNAL_DOMAIN}
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
