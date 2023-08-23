@@ -31,13 +31,24 @@ spec:
         type: statefulset
 
     image:
-      repository: ghcr.io/hotio/qbittorrent
-      tag: release-4.5.4
+      repository: ghcr.io/onedr0p/qbittorrent
+      tag: 4.5.4
 
     env:
       TZ: "${TZ}"
-      PUID: &context 1000
-      PGID: *context
+      QBITTORRENT__PORT: &port 8080
+
+    sidecars:
+      vuetorrent:
+        image: registry.k8s.io/git-sync/git-sync:v4.0.0
+        imagePullPolicy: IfNotPresent
+        args:
+          - --repo=https://github.com/WDaan/VueTorrent
+          - --branch=latest-release
+          - --wait=86400
+          - --root=/add-ons
+        volumeMounts:
+          - { name: add-ons, mountPath: /add-ons }
 
     hostname: *app
 
@@ -45,7 +56,7 @@ spec:
       main:
         ports:
           http:
-            port: 8080
+            port: *port
 
     podAnnotations:
       setGateway: "true"
@@ -74,7 +85,7 @@ spec:
               - *host
 
     podSecurityContext:
-      runAsUser: *context
+      runAsUser: &context 1000
       runAsGroup: *context
       fsGroup: *context
       fsGroupChangePolicy: "OnRootMismatch"
@@ -93,6 +104,9 @@ spec:
         server: "cockpit.${LOCAL_DOMAIN}"
         path: /mnt/data/downloads/torrents
         mountPath: /data
+      add-ons:
+        enabled: true
+        type: emptyDir
     
     resources:
       requests:
