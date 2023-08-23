@@ -28,12 +28,6 @@ spec:
       image:
         repository: jitsi/web
 
-      service:
-        main:
-          ports:
-            http:
-              port: 80
-
       extraEnvs:
         ENABLE_XMPP_WEBSOCKET: "false"
 
@@ -63,8 +57,9 @@ spec:
           memory: 1000Mi
 
     jicofo:
-      extraEnvs:
-        ENABLE_XMPP_WEBSOCKET: "false"
+      xmpp:
+        password: 
+        componentSecret:
 
       resources:
         requests:

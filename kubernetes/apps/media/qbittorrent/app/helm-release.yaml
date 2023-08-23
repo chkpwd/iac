@@ -31,12 +31,13 @@ spec:
         type: statefulset
 
     image:
-      repository: ghcr.io/onedr0p/qbittorrent
-      tag: 4.5.4
+      repository: ghcr.io/hotio/qbittorrent
+      tag: release-4.5.4
 
     env:
       TZ: "${TZ}"
-      QBITTORRENT__PORT: &port 8080
+      PUID: &context 1000
+      PGID: *context
 
     hostname: *app
 
@@ -44,7 +45,7 @@ spec:
       main:
         ports:
           http:
-            port: *port
+            port: 8080
 
     podAnnotations:
       setGateway: "true"
@@ -73,7 +74,7 @@ spec:
               - *host
 
     podSecurityContext:
-      runAsUser: &context 1000
+      runAsUser: *context
       runAsGroup: *context
       fsGroup: *context
       fsGroupChangePolicy: "OnRootMismatch"
