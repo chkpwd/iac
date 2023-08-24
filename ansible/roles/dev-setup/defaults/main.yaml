@@ -6,12 +6,10 @@ zsh_custom: "/home/{{ common_user }}/.oh-my-zsh/custom"
 
 keyrings_dir: /etc/apt/keyrings
 
-pip_tools:
+python_tools:
   - ansible-base
-  # - ansible-lint
-  # - molecule
-  # - molecule-docker
-  # - molecule-vagrant
+  - poetry
+  - molecule
 
 dependecies:
   - gpg

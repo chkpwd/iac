@@ -6,11 +6,9 @@
   become: true
 
 - name: Install Pip Tools
-  ansible.builtin.pip:
+  community.general.pipx:
     name: "{{ item }}"
-    virtualenv: "{{ virtualenv_location }}"
-    virtualenv_command: "/usr/bin/python3 -m venv"
-  loop: "{{ pip_tools }}"
+  loop: "{{ python_tools }}"
   become: false
 
 - name: Install sops on remote hosts
