@@ -12,9 +12,9 @@ ENV DEV=chk
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
 		# Core Utilities
-        bash curl sudo man-db bash-completion wget unzip less locales gnupg apt-transport-https \
+        bash curl sudo man-db bash-completion wget unzip less locales ca-certificates gnupg apt-transport-https \
         # Development Tools
-        build-essential file pwgen git vim htop jq yq ldap-utils rsync tmate rclone software-properties-common \
+        build-essential file pwgen git vim htop jq yq ldap-utils rsync rclone software-properties-common \
         pkg-config libxmlsec1-dev golang-go npm nodejs \
         # SSH Tools
         openssh-server openssh-client sshpass \
@@ -89,10 +89,6 @@ RUN \
     unzip awscliv2.zip && \
     ./aws/install && \
     rm awscliv2.zip && \
-# infrahq
-    echo 'deb [trusted=yes] https://apt.fury.io/infrahq/ /' | tee /etc/apt/sources.list.d/infrahq.list && \
-    apt-get update && \
-    apt-get install -y infra && \
 # pulumi
 	curl -L https://get.pulumi.com/releases/sdk/pulumi-v3.76.1-linux-x64.tar.gz | tar xvzf - -C /tmp --strip-components=1 && \
 	mv /tmp/pulumi* /usr/bin && \
@@ -162,7 +158,6 @@ RUN \
 	curl -L https://raw.githubusercontent.com/agkozak/zsh-z/master/zsh-z.plugin.zsh > $ZSH_CUSTOM/plugins/zsh-z && \
     # Set Settings
     sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply chkpwd && \
-    #chezmoi execute-template --init --promptString bw-pass=somepass < ~/.local/share/chezmoi/.chezmoi.toml.tmpl && \
     # Auto Complete for Tools
     helm completion zsh > $ZSH_CUSTOM/completions/helm.zsh && \
     curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/completion/_kubectx.zsh > $ZSH_CUSTOM/completions/_kubectx.zsh && \
