@@ -4,7 +4,7 @@ kind: Kustomization
 resources: []
 namespace: development
 configMapGenerator:
-  - name: ansible-cfg
+  - name: awx-extra-configs
     files:
       - ansible.cfg=./ansible.cfg
 generatorOptions:
