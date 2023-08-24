@@ -1,0 +1,188 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.haraldkoch.ca/helm.toolkit.fluxcd.io/helmrelease_v2beta1.json
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app immich
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: immich
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    global:
+      fullnameOverride: *app
+
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
+
+    env:
+      REDIS_REPLICATION_MODE: master
+      DB_DATABASE:
+        valueFrom: 
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: dbname
+      DB_HOSTNAME:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: host
+      DB_USERNAME:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: user
+      DB_PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: password
+      DB_URL:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: uri
+      TYPESENSE_ENABLED: "{{ .Values.typesense.enabled }}"
+      TYPESENSE_API_KEY: 
+      TYPESENSE_HOST: '{{ printf "%s-typesense" .Release.Name }}'
+      IMMICH_WEB_URL: '{{ printf "http://%s-web:3000" .Release.Name }}'
+      IMMICH_SERVER_URL: '{{ printf "http://%s-server:3001" .Release.Name }}'
+      IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
+      
+      envFrom:
+        - secretRef:
+          name: immich-secret
+        - configMapRef:
+          name: immich-cm
+
+    image:
+      tag: v1.69.0
+
+    immich:
+      persistence:
+        # Main data store for all photos shared between different components.
+        library:
+          # Automatically creating the library volume is not supported by this chart
+          # You have to specify an existing PVC to use
+          existingClaim:
+
+    # Dependencies
+
+    postgresql:
+      enabled: false
+      global:
+        postgresql:
+          auth:
+            username: immich
+            database: immich
+            password: immich
+
+    redis:
+      enabled: false
+      architecture: standalone
+      auth:
+        enabled: false
+
+    typesense:
+      enabled: false
+      env:
+        TYPESENSE_DATA_DIR: /tsdata
+        TYPESENSE_API_KEY: typesense
+      persistence:
+        tsdata:
+          # Enabling typesense persistence is recommended to avoid slow reindexing
+          enabled: false
+          accessMode: ReadWriteOnce
+          size: 1Gi
+          # storageClass: storage-class
+      image:
+        repository: docker.io/typesense/typesense
+        tag: 0.24.0
+        pullPolicy: IfNotPresent
+
+    # Immich components
+
+    server:
+      enabled: true
+      image:
+        repository: ghcr.io/immich-app/immich-server
+        pullPolicy: IfNotPresent
+
+    microservices:
+      enabled: true
+      env:
+        REVERSE_GEOCODING_DUMP_DIRECTORY: /geodata-cache
+      persistence:
+        geodata-cache:
+          enabled: true
+          size: 1Gi
+          # Optional: Set this to pvc to avoid downloading the geodata every start.
+          type: emptyDir
+          accessMode: ReadWriteMany
+          # storageClass: your-class
+      image:
+        repository: ghcr.io/immich-app/immich-server
+        pullPolicy: IfNotPresent
+
+    machine-learning:
+      enabled: true
+      image:
+        repository: ghcr.io/immich-app/immich-machine-learning
+        pullPolicy: IfNotPresent
+      env:
+        TRANSFORMERS_CACHE: /cache
+      persistence:
+        cache:
+          enabled: true
+          size: 10Gi
+          # Optional: Set this to pvc to avoid downloading the ML models every start.
+          type: emptyDir
+          accessMode: ReadWriteMany
+          # storageClass: your-class
+
+    web:
+      enabled: true
+      image:
+        repository: ghcr.io/immich-app/immich-web
+        pullPolicy: IfNotPresent
+      persistence:
+        library:
+          enabled: false
+
+    proxy:
+      enabled: true
+      image:
+        repository: ghcr.io/immich-app/immich-proxy
+        pullPolicy: IfNotPresent
+
+      persistence:
+        library:
+          enabled: false
+
+      ingress:
+        main:
+          enabled: false
+          annotations:
+            # proxy-body-size is set to 0 to remove the body limit on file uploads
+            nginx.ingress.kubernetes.io/proxy-body-size: "0"
+          hosts:
+            - host: immich.local
+              paths:
+                - path: "/"
+          tls: []
