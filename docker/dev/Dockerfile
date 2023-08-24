@@ -1,4 +1,4 @@
-ARG BASE_IMAGE_TAG=23.10
+ARG BASE_IMAGE_TAG=23.04
 
 FROM ubuntu:${BASE_IMAGE_TAG}
 
@@ -60,10 +60,9 @@ RUN \
     mv korb /usr/bin/korb && \
     chmod +x /usr/bin/korb && \
 # kubectl
-    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add - && \
-    echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list && \
-    apt-get update && \
-    apt-get install --no-install-recommends -y kubectl && \
+    curl -LO https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl && \
+    chmod +x kubectl && \
+    mv ./kubectl /usr/bin/kubectl && \
 # kubectx && kubens
     curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx > /usr/local/bin/kubectx && \
     curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens > /usr/local/bin/kubens && \
@@ -90,14 +89,13 @@ RUN \
     ./aws/install && \
     rm awscliv2.zip && \
 # pulumi
-	curl -L https://get.pulumi.com/releases/sdk/pulumi-v3.76.1-linux-x64.tar.gz | tar xvzf - -C /tmp --strip-components=1 && \
+	curl -L https://get.pulumi.com/releases/sdk/pulumi-v3.78.1-linux-x64.tar.gz | tar xvzf - -C /tmp --strip-components=1 && \
 	mv /tmp/pulumi* /usr/bin && \
 # terraform, vault, and packer
-    curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - && \
-    echo "deb [arch=amd64] https://apt.releases.hashicorp.com focal main" > /etc/apt/sources.list.d/hashicorp.list && \
-    apt-get update && \
-    apt-get install -y terraform vault packer && \
-    setcap cap_ipc_lock= /usr/bin/vault && \
+    curl -LO https://releases.hashicorp.com/terraform/1.5.6/terraform_1.5.6_linux_amd64.zip && \
+    unzip terraform_1.5.6_linux_amd64.zip && \
+    mv terraform /usr/bin && \
+    rm terraform_1.5.6_linux_amd64.zip && \
 # SOPs
     curl -L https://github.com/getsops/sops/releases/download/v3.7.3/sops_3.7.3_amd64.deb > /tmp/sops_amd64.deb && \
     dpkg -i /tmp/sops_amd64.deb && \
@@ -107,6 +105,16 @@ RUN \
     apt-get update && \
     apt-get install --no-install-recommends -y powershell && \
     rm -f packages-microsoft-prod.deb
+# Docker Install
+RUN apt-get update && \
+    apt-get install -y ca-certificates curl gnupg && \
+    mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    chmod a+r /etc/apt/keyrings/docker.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+         $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list && \
+    apt-get update && \
+    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 RUN bash -c "rm -rf /tmp/*"
 
@@ -156,8 +164,6 @@ RUN \
 	chmod -R 755 $ZSH_CUSTOM/completions && \
     curl -L https://gist.githubusercontent.com/raw/88d7f239615905dcad6b74e8e4b0fbbf -o $HOME/.zshrc && \
 	curl -L https://raw.githubusercontent.com/agkozak/zsh-z/master/zsh-z.plugin.zsh > $ZSH_CUSTOM/plugins/zsh-z && \
-    # Set Settings
-    sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply chkpwd && \
     # Auto Complete for Tools
     helm completion zsh > $ZSH_CUSTOM/completions/helm.zsh && \
     curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/completion/_kubectx.zsh > $ZSH_CUSTOM/completions/_kubectx.zsh && \
@@ -168,4 +174,6 @@ RUN \
           bashcompinit && \
           eval "$(register-python-argcomplete pipx)"' > $ZSH_CUSTOM/completions/pipx.zsh
 
-CMD ["sudo", "/usr/sbin/sshd", "-D", "-e"]
+# Set Settings
+RUN \
+    sudo sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply chkpwd
