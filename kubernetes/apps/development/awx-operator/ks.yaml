@@ -5,7 +5,25 @@ metadata:
   name: development-awx-operator
   namespace: flux-system
 spec:
+  dependsOn:
+  - name: development-awx-operator-config
   path: ./kubernetes/apps/development/awx-operator/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: development-awx-operator-config
+  namespace: flux-system
+spec:
+  path: ./kubernetes/apps/development/awx-operator/config
   prune: true
   sourceRef:
     kind: GitRepository

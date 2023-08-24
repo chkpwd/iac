@@ -1,0 +1,13 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources: []
+namespace: development
+configMapGenerator:
+  - name: ansible-cfg
+    files:
+      - ansible.cfg=./ansible.cfg
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
