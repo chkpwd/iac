@@ -32,7 +32,6 @@ all:
         mirage:
         valkyrie:
         crypto:
-        node-01:
         cockpit:
         kubes-cp-1:
         kubes-cp-2:
@@ -51,7 +50,6 @@ all:
         mirage:
         valkyrie:
         crypto:
-        node-01:
         ct-01-x86:
         ct-02-x86:
     
@@ -83,15 +81,6 @@ all:
     devops:
       hosts:
         crypto:
-
-    dev:
-      children:
-        staging:
-
-    staging:
-      hosts:
-        jumpbox-dev: 
-          ansible_host: 172.16.16.232
 
     cloud:
       vars:
