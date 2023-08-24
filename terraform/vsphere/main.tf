@@ -124,7 +124,7 @@ module "kube-ops" {
     folder                  = vsphere_folder.kubernetes.path
     enable_hv               = true
     cpu                     = 4
-    memory                  = 16384
+    memory                  = 1024 * 24
     disk_size               = 32
     additional_disks = [
       {
