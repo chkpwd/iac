@@ -9,5 +9,11 @@ if [ -z "$BW_SESSION" ]; then
     exit 1
 fi
 
+# Set working directory
+cd "$HOME" || return
+
+# Init Chezmoi
+sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply $CHEZMOI_GIT_USER
+
 # Execute any commands passed to the docker run
 exec "$@"
