@@ -110,6 +110,10 @@ RUN \
     unzip bw.zip && \
     chmod +x bw && \
     mv ./bw /usr/bin/bw && \
+# vCluster
+    curl -L https://github.com/loft-sh/vcluster/releases/download/v0.15.6/vcluster-linux-amd64 -o vcluster && \
+    chmod +x vcluster && \
+    mv ./vcluster /usr/bin/vcluster && \
 # Docker Install
     apt-get update && \
     apt-get install -y ca-certificates curl gnupg && \
