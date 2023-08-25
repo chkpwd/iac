@@ -75,6 +75,7 @@ RUN \
 # krew
 	curl -L https://github.com/kubernetes-sigs/krew/releases/download/v0.4.4/krew-linux_amd64.tar.gz | tar xvzf - -C /tmp && \
 	mv /tmp/krew-linux_amd64 /usr/bin/krew && \
+    krew install virt && \
 # viddy
 	curl -L https://github.com/sachaos/viddy/releases/download/v0.3.6/viddy_0.3.6_Linux_x86_64.tar.gz | tar xvzf - -C /tmp && \
 	mv /tmp/viddy /usr/bin/viddy && \
