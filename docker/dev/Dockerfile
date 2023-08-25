@@ -77,10 +77,10 @@ RUN \
 	mv /tmp/krew-linux_amd64 /usr/bin/krew && \
 # viddy
 	curl -L https://github.com/sachaos/viddy/releases/download/v0.3.6/viddy_0.3.6_Linux_x86_64.tar.gz | tar xvzf - -C /tmp && \
-	mv /tmp/viddy /usr/bin && \
+	mv /tmp/viddy /usr/bin/viddy && \
 # k9s
 	curl -L https://github.com/derailed/k9s/releases/download/v0.27.4/k9s_Linux_amd64.tar.gz | tar xvzf - -C /tmp && \
-	mv /tmp/k9s /usr/bin && \
+	mv /tmp/k9s /usr/bin/k9s && \
 # helm 3
     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash && \
 # AWS CLI
@@ -90,11 +90,11 @@ RUN \
     rm awscliv2.zip && \
 # pulumi
 	curl -L https://get.pulumi.com/releases/sdk/pulumi-v3.78.1-linux-x64.tar.gz | tar xvzf - -C /tmp --strip-components=1 && \
-	mv /tmp/pulumi* /usr/bin && \
+	mv /tmp/pulumi* /usr/bin/ && \
 # terraform, vault, and packer
     curl -LO https://releases.hashicorp.com/terraform/1.5.6/terraform_1.5.6_linux_amd64.zip && \
     unzip terraform_1.5.6_linux_amd64.zip && \
-    mv terraform /usr/bin && \
+    mv terraform /usr/bin/terraform && \
     rm terraform_1.5.6_linux_amd64.zip && \
 # SOPs
     curl -L https://github.com/getsops/sops/releases/download/v3.7.3/sops_3.7.3_amd64.deb > /tmp/sops_amd64.deb && \
@@ -104,9 +104,14 @@ RUN \
     dpkg -i packages-microsoft-prod.deb && \
     apt-get update && \
     apt-get install --no-install-recommends -y powershell && \
-    rm -f packages-microsoft-prod.deb
+    rm -f packages-microsoft-prod.deb && \
+# BW-CLI
+    curl -L https://github.com/bitwarden/clients/releases/download/cli-v2023.7.0/bw-linux-2023.7.0.zip -o bw.zip && \
+    unzip bw.zip && \
+    chmod +x bw && \
+    mv ./bw /usr/bin/bw && \
 # Docker Install
-RUN apt-get update && \
+    apt-get update && \
     apt-get install -y ca-certificates curl gnupg && \
     mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
@@ -126,8 +131,6 @@ COPY --from=fluxcd/flux-cli:v2.0.1 /usr/local/bin/flux /usr/bin/flux
 COPY --from=klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bin/hugo
 COPY --from=gcr.io/kaniko-project/executor:v1.14.0 /kaniko/executor /usr/bin/kaniko
 COPY --from=quay.io/coreos/etcd:v3.5.9 /usr/local/bin/etcdctl /usr/bin/etcdctl
-
-COPY ./app/sshd_config /etc/ssh/sshd_config
 
 # User chk
 RUN useradd -m -s /bin/zsh -G sudo $DEV && \
@@ -174,6 +177,15 @@ RUN \
           bashcompinit && \
           eval "$(register-python-argcomplete pipx)"' > $ZSH_CUSTOM/completions/pipx.zsh
 
-# Set Settings
-RUN \
-    sudo sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply chkpwd
+# Bitwarden CLI Configuration
+ENV BW_EMAIL_ADDRESS=
+ENV BW_PASSWORD=
+
+# Copy the entrypoint script into the image
+COPY ./app/entrypoint.sh /entrypoint.sh
+
+# Set the entrypoint
+ENTRYPOINT ["/entrypoint.sh"]
+
+# By default, run a shell if no other command is provided to docker run
+CMD ["/bin/zsh"]
