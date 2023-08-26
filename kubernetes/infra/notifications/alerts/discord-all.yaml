@@ -1,19 +1,13 @@
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Alert
 metadata:
-  name: discord-all
+  name: discord-error
   namespace: flux-system
 spec:
-  summary: New Flux Alert
+  summary: Flux Kustomize Error
   providerRef:
     name: discord
-  eventSeverity: info
+  eventSeverity: error
   eventSources:
-    - kind: GitRepository
-      name: '*'
     - kind: Kustomization
-      name: '*'
-    - kind: HelmRepository
-      name: '*'
-    - kind: HelmRelease
       name: '*'
