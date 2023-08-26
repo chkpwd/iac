@@ -85,9 +85,7 @@ spec:
 
     storage:
       # If this is disabled, vcluster will use an emptyDir instead
-      persistence: true
-      size: 5Gi
-      className: longhorn-clusters
+      persistence: false
 
     # The amount of replicas to run the statefulset with
     replicas: 1
