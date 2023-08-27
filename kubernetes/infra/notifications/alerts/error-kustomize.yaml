@@ -1,0 +1,13 @@
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Alert
+metadata:
+  name: flux-k3s-kustomize-errors
+  namespace: flux-system
+spec:
+  summary: Flux Kustomize Error
+  providerRef:
+    name: discord
+  eventSeverity: error
+  eventSources:
+    - kind: Kustomization
+      name: '*'

@@ -1,11 +1,11 @@
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Provider
 metadata:
-  name: discord
+  name: &name flux-k3s-info
   namespace: flux-system
 spec:
   type: discord
-  channel: flux-k3s
+  channel: *name
   secretRef:
     name: discord-webhook
   username: FluxBot

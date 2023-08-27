@@ -1,0 +1,13 @@
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Alert
+metadata:
+  name: flux-k3s-git-errors
+  namespace: flux-system
+spec:
+  summary: Flux GitRepository Error
+  providerRef:
+    name: discord
+  eventSeverity: error
+  eventSources:
+    - kind: GitRepository
+      name: '*'

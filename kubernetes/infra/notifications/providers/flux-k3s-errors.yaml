@@ -1,0 +1,11 @@
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Provider
+metadata:
+  name: &name flux-k3s-errors
+  namespace: flux-system
+spec:
+  type: discord
+  channel: *name
+  secretRef:
+    name: discord-webhook
+  username: FluxBot
