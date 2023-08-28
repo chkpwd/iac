@@ -1,0 +1,29 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: immich-pv
+  namespace: tools
+spec:
+  storageClassName: longhorn-media
+  capacity:
+    storage: 1T
+  accessModes:
+    - ReadWriteMany
+  nfs:
+    server: "cockpit.${LOCAL_DOMAIN}"
+    path: /mnt/data/images
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-pvc
+  namespace: tools
+spec:
+  storageClassName: longhorn-media
+  volumeName: immich-pv
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1T

@@ -1,0 +1,205 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app immich
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: immich
+      version: 1.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: immich
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    global:
+      fullnameOverride: *app
+
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
+
+    image:
+      tag: &appVersion v1.75.2
+
+    postgres:
+      enabled: false
+
+    redis:
+      enabled: true
+      architecture: standalone
+      auth:
+        enabled: false
+      resources:
+        requests:
+          cpu: 5m
+          memory: 10M
+        limits:
+          memory: 10M
+
+    typesense:
+      enabled: true
+      image:
+        repository: docker.io/typesense/typesense
+        tag: 0.25.0
+        pullPolicy: &pullPolicy IfNotPresent
+      env:
+        TYPESENSE_DATA_DIR: /tsdata
+        TYPESENSE_API_KEY:
+          valueFrom:
+            secretKeyRef:
+              name: immich-secret
+              key: TYPESENSE_API_KEY
+      persistence:
+        config:
+          enabled: true
+          storageClass: longhorn-config
+      resources:
+        requests:
+          cpu: 5m
+          memory: 315M
+        limits:
+          memory: 1443M
+
+
+    immich:
+      persistence:
+        library:
+          existingClaim: immich-pvc
+
+    server:
+      enabled: true
+      image:
+        repository: ghcr.io/immich-app/immich-server
+        tag: *appVersion
+        pullPolicy: *pullPolicy
+      resources:
+        requests:
+          cpu: 5m
+          memory: 150Mi
+        limits:
+          memory: 390Mi
+
+    microservices:
+      enabled: true
+      controller:
+        replicas: 2
+      persistence:
+        geodata-cache:
+          enabled: true
+          size: 1Gi
+          type: emptyDir
+          accessMode: ReadWriteMany
+      resources:
+        requests:
+          cpu: 5m
+          memory: 277Mi
+        limits:
+          memory: 512Mi
+
+    machine-learning:
+      enabled: true
+      image:
+        repository: ghcr.io/immich-app/immich-machine-learning
+        tag: *appVersion
+        pullPolicy: *pullPolicy
+      env:
+        TRANSFORMERS_CACHE: /cache
+      persistence:
+        cache:
+          enabled: true
+          size: 10Gi
+          type: emptyDir
+          accessMode: ReadWriteMany
+      resources:
+        requests:
+          cpu: 512m
+          memory: 274Mi
+        limits:
+          memory: 2000Mi
+
+    web:
+      enabled: true
+      image:
+        repository: ghcr.io/immich-app/immich-web
+        tag: *appVersion
+        pullPolicy: *pullPolicy
+      resources:
+        requests:
+          cpu: 15m
+          memory: 105M
+
+    proxy:
+      ingress:
+        main:
+          enabled: true
+          ingressClassName: ext-ingress
+          annotations:
+            gethomepage.dev/enabled: "true"
+            gethomepage.dev/name: Immich
+            gethomepage.dev/group: Collaboration
+            gethomepage.dev/icon: immich
+            gethomepage.dev/description: Self-Hosted Photo App
+            gethomepage.dev/widget.type: immich
+            gethomepage.dev/widget.url: "http://immich-proxy.tools.${CLUSTER_DOMAIN}:3000"
+            gethomepage.dev/widget.key: ${API_KEY_IMMICH}
+            external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+            nginx.ingress.kubernetes.io/proxy-body-size: "0"
+          hosts:
+            - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - hosts:
+                - *host
+      resources:
+        requests:
+          cpu: 15m
+          memory: 105M
+
+    env:
+      DB_DATABASE_NAME:
+        valueFrom: 
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: dbname
+      DB_HOSTNAME:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: host
+      DB_USERNAME:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: user
+      DB_PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: password
+      DB_URL:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: uri
+      REDIS_HOSTNAME: '{{ printf "%s-redis-master" .Release.Name }}'
+      TYPESENSE_ENABLED: "{{ .Values.typesense.enabled }}"
+      TYPESENSE_API_KEY: "{{ .Values.typesense.env.TYPESENSE_API_KEY }}"
+      TYPESENSE_HOST: '{{ printf "%s-typesense" .Release.Name }}'
+      IMMICH_WEB_URL: '{{ printf "http://%s-web:3000" .Release.Name }}'
+      IMMICH_SERVER_URL: '{{ printf "http://%s-server:3001" .Release.Name }}'
+      IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
+      LOG_LEVEL: verbose
