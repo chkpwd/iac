@@ -1,10 +1,18 @@
 ---
+# Define the anchor named 'custom_format_settings'
+custom_format_settings: &custom_format_settings
+  delete_old_custom_formats: true
+  replace_existing_custom_formats: true
+
 # Configuration specific to Sonarr
 sonarr:
   anime:
     # Set the URL/API Key to your actual instance
     base_url: http://soanrr.media.svc.cluster.local:8989
     api_key: !env_var API_KEY_SONARR
+
+    # Custom Format Configuration
+    <<: *custom_format_settings
 
     # Quality definitions from the guide to sync to Sonarr. Choices: series, anime
     quality_definition:
@@ -29,6 +37,9 @@ sonarr:
     # Set the URL/API Key to your actual instance
     base_url: http://sonarr.media.svc.cluster.local:8989
     api_key: !env_var API_KEY_SONARR
+
+    # Custom Format Configuration
+    <<: *custom_format_settings
 
     # Quality definitions from the guide to sync to Sonarr. Choices: series, anime
     quality_definition:
@@ -84,6 +95,9 @@ radarr:
     # Set the URL/API Key to your actual instance
     base_url: http://radarr.media.svc.cluster.local:7878
     api_key: !env_var API_KEY_RADARR
+
+    # Custom Format Configuration
+    <<: *custom_format_settings
 
     # Which quality definition in the guide to sync to Radarr. Only choice right now is 'movie'
     quality_definition:
