@@ -6,16 +6,6 @@ metadata:
   namespace: tools
 spec:
   postgresVersion: 15
-
-  patroni:
-    dynamicConfiguration:
-      synchronous_mode: true
-      postgresql:
-        synchronous_commit: "on"
-        pg_hba:
-          - hostnossl all all 10.42.0.0/16 md5
-          - hostssl all all 0.0.0.0/0 md5
-
   instances:
     - dataVolumeClaimSpec:
         storageClassName: longhorn-database
@@ -23,7 +13,7 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 5Gi
+            storage: 1Gi
 
   users:
     - name: immich
