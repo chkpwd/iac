@@ -52,7 +52,6 @@ spec:
         tag: 0.25.0
         pullPolicy: &pullPolicy IfNotPresent
       env:
-        TYPESENSE_DATA_DIR: /tsdata
         TYPESENSE_API_KEY:
           valueFrom:
             secretKeyRef:
