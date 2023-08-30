@@ -114,7 +114,17 @@ RUN \
 # vCluster
     curl -L https://github.com/loft-sh/vcluster/releases/download/v0.15.6/vcluster-linux-amd64 -o vcluster && \
     chmod +x vcluster && \
-    mv ./vcluster /usr/bin/vcluster
+    mv ./vcluster /usr/bin/vcluster && \
+# Docker Install
+    apt-get update && \
+    apt-get install -y ca-certificates curl gnupg && \
+    mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    chmod a+r /etc/apt/keyrings/docker.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+         $(. /etc/os-release && echo "$VERSION_CODENAME") stable" > /etc/apt/sources.list.d/docker.list && \
+    apt-get update && \
+    apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 RUN bash -c "rm -rf /tmp/*"
 
