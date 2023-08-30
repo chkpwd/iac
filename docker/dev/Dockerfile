@@ -124,7 +124,7 @@ COPY --from=istio/istioctl:1.18.2 /usr/local/bin/istioctl /usr/bin/istioctl
 COPY --from=digitalocean/doctl:1.98.1 /app/doctl /usr/bin/doctl
 COPY --from=fluxcd/flux-cli:v2.1.0 /usr/local/bin/flux /usr/bin/flux
 COPY --from=klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bin/hugo
-COPY --from=gcr.io/kaniko-project/executor:v1.14.0 /kaniko/executor /usr/bin/kaniko
+COPY --from=gcr.io/kaniko-project/executor:v1.15.0 /kaniko/executor /usr/bin/kaniko
 COPY --from=quay.io/coreos/etcd:v3.5.9 /usr/local/bin/etcdctl /usr/bin/etcdctl
 
 # User chk
