@@ -4,8 +4,6 @@ services:
     environment:
       - BW_EMAIL_ADDRESS=unix.chkpwd@gmail.com
       - CHEZMOI_GIT_USER=chkpwd
-    command: /bin/zsh
-    entrypoint: /entrypoint.sh
     init: true
     volumes:
     - type: bind
