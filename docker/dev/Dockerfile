@@ -6,7 +6,7 @@ USER root
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-ENV DEV=chk
+ENV DEV=ubuntu
 
 # Base System Configuration
 RUN apt-get update && \
@@ -137,15 +137,9 @@ COPY --from=klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bin/hugo
 COPY --from=gcr.io/kaniko-project/executor:v1.15.0 /kaniko/executor /usr/bin/kaniko
 COPY --from=quay.io/coreos/etcd:v3.5.9 /usr/local/bin/etcdctl /usr/bin/etcdctl
 
-# User chk
-RUN useradd -m -s /bin/zsh -G sudo $DEV && \
-	su -c "ssh-keygen -b 2048 -f /home/$DEV/.ssh/id_rsa -t rsa -q -N ''" $DEV && \
-	passwd -d $DEV && \
-	chmod 700 /home/$DEV/.ssh && \
-	curl -L https://github.com/chkpwd.keys > /home/$DEV/.ssh/authorized_keys && \
-	chown $DEV: /home/$DEV/.ssh/authorized_keys && \
-	chmod 600 /home/$DEV/.ssh/authorized_keys && \
-	chown root: /etc/ssh/sshd_config
+# User Config
+RUN su -c "ssh-keygen -b 2048 -f /home/$DEV/.ssh/id_rsa -t rsa -q -N ''" $DEV && \
+	passwd -d $DEV
 
 # User Setup
 USER $DEV
