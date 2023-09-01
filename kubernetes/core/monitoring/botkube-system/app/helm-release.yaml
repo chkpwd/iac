@@ -50,11 +50,8 @@ spec:
                 executors:
                   - k8s-default-tools
                 sources:
-                  - crds
                   - k8s-recommendation-events
                   - k8s-all-events
-                  - k8s-create-events
-                  - k8s-err-events
                   - k8s-err-with-logs-events
 
           notification:
@@ -66,7 +63,7 @@ spec:
     plugins:
       repositories:
         botkube:
-          url: https://github.com/kubeshop/botkube/releases/download/v1.3.0/plugins-index.yaml
+          url: https://storage.googleapis.com/botkube-plugins-latest/plugins-index.yaml
 
     actions:
       'describe-created-resource':
@@ -75,23 +72,6 @@ spec:
         enabled: true
 
     sources:
-      crds:
-        displayName: CRDs
-        kubernetes:
-          enabled: true
-          namespaces:
-            include:
-              - all
-          events:
-            - error
-          resources:
-            - name: helm.toolkit.fluxcd.io/v2beta1/helmreleases
-            - name: source.toolkit.fluxcd.io/v1beta2/helmcharts
-            - name: kustomize.toolkit.fluxcd.io/v1beta2/kustomizations
-            - name: notification.toolkit.fluxcd.io/v1beta1/alerts
-            - name: monitoring.coreos.com/v1/podmonitors
-            - name: monitoring.coreos.com/v1/servicemonitors
-
       k8s-recommendation-events:
         kubernetes:
           enabled: true
@@ -114,25 +94,6 @@ spec:
             - type: apps/v1/deployments
             - type: apps/v1/statefulsets
 
-      k8s-create-events:
-        kubernetes:
-          enabled: true
-          resources:
-            - type: v1/pods
-            - type: v1/services
-            - type: networking.k8s.io/v1/ingresses
-            - type: v1/nodes
-            - type: v1/namespaces
-            - type: v1/configmaps
-            - type: apps/v1/deployments
-            - type: apps/v1/statefulsets
-            - type: apps/v1/daemonsets
-            - type: batch/v1/jobs
-
-      k8s-err-events:
-        kubernetes:
-          enabled: true
-
       k8s-err-with-logs-events:
         kubernetes:
           enabled: true
@@ -147,9 +108,6 @@ spec:
         config:
           log:
             level: info
-        github:
-          auth:
-            accessToken: ${FLUX_BOTKUBE_GITHUB_TOKEN}
 
     aliases:
       k:
@@ -186,3 +144,7 @@ spec:
       kind: Secret
       name: botkube-secret
       valuesKey: BOTKUBE_DISCORD_CHANNEL_ID
+    - targetPath: executors.flux.github.auth.accessToken
+      kind: Secret
+      name: botkube-secret
+      valuesKey: FLUX_BOTKUBE_GITHUB_TOKEN
