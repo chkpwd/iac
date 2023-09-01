@@ -1,0 +1,172 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app botkube
+  namespace: monitoring
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: botkube
+      version: v1.3.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: botkube
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    replicaCount: 1
+
+    fullnameOverride: *app
+
+    image:
+      repository: kubeshop/botkube
+      pullPolicy: IfNotPresent
+      tag: v1.3.0
+
+    settings:
+      clusterName: k3s-onprem
+      configWatcher: true
+
+    communications:
+      default-group:
+        discord:
+          enabled: true
+          channels:
+            default:
+              notification:
+                disabled: false
+              bindings:
+                executors:
+                  - kubectl-read-only
+                sources:
+                  - crds
+                  - k8s-recommendation-events
+
+          notification:
+            type: short
+
+    serviceMonitor:
+      enabled: true
+    executors:
+      kubectl-read-only:
+        kubectl:
+          enabled: true
+
+    actions:
+      'describe-created-resource':
+        enabled: false
+      'show-logs-on-error':
+        enabled: true
+
+    sources:
+      crds:
+        displayName: CRDs
+        kubernetes:
+          enabled: true
+          namespaces:
+            include:
+              - all
+          events:
+            - create
+            - delete
+            - error
+          resources:
+            - name: helm.toolkit.fluxcd.io/v2beta1/helmreleases
+            - name: source.toolkit.fluxcd.io/v1beta2/helmcharts
+            - name: kustomize.toolkit.fluxcd.io/v1beta2/kustomizations
+            - name: notification.toolkit.fluxcd.io/v1beta1/alerts
+            - name: monitoring.coreos.com/v1/podmonitors
+            - name: monitoring.coreos.com/v1/servicemonitors
+
+      k8s-recommendation-events:
+        kubernetes:
+          enabled: true
+
+      k8s-all-events:
+        kubernetes:
+          enabled: true
+          resources:
+            - type: v1/pods
+            - type: v1/services
+            - type: networking.k8s.io/v1/ingresses
+            - type: v1/nodes
+            - type: v1/namespaces
+            - type: v1/configmaps
+            - type: rbac.authorization.k8s.io/v1/roles
+            - type: rbac.authorization.k8s.io/v1/rolebindings
+            - type: rbac.authorization.k8s.io/v1/clusterrolebindings
+            - type: rbac.authorization.k8s.io/v1/clusterroles
+            - type: apps/v1/daemonsets
+            - type: apps/v1/deployments
+            - type: apps/v1/statefulsets
+
+      k8s-create-events:
+        kubernetes:
+          enabled: true
+          resources:
+            - type: v1/pods
+            - type: v1/services
+            - type: networking.k8s.io/v1/ingresses
+            - type: v1/nodes
+            - type: v1/namespaces
+            - type: v1/configmaps
+            - type: apps/v1/deployments
+            - type: apps/v1/statefulsets
+            - type: apps/v1/daemonsets
+
+      k8s-err-events:
+        kubernetes:
+          enabled: true
+
+      k8s-err-with-logs-events:
+        kubernetes:
+          enabled: true
+
+    aliases:
+      kc:
+        command: kubectl
+        displayName: "Kubectl alias"
+      k:
+        command: kubectl
+        displayName: "Kubectl alias"
+      chatgpt:
+        command: doctor
+        displayName: "Doctor alias"
+      x:
+        command: exec
+        displayName: "Exec alias"
+
+    kgp:
+      command: kubectl get pods
+      displayName: "Get pods"
+
+    resources:
+      limits:
+        cpu: 100m
+        memory: 138Mi
+      requests:
+        memory: 3000Mi
+
+  valuesFrom:
+    - targetPath: communications.default-group.discord.token
+      kind: Secret
+      name: botkube-secret
+      valuesKey: BOTKUBE_DISCORD_TOKEN
+    - targetPath: communications.default-group.discord.botID
+      kind: Secret
+      name: botkube-secret
+      valuesKey: BOTKUBE_DISCORD_BOT_ID
+    - targetPath: communications.default-group.discord.channels.default.id
+      kind: Secret
+      name: botkube-secret
+      valuesKey: BOTKUBE_DISCORD_CHANNEL_ID

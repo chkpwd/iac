@@ -1,0 +1,10 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: botkube
+  namespace: flux-system
+spec:
+  interval: 30m
+  url: https://charts.botkube.io
+  timeout: 3m
