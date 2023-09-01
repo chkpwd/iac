@@ -73,6 +73,11 @@
       "matchDatasources": ["helm"],
       "matchUpdateTypes": ["patch"],
       "labels": ["renovate/helm", "dep/patch"]
+    },
+    {
+      "matchDatasources": ["helm"],
+      "labels": ["renovate/helm", "non-semver"],
+      "versioning": "loose"
     }
   ]
 }
