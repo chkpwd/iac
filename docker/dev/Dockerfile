@@ -107,14 +107,18 @@ RUN \
     apt-get install --no-install-recommends -y powershell && \
     rm -f packages-microsoft-prod.deb && \
 # BW-CLI
-    curl -L https://github.com/bitwarden/clients/releases/download/cli-v2023.7.0/bw-linux-2023.7.0.zip -o bw.zip && \
-    unzip bw.zip && \
-    chmod +x bw && \
-    mv ./bw /usr/bin/bw && \
+    curl -L https://github.com/bitwarden/clients/releases/download/cli-v2023.7.0/bw-linux-2023.7.0.zip -o /tmp/bw.zip && \
+    unzip /tmp/bw.zip -d /tmp && \
+    chmod +x /tmp/bw && \
+    mv /tmp/bw /usr/bin/bw && \
 # vCluster
     curl -L https://github.com/loft-sh/vcluster/releases/download/v0.15.6/vcluster-linux-amd64 -o vcluster && \
     chmod +x vcluster && \
     mv ./vcluster /usr/bin/vcluster && \
+# Nova
+    curl -L https://github.com/FairwindsOps/nova/releases/download/3.2.0/nova_3.2.0_linux_amd64.tar.gz > /tmp/nova.tar.gz && \
+    tar -xvf /tmp/nova.tar.gz -C /tmp/ && \
+    mv /tmp/nova /usr/bin/nova && \
 # Docker Install
     apt-get update && \
     apt-get install -y ca-certificates curl gnupg && \
