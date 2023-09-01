@@ -35,6 +35,7 @@ spec:
 
     settings:
       clusterName: k3s-onprem
+      defaultNamespace: "default"
       configWatcher: true
 
     communications:
@@ -51,12 +52,16 @@ spec:
                 sources:
                   - crds
                   - k8s-recommendation-events
+                  - k8s-all-events
+                  - k8s-err-events
+                  - k8s-err-with-logs-events
 
           notification:
             type: short
 
     serviceMonitor:
       enabled: true
+
     executors:
       kubectl-read-only:
         kubectl:
@@ -77,8 +82,6 @@ spec:
             include:
               - all
           events:
-            - create
-            - delete
             - error
           resources:
             - name: helm.toolkit.fluxcd.io/v2beta1/helmreleases
@@ -133,13 +136,10 @@ spec:
           enabled: true
 
     aliases:
-      kc:
-        command: kubectl
-        displayName: "Kubectl alias"
       k:
         command: kubectl
         displayName: "Kubectl alias"
-      chatgpt:
+      gpt:
         command: doctor
         displayName: "Doctor alias"
       x:
