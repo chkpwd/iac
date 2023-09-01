@@ -151,11 +151,11 @@ spec:
       displayName: "Get pods"
 
     resources:
-      limits:
+      requests:
         cpu: 100m
         memory: 138Mi
-      requests:
-        memory: 3000Mi
+      limits:
+        memory: 300Mi
 
   valuesFrom:
     - targetPath: communications.default-group.discord.token
