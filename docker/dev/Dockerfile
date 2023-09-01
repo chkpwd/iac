@@ -8,6 +8,48 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ENV DEV=ubuntu
 
+# renovate: datasource=github-tags depName=knqyf263/pet
+ARG PET_VERSION=0.5.0
+
+# renovate: datasource=github-tags depName=tellerops/teller
+ARG TELLER_VERSION=1.5.6
+
+# renovate: datasource=github-tags depName=twpayne/chezmoi
+ARG CHEZMOI_VERSION=2.27.0
+
+# renovate: datasource=github-tags depName=stern/stern
+ARG STERN_VERSION=1.19.0
+
+# renovate: datasource=github-tags depName=kubernetes-sigs/krew
+ARG KREW_VERSION=0.4.4
+
+# renovate: datasource=github-tags depName=sachaos/viddy
+ARG VIDDY_VERSION=0.3.6
+
+# renovate: datasource=github-tags depName=derailed/k9s
+ARG K9S_VERSION=0.27.4
+
+# renovate: datasource=github-tags depName=pulumi/pulumi
+ARG PULUMI_VERSION=3.78.1
+
+# renovate: datasource=github-tags depName=hashicorp/terraform
+ARG TERRAFORM_VERSION=1.5.6
+
+# renovate: datasource=github-tags depName=getsops/sops
+ARG SOPS_VERSION=3.7.3
+
+# renovate: datasource=github-tags depName=bitwarden/clients
+ARG BW_CLI_VERSION=2023.7.0
+
+# renovate: datasource=github-tags depName=loft-sh/vcluster
+ARG VCLUSTER_VERSION=0.15.6
+
+# renovate: datasource=github-tags depName=FairwindsOps/nova
+ARG NOVA_VERSION=3.2.0
+
+# renovate: datasource=github-tags depName=FairwindsOps/pluto
+ARG PLUTO_VERSION=5.18.3
+
 # Base System Configuration
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -44,83 +86,61 @@ RUN apt-get update && \
 
 # Download and Install Various Tools
 RUN \
-# Pet Snippet
-	curl -L https://github.com/knqyf263/pet/releases/download/v0.5.0/pet_0.5.0_linux_amd64.deb > pet.deb && \
+# Download and install Pet Snippet
+    curl -L "https://github.com/knqyf263/pet/releases/download/v${PET_VERSION}/pet_${PET_VERSION}_linux_amd64.deb" > pet.deb && \
     dpkg -i pet.deb && \
-	rm -f pet.deb && \
-# Teller
-    curl -L https://github.com/tellerops/teller/releases/download/v1.5.6/teller_1.5.6_Linux_x86_64.tar.gz | tar xvzf - -C /tmp && \
+    rm -f pet.deb && \
+# Download and install Teller
+    curl -L "https://github.com/tellerops/teller/releases/download/v${TELLER_VERSION}/teller_${TELLER_VERSION}_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/teller /usr/bin/teller && \
-# chezmoi
-    curl -L https://github.com/twpayne/chezmoi/releases/download/v2.27.0/chezmoi_2.27.0_linux_amd64.deb > chezmoi.deb && \
+# Download and install chezmoi
+    curl -L "https://github.com/twpayne/chezmoi/releases/download/v${CHEZMOI_VERSION}/chezmoi_${CHEZMOI_VERSION}_linux_amd64.deb" > chezmoi.deb && \
     dpkg -i chezmoi.deb && \
     rm -f chezmoi.deb && \
-# Korb
-    curl -L https://github.com/BeryJu/korb/releases/latest/download/korb_linux_amd64 > korb && \
-    mv korb /usr/bin/korb && \
-    chmod +x /usr/bin/korb && \
-# kubectl
-    curl -LO https://dl.k8s.io/release/v1.28.0/bin/linux/amd64/kubectl && \
+# Download and install kubectl
+    curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" && \
     chmod +x kubectl && \
     mv ./kubectl /usr/bin/kubectl && \
-# kubectx && kubens
-    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/kubectx > /usr/local/bin/kubectx && \
-    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/kubens > /usr/local/bin/kubens && \
-    chmod +x /usr/local/bin/kubectx && \
-    chmod +x /usr/local/bin/kubens && \
-# Kubernetes stern
-    curl -L https://github.com/stern/stern/releases/download/v1.19.0/stern_1.19.0_linux_amd64.tar.gz | tar xvzf - --strip-components=1 && \
+# Download and install stern
+    curl -L "https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz" | tar xvzf - --strip-components=1 && \
     mv stern /usr/bin/stern && \
     chmod +x /usr/bin/stern && \
-# krew
-	curl -L https://github.com/kubernetes-sigs/krew/releases/download/v0.4.4/krew-linux_amd64.tar.gz | tar xvzf - -C /tmp && \
-	mv /tmp/krew-linux_amd64 /usr/bin/krew && \
+# Download and install krew
+    curl -L "https://github.com/kubernetes-sigs/krew/releases/download/v${KREW_VERSION}/krew-linux_amd64.tar.gz" | tar xvzf - -C /tmp && \
+    mv /tmp/krew-linux_amd64 /usr/bin/krew && \
     krew install virt && \
-# viddy
-	curl -L https://github.com/sachaos/viddy/releases/download/v0.3.6/viddy_0.3.6_Linux_x86_64.tar.gz | tar xvzf - -C /tmp && \
-	mv /tmp/viddy /usr/bin/viddy && \
-# k9s
-	curl -L https://github.com/derailed/k9s/releases/download/v0.27.4/k9s_Linux_amd64.tar.gz | tar xvzf - -C /tmp && \
-	mv /tmp/k9s /usr/bin/k9s && \
-# helm 3
-    curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash && \
-# AWS CLI
-    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
-    unzip awscliv2.zip && \
-    ./aws/install && \
-    rm awscliv2.zip && \
-# pulumi
-	curl -L https://get.pulumi.com/releases/sdk/pulumi-v3.78.1-linux-x64.tar.gz | tar xvzf - -C /tmp --strip-components=1 && \
-	mv /tmp/pulumi* /usr/bin/ && \
-# terraform, vault, and packer
-    curl -LO https://releases.hashicorp.com/terraform/1.5.6/terraform_1.5.6_linux_amd64.zip && \
-    unzip terraform_1.5.6_linux_amd64.zip && \
+# Download and install viddy
+    curl -L "https://github.com/sachaos/viddy/releases/download/v${VIDDY_VERSION}/viddy_${VIDDY_VERSION}_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
+    mv /tmp/viddy /usr/bin/viddy && \
+# Download and install k9s
+    curl -L "https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_amd64.tar.gz" | tar xvzf - -C /tmp && \
+    mv /tmp/k9s /usr/bin/k9s && \
+# Download and install pulumi
+    curl -L "https://get.pulumi.com/releases/sdk/pulumi-v${PULUMI_VERSION}-linux-x64.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
+    mv /tmp/pulumi* /usr/bin/ && \
+# Download and install terraform
+    curl -LO "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && \
+    unzip "terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && \
     mv terraform /usr/bin/terraform && \
-    rm terraform_1.5.6_linux_amd64.zip && \
-# SOPs
-    curl -L https://github.com/getsops/sops/releases/download/v3.7.3/sops_3.7.3_amd64.deb > /tmp/sops_amd64.deb && \
+    rm "terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && \
+# Download and install sops
+    curl -L "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_amd64.deb" > /tmp/sops_amd64.deb && \
     dpkg -i /tmp/sops_amd64.deb && \
-# powershell
-    curl -L https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb > packages-microsoft-prod.deb && \
-    dpkg -i packages-microsoft-prod.deb && \
-    apt-get update && \
-    apt-get install --no-install-recommends -y powershell && \
-    rm -f packages-microsoft-prod.deb && \
-# BW-CLI
-    curl -L https://github.com/bitwarden/clients/releases/download/cli-v2023.7.0/bw-linux-2023.7.0.zip -o /tmp/bw.zip && \
+# Download and install BW-CLI
+    curl -L "https://github.com/bitwarden/clients/releases/download/cli-v${BW_CLI_VERSION}/bw-linux-${BW_CLI_VERSION}.zip" -o /tmp/bw.zip && \
     unzip /tmp/bw.zip -d /tmp && \
     chmod +x /tmp/bw && \
     mv /tmp/bw /usr/bin/bw && \
-# vCluster
-    curl -L https://github.com/loft-sh/vcluster/releases/download/v0.15.6/vcluster-linux-amd64 -o vcluster && \
+# Download and install vCluster
+    curl -L "https://github.com/loft-sh/vcluster/releases/download/v${VCLUSTER_VERSION}/vcluster-linux-amd64" -o vcluster && \
     chmod +x vcluster && \
     mv ./vcluster /usr/bin/vcluster && \
-# Nova
-    curl -L https://github.com/FairwindsOps/nova/releases/download/3.2.0/nova_3.2.0_linux_amd64.tar.gz > /tmp/nova.tar.gz && \
+# Download and install Nova
+    curl -L "https://github.com/FairwindsOps/nova/releases/download/${NOVA_VERSION}/nova_${NOVA_VERSION}_linux_amd64.tar.gz" > /tmp/nova.tar.gz && \
     tar -xvf /tmp/nova.tar.gz -C /tmp/ && \
     mv /tmp/nova /usr/bin/nova && \
-# Pluto
-    curl -L https://github.com/FairwindsOps/pluto/releases/download/v5.18.3/pluto_5.18.3_linux_amd64.tar.gz > /tmp/pluto.tar.gz && \
+# Download and install Pluto
+    curl -L "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_amd64.tar.gz" > /tmp/pluto.tar.gz && \
     tar -xvf /tmp/pluto.tar.gz -C /tmp/ && \
     mv /tmp/pluto /usr/bin/pluto && \
 # Docker Install
