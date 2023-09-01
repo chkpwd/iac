@@ -45,7 +45,8 @@ spec:
       logFormat: json
 
     metrics:
-      serviceMonitor: false
+      serviceMonitor:
+        enabled: false
       port: 8080
       proxy:
         enabled: false
