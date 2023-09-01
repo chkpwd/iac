@@ -73,11 +73,11 @@ spec:
 
     sources:
       k8s-recommendation-events:
-        kubernetes:
+        botkube/kubernetes:
           enabled: true
 
       k8s-all-events:
-        kubernetes:
+        botkube/kubernetes:
           enabled: true
           resources:
             - type: v1/pods
@@ -95,7 +95,7 @@ spec:
             - type: apps/v1/statefulsets
 
       k8s-err-with-logs-events:
-        kubernetes:
+        botkube/kubernetes:
           enabled: true
 
     executors:
