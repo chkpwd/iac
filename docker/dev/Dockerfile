@@ -119,6 +119,10 @@ RUN \
     curl -L https://github.com/FairwindsOps/nova/releases/download/3.2.0/nova_3.2.0_linux_amd64.tar.gz > /tmp/nova.tar.gz && \
     tar -xvf /tmp/nova.tar.gz -C /tmp/ && \
     mv /tmp/nova /usr/bin/nova && \
+# Pluto
+    curl -L https://github.com/FairwindsOps/pluto/releases/download/v5.18.3/pluto_5.18.3_linux_amd64.tar.gz > /tmp/pluto.tar.gz && \
+    tar -xvf /tmp/pluto.tar.gz -C /tmp/ && \
+    mv /tmp/pluto /usr/bin/pluto && \
 # Docker Install
     apt-get update && \
     apt-get install -y ca-certificates curl gnupg && \
