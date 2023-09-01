@@ -1,0 +1,55 @@
+---
+name: Kustomize Pluto (Helm inheritance)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'kubernetes/**'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'kubernetes/**'
+  workflow_dispatch:  # needs to be in default branch before you get the UI option to manually run though
+    inputs:
+      debug:
+        description: 'Debug mode'
+        type: boolean
+        required: false
+        default: false
+  schedule:
+    - cron: '0 0 * * 1'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash -euxo pipefail {0}
+
+env:
+  DEBUG: ${{ github.event.inputs.debug == true || '' }}
+
+jobs:
+  fairwinds-pluto:
+    name: Fairwinds Pluto
+    runs-on: ubuntu-latest
+    steps:
+      - name: Environment
+        run: env | sort
+
+      - uses: actions/checkout@v3
+
+      - name: Download Pluto
+        uses: FairwindsOps/pluto/github-action@master
+        with:
+          IMAGE_TAG: v5
+
+      - name: Pluto detect-files
+        run: pluto detect-files -d kubernetes/
