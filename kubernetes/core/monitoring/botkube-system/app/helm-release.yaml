@@ -48,11 +48,12 @@ spec:
                 disabled: false
               bindings:
                 executors:
-                  - kubectl-read-only
+                  - k8s-default-tools
                 sources:
                   - crds
                   - k8s-recommendation-events
                   - k8s-all-events
+                  - k8s-create-events
                   - k8s-err-events
                   - k8s-err-with-logs-events
 
@@ -62,10 +63,10 @@ spec:
     serviceMonitor:
       enabled: true
 
-    executors:
-      kubectl-read-only:
-        kubectl:
-          enabled: true
+    plugins:
+      repositories:
+        botkube:
+          url: https://github.com/kubeshop/botkube/releases/download/v1.3.0/plugins-index.yaml
 
     actions:
       'describe-created-resource':
@@ -126,6 +127,7 @@ spec:
             - type: apps/v1/deployments
             - type: apps/v1/statefulsets
             - type: apps/v1/daemonsets
+            - type: batch/v1/jobs
 
       k8s-err-events:
         kubernetes:
@@ -134,6 +136,20 @@ spec:
       k8s-err-with-logs-events:
         kubernetes:
           enabled: true
+
+    executors:
+      k8s-default-tools:
+        botkube/kubectl:
+          enabled: true
+      flux:
+        botkube/flux:
+          enabled: true
+        config:
+          log:
+            level: info
+        github:
+          auth:
+            accessToken: ${FLUX_BOTKUBE_GITHUB_TOKEN}
 
     aliases:
       k:
