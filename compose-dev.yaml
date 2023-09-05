@@ -1,11 +1,11 @@
 services:
   app:
-    image: ghcr.io/chkpwd/dev:latest
+    # image: ghcr.io/chkpwd/dev:latest
+    image: dev:latest
     environment:
       - BW_EMAIL_ADDRESS=unix.chkpwd@gmail.com
       - CHEZMOI_GIT_USER=chkpwd
-    entrypoint: /bin/zsh
-    init: true
+    tty: true
     volumes:
     - type: bind
       source: /var/run/docker.sock
