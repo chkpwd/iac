@@ -158,7 +158,7 @@ RUN bash -c "rm -rf /tmp/*"
 
 # Copy Commands for Various Tools
 COPY --from=vmware/govc:v0.30.7 /govc /usr/bin/govc
-COPY --from=istio/istioctl:1.18.2 /usr/local/bin/istioctl /usr/bin/istioctl
+COPY --from=istio/istioctl:1.19.0 /usr/local/bin/istioctl /usr/bin/istioctl
 COPY --from=digitalocean/doctl:1.98.1 /app/doctl /usr/bin/doctl
 COPY --from=fluxcd/flux-cli:v2.1.0 /usr/local/bin/flux /usr/bin/flux
 COPY --from=klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bin/hugo
