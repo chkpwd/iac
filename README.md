@@ -1,7 +1,5 @@
 # Infrastructure as Code (IaC) by Bryan J.
 
-A repository dedicated to **Infrastructure as Code (IaC)**. This repository is a testament to Bryan's passion for technology, encompassing everything from hardware and software to automation.
-
 ## General Overview
 
 This repository is a collection of tools, scripts, and configurations that demonstrate the power of automation in managing and provisioning infrastructure. I tried not to be opinionated in the way I tackle issues. In general it includes various components such as:
