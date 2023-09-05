@@ -115,6 +115,8 @@ RUN \
 # Download and install k9s
     curl -L "https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_amd64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/k9s /usr/bin/k9s && \
+# Download and install helm
+    curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash && \
 # Download and install pulumi
     curl -L "https://get.pulumi.com/releases/sdk/pulumi-v${PULUMI_VERSION}-linux-x64.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
     mv /tmp/pulumi* /usr/bin/ && \
