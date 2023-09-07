@@ -11,7 +11,7 @@ d-i netcfg/choose_interface select auto
 
 ### Host
 d-i netcfg/get_domain string local.chkpwd.com
-d-i netcfg/hostname string deb-12-template
+d-i netcfg/hostname string k3s-deb12
 d-i netcfg/wireless_wep string
 
 ### Account setup - Root
