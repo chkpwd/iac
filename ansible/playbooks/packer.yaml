@@ -4,6 +4,7 @@
   become: true
 
   vars:
+    ansible_user: "hyoga"
     packages: [vim,htop]
 
   tasks:
@@ -19,6 +20,12 @@
         regexp: '^%sudo'
         line: '%sudo ALL=(ALL) NOPASSWD: ALL'
         validate: '/usr/sbin/visudo -cf %s'
+
+    - name: Add default user
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        password: "{{ USR_PASSWORD_SOPS }}"
+        state: present
 
     - name: Copy the public SSH key
       ansible.posix.authorized_key:
