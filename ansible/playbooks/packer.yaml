@@ -1,6 +1,6 @@
 ---
 - name: Install the essentials on the target
-  hosts: all
+  hosts: default
   become: true
 
   vars:
@@ -24,7 +24,7 @@
     - name: Add default user
       ansible.builtin.user:
         name: "{{ ansible_user }}"
-        password: "{{ USR_PASSWORD_SOPS }}"
+        password: '*'
         state: present
 
     - name: Copy the public SSH key
