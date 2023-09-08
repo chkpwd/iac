@@ -4,8 +4,6 @@ kind: Kustomization
 metadata:
   name: misc-podinfo
   namespace: flux-system
-  labels:
-    substitution.flux.home.arpa/enabled: "true"
 spec:
   path: ./kubernetes/apps/misc/podinfo/app
   prune: true
