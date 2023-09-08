@@ -51,12 +51,13 @@ spec:
       proxy:
         enabled: false
     actionsMetrics:
-      serviceMonitor: false
+      serviceMonitor:
+        enabled: false
       port: 8080
       proxy:
         enabled: false
     actionsMetricsServer:
-      enabled: true
+      enabled: false
 
     resources:
       requests:
