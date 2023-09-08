@@ -4,7 +4,7 @@
 
 - name: Change the hostname to loba
   ansible.windows.win_hostname:
-    name: loba
+    name: chk-dev-win11
   register: hostname
 
 - name: Install dependencies
@@ -35,14 +35,6 @@
 
 - name: Ensure RDP rights are given to {{ ansible_user }}
   ansible.builtin.include_tasks: users.yaml
-
-- name: Download 128Bit Yuzu Installer
-  ansible.windows.win_get_url:
-    url: https://github.com/MostlyWhat/128Bit-Yuzu-Installer/releases/download/v0.2/128Bit-Yuzu-Installer.v0.2.exe # * Levarge ansible_facts for the path
-    dest: C:\Users\{{ ansible_user }}\Downloads\128Bit-Yuzu-Installer.v0.2.exe
-    checksum: 6b6b9ca1660ecfaf75c6a328f7bd2e590a304cba74602bfb84ab13fb6f123427
-    checksum_algorithm: sha256
-    force: True
 
 - name: Update the system
   ansible.builtin.include_tasks: system.yaml
