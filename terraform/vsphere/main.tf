@@ -90,6 +90,7 @@ module "homeassistant" {
 
 module "gaming-vm-01" {
   source                    = "../_modules/vsphere_vm"
+  count                     = 0
   vm_name                   = "gaming-vm-01"
   vm_template               = "WSrv22-DE-Temp"
   network_spec = {
@@ -136,6 +137,7 @@ module "kube-ops" {
 
 module "casa-os" {
   source                    = "../_modules/vsphere_vm"
+  count                     = 0
   vm_name                   = "casa-os"
   vm_template               = "deb-12-template"
   network_spec = {
