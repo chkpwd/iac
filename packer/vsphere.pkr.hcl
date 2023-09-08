@@ -6,7 +6,6 @@ locals {
       user_password = var.connection_password
     })
   }
-  ansible_path = "/home/hyoga/code/iac/ansible"
 }
 
 source "vsphere-iso" "linux" {
@@ -80,7 +79,7 @@ source "vsphere-iso" "windows" {
   boot_wait           = "3s"
 
   # VM Settings
-	vm_name     				  = var.machine_name
+  vm_name     		    = var.machine_name
   ip_wait_timeout       = "45m"
   communicator          = "winrm"
   winrm_username        = var.connection_username
@@ -127,12 +126,12 @@ build {
   ]
 
   provisioner "ansible" {
-    playbook_file           = "${local.ansible_path}/playbooks/packer.yaml"
+    playbook_file           = "../ansible/playbooks/packer.yaml"
     use_proxy               = false
     max_retries             = 3
     inventory_file_template = "{{ .HostAlias }} ansible_host={{ .Host }} ansible_user={{ .User }} ansible_password={{ .Password }} ansible_become_password={{ .Password }}"
     ansible_env_vars        = [
-      "ANSIBLE_CONFIG=/home/hyoga/code/iac/ansible/ansible.cfg", 
+      "ANSIBLE_CONFIG=../ansible/ansible.cfg", 
       "ANSIBLE_HOST_KEY_CHECKING=False",
       "ANSIBLE_VERBOSITY=2"
     ]
