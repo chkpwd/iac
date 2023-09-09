@@ -17,6 +17,9 @@ ARG TELLER_VERSION=1.5.6
 # renovate: datasource=github-tags depName=twpayne/chezmoi
 ARG CHEZMOI_VERSION=2.27.0
 
+# renovate: datasource=github-tags depName=kubernetes/kubernetes
+ARG KUBECTL_VERSION=1.28.1
+
 # renovate: datasource=github-tags depName=stern/stern
 ARG STERN_VERSION=1.19.0
 
