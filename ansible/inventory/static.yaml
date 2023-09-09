@@ -40,10 +40,12 @@ all:
     windows:
       hosts:
         loba:
+          ansible_host: 172.16.16.100
+          ansible_user: chkpwd
+          ansible_become_method: runas
+          ansible_become_user: chkpwd
+
         bloodhound:
-      vars:
-        ansible_become_method: runas
-        ansible_become_user: "{{ ansible_user }}"
 
     docker_hosts:
       hosts:
