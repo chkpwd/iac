@@ -22,6 +22,3 @@ fi
 
 # Source zsh
 source ~/.zshrc
-
-# Pass commands to container
-exec "$@"
