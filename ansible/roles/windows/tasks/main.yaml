@@ -20,6 +20,13 @@
   loop_control:
     label: "Chocolate: {{ item }}"
 
+- name: Install PowerShell Core
+  chocolatey.chocolatey.win_chocolatey:
+    name: powershell-core
+    state: present
+  choco_args:
+    - --install-arguments='ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1 REGISTER_MANIFEST=1 ENABLE_PSREMOTING=1'
+
 - name: Registry Edits
   ansible.builtin.include_tasks: registry.yaml
 
