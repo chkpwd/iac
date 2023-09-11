@@ -16,4 +16,4 @@ cd "$HOME" || return
 sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply $GIT_USER
 
 # Pull all git repos
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/chkpwd/scripts/main/Bash/git_pull_repos.sh)" $GIT_USER
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/chkpwd/scripts/main/Bash/git_pull_repos.sh)" -- $GIT_USER
