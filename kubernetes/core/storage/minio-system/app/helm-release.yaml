@@ -24,6 +24,10 @@ spec:
       retries: 3
 
   values:
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
+
     image:
       repository: quay.io/minio/minio
       tag: RELEASE.2022-09-07T22-25-02Z
@@ -109,9 +113,6 @@ spec:
         type: pvc
         storageClass: longhorn-config
         mountPath: /data
-
-    podAnnotations:
-      secret.reloader.stakater.com/reload: *app
 
     resources:
       requests:
