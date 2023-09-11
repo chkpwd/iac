@@ -7,8 +7,6 @@ resource "radarr_download_client_sabnzbd" "sabnzbd" {
   port              = var.ports["sabnzbd"]
   movie_category    = "movies"
   api_key           = "${data.sops_file.servarr-secrets.data["sabnzbd_api_key"]}"
-  username          = "${data.sops_file.servarr-secrets.data["servarr_username"]}"
-  password          = "${data.sops_file.servarr-secrets.data["servarr_password"]}"
 }
 
 resource "radarr_download_client_qbittorrent" "qbittorrent" {
@@ -20,8 +18,6 @@ resource "radarr_download_client_qbittorrent" "qbittorrent" {
   movie_category = "radarr"
   port           = var.ports["qbittorrent"]
   first_and_last = false
-  username       = "${data.sops_file.servarr-secrets.data["servarr_username"]}"
-  password       = "${data.sops_file.servarr-secrets.data["servarr_password"]}"
 }
 
 resource "radarr_naming" "media_naming_configs" {

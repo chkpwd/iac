@@ -6,8 +6,6 @@ resource "sonarr_download_client_sabnzbd" "sabnzbd" {
   url_base = "/"
   port     = var.ports["sabnzbd"]
   api_key  = "${data.sops_file.servarr-secrets.data["sabnzbd_api_key"]}"
-  username = "${data.sops_file.servarr-secrets.data["servarr_username"]}"
-  password = "${data.sops_file.servarr-secrets.data["servarr_password"]}"
 }
 
 resource "sonarr_download_client_qbittorrent" "qbittorrent" {
@@ -19,8 +17,6 @@ resource "sonarr_download_client_qbittorrent" "qbittorrent" {
   tv_category    = "tv-sonarr"
   port           = var.ports["qbittorrent"]
   first_and_last = false
-  username       = "${data.sops_file.servarr-secrets.data["servarr_username"]}"
-  password       = "${data.sops_file.servarr-secrets.data["servarr_password"]}"
 }
 
 resource "sonarr_naming" "media_naming_configs" {
