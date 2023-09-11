@@ -110,8 +110,7 @@ spec:
     persistence:
       config:
         enabled: true
-        type: pvc
-        storageClass: longhorn-config
+        existingClaim: minio-pvc
         mountPath: /data
 
     resources:
