@@ -15,7 +15,7 @@ cd "$HOME" || return
 # Init Chezmoi
 sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply $GIT_USER
 
-if [ -z "$PULL_REPOS" ]; then
+if [ -z "$PULL_REPOS" = "no" ]; then
     # Pull all git repos
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/chkpwd/scripts/main/Bash/git_pull_repos.sh)" -- $GIT_USER
 fi
