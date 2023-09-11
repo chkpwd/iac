@@ -13,8 +13,12 @@
 
 - name: Install dependencies
   chocolatey.chocolatey.win_chocolatey:
-    name: "{{ chocolates }}"
+    name: "{{ item }}"
     state: present
+  loop:
+    - "{{ chocolates }}"
+  loop_control:
+    label: "Chocolate: {{ item }}"
 
 - name: Registry Edits
   ansible.builtin.include_tasks: registry.yaml
