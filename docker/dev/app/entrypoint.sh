@@ -13,7 +13,7 @@ fi
 cd "$HOME" || return
 
 # Init Chezmoi
-sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply $CHEZMOI_GIT_USER
+sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply $GIT_USER
 
-# Execute any commands passed to the docker run
-exec "$@"
+# Pull all git repos
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/chkpwd/scripts/main/Bash/git_pull_repos.sh)" $GIT_USER
