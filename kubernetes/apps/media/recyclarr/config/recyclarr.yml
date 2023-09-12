@@ -7,9 +7,8 @@ sonarr:
     api_key: !env_var API_KEY_SONARR
 
     # Custom Format Configuration
-    custom_format_settings:
-      delete_old_custom_formats: true
-      replace_existing_custom_formats: true
+    delete_old_custom_formats: true
+    replace_existing_custom_formats: true
 
     # Quality definitions from the guide to sync to Sonarr. Choices: series, anime
     quality_definition:
@@ -36,9 +35,8 @@ sonarr:
     api_key: !env_var API_KEY_SONARR
 
     # Custom Format Configuration
-    custom_format_settings:
-      delete_old_custom_formats: true
-      replace_existing_custom_formats: true
+    delete_old_custom_formats: true
+    replace_existing_custom_formats: true
 
     # Quality definitions from the guide to sync to Sonarr. Choices: series, anime
     quality_definition:
@@ -96,18 +94,13 @@ radarr:
     api_key: !env_var API_KEY_RADARR
 
     # Custom Format Configuration
-    custom_format_settings:
-      delete_old_custom_formats: true
-      replace_existing_custom_formats: true
+    delete_old_custom_formats: true
+    replace_existing_custom_formats: true
 
     # Which quality definition in the guide to sync to Radarr. Only choice right now is 'movie'
     quality_definition:
       type: movie
       preferred_ratio: 0.2
-
-    # Set to 'true' to automatically remove custom formats from Radarr when they are removed from
-    # the guide or your configuration. This will NEVER delete custom formats you manually created!
-    delete_old_custom_formats: true
 
     custom_formats:
       # A list of custom formats to sync to Radarr.
