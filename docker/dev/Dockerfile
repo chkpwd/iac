@@ -8,6 +8,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ENV DEV=ubuntu
 
+# renovate: datasource=github-tags depName=bitwarden/sdk
+ARG BWS_SDK_VERSION=0.3.0
+
 # renovate: datasource=github-tags depName=knqyf263/pet
 ARG PET_VERSION=0.5.0
 
@@ -93,6 +96,10 @@ RUN apt-get update && \
 RUN \
     # Determine the Platform Architecture
     export PLATFORM=$(dpkg --print-architecture) && \
+    # Download and install bws-sdk
+    curl -L "https://github.com/bitwarden/sdk/releases/download/bws-v${BWS_SDK_VERSION}/bws-x86_64-unknown-linux-gnu-${BWS_SDK_VERSION}.zip" > /tmp/bws.zip && \
+    unzip /tmp/bws.zip && \
+    mv bws /usr/bin/ && \
     # Download and install pulumi
     if [ "$PLATFORM" = "amd64" ]; then \
     curl -L "https://get.pulumi.com/releases/sdk/pulumi-v${PULUMI_VERSION}-linux-x64.tar.gz" | tar xvzf - -C /tmp --strip-components=1; \
