@@ -241,11 +241,8 @@ RUN \
 ENV BW_EMAIL_ADDRESS=
 ENV BW_PASSWORD=
 
-# Copy the entrypoint script into the image
-COPY ./app/entrypoint.sh /entrypoint.sh
-
-# Set the entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+# Copy files into the image
+COPY ./app/setup_env.sh /setup_env.sh
 
 # By default, run a shell if no other command is provided to docker run
 CMD ["/bin/zsh"]

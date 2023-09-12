@@ -4,7 +4,7 @@ services:
     image: dev:latest
     environment:
       - BW_EMAIL_ADDRESS=unix.chkpwd@gmail.com
-      - CHEZMOI_GIT_USER=chkpwd
+      - GIT_USER=chkpwd
     tty: true
     volumes:
     - type: bind
