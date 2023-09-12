@@ -8,6 +8,27 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ENV DEV=ubuntu
 
+# renovate: datasource=github-tags depName=istio/istio
+ARG ISTIOCTL_VERSION=1.19.0
+
+# renovate: datasource=github-tags depName=fluxcd/flux-cli
+ARG FLUXCLI_VERSION=v2.1.0
+
+# renovate: datasource=github-tags depName=gohugoio/hugo
+ARG HUGO_VERSION=0.111.3-ext-ubuntu
+
+# renovate: datasource=github-tags depName=GoogleContainerTools/kaniko
+ARG KANIKO_VERSION=v1.15.0
+
+# renovate: datasource=github-tags depName=
+ARG ETCD_VERSION=v3.5.9
+
+# renovate: datasource=github-tags depName=digitalocean/doctl
+ARG DOCTL_VERSION=1.98.1
+
+# renovate: datasource=github-tags depName=vmware/govmomi
+ARG GOVC_VERSION=v0.30.7
+
 # renovate: datasource=github-tags depName=bitwarden/sdk
 ARG BWS_SDK_VERSION=0.3.0
 
@@ -18,19 +39,19 @@ ARG PET_VERSION=0.5.0
 ARG TELLER_VERSION=1.5.6
 
 # renovate: datasource=github-tags depName=twpayne/chezmoi
-ARG CHEZMOI_VERSION=2.27.0
+ARG CHEZMOI_VERSION=2.39.1
 
 # renovate: datasource=github-tags depName=kubernetes/kubernetes
 ARG KUBECTL_VERSION=1.28.1
 
 # renovate: datasource=github-tags depName=stern/stern
-ARG STERN_VERSION=1.19.0
+ARG STERN_VERSION=1.26.0
 
 # renovate: datasource=github-tags depName=kubernetes-sigs/krew
 ARG KREW_VERSION=0.4.4
 
 # renovate: datasource=github-tags depName=sachaos/viddy
-ARG VIDDY_VERSION=0.3.6
+ARG VIDDY_VERSION=0.3.7
 
 # renovate: datasource=github-tags depName=derailed/k9s
 ARG K9S_VERSION=0.27.4
@@ -39,22 +60,22 @@ ARG K9S_VERSION=0.27.4
 ARG PULUMI_VERSION=3.78.1
 
 # renovate: datasource=github-tags depName=hashicorp/terraform
-ARG TERRAFORM_VERSION=1.5.6
+ARG TERRAFORM_VERSION=1.5.7
 
 # renovate: datasource=github-tags depName=getsops/sops
 ARG SOPS_VERSION=3.7.3
 
 # renovate: datasource=github-tags depName=bitwarden/clients
-ARG BW_CLI_VERSION=2023.7.0
+ARG BW_CLI_VERSION=2023.8.4
 
 # renovate: datasource=github-tags depName=loft-sh/vcluster
-ARG VCLUSTER_VERSION=0.15.6
+ARG VCLUSTER_VERSION=0.15.7
 
 # renovate: datasource=github-tags depName=FairwindsOps/nova
-ARG NOVA_VERSION=3.2.0
+ARG NOVA_VERSION=3.7.0
 
 # renovate: datasource=github-tags depName=FairwindsOps/pluto
-ARG PLUTO_VERSION=5.18.3
+ARG PLUTO_VERSION=5.18.4
 
 # Base System Configuration
 RUN apt-get update && \
@@ -175,23 +196,23 @@ RUN \
     apt-get update && \
     apt-get install -y docker-ce docker-ce-cli \
     containerd.io docker-buildx-plugin \
-    docker-compose-plugin
+    docker-compose-plugin1
 
 RUN bash -c "rm -rf /tmp/*"
 
 # Copy Commands for Various Tools
-COPY --from=docker.io/istio/istioctl:1.19.0 /usr/local/bin/istioctl /usr/bin/istioctl
-COPY --from=docker.io/fluxcd/flux-cli:v2.1.0 /usr/local/bin/flux /usr/bin/flux
-COPY --from=docker.io/klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bin/hugo
-COPY --from=gcr.io/kaniko-project/executor:v1.15.0 /kaniko/executor /usr/bin/kaniko
-COPY --from=quay.io/coreos/etcd:v3.5.9 /usr/local/bin/etcdctl /usr/bin/etcdctl
+COPY --from=docker.io/istio/istioctl:${ISTIOCTL_VERSION} /usr/local/bin/istioctl /usr/bin/istioctl
+COPY --from=docker.io/fluxcd/flux-cli:${FLUXCLI_VERSION} /usr/local/bin/flux /usr/bin/flux
+COPY --from=docker.io/klakegg/hugo:${HUGO_VERSION} /usr/lib/hugo/hugo /usr/bin/hugo
+COPY --from=gcr.io/kaniko-project/executor:${KANIKO_VERSION} /kaniko/executor /usr/bin/kaniko
+COPY --from=quay.io/coreos/etcd:${ETCD_VERSION} /usr/local/bin/etcdctl /usr/bin/etcdctl
 
-# Copy Commands, but these only work on amd64 architecture
-COPY --from=docker.io/digitalocean/doctl:1.98.1 /app/doctl /usr/bin/doctl
-COPY --from=docker.io/vmware/govc:v0.30.7 /govc /usr/bin/govc
+# Copy Commands for amd64 architecture
+COPY --from=docker.io/digitalocean/doctl:${DOCTL_VERSION} /app/doctl /usr/bin/doctl
+COPY --from=docker.io/vmware/govc:${GOVC_VERSION} /govc /usr/bin/govc
 
 # UPX all of the binaries
-RUN for item in terraform pulumi pet teller chezmoi \
+RUN for item in bw bws nova pluto terraform pulumi pet teller chezmoi \
     kubectl stern krew viddy k9s helm sops vcluster \
     pluto curl istioctl flux hugo kaniko \
     etcdctl doctl govc; do \
@@ -240,6 +261,7 @@ RUN \
 # Bitwarden CLI Configuration
 ENV BW_EMAIL_ADDRESS=
 ENV BW_PASSWORD=
+ENV GIT_USER=
 
 # Copy files into the image
 COPY ./app/setup_env.sh /setup_env.sh
