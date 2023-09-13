@@ -8,19 +8,19 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ENV DEV=ubuntu
 
-# renovate: datasource=github-tags depName=istio/istio
+# renovate: datasource=github-releases depName=istio/istio
 ARG ISTIOCTL_VERSION=1.19.0
 
-# renovate: datasource=github-tags depName=fluxcd/flux-cli
+# renovate: datasource=github-releases depName=fluxcd/flux-cli
 ARG FLUXCLI_VERSION=v2.1.0
 
-# renovate: datasource=github-tags depName=gohugoio/hugo
+# renovate: datasource=github-tags depName=klakegg/hugo
 ARG HUGO_VERSION=0.111.3-ext-ubuntu
 
 # renovate: datasource=github-tags depName=GoogleContainerTools/kaniko
 ARG KANIKO_VERSION=v1.15.0
 
-# renovate: datasource=github-tags depName=
+# renovate: datasource=docker depName=quay.io/coreos/etcd
 ARG ETCD_VERSION=v3.5.9
 
 # renovate: datasource=github-tags depName=digitalocean/doctl
