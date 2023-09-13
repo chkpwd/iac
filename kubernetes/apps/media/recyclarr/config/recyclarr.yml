@@ -3,7 +3,7 @@
 sonarr:
   anime:
     # Set the URL/API Key to your actual instance
-    base_url: http://soanrr.media.svc.cluster.local:8989
+    base_url: http://sonarr.media.svc.cluster.local:8989
     api_key: !env_var API_KEY_SONARR
 
     # Custom Format Configuration
@@ -12,7 +12,7 @@ sonarr:
 
     # Quality definitions from the guide to sync to Sonarr. Choices: series, anime
     quality_definition:
-      type: anime 
+      type: anime
 
     # Release profiles from the guide to sync to Sonarr v3 (Sonarr v4 does not use this!)
     # Use `recyclarr sonarr --list-release-profiles` for values you can put here.
@@ -45,7 +45,7 @@ sonarr:
 
     quality_profiles:
       - name: HD-1080p
-        reset_unmatched_scores: true            
+        reset_unmatched_scores: true
 
     # Release profiles from the guide to sync to Sonarr v3 (Sonarr v4 does not use this!)
     # Use `recyclarr sonarr --list-release-profiles` for values you can put here.
