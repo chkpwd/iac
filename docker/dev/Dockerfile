@@ -97,22 +97,20 @@ RUN apt-get update && \
 
 # Download and Install Various Tools
 RUN \
-    # Determine the Platform Architecture
-    export PLATFORM=$(dpkg --print-architecture) && \
     # Download and install helm
     curl "https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
     mv /tmp/helm /usr/bin/helm && \
     chmod +x /usr/bin/helm && \
     # Download and install sops
-    curl -L "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_${PLATFORM}.deb" > /tmp/sops_${PLATFORM}.deb && \
-    dpkg -i /tmp/sops_${PLATFORM}.deb && \
+    curl -L "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_amd64.deb" > /tmp/sops_amd64.deb && \
+    dpkg -i /tmp/sops_amd64.deb && \
     # Download and install BW-CLI
     curl -L "https://github.com/bitwarden/clients/releases/download/cli-v${BW_CLI_VERSION}/bw-linux-${BW_CLI_VERSION}.zip" -o /tmp/bw.zip && \
     unzip /tmp/bw.zip -d /tmp && \
     mv /tmp/bw /usr/bin/bw && \
     chmod +x /usr/bin/bw && \
     # Download and install stern
-    curl -L "https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${PLATFORM}.tar.gz" | tar xvzf - -C /tmp && \
+    curl -L "https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/stern /usr/bin/stern && \
     chmod +x /usr/bin/stern && \
     # Download and install bws-sdk
@@ -120,52 +118,47 @@ RUN \
     unzip /tmp/bws.zip -d /tmp && \
     mv /tmp/bws /usr/bin/ && \
     # Download and install pulumi
-    if [ "$PLATFORM" = "amd64" ]; then \
     curl -L "https://get.pulumi.com/releases/sdk/pulumi-v${PULUMI_VERSION}-linux-x64.tar.gz" | tar xvzf - -C /tmp --strip-components=1; \
-    elif [ "$PLATFORM" = "arm64" ]; then \
-    curl -L "https://get.pulumi.com/releases/sdk/pulumi-v${PULUMI_VERSION}-linux-${PLATFORM}.tar.gz" | tar xvzf - -C /tmp --strip-components=1; \
-    fi && \
     mv /tmp/pulumi* /usr/bin/ && \
     # Download and install terraform
-    curl -LO "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${PLATFORM}.zip" && \
-    unzip "terraform_${TERRAFORM_VERSION}_linux_${PLATFORM}.zip" -d /tmp && \
+    curl -LO "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && \
+    unzip "terraform_${TERRAFORM_VERSION}_linux_amd64.zip" -d /tmp && \
     mv /tmp/terraform /usr/bin/terraform && \
     # Download and install Pet Snippet
-    curl -L "https://github.com/knqyf263/pet/releases/download/v${PET_VERSION}/pet_${PET_VERSION}_linux_${PLATFORM}.deb" > pet.deb && \
+    curl -L "https://github.com/knqyf263/pet/releases/download/v${PET_VERSION}/pet_${PET_VERSION}_linux_amd64.deb" > pet.deb && \
     dpkg -i pet.deb && \
     rm -f pet.deb && \
     # Download and install Teller
     curl -L "https://github.com/tellerops/teller/releases/download/v${TELLER_VERSION}/teller_${TELLER_VERSION}_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/teller /usr/bin/teller && \
     # Download and install chezmoi
-    curl -L "https://github.com/twpayne/chezmoi/releases/download/v${CHEZMOI_VERSION}/chezmoi_${CHEZMOI_VERSION}_linux_${PLATFORM}.deb" > chezmoi.deb && \
+    curl -L "https://github.com/twpayne/chezmoi/releases/download/v${CHEZMOI_VERSION}/chezmoi_${CHEZMOI_VERSION}_linux_amd64.deb" > chezmoi.deb && \
     dpkg -i chezmoi.deb && \
     rm -f chezmoi.deb && \
     # Download and install kubectl
-    curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${PLATFORM}/kubectl" && \
+    curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" && \
     chmod +x kubectl && \
     mv ./kubectl /usr/bin/kubectl && \
     # Download and install krew
-    curl -L "https://github.com/kubernetes-sigs/krew/releases/download/v${KREW_VERSION}/krew-linux_${PLATFORM}.tar.gz" | tar xvzf - -C /tmp && \
-    mv /tmp/krew-linux_${PLATFORM} /usr/bin/krew && \
-    # Install Virt ONLY if we're on amd64
-    if [ "$PLATFORM" = "amd64" ]; then krew install virt; fi && \
+    curl -L "https://github.com/kubernetes-sigs/krew/releases/download/v${KREW_VERSION}/krew-linux_amd64.tar.gz" | tar xvzf - -C /tmp && \
+    mv /tmp/krew-linux_amd64 /usr/bin/krew && \
+    krew install virt ctx ns && \
     # Download and install viddy
     curl -L "https://github.com/sachaos/viddy/releases/download/v${VIDDY_VERSION}/viddy_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/viddy /usr/bin/viddy && \
     # Download and install k9s
-    curl -L "https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_${PLATFORM}.tar.gz" | tar xvzf - -C /tmp && \
+    curl -L "https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_amd64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/k9s /usr/bin/k9s && \
     # Download and install vCluster
-    curl -L "https://github.com/loft-sh/vcluster/releases/download/v${VCLUSTER_VERSION}/vcluster-linux-${PLATFORM}" -o vcluster && \
+    curl -L "https://github.com/loft-sh/vcluster/releases/download/v${VCLUSTER_VERSION}/vcluster-linux-amd64" -o vcluster && \
     chmod +x vcluster && \
     mv ./vcluster /usr/bin/vcluster && \
     # Download and install Nova
-    curl -L "https://github.com/FairwindsOps/nova/releases/download/v${NOVA_VERSION}/nova_${NOVA_VERSION}_linux_${PLATFORM}.tar.gz" > /tmp/nova.tar.gz && \
+    curl -L "https://github.com/FairwindsOps/nova/releases/download/v${NOVA_VERSION}/nova_${NOVA_VERSION}_linux_amd64.tar.gz" > /tmp/nova.tar.gz && \
     tar -xvf /tmp/nova.tar.gz -C /tmp/ && \
     mv /tmp/nova /usr/bin/nova && \
     # Download and install Pluto
-    curl -L "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_${PLATFORM}.tar.gz" > /tmp/pluto.tar.gz && \
+    curl -L "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_amd64.tar.gz" > /tmp/pluto.tar.gz && \
     tar -xvf /tmp/pluto.tar.gz -C /tmp/ && \
     mv /tmp/pluto /usr/bin/pluto && \
     # Docker Install
@@ -190,8 +183,6 @@ COPY --from=docker.io/klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bi
 COPY --from=gcr.io/kaniko-project/executor:v1.15.0 /kaniko/executor /usr/bin/kaniko
 COPY --from=quay.io/coreos/etcd:v3.5.9 /usr/local/bin/etcdctl /usr/bin/etcdctl
 COPY --from=docker.io/hashicorp/packer:1.9.4 /bin/packer /usr/bin/packer
-
-# Copy Commands, but these only work on amd64 architecture
 COPY --from=docker.io/digitalocean/doctl:1.98.1 /app/doctl /usr/bin/doctl
 COPY --from=docker.io/vmware/govc:v0.30.7 /govc /usr/bin/govc
 
@@ -243,9 +234,11 @@ RUN \
     eval "$(register-python-argcomplete pipx)"' > $ZSH_CUSTOM/completions/pipx.zsh
 
 # Bitwarden CLI Configuration
+ENV BW_API_KEY=
 ENV BW_EMAIL_ADDRESS=
 ENV BW_PASSWORD=
 ENV GIT_USER=
+ENV PULL_REPOS=
 
 # Copy files into the image
 COPY ./app/setup_env.sh /setup_env.sh
