@@ -36,7 +36,7 @@ if [[ "$1" == "-h" || "$1" == "--help" ]]; then
 fi
 
 # Login to Bitwarden and set the BW_SESSION environment variable
-if [[ -z "$BWS_ACCESS_SESSION" || yq -r '.data.accessToken' $CHEZMOI_CONF ]]; then
+if [[ -z "$BWS_ACCESS_SESSION" ]] && [[ -z $(yq '(.[] | select(has("accessToken")).accessToken)' "$CHEZMOI_CONF") ]]; then
    # https://bitwarden.com/help/personal-api-key/
    if [[ "$BW_API_KEY" ]]; then
       export BW_SESSION=$(/usr/bin/bw login --apikey $BW_API --raw)
@@ -49,7 +49,7 @@ fi
 cd "$HOME" || return
 
 # Init Chezmoi
-sh -c "$(curl -fsLS chezmoi.io/get)" -- init --apply $GIT_USER
+chezmoi init --apply $GIT_USER
 
 if [ "$PULL_REPOS" = "no" ]; then
     echo "Skipping pulling git repos."
