@@ -8,6 +8,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ENV DEV=ubuntu
 
+# renovate: datasource=github-tags depName=helm/helm
+ARG HELM_VERSION=3.12.3
+
 # renovate: datasource=github-tags depName=bitwarden/sdk
 ARG BWS_SDK_VERSION=0.3.0
 
@@ -36,7 +39,7 @@ ARG VIDDY_VERSION=0.3.7
 ARG K9S_VERSION=0.27.4
 
 # renovate: datasource=github-tags depName=pulumi/pulumi
-ARG PULUMI_VERSION=v3.82.1
+ARG PULUMI_VERSION=3.82.1
 
 # renovate: datasource=github-tags depName=hashicorp/terraform
 ARG TERRAFORM_VERSION=1.5.7
@@ -45,7 +48,7 @@ ARG TERRAFORM_VERSION=1.5.7
 ARG SOPS_VERSION=3.7.3
 
 # renovate: datasource=github-tags depName=bitwarden/clients
-ARG BW_CLI_VERSION=2023.8.4
+ARG BW_CLI_VERSION=2023.8.2
 
 # renovate: datasource=github-tags depName=loft-sh/vcluster
 ARG VCLUSTER_VERSION=0.15.7
@@ -96,10 +99,26 @@ RUN apt-get update && \
 RUN \
     # Determine the Platform Architecture
     export PLATFORM=$(dpkg --print-architecture) && \
+    # Download and install helm
+    curl "https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
+    mv /tmp/helm /usr/bin/helm && \
+    chmod +x /usr/bin/helm && \
+    # Download and install sops
+    curl -L "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_${PLATFORM}.deb" > /tmp/sops_${PLATFORM}.deb && \
+    dpkg -i /tmp/sops_${PLATFORM}.deb && \
+    # Download and install BW-CLI
+    curl -L "https://github.com/bitwarden/clients/releases/download/cli-v${BW_CLI_VERSION}/bw-linux-${BW_CLI_VERSION}.zip" -o /tmp/bw.zip && \
+    unzip /tmp/bw.zip -d /tmp && \
+    mv /tmp/bw /usr/bin/bw && \
+    chmod +x /usr/bin/bw && \
+    # Download and install stern
+    curl -L "https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${PLATFORM}.tar.gz" | tar xvzf - -C /tmp && \
+    mv /tmp/stern /usr/bin/stern && \
+    chmod +x /usr/bin/stern && \
     # Download and install bws-sdk
     curl -L "https://github.com/bitwarden/sdk/releases/download/bws-v${BWS_SDK_VERSION}/bws-x86_64-unknown-linux-gnu-${BWS_SDK_VERSION}.zip" > /tmp/bws.zip && \
-    unzip /tmp/bws.zip && \
-    mv bws /usr/bin/ && \
+    unzip /tmp/bws.zip -d /tmp && \
+    mv /tmp/bws /usr/bin/ && \
     # Download and install pulumi
     if [ "$PLATFORM" = "amd64" ]; then \
     curl -L "https://get.pulumi.com/releases/sdk/pulumi-v${PULUMI_VERSION}-linux-x64.tar.gz" | tar xvzf - -C /tmp --strip-components=1; \
@@ -109,9 +128,8 @@ RUN \
     mv /tmp/pulumi* /usr/bin/ && \
     # Download and install terraform
     curl -LO "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_${PLATFORM}.zip" && \
-    unzip "terraform_${TERRAFORM_VERSION}_linux_${PLATFORM}.zip" && \
-    mv terraform /usr/bin/terraform && \
-    rm "terraform_${TERRAFORM_VERSION}_linux_${PLATFORM}.zip" && \
+    unzip "terraform_${TERRAFORM_VERSION}_linux_${PLATFORM}.zip" -d /tmp && \
+    mv /tmp/terraform /usr/bin/terraform && \
     # Download and install Pet Snippet
     curl -L "https://github.com/knqyf263/pet/releases/download/v${PET_VERSION}/pet_${PET_VERSION}_linux_${PLATFORM}.deb" > pet.deb && \
     dpkg -i pet.deb && \
@@ -127,37 +145,23 @@ RUN \
     curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/${PLATFORM}/kubectl" && \
     chmod +x kubectl && \
     mv ./kubectl /usr/bin/kubectl && \
-    # Download and install stern
-    curl -L "https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${PLATFORM}.tar.gz" | tar xvzf - --strip-components=1 && \
-    mv stern /usr/bin/stern && \
-    chmod +x /usr/bin/stern && \
     # Download and install krew
     curl -L "https://github.com/kubernetes-sigs/krew/releases/download/v${KREW_VERSION}/krew-linux_${PLATFORM}.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/krew-linux_${PLATFORM} /usr/bin/krew && \
     # Install Virt ONLY if we're on amd64
     if [ "$PLATFORM" = "amd64" ]; then krew install virt; fi && \
     # Download and install viddy
-    curl -L "https://github.com/sachaos/viddy/releases/download/v${VIDDY_VERSION}/viddy_${VIDDY_VERSION}_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
+    curl -L "https://github.com/sachaos/viddy/releases/download/v${VIDDY_VERSION}/viddy_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/viddy /usr/bin/viddy && \
     # Download and install k9s
     curl -L "https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_${PLATFORM}.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/k9s /usr/bin/k9s && \
-    # Download and install helm
-    curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash && \
-    # Download and install sops
-    curl -L "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_${PLATFORM}.deb" > /tmp/sops_${PLATFORM}.deb && \
-    dpkg -i /tmp/sops_${PLATFORM}.deb && \
-    # Download and install BW-CLI
-    curl -L "https://github.com/bitwarden/clients/releases/download/cli-v${BW_CLI_VERSION}/bw-linux-${BW_CLI_VERSION}.zip" -o /tmp/bw.zip && \
-    unzip /tmp/bw.zip -d /tmp && \
-    chmod +x /tmp/bw && \
-    mv /tmp/bw /usr/bin/bw && \
     # Download and install vCluster
     curl -L "https://github.com/loft-sh/vcluster/releases/download/v${VCLUSTER_VERSION}/vcluster-linux-${PLATFORM}" -o vcluster && \
     chmod +x vcluster && \
     mv ./vcluster /usr/bin/vcluster && \
     # Download and install Nova
-    curl -L "https://github.com/FairwindsOps/nova/releases/download/${NOVA_VERSION}/nova_${NOVA_VERSION}_linux_${PLATFORM}.tar.gz" > /tmp/nova.tar.gz && \
+    curl -L "https://github.com/FairwindsOps/nova/releases/download/v${NOVA_VERSION}/nova_${NOVA_VERSION}_linux_${PLATFORM}.tar.gz" > /tmp/nova.tar.gz && \
     tar -xvf /tmp/nova.tar.gz -C /tmp/ && \
     mv /tmp/nova /usr/bin/nova && \
     # Download and install Pluto
