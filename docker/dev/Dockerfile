@@ -175,7 +175,7 @@ RUN \
     apt-get update && \
     apt-get install -y docker-ce docker-ce-cli \
     containerd.io docker-buildx-plugin \
-    docker-compose-plugin1
+    docker-compose-plugin
 
 RUN bash -c "rm -rf /tmp/*"
 
