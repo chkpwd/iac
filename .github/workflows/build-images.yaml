@@ -11,6 +11,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [linux/amd64, linux/arm64, linux/arm]
     steps:
       - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
 
@@ -32,7 +35,8 @@ jobs:
         uses: docker/build-push-action@v5.0.0
         with:
           context: docker/dev/
+          platforms: linux/amd64,linux/arm64,linux/arm
           tags: |
-            ghcr.io/chkpwd/dev:latest,
-            ghcr.io/chkpwd/dev:auto-${{ steps.time.outputs.time }}
+            ghcr.io/chkpwd/dev:latest-${{ matrix.platform }}
+            ghcr.io/chkpwd/dev:auto-${{ steps.time.outputs.time }}-${{ matrix.platform }}
           push: ${{ github.ref == 'refs/heads/main' }}
