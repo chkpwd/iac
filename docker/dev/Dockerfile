@@ -8,27 +8,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ENV DEV=ubuntu
 
-# renovate: datasource=github-releases depName=istio/istio
-ARG ISTIOCTL_VERSION=1.19.0
-
-# renovate: datasource=github-releases depName=fluxcd/flux-cli
-ARG FLUXCLI_VERSION=v2.1.0
-
-# renovate: datasource=github-tags depName=klakegg/hugo
-ARG HUGO_VERSION=0.111.3-ext-ubuntu
-
-# renovate: datasource=github-tags depName=GoogleContainerTools/kaniko
-ARG KANIKO_VERSION=v1.15.0
-
-# renovate: datasource=docker depName=quay.io/coreos/etcd
-ARG ETCD_VERSION=v3.5.9
-
-# renovate: datasource=github-tags depName=digitalocean/doctl
-ARG DOCTL_VERSION=1.98.1
-
-# renovate: datasource=github-tags depName=vmware/govmomi
-ARG GOVC_VERSION=v0.30.7
-
 # renovate: datasource=github-tags depName=bitwarden/sdk
 ARG BWS_SDK_VERSION=0.3.0
 
@@ -201,15 +180,15 @@ RUN \
 RUN bash -c "rm -rf /tmp/*"
 
 # Copy Commands for Various Tools
-COPY --from=docker.io/istio/istioctl:${ISTIOCTL_VERSION} /usr/local/bin/istioctl /usr/bin/istioctl
-COPY --from=docker.io/fluxcd/flux-cli:${FLUXCLI_VERSION} /usr/local/bin/flux /usr/bin/flux
-COPY --from=docker.io/klakegg/hugo:${HUGO_VERSION} /usr/lib/hugo/hugo /usr/bin/hugo
-COPY --from=gcr.io/kaniko-project/executor:${KANIKO_VERSION} /kaniko/executor /usr/bin/kaniko
-COPY --from=quay.io/coreos/etcd:${ETCD_VERSION} /usr/local/bin/etcdctl /usr/bin/etcdctl
+COPY --from=docker.io/istio/istioctl:1.19.0 /usr/local/bin/istioctl /usr/bin/istioctl
+COPY --from=docker.io/fluxcd/flux-cli:v2.1.0 /usr/local/bin/flux /usr/bin/flux
+COPY --from=docker.io/klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bin/hugo
+COPY --from=gcr.io/kaniko-project/executor:v1.15.0 /kaniko/executor /usr/bin/kaniko
+COPY --from=quay.io/coreos/etcd:v3.5.9 /usr/local/bin/etcdctl /usr/bin/etcdctl
 
-# Copy Commands for amd64 architecture
-COPY --from=docker.io/digitalocean/doctl:${DOCTL_VERSION} /app/doctl /usr/bin/doctl
-COPY --from=docker.io/vmware/govc:${GOVC_VERSION} /govc /usr/bin/govc
+# Copy Commands, but these only work on amd64 architecture
+COPY --from=docker.io/digitalocean/doctl:1.98.1 /app/doctl /usr/bin/doctl
+COPY --from=docker.io/vmware/govc:v0.30.7 /govc /usr/bin/govc
 
 # UPX all of the binaries
 RUN for item in bw bws nova pluto terraform pulumi pet teller chezmoi \
