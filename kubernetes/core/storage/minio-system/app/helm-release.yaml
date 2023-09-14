@@ -24,7 +24,11 @@ spec:
       retries: 3
 
   values:
+    global:
+    fullnameOverride: *app
+
     controller:
+      type: statefulset
       annotations:
         reloader.stakater.com/auto: "true"
 
@@ -40,6 +44,8 @@ spec:
       MINIO_BROWSER_REDIRECT_URL: "https://minio.${LOCAL_DOMAIN}"
       MINIO_SERVER_URL: "https://s3.${EXTERNAL_DOMAIN}"
       MINIO_API_CORS_ALLOW_ORIGIN: https://minio.${LOCAL_DOMAIN},https://s3.${EXTERNAL_DOMAIN}
+
+    hostname: *app
 
     envFrom:
       - secretRef:
@@ -107,11 +113,12 @@ spec:
       fsGroupChangePolicy: "OnRootMismatch"
       supplementalGroups: [100]
 
-    persistence:
-      config:
-        enabled: true
-        existingClaim: minio-pvc
+    volumeClaimTemplates:
+      - name: config
         mountPath: /data
+        accessMode: ReadWriteOnce
+        size: 20Gi
+        storageClass: longhorn-config
 
     resources:
       requests:
