@@ -1,0 +1,40 @@
+name: Docker Build Dev Container
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ docker/test/** ]
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment
+permissions:
+  packages: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get current timestamp
+        id: time
+        run: echo "time=$(date +'%s')" >> $GITHUB_OUTPUT
+
+      - name: Build and push images
+        uses: docker/build-push-action@v5.0.0
+        with:
+          context: docker/test/
+          tags: |
+            latest
+            auto-${{ steps.time.outputs.time }}
+          push: ${{ github.ref == 'refs/heads/main' }}
