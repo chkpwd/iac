@@ -57,7 +57,7 @@ elif [ "$PULL_REPOS" = "yes" ]; then
     # Pull all git repos
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/chkpwd/scripts/main/Bash/git_pull_repos.sh)" -- $GIT_USER
 else
-    echo "PULL_REPOS not set to 'yes' or 'no'. Ignoring."
+    echo "PULL_REPOS not set to 'yes' or 'no'."
 fi
 
 # Source zsh
