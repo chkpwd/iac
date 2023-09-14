@@ -1,0 +1,61 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app weave-gitops
+  namespace: flux-system
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: weave-gitops
+      version: 4.0.30
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: weaveworks
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    adminUser:
+      create: true
+      createSecret: false
+      username: admin
+
+    ingress:
+      enabled: true
+      className: int-ingress
+      annotations:
+        gethomepage.dev/enabled: "true"
+        gethomepage.dev/name: Weave GitOps
+        gethomepage.dev/group: Tools
+        gethomepage.dev/icon: "https://docs.gitops.weave.works/img/weave-logo.png"
+        gethomepage.dev/description: Flux GitOps
+        gethomepage.dev/href: "http://weave.${LOCAL_DOMAIN}"
+      hosts:
+        - host: &host "weave.${LOCAL_DOMAIN}"
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - hosts:
+            - *host
+
+    networkPolicy:
+      create: false
+
+    metrics:
+      enabled: true
+
+    rbac:
+      create: true
+      impersonationResourceNames: ["admin"]
+    podannotations:      
+      secret.reloader.stakater.com/reload: cluster-user-auth      
