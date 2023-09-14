@@ -40,7 +40,7 @@ jobs:
     - uses: terraform-linters/setup-tflint@v3
       name: Setup TFLint
       with:
-        tflint_version: v0.44.1
+        tflint_version: v3.1.1
 
     - name: Show version
       run: tflint --version
