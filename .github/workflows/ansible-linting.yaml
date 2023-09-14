@@ -51,4 +51,4 @@ jobs:
         working-directory: ${{ github.workspace }}
 
       - name: Run Ansible Lint
-        run: ansible-lint ansible/.
+        run: ansible-lint ansible/. --exclude .dependencies
