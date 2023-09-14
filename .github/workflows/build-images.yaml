@@ -3,7 +3,7 @@ name: Docker Build Dev Container
 on:
   push:
     branches: [ main ]
-    paths: [ docker/** ]
+    paths: [ docker/dev/** ]
   schedule:
     - cron: '0 5 * * *'
   workflow_dispatch:
