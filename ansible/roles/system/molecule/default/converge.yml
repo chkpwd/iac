@@ -50,7 +50,7 @@
         cache_valid_time: 600
       become: true
 
-    - name: Wait for systemd to complete initialisation # noqa 303
+    - name: Wait for systemd to complete initialisation # noqa command-instead-of-module
       ansible.builtin.command: systemctl is-system-running
       register: systemctl_status
       until: >
