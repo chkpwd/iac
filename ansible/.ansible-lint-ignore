@@ -1,0 +1,7 @@
+# This file contains ignores rule violations for ansible-lint
+playbooks/cloud/pre_configuration.yaml syntax-check[specific]
+playbooks/dynamic_role_call.yaml internal-error
+playbooks/kubernetes/k3s-reset.yaml load-failure[runtimeerror]
+roles/compose/tasks/main.yaml syntax-check[specific]
+roles/traefik/tasks/main.yaml syntax-check[specific]
+roles/windows/tasks/main.yaml syntax-check[specific]
