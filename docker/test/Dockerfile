@@ -1,1 +1,0 @@
-FROM nginx:alpine3.17
