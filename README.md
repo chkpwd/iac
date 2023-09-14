@@ -38,11 +38,6 @@ packer build -force --only vsphere-iso.windows --var-file=windows/22H2-W11.pkrva
 ```
 ###### Note: The VCENTER_PASS var gets passed at runtime using [.envrc](https://github.com/chkpwd/iac/blob/main/packer/.envrc) in the packer directory.
 
-### 🛠️ Vagrant
-
-#### Files
-Development environments using Vagrant for both Hyper-V and KVM. Additionally, for **Ansible Molecule** testing, it uses **Docker** as the driver.
-
 ## 🚀 Getting Started
 
 To get started with this repository, you may explore the different directories to find the specific tools or configurations you need. Each directory typically contains detailed instructions or scripts to help you set up and run the components.
