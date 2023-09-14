@@ -97,7 +97,7 @@ RUN apt-get update && \
 
 # Download and Install Various Tools
 RUN \
-    # Download and install helm
+    # Download and install Helm
     curl "https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
     mv /tmp/helm /usr/bin/helm && \
     chmod +x /usr/bin/helm && \
