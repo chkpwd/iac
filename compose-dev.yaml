@@ -1,12 +1,15 @@
 services:
-  app:
-    # image: ghcr.io/chkpwd/dev:latest
-    image: dev:latest
+  dev-container:
+    image: ghcr.io/chkpwd/dev:latest
+    container_name: dev-container1
     environment:
       - BW_EMAIL_ADDRESS=unix.chkpwd@gmail.com
       - GIT_USER=chkpwd
+      - PULL_REPOS=yes
     tty: true
+    dns:
+      - 172.16.16.1
+    domainname: local.chkpwd.com
+    dns_search: local.chkpwd.com.
     volumes:
-    - type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
+      - //var/run/docker.sock:/var/run/docker.sock
