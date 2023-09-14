@@ -32,7 +32,7 @@ spec:
     
     image:
       repository: kizaing/kavita
-      tag: 0.7.8@sha256:48b3c2c07f90feb4641ddb791f96a1bf6e70a2b27da8c8b2ca0cc2c627b91d72
+      tag: 0.7.8
 
     env:
       TZ: "${TZ}"
@@ -43,7 +43,7 @@ spec:
       main:
         ports:
           http:
-            port: &port 5000
+            port: 5000
 
     ingress:
       main:
