@@ -8,11 +8,6 @@ on:
     - cron: '0 5 * * *'
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment
-permissions:
-  packages: write
-  contents: read
-
 jobs:
   build:
     runs-on: ubuntu-latest
