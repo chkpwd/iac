@@ -1,17 +1,16 @@
 - name: Reset K3S Cluster
-  hosts:
-    - k3s_cluster
+  hosts: k3s_cluster
   become: true
   gather_facts: true
-  any_errors_fatal: true
+  any_errors_fatal:
     vars_prompt:
-    - name: nuke
-      prompt: |-
-        Are you sure you want to nuke this cluster?
-        Type 'cluster destroy' to proceed
-      default: "n"
-      private: false
-      
+      - name: nuke
+        prompt: |-
+          Are you sure you want to nuke this cluster?
+          Type 'cluster destroy' to proceed
+        default: "n"
+        private: false
+
   pre_tasks:
     - name: Check for confirmation
       ansible.builtin.fail:
