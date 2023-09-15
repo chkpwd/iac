@@ -39,7 +39,7 @@ fi
 if [[ -z "$BWS_ACCESS_SESSION" ]] && [[ -z $(yq '(.[] | select(has("accessToken")).accessToken)' "$CHEZMOI_CONF") ]]; then
    # https://bitwarden.com/help/personal-api-key/
    if [[ "$BW_API_KEY" ]]; then
-      export BW_SESSION=$(/usr/bin/bw login --apikey $BW_API --raw)
+      export BW_SESSION=$(/usr/bin/bw login --apikey $BW_CLIENTID $BW_CLIENTSECRET --raw)
    else
       export BW_SESSION=$(/usr/bin/bw login $BW_EMAIL_ADDRESS $BW_PASSWORD --raw)
    fi
