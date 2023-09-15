@@ -1,11 +1,11 @@
 locals {
-  preseed_config = {
+  preseed_config = var.preseed != "" ? {
     "/preseed.cfg" = templatefile("${abspath(path.root)}/files/${var.preseed}.pkrtpl.hcl", {
       user_fullname = var.connection_username,
       user_name     = var.connection_username,
       user_password = var.connection_password
     })
-  }
+  } : {}
 }
 
 source "vsphere-iso" "linux" {
