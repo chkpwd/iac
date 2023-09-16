@@ -41,15 +41,3 @@ packer build -force --only vsphere-iso.windows --var-file=windows/22H2-W11.pkrva
 ## 🚀 Getting Started
 
 To get started with this repository, you may explore the different directories to find the specific tools or configurations you need. Each directory typically contains detailed instructions or scripts to help you set up and run the components.
-
-## 🤝 Contributions
-
-Feel free to contribute to this repository by submitting pull requests or opening issues. Check the [CONTRIBUTING.md](CONTRIBUTING.md) file for guidelines on contributing.
-
-## 📜 License
-
-This project is licensed under the terms of the [LICENSE](LICENSE) file.
-
-## 📧 Contact
-
-For any questions or feedback, please reach out to Bryan Jones through GitHub.
