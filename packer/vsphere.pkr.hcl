@@ -86,11 +86,6 @@ source "vsphere-iso" "windows" {
   # VM Settings
   vm_name     		    = var.machine_name
   ip_wait_timeout       = "45m"
-  communicator          = "winrm"
-  winrm_username        = var.connection_username
-  winrm_password        = var.connection_password
-  winrm_timeout         = "12h"
-  winrm_port            = "5985"
   shutdown_command      = "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\""
   shutdown_timeout      = "15m"
   vm_version            = var.vm_hardware_version
@@ -104,6 +99,15 @@ source "vsphere-iso" "windows" {
     network      = var.network_name
     network_card = var.nic_type
   }
+
+  # WinRM Communicator Settings
+  communicator          = "winrm"
+  winrm_username        = var.connection_username
+  winrm_password        = var.connection_password
+  winrm_timeout         = "12h"
+  winrm_port            = "5985"
+  winrm_host            = var.orchestrator_ip
+  winrm_no_proxy        = true
 
   storage {
     disk_size             = var.root_disk_size
