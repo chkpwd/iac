@@ -50,6 +50,11 @@ source "vsphere-iso" "linux" {
     network_card = var.nic_type
   }
 
+  http_port_min = 8687
+  http_port_max = 8687
+
+  http_ip = var.orchestrator_ip
+
   boot_command = [
     "c<wait>",
     "linux /install.amd/vmlinuz ",

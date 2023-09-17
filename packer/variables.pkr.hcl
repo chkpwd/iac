@@ -87,3 +87,6 @@ variable "preseed" {
   description = "The preseed file to use"
   default     = ""
 }
+variable "orchestrator_ip" {
+  default = ""
+}
