@@ -25,27 +25,6 @@ module "cockpit" {
   }
 }
 
-module "crypto" {
-  source                    = "../_modules/vsphere_vm"
-  vm_name                   = "crypto"
-  vm_template               = "deb-12-template"
-  network_spec = {
-    network_id              = "LAN"
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.dev.id ]
-    folder                  = vsphere_folder.dev.path
-    cpu                     = 8
-    memory                  = 8192
-    disk_size               = 16
-    additional_disks = [
-      {
-        size                = 25
-      }
-    ]
-  }
-}
-
 module "mirage" {
   source                    = "../_modules/vsphere_vm"
   vm_name                   = "mirage"
@@ -94,7 +73,7 @@ module "gaming-vm-01" {
   vm_name                   = "gaming-vm-01"
   vm_template               = "WSrv22-DE-Temp"
   network_spec = {
-    network_id              = "LAN"
+    network_id              = "IoT"
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
@@ -132,22 +111,5 @@ module "kube-ops" {
         size                = 75
       }
     ]
-  }
-}
-
-module "casa-os" {
-  source                    = "../_modules/vsphere_vm"
-  count                     = 0
-  vm_name                   = "casa-os"
-  vm_template               = "deb-12-template"
-  network_spec = {
-    network_id              = "Lab"
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
-    folder                  = vsphere_folder.linux.path
-    cpu                     = 2
-    memory                  = 2048
-    disk_size               = 16
   }
 }
