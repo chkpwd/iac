@@ -1,7 +1,12 @@
 services:
+<<<<<<< Updated upstream
   dev-container:
     image: ghcr.io/chkpwd/dev:latest
     container_name: dev-container1
+=======
+  app:
+    image: ghcr.io/chkpwd/dev:latest
+>>>>>>> Stashed changes
     environment:
       - BW_EMAIL_ADDRESS=unix.chkpwd@gmail.com
       - GIT_USER=chkpwd
@@ -12,4 +17,9 @@ services:
     domainname: local.chkpwd.com
     dns_search: local.chkpwd.com.
     volumes:
+<<<<<<< Updated upstream
       - //var/run/docker.sock:/var/run/docker.sock
+=======
+      ~/.ssh:/home/ubuntu/.ssh
+      ~/code:/code
+>>>>>>> Stashed changes
