@@ -113,3 +113,24 @@ module "kube-ops" {
     ]
   }
 }
+
+module "dev-vm-01" {
+  source                    = "../_modules/vsphere_vm"
+  vm_name                   = "dev-vm-01"
+  vm_template               = "deb-12-template"
+  network_spec = {
+    network_id              = "LAN"
+  }
+  spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
+    folder                  = vsphere_folder.dev.path
+    cpu                     = 2
+    memory                  = 2048
+    disk_size               = 16
+    additional_disks = [ 
+      {
+        size                = 25
+      } 
+    ]
+  }
+}
