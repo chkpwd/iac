@@ -106,8 +106,6 @@ source "vsphere-iso" "windows" {
   winrm_password        = var.connection_password
   winrm_timeout         = "12h"
   winrm_port            = "5985"
-  winrm_host            = var.orchestrator_ip
-  winrm_no_proxy        = true
 
   storage {
     disk_size             = var.root_disk_size
