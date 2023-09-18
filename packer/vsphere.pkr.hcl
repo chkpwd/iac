@@ -101,11 +101,15 @@ source "vsphere-iso" "windows" {
   }
 
   # WinRM Communicator Settings
-  communicator          = "winrm"
-  winrm_username        = var.connection_username
-  winrm_password        = var.connection_password
-  winrm_timeout         = "12h"
-  winrm_port            = "5985"
+  # communicator          = "winrm"
+  ssh_username = var.connection_username
+  ssh_password = var.connection_password
+  ssh_timeout = "1h"
+  ssh_clear_authorized_keys = true
+  # winrm_username        = var.connection_username
+  # winrm_password        = var.connection_password
+  # winrm_timeout         = "12h"
+  # winrm_port            = "5985"
 
   storage {
     disk_size             = var.root_disk_size
@@ -120,7 +124,7 @@ source "vsphere-iso" "windows" {
   firmware              = "efi"
   floppy_files          = [
     "./boot_config/${var.os_version}/Autounattend.xml",
-    "./scripts/winrm.bat",
+    "./scripts/Setup-OpenSSH.ps1",
     "./scripts/Install-VMWareTools.ps1",
     "./scripts/Fix-Firewall.ps1",
     "./files/TaskbarLayout.xml",
@@ -158,7 +162,6 @@ build {
           "scripts/Disable-UAC.ps1", # I re-enable UAC with ansible post deployment
           "scripts/Enable-Other-Updates.ps1", 
           "scripts/Install-Chocolatey.ps1",
-          "scripts/Install-OpenSSH.ps1",
           "scripts/Build.ps1",
           "scripts/Setup-NewUser.ps1"
         ]

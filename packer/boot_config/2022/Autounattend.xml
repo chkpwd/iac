@@ -174,8 +174,8 @@
                     <RequiresUserInput>true</RequiresUserInput>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>cmd.exe /c A:\winrm.bat</CommandLine>
-                    <Description>WinRM Enabling</Description>
+                    <CommandLine>powershell.exe -File A:\Setup-OpenSSH.ps1</CommandLine>
+                    <Description>Setup SSH on host</Description>
                     <Order>5</Order>
                 </SynchronousCommand>
                 <SynchronousCommand>
