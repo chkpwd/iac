@@ -17,7 +17,8 @@ sonarr:
 
     quality_profiles:
       - name: HD-1080p
-        reset_unmatched_scores: true
+        reset_unmatched_scores:
+          enabled: true
 
     # Release profiles from the guide to sync to Sonarr v3 (Sonarr v4 does not use this!)
     # Use `recyclarr sonarr --list-release-profiles` for values you can put here.
