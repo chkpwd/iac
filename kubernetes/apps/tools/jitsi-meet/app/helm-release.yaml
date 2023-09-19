@@ -35,12 +35,6 @@ spec:
         enabled: true
         ingressClassName: int-ingress
         annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: Jitsi-meet
-          gethomepage.dev/group: Tools
-          gethomepage.dev/icon: jitsi-meet
-          gethomepage.dev/description: Video Conferencing
-          gethomepage.dev/href: https://jitsi.${EXTERNAL_DOMAIN}
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
           - host: &host jitsi.${EXTERNAL_DOMAIN}

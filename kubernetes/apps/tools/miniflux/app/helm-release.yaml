@@ -59,13 +59,6 @@ spec:
         enabled: true
         ingressClassName: ext-ingress
         annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: Miniflux
-          gethomepage.dev/group: Tools
-          gethomepage.dev/icon: miniflux.png
-          gethomepage.dev/description: RSS Feed Aggregator
-          gethomepage.dev/widget.type: "miniflux"
-          gethomepage.dev/widget.url: "http://miniflux.tools.${CLUSTER_DOMAIN}:8080"
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"

@@ -28,14 +28,6 @@ spec:
       enabled: true
       ingressClassName: ext-ingress
       annotations:
-        gethomepage.dev/enabled: "true"
-        gethomepage.dev/name: Authentik
-        gethomepage.dev/group: Security
-        gethomepage.dev/icon: authentik.png
-        gethomepage.dev/description: Authentication and authorization management
-        gethomepage.dev/widget.type: authentik
-        gethomepage.dev/widget.url: "http://authentik.security.${CLUSTER_DOMAIN}"
-        gethomepage.dev/widget.key: "${API_KEY_AUTHENTIK}"
         external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
       hosts:
         - host: &host "authentik.${EXTERNAL_DOMAIN}"
