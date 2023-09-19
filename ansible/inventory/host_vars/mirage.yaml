@@ -9,48 +9,49 @@ common_env: &common_env
     PGID: '1000'
 
 service_definitions:
-    - name: plex
-      image: '{{ linuxserver_image }}/plex:latest'
-      network_mode: host
-      device_requests:
-        - # Add nVidia GPUs to this container
-          driver: nvidia
-          count: -1  # this means we want all
-          capabilities:
-            # We have one OR condition: 'gpu' AND 'utility'
-              - gpu
-              - utility
-      env:
-        <<: *common_env
-        VERSION: docker
-        PLEX_CLAIM: '{{ claim_token }}'
-        UMASK_SET: "022"
-        NVIDIA_VISIBLE_DEVICES: all
-        NVIDIA_DRIVER_CAPABILITIES: "compute,video,utility"
-      volumes:
-        - '{{ configuration_path }}/plex:/config'
-        - '{{ media_path }}:{{ container_path }}/media'
-        - '/tmp/plex:/transcode'
+  - name: plex
+    image: '{{ linuxserver_image }}/plex:latest'
+    network_mode: host
+    device_requests:
+      - # Add nVidia GPUs to this container
+        driver: nvidia
+        count: -1  # this means we want all
+        capabilities:
+          # Nested List: Allowing for or conditions: ('gpu' AND 'utility') OR 'compute'
+          - - gpu
+            - utility
+          # - - compute  
+    env:
+      <<: *common_env
+      VERSION: docker
+      PLEX_CLAIM: '{{ claim_token }}'
+      UMASK_SET: "022"
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: "compute,video,utility"
+    volumes:
+      - '{{ configuration_path }}/plex:/config'
+      - '{{ media_path }}:{{ container_path }}/media'
+      - '/tmp/plex:/transcode'
 
-    - name: watchtower
-      image: containrrr/watchtower
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-      env:
-        WATCHTOWER_CLEANUP: "true"
-        WATCHTOWER_NOTIFICATION_TITLE_TAG: Mirage
-        WATCHTOWER_SCHEDULE: 0 7 */10 * *
-        WATCHTOWER_NOTIFICATION_URL: '{{ discord_webhook }}'
+  - name: watchtower
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    env:
+      WATCHTOWER_CLEANUP: "true"
+      WATCHTOWER_NOTIFICATION_TITLE_TAG: Mirage
+      WATCHTOWER_SCHEDULE: 0 7 */10 * *
+      WATCHTOWER_NOTIFICATION_URL: '{{ discord_webhook }}'
 
-    - name: wireguard
-      image: lscr.io/linuxserver/wireguard:latest
-      capabilities:
-        - net_admin
-        #- sys_module #optional
-      env: "{{ common_env }}"
-      volumes:
-        - '{{ configuration_path }}/wireguard:/config'
-        - /lib/modules:/lib/modules
-      #sysctls: net.ipv4.conf.all.src_valid_mark=1
-      network_mode: host
-      state: absent
+  - name: wireguard
+    image: lscr.io/linuxserver/wireguard:latest
+    capabilities:
+      - net_admin
+      #- sys_module #optional
+    env: "{{ common_env }}"
+    volumes:
+      - '{{ configuration_path }}/wireguard:/config'
+      - /lib/modules:/lib/modules
+    #sysctls: net.ipv4.conf.all.src_valid_mark=1
+    network_mode: host
+    state: absent
