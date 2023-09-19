@@ -28,8 +28,8 @@ spec:
     defaultRules:
       create: true
       rules:
-        alertmanager: true
-        etcd: true
+        alertmanager: false
+        etcd: false
         configReloaders: true
         general: true
         k8s: true
@@ -55,46 +55,10 @@ spec:
         prometheusOperator: true
 
     alertmanager:
-      fullnameOverride: alertmanager
-      enabled: true
-      ingress:
-        enabled: true
-        ingressClassName: int-ingress
-        hosts:
-          - &alertmanager_host alertmanager.${LOCAL_DOMAIN}
-        tls:
-          - hosts:
-              - *alertmanager_host
+      enabled: false
 
     grafana:
-      enabled: true
-      fullnameOverride: grafana
-      forceDeployDatasources: false
-      forceDeployDashboards: false
-      defaultDashboardsEnabled: true
-      defaultDashboardsTimezone: ${TZ}
-      serviceMonitor:
-        enabled: true
-      admin:
-        existingSecret: grafana-secrets
-        userKey: admin-user
-        passwordKey: admin-password
-      ingress:
-        enabled: true
-        ingressClassName: int-ingress
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: Grafana
-          gethomepage.dev/group: Monitoring
-          gethomepage.dev/icon: grafana
-          gethomepage.dev/description: Analytics and interactive visualization
-          gethomepage.dev/widget.type: grafana
-          gethomepage.dev/widget.url: "http://grafana.monitoring.${CLUSTER_DOMAIN}:80"
-        hosts:
-          - &grafana_host monitoring.${LOCAL_DOMAIN}
-        tls:
-          - hosts:
-              - *grafana_host
+      enabled: false
 
     kubeApiServer:
       enabled: true
@@ -109,20 +73,20 @@ spec:
             targetLabel: instance
 
     kubeControllerManager:
-      enabled: true
+      enabled: false
       endpoints: &endpoints
         - 172.16.16.201
         - 172.16.16.202
         - 172.16.16.203
 
     coreDns:
-      enabled: true
+      enabled: false
 
     kubeDns:
       enabled: false
 
     kubeEtcd:
-      enabled: true
+      enabled: false
       endpoints: *endpoints
       service:
         enabled: true
@@ -136,9 +100,6 @@ spec:
     kubeProxy:
       enabled: false
       endpoints: []
-
-    kubeStateMetrics:
-      enabled: true
 
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
