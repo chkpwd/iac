@@ -20,11 +20,9 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: tools-lynx
+  name: tools-lynx-config
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: tools-lynx-config
   path: ./kubernetes/apps/tools/lynx/config
   prune: true
   sourceRef:
