@@ -22,37 +22,10 @@ spec:
   upgrade:
     remediation:
       retries: 3
-  values:
-    fullnameOverride: prometheus
 
-    defaultRules:
-      create: true
-      rules:
-        alertmanager: false
-        etcd: false
-        configReloaders: true
-        general: true
-        k8s: true
-        kubeApiserverAvailability: true
-        kubeApiserverBurnrate: true
-        kubeApiserverHistogram: true
-        kubeApiserverSlos: true
-        kubelet: true
-        kubeProxy: true
-        kubePrometheusGeneral: true
-        kubePrometheusNodeRecording: true
-        kubernetesApps: true
-        kubernetesResources: true
-        kubernetesStorage: true
-        kubernetesSystem: true
-        kubeScheduler: true
-        kubeStateMetrics: true
-        network: true
-        node: true
-        nodeExporterAlerting: true
-        nodeExporterRecording: true
-        prometheus: true
-        prometheusOperator: true
+  values:
+    crds:
+      enabled: true
 
     alertmanager:
       enabled: false
@@ -74,10 +47,6 @@ spec:
 
     kubeControllerManager:
       enabled: false
-      endpoints: &endpoints
-        - 172.16.16.201
-        - 172.16.16.202
-        - 172.16.16.203
 
     coreDns:
       enabled: false
@@ -87,19 +56,15 @@ spec:
 
     kubeEtcd:
       enabled: false
-      endpoints: *endpoints
-      service:
-        enabled: true
-        port: 2381
-        targetPort: 2381
 
     kubeScheduler:
       enabled: false
-      endpoints: *endpoints
 
     kubeProxy:
       enabled: false
-      endpoints: []
+
+    kubeStateMetrics:
+      enabled: true
 
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
@@ -117,15 +82,7 @@ spec:
               targetLabel: kubernetes_node
 
     nodeExporter:
-      enabled: true
-      serviceMonitor:
-        relabelings:
-          - action: replace
-            regex: (.*)
-            replacement: $1
-            sourceLabels:
-              - __meta_kubernetes_pod_node_name
-            targetLabel: kubernetes_node
+      enabled: false
 
     prometheus-node-exporter:
       fullnameOverride: node-exporter
@@ -158,7 +115,7 @@ spec:
       prometheusConfigReloader:
         resources:
           requests:
-            cpu: 200m
+            cpu: 5m
             memory: 50Mi
           limits:
             memory: 100Mi
@@ -172,19 +129,34 @@ spec:
         serviceMonitorSelectorNilUsesHelmValues: false
         podMonitorSelectorNilUsesHelmValues: false
         probeSelectorNilUsesHelmValues: false
-        retention: 7d
-        retentionSize: 7GB
+        retention: 2d
+        retentionSize: 6GB
         enableAdminAPI: true
         walCompression: true
+        scraoeInterval: 1m
         storageSpec:
           volumeClaimTemplate:
             spec:
               storageClassName: longhorn-database
               resources:
                 requests:
-                  storage: 5Gi
-                limits:
                   storage: 10Gi
 
     thanosRuler:
       enabled: false
+
+  postRenderers:
+    - kustomize:
+        patches:
+          - target:
+              version: v1
+              kind: ConfigMap
+              labelSelector: grafana_dashboard in (1)
+            patch: |-
+              apiVersion: v1
+              kind: ConfigMap
+              metadata:
+                name: not-used
+                namespace: not-used
+                annotations:
+                  grafana_folder: Kubernetes
