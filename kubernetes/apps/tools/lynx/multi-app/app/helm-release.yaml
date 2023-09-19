@@ -30,16 +30,12 @@ spec:
 
     env:
       NODE_ENV: production
-      DB_USER:
-        valueFrom:
-          secretKeyRef:
-            name: lynx-secrets
-            key: LYNX_MONGO_DB_USERNAME
+      DB_USER: root
       DB_PASSWORD:
         valueFrom:
           secretKeyRef:
-            name: lynx-secrets
-            key: LYNX_MONGO_DB_PASSWORD
+            name: lynx-mongodb
+            key: mongodb-root-password
       JWT_KEY:
         valueFrom:
           secretKeyRef:
@@ -51,7 +47,7 @@ spec:
       HOME_REDIRECT: /dash/overview
       FORCE_FRONTEND_REDIRECT: true
       ENABLE_REGISTRATION: false # First registration will always be allowed
-      DOMAIN: https://i.chkpwd.com
+      DOMAIN: https://i.${EXTERNAL_DOMAIN}
       USE_HTTPS: true
       CORS: "*"
       BACKUP: true
