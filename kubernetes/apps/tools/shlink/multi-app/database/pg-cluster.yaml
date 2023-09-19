@@ -1,0 +1,39 @@
+---
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: shlink
+  namespace: tools
+spec:
+  postgresVersion: 15
+  instances:
+    - dataVolumeClaimSpec:
+        storageClassName: longhorn-database
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+
+  users:
+    - name: shlink
+      databases:
+        - shlink
+      options: "SUPERUSER"
+
+  backups:
+    pgbackrest:
+      manual:
+        repoName: repo1
+        options:
+          - --type=full
+      repos:
+        - name: repo1
+          volume:
+            volumeClaimSpec:
+              storageClassName: longhorn-database
+              accessModes:
+              - "ReadWriteOnce"
+              resources:
+                requests:
+                  storage: 1Gi
