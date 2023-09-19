@@ -10,16 +10,23 @@ common_env: &common_env
 
 service_definitions:
     - name: plex
-      image: '{{ hotio_image }}/plex:latest'
-      ports:
-        - 32400:32400
+      image: '{{ linuxserver_image }}/plex:latest'
       network_mode: host
+      device_requests:
+        - # Add nVidia GPUs to this container
+          driver: nvidia
+          count: -1  # this means we want all
+          capabilities:
+            # We have one OR condition: 'gpu' AND 'utility'
+              - gpu
+              - utility
       env:
         <<: *common_env
         VERSION: docker
         PLEX_CLAIM: '{{ claim_token }}'
         UMASK_SET: "022"
-        ADVERTISE_IP: 172.16.10.20
+        NVIDIA_VISIBLE_DEVICES: all
+        NVIDIA_DRIVER_CAPABILITIES: "compute,video,utility"
       volumes:
         - '{{ configuration_path }}/plex:/config'
         - '{{ media_path }}:{{ container_path }}/media'
