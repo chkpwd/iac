@@ -37,6 +37,7 @@ module "mirage" {
     folder                  = vsphere_folder.media.path
     cpu                     = 2
     memory                  = 2048
+    memory_reservation      = true
     disk_size               = 16
     additional_disks = [
       {

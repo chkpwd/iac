@@ -16,7 +16,7 @@ resource "vsphere_virtual_machine" "main" {
   nested_hv_enabled = var.spec.enable_hv
 
   sync_time_with_host = true
-
+  memory_reservation  = var.spec.memory_reservation == true ? var.spec.memory : null
   firmware = "efi"
 
   network_interface {
