@@ -44,12 +44,6 @@ spec:
       ingress:
         enabled: true
         ingressClassName: int-ingress
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: Goldilocks
-          gethomepage.dev/group: Monitoring
-          gethomepage.dev/icon: goldilocks
-          gethomepage.dev/description: Resource Management
         hosts:
           - host: "goldilocks.${LOCAL_DOMAIN}"
             paths:

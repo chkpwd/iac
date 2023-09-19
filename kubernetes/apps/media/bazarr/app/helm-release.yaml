@@ -56,15 +56,6 @@ spec:
       main:
         enabled: true
         ingressClassName: int-ingress
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: Bazarr
-          gethomepage.dev/group: Media Automation
-          gethomepage.dev/icon: bazarr
-          gethomepage.dev/description: Subtitles Automation Tool
-          gethomepage.dev/widget.type: bazarr
-          gethomepage.dev/widget.url: "http://bazarr.media.${CLUSTER_DOMAIN}:6767"
-          gethomepage.dev/widget.key: "${API_KEY_BAZARR}"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:

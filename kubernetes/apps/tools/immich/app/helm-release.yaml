@@ -141,14 +141,6 @@ spec:
           enabled: true
           ingressClassName: ext-ingress
           annotations:
-            gethomepage.dev/enabled: "true"
-            gethomepage.dev/name: Immich
-            gethomepage.dev/group: Collaboration
-            gethomepage.dev/icon: immich
-            gethomepage.dev/description: Self-Hosted Photo App
-            gethomepage.dev/widget.type: immich
-            gethomepage.dev/widget.url: "http://immich-proxy.tools.${CLUSTER_DOMAIN}:3000"
-            gethomepage.dev/widget.key: ${API_KEY_IMMICH}
             external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
             nginx.ingress.kubernetes.io/proxy-body-size: "0"
           hosts:

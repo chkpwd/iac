@@ -64,12 +64,6 @@ spec:
         enabled: true
         ingressClassName: ext-ingress
         annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: zipline
-          gethomepage.dev/group: Tools
-          gethomepage.dev/icon: zipline.png
-          gethomepage.dev/description: Upload Server
-          gethomepage.dev/href: "https://zipline.${EXTERNAL_DOMAIN}"
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"

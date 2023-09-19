@@ -59,15 +59,6 @@ spec:
       main:
         enabled: true
         ingressClassName: int-ingress
-        annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/name: Sabnzbd
-          gethomepage.dev/group: Media Automation
-          gethomepage.dev/icon: sabnzbd.png
-          gethomepage.dev/description: Binary Newsreader
-          gethomepage.dev/widget.type: sabnzbd
-          gethomepage.dev/widget.url: "http://sabnzbd.media.${CLUSTER_DOMAIN}:8080"
-          gethomepage.dev/widget.key: "${API_KEY_SABNZBD}"
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:

@@ -52,14 +52,6 @@ spec:
         enabled: true
         ingressClassName: ext-ingress
         annotations:
-          gethomepage.dev/enabled: "true"
-          gethomepage.dev/description: User requests management
-          gethomepage.dev/group: Media Automation
-          gethomepage.dev/icon: overseerr.png
-          gethomepage.dev/name: Overseerr
-          gethomepage.dev/widget.type: "overseerr"
-          gethomepage.dev/widget.url: "http://overseerr.media.${CLUSTER_DOMAIN}:5055"
-          gethomepage.dev/widget.key: ${API_KEY_OVERSEERR}
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
