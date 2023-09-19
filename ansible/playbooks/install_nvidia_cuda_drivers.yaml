@@ -1,93 +1,57 @@
 ---
-- name: "Update the target system"
-  hosts: guests
+- hosts: guests
   become: true
-
   tasks:
+    - block:
+      - name: Ensure non-free and contrib repositories are in sources.list
+        lineinfile:
+          path: /etc/apt/sources.list
+          regexp: '^deb http://deb.debian.org/debian/ bookworm main'
+          line: 'deb http://deb.debian.org/debian/ bookworm main non-free-firmware contrib non-free'
+        register: repo_updated
 
-    # - name: Enable non-free and contrib packages
-    #   ansible.builtin.command:
-    #     cmd: sudo apt-add-repository contrib
-    #   register: add_repo_types
-    #   changed_when: >-
-    #     add_repo_types.stdout == "'contrib' distribution component enabled for all sources."
+      - name: Update apt cache if repo updated
+        ansible.builtin.apt:
+          update_cache: yes
+        when: repo_updated.changed
 
-    - name: Install NVIDIA requirements
-      ansible.builtin.apt:
-        update_cache: true
-        name:
-          - gcc
-          - make
-          - linux-headers-amd64
-        state: present
+      - name: Gather facts (get current kernel versions)
+        setup:
+          filter: ansible_kernel
 
-    - name: Import NVIDIA GPG Key
-      ansible.builtin.get_url:
-        url: https://developer.download.nvidia.com/compute/cuda/repos/{{ release }}/{{ ansible_architecture }}/3bf863cc.pub
-        dest: "/etc/apt/trusted.gpg.d/cuda-debian11-keyring.asc"
-        mode: 0644
-        force: true
-      register: add_apt_key
-      until: add_apt_key is succeeded
-      retries: 2
-      delay: 2
+      - name: Install required packages
+        ansible.builtin.apt:
+          name:
+            - nvidia-driver
+            - firmware-misc-nonfree
+            - dkms
+            - "linux-headers-{{ ansible_kernel }}"
+          state: present
+        register: packages_installed
 
-    - name: Add NVIDIA Repository
-      ansible.builtin.apt_repository:
-        filename: cuda-drivers
-        repo: 'deb [signed-by={{ add_apt_key.dest }}] https://developer.download.nvidia.com/compute/cuda/repos/{{ release }}/{{ ansible_architecture }}/ /'
-      when: ansible_distribution == 'Debian'
+      tags:
+        - setup
 
-    - name: Enabled contrib and non-free sources
-      ansible.builtin.lineinfile:
-        path: /etc/apt/sources.list
-        line: '\1 contrib non-free'
-        backrefs: true
-        regexp: '^(deb\s.*{{ ansible_distribution_release }}\smain)(\s(non-free|contrib)){0,2}$'
+    - block:
+      - name: Blacklist nouveau driver
+        lineinfile:
+          path: /etc/modprobe.d/nvidia-blacklists-nouveau.conf
+          line: 'blacklist nouveau'
+          create: yes
 
-    - name: Update cache
-      ansible.builtin.apt:
-        update_cache: true
+      - name: Run update-initramfs -u
+        command:
+          cmd: update-initramfs -u
+        when: packages_installed.changed
 
-    - name: Disable Nouveau drivers
-      ansible.builtin.copy:
-        content: |
-          blacklist nouveau
-          options nouveau modeset=0
-        dest: /etc/modprobe.d/blacklist-nouveau.conf
-        mode: '644'
-        owner: root
-      notify: Unconditionally reboot the machine with all defaults
-    
-    - name: Flush handlers
-      ansible.builtin.meta: flush_handlers
+      tags:
+        - post_install
 
-    - name: Install NVIDIA CUDA packages
-      ansible.builtin.apt:
-        update_cache: true
-        pkg:
-         - nvidia-driver
-         - nvidia-smi 
-         - cuda 
-        state: present
-      ignore_errors: "{{ ansible_check_mode }}"
-
-    # Disallow updates
-    - name: Hold NVIDIA CUDA package
-      ansible.builtin.dpkg_selections:
-        name: cuda
-        selection: hold
-
-    - name: Add CUDA paths to environment
-      ansible.builtin.copy:
-        content: |
-          # /usr/local/cuda is a syamlink to a syamlink to the latest installed version of CUDA, i.e. /usr/local/cuda-x.x.x
-          export PATH="/usr/local/cuda/bin/:$PATH"
-          export LD_LIBRARY_PATH="/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
-        dest: /etc/profile.d/cuda_paths.sh
-        mode: '644'
-        owner: root
+    - name: Notify reboot handler if changes were made
+      meta: flush_handlers
 
   handlers:
-    - name: Unconditionally reboot the machine with all defaults
+    - name: Reboot the system
       ansible.builtin.reboot:
+      listen: "reboot_system"
+      when: packages_installed.changed or repo_updated.changed
