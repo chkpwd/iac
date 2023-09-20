@@ -1,0 +1,45 @@
+name: Packer-Driven Debian 12 Deployment
+
+on:
+  push:
+
+env:
+  PRODUCT_VERSION: "1.9.4"
+
+jobs:
+  packer:
+    runs-on: self-hosted
+    name: Run Packer
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install python packages
+        run: pip install ansible
+
+      - name: Install Ansible roles and collection
+        run: ansible-galaxy install --verbose --role-file src/requirements.yaml
+
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        with:
+          version: latest
+
+      - name: Setup `packer`
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: ${{ env.PRODUCT_VERSION }}
+
+      - name: Run `packer init`
+        id: init
+        run: "packer init ./image.pkr.hcl"
+
+      - name: Run `packer validate`
+        id: validate
+        run: "packer validate ./image.pkr.hcl"
