@@ -57,9 +57,13 @@ spec:
     rbac:
       create: true
       impersonationResourceNames: ["admin"]
+      additionalRules:
+        - apiGroups: ["infra.contrib.fluxcd.io"]
+          resources: ["terraforms"]
+          verbs: ["get", "list", "patch"]
 
   valuesFrom:
     - kind: Secret
-      name: weave-gitops-secrets
-      valuesKey: adminPassword
+      name: cluster-user-auth
+      valuesKey: password
       targetPath: adminUser.passwordHash
