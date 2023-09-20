@@ -55,8 +55,7 @@ spec:
             - path: /
               pathType: Prefix
       tls:
-        - secretName: *app
-          hosts:
+        - hosts:
             - *host
 
     networkPolicy:
