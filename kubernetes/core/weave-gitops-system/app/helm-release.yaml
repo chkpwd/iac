@@ -50,7 +50,7 @@ spec:
       enabled: true
       className: int-ingress
       hosts:
-        - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+        - host: &host "weave-gitops.${LOCAL_DOMAIN}"
           paths:
             - path: /
               pathType: Prefix
