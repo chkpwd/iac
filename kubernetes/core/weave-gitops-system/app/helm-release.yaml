@@ -41,6 +41,11 @@ spec:
       - name: WEAVE_GITOPS_FEATURE_CLUSTER
         value: "false"
 
+    service:
+      create: true
+      type: ClusterIP
+      port: 9001
+
     adminUser:
       create: true
       createSecret: false

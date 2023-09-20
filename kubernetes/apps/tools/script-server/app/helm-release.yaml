@@ -1,0 +1,96 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app script-server
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 1.5.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-charts
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    global:
+      fullnameOverride: *app
+
+    image:
+      repository: bugy/script-server
+      tag: 1.18.0
+
+    env:
+      port: 5000
+      title: "Chk's Script Server"
+      expiration_days: 7
+      access:
+        valueFrom:
+          secretKeyRef:
+            name: script-server-secrets
+            key: username
+      allowed_users:
+        valueFrom:
+          secretKeyRef:
+            name: script-server-secrets
+            key: allowed_users
+      full_history:
+        valueFrom:
+          secretKeyRef:
+            name: script-server-secrets
+            key: full_history_viewers
+
+    service:
+      main:
+        ports:
+          http:
+            port: 8000
+
+    hostname: *app
+
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: ext-ingress
+        annotations:
+          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+        hosts:
+          - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+            paths:
+              - path: /
+        tls:
+          - hosts:
+              - *host
+
+    volumeClaimTemplates:
+      - name: config
+        mountPath: /config
+        accessMode: ReadWriteOnce
+        size: 1Gi
+        storageClass: longhorn-media
+
+    persistence:
+      media:
+        enabled: true
+        type: nfs
+        server: "cockpit.${LOCAL_DOMAIN}"
+        path: /mnt/data/downloads/script-server
+        mountPath: /data
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 100Mi
+      limits:
+        memory: 200Mi
