@@ -24,6 +24,13 @@ spec:
       retries: 3
 
   values:
+    global:
+      fullnameOverride: *app
+
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
+
     adminUser:
       create: true
       createSecret: false
@@ -33,7 +40,7 @@ spec:
       enabled: true
       className: int-ingress
       hosts:
-        - host: &host "weave.${LOCAL_DOMAIN}"
+        - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
           paths:
             - path: /
               pathType: Prefix
@@ -50,5 +57,9 @@ spec:
     rbac:
       create: true
       impersonationResourceNames: ["admin"]
-    podannotations:      
-      secret.reloader.stakater.com/reload: cluster-user-auth      
+
+  valuesFrom:
+    - kind: Secret
+      name: weave-gitops-secrets
+      valuesKey: adminPassword
+      targetPath: adminUser.passwordHash
