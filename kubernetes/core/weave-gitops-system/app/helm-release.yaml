@@ -31,6 +31,16 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
 
+    image:
+      repository: ghcr.io/weaveworks/wego-app
+      tag: v0.32.0
+
+    envVars:
+      - name: WEAVE_GITOPS_FEATURE_TENANCY
+        value: "true"
+      - name: WEAVE_GITOPS_FEATURE_CLUSTER
+        value: "false"
+
     adminUser:
       create: true
       createSecret: false
@@ -45,7 +55,8 @@ spec:
             - path: /
               pathType: Prefix
       tls:
-        - hosts:
+        - secretName: *app
+          hosts:
             - *host
 
     networkPolicy:
@@ -61,6 +72,13 @@ spec:
         - apiGroups: ["infra.contrib.fluxcd.io"]
           resources: ["terraforms"]
           verbs: ["get", "list", "patch"]
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 200Mi
+      limits:
+        memory: 500Mi
 
   valuesFrom:
     - kind: Secret
