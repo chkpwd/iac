@@ -35,6 +35,8 @@ spec:
       enabled: false
 
     redis:
+      image:
+        tag: 7.0.11-debian-11-r18
       enabled: true
       architecture: standalone
       auth:
@@ -59,9 +61,9 @@ spec:
               name: immich-secret
               key: TYPESENSE_API_KEY
       persistence:
-        config:
+        tsdata:
           enabled: true
-          storageClass: longhorn-config
+          type: emptyDir
       resources:
         requests:
           cpu: 5m
@@ -118,6 +120,10 @@ spec:
           size: 10Gi
           type: emptyDir
           accessMode: ReadWriteMany
+      probes:
+        liveness:
+          spec:
+            initialDelaySeconds: 60
       resources:
         requests:
           cpu: 512m
