@@ -15,6 +15,7 @@ spec:
         kind: HelmRepository
         name: immich
         namespace: flux-system
+
   install:
     remediation:
       retries: 3
@@ -182,11 +183,4 @@ spec:
           secretKeyRef:
             name: immich-pguser-immich
             key: uri
-      REDIS_HOSTNAME: '{{ printf "%s-redis-master" .Release.Name }}'
-      TYPESENSE_ENABLED: "{{ .Values.typesense.enabled }}"
-      TYPESENSE_API_KEY: "{{ .Values.typesense.env.TYPESENSE_API_KEY }}"
-      TYPESENSE_HOST: '{{ printf "%s-typesense" .Release.Name }}'
-      IMMICH_WEB_URL: '{{ printf "http://%s-web:3000" .Release.Name }}'
-      IMMICH_SERVER_URL: '{{ printf "http://%s-server:3001" .Release.Name }}'
-      IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
       LOG_LEVEL: verbose
