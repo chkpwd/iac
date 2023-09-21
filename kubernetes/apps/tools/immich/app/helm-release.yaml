@@ -44,9 +44,9 @@ spec:
       resources:
         requests:
           cpu: 5m
-          memory: 10M
+          memory: 10Mi
         limits:
-          memory: 10M
+          memory: 10Mi
 
     typesense:
       enabled: true
@@ -138,7 +138,7 @@ spec:
       resources:
         requests:
           cpu: 15m
-          memory: 105M
+          memory: 105Mi
 
     proxy:
       ingress:
@@ -159,7 +159,7 @@ spec:
       resources:
         requests:
           cpu: 15m
-          memory: 105M
+          memory: 105Mi
 
     env:
       DB_DATABASE_NAME:
