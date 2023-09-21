@@ -84,10 +84,8 @@ spec:
         pullPolicy: *pullPolicy
       resources:
         requests:
-          cpu: 5m
-          memory: 150Mi
-        limits:
-          memory: 390Mi
+          cpu: 20m
+          memory: 600Mi
 
     microservices:
       enabled: true
