@@ -1,0 +1,57 @@
+---
+- name: Create new organization
+  awx.awx.organization:
+    name: "chkpwd"
+    description: "Default Organization"
+    state: present
+    controller_config_file: "{{ awx_conf }}"
+
+- name: AWX | Credentials
+  ansible.builtin.include_tasks:
+    file: awx_credentials.yaml
+
+- name: Add Git repository as Project
+  awx.awx.project:
+    name: "Git"
+    organization: "{{ awx_org }}"
+    scm_type: git
+    scm_url: "{{ awx_git_url }}"
+    scm_branch: "main"
+    scm_update_on_launch: true
+    state: present
+    controller_config_file: "{{ awx_conf }}"
+
+- name: AWX | Inventory
+  ansible.builtin.include_tasks:
+    file: awx_inventory.yaml
+
+- name: AWX | Inventory Sources
+  ansible.builtin.include_tasks:
+    file: awx_inventory_sources.yaml
+
+- name: AWX | EE
+  ansible.builtin.include_tasks:
+    file: awx_ee.yaml
+
+- name: AWX | Job Templates
+  ansible.builtin.include_tasks:
+    file: awx_job_templates.yaml
+
+# - name: Add Discord Notification
+#   awx.awx.notification_template:
+#     name: Discord Notification
+#     organization: "{{ awx_org }}"
+#     notification_type: slack
+#     notification_configuration:
+#       channels:
+#         - lab-updates
+#       token: https://discord.com/api/webhooks/
+#     messages:
+#        started:
+#          message: "{{ '{{ job_friendly_name }}{{ job.id }} started' }}"
+#        success:
+#          message: "{{ '{{ job_friendly_name }} completed in {{ job.elapsed }} seconds' }}"
+#        error:
+#          message: "{{ '{{ job_friendly_name }} FAILED! Please look at {{ job.url }}' }}"
+#     state: present
+#     controller_config_file: "{{ awx_conf }}"

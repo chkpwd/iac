@@ -1,0 +1,15 @@
+- name: Add Static Inventory
+  awx.awx.inventory:
+    name: "static_inventory"
+    description: "Static Inventory provided by Git Project"
+    organization: "{{ awx_org }}"
+    state: present
+    controller_config_file: "{{ awx_conf }}"
+
+- name: Add Dynamic Inventory
+  awx.awx.inventory:
+    name: "dynamic_inventory"
+    description: "Dynamic Inventory provided by vCenter"
+    organization: "{{ awx_org }}"
+    state: present
+    controller_config_file: "{{ awx_conf }}"

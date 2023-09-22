@@ -1,0 +1,8 @@
+- name: Automate the setup of AWX
+  hosts: "{{ onhosts | default('localhost') }}"
+  gather_facts: false
+
+  tasks:
+    - name: Run the 'awx' role
+      include_role:
+        name: awx

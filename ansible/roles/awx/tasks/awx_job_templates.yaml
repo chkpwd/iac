@@ -1,0 +1,14 @@
+- name: Create Job Template
+  awx.awx.job_template:
+    name: "Linux | Get MAC Addresses"
+    job_type: "run"
+    organization: "{{ awx_org }}"
+    inventory: "static_inventory"
+    project: "Git"
+    playbook: "ansible/playbooks/get_macaddress.yaml"
+    limit: "linux"
+    ask_diff_mode_on_launch: true
+    credentials:
+      - "infra_credential"
+    state: "present"
+    controller_config_file: "{{ awx_conf }}"

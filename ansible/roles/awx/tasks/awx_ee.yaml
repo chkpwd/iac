@@ -1,0 +1,18 @@
+---
+- name: Add 'Packer' EE
+  awx.awx.execution_environment:
+    name: "packer_ee"
+    organization: "{{ awx_org }}"
+    image: hashicorp/packer:light-1.9.4
+    pull: missing
+    state: present
+    controller_config_file: "{{ awx_conf }}"
+
+- name: Add 'Terraform' EE
+  awx.awx.execution_environment:
+    name: "terraform_ee"
+    organization: "{{ awx_org }}"
+    image: hashicorp/terraform:1.5.7
+    pull: missing
+    state: present
+    controller_config_file: "{{ awx_conf }}"

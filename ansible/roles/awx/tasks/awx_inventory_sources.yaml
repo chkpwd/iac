@@ -1,0 +1,30 @@
+---
+- name: Add Git Static Inventory
+  awx.awx.inventory_source:
+    name: "Static Inventory"
+    description: Source for Static Inventory
+    inventory: static_inventory
+    credential: "git_credential"
+    source: scm
+    source_project: "Git"
+    source_path: ansible/inventory/static.yaml
+    overwrite: false
+    update_on_launch: true
+    organization: "{{ awx_org }}"
+    source_vars:
+      private: false
+    controller_config_file: "{{ awx_conf }}"
+
+- name: Add VMware Dynamic Inventory Source
+  awx.awx.inventory_source:
+    name: "VMware Dynamic Inventory"
+    description: Source for VMware Dynamic Inventory
+    inventory: dynamic_inventory
+    credential: "vmware_credential"
+    source: "vmware"
+    overwrite: false
+    update_on_launch: true
+    organization: "{{ awx_org }}"
+    source_vars:
+      private: false
+    controller_config_file: "{{ awx_conf }}"
