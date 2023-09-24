@@ -7,7 +7,7 @@
     project: "Git"
     playbook: "ansible/playbooks/get_macaddress.yaml"
     limit: "linux"
-    ask_diff_mode_on_launch: true
+    diff_mode: true
     credentials:
       - "infra_credential"
     state: "present"
