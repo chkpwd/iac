@@ -19,11 +19,13 @@ resource "vsphere_virtual_machine" "main" {
   memory_reservation  = var.spec.memory_reservation == true ? var.spec.memory : null
   firmware = "efi"
 
+  pci_device_id = var.spec.pci_device != null ? var.spec.pci_device : null
+
   network_interface {
     network_id   = data.vsphere_network.network.id
     adapter_type = "vmxnet3"
     use_static_mac = var.network_spec.static_mac_addr
-    mac_address  = var.network_spec.mac_address != null ? var.network_spec.mac_address : ""
+    mac_address  = var.network_spec.mac_address != null ? var.network_spec.mac_address : null
   }
 
   disk {

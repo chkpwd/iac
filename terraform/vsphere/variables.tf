@@ -1,11 +1,9 @@
 #====================#
 # vCenter connection #
 #====================#
-
-variable "vsphere_vcenter" {
-  description = "vCenter server FQDN or IP"
-  default = "ronin.local.chkpwd.com"
-  type        = string
+variable "domain" {
+  description = "Domain name"
+  default = "local.chkpwd.com"
 }
 
 variable "vsphere_unverified_ssl" {

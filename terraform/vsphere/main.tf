@@ -13,7 +13,7 @@ module "cockpit" {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id ]
     folder                  = vsphere_folder.media.path
     cpu                     = 2
-    memory                  = 4096
+    memory                  = 1024 * 4
     disk_size               = 48
     additional_disks = [
       {
@@ -36,7 +36,7 @@ module "mirage" {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id, vsphere_tag.docker.id ]
     folder                  = vsphere_folder.media.path
     cpu                     = 2
-    memory                  = 2048
+    memory                  = 1024 * 2
     memory_reservation      = true
     disk_size               = 16
     additional_disks = [
@@ -49,7 +49,7 @@ module "mirage" {
 
 module "homeassistant" {
   source                    = "../_modules/vsphere_vm"
-  vm_name                   = "valkyrie"
+  vm_name                   = "home-assistant"
   vm_template               = "deb-12-template"
   network_spec = {
     network_id              = "LAN"
@@ -80,7 +80,7 @@ module "gaming-vm-01" {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
     folder                  = vsphere_folder.gaming_windows.path
     cpu                     = 4
-    memory                  = 8192
+    memory                  = 1024 * 8
     disk_size               = 48
     additional_disks = [
       {
@@ -115,22 +115,24 @@ module "kube-ops" {
   }
 }
 
-module "dev-vm-01" {
+module "stable-diffusion" {
   source                    = "../_modules/vsphere_vm"
-  vm_name                   = "dev-vm-01"
+  vm_name                   = "stable-diffusion"
   vm_template               = "deb-12-template"
   network_spec = {
-    network_id              = "LAN"
+    network_id              = "Lab"
   }
   spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
-    folder                  = vsphere_folder.dev.path
-    cpu                     = 2
-    memory                  = 2048
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id ]
+    folder                  = vsphere_folder.personal_linux.path
+    cpu                     = 8
+    memory                  = 1024 * 16
+    memory_reservation      = true
+    pci_device              =  [ data.vsphere_host_pci_device.nvidia_1080.id ]
     disk_size               = 16
-    additional_disks = [ 
+    additional_disks = [
       {
-        size                = 25
+        size                = 75
       } 
     ]
   }

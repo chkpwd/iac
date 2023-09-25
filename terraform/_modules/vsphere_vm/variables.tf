@@ -49,6 +49,7 @@ variable "spec" {
     memory    = number
     disk_size = number
     linked_clone = optional(bool)
+    pci_device = optional(list(string))
     memory_reservation = optional(bool)
     additional_network = optional(list(object({
       network = string

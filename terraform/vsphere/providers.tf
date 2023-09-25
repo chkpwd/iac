@@ -21,7 +21,7 @@ data "sops_file" "vsphere-secrets" {
 
 # Configure the vSphere Provider
 provider "vsphere" {
-  vsphere_server = "${var.vsphere_vcenter}"
+  vsphere_server = "ronin.${var.domain}"
   user = "${data.sops_file.vsphere-secrets.data["vsphere_user"]}"
   password = "${data.sops_file.vsphere-secrets.data["vsphere_password"]}"
 
