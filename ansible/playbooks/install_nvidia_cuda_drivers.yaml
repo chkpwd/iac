@@ -1,5 +1,5 @@
 ---
-- hosts: guests
+- hosts: linux
   become: true
   tasks:
     - block:
@@ -50,50 +50,50 @@
     - name: Install nvidia-container-toolkit
       when: "'docker_hosts' in group_names"
       block:
-      - name: Add the NVIDIA Docker GPG key
-        ansible.builtin.get_url:
-          url: https://nvidia.github.io/nvidia-docker/gpgkey
-          dest: /etc/apt/keyrings/nvidia-docker.key
-          mode: '0644'
+        - name: Add the NVIDIA Docker GPG key
+          ansible.builtin.get_url:
+            url: https://nvidia.github.io/nvidia-docker/gpgkey
+            dest: /etc/apt/keyrings/nvidia-docker.key
+            mode: '0644'
 
-      - name: Add the NVIDIA Docker repository
-        ansible.builtin.get_url:
-          url: https://nvidia.github.io/nvidia-docker/debian11/nvidia-docker.list
-          dest: /etc/apt/sources.list.d/nvidia-docker.list
-          mode: '0644'
+        - name: Add the NVIDIA Docker repository
+          ansible.builtin.get_url:
+            url: https://nvidia.github.io/nvidia-docker/debian11/nvidia-docker.list
+            dest: /etc/apt/sources.list.d/nvidia-docker.list
+            mode: '0644'
 
-      - name: Ensure ARCH is set to the machine's architecture
-        set_fact:
-          ARCH: "{{ ansible_architecture }}"
+        - name: Ensure ARCH is set to the machine's architecture
+          set_fact:
+            ARCH: "{{ ansible_architecture }}"
 
-      - name: Add NVIDIA Docker repo signing key
-        ansible.builtin.lineinfile:
-          path: /etc/apt/sources.list.d/nvidia-docker.list
-          regexp: '^deb https://nvidia.github.io/(.*)'
-          line: 'deb [signed-by=/etc/apt/keyrings/nvidia-docker.key] https://nvidia.github.io/\1'
-          backrefs: true
+        - name: Add NVIDIA Docker repo signing key
+          ansible.builtin.lineinfile:
+            path: /etc/apt/sources.list.d/nvidia-docker.list
+            regexp: '^deb https://nvidia.github.io/(.*)'
+            line: 'deb [signed-by=/etc/apt/keyrings/nvidia-docker.key] https://nvidia.github.io/\1'
+            backrefs: true
 
-      - name: Import Nvidia GPG key
-        ansible.builtin.apt_key:
-          url: "https://nvidia.github.io/nvidia-docker/gpgkey"
-          state: present
+        - name: Import Nvidia GPG key
+          ansible.builtin.apt_key:
+            url: "https://nvidia.github.io/nvidia-docker/gpgkey"
+            state: present
 
-      - name: Update apt cache
-        ansible.builtin.apt:
-          update_cache: true
+        - name: Update apt cache
+          ansible.builtin.apt:
+            update_cache: true
 
-      - name: Install the containerized packages
-        ansible.builtin.apt:
-          name: 
-            - nvidia-container-toolkit
-            - nvidia-container-runtime
-            - nvidia-docker2
-          state: present
+        - name: Install the containerized packages
+          ansible.builtin.apt:
+            name: 
+              - nvidia-container-toolkit
+              - nvidia-container-runtime
+              - nvidia-docker2
+            state: present
 
-      - name: Restart Docker service
-        ansible.builtin.service:
-          name: docker
-          state: restarted
+        - name: Restart Docker service
+          ansible.builtin.service:
+            name: docker
+            state: restarted
 
     - name: Notify reboot handler if changes were made
       meta: flush_handlers
