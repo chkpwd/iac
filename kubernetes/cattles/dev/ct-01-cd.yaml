@@ -1,7 +1,8 @@
+---
 apiVersion: kubevirt.io/v1
 kind: VirtualMachine
 metadata:
-  name: &name testing-01
+  name: &name ct-01-cd
   namespace: cattles
 spec:
   runStrategy: RerunOnFailure
@@ -14,25 +15,40 @@ spec:
       domain:
         devices:
           disks:
-            - name: containerdisk
+            - disk:
+                bus: virtio  # Type of disk bus
+              name: containerdisk
+            - disk:
+                bus: virtio
+              name: cloudinitdisk
+            - name: emptydisk
               disk:
                 bus: virtio
-            - name: cloudinitdisk
-              disk:
-                bus: virtio
-          interfaces:
-          - name: default
-            masquerade: {}
         resources:
           requests:
-            memory: 64M
-      networks:
-      - name: default
-        pod: {}
+            memory: 100Mi
       volumes:
-        - name: containerdisk
-          containerDisk:
-            image: quay.io/kubevirt/cirros-container-disk-demo
-        - name: cloudinitdisk
-          cloudInitNoCloud:
-            userDataBase64: SGkuXG4=
+        - name: emptydisk
+          emptyDisk:
+            capacity: 100Mi # Capacity of the empty ephemeral disk
+        - containerDisk:
+            image: quay.io/kubevirt/alpine-container-disk-demo # The image used for the container disk
+          name: containerdisk
+        - cloudInitNoCloud: # Cloud-init configuration
+            userData: | # User-data script
+              #cloud-config
+              preserve_hostname: true
+              hostname: *name  # Sets the hostname
+              fqdn: *name      # Fully Qualified Domain Name
+              prefer_fqdn_over_hostname: true
+              users:
+                - default
+                - name: hyoga
+                  lock_passwd: true   # Locks the password
+                  ssh_authorized_keys:
+                    - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa"
+              runcmd:
+                - [ sh, -c, "hostnamectl set-hostname *name" ]  # Sets the hostname
+                - [ sudo, yum, install, -y, qemu-guest-agent ]  # Installs qemu-guest-agent
+                - [ sudo, systemctl, start, qemu-guest-agent ]  # Starts qemu-guest-agent
+          name: cloudinitdisk
