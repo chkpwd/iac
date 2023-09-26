@@ -1,27 +1,15 @@
 ---
-# - name: Read command line flags
-#   set_fact:
-#     can_run_as_root: 1
-#   when:  ansible_user_id == 'root'
-
-- name: Check if script is run as root
-  fail:
-    msg: "Stable Diffusion should not be launched as root, aborting..."
-  when: ansible_user_id == "root"
-
-- name: Display user information
-  debug:
-    msg: "Running on {{ ansible_user_id }} user"
-
-- name: Packages
-  ansible.builtin.include_tasks: "setup_{{ ansible_os_family | lower }}.yaml"
+- name: Install necessary packages
+  ansible.builtin.apt:
+    pkg: "{{ packages }}"
+  become: true
 
 - name: Create Git directory
   ansible.builtin.file:
     path: "{{ ansible_user_dir }}/{{ clone_dir }}"
     state: directory
-    owner: "{{ ansible_user }}"
-    group: "{{ ansible_user }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
     mode: '0755'
 
 - name: Check if the directory exists
@@ -31,49 +19,6 @@
 
 - name: Clone a repo with separate git directory
   ansible.builtin.git:
-    repo: https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
+    repo: "{{ automatic1111_git_url }}"
     dest: "{{ ansible_user_dir }}/{{ clone_dir }}"
   when: not repo_directory.stat.exists
-
-- name: Gather GPU information
-  ansible.builtin.shell: |
-    set -o pipefail
-    lspci 2>/dev/null | grep VGA | grep -v VMware
-  register: gpu_info
-  changed_when: false
-  args:
-    executable: /bin/bash
-
-- name: Check prerequisites
-  debug:
-    msg: |-
-      Experimental support for Renoir:
-      make sure to have at least 4GB of VRAM
-      and 10GB of RAM or enable cpu mode:
-      --use-cpu all --no-half
-  when: "'Renoir' in gpu_info.stdout"
-
-- name: Install Pytorch and Torchvision on AMD
-  when: "'AMD' in gpu_info.stdout and ('Navi 1' in gpu_info.stdout or 'Navi 2' in gpu_info.stdout)"
-  block:
-    - name: Set HSA_OVERRIDE_GFX_VERSION for AMD GPUs
-      set_fact:
-        hsa_override_gfx_version: "10.3.0"
-      register: environment
-
-    - name: Install specified python
-      ansible.builtin.pip:
-        name:
-          - torch
-          - torchvision
-        virtualenv: "/opt/{{ venv_dir }}"
-        extra_args: --extra-index-url https://download.pytorch.org/whl/rocm5.2
-
-- name: Install Pip Packages 
-  when: "'NVIDIA' in gpu_info.stdout"
-  block:
-    - name: Install Pytorch and Torchvision on NVIDIA
-      ansible.builtin.pip:
-        name:
-          - torch
-          - torvision
