@@ -189,7 +189,7 @@ COPY --from=docker.io/klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bi
 COPY --from=gcr.io/kaniko-project/executor:v1.15.0 /kaniko/executor /usr/bin/kaniko
 COPY --from=quay.io/coreos/etcd:v3.5.9 /usr/local/bin/etcdctl /usr/bin/etcdctl
 COPY --from=docker.io/hashicorp/packer:light-1.9.4 /bin/packer /usr/bin/packer
-COPY --from=docker.io/digitalocean/doctl:1.98.1 /app/doctl /usr/bin/doctl
+COPY --from=docker.io/digitalocean/doctl:1.99.0 /app/doctl /usr/bin/doctl
 COPY --from=docker.io/vmware/govc:v0.30.7 /govc /usr/bin/govc
 
 # UPX all of the binaries
