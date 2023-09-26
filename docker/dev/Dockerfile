@@ -8,60 +8,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ENV DEV=ubuntu
 
-# renovate: datasource=github-tags depName=atuinsh/atuin
-ARG ATUIN_VERSION=16.0.0
-
-# renovate: datasource=github-tags depName=helm/helm
-ARG HELM_VERSION=3.12.3
-
-# renovate: datasource=github-tags depName=bitwarden/sdk
-ARG BWS_SDK_VERSION=0.3.0
-
-# renovate: datasource=github-tags depName=knqyf263/pet
-ARG PET_VERSION=0.5.0
-
-# renovate: datasource=github-tags depName=tellerops/teller
-ARG TELLER_VERSION=1.5.6
-
-# renovate: datasource=github-tags depName=twpayne/chezmoi
-ARG CHEZMOI_VERSION=v2.40.0
-
-# renovate: datasource=github-tags depName=kubernetes/kubernetes
-ARG KUBECTL_VERSION=1.28.2
-
-# renovate: datasource=github-tags depName=stern/stern
-ARG STERN_VERSION=1.26.0
-
-# renovate: datasource=github-tags depName=kubernetes-sigs/krew
-ARG KREW_VERSION=0.4.4
-
-# renovate: datasource=github-tags depName=sachaos/viddy
-ARG VIDDY_VERSION=0.3.7
-
-# renovate: datasource=github-tags depName=derailed/k9s
-ARG K9S_VERSION=0.27.4
-
-# renovate: datasource=github-tags depName=pulumi/pulumi
-ARG PULUMI_VERSION=v3.85.0
-
-# renovate: datasource=github-tags depName=hashicorp/terraform
-ARG TERRAFORM_VERSION=1.5.7
-
-# renovate: datasource=github-tags depName=getsops/sops
-ARG SOPS_VERSION=3.8.0
-
-# renovate: datasource=github-tags depName=bitwarden/clients
-ARG BW_CLI_VERSION=2023.8.2
-
-# renovate: datasource=github-tags depName=loft-sh/vcluster
-ARG VCLUSTER_VERSION=0.15.7
-
-# renovate: datasource=github-tags depName=FairwindsOps/nova
-ARG NOVA_VERSION=3.7.0
-
-# renovate: datasource=github-tags depName=FairwindsOps/pluto
-ARG PLUTO_VERSION=5.18.4
-
 # Base System Configuration
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -98,6 +44,60 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# renovate: datasource=github-tags depName=atuinsh/atuin
+ARG ATUIN_VERSION=16.0.0
+
+# renovate: datasource=github-tags depName=helm/helm
+ARG HELM_VERSION=3.12.3
+
+# renovate: datasource=github-tags depName=bitwarden/sdk
+ARG BWS_SDK_VERSION=0.3.0
+
+# renovate: datasource=github-tags depName=knqyf263/pet
+ARG PET_VERSION=0.5.0
+
+# renovate: datasource=github-tags depName=tellerops/teller
+ARG TELLER_VERSION=1.5.6
+
+# renovate: datasource=github-tags depName=twpayne/chezmoi
+ARG CHEZMOI_VERSION=v2.40.0
+
+# renovate: datasource=github-tags depName=kubernetes/kubernetes
+ARG KUBECTL_VERSION=1.28.2
+
+# renovate: datasource=github-tags depName=stern/stern
+ARG STERN_VERSION=1.26.0
+
+# renovate: datasource=github-tags depName=kubernetes-sigs/krew
+ARG KREW_VERSION=0.4.4
+
+# renovate: datasource=github-tags depName=sachaos/viddy
+ARG VIDDY_VERSION=0.3.7
+
+# renovate: datasource=github-tags depName=derailed/k9s
+ARG K9S_VERSION=0.27.4
+
+# renovate: datasource=github-tags depName=pulumi/pulumi
+ARG PULUMI_VERSION=v3.83.0
+
+# renovate: datasource=github-tags depName=hashicorp/terraform
+ARG TERRAFORM_VERSION=1.5.7
+
+# renovate: datasource=github-tags depName=getsops/sops
+ARG SOPS_VERSION=3.8.0
+
+# renovate: datasource=github-tags depName=bitwarden/clients
+ARG BW_CLI_VERSION=2023.8.2
+
+# renovate: datasource=github-tags depName=loft-sh/vcluster
+ARG VCLUSTER_VERSION=0.15.7
+
+# renovate: datasource=github-tags depName=FairwindsOps/nova
+ARG NOVA_VERSION=3.7.0
+
+# renovate: datasource=github-tags depName=FairwindsOps/pluto
+ARG PLUTO_VERSION=5.18.4
+
 # Download and Install Various Tools
 RUN \
     # Download and install Atuin
@@ -124,7 +124,7 @@ RUN \
     unzip /tmp/bws.zip -d /tmp && \
     mv /tmp/bws /usr/bin/ && \
     # Download and install pulumi
-    curl -L "https://get.pulumi.com/releases/sdk/pulumi-v${PULUMI_VERSION}-linux-x64.tar.gz" | tar xvzf - -C /tmp --strip-components=1; \
+    curl -L "https://get.pulumi.com/releases/sdk/pulumi-${PULUMI_VERSION}-linux-x64.tar.gz" | tar xvzf - -C /tmp --strip-components=1; \
     mv /tmp/pulumi* /usr/bin/ && \
     # Download and install terraform
     curl -LO "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && \
@@ -138,7 +138,7 @@ RUN \
     curl -L "https://github.com/tellerops/teller/releases/download/v${TELLER_VERSION}/teller_${TELLER_VERSION}_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/teller /usr/bin/teller && \
     # Download and install chezmoi
-    curl -L "https://github.com/twpayne/chezmoi/releases/download/v${CHEZMOI_VERSION}/chezmoi_${CHEZMOI_VERSION}_linux_amd64.deb" > chezmoi.deb && \
+    curl -L "https://github.com/twpayne/chezmoi/releases/download/${CHEZMOI_VERSION}/chezmoi_${CHEZMOI_VERSION#v}_linux_amd64.deb" > chezmoi.deb && \
     dpkg -i chezmoi.deb && \
     rm -f chezmoi.deb && \
     # Download and install kubectl
