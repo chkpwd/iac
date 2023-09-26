@@ -8,6 +8,42 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ENV DEV=ubuntu
 
+# Base System Configuration
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    # Core Utilities
+    bash curl sudo man-db bash-completion wget unzip \
+    less locales ca-certificates gnupg apt-transport-https \
+    # Development Tools
+    build-essential file pwgen git vim htop jq yq ldap-utils \
+    rsync rclone software-properties-common pkg-config \
+    libxmlsec1-dev golang-go npm nodejs upx-ucl \
+    # SSH Tools
+    openssh-server openssh-client sshpass \
+    # Network Tools
+    nmap mtr-tiny host net-tools iputils-ping traceroute dnsutils \
+    # Disk Utilities
+    genisoimage \
+    # Text Processing and Viewing
+    bat fzf tree \
+    # Python Tools
+    pipx python3-dev python3-pip python3-venv python3-setuptools \
+    # Zsh and Plugins
+    zsh zsh-autosuggestions zsh-syntax-highlighting \
+    # Miscellaneous Tools
+    direnv age hugo && \
+    # SSH Config
+    ssh-keygen -A && \
+    mkdir -p /run/sshd && \
+    # Elavation Setup
+    echo "%sudo ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    # Locale Setup
+    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
+    locale-gen && \
+    # Perform clean-up
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # renovate: datasource=github-tags depName=atuinsh/atuin
 ARG ATUIN_VERSION=16.0.0
 
@@ -24,7 +60,7 @@ ARG PET_VERSION=0.5.0
 ARG TELLER_VERSION=1.5.6
 
 # renovate: datasource=github-tags depName=twpayne/chezmoi
-ARG CHEZMOI_VERSION=2.39.1
+ARG CHEZMOI_VERSION=v2.40.0
 
 # renovate: datasource=github-tags depName=kubernetes/kubernetes
 ARG KUBECTL_VERSION=1.28.2
@@ -62,42 +98,6 @@ ARG NOVA_VERSION=3.7.0
 # renovate: datasource=github-tags depName=FairwindsOps/pluto
 ARG PLUTO_VERSION=5.18.4
 
-# Base System Configuration
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    # Core Utilities
-    bash curl sudo man-db bash-completion wget unzip \
-    less locales ca-certificates gnupg apt-transport-https \
-    # Development Tools
-    build-essential file pwgen git vim htop jq yq ldap-utils \
-    rsync rclone software-properties-common pkg-config \
-    libxmlsec1-dev golang-go npm nodejs upx-ucl \
-    # SSH Tools
-    openssh-server openssh-client sshpass \
-    # Network Tools
-    nmap mtr-tiny host net-tools iputils-ping traceroute dnsutils \
-    # Disk Utilities
-    genisoimage \
-    # Text Processing and Viewing
-    bat fzf tree \
-    # Python Tools
-    pipx python3-dev python3-pip python3-venv python3-setuptools \
-    # Zsh and Plugins
-    zsh zsh-autosuggestions zsh-syntax-highlighting \
-    # Miscellaneous Tools
-    direnv age hugo && \
-    # SSH Config
-    ssh-keygen -A && \
-    mkdir -p /run/sshd && \
-    # Elavation Setup
-    echo "%sudo ALL = (ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    # Locale Setup
-    echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
-    locale-gen && \
-    # Perform clean-up
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
-
 # Download and Install Various Tools
 RUN \
     # Download and install Atuin
@@ -124,7 +124,7 @@ RUN \
     unzip /tmp/bws.zip -d /tmp && \
     mv /tmp/bws /usr/bin/ && \
     # Download and install pulumi
-    curl -L "https://get.pulumi.com/releases/sdk/pulumi-v${PULUMI_VERSION}-linux-x64.tar.gz" | tar xvzf - -C /tmp --strip-components=1; \
+    curl -L "https://get.pulumi.com/releases/sdk/pulumi-${PULUMI_VERSION}-linux-x64.tar.gz" | tar xvzf - -C /tmp --strip-components=1; \
     mv /tmp/pulumi* /usr/bin/ && \
     # Download and install terraform
     curl -LO "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && \
@@ -138,7 +138,7 @@ RUN \
     curl -L "https://github.com/tellerops/teller/releases/download/v${TELLER_VERSION}/teller_${TELLER_VERSION}_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/teller /usr/bin/teller && \
     # Download and install chezmoi
-    curl -L "https://github.com/twpayne/chezmoi/releases/download/v${CHEZMOI_VERSION}/chezmoi_${CHEZMOI_VERSION}_linux_amd64.deb" > chezmoi.deb && \
+    curl -L "https://github.com/twpayne/chezmoi/releases/download/${CHEZMOI_VERSION}/chezmoi_${CHEZMOI_VERSION#v}_linux_amd64.deb" > chezmoi.deb && \
     dpkg -i chezmoi.deb && \
     rm -f chezmoi.deb && \
     # Download and install kubectl
