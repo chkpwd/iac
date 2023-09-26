@@ -38,6 +38,32 @@ spec:
         - hosts:
             - *host
 
+    env:
+      AUTHENTIK_POSTGRESQL__HOST:
+        valueFrom:
+          secretKeyRef:
+            name: authentik-pguser-authentik
+            key: host
+      AUTHENTIK_POSTGRESQL__NAME:
+        valueFrom:
+          secretKeyRef:
+            name: authentik-pguser-authentik
+            key: dbname
+      AUTHENTIK_POSTGRESQL__USER:
+        valueFrom:
+          secretKeyRef:
+            name: authentik-pguser-authentik
+            key: user
+      AUTHENTIK_POSTGRESQL__PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: authentik-pguser-authentik
+            key: password
+      AUTHENTIK_POSTGRESQL__PORT:
+        valueFrom:
+          secretKeyRef:
+            name: authentik-pguser-authentik
+            key: port
     envFrom:
       secretRef:
       name: authentik-secrets
@@ -53,7 +79,7 @@ spec:
         use_ssl: false
 
     postgresql:
-      enabled: true
+      enabled: false
 
     redis:
       enabled: true
