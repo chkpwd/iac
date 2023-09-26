@@ -6,7 +6,7 @@ metadata:
   namespace: networking
 spec:
   type: ExternalName
-  externalName: 172.16.16.1
+  externalName: router.${LOCAL_DOMAIN}
   ports:
     - name: http
       port: &port 80
