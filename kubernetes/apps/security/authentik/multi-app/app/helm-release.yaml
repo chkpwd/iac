@@ -24,6 +24,13 @@ spec:
       retries: 3
 
   values:
+    worker:
+      replicas: 1
+
+    image:
+      repository: ghcr.io/goauthentik/server
+      tag: 2023.8.3
+
     ingress:
       enabled: true
       ingressClassName: ext-ingress
@@ -38,37 +45,8 @@ spec:
         - hosts:
             - *host
 
-    env:
-      AUTHENTIK_POSTGRESQL__HOST:
-        valueFrom:
-          secretKeyRef:
-            name: authentik-pguser-authentik
-            key: host
-      AUTHENTIK_POSTGRESQL__NAME:
-        valueFrom:
-          secretKeyRef:
-            name: authentik-pguser-authentik
-            key: dbname
-      AUTHENTIK_POSTGRESQL__USER:
-        valueFrom:
-          secretKeyRef:
-            name: authentik-pguser-authentik
-            key: user
-      AUTHENTIK_POSTGRESQL__PASSWORD:
-        valueFrom:
-          secretKeyRef:
-            name: authentik-pguser-authentik
-            key: password
-      AUTHENTIK_POSTGRESQL__PORT:
-        valueFrom:
-          secretKeyRef:
-            name: authentik-pguser-authentik
-            key: port
-    envFrom:
-      secretRef:
-      name: authentik-secrets
-
     authentik:
+      log_level: info
       error_reporting:
         enabled: true
 
@@ -78,15 +56,55 @@ spec:
         port: 465
         use_ssl: false
 
+    prometheus:
+      serviceMonitor:
+        create: true
+
+    envValueFrom:
+      AUTHENTIK_POSTGRESQL__HOST:
+        secretKeyRef:
+          name: authentik-pguser-authentik
+          key: host
+      AUTHENTIK_POSTGRESQL__NAME:
+        secretKeyRef:
+          name: authentik-pguser-authentik
+          key: dbname
+      AUTHENTIK_POSTGRESQL__USER:
+        secretKeyRef:
+          name: authentik-pguser-authentik
+          key: user
+      AUTHENTIK_POSTGRESQL__PASSWORD:
+        secretKeyRef:
+          name: authentik-pguser-authentik
+          key: password
+      AUTHENTIK_POSTGRESQL__PORT:
+        secretKeyRef:
+          name: authentik-pguser-authentik
+          key: port
+      AUTHENTIK_EMAIL__USERNAME:
+        secretKeyRef:
+          name: authentik-secrets
+          key: email_address
+      AUTHENTIK_EMAIL__PASSWORD:
+        secretKeyRef:
+          name: authentik-secrets
+          key: app_password
+      AUTHENTIK_REDIS__PASSWORD:
+        secretKeyRef:
+          name: authentik-secrets
+          key: redis_password
+      AUTHENTIK_SECRET_KEY:
+        secretKeyRef:
+          name: authentik-secrets
+          key: secret_key
+
     postgresql:
       enabled: false
 
     redis:
       enabled: true
-
-    prometheus:
-      serviceMonitor:
-        create: true
+      image:
+        tag: 7.2.1-debian-11-r0
 
     resources:
       server:
