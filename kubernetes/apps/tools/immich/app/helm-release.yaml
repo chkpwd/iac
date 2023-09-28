@@ -41,6 +41,11 @@ spec:
       architecture: standalone
       auth:
         enabled: false
+      persistence:
+        enabled: false  # Disable PVC persistence
+        medium: ""  # Specify the medium for emptyDir (can be "" or "Memory")
+        sizeLimit: "8Gi"  # Optional: set a size limit for the emptyDir volume
+        path: /data
       resources:
         requests:
           cpu: 5m
