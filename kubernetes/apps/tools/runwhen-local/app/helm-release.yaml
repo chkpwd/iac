@@ -69,17 +69,7 @@ spec:
       custom:
         kubernetes_distribution: Kubernetes
         kubernetes_distribution_binary: kubectl
-
-        # Possible values are gmp, promql, none
-        # prometheus_provider: gmp
-
-        #### RunWhen Platform only
-        # Secret names are used when integrating the RunWhen Platform
-        # with your enviornment. Configuration data will reference these
-        # secret names - and so secrets uploaded to RunWhen Platform must
-        # be given the same name
         kubeconfig_secret_name: kubeconfig
-        # gcp_ops_suite_sa: ops-suite-sa
 
     resources:
       requests:
