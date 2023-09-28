@@ -32,7 +32,19 @@ spec:
 
     service:
       type: ClusterIP
-      port: 80
+      port: 8081
+
+    # serviceAccountRoles:
+    #   namespaceRole:
+    #     enabled: false
+    #     namespaces: []
+    #     rules:
+    #     - apiGroups: [""]
+    #       resources: ["*"]
+    #       verbs: ["get", "watch", "list"]
+
+    #   clusterRoleView:
+    #     enabled: true
 
     ingress:
       enabled: true
@@ -52,7 +64,7 @@ spec:
 
     # autoRun: start discovery on deployment, and re-run discovery evey discoveryInterval seconds
     autoRun:
-      discoveryInterval: 1800                 # seconds to wait until a new discovery
+      discoveryInterval: 1800 # seconds to wait until a new discovery
 
     workspaceInfo:
       workspaceName: chkpwd
