@@ -104,7 +104,7 @@ RUN \
     curl -L "https://github.com/atuinsh/atuin/releases/download/v${ATUIN_VERSION}/atuin-v${ATUIN_VERSION}-x86_64-unknown-linux-gnu.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
     mv /tmp/atuin /usr/bin/atuin && \
     # Download and install Helm
-    curl "https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
+    curl "https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
     mv /tmp/helm /usr/bin/helm && \
     chmod +x /usr/bin/helm && \
     # Download and install sops
@@ -124,7 +124,7 @@ RUN \
     unzip /tmp/bws.zip -d /tmp && \
     mv /tmp/bws /usr/bin/ && \
     # Download and install pulumi
-    curl -L "https://get.pulumi.com/releases/sdk/pulumi-${PULUMI_VERSION}-linux-x64.tar.gz" | tar xvzf - -C /tmp --strip-components=1; \
+    curl -L "https://get.pulumi.com/releases/sdk/pulumi-${PULUMI_VERSION}-linux-x64.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
     mv /tmp/pulumi* /usr/bin/ && \
     # Download and install terraform
     curl -LO "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && \
