@@ -1,0 +1,34 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tools-runwhen-local
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: tools-runwhen-local-config
+  path: ./kubernetes/apps/tools/runwhen-local/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tools-runwhen-local-config
+  namespace: flux-system
+spec:
+  path: ./kubernetes/apps/tools/runwhen-local/config
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m

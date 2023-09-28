@@ -1,0 +1,79 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app runwhen-local
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: runwhen-local
+      version: 
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: runwhen-contrib
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    fullnameOverride: *app
+
+    image:
+      repository: ghcr.io/runwhen-contrib/runwhen-local
+      tag: 0.0.5
+
+    service:
+      type: ClusterIP
+      port: 80
+
+    ingress:
+      enabled: true
+      className: int-ingress
+      hosts:
+        - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - hosts:
+            - *host
+
+    discoveryKubeconfig:
+      secretName: runwhen-local-kubeconfig
+      secretKey: kubeconfig
+      secretPath: kubeconfig
+
+    # autoRun: start discovery on deployment, and re-run discovery evey discoveryInterval seconds
+    autoRun:
+      discoveryInterval: 1800                 # seconds to wait until a new discovery
+
+    workspaceInfo:
+      workspaceName: chkpwd
+      token: undefined
+      workspaceOwnerEmail: unix.chkpwd@gmail.com
+      papiURL: undefined
+      defaultLocation: undefined
+      defaultLOD: 2                 # This setting will discover all namespaces not specified in namespaceLODs with the greatest level of detail/depth
+      namespaceLODs:                # Specific discovery depth overrides on a per-namespace basis. 0 = ignore, 1 = simple/basic discovery, 2 = detailed discovery
+        kube-system: 0
+        kube-public: 0
+        kube-node-lease: 0
+      custom:
+        kubernetes_distribution: Kubernetes
+        kubernetes_distribution_binary: kubectl
+        kubeconfig_secret_name: kubeconfig
+
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        memory: 1000Mi
