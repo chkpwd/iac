@@ -28,7 +28,7 @@ spec:
 
     image:
       repository: ghcr.io/runwhen-contrib/runwhen-local
-      tag: 0.0.5
+      tag: 0.3.4
 
     service:
       type: ClusterIP
@@ -38,7 +38,7 @@ spec:
       enabled: true
       className: int-ingress
       hosts:
-        - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+        - host: &host "runwhen-local.${LOCAL_DOMAIN}"
           paths:
             - path: /
               pathType: Prefix
@@ -47,9 +47,8 @@ spec:
             - *host
 
     discoveryKubeconfig:
-      secretName: runwhen-local-kubeconfig
-      secretKey: kubeconfig
-      secretPath: kubeconfig
+      inClusterAuth:
+        enabled: true # Local cluster discovery
 
     # autoRun: start discovery on deployment, and re-run discovery evey discoveryInterval seconds
     autoRun:
@@ -69,7 +68,6 @@ spec:
       custom:
         kubernetes_distribution: Kubernetes
         kubernetes_distribution_binary: kubectl
-        kubeconfig_secret_name: kubeconfig
 
     resources:
       requests:
