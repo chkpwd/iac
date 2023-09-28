@@ -34,16 +34,27 @@ spec:
       "Database":
         backup:
           - interval: 12h
-            retain: 2
+            retain: 7
+        filesystem-trim:
+          - interval: 20m
       "Config":
         backup:
           - interval: 24h
             retain: 7
+        filesystem-trim:
+          - interval: 20m
       "Media":
         backup:
           - interval: 24h
             retain: 2
+        filesystem-trim:
+          - interval: 20m
       "Clusters":
+        options:
+          parameters:
+            numberOfReplicas: "1"
         backup:
           - interval: 24h
             retain: 1
+        filesystem-trim:
+          - interval: 20m
