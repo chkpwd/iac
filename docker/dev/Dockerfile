@@ -48,7 +48,7 @@ RUN apt-get update && \
 ARG ATUIN_VERSION=16.0.0
 
 # renovate: datasource=github-tags depName=helm/helm
-ARG HELM_VERSION=3.12.3
+ARG HELM_VERSION=v3.13.0
 
 # renovate: datasource=github-tags depName=bitwarden/sdk
 ARG BWS_SDK_VERSION=0.3.0
