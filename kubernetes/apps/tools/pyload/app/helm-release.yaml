@@ -27,6 +27,9 @@ spec:
     global:
       fullnameOverride: *app
 
+    controller:
+      type: statefulset
+
     image:
       repository: lscr.io/linuxserver/pyload-ng
       tag: 0.5.0
@@ -36,13 +39,13 @@ spec:
       PUID: &context 1000
       PGID: *context
 
+    hostname: *app
+
     service:
       main:
         ports:
           http:
             port: 8000
-
-    hostname: *app
 
     ingress:
       main:
@@ -57,6 +60,12 @@ spec:
         tls:
           - hosts:
               - *host
+
+    podSecurityContext:
+      runAsUser: &context 1000
+      runAsGroup: *context
+      fsGroup: *context
+      fsGroupChangePolicy: "OnRootMismatch"
 
     volumeClaimTemplates:
       - name: config
