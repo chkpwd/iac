@@ -57,8 +57,8 @@ module "homeassistant" {
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
     folder                  = vsphere_folder.personal_linux.path
-    cpu                     = 2
-    memory                  = 2048
+    cpu                     = 4
+    memory                  = 1024 * 4
     disk_size               = 16
     additional_disks = [ 
       {
