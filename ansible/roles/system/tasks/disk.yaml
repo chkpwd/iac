@@ -16,14 +16,6 @@
 
     - name: Mount NFS share from TrueNAS
       ansible.posix.mount:
-        src: "{{ docker_confs_nfs }}:/mnt/atlantic/media"
-        path: "{{ docker_path }}"
-        opts: rw,sync,hard,nofail
-        state: mounted
-        fstype: nfs
-
-    - name: Mount NFS share from TrueNAS
-      ansible.posix.mount:
         src: "{{ media_nfs_share }}:/mnt/data"
         path: "{{ media_path }}"
         opts: rw,sync,hard,nofail
