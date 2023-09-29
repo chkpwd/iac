@@ -34,17 +34,17 @@ spec:
       type: ClusterIP
       port: 8081
 
-    # serviceAccountRoles:
-    #   namespaceRole:
-    #     enabled: false
-    #     namespaces: []
-    #     rules:
-    #     - apiGroups: [""]
-    #       resources: ["*"]
-    #       verbs: ["get", "watch", "list"]
+    serviceAccountRoles:
+      namespaceRole:
+        enabled: true
+        namespaces: []
+        rules:
+        - apiGroups: [""]
+          resources: ["*"]
+          verbs: ["get", "watch", "list"]
 
-    #   clusterRoleView:
-    #     enabled: true
+      clusterRoleView:
+        enabled: true
 
     ingress:
       enabled: true
