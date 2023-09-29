@@ -25,7 +25,7 @@ hassio_daemon_options:
   data: "/mnt/data/hassio"
 
 docker_daemon_options:
-  exec-opt: "native.cgroupdriver=cgroupfs" # HAOS hasn't updated to cgroup v2
+  exec-opt: "native.cgroupdriver=systemd" # HAOS hasn't updated to cgroup v2
   data-root: "/mnt/data/docker"
 
 packages:
