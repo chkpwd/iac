@@ -36,10 +36,10 @@ spec:
       type: LoadBalancer
       port: 53
       annotations:
-        metallb.universe.tf/loadBalancerIPs: "${LB_K8S_GATEWAY}"
+        metallb.universe.tf/loadBalancerIPs: "${K8S_GATEWAY_LB_ADDRESS}"
       externalTrafficPolicy: Local
       loadBalancerIPs:
-        - ${LB_K8S_GATEWAY}
+        - ${K8S_GATEWAY_LB_ADDRESS}
 
     domain: ${LOCAL_DOMAIN}
 
