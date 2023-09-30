@@ -1,6 +1,6 @@
-data "unifi_ap_group" "default" {}
+data "unifi_ap_group" "main" {}
 
-data "unifi_user_group" "default" {}
+data "unifi_user_group" "main" {}
 
 data "unifi_network" "lan" {
   name = "Default"
@@ -18,8 +18,8 @@ resource "unifi_wlan" "lan" {
   pmf_mode        = "optional"
 
   network_id    = data.unifi_network.lan.id
-  ap_group_ids  = [data.unifi_ap_group.default.id]
-  user_group_id = data.unifi_user_group.default.id
+  ap_group_ids  = [data.unifi_ap_group.main.id]
+  user_group_id = data.unifi_user_group.main.id
 }
 
 resource "unifi_wlan" "iot" {
@@ -33,8 +33,8 @@ resource "unifi_wlan" "iot" {
   pmf_mode        = "optional"
 
   network_id    = unifi_network.iot.id
-  ap_group_ids  = [data.unifi_ap_group.default.id]
-  user_group_id = data.unifi_user_group.default.id
+  ap_group_ids  = [data.unifi_ap_group.main.id]
+  user_group_id = data.unifi_user_group.main.id
 }
 
 resource "unifi_wlan" "lab" {
@@ -48,9 +48,9 @@ resource "unifi_wlan" "lab" {
   pmf_mode        = "optional"
 
   network_id    = unifi_network.lab.id
-  ap_group_ids  = [data.unifi_ap_group.default.id]
- 
-  user_group_id = data.unifi_user_group.default.id
+  ap_group_ids  = [data.unifi_ap_group.main.id]
+
+  user_group_id = data.unifi_user_group.main.id
 }
 
 
@@ -65,6 +65,6 @@ resource "unifi_wlan" "media" {
   pmf_mode        = "optional"
 
   network_id    = unifi_network.media.id
-  ap_group_ids  = [data.unifi_ap_group.default.id]
-  user_group_id = data.unifi_user_group.default.id
+  ap_group_ids  = [data.unifi_ap_group.main.id]
+  user_group_id = data.unifi_user_group.main.id
 }
