@@ -2,9 +2,9 @@
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: awx-chart
+  name: bjw-s
   namespace: flux-system
 spec:
   interval: 30m
-  url: https://ansible.github.io/awx-operator
+  url: https://bjw-s.github.io/helm-charts
   timeout: 3m
