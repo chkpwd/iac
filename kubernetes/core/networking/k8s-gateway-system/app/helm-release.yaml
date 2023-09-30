@@ -24,10 +24,28 @@ spec:
       retries: 3
 
   values:
-    domain: ${LOCAL_DOMAIN}
-    replicaCount: 1
+    replicaCount: 2
+
+    image:
+      registry: quay.io
+      repository: oriedge/k8s_gateway
+      tag: v0.3.4
+
+    fullnameOverride: k8s-gateway
+
     service:
       type: LoadBalancer
       port: 53
       annotations:
         metallb.universe.tf/loadBalancerIPs: "${LB_K8S_GATEWAY}"
+      externalTrafficPolicy: Local
+      loadBalancerIPs:
+        - ${LB_K8S_GATEWAY}
+
+    domain: ${LOCAL_DOMAIN}
+
+    watchedResources:
+      - Ingress
+      - Service
+
+    ttl: 1
