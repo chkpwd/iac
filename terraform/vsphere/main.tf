@@ -137,3 +137,24 @@ module "stable-diffusion" {
     ]
   }
 }
+
+module "boot-server" {
+  source                    = "../_modules/vsphere_vm"
+  vm_name                   = "boot-server"
+  vm_template               = "deb-12-template"
+  network_spec = {
+    network_id              = "LAN"
+  }
+  spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
+    folder                  = vsphere_folder.personal_linux.path
+    cpu                     = 2
+    memory                  = 1024 * 4
+    disk_size               = 16
+    additional_disks = [ 
+      {
+        size                = 10
+      } 
+    ]
+  }
+}
