@@ -1,0 +1,33 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: k8s-gateway
+  namespace: networking
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: k8s-gateway
+      version: 2.0.4
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: k8s-gateway
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    domain: ${LOCAL_DOMAIN}
+    replicaCount: 1
+    service:
+      type: LoadBalancer
+      port: 53
+      annotations:
+        metallb.universe.tf/loadBalancerIPs: "${LB_K8S_GATEWAY}"
