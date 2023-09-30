@@ -41,7 +41,7 @@ spec:
       loadBalancerIPs:
         - ${K8S_GATEWAY_LB_ADDRESS}
 
-    domain: ${LOCAL_DOMAIN}
+    domain: k8s.${LOCAL_DOMAIN}
 
     watchedResources:
       - Ingress
