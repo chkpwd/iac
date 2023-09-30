@@ -31,12 +31,12 @@ all:
       hosts:
         mirage:
         home-assistant:
-        crypto:
         cockpit:
         kubes-cp-1:
         kubes-cp-2:
         kubes-cp-3:
         stable-diffusion:
+        boot-server:
 
     windows:
       hosts:
@@ -52,9 +52,9 @@ all:
       hosts:
         mirage:
         home-assistant:
-        crypto:
         ct-01-x86:
         ct-02-x86:
+        boot-server:
     
     k3s_cluster:
       children:
@@ -80,10 +80,6 @@ all:
     media_server:
       hosts:
         mirage:
-    
-    devops:
-      hosts:
-        crypto:
 
     cloud:
       vars:
