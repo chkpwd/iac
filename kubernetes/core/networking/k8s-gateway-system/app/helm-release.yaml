@@ -41,10 +41,17 @@ spec:
       loadBalancerIPs:
         - ${K8S_GATEWAY_LB_ADDRESS}
 
-    domain: k8s.${LOCAL_DOMAIN}
+    domain: ${LOCAL_DOMAIN}
 
     watchedResources:
       - Ingress
       - Service
 
     ttl: 1
+    
+    resources:
+      requests:
+        cpu: 50m
+        memory: 100Mi
+      limits:
+        memory: 200Mi
