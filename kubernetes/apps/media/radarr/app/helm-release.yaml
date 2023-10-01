@@ -38,7 +38,7 @@ spec:
       TZ: "${TZ}"
       RADARR__INSTANCE_NAME: Radarr
       RADARR__PORT: &port 7878
-      RADARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
+      RADARR__APPLICATION_URL: "https://{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
       RADARR__LOG_LEVEL: info
       RADARR__API_KEY: ${API_KEY_RADARR}
       RADARR__AUTHENTICATION_METHOD: None
@@ -56,7 +56,7 @@ spec:
         enabled: true
         ingressClassName: int-ingress
         hosts:
-          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
             paths:
               - path: /
         tls:

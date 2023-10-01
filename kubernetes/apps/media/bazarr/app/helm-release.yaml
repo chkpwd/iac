@@ -38,7 +38,7 @@ spec:
       TZ: "${TZ}"
       BAZARR__INSTANCE_NAME: *app
       BAZARR__PORT: &port 6767
-      BAZARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
+      BAZARR__APPLICATION_URL: "https://{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
       BAZARR__API_KEY: ${API_KEY_BAZARR}
       BAZARR__AUTHENTICATION_METHOD: External
       BAZARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
@@ -57,7 +57,7 @@ spec:
         enabled: true
         ingressClassName: int-ingress
         hosts:
-          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
             paths:
               - path: /
         tls:

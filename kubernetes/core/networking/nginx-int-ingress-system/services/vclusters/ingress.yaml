@@ -11,7 +11,7 @@ metadata:
 spec:
   ingressClassName: int-ingress
   rules:
-  - host: dev-cluster.${LOCAL_DOMAIN}
+  - host: dev-cluster.${K8S_GATEWAY_DOMAIN}
     http:
       paths:
       - backend:

@@ -50,7 +50,7 @@ spec:
       enabled: true
       className: int-ingress
       hosts:
-        - host: &host "runwhen-local.${LOCAL_DOMAIN}"
+        - host: &host "runwhen-local.${K8S_GATEWAY_DOMAIN}"
           paths:
             - path: /
               pathType: Prefix

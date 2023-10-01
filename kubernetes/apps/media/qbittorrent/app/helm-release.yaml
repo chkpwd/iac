@@ -66,7 +66,7 @@ spec:
         enabled: true
         ingressClassName: int-ingress
         hosts:
-          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

@@ -45,7 +45,7 @@ spec:
         enabled: true
         ingressClassName: int-ingress
         hosts:
-          - host: "goldilocks.${LOCAL_DOMAIN}"
+          - host: "goldilocks.${K8S_GATEWAY_DOMAIN}"
             paths:
               - path: /
                 type: Prefix

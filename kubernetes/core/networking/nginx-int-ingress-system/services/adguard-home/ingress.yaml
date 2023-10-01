@@ -7,7 +7,7 @@ metadata:
 spec:
   ingressClassName: int-ingress
   rules:
-    - host: &host adguard.${LOCAL_DOMAIN}
+    - host: &host adguard.${K8S_GATEWAY_DOMAIN}
       http:
         paths:
           - path: /

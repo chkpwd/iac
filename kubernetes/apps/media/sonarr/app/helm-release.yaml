@@ -38,7 +38,7 @@ spec:
       TZ: "${TZ}"
       SONARR__INSTANCE_NAME: Sonarr
       SONARR__PORT: &port 8989
-      SONARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
+      SONARR__APPLICATION_URL: "https://{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
       SONARR__API_KEY: ${API_KEY_SONARR}
       SONARR__AUTHENTICATION_METHOD: External
       SONARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
@@ -57,7 +57,7 @@ spec:
         enabled: true
         ingressClassName: int-ingress
         hosts:
-          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

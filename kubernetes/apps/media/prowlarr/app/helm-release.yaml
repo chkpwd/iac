@@ -38,7 +38,7 @@ spec:
       TZ: "${TZ}"
       PROWLARR__INSTANCE_NAME: Prowlarr
       PROWLARR__PORT: &port 9696
-      PROWLARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
+      PROWLARR__APPLICATION_URL: "https://{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
       PROWLARR__LOG_LEVEL: info
       PROWLARR__API_KEY: ${API_KEY_PROWLARR}
       PROWLARR__AUTHENTICATION_METHOD: External
@@ -57,7 +57,7 @@ spec:
         enabled: true
         ingressClassName: int-ingress
         hosts:
-          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

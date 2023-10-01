@@ -55,7 +55,7 @@ spec:
       enabled: true
       className: int-ingress
       hosts:
-        - host: &host "weave-gitops.${LOCAL_DOMAIN}"
+        - host: &host "weave-gitops.${K8S_GATEWAY_DOMAIN}"
           paths:
             - path: /
               pathType: Prefix

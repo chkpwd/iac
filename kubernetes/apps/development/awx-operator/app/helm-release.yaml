@@ -34,7 +34,7 @@ spec:
         admin_password_secret: ${AWX_ADMIN_PASSWORD}
         ingress_type: ingress
         ingress_class_name: int-ingress
-        hostname: &host "awx.${LOCAL_DOMAIN}"
+        hostname: &host "awx.${K8S_GATEWAY_DOMAIN}"
         ingress_path: /
         ingress_path_type: Prefix
         ingress_tls_secret: *host
