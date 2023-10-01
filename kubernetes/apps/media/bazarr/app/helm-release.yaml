@@ -28,7 +28,9 @@ spec:
       fullnameOverride: *app
 
     controller:
-        type: statefulset
+      type: statefulset
+      annotations:
+        reloader.stakater.com/auto: "true"
 
     image:
       repository: ghcr.io/onedr0p/bazarr

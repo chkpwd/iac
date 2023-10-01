@@ -29,6 +29,8 @@ spec:
 
     controller:
       type: statefulset
+      annotations:
+        reloader.stakater.com/auto: "true"
 
     image:
       repository: lscr.io/linuxserver/pyload-ng

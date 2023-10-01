@@ -32,7 +32,9 @@ spec:
       tag: dev
 
     controller:
-        type: statefulset
+      type: statefulset
+      annotations:
+        reloader.stakater.com/auto: "true"
 
     env:
       TZ: "${TZ}"

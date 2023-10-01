@@ -26,6 +26,10 @@ spec:
       retries: 3
 
   values:
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
+
     image:
       repository: ghcr.io/actions-runner-controller/actions-runner-controller
       tag: v0.27.5-52fc819

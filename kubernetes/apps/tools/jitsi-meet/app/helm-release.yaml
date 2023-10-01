@@ -16,6 +16,10 @@ spec:
         name: jitsi
         namespace: flux-system
   values:
+    global:
+      podAnnotations:
+        secret.reloader.stakater.com/reload: *app
+
     fullnameOverride: *app
 
     enableAuth: true

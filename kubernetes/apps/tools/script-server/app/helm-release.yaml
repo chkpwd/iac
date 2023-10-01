@@ -27,6 +27,10 @@ spec:
     global:
       fullnameOverride: *app
 
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
+
     image:
       repository: bugy/script-server
       tag: 1.18.0

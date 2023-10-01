@@ -24,8 +24,13 @@ spec:
       retries: 3
 
   values:
+    global:
+      fullnameOverride: *app
+
     controller:
       type: statefulset
+      annotations:
+        reloader.stakater.com/auto: "true"
 
     image:
       repository: jacobalberty/unifi

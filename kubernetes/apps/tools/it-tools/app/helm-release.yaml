@@ -24,6 +24,13 @@ spec:
       retries: 3
 
   values:
+    global:
+      fullnameOverride: *app
+
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
+
     image:
       repository: ghcr.io/corentinth/it-tools
       tag: 2023.8.16-9bd4ad4
