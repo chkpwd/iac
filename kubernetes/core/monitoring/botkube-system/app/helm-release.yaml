@@ -63,7 +63,7 @@ spec:
     plugins:
       repositories:
         botkube:
-          url: https://github.com/kubeshop/botkube/releases/download/v1.3.0/plugins-index.yaml
+          url: https://github.com/kubeshop/botkube/releases/download/v1.4.0/plugins-index.yaml
 
     actions:
       'describe-created-resource':
@@ -105,20 +105,14 @@ spec:
       flux:
         botkube/flux:
           enabled: true
-        config:
-          log:
-            level: info
+          config:
+            log:
+              level: info
 
     aliases:
       k:
         command: kubectl
         displayName: "Kubectl alias"
-      gpt:
-        command: doctor
-        displayName: "Doctor alias"
-      x:
-        command: exec
-        displayName: "Exec alias"
 
     kgp:
       command: kubectl get pods
