@@ -2,7 +2,7 @@ terraform {
   required_providers {
     gravity = {
       source  = "BeryJu/gravity"
-      version = "0.3.0"
+      version = "0.3.1"
     }
     sops = {
       source  = "carlpett/sops"
