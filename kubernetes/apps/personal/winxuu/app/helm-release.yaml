@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.0.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -28,12 +28,23 @@ spec:
       fullnameOverride: *app
 
     controller:
+      main:
       annotations:
         reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+            repository: ghcr.io/chkpwd/winxuu
+            tag: 2.0.1
+            pullPolicy: IfNotPresent
 
-    image:
-      repository: ghcr.io/chkpwd/winxuu
-      tag: 2.0.1
+          probes:
+            liveness:
+              enabled: false
+            readiness:
+              enabled: false
+            startup:
+              enabled: false
 
     service:
       main:
@@ -44,7 +55,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: ext-ingress
+        className: ext-ingress
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
@@ -55,11 +66,16 @@ spec:
           - hosts:
               - *host
 
-    podSecurityContext:
-      runAsUser: &context 65532
-      runAsGroup: *context
-      fsGroup: *context
-      fsGroupChangePolicy: "OnRootMismatch"
+    defaultPodOptions:
+      securityContext:
+        runAsUser: &context 65532
+        runAsGroup: *context
+        fsGroup: *context
+        fsGroupChangePolicy: "OnRootMismatch"
+
+    persistence:
+      config:
+        enabled: false
 
     resources:
       requests:
