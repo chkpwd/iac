@@ -29,14 +29,17 @@ spec:
 
     controller:
       main:
-      annotations:
-        reloader.stakater.com/auto: "true"
+        enabled: true
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
         containers:
           main:
             image:
-            repository: ghcr.io/chkpwd/winxuu
-            tag: 2.0.1
-            pullPolicy: IfNotPresent
+              repository: ghcr.io/chkpwd/winxuu
+              tag: 2.0.1
+              pullPolicy: IfNotPresent
 
           probes:
             liveness:
