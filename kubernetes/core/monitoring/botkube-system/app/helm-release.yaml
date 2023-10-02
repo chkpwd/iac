@@ -77,7 +77,6 @@ spec:
               bindings:
                 executors:
                   - k8s-default-tools
-                  - helm
                   - flux
                 sources:
                   - k8s-recommendation-events
@@ -133,7 +132,7 @@ spec:
         botkube/kubectl:
           enabled: true
         botkube/helm:
-          enabled: true # If not enabled, plugin is not downloaded and started.
+          enabled: true
       flux:
         botkube/flux:
           enabled: true
