@@ -38,6 +38,34 @@ spec:
       defaultNamespace: "default"
       configWatcher: true
 
+    # Runs as a Non-Privileged user.
+    securityContext:
+      runAsUser: 101
+      runAsGroup: 101
+
+    containerSecurityContext:
+      privileged: false
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+    
+    # -- Role Based Access for Botkube Pod and plugins.
+    # [Ref doc](https://kubernetes.io/docs/admin/authorization/rbac/).
+    rbac:
+      groups:
+        'botkube-plugins-default':
+          create: true
+          rules:
+            - apiGroups: ["*"]
+              resources: ["*"]
+              verbs: ["get", "watch", "list"]
+        'flux-read-patch':
+          # -- Set it to `true` when using Flux executor plugin to enable `flux diff`.
+          create: false
+          rules:
+            - apiGroups: ["*"]
+              resources: ["*"]
+              verbs: ["get", "watch", "list", "patch"]
+
     communications:
       default-group:
         discord:
@@ -49,6 +77,8 @@ spec:
               bindings:
                 executors:
                   - k8s-default-tools
+                  - helm
+                  - flux
                 sources:
                   - k8s-recommendation-events
                   - k8s-all-events
