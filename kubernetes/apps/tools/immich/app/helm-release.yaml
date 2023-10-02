@@ -54,7 +54,7 @@ spec:
           memory: 10Mi
 
     typesense:
-      enabled: true
+      enabled: false
       image:
         repository: docker.io/typesense/typesense
         tag: 0.25.1
@@ -110,7 +110,7 @@ spec:
           memory: 512Mi
 
     machine-learning:
-      enabled: true
+      enabled: false
       image:
         repository: ghcr.io/immich-app/immich-machine-learning
         tag: *appVersion
