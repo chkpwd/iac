@@ -132,6 +132,8 @@ spec:
       k8s-default-tools:
         botkube/kubectl:
           enabled: true
+        botkube/helm:
+          enabled: true # If not enabled, plugin is not downloaded and started.
       flux:
         botkube/flux:
           enabled: true
