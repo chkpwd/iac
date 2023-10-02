@@ -47,7 +47,7 @@ spec:
         {{ .Release.Name }}.media.svc,
         {{ .Release.Name }}.media.svc.cluster,
         {{ .Release.Name }}.media.${CLUSTER_DOMAIN},
-        {{ .Release.Name }}.local.chkpwd.com
+        {{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}
 
     hostname: *app
 
