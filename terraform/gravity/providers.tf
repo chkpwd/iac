@@ -1,6 +1,6 @@
 terraform {
   required_providers {
-    opnsense = {
+    gravity = {
       source  = "BeryJu/gravity"
       version = "0.3.0"
     }
@@ -11,12 +11,12 @@ terraform {
   }
 }
 
-data "sops_file" "opnsense-secrets" {
+data "sops_file" "gravity-secrets" {
   source_file = "../terraform.sops.yaml"
 }
 
 provider "gravity" {
-  url        = data.sops_file.gravity-secrets.data["gravity_url"]
+  url        = "http://172.16.16.4:8008" #TODO Maybe cycle through an array of nodes
   token      = data.sops_file.gravity-secrets.data["gravity_token"]
   insecure   = false
 }

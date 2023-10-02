@@ -1,0 +1,22 @@
+---
+common_user: hyoga
+image_tag: v0.6.13
+
+service_definitions:
+  - name: gravity
+    image: "ghcr.io/beryju/gravity:{{ image_tag }}"
+    network_mode: host
+    env:
+      BOOTSTRAP_ROLES: dns;api;etcd;discovery;backup;monitoring;tsdb
+      DATA_PATH: /data
+      LOG_LEVEL: info
+      ADMIN_PASSWORD: "{{ GRAVITY_ADMIN_PASSWORD }}"
+      ADMIN_TOKEN: "{{ GRAVITY_TOKEN }}"
+      ETCD_JOIN_CLUSTER: "{{ GRAVITY_TOKEN_EPHEMERAL }},{{ gravity_http_url }}"
+      LISTEN_ONLY: "true"
+    volumes:
+      - "{{ configuration_path }}/gravity:/data"
+    log_driver: json-file
+    log_options:
+      max-size: "10m"
+      max-file: "3"

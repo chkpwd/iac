@@ -1,0 +1,31 @@
+---
+- name: Setup DNS Server
+  hosts: dns_servers
+  become: true
+
+  tasks:
+    - name: Install Packages
+      ansible.builtin.apt:
+        update_cache: true
+        name:
+          - vim
+          - curl
+          - wget
+          - iputils-ping
+        state: present
+
+    - name: User Administration
+      ansible.builtin.include_tasks: ../tasks/linux/create_user.yaml
+        
+    - name: Docker Containerization | Installation
+      ansible.builtin.include_tasks: ../tasks/docker/install_docker.yaml
+
+    - name: expand file system
+      when: "'dns-srv-01' in ansible_nodename"
+      command: "raspi-config nonint do_expand_rootfs"
+
+    - name: Deploy Docker containers # noqa args[module]
+      community.docker.docker_container: "{{ item }}"
+      loop: "{{ service_definitions }}"
+      loop_control:
+        label: "{{ item.name }}"

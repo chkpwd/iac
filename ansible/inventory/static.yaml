@@ -37,6 +37,8 @@ all:
         kubes-cp-3:
         stable-diffusion:
         boot-server:
+        dns-srv-01:
+        dns-srv-02:
 
     windows:
       hosts:
@@ -45,7 +47,6 @@ all:
           ansible_user: chkpwd
           ansible_become_method: runas
           ansible_become_user: chkpwd
-
         bloodhound:
 
     docker_hosts:
@@ -55,7 +56,9 @@ all:
         ct-01-x86:
         ct-02-x86:
         boot-server:
-    
+        dns-srv-01:
+        dns-srv-02:
+
     k3s_cluster:
       children:
         k3s_master:
@@ -92,6 +95,11 @@ all:
           ansible_host:	129.80.241.202
         ct-02-x86:
           ansible_host: 150.136.245.5
+
+    dns_servers:
+      hosts:
+        dns-srv-01:
+        dns-srv-02:
 
     onprem:
       children:
