@@ -58,3 +58,12 @@ spec:
             retain: 1
         filesystem-trim:
           - interval: 4h
+      "Game-Servers":
+        options:
+          parameters:
+            numberOfReplicas: "1"
+        backup:
+          - interval: 24h
+            retain: 1
+        filesystem-trim:
+          - interval: 4h
