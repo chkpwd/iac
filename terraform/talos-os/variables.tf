@@ -20,7 +20,7 @@ variable "vsphere_compute_cluster" {
 }
 
 variable "vsphere_datastore" {
-  default = "nvme-30A"
+  default = "NVME-30A"
 }
 
 variable "vsphere_network" {
