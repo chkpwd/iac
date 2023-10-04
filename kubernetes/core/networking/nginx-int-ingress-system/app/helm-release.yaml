@@ -41,6 +41,15 @@ spec:
       ingressClassResource:
         name: int-ingress
         default: true
+        controllerValue: k8s.io/ingress-nginx-internal
+
+      admissionWebhooks:
+        objectSelector:
+          matchExpressions:
+            - key: ingress-class
+              operator: In
+              values:
+                - int-ingress
 
       config:
         client-header-timeout: 120
