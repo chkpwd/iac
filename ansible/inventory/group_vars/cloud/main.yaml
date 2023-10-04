@@ -60,22 +60,22 @@ uptime_kuma_monitors:
 
   - name: Kube-VIP LoadBalancer
     type: ping
-    url: 172.16.16.200
+    url: 172.16.16.13
     parent: Services Ping
 
   - name: Kubernetes Node 1
     type: ping
-    url: 172.16.16.201
+    url: 172.16.16.10
     parent: Services Ping
 
   - name: Kubernetes Node 2
     type: ping
-    url: 172.16.16.202
+    url: 172.16.16.11
     parent: Services Ping
 
   - name: Kubernetes Node 3
     type: ping
-    url: 172.16.16.203
+    url: 172.16.16.12
     parent: Services Ping
 
   # Sites
