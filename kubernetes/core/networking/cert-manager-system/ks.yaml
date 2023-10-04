@@ -7,7 +7,7 @@ metadata:
 spec:
   dependsOn:
     - name: core-cert-manager-config
-  path: ./kubernetes/core/cert-manager-system/app
+  path: ./kubernetes/core/networking/cert-manager-system/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -23,7 +23,7 @@ metadata:
   name: core-cert-manager-config
   namespace: flux-system
 spec:
-  path: ./kubernetes/core/cert-manager-system/config
+  path: ./kubernetes/core/networking/cert-manager-system/config
   prune: true
   sourceRef:
     kind: GitRepository
@@ -40,7 +40,7 @@ metadata:
 spec:
   dependsOn:
     - name: core-cert-manager
-  path: ./kubernetes/core/cert-manager-system/issuers
+  path: ./kubernetes/core/networking/cert-manager-system/issuers
   prune: true
   sourceRef:
     kind: GitRepository
@@ -57,7 +57,7 @@ metadata:
 spec:
   dependsOn:
     - name: core-cert-manager
-  path: ./kubernetes/core/cert-manager-system/certificates
+  path: ./kubernetes/core/networking/cert-manager-system/certificates
   prune: true
   sourceRef:
     kind: GitRepository

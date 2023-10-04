@@ -2,10 +2,12 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-system-upgrade
+  name: core-weave-gitops
   namespace: flux-system
 spec:
-  path: ./kubernetes/core/system-upgrade-system/app
+  dependsOn:
+    - name: core-weave-gitops-config
+  path: ./kubernetes/core/management/weave-gitops-system/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -18,12 +20,10 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-system-upgrade-plan
+  name: core-weave-gitops-config
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: core-system-upgrade
-  path: ./kubernetes/core/system-upgrade-system/plan
+  path: ./kubernetes/core/management/weave-gitops-system/config
   prune: true
   sourceRef:
     kind: GitRepository

@@ -2,15 +2,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - namespaces
   - networking
   - monitoring
   - databases
   - storage
-  - longhorn-system/ks.yaml
-  - metallb-system/ks.yaml
-  - cert-manager-system/ks.yaml
-  - reloader-system/ks.yaml
-  - system-upgrade-system/ks.yaml
-  - kubevirt-system/ks.yaml
-  - weave-gitops-system/ks.yaml
+  - management

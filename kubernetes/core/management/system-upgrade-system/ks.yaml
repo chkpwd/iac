@@ -2,33 +2,33 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-metallb
+  name: core-system-upgrade
   namespace: flux-system
 spec:
-  path: ./kubernetes/core/metallb-system/app
+  path: ./kubernetes/core/management/system-upgrade-system/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
   wait: true
-  interval: 15m
+  interval: 30m
   retryInterval: 1m
   timeout: 5m
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-metallb-config
+  name: core-system-upgrade-plan
   namespace: flux-system
 spec:
   dependsOn:
-    - name: core-metallb
-  path: ./kubernetes/core/metallb-system/config
+    - name: core-system-upgrade
+  path: ./kubernetes/core/management/system-upgrade-system/plan
   prune: true
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
   wait: true
-  interval: 15m
+  interval: 30m
   retryInterval: 1m
   timeout: 5m
