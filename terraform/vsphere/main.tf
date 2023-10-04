@@ -95,6 +95,7 @@ module "kube-ops" {
   count                     = 3
   vm_name                   = "kubes-cp-${count.index + 1}"
   vm_template               = "k3s-deb12"
+  vm_datastore              = "NVME-30B"
   network_spec = {
     network_id              = "LAN"
     mac_address             = ["00:50:56:93:8a:b9", "00:50:56:93:35:60", "00:50:56:93:fa:88"][count.index]
@@ -109,7 +110,7 @@ module "kube-ops" {
     disk_size               = 32
     additional_disks = [
       {
-        size                = 75
+        size                = 200
       }
     ]
   }

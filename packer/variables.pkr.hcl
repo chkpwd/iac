@@ -20,7 +20,7 @@ variable "vcenter_host" {
   default = "octane.local.chkpwd.com"
 }
 variable "vcenter_datastore" {
-  default = "nvme-30A"
+  default = "NVME-30A"
 }
 variable "vcenter_folder" {
   description = "The vcenter folder to store the template"
