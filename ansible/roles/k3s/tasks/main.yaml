@@ -33,7 +33,7 @@
 
 - name: Control remote_user escalation
   vars: 
-    common_user_dir: "/home/{{ common_user }}"
+    common_user_dir: "/home/{{ lookup('env', 'USER') }}"
   block:
     - name: Copy kubeconfig file
       become: false
@@ -53,37 +53,63 @@
         path: "{{ common_user_dir }}/.kube/config"
         regexp: "https://127.0.0.1:6443"
         replace: "https://{{ kube_vip_address }}:6443"
-        owner: "{{ common_user }}"
-        group: "{{ common_user }}"
+        owner: "ubuntu"
+        group: "ubuntu"
         mode: "0600"
 
-- name: Create Flux Namespace
-  delegate_to: localhost
-  run_once: true
-  kubernetes.core.k8s:
-    name: "{{ flux_namespace }}"
-    api_version: v1
-    kind: Namespace
-    state: present
-    kubeconfig: "/home/{{ common_user }}/.kube/config"
-  retries: 3
+    - name: Create Flux Namespace
+      delegate_to: localhost
+      run_once: true
+      kubernetes.core.k8s:
+        name: "{{ flux_namespace }}"
+        api_version: v1
+        kind: Namespace
+        state: present
+        kubeconfig: "{{ common_user_dir }}/.kube/config"
+      retries: 3
 
-- name: Create SOPs secret
-  delegate_to: localhost
-  run_once: true
-  kubernetes.core.k8s:
-    state: present
-    template: templates/age.sops.yaml.j2 
-    kubeconfig: "/home/{{ common_user }}/.kube/config"
-  become: false
-  retries: 3
+    - name: Create SOPs secret
+      delegate_to: localhost
+      run_once: true
+      kubernetes.core.k8s:
+        state: present
+        template: templates/age.sops.yaml.j2 
+        kubeconfig: "{{ common_user_dir }}/.kube/config"
+      become: false
+      retries: 3
 
-- name: Bootstrap flux
-  delegate_to: localhost
-  run_once: true
-  command: kubectl apply --server-side --kustomize {{ role_path }}/files/bootstrap_flux
+    - name: Generate kustomize output
+      delegate_to: localhost
+      command:
+        cmd: "kubectl kustomize {{ role_path }}/files/bootstrap_flux"
+      register: kustomize_output
+      changed_when: false
 
-- name: Apply flux config
-  delegate_to: localhost
-  run_once: true
-  command: kubectl apply --server-side --kustomize {{ role_path }}/files/apply_flux
+    - name: Apply kustomized manifests using server-side apply
+      delegate_to: localhost
+      become: false
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ kustomize_output.stdout | from_yaml_all }}"
+        apply: yes
+        kubeconfig: "{{ common_user_dir }}/.kube/config"
+        server_side_apply:
+          field_manager: ansible
+
+    - name: Generate kustomize output for apply_flux
+      delegate_to: localhost
+      command:
+        cmd: "kubectl kustomize {{ role_path }}/files/apply_flux"
+      register: kustomize_output_flux
+      changed_when: false
+
+    - name: Apply kustomized manifests for apply_flux using server-side apply
+      delegate_to: localhost
+      become: false
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ kustomize_output_flux.stdout | from_yaml_all }}"
+        apply: yes
+        kubeconfig: "{{ common_user_dir }}/.kube/config"
+        server_side_apply:
+          field_manager: ansible
