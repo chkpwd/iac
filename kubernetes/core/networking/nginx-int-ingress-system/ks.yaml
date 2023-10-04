@@ -5,6 +5,8 @@ metadata:
   name: core-internal-nginx
   namespace: flux-system
 spec:
+  dependsOn:
+    - name: core-cert-manager
   path: ./kubernetes/core/networking/nginx-int-ingress-system/app
   prune: true
   sourceRef:
