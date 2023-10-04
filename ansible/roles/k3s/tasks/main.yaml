@@ -78,38 +78,27 @@
       become: false
       retries: 3
 
-    - name: Generate kustomize output
+    # Generate all kustomize outputs
+    - name: Generate kustomize outputs
       delegate_to: localhost
       command:
-        cmd: "kubectl kustomize {{ role_path }}/files/bootstrap_flux"
-      register: kustomize_output
+        cmd: "kubectl kustomize {{ role_path }}/files/{{ item }}"
+      register: kustomize_outputs
+      loop:
+        - crd
+        - bootstrap_flux
+        - apply_flux
       changed_when: false
 
+    # Apply the kustomized manifests
     - name: Apply kustomized manifests using server-side apply
       delegate_to: localhost
       become: false
       kubernetes.core.k8s:
         state: present
-        definition: "{{ kustomize_output.stdout | from_yaml_all }}"
+        definition: "{{ item.stdout | from_yaml_all }}"
         apply: yes
         kubeconfig: "{{ common_user_dir }}/.kube/config"
         server_side_apply:
           field_manager: ansible
-
-    - name: Generate kustomize output for apply_flux
-      delegate_to: localhost
-      command:
-        cmd: "kubectl kustomize {{ role_path }}/files/apply_flux"
-      register: kustomize_output_flux
-      changed_when: false
-
-    - name: Apply kustomized manifests for apply_flux using server-side apply
-      delegate_to: localhost
-      become: false
-      kubernetes.core.k8s:
-        state: present
-        definition: "{{ kustomize_output_flux.stdout | from_yaml_all }}"
-        apply: yes
-        kubeconfig: "{{ common_user_dir }}/.kube/config"
-        server_side_apply:
-          field_manager: ansible
+      loop: "{{ kustomize_outputs.results }}"
