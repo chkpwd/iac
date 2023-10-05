@@ -44,6 +44,9 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# renovate: datasource=github-tags depName=BeryJu/korb
+ARG KORB_VERSION=v2.2.0
+
 # renovate: datasource=github-tags depName=atuinsh/atuin
 ARG ATUIN_VERSION=16.0.0
 
@@ -100,6 +103,9 @@ ARG PLUTO_VERSION=5.18.4
 
 # Download and Install Various Tools
 RUN \
+    # Download and install Korb
+    curl -L "https://github.com/BeryJu/korb/releases/download/{KORB_VERSION}/korb_linux_amd64" -o /tmp/korb && \
+    mv /tmp/korb /usr/bin/korb && \
     # Download and install Atuin
     curl -L "https://github.com/atuinsh/atuin/releases/download/v${ATUIN_VERSION}/atuin-v${ATUIN_VERSION}-x86_64-unknown-linux-gnu.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
     mv /tmp/atuin /usr/bin/atuin && \
