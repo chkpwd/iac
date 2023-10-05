@@ -30,7 +30,8 @@ spec:
       ingressClassName: int-ingress
       host: longhorn.${K8S_GATEWAY_DOMAIN}
       tls: true
-      tlsSecret: chkpwd-cert-production
+      secureBackends: true
+      tlsSecret: longhorn-tls
       path: /
 
     persistence:
