@@ -22,7 +22,7 @@ data "sops_file" "unifi-secrets" {
 provider "unifi" {
   username = "terraform"
   password = data.sops_file.unifi-secrets.data["tf_svc_unifi_pwd"]
-  api_url  = "https://172.16.16.207:8443"
+  api_url  = "https://172.16.16.33:8443"
 
   allow_insecure = true
 
