@@ -24,6 +24,11 @@ spec:
       retries: 3
 
   values:
+    image:
+      repository: us-docker.pkg.dev/fairwinds-ops/oss/goldilocks
+      tag: v4.10.0
+      pullPolicy: Always
+
     controller:
       resources:
         requests:
@@ -33,7 +38,14 @@ spec:
           memory: 270M
 
     dashboard:
+      enabled: true
       replicaCount: 1
+
+      service:
+        type: ClusterIP
+        port: 80
+        annotations: {}
+
       resources:
         requests:
           cpu: 15m
@@ -45,7 +57,11 @@ spec:
         enabled: true
         ingressClassName: int-ingress
         hosts:
-          - host: "goldilocks.${K8S_GATEWAY_DOMAIN}"
+          - host: &host "goldilocks.${K8S_GATEWAY_DOMAIN}"
             paths:
               - path: /
                 type: Prefix
+        tls:
+          - secretName: chkpwd-cert-production
+            hosts:
+              - *host
