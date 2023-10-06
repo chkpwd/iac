@@ -78,7 +78,7 @@ module "win-srv-2022" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
-    folder                  = vsphere_folder.gaming_windows.path
+    folder                  = vsphere_folder.windows.path
     cpu                     = 4
     memory                  = 1024 * 8
     disk_size               = 48
@@ -125,11 +125,11 @@ module "stable-diffusion" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id ]
-    folder                  = vsphere_folder.personal_linux.path
+    folder                  = vsphere_folder.dev.path
     cpu                     = 8
     memory                  = 1024 * 16
     memory_reservation      = true
-    pci_device              =  [ data.vsphere_host_pci_device.nvidia_1080.id ]
+    pci_device              = [ data.vsphere_host_pci_device.nvidia_1080.id ]
     disk_size               = 16
     additional_disks = [
       {
@@ -169,7 +169,7 @@ module "dns-srv-02" {
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
-    folder                  = vsphere_folder.personal_linux.path
+    folder                  = vsphere_folder.dev.path
     cpu                     = 1
     memory                  = 1024 * 1
     disk_size               = 16
@@ -177,6 +177,31 @@ module "dns-srv-02" {
       {
         size                = 10
       } 
+    ]
+  }
+}
+
+module "win10-gaming-01" {
+  source                    = "../_modules/vsphere_vm"
+  count                     = 1
+  vm_name                   = "win10-gaming-01"
+  vm_template               = "W10-22H2-Temp"
+  network_spec = {
+    network_id              = "Lab"
+  }
+  spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id, vsphere_tag.windows.id ]
+    folder                  = vsphere_folder.gaming_windows.path
+    cpu                     = 4
+    memory                  = 1024 * 8
+    memory_reservation      = true
+    pci_device              = [ data.vsphere_host_pci_device.nvidia_1050ti.id ]
+    disk_size               = 48
+    scsi_type               = "lsilogic-sas"
+    additional_disks = [
+      {
+        size                = 100
+      }
     ]
   }
 }
