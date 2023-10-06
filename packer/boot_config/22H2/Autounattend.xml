@@ -97,9 +97,9 @@
                         <DiskID>0</DiskID>
                         <PartitionID>4</PartitionID>
                     </InstallTo>
+                    <WillShowUI>OnError</WillShowUI>
                 </OSImage>
             </ImageInstall>
-
             <UserData>
                 <ProductKey>
                     <key>W269N-WFGWX-YVC9B-4J6C9-T83GX</key>
@@ -168,30 +168,14 @@
             <FirstLogonCommands>
                 <SynchronousCommand wcm:action="add">
                     <CommandLine>cmd.exe /c powershell -Command "Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force"</CommandLine>
-                    <Description>Set Execution Policy 64 Bit</Description>
-                    <Order>1</Order>
-                    <RequiresUserInput>true</RequiresUserInput>
-                </SynchronousCommand>
-                <SynchronousCommand wcm:action="add">
-                    <CommandLine>C:\Windows\SysWOW64\cmd.exe /c powershell -Command "Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force"</CommandLine>
-                    <Description>Set Execution Policy 32 Bit</Description>
+                    <Description>Set Execution Policy</Description>
                     <Order>3</Order>
                     <RequiresUserInput>true</RequiresUserInput>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
-                    <CommandLine>cmd.exe /c A:\winrm.bat</CommandLine>
-                    <Description>WinRM Enabling</Description>
+                    <CommandLine>powershell.exe -File A:\Setup-OpenSSH.ps1</CommandLine>
+                    <Description>Setup SSH on host</Description>
                     <Order>5</Order>
-                </SynchronousCommand>
-                <SynchronousCommand wcm:action="add">
-                    <CommandLine>powershell.exe -File A:\Fix-Firewall.ps1</CommandLine>
-                    <Description>Change Firewall to Private</Description>
-                    <Order>6</Order>
-                </SynchronousCommand>
-                <SynchronousCommand wcm:action="add">
-                    <Order>8</Order>
-                    <Description>Disable Windows Firewall</Description>
-                    <CommandLine>cmd.exe /c "Netsh Advfirewall set allprofiles state off"</CommandLine>
                 </SynchronousCommand>
                 <SynchronousCommand>
                     <Order>9</Order>
@@ -209,7 +193,6 @@
                <UILanguage>en-US</UILanguage>
                <UserLocale>en-US</UserLocale>
          </component>
-
     </settings>
 
     <settings pass="offlineServicing">
