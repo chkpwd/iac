@@ -16,3 +16,8 @@ data "vsphere_host_pci_device" "nvidia_1080" {
   host_id    = data.vsphere_host.main.id
   name_regex = "1080"
 }
+
+data "vsphere_host_pci_device" "nvidia_1050ti" {
+  host_id    = data.vsphere_host.main.id
+  name_regex = "1050"
+}
