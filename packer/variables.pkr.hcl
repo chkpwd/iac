@@ -27,7 +27,7 @@ variable "vcenter_folder" {
   default = "cattle/templates"
 }
 variable "connection_username" {
-  default = "hyoga"
+  default = "administrator"
 }
 variable "connection_password" {
   default = "Unattendvm1"

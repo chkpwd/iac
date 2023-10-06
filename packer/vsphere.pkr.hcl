@@ -100,16 +100,13 @@ source "vsphere-iso" "windows" {
     network_card = var.nic_type
   }
 
-  # WinRM Communicator Settings
-  # communicator          = "winrm"
-  ssh_username = var.connection_username
-  ssh_password = var.connection_password
-  ssh_timeout = "1h"
+  # SSH Communicator Settings
+  communicator              = "ssh"
+  ssh_username              = var.connection_username
+  ssh_password              = var.connection_password
+  ssh_private_key_file      = "~/.ssh/main"
+  ssh_timeout               = "1h"
   ssh_clear_authorized_keys = true
-  # winrm_username        = var.connection_username
-  # winrm_password        = var.connection_password
-  # winrm_timeout         = "12h"
-  # winrm_port            = "5985"
 
   storage {
     disk_size             = var.root_disk_size
