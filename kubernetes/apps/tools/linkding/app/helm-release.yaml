@@ -31,6 +31,7 @@ spec:
       main:
         enabled: true
         type: deployment
+        strategy: RollingUpdate
         annotations:
           reloader.stakater.com/auto: "true"
 
@@ -39,7 +40,7 @@ spec:
         pod:
           enableServiceLinks: false
           securityContext:
-            runAsUser: &context 65532
+            runAsUser: &context 0
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
@@ -49,6 +50,7 @@ spec:
             image:
               repository: sissbruecker/linkding
               tag: 1.22.0
+
             env:
               LD_SUPERUSER_NAME: chkpwd
               LD_SUPERUSER_PASSWORD:
@@ -85,11 +87,21 @@ spec:
                     name: linkding-pguser-linkding
                     key: password
 
+            securityContext:
+              allowPrivilegeEscalation: false
+
+            resources:
+              requests:
+                cpu: 12m
+                memory: 64M
+              limits:
+                memory: 256M
+
     service:
       main:
         ports:
           http:
-            port: 3000
+            port: 9090
 
     ingress:
       main:
@@ -108,10 +120,3 @@ spec:
         tls:
           - hosts:
               - *host
-
-    resources:
-      requests:
-        cpu: 13m
-        memory: 64Mi
-      limits:
-        memory: 256Mi
