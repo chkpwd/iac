@@ -165,6 +165,7 @@ build {
     }
     provisioner "windows-update" { # This requires windows-update-provisioner https://github.com/rgl/packer-provisioner-windows-update
         pause_before = "30s"
+        search_criteria = "IsInstalled=0"
         filters = [
           "exclude:$_.Title -like '*VMware*'",
           "exclude:$_.Title -like '*Preview*'",

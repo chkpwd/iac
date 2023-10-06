@@ -53,10 +53,10 @@ variable "network_name" {
   default = "LAN"
 }
 variable "num_cores" {
-  default = 4
+  default = 8
 }
 variable "mem_size" {
-  default = 4096
+  default = 1024 * 8
 }
 variable "os_family" {
   description = "OS Family builds the paths needed for packer"
