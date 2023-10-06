@@ -2,12 +2,12 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: tools-linkwarden
+  name: tools-linkding
   namespace: flux-system
 spec:
   dependsOn:
-    - name: tools-linkwarden-config
-  path: ./kubernetes/apps/tools/linkwarden/app
+    - name: tools-linkding-config
+  path: ./kubernetes/apps/tools/linkding/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -20,10 +20,10 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: tools-linkwarden-config
+  name: tools-linkding-config
   namespace: flux-system
 spec:
-  path: ./kubernetes/apps/tools/linkwarden/config
+  path: ./kubernetes/apps/tools/linkding/config
   prune: true
   sourceRef:
     kind: GitRepository
