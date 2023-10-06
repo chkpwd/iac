@@ -93,7 +93,7 @@ ARG SOPS_VERSION=3.8.0
 ARG BW_CLI_VERSION=2023.8.2
 
 # renovate: datasource=github-tags depName=loft-sh/vcluster
-ARG VCLUSTER_VERSION=0.15.7
+ARG VCLUSTER_VERSION=v0.16.2
 
 # renovate: datasource=github-tags depName=FairwindsOps/nova
 ARG NOVA_VERSION=3.7.0
