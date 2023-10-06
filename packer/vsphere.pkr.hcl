@@ -27,6 +27,8 @@ source "vsphere-iso" "linux" {
   ssh_password = var.connection_password
   http_content = local.preseed_config
 
+  # Needed for TPM
+  vTPM         = true
   firmware     = "efi"
 
   CPUs            = var.num_cores
@@ -125,6 +127,7 @@ source "vsphere-iso" "windows" {
     "./scripts/Install-VMWareTools.ps1",
     "./scripts/Fix-Firewall.ps1",
     "./files/TaskbarLayout.xml",
+    "./drivers"
   ]
 }
 
