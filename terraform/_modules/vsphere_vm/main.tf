@@ -8,11 +8,13 @@ resource "vsphere_virtual_machine" "main" {
 
   name             = var.vm_name
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
+  host_system_id   = data.vsphere_host.main.id
   datastore_id     = data.vsphere_datastore.datastore.id
 
-  num_cpus = var.spec.cpu
-  memory   = var.spec.memory
-  guest_id = data.vsphere_virtual_machine.template.guest_id
+  num_cpus  = var.spec.cpu
+  memory    = var.spec.memory
+  guest_id  = data.vsphere_virtual_machine.template.guest_id
+  scsi_type = var.spec.scsi_type != null ? var.spec.scsi_type : null
   nested_hv_enabled = var.spec.enable_hv
 
   sync_time_with_host = true
