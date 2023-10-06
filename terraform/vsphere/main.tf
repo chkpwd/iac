@@ -68,10 +68,10 @@ module "homeassistant" {
   }
 }
 
-module "gaming-vm-01" {
+module "win-srv-2022" {
   source                    = "../_modules/vsphere_vm"
-  count                     = 0
-  vm_name                   = "gaming-vm-01"
+  count                     = 1
+  vm_name                   = "win-srv-2022"
   vm_template               = "WSrv22-DE-Temp"
   network_spec = {
     network_id              = "IoT"
