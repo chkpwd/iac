@@ -51,14 +51,29 @@ resource "vsphere_virtual_machine" "main" {
     linked_clone  = var.spec.linked_clone
 
     dynamic "customize" {
-      for_each = length(regexall("^win.*", data.vsphere_virtual_machine.template.guest_id)) == 0 ? [1] : []
+      # Check if it's a Windows VM
+      for_each = length(regexall("^win.*", data.vsphere_virtual_machine.template.guest_id)) > 0 ? ["windows"] : ["linux"]
+
       content {
         timeout = "20"
 
-        linux_options {
-          host_name = var.vm_name
-          domain    = var.vm_domain
+        dynamic "linux_options" {
+          for_each = customize.value == "linux" ? [1] : []
+          content {
+            host_name = var.vm_name
+            domain    = var.vm_domain
+          }
         }
+
+        dynamic "windows_options" {
+          for_each = customize.value == "windows" ? [1] : []
+          content {
+            computer_name  = var.vm_name
+            workgroup      = "CHKPWD"
+            admin_password = "terraform"
+          }
+        }
+
         network_interface {}
       }
     }
