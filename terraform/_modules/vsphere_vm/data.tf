@@ -11,6 +11,11 @@ data "vsphere_compute_cluster" "cluster" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
+data "vsphere_host" "main" {
+  name          = "octane.${var.domain}"
+  datacenter_id = data.vsphere_datacenter.dc.id
+}
+
 data "vsphere_datastore" "datastore" {
   name          = var.vm_datastore
   datacenter_id = data.vsphere_datacenter.dc.id
