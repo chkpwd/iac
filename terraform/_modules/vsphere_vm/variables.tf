@@ -1,3 +1,8 @@
+variable "domain" {
+  description = "Domain name"
+  default = "local.chkpwd.com"
+}
+
 variable "vsphere_unverified_ssl" {
   description = "Is the vCenter using a self signed certificate (true/false)"
   default = "true"
@@ -48,6 +53,7 @@ variable "spec" {
     cpu       = number
     memory    = number
     disk_size = number
+    scsi_type  = optional(string)
     linked_clone = optional(bool)
     pci_device = optional(list(string))
     memory_reservation = optional(bool)
