@@ -33,10 +33,10 @@ spec:
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
+
         replicas: 1
 
         statefulset:
-          podManagementPolicy:
           volumeClaimTemplates:
             - name: config
               mountPath: /data/data
@@ -44,12 +44,19 @@ spec:
               size: 2Gi
               storageClass: longhorn-config
 
+        pod:
+          enableServiceLinks: false
+          securityContext:
+            runAsUser: &context 65532
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
+
         containers:
           main:
             image:
               repository: ghcr.io/linkwarden/linkwarden
               tag: main
-              pullPolicy: IfNotPresent
             env:
               DATABASE_URL:
                 valueFrom:
@@ -63,14 +70,6 @@ spec:
                     key: nextauth-secret
               NEXTAUTH_URL: "https://linkwarden.${EXTERNAL_DOMAIN}"
               NEXT_PUBLIC_DISABLE_REGISTRATION: "true"
-
-          probes:
-            liveness:
-              enabled: true
-            readiness:
-              enabled: true
-            startup:
-              enabled: true
 
     service:
       main:
@@ -89,16 +88,12 @@ spec:
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - *host
-
-    defaultPodOptions:
-      securityContext:
-        runAsUser: &context 65532
-        runAsGroup: *context
-        fsGroup: *context
-        fsGroupChangePolicy: "OnRootMismatch"
 
     persistence:
       config:
