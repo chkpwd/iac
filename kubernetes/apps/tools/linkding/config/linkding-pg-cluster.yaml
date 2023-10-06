@@ -2,7 +2,7 @@
 apiVersion: postgres-operator.crunchydata.com/v1beta1
 kind: PostgresCluster
 metadata:
-  name: linkwarden
+  name: linkding
   namespace: tools
 spec:
   postgresVersion: 15
@@ -16,9 +16,9 @@ spec:
             storage: 1Gi
 
   users:
-    - name: linkwarden
+    - name: linkding
       databases:
-        - linkwarden
+        - linkding
       options: "SUPERUSER"
 
   backups:

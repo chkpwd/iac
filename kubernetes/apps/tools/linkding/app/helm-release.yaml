@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: &app linkwarden
+  name: &app linkding
   namespace: tools
 spec:
   interval: 15m
@@ -30,19 +30,11 @@ spec:
     controllers:
       main:
         enabled: true
-        type: statefulset
+        type: deployment
         annotations:
           reloader.stakater.com/auto: "true"
 
         replicas: 1
-
-        statefulset:
-          volumeClaimTemplates:
-            - name: config
-              mountPath: /data/data
-              accessMode: "ReadWriteOnce"
-              size: 2Gi
-              storageClass: longhorn-config
 
         pod:
           enableServiceLinks: false
@@ -55,21 +47,43 @@ spec:
         containers:
           main:
             image:
-              repository: ghcr.io/linkwarden/linkwarden
-              tag: main
+              repository: sissbruecker/linkding
+              tag: 1.22.0
             env:
-              DATABASE_URL:
+              LD_SUPERUSER_NAME: chkpwd
+              LD_SUPERUSER_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: linkwarden-pguser-linkwarden
-                    key: uri
-              NEXTAUTH_SECRET:
+                    name: linkding-secrets
+                    key: LD_SUPERUSER_PASSWORD
+              LD_CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+              LD_DISABLE_URL_VALIDATION: true
+              LD_DB_ENGINE: "postgres"
+              LD_DB_HOST:
                 valueFrom:
                   secretKeyRef:
-                    name: linkwarden-secrets
-                    key: nextauth-secret
-              NEXTAUTH_URL: "https://linkwarden.${EXTERNAL_DOMAIN}"
-              NEXT_PUBLIC_DISABLE_REGISTRATION: "true"
+                    name: linkding-pguser-linkding
+                    key: host
+              LD_DB_PORT:
+                valueFrom:
+                  secretKeyRef:
+                    name: linkding-pguser-linkding
+                    key: port
+              LD_DB_DATABASE:
+                valueFrom:
+                  secretKeyRef:
+                    name: linkding-pguser-linkding
+                    key: dbname
+              LD_DB_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: linkding-pguser-linkding
+                    key: user
+              LD_DB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: linkding-pguser-linkding
+                    key: password
 
     service:
       main:
@@ -94,10 +108,6 @@ spec:
         tls:
           - hosts:
               - *host
-
-    persistence:
-      config:
-        enabled: false
 
     resources:
       requests:
