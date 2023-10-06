@@ -166,15 +166,15 @@ build {
           "scripts/Setup-NewUser.ps1"
         ]
     }
-    provisioner "windows-update" { # This requires windows-update-provisioner https://github.com/rgl/packer-provisioner-windows-update
-        pause_before = "30s"
-        search_criteria = "IsInstalled=0"
-        filters = [
-          "exclude:$_.Title -like '*VMware*'",
-          "exclude:$_.Title -like '*Preview*'",
-          "include:$true"
-        ]
-    }
+    // provisioner "windows-update" { # This requires windows-update-provisioner https://github.com/rgl/packer-provisioner-windows-update
+    //     pause_before = "30s"
+    //     search_criteria = "IsInstalled=0"
+    //     filters = [
+    //       "exclude:$_.Title -like '*VMware*'",
+    //       "exclude:$_.Title -like '*Preview*'",
+    //       "include:$true"
+    //     ]
+    // }
     provisioner "powershell" {
         elevated_user = var.connection_username
         elevated_password = var.connection_password
