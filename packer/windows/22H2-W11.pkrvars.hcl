@@ -1,5 +1,5 @@
 machine_name = "W11-22H2-Temp"
-os_version = "22H2"
+os_version = "22H2-W11"
 os_family = "windows"
 guest_os_type = "windows9_64Guest"
 os_iso_path = "[datastore1] iso/en-us_windows_11_business_editions_version_22h2_updated_may_2023_x64_dvd_c2d14816.iso"
