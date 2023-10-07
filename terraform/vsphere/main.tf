@@ -192,8 +192,8 @@ module "win10-gaming-01" {
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id, vsphere_tag.windows.id ]
     folder                  = vsphere_folder.gaming_windows.path
-    cpu                     = 4
-    memory                  = 1024 * 8
+    cpu                     = 8
+    memory                  = 1024 * 16
     memory_reservation      = true
     pci_device              = [ data.vsphere_host_pci_device.nvidia_1050ti.id ]
     disk_size               = 48

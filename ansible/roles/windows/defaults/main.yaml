@@ -1,14 +1,23 @@
 ---
+buckets:
+  - extras
+  - main
+  - versions
+  - games
 chocolates:
 # Drivers
   - amd-ryzen-chipset
   - geforce-game-ready-driver
   - hwinfo
+  - dropbox
+scoops:
+# Drivers
+  - nvcleanstall
 # Games
   - sunshine
   - ryujinx
-  - steam
-  - epicgameslauncher
+  - versions/steam
+  - epic-games-launcher
   - playnite
 # Development
   - k9s
@@ -16,27 +25,27 @@ chocolates:
   - neovim
   - vscode
   - hugo
-  - dropbox
   - rclone
   - openlens
   - starship
   - chezmoi
   - podman-desktop
   - bitwarden-cli
+  - powershell-core
 # Tools
   - 7zip
   - sharex
   - postman
+  - powertoys
 # Communication
-  # - whatsapp
+  - whatsapp
   - discord
   - zoom
 # Utilities
   - bitwarden
-  - authy-desktop
-  - podman-desktop
+  - authy
   - vlc
   - obsidian
-  - plex
+  - plex-desktop
   - prusaslicer
   - firefox

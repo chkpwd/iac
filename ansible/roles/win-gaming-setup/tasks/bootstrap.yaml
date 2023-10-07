@@ -1,0 +1,21 @@
+---
+- name: Ensure Chocolatey itself is installed, using community repo for the bootstrap
+  chocolatey.chocolatey.win_chocolatey:
+    name: chocolatey
+
+# Needed for adding scoop buckets
+- name: Ensure Git is installed
+  community.windows.win_scoop:
+    name: git
+
+- name: Add the extras bucket
+  community.windows.win_scoop_bucket:
+    name: "{{ item }}"
+  loop: "{{ buckets }}"
+  loop_control:
+    label: "Adding Bucket: {{ item }}"
+
+- name: Copy folder contents recursively
+  ansible.windows.win_copy:
+    src: templates
+    dest: "{{ ansible_facts.env.TEMP }}"

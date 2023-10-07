@@ -1,0 +1,59 @@
+---
+- name: Run PowerShell script that finds the biggest drive
+  ansible.windows.win_powershell:
+    script: |
+      $largestDrive = Get-Disk | Where-Object { $_.OperationalStatus -eq 'Online' } | Sort-Object Size -Descending | Select-Object -First 1
+      if ($largestDrive.PartitionStyle -eq 'RAW') {
+          Initialize-Disk -Number $largestDrive.Number
+          New-Partition -DiskNumber $largestDrive.Number -AssignDriveLetter -UseMaximumSize | Format-Volume -FileSystem NTFS -NewFileSystemLabel "Games" -Confirm:$false
+      } else {
+          $Ansible.Changed = $false
+      }
+
+- name: Bootstrap Process
+  ansible.builtin.include_tasks: bootstrap.yaml
+
+- name: Set locale and timezone
+  community.windows.win_timezone:
+    timezone: Eastern Standard Time
+
+- name: Change the hostname to loba
+  ansible.windows.win_hostname:
+    name: "{{ inventory_hostname }}"
+  register: hostname
+
+# - name: Chocolatey - Install dependencies
+#   chocolatey.chocolatey.win_chocolatey:
+#     name: "{{ item }}"
+#     state: present
+#   loop:
+#     - "{{ chocolates }}"
+#   loop_control:
+#     label: "Chocolate: {{ item }}"
+
+- name: Scoops - Install dependencies
+  community.windows.win_scoop:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - "{{ scoops }}"
+  loop_control:
+    label: "Scoop: {{ item }}"
+
+- name: Registry Edits
+  ansible.builtin.include_tasks: registry.yaml
+
+- name: Define Taskbar Layout
+  ansible.windows.win_powershell:
+    script: |
+      Import-StartLayout -LayoutPath "TaskbarLayout.xml" -MountPath "{{ ansible_facts.env.TEMP }}\templates\TaskbarLayout.xml"
+
+- name: Change power plan to Balanced
+  community.windows.win_power_plan:
+    name: balanced
+
+- name: Ensure RDP rights are given to {{ ansible_user }}
+  ansible.builtin.include_tasks: users.yaml
+
+- name: Update the system
+  ansible.builtin.include_tasks: system.yaml

@@ -1,0 +1,14 @@
+---
+- name: Ensure user "{{ ansible_user }}" is present
+  ansible.windows.win_user:
+    name: "{{ ansible_user }}"
+    password: "{{ USR_PASSWORD_SOPS }}"
+    state: present
+    password_never_expires: true
+    groups:
+      - Administrators
+
+- name: Add users to remote interactive login rights
+  ansible.windows.win_user_right:
+    name: SeRemoteInteractiveLogonRight
+    users: "{{ ansible_user }}"
