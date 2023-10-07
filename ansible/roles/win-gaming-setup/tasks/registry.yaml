@@ -1,0 +1,60 @@
+---
+- name: Disable News Feed
+  ansible.windows.win_regedit:
+    path: HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    name: TaskbarDa
+    data: 0
+    type: dword
+
+- name: Set 'Enhance Pointer Precision' to off
+  ansible.windows.win_regedit:
+    path: HKCU:\Control Panel\Mouse
+    name: MouseSpeed
+    data: 0
+    type: dword
+
+- name: Disable Desktop Icons
+  ansible.windows.win_regedit:
+    path: HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer
+    name: NoDesktop
+    data: 1
+    type: dword
+
+- name: Enable File Extensions
+  ansible.windows.win_regedit:
+    path: HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    name: HideFileExt
+    data: 0
+    type: dword
+
+- name: Enable Hidden Files
+  ansible.windows.win_regedit:
+    path: HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    name: Hidden
+    data: 1
+    type: dword
+
+- name: Remove Teams Chat
+  ansible.windows.win_regedit:
+    path: HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced
+    name: TaskbarMn
+    data: 0
+    type: dword
+
+- name: Allow RDP Connections
+  ansible.windows.win_regedit:
+    path: HKLM:\System\CurrentControlSet\Control\Terminal Server
+    name: fDenyTSConnections
+    data: 0
+    type: dword
+
+# https://docs.microsoft.com/en-us/mem/configmgr/core/plan-design/security/enable-tls-1-2-client#configure-for-strong-cryptography
+- name: Miscellaneous | Configure .NET SchUseStrongCrypto
+  ansible.windows.win_regedit:
+    path: "{{ item }}"
+    name: SchUseStrongCrypto
+    data: 1
+    type: dword
+  loop:
+    - HKLM:\SOFTWARE\Microsoft\.NetFramework\v4.0.30319
+    - HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NetFramework\v4.0.30319
