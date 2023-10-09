@@ -46,7 +46,7 @@ service_definitions:
       net.ipv4.ping_group_range: "0 2147483647"
 
   - name: uptime-kuma
-    image: louislam/uptime-kuma:1.23.0
+    image: louislam/uptime-kuma:1.23.3
     volumes:
       - "{{ configuration_path }}/uptime-kuma:/app/data" 
     network_mode: container:wireguard
