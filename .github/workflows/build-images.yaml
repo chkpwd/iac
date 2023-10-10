@@ -32,7 +32,9 @@ jobs:
         uses: docker/build-push-action@v5.0.0
         with:
           context: docker/dev/
-          tags: |
-            ghcr.io/chkpwd/dev:latest,
-            ghcr.io/chkpwd/dev:auto-${{ steps.time.outputs.time }}
           push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ghcr.io/chkpwd/dev:auto-${{ steps.time.outputs.time }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
