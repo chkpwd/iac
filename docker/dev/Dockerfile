@@ -63,7 +63,7 @@ ARG PET_VERSION=0.5.0
 ARG TELLER_VERSION=1.5.6
 
 # renovate: datasource=github-tags depName=twpayne/chezmoi
-ARG CHEZMOI_VERSION=v2.40.0
+ARG CHEZMOI_VERSION=v2.40.2
 
 # renovate: datasource=github-tags depName=kubernetes/kubernetes
 ARG KUBECTL_VERSION=1.28.2
