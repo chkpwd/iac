@@ -12,7 +12,7 @@
   awx.awx.execution_environment:
     name: "terraform_ee"
     organization: "{{ awx_org }}"
-    image: hashicorp/terraform:1.5.7
+    image: hashicorp/terraform:1.6.1
     pull: missing
     state: present
     controller_config_file: "{{ awx_conf }}"
