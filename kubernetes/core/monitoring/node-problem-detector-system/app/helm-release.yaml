@@ -1,0 +1,67 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app node-problem-detector
+  namespace: monitoring
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: node-problem-detector
+      version: 2.3.11
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: deliveryhero
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    image:
+      repository: registry.k8s.io/node-problem-detector/node-problem-detector
+      tag: v0.8.14
+      pullPolicy: IfNotPresent
+
+    fullnameOverride: *app
+
+    rbac:
+      create: true
+      pspEnabled: false
+
+    volume:
+      localtime:
+        type: "FileOrCreate"
+
+    priorityClassName: system-node-critical
+
+    securityContext:
+      privileged: true
+
+    tolerations:
+      - effect: NoSchedule
+        operator: Exists
+
+    metrics:
+      enabled: true
+      serviceMonitor:
+        enabled: true
+      prometheusRule:
+        enabled: true
+
+    updateStrategy: RollingUpdate
+
+    maxUnavailable: 1
+
+    resources:
+      requests:
+        cpu: 50m
+        memory: 263Mi
+      limits:
+        memory: 512Mi
