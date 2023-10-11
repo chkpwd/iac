@@ -133,8 +133,8 @@ RUN \
     curl -L "https://get.pulumi.com/releases/sdk/pulumi-${PULUMI_VERSION}-linux-x64.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
     mv /tmp/pulumi* /usr/bin/ && \
     # Download and install terraform
-    curl -LO "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip" && \
-    unzip "terraform_${TERRAFORM_VERSION}_linux_amd64.zip" -d /tmp && \
+    curl -LO "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION#v}/terraform_${TERRAFORM_VERSION#v}_linux_amd64.zip" && \
+    unzip "terraform_${TERRAFORM_VERSION#v}_linux_amd64.zip" -d /tmp && \
     mv /tmp/terraform /usr/bin/terraform && \
     # Download and install Pet Snippet
     curl -L "https://github.com/knqyf263/pet/releases/download/v${PET_VERSION}/pet_${PET_VERSION}_linux_amd64.deb" > pet.deb && \
