@@ -217,7 +217,7 @@ USER $DEV
 RUN \
     pipx install poetry && \
     # Ansible Modules
-    pipx install ansible-base && \
+    pipx install ansible-base ansible-lint && \
     pipx install molecule
 
 # Set ZSH Custom Dir
