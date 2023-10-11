@@ -99,7 +99,7 @@ ARG VCLUSTER_VERSION=v0.16.3
 ARG NOVA_VERSION=3.7.0
 
 # renovate: datasource=github-tags depName=FairwindsOps/pluto
-ARG PLUTO_VERSION=5.18.4
+ARG PLUTO_VERSION=v5.18.5
 
 # Download and Install Various Tools
 RUN \
