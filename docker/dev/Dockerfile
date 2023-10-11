@@ -21,7 +21,7 @@ RUN apt-get update && \
     # SSH Tools
     openssh-server openssh-client sshpass \
     # Network Tools
-    nmap mtr-tiny host net-tools iputils-ping traceroute dnsutils \
+    nmap mtr-tiny host net-tools iputils-ping traceroute dnsutils ipcalc \
     # Disk Utilities
     genisoimage \
     # Text Processing and Viewing
