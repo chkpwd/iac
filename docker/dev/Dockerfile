@@ -44,89 +44,89 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# renovate: datasource=github-tags depName=BeryJu/korb
+# renovate: datasource=github-releases depName=BeryJu/korb
 ARG KORB_VERSION=v2.2.0
 
-# renovate: datasource=github-tags depName=atuinsh/atuin
-ARG ATUIN_VERSION=16.0.0
+# renovate: datasource=github-releases depName=atuinsh/atuin
+ARG ATUIN_VERSION=v16.0.0
 
-# renovate: datasource=github-tags depName=helm/helm
-ARG HELM_VERSION=v3.13.0
+# renovate: datasource=github-releases depName=helm/helm
+ARG HELM_VERSION=v3.13.1
 
-# renovate: datasource=github-tags depName=bitwarden/sdk
-ARG BWS_SDK_VERSION=0.3.0
+# renovate: datasource=github-releases depName=bitwarden/sdk
+ARG BWS_SDK_VERSION=v0.3.0
 
-# renovate: datasource=github-tags depName=knqyf263/pet
-ARG PET_VERSION=0.5.0
+# renovate: datasource=github-releases depName=knqyf263/pet
+ARG PET_VERSION=v0.5.0
 
-# renovate: datasource=github-tags depName=tellerops/teller
-ARG TELLER_VERSION=1.5.6
+# renovate: datasource=github-releases depName=tellerops/teller
+ARG TELLER_VERSION=v1.5.6
 
-# renovate: datasource=github-tags depName=twpayne/chezmoi
+# renovate: datasource=github-releases depName=twpayne/chezmoi
 ARG CHEZMOI_VERSION=v2.40.2
 
 # renovate: datasource=github-tags depName=kubernetes/kubernetes
-ARG KUBECTL_VERSION=1.28.2
+ARG KUBECTL_VERSION=v1.28.2
 
-# renovate: datasource=github-tags depName=stern/stern
-ARG STERN_VERSION=1.26.0
+# renovate: datasource=github-releases depName=stern/stern
+ARG STERN_VERSION=v1.26.0
 
-# renovate: datasource=github-tags depName=kubernetes-sigs/krew
-ARG KREW_VERSION=0.4.4
+# renovate: datasource=github-releases depName=kubernetes-sigs/krew
+ARG KREW_VERSION=v0.4.4
 
-# renovate: datasource=github-tags depName=sachaos/viddy
-ARG VIDDY_VERSION=0.3.7
+# renovate: datasource=github-releases depName=sachaos/viddy
+ARG VIDDY_VERSION=v0.3.7
 
-# renovate: datasource=github-tags depName=derailed/k9s
-ARG K9S_VERSION=0.27.4
+# renovate: datasource=github-releases depName=derailed/k9s
+ARG K9S_VERSION=v0.27.4
 
-# renovate: datasource=github-tags depName=pulumi/pulumi
-ARG PULUMI_VERSION=v3.88.0
+# renovate: datasource=github-releases depName=pulumi/pulumi
+ARG PULUMI_VERSION=v3.88.1
 
-# renovate: datasource=github-tags depName=hashicorp/terraform
+# renovate: datasource=github-releases depName=hashicorp/terraform
 ARG TERRAFORM_VERSION=v1.6.1
 
-# renovate: datasource=github-tags depName=getsops/sops
-ARG SOPS_VERSION=3.8.0
+# renovate: datasource=github-releases depName=getsops/sops
+ARG SOPS_VERSION=v3.8.0
 
-# renovate: datasource=github-tags depName=bitwarden/clients
-ARG BW_CLI_VERSION=2023.8.2
+# renovate: datasource=github-releases depName=bitwarden/clients
+ARG BW_CLI_VERSION=cli-v2023.9.1
 
-# renovate: datasource=github-tags depName=loft-sh/vcluster
+# renovate: datasource=github-releases depName=loft-sh/vcluster
 ARG VCLUSTER_VERSION=v0.16.3
 
-# renovate: datasource=github-tags depName=FairwindsOps/nova
-ARG NOVA_VERSION=3.7.0
+# renovate: datasource=github-releases depName=FairwindsOps/nova
+ARG NOVA_VERSION=v3.7.0
 
-# renovate: datasource=github-tags depName=FairwindsOps/pluto
+# renovate: datasource=github-releases depName=FairwindsOps/pluto
 ARG PLUTO_VERSION=v5.18.5
 
 # Download and Install Various Tools
 RUN \
     # Download and install Korb
-    curl -L "https://github.com/BeryJu/korb/releases/download/{KORB_VERSION}/korb_linux_amd64" -o /tmp/korb && \
+    curl -L "https://github.com/BeryJu/korb/releases/download/${KORB_VERSION}/korb_${KORB_VERSION#v}_linux_amd64" -o /tmp/korb && \
     mv /tmp/korb /usr/bin/korb && \
     # Download and install Atuin
-    curl -L "https://github.com/atuinsh/atuin/releases/download/v${ATUIN_VERSION}/atuin-v${ATUIN_VERSION}-x86_64-unknown-linux-gnu.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
+    curl -L "https://github.com/atuinsh/atuin/releases/download/${ATUIN_VERSION}/atuin-${ATUIN_VERSION}-x86_64-unknown-linux-gnu.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
     mv /tmp/atuin /usr/bin/atuin && \
     # Download and install Helm
     curl "https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
     mv /tmp/helm /usr/bin/helm && \
     chmod +x /usr/bin/helm && \
     # Download and install sops
-    curl -L "https://github.com/getsops/sops/releases/download/v${SOPS_VERSION}/sops_${SOPS_VERSION}_amd64.deb" > /tmp/sops_amd64.deb && \
+    curl -L "https://github.com/getsops/sops/releases/download/${SOPS_VERSION}/sops_${SOPS_VERSION#v}_amd64.deb" > /tmp/sops_amd64.deb && \
     dpkg -i /tmp/sops_amd64.deb && \
     # Download and install BW-CLI
-    curl -L "https://github.com/bitwarden/clients/releases/download/cli-v${BW_CLI_VERSION}/bw-linux-${BW_CLI_VERSION}.zip" -o /tmp/bw.zip && \
+    curl -L "https://github.com/bitwarden/clients/releases/download/${BW_CLI_VERSION}/bw-linux-${BW_CLI_VERSION#cli-v}.zip" -o /tmp/bw.zip && \
     unzip /tmp/bw.zip -d /tmp && \
     mv /tmp/bw /usr/bin/bw && \
     chmod +x /usr/bin/bw && \
     # Download and install stern
-    curl -L "https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz" | tar xvzf - -C /tmp && \
+    curl -L "https://github.com/stern/stern/releases/download/${STERN_VERSION}/stern_${STERN_VERSION#v}_linux_amd64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/stern /usr/bin/stern && \
     chmod +x /usr/bin/stern && \
     # Download and install bws-sdk
-    curl -L "https://github.com/bitwarden/sdk/releases/download/bws-v${BWS_SDK_VERSION}/bws-x86_64-unknown-linux-gnu-${BWS_SDK_VERSION}.zip" > /tmp/bws.zip && \
+    curl -L "https://github.com/bitwarden/sdk/releases/download/bws-${BWS_SDK_VERSION}/bws-x86_64-unknown-linux-gnu-${BWS_SDK_VERSION#v}.zip" > /tmp/bws.zip && \
     unzip /tmp/bws.zip -d /tmp && \
     mv /tmp/bws /usr/bin/ && \
     # Download and install pulumi
@@ -137,36 +137,36 @@ RUN \
     unzip "terraform_${TERRAFORM_VERSION#v}_linux_amd64.zip" -d /tmp && \
     mv /tmp/terraform /usr/bin/terraform && \
     # Download and install Pet Snippet
-    curl -L "https://github.com/knqyf263/pet/releases/download/v${PET_VERSION}/pet_${PET_VERSION}_linux_amd64.deb" > pet.deb && \
+    curl -L "https://github.com/knqyf263/pet/releases/download/${PET_VERSION}/pet_${PET_VERSION#v}_linux_amd64.deb" > pet.deb && \
     dpkg -i pet.deb && \
     rm -f pet.deb && \
     # Download and install Teller
-    curl -L "https://github.com/tellerops/teller/releases/download/v${TELLER_VERSION}/teller_${TELLER_VERSION}_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
+    curl -L "https://github.com/tellerops/teller/releases/download/${TELLER_VERSION}/teller_${TELLER_VERSION#v}_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/teller /usr/bin/teller && \
     # Download and install chezmoi
     curl -L "https://github.com/twpayne/chezmoi/releases/download/${CHEZMOI_VERSION}/chezmoi_${CHEZMOI_VERSION#v}_linux_amd64.deb" > chezmoi.deb && \
     dpkg -i chezmoi.deb && \
     rm -f chezmoi.deb && \
     # Download and install kubectl
-    curl -LO "https://dl.k8s.io/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" && \
+    curl -LO "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl" && \
     chmod +x kubectl && \
     mv ./kubectl /usr/bin/kubectl && \
     # Download and install krew
-    curl -L "https://github.com/kubernetes-sigs/krew/releases/download/v${KREW_VERSION}/krew-linux_amd64.tar.gz" | tar xvzf - -C /tmp && \
+    curl -L "https://github.com/kubernetes-sigs/krew/releases/download/${KREW_VERSION}/krew-linux_amd64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/krew-linux_amd64 /usr/bin/krew && \
     krew install virt ctx ns && \
     # Download and install viddy
-    curl -L "https://github.com/sachaos/viddy/releases/download/v${VIDDY_VERSION}/viddy_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
+    curl -L "https://github.com/sachaos/viddy/releases/download/${VIDDY_VERSION}/viddy_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/viddy /usr/bin/viddy && \
     # Download and install k9s
-    curl -L "https://github.com/derailed/k9s/releases/download/v${K9S_VERSION}/k9s_Linux_amd64.tar.gz" | tar xvzf - -C /tmp && \
+    curl -L "https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_amd64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/k9s /usr/bin/k9s && \
     # Download and install vCluster
-    curl -L "https://github.com/loft-sh/vcluster/releases/download/v${VCLUSTER_VERSION}/vcluster-linux-amd64" -o vcluster && \
+    curl -L "https://github.com/loft-sh/vcluster/releases/download/${VCLUSTER_VERSION}/vcluster-linux-amd64" -o vcluster && \
     chmod +x vcluster && \
     mv ./vcluster /usr/bin/vcluster && \
     # Download and install Nova
-    curl -L "https://github.com/FairwindsOps/nova/releases/download/v${NOVA_VERSION}/nova_${NOVA_VERSION}_linux_amd64.tar.gz" > /tmp/nova.tar.gz && \
+    curl -L "https://github.com/FairwindsOps/nova/releases/download/${NOVA_VERSION}/nova_${NOVA_VERSION#v}_linux_amd64.tar.gz" > /tmp/nova.tar.gz && \
     tar -xvf /tmp/nova.tar.gz -C /tmp/ && \
     mv /tmp/nova /usr/bin/nova && \
     # Download and install Pluto
@@ -199,10 +199,10 @@ COPY --from=docker.io/digitalocean/doctl:1.99.0 /app/doctl /usr/bin/doctl
 COPY --from=docker.io/vmware/govc:v0.32.0 /govc /usr/bin/govc
 
 # UPX all of the binaries
-RUN for item in bw bws nova pluto terraform pulumi pet teller chezmoi \
+RUN for item in bw bws nova pluto terraform pulumi pet  \
     kubectl stern krew viddy k9s helm sops vcluster \
-    pluto curl istioctl flux hugo kaniko \
-    etcdctl doctl govc packer; do \
+    pluto curl istioctl flux hugo kaniko chezmoi \
+    etcdctl doctl govc packer korb atuin teller; do \
     upx $(which $item); \
     done
 
@@ -214,11 +214,15 @@ RUN su -c "ssh-keygen -t ed25519 -b 2048 -f /home/$DEV/.ssh/id_ed25519 -qN ''" $
 USER $DEV
 
 # Python
-RUN \
-    pipx install poetry && \
-    # Ansible Modules
-    pipx install ansible-base ansible-lint && \
-    pipx install molecule
+RUN for pkg in \
+        ansible-base \
+        ansible-lint \
+        poetry \
+        molecule \
+    ; do \
+        pipx install $pkg; \
+    done
+
 
 # Set ZSH Custom Dir
 ENV ZSH_CUSTOM=/home/$DEV/.oh-my-zsh/custom
@@ -256,4 +260,4 @@ ENV PULL_REPOS=
 COPY ./app/setup_env.sh /setup_env.sh
 
 # By default, run a shell if no other command is provided to docker run
-CMD ["/bin/zsh"]
+ENTRYPOINT ["/bin/zsh"]
