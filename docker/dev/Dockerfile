@@ -87,7 +87,7 @@ ARG PULUMI_VERSION=v3.88.1
 ARG TERRAFORM_VERSION=v1.6.1
 
 # renovate: datasource=github-releases depName=getsops/sops
-ARG SOPS_VERSION=v3.8.0
+ARG SOPS_VERSION=v3.8.1
 
 # renovate: datasource=github-releases depName=bitwarden/clients
 ARG BW_CLI_VERSION=cli-v2023.9.1
