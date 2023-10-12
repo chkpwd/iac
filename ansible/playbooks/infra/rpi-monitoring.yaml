@@ -1,0 +1,41 @@
+---
+- name: Raspberry Pi Zero Monitoring Setup
+  hosts: rpi-zero-monitoring
+  gather_facts: true
+  become: true
+
+  tasks:
+      - name: Install Packages
+      ansible.builtin.apt:
+        update_cache: true
+        install_recommends: false
+        name:
+          - raspi-config
+          - xserver-xorg
+          - x11-xserver-utils
+          - xinit
+          - openbox
+          - epiphany-browser
+    
+      - name: Change hostname
+        shell: "raspi-config nonint do_hostname {{ ansible_host }}"
+
+      - name: Change locale
+        shell: "raspi-config nonint do_change_locale en_US.UTF-8"
+      
+      - name: Change user password
+        shell: "echo '*' | passwd {{ ansible_user }}"
+
+      - name: Set Boot behaviour
+        shell: "raspi-config nonint do_boot_behaviour B2"
+
+      - name: Enable SSH
+        shell: "raspi-config nonint do_ssh 0"
+
+      - name: Configure OpenBox
+        ansible.builtin.template:
+          src: ../../templates/raspbian_kiosk.j2
+          dest: /etc/xdg/openbox/autostart
+          owner: root
+          group: root
+          mode: 0644

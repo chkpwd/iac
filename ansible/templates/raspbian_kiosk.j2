@@ -1,0 +1,15 @@
+#! /usr/bin/env bash
+
+# Disable any form of screen saver / screen blanking / power management
+xset s off
+xset s noblank
+xset -dpms
+
+# Allow quitting the X server with CTRL-ATL-Backspace
+setxkbmap -option terminate:ctrl_alt_bksp
+
+# Allow quitting the X server with CTRL-ATL-Backspace
+setxkbmap -option terminate:ctrl_alt_bksp
+
+# Launch Epiphany Browser
+WEBKIT_DISABLE_TBS=1 epiphany-browser -a --profile /home/chkpwd/.config  https://i.chkpwd.com/memes
