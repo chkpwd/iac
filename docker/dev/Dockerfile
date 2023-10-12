@@ -170,7 +170,7 @@ RUN \
     tar -xvf /tmp/nova.tar.gz -C /tmp/ && \
     mv /tmp/nova /usr/bin/nova && \
     # Download and install Pluto
-    curl -L "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_amd64.tar.gz" > /tmp/pluto.tar.gz && \
+    curl -L "https://github.com/FairwindsOps/pluto/releases/download/${PLUTO_VERSION}/pluto_${PLUTO_VERSION#v}_linux_amd64.tar.gz" > /tmp/pluto.tar.gz && \
     tar -xvf /tmp/pluto.tar.gz -C /tmp/ && \
     mv /tmp/pluto /usr/bin/pluto && \
     # Docker Install
