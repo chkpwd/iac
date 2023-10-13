@@ -19,3 +19,4 @@
   loop_control:
     label: "Files: {{ item.path }}"
   when: item.state == 'file'
+  notify: Restart Prometheus

@@ -5,10 +5,29 @@ global:
 
 scrape_configs:
   - job_name: 'prometheus'
-    scrape_interval: 5s
     static_configs:
       - targets: ['localhost:9090']
 
     basic_auth:
       username: chkpwd
       password: "{{ USR_PASSWORD_SOPS }}"
+
+  - job_name: 'exportarr-sonarr'
+    scheme: https
+    static_configs:
+      - targets: ['sonarr.k8s.chkpwd.com']
+
+  - job_name: 'exportarr-radarr'
+    scheme: https
+    static_configs:
+      - targets: ['radarr.k8s.chkpwd.com']
+
+  - job_name: 'exportarr-bazarr'
+    scheme: https
+    static_configs:
+      - targets: ['bazarr.k8s.chkpwd.com']
+
+  - job_name: 'exportarr-prowlarr'
+    scheme: https
+    static_configs:
+      - targets: ['prowlarr.k8s.chkpwd.com']
