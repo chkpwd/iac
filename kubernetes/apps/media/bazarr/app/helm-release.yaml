@@ -85,7 +85,7 @@ spec:
               PORT: &metricsPort 9707
               URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:9707"
               APIKEY: ${API_KEY_BAZARR}
-            args: ["{{ .Release.Name }}"]
+            args: ["bazarr"]
 
             resources:
               requests:
@@ -110,6 +110,7 @@ spec:
         metrics:
           enabled: true
           serviceName: "{{ .Release.Name }}-metrics"
+          nameOverride: "{{ .Release.Name }}-metrics"
           endpoints:
             - port: metrics
               scheme: http
