@@ -96,10 +96,12 @@ spec:
 
     service:
       main:
+        primary: true
         ports:
           http:
             port: *port
       secondary:
+        nameOverride: "{{ .Release.Name }}-metrics"
         controller: main
         ports:
           metrics:
