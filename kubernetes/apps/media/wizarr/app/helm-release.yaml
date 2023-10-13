@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.0.3
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,58 +27,68 @@ spec:
     global:
       fullnameOverride: *app
 
-    image:
-      repository: ghcr.io/wizarrrr/wizarr
-      tag: dev
+    controllers:
+      main:
+        enabled: true
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
 
-    controller:
-      type: statefulset
-      annotations:
-        reloader.stakater.com/auto: "true"
+        pod:
+          enableServiceLinks: false
+          securityContext:
+            runAsUser: &context 1000
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
 
-    env:
-      TZ: "${TZ}"
-      APP_URL: https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}
-      DISABLE_BUILTIN_AUTH: "false"
+        containers:
+          main:
+            image:
+              repository: ghcr.io/wizarrrr/wizarr
+              tag: v3-beta-3.4.2
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "${TZ}"
+              APP_URL: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+              DISABLE_BUILTIN_AUTH: "false"
 
-    hostname: *app
+            resources:
+              requests:
+                cpu: 10m
+                memory: 100M
+              limits:
+                memory: 200M
 
     service:
       main:
         ports:
           http:
-            port: &port 5690
+            port: *port
 
     ingress:
       main:
         enabled: true
-        ingressClassName: ext-ingress
+        className: ext-ingress
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
+                pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - *host
 
-    podSecurityContext:
-      runAsUser: &context 1000
-      runAsGroup: *context
-      fsGroup: *context
-      fsGroupChangePolicy: "OnRootMismatch"
-
-    volumeClaimTemplates:
-      - name: config
-        mountPath: /data/database
+    persistence:
+      config:
+        enabled: true
+        path: /data/database
         accessMode: ReadWriteOnce
         size: 300Mi
         storageClass: longhorn-media
-
-    resources:
-      requests:
-        cpu: 10m
-        memory: 100M
-      limits:
-        memory: 200M

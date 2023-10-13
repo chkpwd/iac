@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.0.3
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,78 +27,90 @@ spec:
     global:
       fullnameOverride: *app
 
-    controller:
-      annotations:
-        reloader.stakater.com/auto: "true"
+    controllers:
+      main:
+        enabled: true
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
 
-    image:
-      repository: shlinkio/shlink
-      tag: 3.6.4-non-root
+        pod:
+          enableServiceLinks: false
 
-    env:
-      DEFAULT_DOMAIN: &host "i.${EXTERNAL_DOMAIN}"
-      IS_HTTPS_ENABLED: true
-      GEOLITE_LICENSE_KEY:
-        valueFrom:
-          secretKeyRef:
-            name: shlink-secrets
-            key: GEOLITE_LICENSE_KEY
-      DEFAULT_SHORT_CODES_LENGTH: 4
-      ENABLE_PERIODIC_VISIT_LOCATE: true
-      PORT: &port 80
-      TIMEZONE: ${TZ}
-      DB_DRIVER: postgres
-      DB_NAME:
-        valueFrom:
-          secretKeyRef:
-            name: shlink-pguser-shlink
-            key: dbname
-      DB_USER:
-        valueFrom:
-          secretKeyRef:
-            name: shlink-pguser-shlink
-            key: user
-      DB_PASSWORD:
-        valueFrom:
-          secretKeyRef:
-            name: shlink-pguser-shlink
-            key: password
-      DB_HOST:
-        valueFrom:
-          secretKeyRef:
-            name: shlink-pguser-shlink
-            key: host
-      DB_PORT:
-        valueFrom:
-          secretKeyRef:
-            name: shlink-pguser-shlink
-            key: port
-      INITIAL_API_KEY: ${API_KEY_SHLINK}
+        containers:
+          main:
+            image:
+              repository: shlinkio/shlink
+              tag: 3.6.4-non-root
+              pullPolicy: IfNotPresent
+
+            env:
+              DEFAULT_DOMAIN: &host "i.${EXTERNAL_DOMAIN}"
+              IS_HTTPS_ENABLED: true
+              GEOLITE_LICENSE_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: shlink-secrets
+                    key: GEOLITE_LICENSE_KEY
+              DEFAULT_SHORT_CODES_LENGTH: 4
+              ENABLE_PERIODIC_VISIT_LOCATE: true
+              PORT: &port 80
+              TIMEZONE: ${TZ}
+              DB_DRIVER: postgres
+              DB_NAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: shlink-pguser-shlink
+                    key: dbname
+              DB_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: shlink-pguser-shlink
+                    key: user
+              DB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: shlink-pguser-shlink
+                    key: password
+              DB_HOST:
+                valueFrom:
+                  secretKeyRef:
+                    name: shlink-pguser-shlink
+                    key: host
+              DB_PORT:
+                valueFrom:
+                  secretKeyRef:
+                    name: shlink-pguser-shlink
+                    key: port
+              INITIAL_API_KEY: ${API_KEY_SHLINK}
+
+            resources:
+              requests:
+                cpu: 10m
+                memory: 100Mi
+              limits:
+                memory: 500Mi
 
     service:
       main:
         ports:
           http:
-            port: *port
+            port: 80
 
     ingress:
       main:
-        enabled: true
-        ingressClassName: ext-ingress
         annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+        enabled: true
+        className: ext-ingress
         hosts:
           - host: *host
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - *host
-
-    resources:
-      requests:
-        cpu: 10m
-        memory: 100Mi
-      limits:
-        memory: 500Mi

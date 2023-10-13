@@ -27,24 +27,52 @@ spec:
     global:
       fullnameOverride: *app
 
-    controller:
-      type: statefulset
-      annotations:
-        reloader.stakater.com/auto: "true"
+    controllers:
+      main:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
 
-    image:
-      repository: lscr.io/linuxserver/pyload-ng
-      tag: 0.5.0
+        replicas: 1
 
-    env:
-      TZ: ${TZ}
-      PUID: &context 1000
-      PGID: *context
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              mountPath: /config
+              accessMode: ReadWriteOnce
+              size: 1Gi
+              storageClass: longhorn-media
 
-    hostname: *app
+        pod:
+          enableServiceLinks: false
+          securityContext:
+            runAsUser: &context 1000
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
+
+        containers:
+          main:
+            image:
+              repository: lscr.io/linuxserver/pyload-ng
+              tag: 0.5.0
+
+            env:
+              TZ: ${TZ}
+              PUID: *context
+              PGID: *context
+
+            resources:
+              requests:
+                cpu: 50m
+                memory: 100Mi
+              limits:
+                memory: 200Mi
 
     service:
       main:
+        primary: true
         ports:
           http:
             port: 8000
@@ -52,29 +80,20 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: ext-ingress
+        className: ext-ingress
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
+                pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - *host
-
-    podSecurityContext:
-      runAsUser: &context 1000
-      runAsGroup: *context
-      fsGroup: *context
-      fsGroupChangePolicy: "OnRootMismatch"
-
-    volumeClaimTemplates:
-      - name: config
-        mountPath: /config
-        accessMode: ReadWriteOnce
-        size: 1Gi
-        storageClass: longhorn-media
 
     persistence:
       media:
@@ -83,10 +102,3 @@ spec:
         server: "cockpit.${LOCAL_DOMAIN}"
         path: /mnt/data/downloads/pyload
         mountPath: /downloads
-
-    resources:
-      requests:
-        cpu: 50m
-        memory: 100Mi
-      limits:
-        memory: 200Mi
