@@ -10,7 +10,7 @@ spec:
     spec:
       chart: app-template
       interval: 30m
-      version: 1.5.1
+      version: 2.0.3
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -27,95 +27,103 @@ spec:
     global:
       fullnameOverride: *app
 
-    controller:
-      type: statefulset
-      annotations:
-        reloader.stakater.com/auto: "true"
+    controllers:
+      main:
+        enabled: true
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
 
-    image:
-      repository: quay.io/minio/minio
-      tag: RELEASE.2022-09-07T22-25-02Z
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              mountPath: /data
+              accessMode: ReadWriteOnce
+              size: 20Gi
+              storageClass: longhorn-config
 
-    env:
-      TZ: ${TZ}
-      MINIO_UPDATE: "off"
-      MINIO_PROMETHEUS_URL: http://prometheus-prometheus.monitoring.${CLUSTER_DOMAIN}:9090
-      MINIO_PROMETHEUS_JOB_ID: minio
-      MINIO_BROWSER_REDIRECT_URL: "https://minio.${K8S_GATEWAY_DOMAIN}"
-      MINIO_SERVER_URL: "https://s3.${EXTERNAL_DOMAIN}"
-      MINIO_API_CORS_ALLOW_ORIGIN: https://minio.${K8S_GATEWAY_DOMAIN},https://s3.${EXTERNAL_DOMAIN}
+        pod:
+          enableServiceLinks: false
+          podSecurityContext:
+            runAsUser: &context 568
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
+            supplementalGroups: [100]
 
-    hostname: *app
+        containers:
+          main:
+            image:
+              repository: quay.io/minio/minio
+              tag: RELEASE.2022-09-07T22-25-02Z
+              pullPolicy: IfNotPresent
 
-    envFrom:
-      - secretRef:
-          name: minio-secrets
+            env:
+              TZ: ${TZ}
+              MINIO_UPDATE: "off"
+              MINIO_PROMETHEUS_URL: http://prometheus-prometheus.monitoring.${CLUSTER_DOMAIN}:9090
+              MINIO_PROMETHEUS_JOB_ID: minio
+              MINIO_BROWSER_REDIRECT_URL: "https://minio.${K8S_GATEWAY_DOMAIN}"
+              MINIO_SERVER_URL: "https://s3.${EXTERNAL_DOMAIN}"
+              MINIO_API_CORS_ALLOW_ORIGIN: https://minio.${K8S_GATEWAY_DOMAIN},https://s3.${EXTERNAL_DOMAIN}
 
-    args: ["server", "/data", "--console-address", ":9001"]
+            envFrom:
+              - secretRef:
+                  name: minio-secrets
+
+            args: ["server", "/data", "--console-address", ":9001"]
+
+            resources:
+              requests:
+                cpu: 100m
+                memory: 100Mi
+              limits:
+                memory: 750Mi
 
     service:
       main:
-        enabled: true
         ports:
-          http:
-            port: &port-console 9001
+          console:
+            port: 9001
           api:
-            enabled: true
-            port: &port-api 9000
+            port: 9000
 
     ingress:
       main:
+        annotations:
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
         enabled: true
-        ingressClassName: int-ingress
+        className: int-ingress
         hosts:
           - host: &console-host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
                 service:
-                  port: *port-console
+                  name: main
+                  port: console
         tls:
           - hosts:
               - *console-host
 
       s3:
-        enabled: true
-        ingressClassName: ext-ingress
         annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
           nginx.ingress.kubernetes.io/proxy-connect-timeout: "180"
           nginx.ingress.kubernetes.io/proxy-body-size: 1024m
           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
           nginx.ingress.kubernetes.io/configuration-snippet: |
             chunked_transfer_encoding off;
+        enabled: true
+        className: ext-ingress
         hosts:
           - host: &api-host s3.${EXTERNAL_DOMAIN}
             paths:
               - path: /
                 pathType: Prefix
                 service:
-                  port: *port-api
+                  name: main
+                  port: api
         tls:
           - hosts:
               - *api-host
-
-    podSecurityContext:
-      runAsUser: &context 568
-      runAsGroup: *context
-      fsGroup: *context
-      fsGroupChangePolicy: "OnRootMismatch"
-      supplementalGroups: [100]
-
-    volumeClaimTemplates:
-      - name: config
-        mountPath: /data
-        accessMode: ReadWriteOnce
-        size: 20Gi
-        storageClass: longhorn-config
-
-    resources:
-      requests:
-        cpu: 100m
-        memory: 100Mi
-      limits:
-        memory: 750Mi

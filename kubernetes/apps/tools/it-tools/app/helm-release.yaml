@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.0.3
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,46 +27,56 @@ spec:
     global:
       fullnameOverride: *app
 
-    controller:
-      annotations:
-        reloader.stakater.com/auto: "true"
+    controllers:
+      main:
+        enabled: true
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
 
-    image:
-      repository: ghcr.io/corentinth/it-tools
-      tag: 2023.8.16-9bd4ad4
+        pod:
+          enableServiceLinks: false
+          securityContext:
+            runAsUser: &context 0
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
+            allowPrivilegeEscalation: false
+
+        containers:
+          main:
+            image:
+              repository: ghcr.io/corentinth/it-tools
+              tag: 2023.8.16-9bd4ad4
+              pullPolicy: IfNotPresent
+
+            resources:
+              requests:
+                cpu: 10m
+                memory: 50M
+              limits:
+                memory: 50M
 
     service:
       main:
         ports:
           http:
-            port: &port 80
+            port: 80
 
     ingress:
       main:
-        enabled: true
-        ingressClassName: ext-ingress
         annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+        enabled: true
+        className: ext-ingress
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
+                pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - *host
-
-    podSecurityContext:
-      runAsUser: &context 0
-      runAsGroup: *context
-      fsGroup: *context
-      fsGroupChangePolicy: "OnRootMismatch"
-
-    securityContext:
-      allowPrivilegeEscalation: false
-
-    resources:
-      requests:
-        cpu: 10m
-        memory: 50M
-      limits:
-        memory: 50M

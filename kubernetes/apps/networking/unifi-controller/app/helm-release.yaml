@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.0.3
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,22 +27,50 @@ spec:
     global:
       fullnameOverride: *app
 
-    controller:
-      type: statefulset
-      annotations:
-        reloader.stakater.com/auto: "true"
+    controllers:
+      main:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
 
-    image:
-      repository: jacobalberty/unifi
-      tag: v7.5.174
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              mountPath: /unifi
+              accessMode: ReadWriteOnce
+              size: 2Gi
+              storageClass: longhorn-config
 
-    env:
-      RUNAS_UID0: "false"
-      UNIFI_UID: "999"
-      UNIFI_GID: "999"
-      UNIFI_STDOUT: "true"
-      JVM_INIT_HEAP_SIZE:
-      JVM_MAX_HEAP_SIZE: "1024M"
+        pod:
+          enableServiceLinks: false
+          securityContext:
+            runAsUser: &context 999
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
+
+        containers:
+          main:
+            image:
+              repository: jacobalberty/unifi
+              tag: v7.5.174
+              pullPolicy: IfNotPresent
+            env:
+              RUNAS_UID0: "false"
+              UNIFI_UID: "999"
+              UNIFI_GID: "999"
+              UNIFI_STDOUT: "true"
+              JVM_INIT_HEAP_SIZE:
+              JVM_MAX_HEAP_SIZE: "1024M"
+
+            resources:
+              requests:
+                cpu: 100m
+                memory: 500M
+              limits:
+                memory: 1000M
 
     service:
       main:
@@ -67,34 +95,15 @@ spec:
         annotations:
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
         enabled: true
-        ingressClassName: int-ingress
+        className: int-ingress
         hosts:
           - host: &host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
             paths:
               - path: /
-                backend:
-                  serviceName: unifi-controller
-                  servicePort: 8443
+                pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - *host
-    
-    podSecurityContext:
-      runAsUser: &context 999
-      runAsGroup: *context
-      fsGroup: *context
-      fsGroupChangePolicy: "OnRootMismatch"
-
-    volumeClaimTemplates:
-      - name: config
-        mountPath: /unifi
-        accessMode: ReadWriteOnce
-        size: 2Gi
-        storageClass: longhorn-config
-
-    resources:
-      requests:
-        cpu: 100m
-        memory: 500M
-      limits:
-        memory: 1000M

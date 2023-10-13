@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.0.3
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,38 +27,54 @@ spec:
     global:
       fullnameOverride: *app
 
-    controller:
-      annotations:
-        reloader.stakater.com/auto: "true"
+    controllers:
+      main:
+        enabled: true
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
 
-    image:
-      repository: ghcr.io/miniflux/miniflux
-      tag: 2.0.48
+        pod:
+          enableServiceLinks: false
 
-    env:
-      BASE_URL: https://miniflux.${EXTERNAL_DOMAIN}
-      CREATE_ADMIN: "1"
-      DATABASE_URL:
-        valueFrom:
-          secretKeyRef:
-            name: miniflux-pguser-miniflux
-            key: uri
-      DEBUG: "1"
-      LOG_DATE_TIME: "1"
-      RUN_MIGRATIONS: "1"
-      METRICS_COLLECTOR: "1"
-      METRICS_ALLOWED_NETWORKS: "10.42.0.0/16"
-      POLLING_SCHEDULER: entry_frequency
-      POLLING_FREQUENCY: "15"
-      FETCH_YOUTUBE_WATCH_TIME: 1
-      OAUTH2_PROVIDER: oidc
-      OAUTH2_REDIRECT_URL: https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}/oauth2/oidc/callback
-      OAUTH2_OIDC_DISCOVERY_ENDPOINT: https://authentik.${EXTERNAL_DOMAIN}/application/o/miniflux/
-      OAUTH2_USER_CREATION: "1"
+        containers:
+          main:
+            image:
+              repository: ghcr.io/miniflux/miniflux
+              tag: 2.0.48
+              pullPolicy: IfNotPresent
 
-    envFrom:
-      - secretRef:
-          name: miniflux-secrets
+            env:
+              BASE_URL: https://miniflux.${EXTERNAL_DOMAIN}
+              CREATE_ADMIN: "1"
+              DATABASE_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: miniflux-pguser-miniflux
+                    key: uri
+              DEBUG: "1"
+              LOG_DATE_TIME: "1"
+              RUN_MIGRATIONS: "1"
+              METRICS_COLLECTOR: "1"
+              METRICS_ALLOWED_NETWORKS: "10.42.0.0/16"
+              POLLING_SCHEDULER: entry_frequency
+              POLLING_FREQUENCY: "15"
+              FETCH_YOUTUBE_WATCH_TIME: 1
+              OAUTH2_PROVIDER: oidc
+              OAUTH2_REDIRECT_URL: https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}/oauth2/oidc/callback
+              OAUTH2_OIDC_DISCOVERY_ENDPOINT: https://authentik.${EXTERNAL_DOMAIN}/application/o/miniflux/
+              OAUTH2_USER_CREATION: "1"
+
+            envFrom:
+              - secretRef:
+                  name: miniflux-secrets
+
+            resources:
+              requests:
+                cpu: 10m
+                memory: 100Mi
+              limits:
+                memory: 350Mi
 
     service:
       main:
@@ -68,22 +84,18 @@ spec:
 
     ingress:
       main:
-        enabled: true
-        ingressClassName: ext-ingress
         annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        enabled: true
+        className: ext-ingress
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - *host
-
-    resources:
-      requests:
-        cpu: 10m
-        memory: 100Mi
-      limits:
-        memory: 350Mi
