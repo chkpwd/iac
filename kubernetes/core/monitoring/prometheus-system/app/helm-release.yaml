@@ -146,6 +146,16 @@ spec:
 
     prometheus:
       enabled: true
+      ingress:
+        enabled: true
+        ingressClassName: int-ingress
+        hosts: [ &prometheus-host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}" ]
+        path: /
+        pathType: Prefix
+        tls:
+          - hosts:
+              - *prometheus-host
+            secretName: chkpwd-cert-production
       prometheusSpec:
         replicas: 1
         replicaExternalLabelName: "replica"
