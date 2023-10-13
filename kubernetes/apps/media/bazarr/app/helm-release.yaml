@@ -76,33 +76,11 @@ spec:
               limits:
                 memory: 600M
 
-          secondary:
-            image:
-              repository: ghcr.io/onedr0p/exportarr
-              tag: v1.5.3
-            env:
-              PORT: 9707
-              URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:9707"
-              APIKEY: "{{ API_KEY_BAZARR }}"
-            args: ["{{ .Release.Name }}"]
-
-            resources:
-              requests:
-                cpu: 10m
-                memory: 500M
-              limits:
-                memory: 600M
-
-
     service:
       main:
         ports:
           http:
             port: *port
-      secondary:
-        ports:
-          metrics:
-            port: 9707
 
     ingress:
       main:
