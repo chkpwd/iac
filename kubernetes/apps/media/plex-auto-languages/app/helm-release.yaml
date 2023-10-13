@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.0.3
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,21 +27,35 @@ spec:
     global:
       fullnameOverride: *app
 
-    controller:
-      annotations:
-        reloader.stakater.com/auto: "true"
+    controllers:
+      main:
+        enabled: true
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
 
-    image:
-      repository: docker.io/remirigal/plex-auto-languages
-      tag: v1.2.3
+        pod:
+          enableServiceLinks: false
 
-    env:
-      TZ: "${TZ}"
-      PLEX_URL: http://media.${LOCAL_DOMAIN}:32400
-      REFRESH_LIBRARY_ON_SCAN: false
-      PLEX_TOKEN: ${APP_PLEX_TOKEN}
+        containers:
+          main:
+            image:
+              repository: docker.io/remirigal/plex-auto-languages
+              tag: v1.2.3
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "${TZ}"
+              PLEX_URL: http://media.${LOCAL_DOMAIN}:32400
+              REFRESH_LIBRARY_ON_SCAN: "false"
+              PLEX_TOKEN: ${APP_PLEX_TOKEN}
 
-    hostname: *app
+            resources:
+              requests:
+                cpu: 50m
+                memory: 100M
+              limits:
+                memory: 500M
 
     service:
       main:
@@ -56,10 +70,3 @@ spec:
         enabled: true
         type: emptyDir
         mountPath: /.local
-
-    resources:
-      requests:
-        cpu: 50m
-        memory: 100M
-      limits:
-        memory: 500M

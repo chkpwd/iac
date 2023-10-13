@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.0.3
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,19 +27,45 @@ spec:
     global:
       fullnameOverride: *app
 
-    controller:
-      type: statefulset
-      annotations:
-        reloader.stakater.com/auto: "true"
-    
-    image:
-      repository: kizaing/kavita
-      tag: 0.7.8
+    controllers:
+      main:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
 
-    env:
-      TZ: "${TZ}"
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              mountPath: /kavita/config
+              accessMode: ReadWriteOnce
+              size: 300Mi
+              storageClass: longhorn-media
 
-    hostname: *app
+        pod:
+          enableServiceLinks: false
+          securityContext:
+            runAsUser: &context 1000
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
+
+        containers:
+          main:
+            image:
+              repository: kizaing/kavita
+              tag: 0.7.8
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "${TZ}"
+
+            resources:
+              requests:
+                cpu: 25m
+                memory: 350Mi
+              limits:
+                memory: 1000Mi
 
     service:
       main:
@@ -50,7 +76,7 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: ext-ingress
+        className: ext-ingress
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
@@ -62,19 +88,6 @@ spec:
           - hosts:
               - *host
 
-    podSecurityContext:
-      runAsUser: &context 1000
-      runAsGroup: *context
-      fsGroup: *context
-      fsGroupChangePolicy: "OnRootMismatch"
-
-    volumeClaimTemplates:
-      - name: config
-        mountPath: /kavita/config 
-        accessMode: ReadWriteOnce
-        size: 300Mi
-        storageClass: longhorn-media
-
     persistence:
       media:
         enabled: true
@@ -82,10 +95,3 @@ spec:
         server: "cockpit.${LOCAL_DOMAIN}"
         path: /mnt/data/reading
         mountPath: /data
-
-    resources:
-      requests:
-        cpu: 25m
-        memory: 350Mi
-      limits:
-        memory: 1000Mi
