@@ -93,6 +93,7 @@ spec:
 
     service:
       main:
+        primary: true
         ports:
           http:
             port: *port
@@ -118,7 +119,7 @@ spec:
               - path: /metrics
                 pathType: Prefix
                 service:
-                  name: sonarr-metrics
+                  name: secondary
                   port: metrics
 
         tls:
