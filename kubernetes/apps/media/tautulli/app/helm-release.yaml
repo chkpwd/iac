@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.0.3
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,21 +27,47 @@ spec:
     global:
       fullnameOverride: *app
 
-    controller:
-      type: statefulset
-      annotations:
-        reloader.stakater.com/auto: "true"
+    controllers:
+      main:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
 
-    image:
-      repository: ghcr.io/onedr0p/tautulli
-      tag: 2.13.1
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              mountPath: /config
+              accessMode: ReadWriteOnce
+              size: 200Mi
+              storageClass: longhorn-media
 
-    env:
-      TZ: "${TZ}"
-      LOG_LEVEL: info
-      PORT: &port 8181
+        pod:
+          enableServiceLinks: false
+          securityContext:
+            runAsUser: &context 568
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
 
-    hostname: *app
+        containers:
+          main:
+            image:
+              repository: ghcr.io/onedr0p/tautulli
+              tag: 2.13.1
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "${TZ}"
+              LOG_LEVEL: "info"
+              PORT: &port 8181
+
+            resources:
+              requests:
+                cpu: 100m
+                memory: 200Mi
+              limits:
+                memory: 350Mi
 
     service:
       main:
@@ -52,32 +78,15 @@ spec:
     ingress:
       main:
         enabled: true
-        ingressClassName: int-ingress
+        className: int-ingress
         hosts:
           - host: &host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - *host
-
-    podSecurityContext:
-      runAsUser: &context 568
-      runAsGroup: *context
-      fsGroup: *context
-      fsGroupChangePolicy: "OnRootMismatch"
-
-    volumeClaimTemplates:
-      - name: config
-        mountPath: /config
-        accessMode: ReadWriteOnce
-        size: 200Mi
-        storageClass: longhorn-media
-
-    resources:
-      requests:
-        cpu: 100m
-        memory: 200Mi
-      limits:
-        memory: 350Mi
