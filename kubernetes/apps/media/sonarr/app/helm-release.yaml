@@ -97,6 +97,7 @@ spec:
           http:
             port: *port
       secondary:
+        nameOverride: "{{ .Release.Name }}-metrics"
         controller: main
         ports:
           metrics:
@@ -114,6 +115,12 @@ spec:
                 service:
                   name: main
                   port: http
+              - path: /metrics
+                pathType: Prefix
+                service:
+                  name: secondary
+                  port: metrics
+
         tls:
           - hosts:
               - *host
