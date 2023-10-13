@@ -27,7 +27,7 @@ spec:
     global:
       fullnameOverride: *app
 
-    controller:
+    controllers:
       main:
         enabled: true
         type: statefulset
@@ -72,15 +72,49 @@ spec:
             resources:
               requests:
                 cpu: 10m
-                memory: 500M
+                memory: 500Mi
               limits:
-                memory: 600M
+                memory: 600Mi
+
+          secondary:
+            image:
+              repository: ghcr.io/onedr0p/exportarr
+              tag: v1.5.3
+
+            env:
+              PORT: &metricsPort 9707
+              URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:9707"
+              APIKEY: ${API_KEY_BAZARR}
+            args: ["{{ .Release.Name }}"]
+
+            resources:
+              requests:
+                cpu: 100m
+                memory: 100Mi
+              limits:
+                memory: 200Mi
 
     service:
       main:
         ports:
           http:
             port: *port
+      secondary:
+        ports:
+          metrics:
+            port: *metricsPort
+
+    serviceMonitor:
+      main:
+        metrics:
+          enabled: true
+          serviceName: "{{ .Release.Name }}-metrics"
+          endpoints:
+            - port: metrics
+              scheme: http
+              path: /metrics
+              interval: 10m
+              scrapeTimeout: 2m
 
     ingress:
       main:
