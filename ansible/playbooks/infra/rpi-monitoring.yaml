@@ -6,17 +6,17 @@
 
   tasks:
       - name: Install Packages
-      ansible.builtin.apt:
-        update_cache: true
-        install_recommends: false
-        name:
-          - raspi-config
-          - xserver-xorg
-          - x11-xserver-utils
-          - xinit
-          - openbox
-          - epiphany-browser
-    
+        ansible.builtin.apt:
+          update_cache: true
+          install_recommends: false
+          name:
+            - raspi-config
+            - xserver-xorg
+            - x11-xserver-utils
+            - xinit
+            - openbox
+            - epiphany-browser
+
       - name: Change hostname
         shell: "raspi-config nonint do_hostname {{ ansible_host }}"
 
