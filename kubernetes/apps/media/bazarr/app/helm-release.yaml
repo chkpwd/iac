@@ -27,11 +27,11 @@ spec:
     global:
       fullnameOverride: *app
 
-    controller:
+    controllers:
       main:
         enabled: true
         type: statefulset
-        strategy: 
+        strategy: RollingUpdate
         annotations:
           reloader.stakater.com/auto: "true"
 
