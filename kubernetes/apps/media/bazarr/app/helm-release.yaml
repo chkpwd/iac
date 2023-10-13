@@ -105,19 +105,6 @@ spec:
           metrics:
             port: *metricsPort
 
-    serviceMonitor:
-      main:
-        metrics:
-          enabled: true
-          serviceName: "{{ .Release.Name }}-metrics"
-          nameOverride: "{{ .Release.Name }}-metrics"
-          endpoints:
-            - port: metrics
-              scheme: http
-              path: /metrics
-              interval: 10m
-              scrapeTimeout: 2m
-
     ingress:
       main:
         enabled: true
@@ -130,6 +117,11 @@ spec:
                 service:
                   name: main
                   port: http
+              - path: /metrics
+                pathType: Prefix
+                service:
+                  name: secondary
+                  port: metrics
         tls:
           - hosts:
               - *host
