@@ -2,11 +2,9 @@
 common_user: chkpwd
 ansible_user: chkpwd
 
-image_tag: v0.6.13
-
 service_definitions:
   - name: gravity
-    image: "ghcr.io/beryju/gravity:{{ image_tag }}"
+    image: ghcr.io/beryju/gravity:v0.6.13
     network_mode: host
     env:
       BOOTSTRAP_ROLES: dns;api;etcd;discovery;backup;monitoring;tsdb
@@ -16,8 +14,23 @@ service_definitions:
       ADMIN_TOKEN: "{{ GRAVITY_TOKEN }}"
       LISTEN_ONLY: "true"
     volumes:
-      - data:/data
+      - "{{ configuration_path }}/gravity:/data"
     log_driver: json-file
     log_options:
       max-size: "10m"
       max-file: "3"
+
+  - name: prometheus
+    image: prom/prometheus:v2.47.2
+    user: 1000:1000
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --web.config.file=/etc/prometheus/web.yml
+      - --storage.tsdb.retention.time=14d
+      - --storage.tsdb.retention.size=5GB
+    volumes:
+      - "{{ configuration_path }}/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml:ro"
+      - "{{ configuration_path }}/prometheus/web.yaml:/etc/prometheus/web.yml:ro"
+      - "{{ configuration_path }}/prometheus/data:/prometheus/data"
+    ports: [9090:9090]
+
