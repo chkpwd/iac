@@ -34,3 +34,14 @@ service_definitions:
       - "{{ configuration_path }}/prometheus/data:/prometheus/data"
     ports: [9090:9090]
 
+  - name: grafana
+    image: grafana/grafana:10.1.5
+    user: 1000:1000
+    env:
+      GF_DAGF_FEATURE_TOGGLES_ENABLE: publicDashboards
+      GF_INSTALL_PLUGINS: "grafana-clock-panel, grafana-simple-json-datasource"
+      GF_SECURITY_ADMIN_USER: grafana
+      GF_SECURITY_ADMIN_PASSWORD: "{{ GRAFANA_ADMIN_PASSWORD }}"
+    volumes:
+      - "{{ configuration_path }}/grafana:/var/lib/grafana"
+    ports: [3000:3000]
