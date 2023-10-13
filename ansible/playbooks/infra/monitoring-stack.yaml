@@ -1,0 +1,13 @@
+---
+- name: Monitoring Stack Setup
+  hosts: dns-srv-01
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Run the 'monitoring' role
+      include_role:
+        name: monitoring
+    - name: Run the 'compose' role
+      include_role:
+        name: compose
