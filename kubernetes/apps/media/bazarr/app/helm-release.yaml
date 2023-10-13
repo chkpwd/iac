@@ -79,11 +79,11 @@ spec:
           secondary:
             image:
               repository: ghcr.io/onedr0p/exportarr
-              tag: v1.5.3
+              tag: v1.5.5
 
             env:
               PORT: &metricsPort 9707
-              URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:9707"
+              URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:6767"
               APIKEY: ${API_KEY_BAZARR}
             args: ["bazarr"]
 
