@@ -31,8 +31,6 @@ spec:
       main:
         enabled: true
         type: cronjob
-        annotations: {}
-        labels: {}
         cronjob:
           concurrencyPolicy: Forbid
           schedule: '@daily'
