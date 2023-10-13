@@ -97,7 +97,7 @@ spec:
           http:
             port: *port
       secondary:
-        nameOverride: "-metrics"
+        nameOverride: metrics
         controller: main
         ports:
           metrics:
@@ -118,7 +118,7 @@ spec:
               - path: /metrics
                 pathType: Prefix
                 service:
-                  name: "{{ .Release.Name }}-metrics"
+                  name: sonarr-metrics
                   port: metrics
 
         tls:

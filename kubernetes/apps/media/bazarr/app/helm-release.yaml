@@ -101,7 +101,7 @@ spec:
           http:
             port: *port
       secondary:
-        nameOverride: "-metrics"
+        nameOverride: metrics
         controller: main
         ports:
           metrics:
@@ -122,7 +122,7 @@ spec:
               - path: /metrics
                 pathType: Prefix
                 service:
-                  name: "{{ .Release.Name }}-metrics"
+                  name: bazarr-metrics
                   port: metrics
         tls:
           - hosts:
