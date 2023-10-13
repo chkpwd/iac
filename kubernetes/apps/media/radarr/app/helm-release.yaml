@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.0.3
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,56 +27,102 @@ spec:
     global:
       fullnameOverride: *app
 
-    controller:
-      type: statefulset
-      annotations:
-        reloader.stakater.com/auto: "true"
+    controllers:
+      main:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
 
-    image:
-      repository: ghcr.io/onedr0p/radarr-develop
-      tag: 5.0.3.8127
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              mountPath: /config
+              accessMode: ReadWriteOnce
+              size: 2Gi
+              storageClass: longhorn-media
 
-    env:
-      TZ: "${TZ}"
-      RADARR__INSTANCE_NAME: Radarr
-      RADARR__PORT: &port 7878
-      RADARR__APPLICATION_URL: "https://{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
-      RADARR__LOG_LEVEL: info
-      RADARR__API_KEY: ${API_KEY_RADARR}
-      RADARR__AUTHENTICATION_METHOD: None
+        pod:
+          enableServiceLinks: false
+          securityContext:
+            runAsUser: &context 1000
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
 
-    hostname: *app
+        containers:
+          main:
+            image:
+              repository: ghcr.io/onedr0p/radarr-develop
+              tag: 5.0.3.8127
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "${TZ}"
+              RADARR__INSTANCE_NAME: *app
+              RADARR__PORT: &port 7878
+              RADARR__APPLICATION_URL: "https://{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
+              RADARR__API_KEY: ${API_KEY_RADARR}
+              RADARR__AUTHENTICATION_METHOD: None
+              RADARR__LOG_LEVEL: info
+
+            resources:
+              requests:
+                cpu: 100m
+                memory: 250M
+              limits:
+                memory: 300M
+
+          secondary:
+            image:
+              repository: ghcr.io/onedr0p/exportarr
+              tag: v1.5.5
+            env:
+              PORT: &metricsPort 9707
+              URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:7878"
+              APIKEY: ${API_KEY_RADARR}
+            args: ["radarr"]
+
+            resources:
+              requests:
+                cpu: 100m
+                memory: 100Mi
+              limits:
+                memory: 200Mi
 
     service:
       main:
+        primary: true
         ports:
           http:
             port: *port
+      secondary:
+        nameOverride: "-metrics"
+        controller: main
+        ports:
+          metrics:
+            port: *metricsPort
 
     ingress:
       main:
         enabled: true
-        ingressClassName: int-ingress
+        className: int-ingress
         hosts:
           - host: &host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
             paths:
               - path: /
+                pathType: Prefix
+                service:
+                  name: main
+                  port: http
+              - path: /metrics
+                pathType: Prefix
+                service:
+                  name: "{{ .Release.Name }}-metrics"
+                  port: metrics
         tls:
           - hosts:
               - *host
-
-    podSecurityContext:
-      runAsUser: 1000
-      runAsGroup: 1000
-      fsGroup: 1000
-      fsGroupChangePolicy: "OnRootMismatch"
-
-    volumeClaimTemplates:
-      - name: config
-        mountPath: /config
-        accessMode: ReadWriteOnce
-        size: 2Gi
-        storageClass: longhorn-media
 
     persistence:
       media:
@@ -85,10 +131,3 @@ spec:
         server: "cockpit.${LOCAL_DOMAIN}"
         path: /mnt/data/
         mountPath: /data
-
-    resources:
-      requests:
-        cpu: 100m
-        memory: 250M
-      limits:
-        memory: 300M
