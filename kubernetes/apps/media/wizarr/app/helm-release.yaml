@@ -33,6 +33,7 @@ spec:
         type: deployment
         annotations:
           reloader.stakater.com/auto: "true"
+
         replicas: 1
 
         pod:
@@ -92,3 +93,14 @@ spec:
         tls:
           - hosts:
               - *host
+
+    persistence:
+      config:
+        enabled: true
+        accessMode: ReadWriteOnce
+        storageClass: longhorn-media
+        size: 300Mi
+        advancedMounts:
+          main:
+            main:
+              - path: /data/database
