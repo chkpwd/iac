@@ -39,8 +39,8 @@ spec:
         pod:
           enableServiceLinks: false
           securityContext:
-            runAsNonRoot: true
-            runAsUser: &context 568
+            # runAsNonRoot: true
+            runAsUser: &context 1000
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
