@@ -38,12 +38,12 @@ spec:
 
         pod:
           enableServiceLinks: false
-          securityContext:
-            runAsNonRoot: true
-            runAsUser: &context 568
-            runAsGroup: *context
-            fsGroup: *context
-            fsGroupChangePolicy: "OnRootMismatch"
+          # securityContext:
+          #   runAsNonRoot: true
+          #   runAsUser: &context 568
+          #   runAsGroup: *context
+          #   fsGroup: *context
+          #   fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
           main:
@@ -57,11 +57,11 @@ spec:
               APP_URL: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
               DISABLE_BUILTIN_AUTH: "false"
 
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop:
-                  - ALL
+            # securityContext:
+            #   allowPrivilegeEscalation: false
+            #   capabilities:
+            #     drop:
+            #       - ALL
 
             resources:
               requests:
