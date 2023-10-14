@@ -38,10 +38,11 @@ spec:
         statefulset:
           volumeClaimTemplates:
             - name: config
-              mountPath: /app/config
               accessMode: ReadWriteOnce
               size: 500Mi
               storageClass: longhorn-media
+              globalMounts:
+                - path: /app/config
 
         pod:
           enableServiceLinks: false
