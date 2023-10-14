@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 1.5.1
+      version: 2.0.3
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -31,6 +31,9 @@ spec:
       main:
         enabled: true
         type: cronjob
+        annotations:
+          reloader.stakater.com/auto: "true"
+
         cronjob:
           concurrencyPolicy: Forbid
           schedule: '@daily'
@@ -39,42 +42,52 @@ spec:
           failedJobsHistory: 1
           backoffLimit: 6
 
-    image:
-      repository: ghcr.io/recyclarr/recyclarr
-      tag: 6.0.1
+        pod:
+          securityContext:
+            runAsUser: &context 568
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
 
-    command: ['/app/recyclarr/recyclarr']
-    args: ['sync']
+        containers:
+          main:
+            image:
+              repository: ghcr.io/recyclarr/recyclarr
+              tag: 6.0.1
 
-    env:
-      TZ: ${TZ}
-      API_KEY_SONARR:
-        valueFrom:
-          secretKeyRef:
-            name: media-secrets
-            key: API_KEY_SONARR
-      API_KEY_RADARR:
-        valueFrom:
-          secretKeyRef:
-            name: media-secrets
-            key: API_KEY_RADARR
+            command: ['/app/recyclarr/recyclarr']
+            args: ['sync']
+
+            env:
+              TZ: ${TZ}
+              API_KEY_SONARR:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: API_KEY_SONARR
+              API_KEY_RADARR:
+                valueFrom:
+                  secretKeyRef:
+                    name: media-secrets
+                    key: API_KEY_RADARR
+
+            resources:
+              requests:
+                cpu: 5m
+                memory: 36M
+              limits:
+                memory: 128M
 
     service:
       main:
         enabled: false
 
     persistence:
-      config:
+      config-file:
         enabled: true
         type: configMap
         name: recyclarr-cm
-        mountPath: /config/recyclarr.yml
-        subPath: recyclarr.yml
-        readOnly: true
-
-    resources:
-      requests:
-        cpu: 10m
-        memory: 50M
-      limits:
-        memory: 100M
+        globalMounts:
+          - path: /config/recyclarr.yml
+            subPath: recyclarr.yml
+            readOnly: true
