@@ -8,23 +8,71 @@ spec:
   interval: 15m
   chart:
     spec:
-      chart: metallb
+      chart: &app metallb
       version: 0.13.11
       sourceRef:
         kind: HelmRepository
         name: metallb
         namespace: flux-system
-  maxHistory: 2
+
   install:
-    createNamespace: true
     remediation:
       retries: 3
   upgrade:
-    cleanupOnFail: true
     remediation:
       retries: 3
-  uninstall:
-    keepHistory: false
+
   values:
-    crds:
+    fullnameOverride: *app
+
+    speaker:
       enabled: true
+      logLevel: info
+      tolerateMaster: true
+
+      image:
+        repository: quay.io/metallb/speaker
+
+      updateStrategy:
+        type: RollingUpdate
+
+      resources:
+        requests:
+          cpu: 10m
+          memory: 100Mi
+        limits:
+          memory: 125Mi
+
+    frr:
+      enabled: true
+      image:
+        repository: quay.io/frrouting/frr
+        tag: 9.0.1
+
+      metricsPort: 7473
+
+      resources:
+        requests:
+          cpu: 10m
+          memory: 102Mi
+        limits:
+          memory: 125Mi
+
+    reloader:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 100Mi
+        limits:
+          memory: 125Mi
+
+    frrMetrics:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 100Mi
+        limits:
+          memory: 125Mi
+
+      crds:
+        enabled: true
