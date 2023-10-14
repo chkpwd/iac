@@ -84,11 +84,3 @@ spec:
         tls:
           - hosts:
               - *host
-
-    persistence:
-      config:
-        enabled: true
-        path: /data/database
-        accessMode: ReadWriteOnce
-        size: 300Mi
-        storageClass: longhorn-media
