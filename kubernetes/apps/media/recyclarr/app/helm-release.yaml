@@ -44,10 +44,13 @@ spec:
 
         pod:
           securityContext:
+            runAsNonRoot: true
             runAsUser: &context 568
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
+            seccompProfile:
+              type: RuntimeDefault
 
         containers:
           main:
@@ -70,6 +73,12 @@ spec:
                   secretKeyRef:
                     name: media-secrets
                     key: API_KEY_RADARR
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
 
             resources:
               requests:
