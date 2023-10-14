@@ -70,10 +70,10 @@ spec:
 
             resources:
               requests:
-                cpu: 18m
-                memory: 160Mi
+                cpu: 10m
+                memory: 131Mi
               limits:
-                memory: 200Mi
+                memory: 156Mi
 
           secondary:
             image:
@@ -88,10 +88,10 @@ spec:
 
             resources:
               requests:
-                cpu: 100m
+                cpu: 10m
                 memory: 100Mi
               limits:
-                memory: 200Mi
+                memory: 125Mi
 
     service:
       main:

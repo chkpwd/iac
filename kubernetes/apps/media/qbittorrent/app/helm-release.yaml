@@ -66,10 +66,10 @@ spec:
     
             resources:
               requests:
-                cpu: 200m
-                memory: 350Mi
+                cpu: 10m
+                memory: 100Mi
               limits:
-                memory: 1000Mi
+                memory: 125Mi
 
           secondary:
             image: 
@@ -80,7 +80,13 @@ spec:
               - --branch=latest-release
               - --wait=86400
               - --root=/add-ons
-
+    
+            resources:
+              requests:
+                cpu: 10m
+                memory: 100Mi
+              limits:
+                memory: 125Mi
     service:
       main:
         ports:
