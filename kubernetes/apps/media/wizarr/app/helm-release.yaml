@@ -38,7 +38,8 @@ spec:
         pod:
           enableServiceLinks: false
           securityContext:
-            runAsUser: &context 1000
+            runAsNonRoot: true
+            runAsUser: &context 568
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
@@ -47,19 +48,26 @@ spec:
           main:
             image:
               repository: ghcr.io/wizarrrr/wizarr
-              tag: v3-beta-3.4.2
+              tag: 3.4.1
               pullPolicy: IfNotPresent
+
             env:
               TZ: "${TZ}"
               APP_URL: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
               DISABLE_BUILTIN_AUTH: "false"
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
 
             resources:
               requests:
                 cpu: 10m
                 memory: 100M
               limits:
-                memory: 200M
+                memory: 500M
 
     service:
       main:
