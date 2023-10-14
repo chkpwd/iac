@@ -106,6 +106,14 @@ spec:
     resources:
       server:
         requests:
-          cpu: 200m
+          cpu: 19m
+          memory: 562Mi
         limits:
-          memory: 500Mi
+          memory: 587Mi
+      worker:
+        requests:
+          cpu: 11m
+          memory: 604Mi
+        limits:
+          memory: 629Mi
+
