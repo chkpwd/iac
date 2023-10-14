@@ -127,9 +127,8 @@ spec:
               - *host
 
     persistence:
-      media:
+      data:
         enabled: true
         type: nfs
         server: "cockpit.${LOCAL_DOMAIN}"
         path: /mnt/data/
-        mountPath: /data

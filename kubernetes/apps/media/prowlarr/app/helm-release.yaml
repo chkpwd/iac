@@ -125,11 +125,3 @@ spec:
         tls:
           - hosts:
               - *host
-
-    persistence:
-      media:
-        enabled: true
-        type: nfs
-        server: "cockpit.${LOCAL_DOMAIN}"
-        path: /mnt/data/
-        mountPath: /data
