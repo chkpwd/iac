@@ -48,6 +48,13 @@ spec:
       enabled: true
       logFormat: json
 
+      resources:
+        requests:
+          cpu: 10m
+          memory: 100Mi
+        limits:
+          memory: 125Mi
+
     metrics:
       serviceMonitor:
         enabled: false
