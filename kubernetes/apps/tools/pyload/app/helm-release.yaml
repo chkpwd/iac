@@ -60,7 +60,7 @@ spec:
               tag: 0.5.0
 
             env:
-              TZ: ${TZ}
+              TZ: "${TZ}"
               PUID: *context
               PGID: *context
 
@@ -96,7 +96,7 @@ spec:
               - *host
 
     persistence:
-      data:
+      downloads:
         enabled: true
         type: nfs
         server: "cockpit.${LOCAL_DOMAIN}"
