@@ -72,7 +72,6 @@ spec:
 
     service:
       main:
-        primary: true
         ports:
           http:
             port: 8000
@@ -96,9 +95,8 @@ spec:
               - *host
 
     persistence:
-      media:
+      data:
         enabled: true
         type: nfs
         server: "cockpit.${LOCAL_DOMAIN}"
         path: /mnt/data/downloads/pyload
-        mountPath: /downloads
