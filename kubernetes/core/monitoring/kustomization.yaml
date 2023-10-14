@@ -2,9 +2,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - goldilocks-system/ks.yaml
   - metrics-system/ks.yaml
   - prometheus-system/ks.yaml
-  - vpa-system/ks.yaml
   - botkube-system/ks.yaml
   - node-problem-detector-system/ks.yaml
