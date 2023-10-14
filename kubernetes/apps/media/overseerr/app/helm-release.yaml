@@ -46,6 +46,7 @@ spec:
         pod:
           enableServiceLinks: false
           securityContext:
+            runAsNonRoot: true
             runAsUser: &context 568
             runAsGroup: *context
             fsGroup: *context
@@ -57,10 +58,17 @@ spec:
               repository: ghcr.io/sct/overseerr
               tag: 1.33.2
               pullPolicy: IfNotPresent
+
             env:
               TZ: "${TZ}"
               LOG_LEVEL: "info"
               PORT: &port 5055
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
 
             resources:
               requests:
