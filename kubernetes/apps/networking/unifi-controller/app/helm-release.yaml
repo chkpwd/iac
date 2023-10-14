@@ -38,10 +38,11 @@ spec:
         statefulset:
           volumeClaimTemplates:
             - name: config
-              mountPath: /unifi
               accessMode: ReadWriteOnce
               size: 2Gi
               storageClass: longhorn-config
+              globalMounts:
+                - path: /unifi
 
         pod:
           enableServiceLinks: false
