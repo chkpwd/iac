@@ -24,12 +24,41 @@ spec:
       retries: 3
 
   values:
+    fullnameOverride: *app
+
+    vpa:
+      enabled: false
+      updater:
+        enabled: false
+
+    metrics-server:
+      enabled: false
+      apiService:
+        create: true
+
     image:
       repository: us-docker.pkg.dev/fairwinds-ops/oss/goldilocks
       tag: v4.10.1
       pullPolicy: Always
 
     controller:
+      enabled: true
+
+      rbac:
+        create: true
+
+      serviceAccount:
+        create: true
+
+      securityContext:
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        runAsUser: 10324
+        capabilities:
+          drop:
+            - ALL
+
       resources:
         requests:
           cpu: 15m
@@ -41,10 +70,25 @@ spec:
       enabled: true
       replicaCount: 1
 
+      rbac:
+        create: true
+        enableArgoproj: true
+
+      serviceAccount:
+        create: true
+
       service:
         type: ClusterIP
         port: 80
-        annotations: {}
+
+      securityContext:
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        runAsUser: 10324
+        capabilities:
+          drop:
+            - ALL
 
       resources:
         requests:
