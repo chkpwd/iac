@@ -31,3 +31,8 @@ scrape_configs:
     scheme: https
     static_configs:
       - targets: ['prowlarr.k8s.chkpwd.com']
+
+  - job_name: 'opnsense-node-exporter'
+    scheme: http
+    static_configs:
+      - targets: ['172.16.16.1:9100']
