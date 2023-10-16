@@ -1,0 +1,34 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tools-youtubedl-material
+  namespace: flux-system
+spec:
+  dependsOn:
+    - name: tools-youtubedl-material-config
+  path: ./kubernetes/apps/tools/youtubedl-material/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tools-youtubedl-material-config
+  namespace: flux-system
+spec:
+  path: ./kubernetes/apps/tools/youtubedl-material/config
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
