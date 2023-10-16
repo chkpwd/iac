@@ -36,6 +36,14 @@ spec:
 
         pod:
           enableServiceLinks: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: &context 2310
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
+            seccompProfile:
+              type: RuntimeDefault
 
         containers:
           main:
@@ -45,6 +53,10 @@ spec:
               pullPolicy: IfNotPresent
 
             env:
+              TZ: "${TZ}"
+              UID: *context
+              GID: *context
+              ytdl_auth_method: "internal"
               ALLOW_CONFIG_MUTATIONS: "true"
               ytdl_use_local_db: "true"
               write_ytdl_config: "true"
@@ -85,6 +97,12 @@ spec:
               ytdl_use_default_downloading_agent: "true"
               ytdl_allow_advanced_download: "true"
               ytdl_use_cookies: "false"
+            
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
 
             resources:
               requests:
