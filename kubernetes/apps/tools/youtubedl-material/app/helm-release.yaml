@@ -37,13 +37,12 @@ spec:
         pod:
           enableServiceLinks: false
           securityContext:
-            runAsNonRoot: true
-            runAsUser: &context 2310
+            runAsUser: &context 1000
             runAsGroup: *context
             fsGroup: *context
+            supplementalGroups:
+              - 100
             fsGroupChangePolicy: "OnRootMismatch"
-            seccompProfile:
-              type: RuntimeDefault
 
         containers:
           main:
@@ -97,12 +96,6 @@ spec:
               ytdl_use_default_downloading_agent: "true"
               ytdl_allow_advanced_download: "true"
               ytdl_use_cookies: "false"
-            
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop:
-                  - ALL
 
             resources:
               requests:
