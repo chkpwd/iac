@@ -34,11 +34,12 @@ spec:
         - server
         - --write-kubeconfig=/data/k3s-config/kube-config.yaml
         - --data-dir=/data
-        - --disable=traefik,servicelb,metrics-server,local-storage,coredns
+        - --disable=traefik,servicelb,metrics-server,local-storage,coredns,flannel
         - --disable-network-policy
         - --disable-agent
         - --disable-cloud-controller
-        - --flannel-backend=none
+        - --flannel-backend='none'
+        - --disable-kube-proxy
       extraArgs: []
       volumeMounts:
         - mountPath: /data
