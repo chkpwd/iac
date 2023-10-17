@@ -75,7 +75,7 @@ ARG STERN_VERSION=v1.26.0
 ARG KREW_VERSION=v0.4.4
 
 # renovate: datasource=github-releases depName=sachaos/viddy
-ARG VIDDY_VERSION=v0.3.7
+ARG VIDDY_VERSION=v0.4.0
 
 # renovate: datasource=github-releases depName=derailed/k9s
 ARG K9S_VERSION=v0.27.4
