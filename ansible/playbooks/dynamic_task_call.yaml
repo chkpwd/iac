@@ -1,0 +1,16 @@
+---
+- name: Dynamic Task Playbook
+  hosts: "{{ onhosts | default('localhost') }}"
+  gather_facts: true
+  
+  pre_tasks:
+    - name: Warn if localhost
+      ansible.builtin.pause:
+        prompt: "\nWARNING: The specified task will run against localhost. You have 2 seconds to cancel"
+        seconds: 2
+      when: onhosts | default('localhost') == 'localhost'
+
+  tasks:
+    - name: Running "{{ task }}" 
+      include_tasks:
+        file: "../tasks/maintenance/{{ task }}.yaml"
