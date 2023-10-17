@@ -1,4 +1,4 @@
-- name: Create Job Template
+- name: Job Templates | Create Test Job
   awx.awx.job_template:
     name: "Linux | Get MAC Addresses"
     job_type: "run"
@@ -8,6 +8,24 @@
     playbook: "ansible/playbooks/get_macaddress.yaml"
     limit: "linux"
     diff_mode: true
+    credentials:
+      - "infra_credential"
+    state: "present"
+    controller_config_file: "{{ awx_conf }}"
+
+- name: Job Templates | Check Disk Usage
+  awx.awx.job_template:
+    name: "Linux | Check Disk Usage"
+    job_type: "run"
+    organization: "{{ awx_org }}"
+    inventory: "static_inventory"
+    project: "Git"
+    playbook: "ansible/playbooks/dynamic_task_call.yaml"
+    limit: "linux"
+    diff_mode: true
+    extra_vars:
+      onhosts: "linux"
+      task: "check_disk"
     credentials:
       - "infra_credential"
     state: "present"
