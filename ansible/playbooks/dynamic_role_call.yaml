@@ -15,14 +15,13 @@
       module_defaults:
         community.docker.docker_container:
           restart_policy: always
-      when: role is defined and role == 'compose'
       block:
         - name: Run the 'compose' role
           include_role:
             name: "{{ role }}"
       
     - name: Non-module defaults
-      when: role is not defined or role != 'compose'
+      when: role != 'compose'
       block:
         - name: Run other roles
           include_role:
