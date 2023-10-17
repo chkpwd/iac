@@ -33,22 +33,22 @@ spec:
     groups:
       "Database":
         backup:
-          - interval: 4h
+          - interval: 24h
             retain: 7
         filesystem-trim:
-          - interval: 4h
+          - interval: 24h
       "Config":
         backup:
           - interval: 24h
             retain: 7
         filesystem-trim:
-          - interval: 4h
+          - interval: 24h
       "Media":
         backup:
           - interval: 24h
             retain: 2
         filesystem-trim:
-          - interval: 4h
+          - interval: 24h
       "Clusters":
         options:
           parameters:
@@ -57,4 +57,4 @@ spec:
           - interval: 24h
             retain: 1
         filesystem-trim:
-          - interval: 4h
+          - interval: 24h
