@@ -1,6 +1,10 @@
 ---
 - name: Get free disk space
   shell: |
+    bash -c '
     set -o pipefail
-    df -h /tmp --output\=avail | tail -n 1 
+    df -h /tmp --output=avail | tail -n 1'
   register: disk_usage
+- name: Display free disk space
+  ansible.builtin.debug:
+    msg: "Available disk space for /tmp is {{ disk_usage.stdout }}"
