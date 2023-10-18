@@ -2,7 +2,7 @@ terraform {
   required_providers {
     oci = {
       source = "oracle/oci"
-      version = "5.15.0"
+      version = "5.17.0"
     }
     sops = { 
       source = "carlpett/sops"
