@@ -37,21 +37,21 @@
   ansible.builtin.include_tasks:
     file: awx_job_templates.yaml
 
-# - name: Add Discord Notification
-#   awx.awx.notification_template:
-#     name: Discord Notification
-#     organization: "{{ awx_org }}"
-#     notification_type: slack
-#     notification_configuration:
-#       channels:
-#         - lab-updates
-#       token: https://discord.com/api/webhooks/
-#     messages:
-#        started:
-#          message: "{{ '{{ job_friendly_name }}{{ job.id }} started' }}"
-#        success:
-#          message: "{{ '{{ job_friendly_name }} completed in {{ job.elapsed }} seconds' }}"
-#        error:
-#          message: "{{ '{{ job_friendly_name }} FAILED! Please look at {{ job.url }}' }}"
-#     state: present
-#     controller_config_file: "{{ awx_conf }}"
+- name: Add Discord Notification
+  awx.awx.notification_template:
+    name: Discord Notification
+    organization: "{{ awx_org }}"
+    notification_type: webhook
+    notification_configuration:
+      url: "{{ DISCORD_AWX_LAB_WEBHOOK }}"
+      headers:
+        Content-Type: "application/json"
+    messages:
+      started:
+        message: '{"content": "test"}'
+      success:
+        message: "{{ '{{ job_friendly_name }} completed in {{ job.elapsed }} seconds' }}"
+      error:
+        message: "{{ '{{ job_friendly_name }} FAILED! Please look at {{ job.url }}' }}"
+    state: present
+    controller_config_file: "{{ awx_conf }}"
