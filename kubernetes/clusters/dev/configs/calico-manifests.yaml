@@ -1,0 +1,47 @@
+---
+apiVersion: projectcalico.org/v3
+kind: BGPConfiguration
+metadata:
+  name: default
+spec:
+  asNumber: 65510
+  nodeToNodeMeshEnabled: true
+  serviceClusterIPs:
+    - cidr: 10.50.10.0/16
+  serviceExternalIPs:
+    - cidr: 10.50.20.0/16
+---
+apiVersion: projectcalico.org/v3
+kind: BGPPeer
+metadata:
+  name: opnsense
+spec:
+  peerIP: 172.16.16.1
+  asNumber: 65505
+  keepOriginalNextHop: true
+  maxRestartTime: 15m
+---
+apiVersion: projectcalico.org/v3
+kind: IPPool
+metadata:
+  name: bgp-pods
+spec:
+  disabled: false
+  blockSize: 0
+  cidr: 10.50.0.0/16
+  ipipMode: Never
+  natOutgoing: true
+  nodeSelector: all()
+  vxlanMode: CrossSubnet
+---
+apiVersion: projectcalico.org/v3
+kind: CalicoNodeStatus
+metadata:
+  name: dev-cluster
+spec:
+  classes:
+    - Agent
+    - BGP
+    - Routes
+  node: kubes-cp-2
+  updatePeriodSeconds: 10
