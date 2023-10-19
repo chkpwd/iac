@@ -10,7 +10,7 @@ spec:
     spec:
       chart: external-dns
       interval: 30m
-      version: 1.13.0
+      version: 1.13.1
       sourceRef:
         kind: HelmRepository
         name: external-dns
@@ -33,7 +33,7 @@ spec:
 
     image:
       repository: registry.k8s.io/external-dns/external-dns
-      tag: v0.13.5
+      tag: v0.13.6
       pullPolicy: IfNotPresent
 
     provider: cloudflare
