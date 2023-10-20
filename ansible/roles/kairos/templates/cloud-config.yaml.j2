@@ -1,0 +1,145 @@
+---
+#cloud-config
+
+hostname: cattle-k3s-{{ trunc 4 .MachineID }}
+
+users:
+  - name: chkpwd
+    shell: /bin/bash
+    groups:
+      - admin
+    ssh_authorized_keys:
+      - github:chkpwd
+
+install:
+  auto: true
+  device: /dev/sda
+  reboot: true
+
+  # Set the boot options
+  firmware: efi
+  part-table: gpt
+
+  extra-dirs-rootfs: &longhorn
+    - /mnt/longhorn
+
+  grub_options:
+    saved_entry: "Kairos"
+
+upgrade:
+  extra-dirs-rootfs: *longhorn
+
+reset:
+  extra-dirs-rootfs: *longhorn
+
+growpart:
+  devices: ['/']
+
+stages:
+  after-install-chroot:
+    - name: "Install Longhorn Prerequisites"
+      commands:
+        - apt install parted nfs-common open-iscsi
+
+  initramfs:
+    - name: "Partition /dev/sdb if needed"
+      if: >-
+        [ $(sudo fdisk -l /dev/sdb | grep -q "83 Linux"; echo $?) -ne 0 ]
+      commands:
+        - parted /dev/sdb --script -- mkpart primary 0 -1
+
+    - name: "Format /dev/sdb1 if needed"
+      if: >-
+        [ $(sudo lsblk -o FSTYPE /dev/sdb1 | tail -n 1 | wc -l) -eq 0 ]
+      commands:
+        - mkfs.ext4 -F /dev/sdb1
+
+  boot:
+    - name: "Set system keymap"
+      system_firstboot:
+        keymap: us
+
+    - name: "Setup hostname"
+      hostname: "cattles-k3s-{{ trunc 4 .MachineID }}"
+
+    - name: "Mount /dev/sdb1 under /mnt/longhorn"
+      commands:
+        - mount -o rw /dev/sdb1 /mnt/longhorn
+
+    - name: "Set up various kube environment variables"
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        CONTAINERD_ADDRESS: /run/k3s/containerd/containerd.sock
+        CONTAINERD_NAMESPACE: k8s.io
+
+    # -- Init Flux Namespace
+    - name: "Add flux-system namespace manifest"
+      files:
+        - path: /var/lib/rancher/k3s/server/manifests/flux-system.yaml
+          content: |
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              name: flux-system
+
+    - name: "Download SOPS secret" 
+      files:
+        - path: /var/lib/rancher/k3s/server/manifests/sops-secret.yaml
+          content: |
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              name: sops-gpg
+              namespace: flux-system
+            type: Opaque
+            data:
+              sops.asc: {[ AGE_KEY_SECRET_BASE64 ]}
+
+    - name: "Bootstrap with Flux" 
+      commands:
+        - bash /usr/local/lib/extensions/flux/bootstrap.sh &
+
+    - name: "Set modprobe modules"
+      modules:
+        - iscsi_tcp
+
+kubevip:
+  enabled: true
+  eip: {[ kairos_kubevip_address ]}
+
+k3s:
+  enabled: true
+  args:
+    - --disable=traefik,servicelb,local-storage
+    - --flannel-backend="vxlan"
+    - --service-cidr 172.23.0.0/16
+    - --cluster-cidr 172.23.0.0/16
+    - --write-kubeconfig-mode 0644
+    - --node-taint 'node-role.kubernetes.io/control-plane=effect:NoSchedule'
+
+p2p:
+  network_id: cattle-k3s
+  disable_dht: true # Discover nodes only in the local network
+
+  vpn:
+    create: false
+    use: false
+  network_token: {[ P2P_NETWORK_TOKEN ]}
+
+  auto:
+    enable: true
+    ha:
+      enable: true
+      master_nodes: 2
+
+bundles:
+  - targets:
+    - run://docker.io/tyzbit/flux:latest
+
+# Bundle configs
+flux:
+  github:
+    owner: chkpwd
+    repository: iac
+    path: kubernetes/
+    components-extra: image-reflector-controller,image-automation-controller

@@ -1,0 +1,6 @@
+---
+- name: Restart AuroraBoot
+  community.docker.docker_container:
+    name: auroraboot
+    state: started
+    restart: true
