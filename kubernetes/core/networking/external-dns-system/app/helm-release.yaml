@@ -63,7 +63,7 @@ spec:
       - --crd-source-kind=DNSEndpoint
       - --cloudflare-dns-records-per-page=1000
 
-    policy: sync
+    policy: upsert-only
 
     sources: ["crd", "ingress"]
     
