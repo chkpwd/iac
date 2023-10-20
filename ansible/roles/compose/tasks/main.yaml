@@ -17,6 +17,16 @@
     mode: '0755'
   register: docker_dir
 
+- name: Create app directories
+  ansible.builtin.file: # noqa risky-file-permissions
+    path: "{{ item }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0755
+    state: directory
+  loop: "{{ service_definitions | selectattr('volumes', 'defined') | map(attribute='name') | product([configuration_path]) | map('reverse') | map('join', '/') }}"
+  when: not item is match('.*\.\w{2,4}$')
+
 - name: Install Docker only if not installed
   when: "'docker_hosts' in group_names and not docker_installed.stat.exists"
   block:
