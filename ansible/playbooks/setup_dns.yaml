@@ -21,7 +21,7 @@
       ansible.builtin.include_tasks: ../tasks/docker/install_docker.yaml
 
     - name: expand file system
-      when: "'dns-srv-01' in ansible_nodename"
+      when: "'mgmt-srv-01' in ansible_nodename"
       command: "raspi-config nonint do_expand_rootfs"
 
     - name: Deploy Docker containers # noqa args[module]
