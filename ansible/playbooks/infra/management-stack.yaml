@@ -1,0 +1,16 @@
+---
+- name: Monitoring Stack Setup
+  hosts: mgmt-srv-01
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Run all corresponding roles
+      include_role:
+        name: "{{ item }}"
+      loop:
+        - monitoring
+        - kairos
+        - compose
+      loop_control:
+        label: "Role: {{ item }}"

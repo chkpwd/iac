@@ -1,0 +1,15 @@
+---
+- name: Create AuroraBoot Config
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ configuration_path }}/auroraboot/files/{{ item.path | splitext | first }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0755
+    variable_start_string: "{["
+    variable_end_string: "]}"
+  loop: "{{ lookup('community.general.filetree', 'templates/') }}"
+  loop_control:
+    label: "Files: {{ item.path }}"
+  when: item.state == 'file'
+  notify: Restart AuroraBoot
