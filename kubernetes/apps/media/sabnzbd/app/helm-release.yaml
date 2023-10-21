@@ -70,6 +70,11 @@ spec:
                 {{ .Release.Name }}.media.svc.cluster,
                 {{ .Release.Name }}.media.${CLUSTER_DOMAIN},
                 {{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}
+              SABNZBD__FRUGALUSENET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sabnzbd-secrets
+                    key: APP_PWD_FRUGALUSENET
 
             resources:
               requests:
