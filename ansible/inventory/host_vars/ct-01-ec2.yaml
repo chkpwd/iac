@@ -1,6 +1,6 @@
 ---
 # Set the user
-common_user: ubuntu
+common_user: admin
 
 # Docker Configurations
 docker_edition: 'ce'
@@ -33,17 +33,17 @@ service_definitions:
     networks:
       - name: net_swag
 
-  - name: twingate-connector
-    image: twingate/connector:1.59.0
-    env:
-      - SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
-      - TWINGATE_API_ENDPOINT: /connector.stock
-      - TWINGATE_NETWORK: chkpwd
-      - TWINGATE_ACCESS_TOKEN: "{{ OCI_TWINGATE_ACCESS_TOKEN }}"
-      - TWINGATE_REFRESH_TOKEN: "{{ OCI_TWINGATE_REFRESH_TOKEN }}"
-      - TWINGATE_LOG_LEVEL: 3
-    sysctls:
-      net.ipv4.ping_group_range: "0 2147483647"
+  # - name: twingate-connector
+  #   image: twingate/connector:1.59.0
+  #   env:
+  #     - SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
+  #     - TWINGATE_API_ENDPOINT: /connector.stock
+  #     - TWINGATE_NETWORK: chkpwd
+  #     - TWINGATE_ACCESS_TOKEN: "{{ OCI_TWINGATE_ACCESS_TOKEN }}"
+  #     - TWINGATE_REFRESH_TOKEN: "{{ OCI_TWINGATE_REFRESH_TOKEN }}"
+  #     - TWINGATE_LOG_LEVEL: 3
+  #   sysctls:
+  #     net.ipv4.ping_group_range: "0 2147483647"
 
   - name: uptime-kuma
     image: louislam/uptime-kuma:1.23.3
@@ -52,7 +52,7 @@ service_definitions:
     network_mode: container:wireguard
 
   - name: swag
-    image: "{{ linuxserver_image }}/swag:latest"
+    image: "{{ linuxserver_image }}/swag:2.7.2"
     ports:
       - 443:443
       - 80:80
