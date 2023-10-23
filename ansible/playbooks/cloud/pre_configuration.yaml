@@ -16,7 +16,7 @@
     - name: Template NGINX config
       delegate_to: ct-01-ec2
       ansible.builtin.template:
-        src: ../../files/nginx.conf.j2
+        src: ../../templates/nginx.conf.j2
         dest: "{{ configuration_path }}/swag/nginx/site-confs/default.conf"
         mode: '664'
 
