@@ -21,15 +21,6 @@ resource "cloudflare_record" "uptime" {
   proxied = true
   ttl     = 1
   type    = "A"
-  value   = data.tfe_outputs.oci.values.ct-01-x86_public_ip
-  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
-}
-
-resource "cloudflare_record" "couchdb" {
-  name    = "couchdb.chkpwd.com"
-  proxied = true
-  ttl     = 1
-  type    = "A"
-  value   = data.tfe_outputs.oci.values.ct-01-x86_public_ip
+  value   = data.tfe_outputs.aws.values.ct-01-ec2_public_ip
   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
 }
