@@ -1,18 +1,10 @@
-resource "aws_instance" "t3-instance" {
+resource "aws_instance" "main" {
   ami                    = var.instance_spec.ami
   instance_type          = var.instance_spec.type
   key_name               = var.instance_spec.key_name
-  vpc_security_group_ids = [aws_security_group.main.id]
-
+  subnet_id              = var.subnet_id
+  vpc_security_group_ids = var.vpc_security_groups
   tags = {
-    Name = "t3-general"
-  }
-
-  connection {
-    type        = "ssh"
-    user        = var.instance_spec.connection.user
-    private_key = file(var.ssh_configuration.private_key)
-    host        = aws_instance.t3-instance.public_ip
-    timeout     = "2m"
+    Name = var.instance_spec.name
   }
 }
