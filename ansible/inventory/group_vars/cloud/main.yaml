@@ -1,13 +1,9 @@
 sites:
-  - url: couchdb.{{ remote_domain }}
-    name: ct-02-x86.{{ oci_dns_domain }}
-    port: 5984
   - url: uptime.{{ remote_domain }}
     name: wireguard
     port: 3001
 
 remote_domain: chkpwd.com
-oci_dns_domain: remote.chkpwd.oraclevcn.com
 
 uptime_kuma_monitors:
   # Groups
@@ -33,6 +29,16 @@ uptime_kuma_monitors:
     url: 172.16.16.3
     parent: Services Ping
 
+  - name: MGMT-SRV-01
+    type: ping
+    url: 172.16.16.4
+    parent: Services Ping
+
+  - name: DNS-SRV-02
+    type: ping
+    url: 172.16.16.5
+    parent: Services Ping
+
   - name: vCenter
     type: ping
     url: 172.16.16.6
@@ -41,26 +47,6 @@ uptime_kuma_monitors:
   - name: Unifi AP
     type: ping
     url: 172.16.16.9
-    parent: Services Ping
-
-  - name: Home Assistant
-    type: ping
-    url: 172.16.16.11
-    parent: Services Ping
-
-  - name: 3D Printer
-    type: ping
-    url: 172.16.16.13
-    parent: Services Ping
-
-  - name: NAS
-    type: ping
-    url: 172.16.16.15
-    parent: Services Ping
-
-  - name: Kube-VIP LoadBalancer
-    type: ping
-    url: 172.16.16.13
     parent: Services Ping
 
   - name: Kubernetes Node 1
@@ -76,6 +62,21 @@ uptime_kuma_monitors:
   - name: Kubernetes Node 3
     type: ping
     url: 172.16.16.12
+    parent: Services Ping
+
+  - name: Kube-VIP LoadBalancer
+    type: ping
+    url: 172.16.16.13
+    parent: Services Ping
+
+  - name: NAS
+    type: ping
+    url: 172.16.16.15
+    parent: Services Ping
+
+  - name: Home Assistant
+    type: ping
+    url: 172.16.16.16
     parent: Services Ping
 
   # Sites

@@ -57,8 +57,7 @@ all:
       hosts:
         mirage:
         home-assistant:
-        ct-01-x86:
-        ct-02-x86:
+        ct-01-ec2:
         boot-server:
         mgmt-srv-01:
         dns-srv-02:
@@ -90,15 +89,13 @@ all:
 
     cloud:
       vars:
-        ansible_remote_user: ubuntu
-        ansible_ssh_user: ubuntu
-        ansible_ssh_private_key_file: ~/.ssh/oci
-        common_user: ubuntu
+        ansible_remote_user: admin
+        ansible_ssh_user: admin
+        ansible_ssh_private_key_file: ~/.ssh/aws
+        common_user: admin
       hosts:
-        ct-01-x86:
-          ansible_host:	129.80.241.202
-        ct-02-x86:
-          ansible_host: 150.136.245.5
+        ct-01-ec2:
+          ansible_host:	3.94.249.121
 
     dns_servers:
       hosts:
