@@ -1,7 +1,7 @@
-# resource "cloudflare_email_routing_settings" "settings" {
-#   enabled = true
-#   zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
-# }
+resource "cloudflare_email_routing_settings" "settings" {
+  enabled = true
+  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
+}
 
 resource "cloudflare_email_routing_address" "catch_all_address" {
   account_id = data.sops_file.cloudflare-secrets.data["cloudflare_account_id"]
