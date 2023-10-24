@@ -1,9 +1,11 @@
 ---
 - name: Set up OCI Instances
   ansible.builtin.import_playbook: setup_instances.yaml
+  tags: setup
     
 - name: Preconfigure services
   ansible.builtin.import_playbook: pre_configuration.yaml
+  tags: pre_config
 
 - hosts: cloud
   roles:
@@ -11,3 +13,4 @@
 
 - name: Postconfigure services
   ansible.builtin.import_playbook: post_configuration.yaml
+  tags: post_config
