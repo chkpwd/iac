@@ -7,114 +7,95 @@ remote_domain: chkpwd.com
 
 uptime_kuma_monitors:
   # Groups
-  - name: Site Ping
-    type: group
-
-  - name: Services Ping
+  - name: &services_group Services Ping
     type: group
 
   # Services
   - name: OPNsense
     type: ping
     url: 172.16.16.1
-    parent: Services Ping
+    parent: *services_group
 
   - name: Switch
     type: ping
     url: 172.16.16.2
-    parent: Services Ping
+    parent: *services_group
 
   - name: ESXi-1
     type: ping
     url: 172.16.16.3
-    parent: Services Ping
+    parent: *services_group
 
   - name: MGMT-SRV-01
     type: ping
     url: 172.16.16.4
-    parent: Services Ping
+    parent: *services_group
 
   - name: DNS-SRV-02
     type: ping
     url: 172.16.16.5
-    parent: Services Ping
+    parent: *services_group
 
   - name: vCenter
     type: ping
     url: 172.16.16.6
-    parent: Services Ping
+    parent: *services_group
 
   - name: Unifi AP
     type: ping
     url: 172.16.16.9
-    parent: Services Ping
+    parent: *services_group
 
   - name: Kubernetes Node 1
     type: ping
     url: 172.16.16.10
-    parent: Services Ping
+    parent: *services_group
 
   - name: Kubernetes Node 2
     type: ping
     url: 172.16.16.11
-    parent: Services Ping
+    parent: *services_group
 
   - name: Kubernetes Node 3
     type: ping
     url: 172.16.16.12
-    parent: Services Ping
+    parent: *services_group
 
   - name: Kube-VIP LoadBalancer
     type: ping
     url: 172.16.16.13
-    parent: Services Ping
+    parent: *services_group
 
   - name: NAS
     type: ping
     url: 172.16.16.15
-    parent: Services Ping
+    parent: *services_group
 
   - name: Home Assistant
     type: ping
     url: 172.16.16.16
-    parent: Services Ping
+    parent: *services_group
 
   # Sites
-  - name: Winxuu
+  - name: WinXuu
     type: ping
     url: winxuu.chkpwd.com
-    parent: Site Ping
 
   - name: Tig's Blog
     type: ping
     url: blog.tiga.tech
-    parent: Site Ping
 
 uptime_kuma_status_pages:
-  - title: "Default"
-    description: "Hosted Products"
+  - title: "Chkpwd's Monitoring"
+    description: "Hosted Services"
     slug: default
     publicGroupList:
-      - name: Site Ping
+      - name: Hosted Services Monitoring
         weight: 1
         monitorList:
-          - name: Site Ping
-      - name: Servies Ping
+          - name: *services_group
+      - name: Site Monitoring
         weight: 2
         monitorList:
-          - name: Services Ping
-
-# uptime_kuma_maintenance_schedules:
-#   - title: Backup - Plex
-#     description: Plex Server Backup
-#     strategy: recurring-weekday
-#     intervalDay: 1
-#     weekdays: [2, 3, 4, 5, 6, 7, 0]
-#     timeRange:
-#       - hours: 7
-#         minutes: 0
-#       - hours: 7
-#         minutes: 30
-#     monitors:
-#       - name: Bristol Plex Media Server
-#       - name: Plex Media Server
+          - name: WinXuu
+          - name: Tig's Blog
