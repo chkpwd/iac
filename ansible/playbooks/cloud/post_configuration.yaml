@@ -1,6 +1,12 @@
 ---
 - name: Uptime Kuma Configuration
   hosts: ct-01-ec2
+  gather_facts: false
+
+  vars_prompt:
+    - name: "two_factor_token"
+      prompt: "Enter your 2FA Token: "
+      private: true
 
   vars:
     uptime_kuma_url: "https://uptime.{{ domain }}"
@@ -32,7 +38,9 @@
           api_url: "{{ uptime_kuma_url }}"
           api_username: uptime
           api_password: "{{ UPTIME_KUMA_PASSWORD }}"
-        lucasheld.uptime_kuma.login: *uptimekuma_passwd_defaults
+        lucasheld.uptime_kuma.login: 
+          <<: *uptimekuma_passwd_defaults
+          api_2fa: "{{ two_factor_token }}"
       block:
         - name: Set credentials
           lucasheld.uptime_kuma.setup:
@@ -102,22 +110,3 @@
           loop_control:
             label: "{{ item.title }}"
           tags: pages
-
-        # - name: Set maintenance schedules
-        #   lucasheld.uptime_kuma.maintenance:
-        #     title: "{{ item.title }}"
-        #     description: "{{ item.description }}"
-        #     strategy: "{{ item.strategy }}"
-        #     active: "{{ item.active | default(true) }}"
-        #     intervalDay: "{{ item.intervalDay | default(omit) }}"
-        #     dateRange: "{{ item.dateRange | default(omit) }}"
-        #     timeRange: "{{ item.timeRange | default(omit) }}"
-        #     weekdays: "{{ item.weekdays | default(omit) }}"
-        #     timezoneOption: "{{ item.timezoneOption | default('America/New_York') }}"
-        #     monitors: "{{ item.monitors | default(omit) }}"
-        #     status_pages: "{{ item.status_pages | default(omit) }}"
-        #     state: "{{ item.state | default('present') }}"
-        #   loop: "{{ uptime_kuma_maintenance_schedules }}"
-        #   loop_control:
-        #     label: "{{ item.title }}"
-        #   tags: maintenance
