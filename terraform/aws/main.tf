@@ -7,5 +7,5 @@ module "ct-01-ec2" {
     key_name                     = aws_key_pair.main.key_name
   }
   subnet_id                      = aws_subnet.main.id
-  vpc_security_groups            = [ aws_security_group.main.id ]
+  vpc_security_groups            = [ aws_security_group.main.id, aws_security_group.secondary.id ]
 }
