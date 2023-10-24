@@ -4,7 +4,8 @@
   become: true
 
   tasks:
-    - name: Create swag directories
+
+    - name: Create necessary directories
       delegate_to: ct-01-ec2
       ansible.builtin.file: # noqa risky-file-permissions
         path: "{{ item }}"
@@ -12,6 +13,26 @@
       loop:
         - "{{ configuration_path }}/swag/dns-conf"
         - "{{ configuration_path }}/swag/nginx/site-confs"
+        - "{{ configuration_path }}/wireguard/wg_confs/"
+
+    - name: Create wireguard config
+      delegate_to: ct-01-ec2
+      ansible.builtin.copy:
+        content: |
+          [Interface]
+          PrivateKey = {{ WIREGUARD_CLIENT_PRIVATE_KEY }}
+          ListenPort = {{ WIREGUARD_PORT }}
+          Address = 10.6.6.5/24
+          DNS = 172.16.16.1, local.chkpwd.com
+
+          [Peer]
+          PublicKey = {{ WIREGUARD_PEER_PUBLIC_KEY }}
+          AllowedIPs = 0.0.0.0/0
+          Endpoint = {{ PUBLIC_IP_ADDRESS }}:{{ WIREGUARD_PORT }}
+        dest: "{{ configuration_path }}/wireguard/wg_confs/wg0.conf"
+        owner: "root"
+        group: "root"
+        mode: '600'
 
     - name: Template NGINX config
       delegate_to: ct-01-ec2

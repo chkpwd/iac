@@ -1,3 +1,4 @@
+PUBLIC_IP_ADDRESS: ENC[AES256_GCM,data:lYwohNuIpVHiENIQ,iv:iQ+pk2kf0y7NKNCuTY/q9rQfFZm6I6KrE4YK0zeEvjk=,tag:3ZreN1IWLKBWF1xg4M9gbA==,type:str]
 AWX_GIT_TOKEN_SOPS: ENC[AES256_GCM,data:oG66dayLYmIfNOr7edlWvTxuG+kPNF5gzD5WElaUrvQf0ODCP5qIIA==,iv:Roof+aoQbqhDk4vaYogk8oRodhnXNxKuHW+uuPn4LSo=,tag:JBGtGvuuB/gt4xLme0hwZQ==,type:str]
 VCENTER_USERNAME_SOPS: ENC[AES256_GCM,data:oQbl3B04kvRsst2SiNlnkOChbpvKtcZWxMDTfXP/e+HCV2VLYqs=,iv:1zZDoSuRjlZmEGbNTsVR1RzPV4isArHHP5nMUMoXHto=,tag:20615NoElgAy0/SZ1U15TA==,type:str]
 VCENTER_PASSWORD_SOPS: ENC[AES256_GCM,data:Se/G6TlNjQ/fK5RaG9P6rA==,iv:oIsjx+6Cb7Na7tz2Zj2OSZ7jaffdz1uiodWhwSpW0n4=,tag:JHwQBz4esRe6GGsNbsUJUQ==,type:str]
@@ -25,6 +26,9 @@ GRAVITY_ADMIN_PASSWORD: ENC[AES256_GCM,data:jqyPh+Lp1ohLUGnQ00TtqO2tsbfBDnImyTpo
 GRAVITY_TOKEN: ENC[AES256_GCM,data:EAoWFklr61L9EgwRWOcoShk8W/wmElT4iBujgRFMpzFi+Bb4RldsvCvJqqBlsInX33cZuXnCmgAz3AVonnJ3tg==,iv:d3WDkiLsjWBhxAhJsopfyUgFWQT1R/2TsCFp/mL39Q8=,tag:tyg0Iy/GzLtarO8Z6lJFfQ==,type:str]
 GRAFANA_ADMIN_PASSWORD: ENC[AES256_GCM,data:t1cznZtN/NmU4yrY+lswnj6nZ7QpTdqWHdQ=,iv:qzoMFaP24O5DOlhpbjqqFWyTzmPfLXt4gdswpEv8moI=,tag:b4wyr7TtEDLS96QC94zKEg==,type:str]
 P2P_NETWORK_TOKEN: ENC[AES256_GCM,data:Vw4MPp1wOZsT6cJgYVkcuRileClyRhChb1okbCsqC2v4/9jvKv1mgpci8+rM+5KXNXmP0kR9BuYp4XYC19g4gCTFimmHv8X0zVRwZZf9Ls/j7NBlobyB9nHb73qLRd3C2N6c8iHqOxF0wXikGMBXHbzRQsCsi9haHHq4Mc2NzoQfsGGJKLbQXtuA4aldNyMlKRHhwsBJm8UEnWea1ZDXX4+G/JAeUmE/GV49CjB2XMkhkTBDOZdu+G3Z2xRkKQxV3BEGcK7W0t882Eu7z+TV4ym7nSzpVT60ZhcOd5JpStxn/m/Li/cmZ2X6ZvFuPMjFi8ytLgHzNS8Bips5kd/tvPHkjXC7VElLX96fkKGISIxbMVNwvvPAt/VeGoMErzAAegRndqJyI9UAZmDoUrw0FZ18k1WrF15+61HQqLDHpPRUkfaj6qHFVa/D9Pn1z3mbzxE/OKsTfHuwaWN+JXKFTAkQHuVV9MXhiwCXOCtv7T4JATBi9kDD0ZG/QogeMLioqThmw3bwQx52PjANbvHIVkIx+lCA3Cf3oiNMRdOgJNxM2s8tO8SsY9X+c/DoqBMzN+4o8k+WyQPCQcwLQbPT3p8PBhDxs77qkM+MM5zNT91ik4jjI3Nyjq5udPZ0AxbkrMilJYZau1xWms/ONwHIuiCYJR1vz7zwNCNt+A==,iv:d+cIlL/oIrquq8NuhyZqunxcr4cSAxUluxJUwWXMU8A=,tag:QoR4R3xLLmAcrxd08TcdGQ==,type:str]
+WIREGUARD_CLIENT_PRIVATE_KEY: ENC[AES256_GCM,data:OkjHzuUUp2XA51WLt66EGwi52mDC79LlZu3H5fHCiUEMvSSKJwOK13nPVH4=,iv:QOF3KLEVtZNi/vhPo+VKtPrnfAiypNHlJ8GDsHEk+oc=,tag:puXHSnFytMsNbo/H4exjrg==,type:str]
+WIREGUARD_PEER_PUBLIC_KEY: ENC[AES256_GCM,data:PiIkzl6OnqHuhy0du9A2scg6YT00m9g+cFpj3rJRq5MG8f6vWaM4kK5yox0=,iv:rSaLpL2BPXYKucaYWpskXYzHiDBgpLH3woQ3d6wCvfQ=,tag:YJQ5m+1q6Dcv528MV18Gmg==,type:str]
+WIREGUARD_PORT: ENC[AES256_GCM,data:h78rv48=,iv:udrkM8CbxLk9zK87M/UuGtARXJiYj6uxyj4IWgZrWdQ=,tag:Qt0Y74d/mdiT7vbeFBVzXQ==,type:int]
 sops:
     kms: []
     gcp_kms: []
@@ -40,8 +44,8 @@ sops:
             aTVpSVNZSFRVMWJqTlpCUGZMaFRIWXcKhYnnSTwzar5EIXLwYuUwvJhmtw9A3OTz
             ExSGqRMSWWeJy5YL2K4WL/Bw5ylz0SiXmdBsJjhrBvTmrxLUhFuMZg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2023-10-19T23:52:27Z"
-    mac: ENC[AES256_GCM,data:iQAGCILPEp1RlxWwMBTUPmi6Jy/iSpl9XgTdsPiFWuqQFHdv6LqWAKqODuypre2xJjsLcAhwNMkWXWcCylK80d421AaRaaaBstzHQn/LemFIdkyDyiA7mIm7S06dAcBDCCMXWK6z+BuoxWBRg+T5HxYuIdGvQl4mBPXI+6y+g1I=,iv:QDGje7Y9IAberAvI2OJrW3crDdiw8doUfjgvyoRer60=,tag:XyXtjCgB+TioRj6cMEO03Q==,type:str]
+    lastmodified: "2023-10-24T03:34:49Z"
+    mac: ENC[AES256_GCM,data:AxWnlGd6LiHlBnYClq7TF/fzv2g1/ahTBAeRqccveiJ091XF9C2/9gOc8XEquos8AAJ57mX8OKc6/JsyQuYNfa9OHZ6F6UbeeuP5EbmVXdhpgO746EUrip91PnfMwtKHZRisRVgXlFBcY1etzz0QwIgR9SVkBJYLE98K8JaW/ew=,iv:TJcVlTgpIx7Yv3QqnNnFF39Q0j5tShWab2uPAPKDAFU=,tag:oKc0mNJOErlL3wvH33Aqpg==,type:str]
     pgp: []
     unencrypted_suffix: _unencrypted
     version: 3.8.0
