@@ -14,8 +14,7 @@ data:
           download_strategy: "url"
 
         ytdl_options:
-          # Graciously stolen from https://github.com/npawelek/k8s-gitops/blob/4e92f498939b2b956455f9185cf58ed8d8c7726a/cluster/apps/ytdl-sub/cm.yaml#L18
-          # format: "bestvideo[ext=webm][height<=1440]+bestaudio[ext=webm]/best[ext=webm]/best"
+          # Graciously stolen from ty!
           format: "bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b"
           ignoreerrors: True
           break_on_existing: False
