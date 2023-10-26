@@ -2,12 +2,12 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: tools-youtubedl-material
+  name: tools-ytdl-sub
   namespace: flux-system
 spec:
   dependsOn:
-    - name: tools-youtubedl-material-config
-  path: ./kubernetes/apps/tools/youtubedl-material/app
+    - name: tools-ytdl-sub-config
+  path: ./kubernetes/apps/tools/ytdl-sub/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -20,10 +20,10 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: tools-youtubedl-material-config
+  name: tools-ytdl-sub-config
   namespace: flux-system
 spec:
-  path: ./kubernetes/apps/tools/youtubedl-material/config
+  path: ./kubernetes/apps/tools/ytdl-sub/config
   prune: true
   sourceRef:
     kind: GitRepository
