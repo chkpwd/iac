@@ -46,11 +46,12 @@ spec:
         pod:
           enableServiceLinks: false
           securityContext:
-            runAsUser: &context 1000
+            runAsUser: &context 568
             runAsGroup: *context
             fsGroup: *context
             supplementalGroups:
               - 100
+              - 1000
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
@@ -60,10 +61,18 @@ spec:
               tag: 2023.10.25.post3 
               pullPolicy: IfNotPresent
 
+            command:
+              - bash
+              - -c
+              - |
+                ytdl-sub --log-level=debug --config=/config/config.yaml sub /media/youtube/subscriptions.yaml
+                find $${MEDIA_FOLDER} -user root -exec chown 568:568 "{}" \; -exec chmod 777 "{}" \;
+                echo "Thanks to tyzbit!"
+
             env:
               TZ: "${TZ}"
-              PUID: 568
-              PGID: 568
+              PUID: *context
+              PGID: *context
               MEDIA_FOLDER: /media/youtube
 
             resources:
@@ -86,6 +95,7 @@ spec:
         enabled: true
         name: "{{ .Release.Name }}-config"
         type: configMap
+        defaultMode: 0755
         globalMounts:
           - path: /config/config.yaml
             subPath: config.yaml
