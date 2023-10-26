@@ -1,0 +1,100 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ytdl-sub-config
+  namespace: media
+data:
+  config.yaml: |
+    configuration:
+      working_directory: "/tmp/ytdl-sub/"
+
+    presets:
+      yt_video:
+        download:
+          download_strategy: "url"
+
+        ytdl_options:
+          # Graciously stolen from https://github.com/npawelek/k8s-gitops/blob/4e92f498939b2b956455f9185cf58ed8d8c7726a/cluster/apps/ytdl-sub/cm.yaml#L18
+          # format: "bestvideo[ext=webm][height<=1440]+bestaudio[ext=webm]/best[ext=webm]/best"
+          format: "bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b"
+          ignoreerrors: True
+          break_on_existing: False
+          break_on_reject: False
+          final_ext: mp4
+          cachedir: "/tmp/ytdl-sub/"
+          cookiefile: "/config/cookies-rw.txt"
+
+        date_range:
+          before: "{download_before}"
+          after: "{download_after}"
+
+        output_options:
+          maintain_download_archive: True
+          output_directory: "/media/youtube/videos"
+          file_name: "{video_path}.{ext}"
+          thumbnail_name: "{video_path}-thumb.{thumbnail_ext}"
+          keep_files_after: "{download_after}"
+          download_archive_name: ".{tv_show_name_sanitized}-download-archive.json"
+
+        overrides:
+          video_name: "{title_sanitized}-{upload_date}"
+          video_type: "{channel}"
+          video_path: "{video_type_sanitized}/{video_name}"
+          download_before: "now"
+          download_after: "19000101"
+
+        video_tags:
+            title: "{title}"
+            date: "{upload_date}"
+            description: |
+              Original URL: {webpage_url}
+              Original Channel: {channel_sanitized}
+              Downloaded from playlist: {playlist_title_sanitized}
+              Playlist URL: {playlist_webpage_url}
+
+              Video Description:
+              {description}
+
+      yt_playlist:
+        preset:
+          - yt_video
+          - season_by_year__episode_by_download_index
+
+        download:
+          download_strategy: "url"
+          playlist_thumbnails:
+            - name: "poster.jpg"
+              uid: "avatar_uncropped"
+            - name: "banner.jpg"
+              uid: "banner_uncropped"
+
+        output_options:
+          output_directory: "/media/youtube/playlists/{tv_show_name_sanitized}"
+          file_name: "{episode_path}.{ext}"
+          thumbnail_name: "{episode_path}-thumb.{thumbnail_ext}"
+
+        overrides:
+          date: "{upload_date}"
+          episode: "{download_index}"
+          episode_padded: "{download_index_padded6}"
+          episode_file_name: "S{season}E{episode_padded} - {title_sanitized}"
+          episode_path: "{episode_file_name}"
+
+        video_tags:
+          episode: "{episode}"
+          season: "{season_number}"
+
+      yt_playlist_one_season:
+        preset: yt_playlist
+        overrides:
+          season: "00"
+          tv_show_name: "{subscription_name}"
+
+      yt_channel:
+        preset: yt_playlist
+        overrides:
+          tv_show_name: "{subscription_name}"
+        match_filters:
+          filters:
+            - "original_url!*=/shorts/"
+            - "!is_live"
