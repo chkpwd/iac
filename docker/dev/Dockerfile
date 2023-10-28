@@ -81,7 +81,7 @@ ARG VIDDY_VERSION=v0.4.0
 ARG K9S_VERSION=v0.27.4
 
 # renovate: datasource=github-releases depName=pulumi/pulumi
-ARG PULUMI_VERSION=v3.89.0
+ARG PULUMI_VERSION=v3.91.1
 
 # renovate: datasource=github-releases depName=hashicorp/terraform
 ARG TERRAFORM_VERSION=v1.6.2
