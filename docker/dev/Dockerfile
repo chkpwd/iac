@@ -196,7 +196,7 @@ COPY --from=gcr.io/kaniko-project/executor:v1.17.0 /kaniko/executor /usr/bin/kan
 COPY --from=quay.io/coreos/etcd:v3.5.9 /usr/local/bin/etcdctl /usr/bin/etcdctl
 COPY --from=docker.io/hashicorp/packer:light-1.9.4 /bin/packer /usr/bin/packer
 COPY --from=docker.io/digitalocean/doctl:1.100.0 /app/doctl /usr/bin/doctl
-COPY --from=docker.io/vmware/govc:v0.32.0 /govc /usr/bin/govc
+COPY --from=docker.io/vmware/govc:v0.33.0 /govc /usr/bin/govc
 
 # UPX all of the binaries
 RUN for item in bw bws nova pluto terraform pulumi pet  \
