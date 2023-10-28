@@ -45,14 +45,6 @@ spec:
 
         pod:
           enableServiceLinks: false
-          securityContext:
-            runAsUser: &context 568
-            runAsGroup: *context
-            fsGroup: *context
-            supplementalGroups:
-              - 100
-              - 1000
-            fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
           main:
@@ -71,8 +63,8 @@ spec:
 
             env:
               TZ: "${TZ}"
-              PUID: *context
-              PGID: *context
+              PUID: 1000
+              PGID: 1000
               MEDIA_FOLDER: /media/youtube
 
             resources:
