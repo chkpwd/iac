@@ -36,15 +36,6 @@ spec:
 
         replicas: 1
 
-        pod:
-          enableServiceLinks: false
-          securityContext:
-            # runAsNonRoot: true
-            runAsUser: &context 1000
-            runAsGroup: *context
-            fsGroup: *context
-            fsGroupChangePolicy: "OnRootMismatch"
-
         containers:
           main:
             image:
@@ -56,9 +47,6 @@ spec:
               TZ: "${TZ}"
               APP_URL: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
               DISABLE_BUILTIN_AUTH: "false"
-
-            securityContext:
-              allowPrivilegeEscalation: false
 
             resources:
               requests:
