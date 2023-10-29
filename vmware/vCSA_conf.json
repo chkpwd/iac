@@ -1,0 +1,47 @@
+{
+    "__version": "2.13.0",
+    "__comments": "vCenter Server deployment on an ESXi host.",
+    "new_vcsa": {
+        "esxi": {
+            "hostname": "octane.local.chkpwd.com",
+            "username": "root",
+            "password": "",
+            "deployment_network": "LAN",
+            "datastore": "NVME-30A"
+        },
+        "appliance": {
+            "__comments": [],
+            "thin_disk_mode": true,
+            "deployment_option": "small",
+            "name": "Embedded-vCenter-Server-Appliance"
+        },
+        "network": {
+            "ip_family": "ipv4",
+            "mode": "static",
+            "system_name": "vcenter.local.chkpwd.com",
+            "ip": "172.16.16.6",
+            "prefix": "24",
+            "gateway": "172.16.16.1",
+            "dns_servers": [
+                "172.16.16.1"
+            ]
+        },
+        "os": {
+            "password": "",
+            "ntp_servers": "0.pool.ntp.org",
+            "ssh_enable": true
+        },
+        "sso": {
+            "password": "",
+            "domain_name": "vsphere.local.chkpwd.com"
+        }
+    },
+    "ceip": {
+        "description": {
+            "__comments": []
+        },
+        "settings": {
+            "ceip_enabled": true
+        }
+    }
+}
