@@ -1,11 +1,11 @@
 #!/bin/bash
 
 declare -a stateList=(
-	
+    # Example
+    # vsphere_folder.windows_folder
 )
 
 for state in "${stateList[@]}"
 do
-    echo "Removing $state from terraform state..."
     terraform state rm $state
 done
