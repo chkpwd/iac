@@ -257,6 +257,7 @@ RUN \
     eval "$(register-python-argcomplete pipx)"' > $ZSH_CUSTOM/completions/pipx.zsh
 
 # Bitwarden CLI Configuration
+ENV BWS_ACCESS_TOKEN=
 ENV BW_API_KEY=
 ENV BW_EMAIL_ADDRESS=
 ENV BW_PASSWORD=
