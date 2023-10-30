@@ -28,7 +28,7 @@ source "vsphere-iso" "linux" {
   http_content = local.preseed_config
 
   # Needed for TPM
-  vTPM         = true
+  vTPM         = var.enable_tpm
   firmware     = "efi"
 
   CPUs            = var.num_cores

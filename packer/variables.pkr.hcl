@@ -90,3 +90,6 @@ variable "preseed" {
 variable "orchestrator_ip" {
   default = ""
 }
+variable "enable_tpm"  {
+  default = "false"
+}
