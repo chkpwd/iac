@@ -44,6 +44,9 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# renovate: datasource=github-tags depName=yt-dlp/yt-dlp
+ARG YT_DLP_VERSION=2023.10.13
+
 # renovate: datasource=github-releases depName=BeryJu/korb
 ARG KORB_VERSION=v2.2.0
 
@@ -103,6 +106,10 @@ ARG PLUTO_VERSION=v5.18.5
 
 # Download and Install Various Tools
 RUN \
+    # Download and install yt-dlp
+    curl -L "https://github.com/yt-dlp/yt-dlp/releases/download/${YT_DLP_VERSION}/yt-dlp" -o /tmp/yt-dlp && \
+    mv /tmp/yt-dlp /usr/bin/yt-dlp && \
+    chmod +x /usr/bin/yt-dlp && \
     # Download and install Korb
     curl -L "https://github.com/BeryJu/korb/releases/download/${KORB_VERSION}/korb_${KORB_VERSION#v}_linux_amd64" -o /tmp/korb && \
     mv /tmp/korb /usr/bin/korb && \
