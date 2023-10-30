@@ -1,7 +1,7 @@
 source "null" "testing" {
-  ssh_host = "mirage"
-  ssh_username = "hyoga"
-  ssh_password = "bryanswag12"
+  ssh_host = "hosting-srv-01"
+  ssh_username = "administrator"
+  ssh_password = "testing"
 }
 
 build {
@@ -22,3 +22,5 @@ build {
     ]
   }
 }
+
+# packer build hacks/ansible-provider-test.pkr.hcl
