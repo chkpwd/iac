@@ -3,7 +3,7 @@ variable "vcenter_datacenter" {
 }
 variable "vcenter_server" {
   description = "vCenter server to build the VM on"
-  default = "ronin.local.chkpwd.com"
+  default = "vcenter.local.chkpwd.com"
 }
 variable "vcenter_username" {
   description = "Username to authenticate to vCenter"
