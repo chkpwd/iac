@@ -2,6 +2,31 @@ name: Packer-Driven Debian 12 Deployment
 
 on:
   push:
+    branches:
+      - main
+    paths:
+      - 'packer/**'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'packer/**'
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: 'Debug mode'
+        type: boolean
+        required: false
+        default: false
+  schedule:
+    - cron: '0 0 * * 1'
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash -euxo pipefail {0}
 
 env:
   PRODUCT_VERSION: "1.9.4"
