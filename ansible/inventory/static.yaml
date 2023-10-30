@@ -9,10 +9,6 @@ all:
         esxi_hosts:
         vcenter:
 
-    vcenter:
-      hosts:
-        vcenter:
-
     esxi_hosts:
       hosts:
         # esx[1:3]:
@@ -35,10 +31,10 @@ all:
         kubes-cp-1:
         kubes-cp-2:
         kubes-cp-3:
-        stable-diffusion:
         boot-server:
         mgmt-srv-01:
         dns-srv-02:
+        hosting-srv-01:
 
     windows:
       vars:
@@ -61,6 +57,7 @@ all:
         boot-server:
         mgmt-srv-01:
         dns-srv-02:
+        hosting-srv-01:
 
     k3s_cluster:
       children:
@@ -101,6 +98,13 @@ all:
       hosts:
         mgmt-srv-01:
         dns-srv-02:
+    
+    game_servers:
+      hosts:
+        hosting-srv-01:
+          ansible_remote_user: chkpwd
+          ansible_ssh_user: chkpwd
+          common_user: chkpwd
 
     onprem:
       children:
