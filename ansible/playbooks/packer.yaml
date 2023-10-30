@@ -67,6 +67,6 @@
     - name: Remove default user
       ansible.builtin.user:
         name: administrator
-        password: '*'
         state: absent
+        remove: true
         force: true # User still as an active process
