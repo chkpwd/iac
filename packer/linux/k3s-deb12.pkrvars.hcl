@@ -1,6 +1,6 @@
 preseed             = "k3s"
-os_iso_url          = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.1.0-amd64-netinst.iso"
-iso_checksum        = "9f181ae12b25840a508786b1756c6352a0e58484998669288c4eec2ab16b8559"
+os_iso_url          = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.2.0-amd64-netinst.iso"
+iso_checksum        = "23ab444503069d9ef681e3028016250289a33cc7bab079259b73100daee0af66"
 iso_checksum_type   = "sha256"
 num_cores           = "1"
 mem_size            = "1024"
