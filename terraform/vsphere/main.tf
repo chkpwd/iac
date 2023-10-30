@@ -116,29 +116,6 @@ module "kube-ops" {
   }
 }
 
-module "stable-diffusion" {
-  source                    = "../_modules/vsphere_vm"
-  vm_name                   = "stable-diffusion"
-  vm_template               = "deb-12-template"
-  network_spec = {
-    network_id              = "Lab"
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id ]
-    folder                  = vsphere_folder.dev.path
-    cpu                     = 8
-    memory                  = 1024 * 16
-    memory_reservation      = true
-    pci_device              = [ data.vsphere_host_pci_device.nvidia_1080.id ]
-    disk_size               = 16
-    additional_disks = [
-      {
-        size                = 75
-      } 
-    ]
-  }
-}
-
 module "dns-srv-02" {
   source                    = "../_modules/vsphere_vm"
   vm_name                   = "dns-srv-02"
