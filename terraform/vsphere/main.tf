@@ -137,27 +137,27 @@ module "dns-srv-02" {
   }
 }
 
-module "win10-gaming-01" {
-  source                    = "../_modules/vsphere_vm"
-  count                     = 1
-  vm_name                   = "win10-gaming-01"
-  vm_template               = "W10-22H2-Temp"
-  network_spec = {
-    network_id              = "Lab"
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
-    folder                  = vsphere_folder.gaming_windows.path
-    cpu                     = 8
-    memory                  = 1024 * 16
-    memory_reservation      = true
-    pci_device              = [ data.vsphere_host_pci_device.nvidia_1050ti.id ]
-    disk_size               = 48
-    scsi_type               = "lsilogic-sas"
-    additional_disks = [
-      {
-        size                = 100
-      }
-    ]
-  }
-}
+# module "win10-gaming-01" {
+#   source                    = "../_modules/vsphere_vm"
+#   count                     = 1
+#   vm_name                   = "win10-gaming-01"
+#   vm_template               = "W10-22H2-Temp"
+#   network_spec = {
+#     network_id              = "Lab"
+#   }
+#   spec = {
+#     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
+#     folder                  = vsphere_folder.gaming_windows.path
+#     cpu                     = 8
+#     memory                  = 1024 * 16
+#     memory_reservation      = true
+#     pci_device              = [ data.vsphere_host_pci_device.nvidia_1050ti.id ]
+#     disk_size               = 48
+#     scsi_type               = "lsilogic-sas"
+#     additional_disks = [
+#       {
+#         size                = 100
+#       }
+#     ]
+#   }
+# }
