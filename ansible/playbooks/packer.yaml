@@ -5,6 +5,7 @@
 
   vars:
     ansible_user: "administrator"
+    default_user: "chkpwd"
     packages: [vim,htop]
 
   tasks:
@@ -21,15 +22,15 @@
         line: '%sudo ALL=(ALL) NOPASSWD: ALL'
         validate: '/usr/sbin/visudo -cf %s'
 
-    - name: Add default user
+    - name: Create a login user
       ansible.builtin.user:
-        name: "{{ ansible_user }}"
+        name: "{{ default_user }}"
         password: '*'
         state: present
 
     - name: Copy the public SSH key
       ansible.posix.authorized_key:
-        user: "{{ ansible_user }}"
+        user: "{{ default_user }}"
         state: present
         key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa main"
       become: true
@@ -62,3 +63,10 @@
                   - create 640 root adm
                   - sharedscripts
                   - sharedscripts
+
+    - name: Remove default user
+      ansible.builtin.user:
+        name: administrator
+        password: '*'
+        state: absent
+        force: true # User still as an active process
