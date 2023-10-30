@@ -83,6 +83,7 @@ resource "vsphere_virtual_machine" "main" {
 
   lifecycle {
     ignore_changes = [
+      guest_id,
       firmware,
       clone[0].template_uuid,
       clone[0].customize,
