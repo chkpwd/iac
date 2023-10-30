@@ -13,4 +13,4 @@
   tasks:
     - name: Running "{{ task }}" 
       include_tasks:
-        file: "../tasks/maintenance/{{ task }}.yaml"
+        file: "../tasks/{{ category }}/{{ task }}.yaml"
