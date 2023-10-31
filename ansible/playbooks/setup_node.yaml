@@ -1,0 +1,15 @@
+---
+- name: Install the essentials on the target
+  hosts: "{{ onhosts | default('localhost') }}"
+  become: true
+
+  vars:
+    ansible_user: "administrator"
+    ansible_remote_user: "administrator"
+    ansible_ssh_user: "administrator"
+    packages: [vim,htop]
+
+  tasks:
+    - name: Run role for system Setup
+      ansible.builtin.include_role:
+        name: system

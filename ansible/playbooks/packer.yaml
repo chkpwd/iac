@@ -5,7 +5,6 @@
 
   vars:
     ansible_user: "administrator"
-    default_user: "chkpwd"
     packages: [vim,htop]
 
   tasks:
@@ -22,24 +21,12 @@
         line: '%sudo ALL=(ALL) NOPASSWD: ALL'
         validate: '/usr/sbin/visudo -cf %s'
 
-    - name: Create a login user
-      ansible.builtin.user:
-        name: "{{ default_user }}"
-        password: '*'
-        state: present
-
     - name: Copy the public SSH key
       ansible.posix.authorized_key:
-        user: "{{ default_user }}"
+        user: "{{ ansible_user }}"
         state: present
         key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa main"
       become: true
-
-    - name: Disable SSH password auth
-      ansible.builtin.lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: "^#PasswordAuthentication yes"
-        line: "PasswordAuthentication no"
 
     - name: Include | logrotate
       ansible.builtin.include_role:
@@ -63,10 +50,3 @@
                   - create 640 root adm
                   - sharedscripts
                   - sharedscripts
-
-    - name: Remove default user
-      ansible.builtin.user:
-        name: administrator
-        state: absent
-        remove: true
-        force: true # User still as an active process
