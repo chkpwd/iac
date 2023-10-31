@@ -1,5 +1,7 @@
 ---
 - name: Restart SSH daemon
+  vars:
+    ansible_ssh_user: "{{ common_user }}"
   ansible.builtin.service:
     name: sshd
     state: restarted

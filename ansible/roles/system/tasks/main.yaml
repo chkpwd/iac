@@ -9,73 +9,52 @@
     name: en_US.UTF-8
     state: present
 
-- name: Configure logrotate
-  ansible.builtin.include_tasks: logs.yaml
+- name: Include | logrotate
+  ansible.builtin.include_role:
+    name: arillso.logrotate
+  vars:
+    logrotate_global_config: false
+    logrotate_applications:
+      - name: custom_logging
+        definitions:
+          - logs:
+              - /var/log/syslog.log
+              - /var/log/messages
+            options:
+              - daily
+              - size 20M
+              - missingok
+              - rotate 10
+              - compress
+              - delaycompress
+              - notifempty
+              - create 640 root adm
+              - sharedscripts
 
-- name: Install Projects
-  ansible.builtin.include_tasks: install_projects.yaml
+- name: Gather service facts
+  ansible.builtin.service_facts:
 
-- name: Configure PET Snippet
-  ansible.builtin.template:
-    src: templates/config.toml.j2 
-    dest: "/home/{{ common_user }}/.config/pet/config.toml"
-    owner: "{{ common_user }}"
-    group: "{{ common_user }}"
-    mode: '0644'
+- name: Register logrotate service status
+  set_fact:
+    logrotate_status: >-
+      {{ 
+        ansible_facts['services']['logrotate.service']
+        if 'logrotate.service' in ansible_facts['services']
+        else 'unknown'
+      }}
 
-- name: Configure Rclone
-  ansible.builtin.include_tasks: rclone_config.yaml
+- name: Check if logrotate service is failed
+  ansible.builtin.debug:
+    msg: "logrotate service has failed"
+  when: ansible_facts.services['logrotate.service'].state == 'failed'
 
-- name: Apply secondary disk partitioning
-  ansible.builtin.include_tasks: disk.yaml
-  when: ansible_facts['devices'] | dict2items | list | length > 1
 
 - name: Apply user configurations for {{ common_user }}
   ansible.builtin.include_tasks: user.yaml
 
-- name: Run ZSH configs
-  ansible.builtin.include_role:
-    name: gantsign.oh-my-zsh
-  vars:
-    oh_my_zsh_plugins:
-      - git
-      - sudo
-    users:
-      - username: "{{ common_user }}"
-        oh_my_zsh:
-          theme: bira
-          update_mode: auto
-          update_frequency: 3
-          write_zshrc: true
-          plugins: "{{ zsh_dynamic_plugins }}"
-
-- name: Clone OMZ plugins if they do not exist or need updates
-  ansible.builtin.git:
-    repo: "{{ item.repo }}"
-    dest: "{{ zsh_custom }}/plugins/{{ item.name }}"
-    update: true
-  loop: "{{ zsh_plugins }}"
-  loop_control:
-    label: "{{ item.name }}"
-  register: zsh_plugins
-  until: zsh_plugins is succeeded
-  retries: 2
-  delay: 2
-
-- name: Clone all ZSH settings
-  ansible.builtin.get_url:
-    url: "https://gist.githubusercontent.com/chkpwd/{{ item.id }}/raw"
-    dest: "{{ zsh_custom }}/{{ item.name }}"
-    owner: "{{ common_user }}"
-    group: "{{ common_user }}"
-    mode: "0644"
-  loop: "{{ zsh_gists }}"
-  loop_control:
-    label: "{{ item.name }}"
-  register: zsh_settings
-  until: zsh_settings is succeeded
-  retries: 2
-  delay: 2
+- name: Apply secondary disk partitioning
+  ansible.builtin.include_tasks: disk.yaml
+  when: ansible_facts['devices'] | dict2items | list | length > 1
 
 - name: Copy the public SSH key
   ansible.posix.authorized_key:
@@ -90,4 +69,13 @@
     regexp: "^#PasswordAuthentication yes"
     line: "PasswordAuthentication no"
   notify: Restart SSH daemon
+  become: true
+
+- name: Remove administrator user
+  vars:
+    ansible_ssh_user: "{{ common_user }}"
+  ansible.builtin.user:
+    name: administrator
+    state: absent
+    force: true
   become: true

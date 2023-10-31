@@ -2,10 +2,11 @@
 - name: Create a login user
   ansible.builtin.user:
     name: "{{ common_user }}"
-    password: "{{ USR_PASSWORD_SOPS }}"
-    # groups:
-    #  - sudo
-    # append: true # If false, the above groups are the only groups provided to the user
+    password: "*"
+    shell: /bin/bash
+    groups: "sudo"
+    uid: 5000
+    comment: "Default Admin User"
     state: present
   become: true
 

@@ -28,30 +28,36 @@
     name: parted
     state: present
 
+- name: Get Virtual Disks info
+  community.general.parted:
+    device: "/dev/{{ item }}"
+    unit: MiB
+  register: drive_info
+  loop:
+    - sda
+    - sdb
+  loop_control:
+    label: "Disk Name: {{ item }}"
+
+- name: Determine the largest drive and set the var
+  ansible.builtin.set_fact:
+    largest_drive: "{{ 'sda' if drive_info.results[0].disk.size | int > drive_info.results[1].disk.size | int else 'sdb' }}"
+
 - name: Prepare secondary disk
   community.general.parted:
-    device: /dev/sdb
+    device: "/dev/{{ largest_drive }}"
     number: 1
     name: data
     label: gpt
     state: present
-  register: parted_result
-  failed_when: parted_result.failed
-  delegate_to: "{{ inventory_hostname }}"
-
-- name: Reboot machine if partitioning failed
-  reboot:
-  when: parted_result.failed
-  delegate_to: "{{ inventory_hostname }}"
-  notify: Reboot machines
 
 - name: Create ext4 fs on partition
   community.general.filesystem:
-    dev: /dev/sdb1
+    dev: "/dev/{{ largest_drive }}1"
     fstype: ext4
     state: present
 
-- name: Get the devices ansible_facts
+- name: Gather Drives Facts
   ansible.builtin.setup:
     gather_subset:
       - devices 
@@ -59,7 +65,7 @@
 - name: Mount device by UUID
   ansible.posix.mount:
     path: "{{ mount_dir }}"
-    src: UUID={{ ansible_facts['devices']['sdb']['partitions']['sdb1']['uuid'] }}
+    src: "UUID={{ ansible_facts['devices'][largest_drive]['partitions'][largest_drive + '1']['uuid'] }}"
     fstype: ext4
     opts: defaults
     passno: 2
