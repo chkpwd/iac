@@ -51,7 +51,7 @@ ARG YT_DLP_VERSION=2023.10.13
 ARG KORB_VERSION=v2.2.0
 
 # renovate: datasource=github-releases depName=atuinsh/atuin
-ARG ATUIN_VERSION=v17.0.0
+ARG ATUIN_VERSION=v17.0.1
 
 # renovate: datasource=github-releases depName=helm/helm
 ARG HELM_VERSION=v3.13.1
