@@ -87,7 +87,7 @@ ARG K9S_VERSION=v0.27.4
 ARG PULUMI_VERSION=v3.91.1
 
 # renovate: datasource=github-releases depName=hashicorp/terraform
-ARG TERRAFORM_VERSION=v1.6.2
+ARG TERRAFORM_VERSION=v1.6.3
 
 # renovate: datasource=github-releases depName=getsops/sops
 ARG SOPS_VERSION=v3.8.1
