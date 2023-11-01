@@ -143,7 +143,29 @@ module "hosting-srv-01" {
   vm_template               = "deb-12-template"
   vm_datastore              = "NVME-30C"
   network_spec = {
-    network_id              = "LAN"
+    network_id              = "Lab"
+  }
+  spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id, vsphere_tag.gaming.id ]
+    folder                  = vsphere_folder.gaming_linux.path
+    cpu                     = 1
+    memory                  = 1024 * 2
+    disk_size               = 16
+    additional_disks = [ 
+      {
+        size                = 25
+      } 
+    ]
+  }
+}
+
+module "hosting-srv-02" {
+  source                    = "../_modules/vsphere_vm"
+  vm_name                   = "hosting-srv-02"
+  vm_template               = "deb-12-template"
+  vm_datastore              = "NVME-30C"
+  network_spec = {
+    network_id              = "Lab"
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id, vsphere_tag.gaming.id ]
