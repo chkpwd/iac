@@ -1,0 +1,26 @@
+---
+common_user: chkpwd
+
+common_env: &common_env
+  TZ: 'America/New_York'
+
+service_definitions:
+  - name: wings
+    image: ghcr.io/pterodactyl/wings:v1.11.8
+    ports:
+      - "8080:8080"
+      - "2022:2022"
+      - "443:443"
+    tty: true
+    env:
+      <<: *common_env
+      WINGS_UID: "988"
+      WINGS_GID: "988"
+      WINGS_USERNAME: "{{ common_user }}"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/var/lib/docker/containers:/var/lib/docker/containers"
+      - "{{ configuration_path }}/wings/etc:/etc/pterodactyl"
+      - "{{ configuration_path }}/wings/lib:/var/lib/pterodactyl"
+      - "{{ configuration_path }}/wings/log:/var/log/pterodactyl"
+      - "/tmp/pterodactyl:/tmp/pterodactyl"
