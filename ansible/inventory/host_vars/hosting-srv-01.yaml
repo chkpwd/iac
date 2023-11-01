@@ -1,0 +1,56 @@
+---
+# Set the user
+common_user: chkpwd
+db_password: testing
+
+common_env:
+  database:
+    &db-environment
+    MYSQL_PASSWORD: &db_password testing
+    MYSQL_ROOT_PASSWORD: *db_password
+  panel:
+    &panel-environment
+    APP_URL: "https://pterodactyl.{{ local_domain }}"
+    APP_TIMEZONE: "America/New_York"
+    APP_SERVICE_AUTHOR: "pterodactyl@{{ domain }}"
+    #TRUSTED_PROXIES: "172.16.16.30"
+    TRUSTED_PROXIES: "*"
+
+service_definitions:
+  - name: database
+    image: mariadb:11.1
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - "{{ configuration_path }}/pterodactyl/database:/var/lib/mysql"
+    env:
+      <<: *db-environment
+      MYSQL_DATABASE: "panel"
+      MYSQL_USER: "pterodactyl"
+
+  - name: cache
+    image: redis:alpine
+
+  - name: pterodactyl-panel
+    image: ghcr.io/pterodactyl/panel:v1.11.5
+    ports:
+      - "80:80"
+      - "443:443"
+    links:
+      - database
+      - cache
+    env:
+      <<: *panel-environment
+      DB_PASSWORD: *db_password
+      APP_ENV: "production"
+      APP_ENVIRONMENT_ONLY: "false"
+      CACHE_DRIVER: "redis"
+      SESSION_DRIVER: "redis"
+      QUEUE_DRIVER: "redis"
+      REDIS_HOST: "cache"
+      DB_HOST: "database"
+      DB_PORT: "3306"
+    volumes:
+      - "{{ configuration_path }}/pterodactyl/var/:/app/var/"
+      - "{{ configuration_path }}/pterodactyl/nginx/:/etc/nginx/http.d/"
+      - "{{ configuration_path }}/pterodactyl/certs/:/etc/letsencrypt/"
+      - "{{ configuration_path }}/pterodactyl/logs/:/app/storage/logs"

@@ -102,9 +102,9 @@ all:
     game_servers:
       hosts:
         hosting-srv-01:
-          ansible_remote_user: chkpwd
           ansible_ssh_user: chkpwd
-          common_user: chkpwd
+        hosting-srv-02:
+          ansible_ssh_user: chkpwd
 
     onprem:
       children:
