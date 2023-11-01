@@ -41,35 +41,15 @@ values:
   terminationGracePeriodSeconds: 60
 
   # Defaults to 1, we set this to 0 so servers don't start automatically after deploy
-  replicaCount: 0
+  replicaCount: 1
 
   clusterName: *app
 
-  # Mods available in the cluster and enabled by default on all servers.
-  # Mods are updated with the game and can be overwritten per server.
   mods: []
-  #  - "731604991"
-  #  - "889745138"
-  #  - "893904615"
-  #  - "1404697612"
-  #  - "621154190"
-  #  - "564895376"
-  #  - "931434275"
 
   # Set RCON password for the whole cluster
   rcon:
     password: "foobar"
-
-  # Global extraEnvVars for all servers
-  extraEnvVars:
-    # - name: am_arkwarnminutes
-    #   value: "15"
-
-  # Global custom game settings can be overwritten per server
-  customConfigMap:
-    GameIni:
-    GameUserSettingsIni:
-    EngineIni:
 
   # Servers in the ARK cluster
   servers:
@@ -135,7 +115,7 @@ values:
 
   persistence:
     enabled: true
-    # game files from steam, the largest volume, includes installed mods
+    existingVolumes: false
     game:
       storageClass: game-servers
       accessModes:
