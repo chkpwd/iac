@@ -6,7 +6,6 @@ metadata:
   namespace: flux-system
 spec:
   dependsOn:
-    - name: core-monitoring-prometheus-system-config
     - name: core-monitoring-prometheus-system
   path: ./kubernetes/core/monitoring/metrics-system/app
   prune: true
