@@ -43,6 +43,9 @@ values:
   # Defaults to 1, we set this to 0 so servers don't start automatically after deploy
   replicaCount: 1
 
+  hostNetwork: false
+  hostPort: false
+  
   clusterName: *app
 
   mods: []
@@ -51,24 +54,30 @@ values:
   rcon:
     password: "foobar"
 
+  # Global extraEnvVars for all servers
+  extraEnvVars:
+    - name: am_ark_ServerPVE
+      value: 'True'
+    - name: am_arkopt_DisableStructureDecayPvE
+      value: 'True'
+    - name: am_arkopt_AllowFlyerCarryPvE
+      value: 'True'
+    - name: am_arkopt_ForceAllowCaveFlyers
+      value: 'True'
+    - name: am_arkopt_OverrideStructurePlatformPrevention
+      value: 'True'
+
   # Servers in the ARK cluster
   servers:
-  # one entry for each server in the cluster
     extinction:
-      # updateOnStart should be enabled only on the first server
       updateOnStart: true
-      sessionName: "Extinction"
+      sessionName: "CHKPWD's Ark Server"
       message: "Welcome to Bryan's Ark Server - Map: Extinction"
       # map: TheIsland, Ragnarok, CrystalIsles, Aberration_P, ScorchedEarth_P, Extinction, ...
       map: Extinction
       password: "testing"
       maxPlayers: 10
-      # xpMultiplier is added to default GameUserSettings.ini
-      # if you use `customConfigMap.GameUserSettingsIni` make sure to include it there
       xpMultiplier: 6
-      extraEnvVars:
-        - name: am_arkwarnminutes
-          value: "30"
       ports:
         queryudp: 27010
         gameudp: 7770
@@ -78,17 +87,45 @@ values:
         password: "foobar"
       resources:
         requests:
-          cpu: 1
-          memory: 4Gi
+          cpu: 4
+          memory: 5Gi
         limits:
-          memory: 6Gi
-      customConfigMap:
-        GameIni: |
-          # Extinction Game.ini
+          memory: 10Gi
         GameUserSettingsIni: |
-          # Extinction GameUserSettings.ini
+          [/Script/ShooterGame.ShooterGameUserSettings]
+          Version=5
+          AlwaysAllowStructurePickUp=True
           [ServerSettings]
-          XPMultiplier=6
+          AllowFlyerCarryPvE=True
+          AllowThirdPersonPlayer=True
+          XPMultiplier={{ .server.xpMultiplier }}
+          allowThirdPersonPlayer=1
+          AllowCaveBuildingPvE=1
+          alwaysNotifyPlayerJoined=1
+          alwaysNotifyPlayerLeft=1
+          bAllowFlyerCarryPvE=1
+          bDisableStructureDecayPvE=1
+          DinoCharacterHealthRecoveryMultiplier=2.00000
+          DinoCharacterStaminaDrainMultiplier=0.50000
+          DinoCharacterFoodDrainMultiplier=0.25
+          HarvestAmountMultiplier=1.50000
+          TamingSpeedMultiplier=8.00000
+          DifficultyOffset=1.00000
+          OverrideOfficialDifficulty=5.00000
+          AllowAnyoneBabyImprintCuddle=1
+          [AutoTrough]
+          NoInventory=True
+          [StructuresPlus]
+          EnableEngramOverride=true
+          AdditionalSupportDistanceInFoundations=10
+          BunkBedCooldownTimeInSeconds=60
+          AllowDynamicPillarNonFoundationSupport=True
+          AllowDynamicPillarSupport=True
+          [ArkAutomatedSettings]
+          KitchenModActive=True
+          [AwesomeSpyGlass]
+          AllowStructureTargeting=False
+          AllowOutline=False
         EngineIni: |
           # Extinction Engine.ini
 
@@ -117,13 +154,11 @@ values:
     enabled: true
     existingVolumes: false
     game:
-      storageClass: game-servers
       accessModes:
-        - ReadOnlyMany
         - ReadWriteMany
-        - ReadWriteOnce
-      size: 30Gi
+      size: 60Gi
       mountPath: /arkserver
+      storageClass: game-servers
 
     # shared cluster files
     cluster:

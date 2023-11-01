@@ -36,7 +36,7 @@ spec:
 
         cronjob:
           concurrencyPolicy: Forbid
-          schedule: '*/15 * * * *'
+          schedule: '0 0 * * *'
           ttlSecondsAfterFinished: 86400
           startingDeadlineSeconds: 30
           successfulJobsHistory: 1
