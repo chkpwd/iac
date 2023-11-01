@@ -4,9 +4,9 @@ discord_webhook: "{{ DISCORD_TOKEN }}"
 claim_token: "{{ PLEX_TOKEN }}"
 
 common_env: &common_env
-    TZ: 'America/New_York'
-    PUID: '1000'
-    PGID: '1000'
+  TZ: 'America/New_York'
+  PUID: '1000'
+  PGID: '1000'
 
 service_definitions:
   - name: plex
