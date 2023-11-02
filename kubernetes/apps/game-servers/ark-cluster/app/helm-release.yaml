@@ -52,7 +52,7 @@ spec:
 
     # Set RCON password for the whole cluster
     rcon:
-      password: "foobar"
+      password: ${GLOBAL_ARK_CLUSTER_RCON_PWD}
 
     # Global extraEnvVars for all servers
     extraEnvVars:
@@ -83,8 +83,6 @@ spec:
           gameudp: 7770
           rcon: 32330
         mods: []
-        rcon:
-          password: "foobar"
         resources:
           requests:
             cpu: 4
