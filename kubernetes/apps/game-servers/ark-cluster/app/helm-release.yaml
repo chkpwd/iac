@@ -172,18 +172,5 @@ spec:
         mountPath: /arkserver/ShooterGame/Saved
         storageClass: longhorn-game-servers
 
-    startupProbe:
-      initialDelaySeconds: 120 # 120s + 60*10s = 720s max
-      failureThreshold: 60
-      periodSeconds: 10
-      successThreshold: 1
-      timeoutSeconds: 1
-    livenessProbe:
-      initialDelaySeconds: 10 # unhealthy after max 3*10s = 30s
-      failureThreshold: 3
-      periodSeconds: 10
-      successThreshold: 1
-      timeoutSeconds: 1
-
     podAnnotations:
       secret.reloader.stakater.com/reload: *app
