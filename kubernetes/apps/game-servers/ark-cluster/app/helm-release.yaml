@@ -152,7 +152,6 @@ spec:
 
     persistence:
       enabled: true
-      existingVolumes: false
       game:
         accessModes:
           - ReadWriteMany
@@ -162,18 +161,18 @@ spec:
 
       # shared cluster files
       cluster:
-        storageClass: longhorn-game-servers
         accessModes:
           - ReadWriteMany
         size: 200Mi
         mountPath: /arkserver/ShooterGame/Saved/clusters
+        storageClass: longhorn-game-servers
 
       save:
-        storageClass: longhorn-game-servers
         accessModes:
           - ReadWriteOnce
         size: 2Gi
         mountPath: /arkserver/ShooterGame/Saved
+        storageClass: longhorn-game-servers
 
     startupProbe:
       initialDelaySeconds: 120 # 120s + 60*10s = 720s max
