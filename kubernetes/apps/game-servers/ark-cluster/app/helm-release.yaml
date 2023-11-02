@@ -3,7 +3,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: &app ark-cluster
-  namespace: game-servers
+  namespace: longhorn-game-servers
 spec:
   interval: 15m
   chart:
@@ -158,18 +158,18 @@ spec:
           - ReadWriteMany
         size: 60Gi
         mountPath: /arkserver
-        storageClass: game-servers
+        storageClass: longhorn-game-servers
 
       # shared cluster files
       cluster:
-        storageClass: game-servers
+        storageClass: longhorn-game-servers
         accessModes:
           - ReadWriteMany
         size: 200Mi
         mountPath: /arkserver/ShooterGame/Saved/clusters
 
       save:
-        storageClass: game-servers
+        storageClass: longhorn-game-servers
         accessModes:
           - ReadWriteOnce
         size: 2Gi
