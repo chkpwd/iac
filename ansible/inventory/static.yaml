@@ -58,7 +58,6 @@ all:
         mgmt-srv-01:
         dns-srv-02:
         hosting-srv-01:
-        hosting-srv-02:
 
     k3s_cluster:
       children:
@@ -103,8 +102,6 @@ all:
     game_servers:
       hosts:
         hosting-srv-01:
-          ansible_ssh_user: chkpwd
-        hosting-srv-02:
           ansible_ssh_user: chkpwd
 
     onprem:

@@ -159,28 +159,6 @@ module "hosting-srv-01" {
   }
 }
 
-module "hosting-srv-02" {
-  source                    = "../_modules/vsphere_vm"
-  vm_name                   = "hosting-srv-02"
-  vm_template               = "deb-12-template"
-  vm_datastore              = "NVME-30C"
-  network_spec = {
-    network_id              = "Lab"
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id, vsphere_tag.gaming.id ]
-    folder                  = vsphere_folder.gaming_linux.path
-    cpu                     = 4
-    memory                  = 1024 * 8
-    disk_size               = 16
-    additional_disks = [ 
-      {
-        size                = 300
-      } 
-    ]
-  }
-}
-
 # module "win10-gaming-01" {
 #   source                    = "../_modules/vsphere_vm"
 #   count                     = 1
