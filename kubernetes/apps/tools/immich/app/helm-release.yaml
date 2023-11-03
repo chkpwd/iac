@@ -55,26 +55,6 @@ spec:
 
     typesense:
       enabled: false
-      image:
-        repository: docker.io/typesense/typesense
-        tag: 0.25.1
-        pullPolicy: &pullPolicy IfNotPresent
-      env:
-        TYPESENSE_API_KEY:
-          valueFrom:
-            secretKeyRef:
-              name: immich-secret
-              key: TYPESENSE_API_KEY
-      persistence:
-        tsdata:
-          enabled: true
-          type: emptyDir
-      resources:
-        requests:
-          cpu: 5m
-          memory: 315M
-        limits:
-          memory: 1443M
 
     immich:
       persistence:
@@ -111,28 +91,6 @@ spec:
 
     machine-learning:
       enabled: false
-      image:
-        repository: ghcr.io/immich-app/immich-machine-learning
-        tag: *appVersion
-        pullPolicy: *pullPolicy
-      env:
-        TRANSFORMERS_CACHE: /cache
-      persistence:
-        cache:
-          enabled: true
-          size: 10Gi
-          type: emptyDir
-          accessMode: ReadWriteMany
-      probes:
-        liveness:
-          spec:
-            initialDelaySeconds: 60
-      resources:
-        requests:
-          cpu: 512m
-          memory: 274Mi
-        limits:
-          memory: 2000Mi
 
     web:
       enabled: true
