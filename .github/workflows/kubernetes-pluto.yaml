@@ -3,16 +3,12 @@ name: Kubernetes Pluto
 
 on:
   push:
-    branches:
-      - main
-    paths:
-      - 'kubernetes/**'
+    branches: [ main ]
+    paths: [ kubernetes/** ]
   pull_request:
-    branches:
-      - master
-    paths:
-      - 'kubernetes/**'
-  workflow_dispatch:  # needs to be in default branch before you get the UI option to manually run though
+    branches: [ master ]
+    paths: [ kubernetes/** ]
+  workflow_dispatch:
     inputs:
       debug:
         description: 'Debug mode'
