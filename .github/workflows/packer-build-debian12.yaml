@@ -1,16 +1,8 @@
 name: Packer-Driven Debian 12 Deployment
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'packer/**'
-  pull_request:
-    branches:
-      - master
-    paths:
-      - 'packer/**'
+  schedule:
+    - cron: '0 0 * * 1'
   workflow_dispatch:
     inputs:
       debug:
@@ -18,8 +10,11 @@ on:
         type: boolean
         required: false
         default: false
-  schedule:
-    - cron: '0 0 * * 1'
+      packer_version:
+        description: 'Packer version'
+        type: string
+        required: false
+        default: '1.9.4'
 
 permissions:
   contents: read
@@ -29,7 +24,7 @@ defaults:
     shell: bash -euxo pipefail {0}
 
 env:
-  PRODUCT_VERSION: "1.9.4"
+  PACKER_LOG: 1
 
 jobs:
   packer:
@@ -44,27 +39,34 @@ jobs:
         with:
           python-version: 3.9
 
-      - name: Install python packages
-        run: pip install ansible
-
-      - name: Install Ansible roles and collection
-        run: ansible-galaxy install --verbose --role-file src/requirements.yaml
-
-      - name: Setup `packer`
-        uses: hashicorp/setup-packer@main
+      - name: Cache Python dependencies
+        uses: actions/cache@v2
         with:
-          version: latest
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install python packages
+        run: pip install -r requirements.txt
 
       - name: Setup `packer`
         uses: hashicorp/setup-packer@main
         id: setup
         with:
-          version: ${{ env.PRODUCT_VERSION }}
+          version: ${{ github.event.inputs.packer_version || env.PRODUCT_VERSION }}
 
-      - name: Run `packer init`
+      - name: Initialize Packer configuration
         id: init
-        run: "packer init ./image.pkr.hcl"
+        run: packer init ./vsphere.pkr.hcl
+        working-directory: ./packer
 
-      - name: Run `packer validate`
+      - name: Validate configuration syntax
         id: validate
-        run: "packer validate ./image.pkr.hcl"
+        run: packer validate ./vsphere.pkr.hcl
+        working-directory: ./packer
+
+      - name: Build image
+        id: build
+        run: packer build -force --only vsphere-iso.linux --var-file=./linux/12Deb.pkrvars.hcl -var "vcenter_password=${{ secrets.VCENTER_PASSWORD }}" ./vsphere.pkr.hcl
+        working-directory: ./packer
