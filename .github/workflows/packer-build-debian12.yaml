@@ -58,7 +58,7 @@ jobs:
 
       - name: Initialize Packer configuration
         id: init
-        run: packer init ./vsphere.pkr.hcl
+        run: packer init ./config.pkr.hcl
         working-directory: ./packer
 
       # - name: Validate configuration syntax
@@ -68,5 +68,5 @@ jobs:
 
       - name: Build image
         id: build
-        run: packer build -force --only vsphere-iso.linux --var-file=./linux/12Deb.pkrvars.hcl -var "vcenter_password=${{ secrets.VCENTER_PASSWORD }}" ./vsphere.pkr.hcl
+        run: packer build -force --only vsphere-iso.linux --var-file=./linux/12Deb.pkrvars.hcl -var "vcenter_password=${{ secrets.VCENTER_PASSWORD }}" .
         working-directory: ./packer
