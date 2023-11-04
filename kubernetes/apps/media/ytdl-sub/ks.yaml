@@ -2,12 +2,12 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: tools-ytdl-sub
+  name: media-ytdl-sub
   namespace: flux-system
 spec:
   dependsOn:
-    - name: tools-ytdl-sub-config
-  path: ./kubernetes/apps/tools/ytdl-sub/app
+    - name: media-ytdl-sub-config
+  path: ./kubernetes/apps/media/ytdl-sub/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -20,10 +20,10 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: tools-ytdl-sub-config
+  name: media-ytdl-sub-config
   namespace: flux-system
 spec:
-  path: ./kubernetes/apps/tools/ytdl-sub/config
+  path: ./kubernetes/apps/media/ytdl-sub/config
   prune: true
   sourceRef:
     kind: GitRepository

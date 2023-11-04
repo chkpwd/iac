@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: ytdl-sub-config
-  namespace: tools
+  namespace: media
 data:
   config.yaml: |
     configuration:
@@ -96,3 +96,45 @@ data:
           filters:
             - "original_url!*=/shorts/"
             - "!is_live"
+
+  subscriptions.yaml: |-
+    anton_putra:
+      preset: "yt_channel"
+      download:
+        url: "https://www.youtube.com/@AntonPutra"
+      overrides:
+        season: "00"
+        tv_show_name: Anton Putra
+        download_after: "20231001"
+    the_devops_guy:
+      preset: "yt_channel"
+      download:
+        url: "https://www.youtube.com/@MarcelDempers"
+      overrides:
+        season: "00"
+        tv_show_name: The DevOps Guy
+        download_after: "20231001"
+    devops_journey:
+      preset: "yt_channel"
+      download:
+        url: "https://www.youtube.com/@DevOpsJourney"
+      overrides:
+        season: "00"
+        tv_show_name: DevOps Journey
+        download_after: "20231001"
+    be_a_better_dev:
+      preset: "yt_channel"
+      download:
+        url: "https://www.youtube.com/@BeABetterDev"
+      overrides:
+        season: "00"
+        tv_show_name: Be A Better Dev
+        download_after: "20231001"
+    travis_media:
+      preset: "yt_channel"
+      download:
+        url: "https://www.youtube.com/@TravisMedia"
+      overrides:
+        season: "00"
+        tv_show_name: Travis Media
+        download_after: "20231001"

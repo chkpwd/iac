@@ -3,7 +3,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
   name: &app ytdl-sub
-  namespace: tools
+  namespace: media
 spec:
   interval: 15m
   chart:
@@ -57,9 +57,12 @@ spec:
               - bash
               - -c
               - |
-                ytdl-sub --log-level=debug --config=/config/config.yaml sub /media/youtube/subscriptions.yaml
-                find $${MEDIA_FOLDER} -user root -exec chown 568:568 "{}" \; -exec chmod 777 "{}" \;
-                echo "Thanks to tyzbit!"
+                set -e
+                ytdl-sub --log-level=debug \
+                        --config=/config/config.yaml \
+                        sub /config/subscriptions.yaml
+                # Change ownership and permissions
+                find "${MEDIA_FOLDER}" -user root -exec chown 568:568 "{}" \; -exec chmod 777 "{}" \;
 
             env:
               TZ: "${TZ}"
