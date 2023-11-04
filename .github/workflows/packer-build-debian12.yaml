@@ -68,5 +68,5 @@ jobs:
 
       - name: Build image
         id: build
-        run: packer build -force --only vsphere-iso.linux --var-file=./linux/12Deb.pkrvars.hcl -var "vcenter_password=${{ secrets.VCENTER_PASSWORD }}" .
+        run: packer build -force --only vsphere-iso.linux --var-file=./linux/12Deb.pkrvars.hcl -var "vcenter_password=${{ secrets.VCENTER_PASSWORD }}" -var orchestrator_ip=${{ env.NODE_IP }} .
         working-directory: ./packer

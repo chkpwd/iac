@@ -8,3 +8,8 @@ spec:
   template:
     spec:
       repository: chkpwd/iac
+      env:
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
