@@ -12,9 +12,8 @@ users:
       - github:chkpwd
 
 install:
-  auto: true
-  device: /dev/sda
-  reboot: true
+  # Make sure the installer won't delete our custom partitions
+  no-format: true
 
   # Set the boot options
   firmware: efi
@@ -36,23 +35,48 @@ growpart:
   devices: ['/']
 
 stages:
+  kairos-install.pre.before:
+    - if: '[ -e /dev/sda ] && [ -e /dev/nvme0n1 ] && [ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -lt $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]'
+      name: "Conditionally partition sda"
+      commands:
+        - |
+          parted --script --machine -- /dev/sda mklabel msdos
+      layout:
+        device:
+          path: /dev/sda
+        expand_partition:
+          size: 0 # All available space
+        add_partitions: &common_partitions
+          # all sizes bellow are in MB
+          - fsLabel: COS_OEM
+            size: 64
+            pLabel: oem
+          - fsLabel: COS_RECOVERY
+            size: 8500
+            pLabel: recovery
+          - fsLabel: COS_STATE
+            size: 18000
+            pLabel: state
+          - fsLabel: COS_PERSISTENT
+            pLabel: persistent
+            size: 25000
+            filesystem: "ext4"
+    - if: '[ -e /dev/sda ] && [ -e /dev/nvme0n1 ] && [ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -ge $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]' 
+      name: "Conditionally partition nvme0n1"
+      commands:
+        - |
+          parted --script --machine -- /dev/nvme0n1 mklabel msdos
+      layout:
+        device:
+          path: /dev/nvme0n1
+        expand_partition:
+          size: 0 # All available space
+        add_partitions: *common_partitions
+
   after-install-chroot:
     - name: "Install Longhorn Prerequisites"
       commands:
         - apt install parted nfs-common open-iscsi
-
-  initramfs:
-    - name: "Partition /dev/sdb if needed"
-      if: >-
-        [ $(sudo fdisk -l /dev/sdb | grep -q "83 Linux"; echo $?) -ne 0 ]
-      commands:
-        - parted /dev/sdb --script -- mkpart primary 0 -1
-
-    - name: "Format /dev/sdb1 if needed"
-      if: >-
-        [ $(sudo lsblk -o FSTYPE /dev/sdb1 | tail -n 1 | wc -l) -eq 0 ]
-      commands:
-        - mkfs.ext4 -F /dev/sdb1
 
   boot:
     - name: "Set system keymap"
@@ -62,9 +86,10 @@ stages:
     - name: "Setup hostname"
       hostname: "cattles-k3s-{{ trunc 4 .MachineID }}"
 
-    - name: "Mount /dev/sdb1 under /mnt/longhorn"
-      commands:
-        - mount -o rw /dev/sdb1 /mnt/longhorn
+    # # TODO: need to fix
+    # - if: '[ some eval ]'
+    #   commands:
+    #     - mount -o rw /dev/sdb1 /mnt/longhorn
 
     - name: "Set up various kube environment variables"
       environment:
@@ -82,6 +107,7 @@ stages:
             metadata:
               name: flux-system
 
+    # -- Init SOPS Secrets
     - name: "Download SOPS secret" 
       files:
         - path: /var/lib/rancher/k3s/server/manifests/sops-secret.yaml
@@ -110,12 +136,7 @@ kubevip:
 k3s:
   enabled: true
   args:
-    - --disable=traefik,servicelb,local-storage
-    - --flannel-backend="vxlan"
-    - --service-cidr 172.23.0.0/16
-    - --cluster-cidr 172.23.0.0/16
-    - --write-kubeconfig-mode 0644
-    - --node-taint 'node-role.kubernetes.io/control-plane=effect:NoSchedule'
+    - --disable=traefik,servicelb
 
 p2p:
   network_id: cattle-k3s
@@ -124,6 +145,7 @@ p2p:
   vpn:
     create: false
     use: false
+
   network_token: {[ P2P_NETWORK_TOKEN ]}
 
   auto:
@@ -133,8 +155,7 @@ p2p:
       master_nodes: 2
 
 bundles:
-  - targets:
-    - run://docker.io/tyzbit/flux:latest
+  - targets: [ run://quay.io/kairos/community-bundles:flux_latest ]
 
 # Bundle configs
 flux:
