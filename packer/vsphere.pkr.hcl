@@ -25,7 +25,6 @@ source "vsphere-iso" "linux" {
 
   ssh_username = var.connection_username
   ssh_password = var.connection_password
-  http_content = local.preseed_config
 
   # Needed for TPM
   vTPM         = var.enable_tpm
@@ -52,10 +51,12 @@ source "vsphere-iso" "linux" {
     network_card = var.nic_type
   }
 
-  http_port_min = 8687
-  http_port_max = 8687
-
-  http_ip = var.orchestrator_ip
+  cdrom_type            = "sata"
+  cd_label              = "cidata"
+  remove_cdrom          = true
+  cd_content            = [
+    "/preseed.cfg"      = local.preseed_config
+  ]
 
   boot_command = [
     "c<wait>",

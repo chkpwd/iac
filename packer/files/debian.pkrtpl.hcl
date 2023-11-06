@@ -1,3 +1,11 @@
+### Embed preseed in the ISO
+d-i preseed/include_command string \
+  mount /dev/sr1 /mnt; \
+  cp /mnt/preseed.cfg /; \
+  umount /mnt; \
+  echo 1 > /sys/block/sr1/device/delete; \
+  echo /preseed.cfg
+
 ### Setting the locales, country
 d-i debian-installer/locale string en_US
 d-i keyboard-configuration/xkb-keymap select us
