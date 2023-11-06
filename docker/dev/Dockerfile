@@ -17,7 +17,7 @@ RUN apt-get update && \
     # Development Tools
     build-essential file pwgen git vim htop jq yq ldap-utils \
     rsync rclone software-properties-common pkg-config \
-    libxmlsec1-dev golang-go npm nodejs upx-ucl \
+    libxmlsec1-dev golang-go npm nodejs upx-ucl jqp \
     # SSH Tools
     openssh-server openssh-client sshpass \
     # Network Tools
