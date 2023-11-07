@@ -44,6 +44,9 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# renovate: datasource=github-releases depName=kairos-io/provider-kairos
+ARG KAIROS_VERSION=v2.3.1
+
 # renovate: datasource=github-tags depName=yt-dlp/yt-dlp
 ARG YT_DLP_VERSION=2023.10.13
 
@@ -106,6 +109,9 @@ ARG PLUTO_VERSION=v5.18.5
 
 # Download and Install Various Tools
 RUN \
+    # Download and install Kairos
+    curl -L "https://github.com/kairos-io/provider-kairos/releases/download/${KAIROS_VERSION}/kairosctl-${KAIROS_VERSION}-linux-amd64.tar.gz" | tar xvzf - -C /tmp && \
+    mv /tmp/kairosctl /usr/bin/kairosctl && \
     # Download and install yt-dlp
     curl -L "https://github.com/yt-dlp/yt-dlp/releases/download/${YT_DLP_VERSION}/yt-dlp" -o /tmp/yt-dlp && \
     mv /tmp/yt-dlp /usr/bin/yt-dlp && \
