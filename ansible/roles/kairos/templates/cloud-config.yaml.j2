@@ -31,7 +31,7 @@ growpart:
 stages:
   kairos-install.pre.before:
     - if: '[ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -lt $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]'
-      name: "Conditionally partition sda"
+      name: "Partition /dev/sda"
       commands:
         - |
           parted --script --machine -- /dev/sda mklabel msdos
@@ -55,8 +55,8 @@ stages:
             pLabel: persistent
             size: 25000
             filesystem: "ext4"
-    - if: '[ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -ge $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]'
-      name: "Conditionally partition nvme0n1"
+    - if: '[ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -gt $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]'
+      name: "Partition /dev/nvme0n1"
       commands:
         - |
           parted --script --machine -- /dev/nvme0n1 mklabel msdos
