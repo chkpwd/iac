@@ -33,9 +33,9 @@ stages:
   kairos-install.pre.before:
     - if: '[ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -lt $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]'
       name: "Partition /dev/sda"
-      # commands:
-      #   - |
-      #     parted --script --machine -- /dev/sda mklabel msdos
+      commands:
+        - |
+          parted --script --machine -- /dev/sda mklabel gpt
       layout: &partitions_layout
         device:
           path: /dev/sda
@@ -58,9 +58,9 @@ stages:
             filesystem: "ext4"
     - if: '[ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -gt $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]'
       name: "Partition /dev/nvme0n1"
-      # commands:
-      #   - |
-      #     parted --script --machine -- /dev/nvme0n1 mklabel msdos
+      commands:
+        - |
+          parted --script --machine -- /dev/nvme0n1 mklabel gpt
       layout:
         <<: *partitions_layout
         device:
