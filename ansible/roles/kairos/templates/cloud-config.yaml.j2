@@ -1,7 +1,4 @@
----
 #cloud-config
-
-hostname: cattle-k3s-{{ trunc 4 .MachineID }}
 
 users:
   - name: chkpwd
@@ -12,18 +9,15 @@ users:
       - github:chkpwd
 
 install:
-  # Make sure the installer won't delete our custom partitions
+  auto: true
   no-format: true
-
-  # Set the boot options
-  firmware: efi
-  part-table: gpt
-
-  extra-dirs-rootfs: &longhorn
-    - /mnt/longhorn
+  reboot: true
 
   grub_options:
     saved_entry: "Kairos"
+
+  extra-dirs-rootfs: &longhorn
+    - /mnt/longhorn
 
 upgrade:
   extra-dirs-rootfs: *longhorn
@@ -36,17 +30,17 @@ growpart:
 
 stages:
   kairos-install.pre.before:
-    - if: '[ -e /dev/sda ] && [ -e /dev/nvme0n1 ] && [ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -lt $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]'
+    - if: '[ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -lt $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]'
       name: "Conditionally partition sda"
       commands:
         - |
           parted --script --machine -- /dev/sda mklabel msdos
-      layout:
+      layout: &partitions_layout
         device:
           path: /dev/sda
         expand_partition:
           size: 0 # All available space
-        add_partitions: &common_partitions
+        add_partitions:
           # all sizes bellow are in MB
           - fsLabel: COS_OEM
             size: 64
@@ -61,17 +55,15 @@ stages:
             pLabel: persistent
             size: 25000
             filesystem: "ext4"
-    - if: '[ -e /dev/sda ] && [ -e /dev/nvme0n1 ] && [ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -ge $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]' 
+    - if: '[ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -ge $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]'
       name: "Conditionally partition nvme0n1"
       commands:
         - |
           parted --script --machine -- /dev/nvme0n1 mklabel msdos
       layout:
+        <<: *partitions_layout
         device:
           path: /dev/nvme0n1
-        expand_partition:
-          size: 0 # All available space
-        add_partitions: *common_partitions
 
   after-install-chroot:
     - name: "Install Longhorn Prerequisites"
@@ -85,11 +77,6 @@ stages:
 
     - name: "Setup hostname"
       hostname: "cattles-k3s-{{ trunc 4 .MachineID }}"
-
-    # # TODO: need to fix
-    # - if: '[ some eval ]'
-    #   commands:
-    #     - mount -o rw /dev/sdb1 /mnt/longhorn
 
     - name: "Set up various kube environment variables"
       environment:
@@ -138,6 +125,7 @@ k3s:
   args:
     - --disable=traefik,servicelb
 
+# -- p2p network configs
 p2p:
   network_id: cattle-k3s
   disable_dht: true # Discover nodes only in the local network
@@ -154,10 +142,11 @@ p2p:
       enable: true
       master_nodes: 2
 
+# -- Bundle installs
 bundles:
-  - targets: [ run://quay.io/kairos/community-bundles:flux_latest ]
+  - targets: [run://quay.io/kairos/community-bundles:flux_latest]
 
-# Bundle configs
+# -- Bundle configs
 flux:
   github:
     owner: chkpwd
