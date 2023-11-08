@@ -26,8 +26,7 @@ reset:
   extra-dirs-rootfs: *longhorn
 
 growpart:
-  devices: ['/']
-
+  devices: ["/"]
 stages:
   kairos-install.pre.before:
     - if: '[ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -lt $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]'
@@ -71,14 +70,14 @@ stages:
         - apt install parted nfs-common open-iscsi
 
   boot:
-    - name: "Set system keymap"
+    - name: "Setup Keymap"
       system_firstboot:
         keymap: us
 
-    - name: "Setup hostname"
+    - name: "Setup Hostname"
       hostname: "cattles-k3s-{{ trunc 4 .MachineID }}"
 
-    - name: "Set up various kube environment variables"
+    - name: "Define Environment Variables"
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
         CONTAINERD_ADDRESS: /run/k3s/containerd/containerd.sock
@@ -95,7 +94,7 @@ stages:
               name: flux-system
 
     # -- Init SOPS Secrets
-    - name: "Download SOPS secret" 
+    - name: "Download SOPS secret"
       files:
         - path: /var/lib/rancher/k3s/server/manifests/sops-secret.yaml
           content: |
@@ -108,7 +107,7 @@ stages:
             data:
               sops.asc: {[ AGE_KEY_SECRET_BASE64 ]}
 
-    - name: "Bootstrap with Flux" 
+    - name: "Bootstrap with Flux"
       commands:
         - bash /usr/local/lib/extensions/flux/bootstrap.sh &
 
@@ -144,7 +143,7 @@ p2p:
 
 # -- Bundle installs
 bundles:
-  - targets: [run://quay.io/kairos/community-bundles:flux_latest]
+  - targets: [ run://quay.io/kairos/community-bundles:flux_latest ]
 
 # -- Bundle configs
 flux:
