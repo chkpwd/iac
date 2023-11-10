@@ -27,11 +27,13 @@ jobs:
           endpoint: '${{ secrets.WG_ENDPOINT }}'
           endpoint_public_key: '${{ secrets.WG_ENDPOINT_PUBLIC }}'
           ips: '10.6.6.6/32'
-          allowed_ips: '172.16.16.6/32'
+          allowed_ips: '0.0.0.0/0'
+          #allowed_ips: '172.16.16.6/32'
           private_key: '${{ secrets.WG_PRIVATE }}'
       
       - name: Test routing
         run: |
+            wait 30
             ping 172.16.16.6 -w 1; echo $?
             if [ $? -ne 0 ]; then
               exit 1
