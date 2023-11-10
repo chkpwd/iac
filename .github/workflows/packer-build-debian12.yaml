@@ -53,8 +53,7 @@ jobs:
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          restore-keys: ${{ runner.os }}-pip-
 
       - name: Setup Ansible
         run: |
@@ -76,7 +75,7 @@ jobs:
       - name: Build image
         id: build
         run: |
-            PACKER_LOG=1 packer build -force --only vsphere-iso.linux --var-file=./linux/12Deb.pkrvars.hcl \
+            packer build -force --only vsphere-iso.linux --var-file=./linux/12Deb.pkrvars.hcl \
             -var "vcenter_server=172.16.16.6" \
             -var "vcenter_host=172.16.16.3" \
             -var "vcenter_password=${{ secrets.VCENTER_PASSWORD }}" \
