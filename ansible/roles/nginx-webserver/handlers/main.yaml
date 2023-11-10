@@ -1,0 +1,6 @@
+---
+- name: Restart Nginx
+  community.docker.docker_container:
+    name: nginx-webserver
+    state: started
+    restart: true

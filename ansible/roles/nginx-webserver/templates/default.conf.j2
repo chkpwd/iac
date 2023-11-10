@@ -1,0 +1,29 @@
+server {
+    listen 80;
+    server_name "{{ webserver_node_addr }}";
+    root /files;
+
+    # Enforce stricter Content-Security-Policy to prevent XSS attacks
+    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; object-src 'none'; style-src 'self' 'unsafe-inline'; img-src 'self'; media-src 'none'; frame-src 'none'; font-src 'self'; connect-src 'self';";
+
+    # Disable server tokens to hide nginx version
+    server_tokens off;
+
+    access_log off;
+
+    # Enable directory listing
+    autoindex on;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    # Redirect server error pages to static HTML
+    error_page 404 /custom_404.html;
+    error_page 500 502 503 504 /custom_50x.html;
+
+    # Additional security headers
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+    add_header X-XSS-Protection "1; mode=block";
+}

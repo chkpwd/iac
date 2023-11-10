@@ -1,0 +1,17 @@
+---
+- name: Create default configuration
+  ansible.builtin.template:
+    src: "templates/default.conf.j2"
+    dest: "{{ configuration_path }}/nginx-webserver/default.conf"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0755
+  notify: Restart Nginx
+
+- name: Copy static files
+  ansible.builtin.copy:
+    src: "files/"
+    dest: "{{ configuration_path }}/nginx-webserver/files/"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: 0755
