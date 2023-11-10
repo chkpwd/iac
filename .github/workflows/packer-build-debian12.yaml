@@ -40,7 +40,7 @@ jobs:
           endpoint: '${{ secrets.WG_ENDPOINT }}'
           endpoint_public_key: '${{ secrets.WG_ENDPOINT_PUBLIC }}'
           ips: '10.6.6.6/24'
-          allowed_ips: '0.0.0.0/0'
+          allowed_ips: '172.16.16.0/24'
           private_key: '${{ secrets.WG_PRIVATE }}'
 
       - name: Set up Python
