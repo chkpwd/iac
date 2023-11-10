@@ -1,4 +1,4 @@
-preseed             = "k3s"
+preseed             = "debian-k3s"
 os_iso_url          = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.2.0-amd64-netinst.iso"
 iso_checksum        = "23ab444503069d9ef681e3028016250289a33cc7bab079259b73100daee0af66"
 iso_checksum_type   = "sha256"

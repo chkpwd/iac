@@ -1,13 +1,3 @@
-locals {
-  preseed_config = var.preseed != "" ? {
-    "/preseed.cfg" = templatefile("${abspath(path.root)}/files/${var.preseed}.pkrtpl.hcl", {
-      user_fullname = var.connection_username,
-      user_name     = var.connection_username,
-      user_password = var.connection_password
-    })
-  } : {}
-}
-
 source "vsphere-iso" "linux" {
   vcenter_server        = var.vcenter_server
   datacenter            = var.vcenter_datacenter
@@ -51,26 +41,21 @@ source "vsphere-iso" "linux" {
     network_card = var.nic_type
   }
 
-  cdrom_type            = "sata"
-  cd_label              = "cidata"
-  remove_cdrom          = true
-  cd_content            = [
-    "/preseed.cfg"      = local.preseed_config
-  ]
-
   boot_command = [
     "c<wait>",
-    "linux /install.amd/vmlinuz ",
-    "auto url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg ",
-    "priority=high ",
-    "locale=en_US.UTF-8 ",
-    "keymap=us ",
-    "hostname=${var.hostname} ",
-    "domain=${var.domain} ",
+    "<wait5>",
+    "linux /install.amd/vmlinuz <wait>",
+    "auto url=http://mgmt-srv-01.local.chkpwd.com:8081/${var.preseed}.cfg <wait>",
+    "priority=high <wait>",
+    "locale=en_US.UTF-8 <wait>",
+    "keymap=us <wait>",
+    "hostname=${var.hostname} <wait>",
+    "domain=${var.domain} <wait>",
     "---<enter>",
     "initrd /install.amd/initrd.gz<enter>",
     "boot<enter>"
   ]
+
 }
 
 source "vsphere-iso" "windows" {

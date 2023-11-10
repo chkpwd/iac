@@ -67,7 +67,7 @@ variable "os_iso_url" {
   default = ""
 }
 variable "boot_command" {
-  description = "the download url for the iso"
+  description = ""
   type    = list(string)
   default = []
 }
@@ -86,9 +86,6 @@ variable "machine_name" {
 variable "preseed" {
   description = "The preseed file to use"
   default     = ""
-}
-variable "orchestrator_ip" {
-  default = ""
 }
 variable "enable_tpm"  {
   default = "false"
