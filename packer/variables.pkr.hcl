@@ -90,3 +90,6 @@ variable "preseed" {
 variable "enable_tpm"  {
   default = "false"
 }
+variable "listen_address" {
+  default = ""
+}

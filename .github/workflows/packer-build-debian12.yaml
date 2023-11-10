@@ -28,11 +28,20 @@ env:
 
 jobs:
   packer:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: Run Packer
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Set up WireGuard
+        uses: egor-tensin/setup-wireguard@v1.2.0
+        with:
+          endpoint: '${{ secrets.WG_ENDPOINT }}'
+          endpoint_public_key: '${{ secrets.WG_ENDPOINT_PUBLIC }}'
+          ips: '10.6.6.6/24'
+          allowed_ips: '0.0.0.0/0'
+          private_key: '${{ secrets.WG_PRIVATE }}'
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -61,12 +70,7 @@ jobs:
         run: packer init ./config.pkr.hcl
         working-directory: ./packer
 
-      # - name: Validate configuration syntax
-      #   id: validate
-      #   run: packer validate ./vsphere.pkr.hcl
-      #   working-directory: ./packer
-
       - name: Build image
         id: build
-        run: packer build -force --only vsphere-iso.linux --var-file=./linux/12Deb.pkrvars.hcl -var "vcenter_password=${{ secrets.VCENTER_PASSWORD }}" .
+        run: packer build -force --only vsphere-iso.linux --var-file=./linux/12Deb.pkrvars.hcl -var "vcenter_password=${{ secrets.VCENTER_PASSWORD }}" -var "listen_address=10.6.6.6" .
         working-directory: ./packer

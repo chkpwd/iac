@@ -41,11 +41,16 @@ source "vsphere-iso" "linux" {
     network_card = var.nic_type
   }
 
+  http_port_min = 8687
+  http_port_max = 8687
+
+  http_ip = var.listen_address
+
+
   boot_command = [
     "c<wait>",
-    "<wait5>",
     "linux /install.amd/vmlinuz <wait>",
-    "auto url=http://mgmt-srv-01.local.chkpwd.com:8081/${var.preseed}.cfg <wait>",
+    "auto url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.preseed}.cfg <wait>",
     "priority=high <wait>",
     "locale=en_US.UTF-8 <wait>",
     "keymap=us <wait>",
