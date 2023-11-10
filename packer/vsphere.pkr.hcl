@@ -1,3 +1,13 @@
+locals {
+  preseed_config = var.preseed != "" ? {
+    "/preseed.cfg" = templatefile("${abspath(path.root)}/files/${var.preseed}.pkrtpl.hcl", {
+      user_fullname = var.connection_username,
+      user_name     = var.connection_username,
+      user_password = var.connection_password
+    })
+  } : {}
+}
+
 source "vsphere-iso" "linux" {
   vcenter_server        = var.vcenter_server
   datacenter            = var.vcenter_datacenter
@@ -45,12 +55,13 @@ source "vsphere-iso" "linux" {
   http_port_max = 8687
 
   http_ip = var.listen_address
+  http_content = local.preseed_config
 
 
   boot_command = [
     "c<wait>",
     "linux /install.amd/vmlinuz <wait>",
-    "auto url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/${var.preseed}.cfg <wait>",
+    "auto url=http://{{ .HTTPIP }}:{{ .HTTPPort }}/preseed.cfg <wait>",
     "priority=high <wait>",
     "locale=en_US.UTF-8 <wait>",
     "keymap=us <wait>",
