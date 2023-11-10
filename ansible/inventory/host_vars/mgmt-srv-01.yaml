@@ -3,23 +3,6 @@ common_user: chkpwd
 ansible_user: chkpwd
 
 service_definitions:
-  - name: gravity
-    image: ghcr.io/beryju/gravity:v0.6.13
-    network_mode: host
-    env:
-      BOOTSTRAP_ROLES: dns;api;etcd;discovery;backup;monitoring;tsdb
-      DATA_PATH: /data
-      LOG_LEVEL: info
-      ADMIN_PASSWORD: "{{ GRAVITY_ADMIN_PASSWORD }}"
-      ADMIN_TOKEN: "{{ GRAVITY_TOKEN }}"
-      LISTEN_ONLY: "true"
-    volumes:
-      - "{{ configuration_path }}/gravity:/data"
-    log_driver: json-file
-    log_options:
-      max-size: "10m"
-      max-file: "3"
-
   - name: prometheus
     image: prom/prometheus:v2.47.2
     user: 1000:1000
@@ -37,25 +20,6 @@ service_definitions:
   - name: grafana
     image: grafana/grafana:10.1.5
     user: 1000:1000
-    # entrypoint:
-    #   - sh
-    #   - -euc
-    #   - |
-    #     mkdir -p /etc/grafana/provisioning/datasources
-    #     cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
-    #     apiVersion: 1
-    #     datasources:
-    #     - name: Loki
-    #       type: loki
-    #       access: proxy
-    #       orgId: 1
-    #       url: http://loki:3100
-    #       basicAuth: false
-    #       isDefault: true
-    #       version: 1
-    #       editable: false
-    #     EOF
-    #     /run.sh
     env:
       GF_DAGF_FEATURE_TOGGLES_ENABLE: publicDashboards
       GF_INSTALL_PLUGINS: "grafana-clock-panel, grafana-simple-json-datasource"
@@ -65,17 +29,6 @@ service_definitions:
       - "{{ configuration_path }}/grafana:/var/lib/grafana"
     ports: [3000:3000]
 
-  # - name: loki
-  #   image: grafana/loki:2.9.0
-  #   ports: [3100:3100]
-  #   command: -config.file=/etc/loki/local-config.yaml
-
-  # - name: promtail
-  #   image: grafana/promtail:2.9.0
-  #   volumes:
-  #     - /var/log:/var/log
-  #   command: -config.file=/etc/promtail/config.yml
-
   - name: auroraboot
     image: quay.io/kairos/auroraboot:latest
     command: --cloud-config /files/cloud-config.yaml /files/auroraboot-config.yaml
@@ -83,3 +36,11 @@ service_definitions:
       - "{{ configuration_path }}/auroraboot/storage:/storage"
       - "{{ configuration_path }}/auroraboot/files:/files"
     network_mode: host
+
+  - name: nginx-webserver
+    image: nginx:1.25.3-alpine3.18-slim
+    ports:
+      - 8081:80
+    volumes:
+      - "{{ configuration_path }}/nginx-webserver/default.conf:/etc/nginx/conf.d/default.conf:ro"
+      - "{{ configuration_path }}/nginx-webserver/files:/files"
