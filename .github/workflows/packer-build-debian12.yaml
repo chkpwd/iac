@@ -28,7 +28,7 @@ env:
 
 jobs:
   packer:
-    runs-on: ubuntu-latest
+    runs-on: debian-latest
     name: Run Packer
     steps:
       - name: Checkout
@@ -72,5 +72,10 @@ jobs:
 
       - name: Build image
         id: build
-        run: packer build -force --only vsphere-iso.linux --var-file=./linux/12Deb.pkrvars.hcl -var "vcenter_password=${{ secrets.VCENTER_PASSWORD }}" -var "listen_address=10.6.6.6" .
+        run: |
+            packer build -force --only vsphere-iso.linux --var-file=./linux/12Deb.pkrvars.hcl \
+            -var "vcenter_server=172.16.16.6" \
+            -var "vcenter_host=172.16.16.3" \
+            -var "vcenter_password=${{ secrets.VCENTER_PASSWORD }}" \
+            -var "listen_address=10.6.6.6" .
         working-directory: ./packer
