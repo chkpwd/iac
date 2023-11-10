@@ -1,0 +1,38 @@
+name: test wireguard
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: 'Debug mode'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash -euxo pipefail {0}
+
+jobs:
+  packer:
+    runs-on: ubuntu-latest
+    name: Test WireGuard
+    steps:
+      - name: Set up WireGuard
+        uses: egor-tensin/setup-wireguard@v1.2.0
+        with:
+          endpoint: '${{ secrets.WG_ENDPOINT }}'
+          endpoint_public_key: '${{ secrets.WG_ENDPOINT_PUBLIC }}'
+          ips: '10.6.6.6/32'
+          allowed_ips: '172.16.16.6/32'
+          private_key: '${{ secrets.WG_PRIVATE }}'
+      
+      - name: Test routing
+        run: |
+            ping 172.16.16.6 -w 1; echo $?
+            if [ $? -ne 0 ]; then
+              exit 1
+            fi
