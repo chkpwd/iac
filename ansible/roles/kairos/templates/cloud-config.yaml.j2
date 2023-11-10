@@ -1,7 +1,5 @@
 #cloud-config
 
-debug: true
-
 users:
   - name: chkpwd
     shell: /bin/bash
@@ -12,7 +10,7 @@ users:
 
 install:
   auto: true
-  no-format: true
+  device: /dev/sda
   reboot: true
 
   grub_options:
@@ -29,43 +27,8 @@ reset:
 
 growpart:
   devices: ["/"]
-stages:
-  kairos-install.pre.before:
-    - if: '[ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -lt $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]'
-      name: "Partition /dev/sda"
-      commands:
-        - |
-          parted --script --machine -- /dev/sda mklabel gpt
-      layout: &partitions_layout
-        device:
-          path: /dev/sda
-        expand_partition:
-          size: 0 # All available space
-        add_partitions:
-          # all sizes bellow are in MB
-          - fsLabel: COS_OEM
-            size: 64
-            pLabel: oem
-          - fsLabel: COS_RECOVERY
-            size: 8500
-            pLabel: recovery
-          - fsLabel: COS_STATE
-            size: 18000
-            pLabel: state
-          - fsLabel: COS_PERSISTENT
-            pLabel: persistent
-            size: 25000
-            filesystem: "ext4"
-    - if: '[ $(fdisk -l /dev/sda | grep sectors | head -n 1 | cut -d" " -f5) -gt $(fdisk -l /dev/nvme0n1 | grep sectors | head -n 1 | cut -d" " -f5) ]'
-      name: "Partition /dev/nvme0n1"
-      commands:
-        - |
-          parted --script --machine -- /dev/nvme0n1 mklabel gpt
-      layout:
-        <<: *partitions_layout
-        device:
-          path: /dev/nvme0n1
 
+stages:
   after-install-chroot:
     - name: "Install Longhorn Prerequisites"
       commands:
@@ -111,7 +74,7 @@ stages:
 
     - name: "Bootstrap with Flux"
       commands:
-        - bash /usr/local/lib/extensions/flux/bootstrap.sh &
+        - bash /usr/local/lib/extensions/flux/bootstrap.sh & # TODO: Need to figure out location
 
     - name: "Set modprobe modules"
       modules:
@@ -124,7 +87,7 @@ kubevip:
 k3s:
   enabled: true
   args:
-    - --disable=traefik,servicelb
+    - --disable=traefik,servicelb,metrics-server,local-storage
 
 # -- p2p network configs
 p2p:
@@ -145,12 +108,9 @@ p2p:
 
 # -- Bundle installs
 bundles:
-  - targets: [ run://quay.io/kairos/community-bundles:flux_latest ]
+  - targets: [ container://ghcr.io/chkpwd/kairos-bundle-flux:latest ]
 
 # -- Bundle configs
 flux:
-  github:
-    owner: chkpwd
-    repository: iac
-    path: kubernetes/
-    components-extra: image-reflector-controller,image-automation-controller
+  bootstrap:
+    enabled: true
