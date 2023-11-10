@@ -19,8 +19,8 @@ d-i passwd/root-password password
 d-i passwd/root-password-again password 
 
 ### Account setup - Normal
-d-i passwd/user-fullname string {{ common_user }}
-d-i passwd/username string {{ common_user }}
+d-i passwd/user-fullname string {{ template_user }}
+d-i passwd/username string {{ template_user }}
 d-i passwd/user-password password {{ template_password }}
 d-i passwd/user-password-again password {{ template_password }}
 d-i passwd/user-uid string 1000
