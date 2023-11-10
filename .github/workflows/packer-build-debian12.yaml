@@ -56,12 +56,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: Install Ansible
-        run: pip install ansible
-      
-      - name: Setup Ansible Prerequisites
-        id: Ansible Prerequisites
-        run: ansible-galaxy install arillso.logrotate
+      - name: Setup Ansible
+        run: |
+            pip install ansible
+            ansible-galaxy install arillso.logrotate
         working-directory: ./ansible
 
       - name: Setup `packer`
