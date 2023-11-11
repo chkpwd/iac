@@ -3,10 +3,8 @@
 users:
   - name: chkpwd
     shell: /bin/bash
-    groups:
-      - admin
-    ssh_authorized_keys:
-      - github:chkpwd
+    groups: [ admin ]
+    ssh_authorized_keys: [ github:chkpwd ]
 
 install:
   auto: true
@@ -16,8 +14,7 @@ install:
   grub_options:
     saved_entry: "Kairos"
 
-  extra-dirs-rootfs: &longhorn
-    - /var/lib/longhorn
+  extra-dirs-rootfs: &longhorn [ /var/lib/longhorn ]
 
 upgrade:
   extra-dirs-rootfs: *longhorn
@@ -26,7 +23,7 @@ reset:
   extra-dirs-rootfs: *longhorn
 
 growpart:
-  devices: ["/"]
+  devices: [ "/" ]
 
 stages:
   after-install-chroot:
@@ -103,6 +100,7 @@ k3s:
   enabled: true
   args:
     - --disable=traefik,servicelb,metrics-server,local-storage
+    - --write-kubeconfig-mode 0644
 
 # -- p2p network configs
 p2p:
