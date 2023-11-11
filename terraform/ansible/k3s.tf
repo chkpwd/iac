@@ -4,7 +4,7 @@
 
 # resource "ansible_playbook" "playbook" {
 #   groups     = ["docker_hosts"]
-#   name       = "mirage"
+#   name       = "media-srv-01"
 #   playbook   = "/home/hyoga/code/iac/ansible/playbooks/get_macaddress.yaml"
 #   #replayable = true
 #   #diff_mode  = true

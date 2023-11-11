@@ -25,9 +25,9 @@ module "cockpit" {
   }
 }
 
-module "mirage" {
+module "media-srv-01" {
   source                    = "../_modules/vsphere_vm"
-  vm_name                   = "mirage"
+  vm_name                   = "media-srv-01"
   vm_template               = "deb-12-template"
   network_spec = {
     network_id              = "Media"
