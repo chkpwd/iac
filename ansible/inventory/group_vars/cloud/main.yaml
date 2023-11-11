@@ -76,6 +76,11 @@ uptime_kuma_monitors:
     url: 172.16.16.16
     parent: *services_group
 
+  - name: Plex Server
+    type: ping
+    url: 172.16.20.10
+    parent: *services_group
+
   # Sites
   - name: WinXuu
     type: ping
