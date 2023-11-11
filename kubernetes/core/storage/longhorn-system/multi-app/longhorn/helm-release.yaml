@@ -48,7 +48,7 @@ spec:
       backupstorePollInterval: 60
       orphanAutoDeletion: true
       concurrentAutomaticEngineUpgradePerNodeLimit: 3
-      defaultDataPath: /mnt/data/longhorn
+      defaultDataPath: /var/lib/longhorn
       defaultDataLocality: best-effort
       defaultLonghornStaticStorageClass: longhorn
       storageMinimalAvailablePercentage: 0
@@ -67,18 +67,18 @@ spec:
       upgradeChecker: false
       v2DataEngine: false
 
-  # postRenderers:
-  #   - kustomize:
-  #       patchesStrategicMerge:
-  #         - &setting
-  #           apiVersion: longhorn.io/v1beta2
-  #           kind: Setting
-  #           metadata:
-  #             name: allow-collecting-longhorn-usage-metrics
-  #             namespace: storage
-  #           value: "false"
-  #         - <<: *setting
-  #           metadata:
-  #           # Look out for 1.5.2, should be fixed
-  #             name: storage-reserved-percentage-for-default-disk
-  #           value: 0
+  postRenderers:
+    - kustomize:
+        patchesStrategicMerge:
+          - &setting
+            apiVersion: longhorn.io/v1beta2
+            kind: Setting
+            metadata:
+              name: allow-collecting-longhorn-usage-metrics
+              namespace: storage
+            value: "false"
+          - <<: *setting
+            metadata:
+            # Look out for 1.5.2, should be fixed
+              name: storage-reserved-percentage-for-default-disk
+            value: 0

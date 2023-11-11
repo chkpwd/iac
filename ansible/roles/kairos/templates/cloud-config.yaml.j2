@@ -17,7 +17,7 @@ install:
     saved_entry: "Kairos"
 
   extra-dirs-rootfs: &longhorn
-    - /mnt/longhorn
+    - /var/lib/longhorn
 
 upgrade:
   extra-dirs-rootfs: *longhorn
@@ -41,6 +41,25 @@ stages:
 
     - name: "Setup Hostname"
       hostname: "cattles-k3s-{{ trunc 4 .MachineID }}"
+
+    - name: "Partition Drive"
+      if: >-
+        [ $(fdisk -lo type /dev/nvme0n1 | tail -n 1) != "Linux" ]
+      commands:
+        - parted /dev/nvme0n1 --script -a optimal -- mklabel gpt mkpart longhorn ext4 0% 100%
+
+    - name: "Format Partition"
+      if: >-
+        [ $(lsblk -no FSTYPE /dev/nvme0n1p1) != "ext4" ]
+      commands:
+        - mkfs.ext4 -F /dev/nvme0n1p1
+
+    - name: "Mount drive under default longhorn location"
+      if: >-
+        [ -e /dev/nvme0n1p1 ] && [ -e /dev/sda ]
+      commands:
+        - umount /var/lib/longhorn
+        - mount -o rw /dev/nvme0n1p1 /var/lib/longhorn
 
     - name: "Define Environment Variables"
       environment:
@@ -72,10 +91,6 @@ stages:
             data:
               sops.asc: {[ AGE_KEY_SECRET_BASE64 ]}
 
-    - name: "Bootstrap with Flux"
-      commands:
-        - bash /usr/local/lib/extensions/flux/bootstrap.sh & # TODO: Need to figure out location
-
     - name: "Set modprobe modules"
       modules:
         - iscsi_tcp
@@ -105,12 +120,3 @@ p2p:
     ha:
       enable: true
       master_nodes: 2
-
-# -- Bundle installs
-bundles:
-  - targets: [ container://ghcr.io/chkpwd/kairos-bundle-flux:latest ]
-
-# -- Bundle configs
-flux:
-  bootstrap:
-    enabled: true
