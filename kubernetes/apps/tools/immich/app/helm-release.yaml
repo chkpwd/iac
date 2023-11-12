@@ -66,7 +66,7 @@ spec:
       image:
         repository: ghcr.io/immich-app/immich-server
         tag: *appVersion
-        pullPolicy: *pullPolicy
+        pullPolicy: &pullPolicy IfNotPresent
       resources:
         requests:
           cpu: 20m
