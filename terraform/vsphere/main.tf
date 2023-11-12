@@ -90,53 +90,6 @@ module "win-srv-2022" {
   }
 }
 
-module "kube-ops" {
-  source                    = "../_modules/vsphere_vm"
-  count                     = 3
-  vm_name                   = "kubes-cp-${count.index + 1}"
-  vm_template               = "k3s-deb12"
-  vm_datastore              = "NVME-30B"
-  network_spec = {
-    network_id              = "LAN"
-    mac_address             = ["00:50:56:93:8a:b9", "00:50:56:93:35:60", "00:50:56:93:fa:88"][count.index]
-    static_mac_addr         = true
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.kubernetes.id ]
-    folder                  = vsphere_folder.kubernetes.path
-    enable_hv               = true
-    cpu                     = 4
-    memory                  = 1024 * 24
-    disk_size               = 32
-    additional_disks = [
-      {
-        size                = 200
-      }
-    ]
-  }
-}
-
-module "dns-srv-02" {
-  source                    = "../_modules/vsphere_vm"
-  vm_name                   = "dns-srv-02"
-  vm_template               = "deb-12-template"
-  network_spec = {
-    network_id              = "LAN"
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
-    folder                  = vsphere_folder.dev.path
-    cpu                     = 1
-    memory                  = 1024 * 1
-    disk_size               = 16
-    additional_disks = [ 
-      {
-        size                = 10
-      } 
-    ]
-  }
-}
-
 module "hosting-srv-01" {
   source                    = "../_modules/vsphere_vm"
   vm_name                   = "hosting-srv-01"
@@ -148,12 +101,12 @@ module "hosting-srv-01" {
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id, vsphere_tag.gaming.id ]
     folder                  = vsphere_folder.gaming_linux.path
-    cpu                     = 1
-    memory                  = 1024 * 2
+    cpu                     = 2
+    memory                  = 1024 * 12
     disk_size               = 16
     additional_disks = [ 
       {
-        size                = 25
+        size                = 300
       } 
     ]
   }
