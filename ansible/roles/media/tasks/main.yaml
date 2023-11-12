@@ -1,24 +1,23 @@
-- name: Install pigz
+---
+- name: Install nfs package
   ansible.builtin.apt:
-    name: pigz
-    state: present
+    pkg: 'nfs-common'
 
-- name: Template Plex script
-  ansible.builtin.template:
-    src: templates/plex_script.py.j2
-    dest: ~/plex_script.py
-    owner: root
-    group: root
-    mode: 0644
-  register: script
+- name: Create the dest directory for the mount
+  ansible.builtin.file:
+    path: "{{ media_path }}"
+    state: directory
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: '0755'
 
-- name: Install backup schedule
-  ansible.builtin.cron:
-    name: pms-backup
-    cron_file: pms_backup
-    user: "root"
-    job: "python3 {{ script.dest }}"
-    weekday: 1
-    hour: 3
-    minute: 0
-    state: present
+- name: Mount NFS share from TrueNAS
+  ansible.posix.mount:
+    src: "cockpit:/mnt/data"
+    path: "{{ media_path }}"
+    opts: rw,sync,hard,nofail
+    state: mounted
+    fstype: nfs
+
+- name: Configure Pigz Backup for Plex
+  ansible.builtin.include_tasks: setup_backup.yaml
