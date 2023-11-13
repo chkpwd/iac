@@ -36,6 +36,7 @@ service_definitions:
       - "{{ configuration_path }}/auroraboot/storage:/storage"
       - "{{ configuration_path }}/auroraboot/files:/files"
     network_mode: host
+    state: stopped
 
   - name: nginx-webserver
     image: nginx:1.25.3-alpine3.18-slim
@@ -44,3 +45,14 @@ service_definitions:
     volumes:
       - "{{ configuration_path }}/nginx-webserver/default.conf:/etc/nginx/conf.d/default.conf:ro"
       - "{{ configuration_path }}/nginx-webserver/files:/files"
+
+  - name: netbootxyz
+    image: ghcr.io/netbootxyz/netbootxyz:0.6.9-nbxyz2
+    env:
+      MENU_VERSION: 2.0.73
+    ports:
+      - 3001:3000
+      - 69:69/udp
+    volumes:
+      - "{{ configuration_path }}/netbootxyz:/config"
+      - "{{ configuration_path }}/netbootxyz/data:/assets"
