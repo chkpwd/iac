@@ -78,6 +78,8 @@ spec:
 
     ingress:
       main:
+        annotations:
+          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         enabled: true
         className: ext-ingress
         hosts:
