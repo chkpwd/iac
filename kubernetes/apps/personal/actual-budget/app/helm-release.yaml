@@ -30,20 +30,10 @@ spec:
     controllers:
       main:
         enabled: true
-        type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
 
         replicas: 1
-
-        statefulset:
-          volumeClaimTemplates:
-            - name: config
-              accessMode: ReadWriteOnce
-              size: 1Gi
-              storageClass: longhorn-config
-              globalMounts:
-                - path: /data
 
         pod:
           enableServiceLinks: false
@@ -58,6 +48,7 @@ spec:
             image:
               repository: ghcr.io/actualbudget/actual-server
               tag: 23.11.0
+              pullPolicy: IfNotPresent
 
             resources:
               requests:
@@ -90,3 +81,14 @@ spec:
         tls:
           - hosts:
               - *host
+
+    persistence:
+      config:
+        enabled: true
+        accessMode: ReadWriteOnce
+        storageClass: longhorn-config
+        size: 2Gi
+        advancedMounts:
+          main:
+            main:
+              - path: /data
