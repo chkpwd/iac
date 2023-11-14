@@ -15,6 +15,7 @@
       module_defaults:
         community.docker.docker_container:
           restart_policy: always
+      when: role == 'compose'
       block:
         - name: Run the 'compose' role
           include_role:

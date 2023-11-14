@@ -1,0 +1,52 @@
+---
+- name: "Add grub linux command line options"
+  ansible.builtin.blockinfile:
+    path: "/etc/default/grub"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - GRUB CMDLINE"
+    create: true
+    mode: '0644'
+    block: >-
+      GRUB_CMDLINE_LINUX_DEFAULT="{{ linux_cmdline_args | join(' ') }}
+      vfio_pci.ids={{ vfio_pci_ids | join(',') }}"
+  notify:
+    - Update grub
+    - Reboot pve
+
+- name: "Add vfio modules"
+  ansible.builtin.blockinfile:
+    path: /etc/modules
+    marker: "# {mark} VFIO ANSIBLE MANAGED BLOCK "
+    create: true
+    mode: '0644'
+    block: |
+      vfio
+      vfio_iommu_type1
+      vfio_pci
+      vfio_virqfd
+  notify:
+    - Update initramfs
+    - Reboot pve
+
+- name: "Allow iommu unsafe interrupts"
+  ansible.builtin.blockinfile:
+    path: /etc/modprobe.d/iommu_unsafe_interrupts.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - IOMMU"
+    create: true
+    mode: '0644'
+    block: |
+      options vfio_iommu_type1 allow_unsafe_interrupts=1
+  notify:
+    - Update initramfs
+    - Reboot pve
+
+- name: "Kvm interrupt remapping"
+  ansible.builtin.blockinfile:
+    path: /etc/modprobe.d/kvm.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - KVM"
+    create: true
+    mode: '0644'
+    block: |
+      options kvm ignore_msrs=1
+  notify:
+    - Update initramfs
+    - Reboot pve
