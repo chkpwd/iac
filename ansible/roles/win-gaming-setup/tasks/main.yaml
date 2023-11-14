@@ -17,7 +17,7 @@
   community.windows.win_timezone:
     timezone: Eastern Standard Time
 
-- name: Change the hostname to loba
+- name: Change Hostname
   ansible.windows.win_hostname:
     name: "{{ inventory_hostname }}"
   register: hostname
