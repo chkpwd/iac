@@ -51,7 +51,7 @@ setup_chezmoi_conf() {
 }
 
 # Login to Bitwarden and set the BW_SESSION environment variable
-if [[ -z "$BWS_ACCESS_TOKEN" ]] || [[ -z $(yq '(.[] | select(has("accessToken")).accessToken)' "$CHEZMOI_CONF") ]]; then
+if [[ -z "$BWS_ACCESS_TOKEN" ]] && [[ -z $(yq '(.[] | select(has("accessToken")).accessToken)' "$CHEZMOI_CONF") ]]; then
   # https://bitwarden.com/help/personal-api-key/
   if [[ -n "$BW_API_KEY" ]]; then
     export BW_SESSION=$(/usr/bin/bw login --apikey $BW_CLIENTID $BW_CLIENTSECRET --raw)
@@ -78,4 +78,4 @@ else
 fi
 
 # Source zsh
-source ~/.zshrc
+zsh -c 'source ~/.zshrc'
