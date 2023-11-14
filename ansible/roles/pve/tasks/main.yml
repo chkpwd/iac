@@ -19,13 +19,13 @@
   ansible.builtin.blockinfile:
     path: "/etc/default/grub"
     marker: "# {mark} ANSIBLE MANAGED BLOCK - GRUB CMDLINE"
-    block: |
-      GRUB_CMDLINE_LINUX_DEFAULT="{{ linux_cmdline['cpu'][cpu_manufacturer] }} \
-      {{ linux_cmdline['iommu_passthrough'][iommu_passthrough] }} \
-      {{ linux_cmdline['disable_vga'][disable_vga] }} \
-      {{ linux_cmdline['initcall_blacklist'][initcall_blacklist] }} \
-      {{ linux_cmdline['acs_override'][acs_override] }} \
-      vfio_pci.ids={{ vfio_pci_ids | join(',') }} \
+    block: >-
+      GRUB_CMDLINE_LINUX_DEFAULT="{{ linux_cmdline['cpu'][cpu_manufacturer] }}
+      {{ linux_cmdline['iommu_passthrough'][iommu_passthrough] }}
+      {{ linux_cmdline['disable_vga'][disable_vga] }}
+      {{ linux_cmdline['initcall_blacklist'][initcall_blacklist] }}
+      {{ linux_cmdline['acs_override'][acs_override] }}
+      vfio_pci.ids={{ vfio_pci_ids | join(',') }}
       {{ ' ' + linux_cmdline_extra_args if linux_cmdline_extra_args else '' }}"
   notify:
    - Update grub
