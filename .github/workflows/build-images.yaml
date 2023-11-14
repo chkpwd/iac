@@ -4,8 +4,6 @@ on:
   push:
     branches: [ main ]
     paths: [ docker/dev/** ]
-  schedule:
-    - cron: '0 5 * * *'
 
 jobs:
   build:
@@ -32,7 +30,9 @@ jobs:
         with:
           context: docker/dev/
           push: ${{ github.ref == 'refs/heads/main' }}
-          tags: ghcr.io/chkpwd/dev:auto-${{ steps.time.outputs.time }}
+          tags: |
+            ghcr.io/chkpwd/dev:latest
+            ghcr.io/chkpwd/dev:auto-${{ steps.time.outputs.time }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
