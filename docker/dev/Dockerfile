@@ -214,8 +214,8 @@ COPY --from=docker.io/vmware/govc:v0.33.0 /govc /usr/bin/govc
 # UPX all of the binaries
 RUN for item in bw bws nova pluto terraform pulumi pet  \
     kubectl stern krew viddy k9s helm sops vcluster \
-    pluto curl istioctl flux hugo kaniko chezmoi \
-    etcdctl doctl govc packer korb atuin teller; do \
+    pluto curl istioctl flux hugo kaniko chezmoi kairosctl \
+    etcdctl doctl govc packer korb atuin teller yt-dlp; do \
     upx $(which $item); \
     done
 
