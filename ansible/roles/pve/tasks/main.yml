@@ -1,13 +1,35 @@
 ---
-- name: "add grub linux command line options"
-  ansible.builtin.lineinfile:
-    dest: "/etc/default/grub"
-    state: present
-    line: "GRUB_CMDLINE_LINUX_DEFAULT=\"{{ linux_cmdline['cpu'][cpu_manufacturer] }}{{ linux_cmdline['iommu_passthrough'][iommu_passthrough] }}{{ linux_cmdline['disable_vga'][disable_vga] }}{{ linux_cmdline['initcall_blacklist'][initcall_blacklist] }}{{ linux_cmdline['acs_override'][acs_override] }}vfio_pci.ids={{ vfio_pci_ids | join(',') }}{{ (' '+linux_cmdline_extra_args) if linux_cmdline_extra_args else '' }}\""
-    regexp: "^GRUB_CMDLINE_LINUX_DEFAULT"
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: "/etc/modprobe.d/{{ item }}"
+    state: touch
+    owner: root
+    group: root
+    mode: '0644'
+    modification_time: preserve
+    access_time: preserve
+  loop:
+    - iommu_unsafe_interrupts.conf
+    - kvm.conf
+    - blacklist.conf
+  loop_control:
+    label: "Created: {{ item }}"
+
+- name: "Add grub linux command line options"
+  ansible.builtin.blockinfile:
+    path: "/etc/default/grub"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - GRUB CMDLINE"
+    block: |
+      GRUB_CMDLINE_LINUX_DEFAULT="{{ linux_cmdline['cpu'][cpu_manufacturer] }} \
+      {{ linux_cmdline['iommu_passthrough'][iommu_passthrough] }} \
+      {{ linux_cmdline['disable_vga'][disable_vga] }} \
+      {{ linux_cmdline['initcall_blacklist'][initcall_blacklist] }} \
+      {{ linux_cmdline['acs_override'][acs_override] }} \
+      vfio_pci.ids={{ vfio_pci_ids | join(',') }} \
+      {{ ' ' + linux_cmdline_extra_args if linux_cmdline_extra_args else '' }}"
   notify:
-    - Update grub
-    - Reboot pve
+   - Update grub
+   - Reboot pve
 
 - name: "Add vfio modules"
   ansible.builtin.blockinfile:
@@ -23,30 +45,35 @@
     - Reboot pve
 
 - name: "Allow iommu unsafe interrupts"
-  ansible.builtin.copy:
-    content: |
+  ansible.builtin.blockinfile:
+    path: /etc/modprobe.d/iommu_unsafe_interrupts.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - IOMMU"
+    block: |
       options vfio_iommu_type1 allow_unsafe_interrupts=1
-    dest: "/etc/modprobe.d/iommu_unsafe_interrupts.conf"
   notify:
     - Update initramfs
     - Reboot pve
 
-- name: "kvm interrupt remapping"
-  ansible.builtin.copy:
-    content: |
+- name: "Kvm interrupt remapping"
+  ansible.builtin.blockinfile:
+    path: /etc/modprobe.d/kvm.conf
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - KVM"
+    block: |
       options kvm ignore_msrs=1
-    dest: "/etc/modprobe.d/kvm.conf"
   notify:
     - Update initramfs
     - Reboot pve
 
 - name: "Add blacklist drivers"
-  ansible.builtin.copy:
-    content: |
-      blacklist radeon
-      blacklist nouveau
-      blacklist nvidia
-    dest: /etc/modprobe.d/blacklist.conf
+  ansible.builtin.lineinfile:
+    path: /etc/modprobe.d/blacklist.conf
+    line: "blacklist {{ item }}"
+    create: yes
+    mode: '0644'
+  loop:
+    - radeon
+    - nouveau
+    - nvidia
   notify:
     - Update initramfs
     - Reboot pve
