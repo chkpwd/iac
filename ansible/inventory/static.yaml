@@ -4,6 +4,16 @@ all:
     localhost:
       ansible_connection: local
   children:
+    hypervisors:
+      esxi_hosts:
+      proxmox_nodes:
+
+    proxmox_nodes:
+      hosts:
+        pve-node-01:
+          ansible_host: 172.16.16.85
+          ansible_ssh_user: root
+
     vsphere:
       children:
         esxi_hosts:
