@@ -44,13 +44,10 @@ spec:
 
         pod:
           securityContext:
-            runAsNonRoot: true
-            runAsUser: &context 568
+            runAsUser: &context 1999
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
-            seccompProfile:
-              type: RuntimeDefault
 
         containers:
           main:
@@ -76,9 +73,6 @@ spec:
 
             securityContext:
               allowPrivilegeEscalation: false
-              capabilities:
-                drop:
-                  - ALL
 
             resources:
               requests:
