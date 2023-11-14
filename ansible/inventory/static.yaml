@@ -10,8 +10,7 @@ all:
 
     proxmox_nodes:
       hosts:
-        pve-node-01:
-          ansible_host: 172.16.16.85
+        pve-srv-01:
           ansible_ssh_user: root
 
     vsphere:
@@ -50,7 +49,7 @@ all:
       vars:
         ansible_become_method: runas
       hosts:
-        loba:
+        chk-dev-win11:
           ansible_host: 172.16.16.100
           ansible_user: chkpwd
           ansible_become_user: chkpwd
