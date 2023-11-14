@@ -1,0 +1,12 @@
+---
+- name: Update grub
+  ansible.builtin.command:
+    cmd: "update-grub"
+
+- name: Update initramfs
+  ansible.builtin.command:
+    cmd: "update-initramfs -u"
+
+- name: Reboot pve
+  ansible.builtin.reboot:
+
