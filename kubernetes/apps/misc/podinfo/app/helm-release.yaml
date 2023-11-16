@@ -21,7 +21,7 @@ spec:
       enabled: true
       className: int-ingress
       hosts:
-        - host: &host "pod.${K8S_GATEWAY_DOMAIN}"
+        - host: &host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
           paths:
             - path: /
               pathType: Prefix
