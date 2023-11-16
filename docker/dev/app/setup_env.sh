@@ -41,23 +41,28 @@ fi
 setup_chezmoi_conf() {
   # Ensure the Chezmoi configuration directory exists
   mkdir -p "$CHEZMOI_CONF_DIR"
-  
-  # Prompt user for access token
-  read -rp "Enter your access token: " access_token
-  
+
+  local access_token
+  if [[ -n $BWS_ACCESS_TOKEN ]]; then
+    access_token=$BWS_ACCESS_TOKEN
+  else
+    # Prompt user for access token
+    read -rp "Enter your access token: " access_token
+  fi
+
   # Create Chezmoi configuration file with access token
   echo "data:
   accessToken: $access_token" > "$CHEZMOI_CONF"
 }
 
 # Login to Bitwarden and set the BW_SESSION environment variable
-if [[ -z "$BWS_ACCESS_TOKEN" ]] && [[ -z $(yq '(.[] | select(has("accessToken")).accessToken)' "$CHEZMOI_CONF") ]]; then
+if [[ -z $(yq -r '.data.accessToken' "$CHEZMOI_CONF") ]]; then
   # https://bitwarden.com/help/personal-api-key/
   if [[ -n "$BW_API_KEY" ]]; then
     export BW_SESSION=$(/usr/bin/bw login --apikey $BW_CLIENTID $BW_CLIENTSECRET --raw)
   else
     setup_chezmoi_conf
-    access_token=$(yq -r '.data.accessToken' "$CHEZMOI_CONF")
+    access_token=$(yq e '.data.accessToken' "$CHEZMOI_CONF")
     export BW_SESSION=$(/usr/bin/bw login --apikey $access_token --raw)
   fi
 fi
