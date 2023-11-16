@@ -28,6 +28,8 @@ spec:
       extraArgs:
         default-ssl-certificate: cert-manager/chkpwd-cert-production
 
+      allowSnippetAnnotations: true # Authentik
+
       service:
         enabled: true
         annotations:
