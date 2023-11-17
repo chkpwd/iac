@@ -95,6 +95,18 @@ spec:
         secretKeyRef:
           name: authentik-secrets
           key: secret_key
+      AUTHENTIK_BOOTSTRAP_PASSWORD:
+        secretKeyRef:
+          name: authentik-secrets
+          key: bootstrap_password
+      AUTHENTIK_BOOTSTRAP_TOKEN:
+        secretKeyRef:
+          name: authentik-secrets
+          key: bootstrap_token
+      AUTHENTIK_BOOTSTRAP_EMAIL:
+        secretKeyRef:
+          name: authentik-secrets
+          key: bootstrap_email
 
     postgresql:
       enabled: false
