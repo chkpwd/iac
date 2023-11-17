@@ -22,9 +22,9 @@ resource "authentik_application" "app" {
   group             = var.group
 }
 
-# resource "authentik_policy_binding" "app-access" {
-#   for_each = toset(var.access_group)
-#   target   = authentik_application.app.uuid
-#   group    = each.key
-#   order    = index(var.access_group, each.key) + 100
-# }
+resource "authentik_policy_binding" "app-access" {
+  for_each = toset(var.access_group)
+  target   = authentik_application.app.uuid
+  group    = each.key
+  order    = index(var.access_group, each.key) + 100
+}

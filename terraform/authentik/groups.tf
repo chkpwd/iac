@@ -1,6 +1,7 @@
 resource "authentik_user" "media" {
   username = "media"
   name     = "Media User"
+  password = data.sops_file.authentik-secrets.data["authentik_media_group_pwd"]
 }
 
 resource "authentik_group" "media" {
@@ -12,6 +13,7 @@ resource "authentik_group" "media" {
 resource "authentik_user" "misc" {
   username = "misc"
   name     = "Misc User"
+  password = data.sops_file.authentik-secrets.data["authentik_misc_group_pwd"]
 }
 
 resource "authentik_group" "misc" {
