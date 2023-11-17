@@ -16,8 +16,6 @@ data "sops_file" "authentik-secrets" {
 }
 
 provider "authentik" {
-  url   = "https://authentik.company"
-  token = "foo-bar"
-  # Optionally set insecure to ignore TLS Certificates
-  # insecure = true
+  url   = "https://authentik.chkpwd.com"
+  token = data.sops_file.authentik-secrets.data["authentik_token"]
 }
