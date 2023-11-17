@@ -1,5 +1,5 @@
 resource "authentik_provider_proxy" "provider" {
-  name                         = "tf-${lower(var.name)}"
+  name                         = "${lower(var.name)}"
   internal_host                = var.internal == "" ? null : var.internal
   external_host                = var.external
   mode                         = var.internal == "" ? "forward_single" : "proxy"
