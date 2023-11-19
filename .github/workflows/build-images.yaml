@@ -1,13 +1,19 @@
-name: Docker Build Dev Container
+name: Docker Build Container Images
 
 on:
   push:
     branches: [ main ]
-    paths: [ docker/dev/** ]
+    paths: 
+      - 'docker/**/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        context: 
+          - 'dev'
+          - 'galene'
     steps:
       - uses: actions/checkout@v4
 
@@ -28,11 +34,11 @@ jobs:
       - name: Build and push images
         uses: docker/build-push-action@v5.1.0
         with:
-          context: docker/dev/
+          context: docker/${{ matrix.context }}
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: |
-            ghcr.io/chkpwd/dev:latest
-            ghcr.io/chkpwd/dev:auto-${{ steps.time.outputs.time }}
+            ghcr.io/chkpwd/${{ matrix.context }}:latest
+            ghcr.io/chkpwd/${{ matrix.context }}:auto-${{ steps.time.outputs.time }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
