@@ -1,0 +1,48 @@
+---
+name: "Flux Diff"
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths: ["kubernetes/**.yaml"]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  flux-diff:
+    name: Compute diffs
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        cluster_path: ["kubernetes"]
+        resources:
+          - helmrelease
+          - kustomization
+    steps:
+      - name: Token Generation
+        uses: tibdex/github-app-token@v2.1.0
+        id: generate-token
+        with:
+          app_id: "${{ secrets.BOT_APP_ID }}"
+          private_key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
+
+      - name: Diff Resources
+        uses: allenporter/flux-local/action/diff@3.1.1
+        id: diff
+        with:
+          sources: home-kubernetes
+          path: "${{ matrix.cluster_path }}"
+          resource: "${{ matrix.resources }}"
+
+      - if: ${{ steps.diff.outputs.diff != '' }}
+        name: Create PR Comments
+        uses: mshick/add-pr-comment@v2.8.1
+        with:
+          repo-token: "${{ steps.generate-token.outputs.token }}"
+          message-id: "${{ github.event.pull_request.number }}/${{ matrix.cluster_path }}/${{ matrix.resources }}"
+          message-failure: Diff was not successful
+          message: |
+            ```diff
+            ${{ steps.diff.outputs.diff }}
+            ```
