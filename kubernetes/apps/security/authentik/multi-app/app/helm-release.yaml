@@ -24,6 +24,10 @@ spec:
       retries: 3
 
   values:
+    autoscaling:
+      server:
+        enabled: true
+        minReplicas: 2
     worker:
       replicas: 1
 
