@@ -58,15 +58,27 @@ module "authentik-app-sabnzbd" {
   ]
 }
 
-module "authentik-app-miniflux" {
-  source = "../_modules/authentik/oauth_app"
-  name                = "miniflux"
-  group               = "main"
-  provider_type       = "openidconnect"
-  authorization_url   = "https://miniflux.chkpwd.com"
-  consumer_key        = "foo"
-  consumer_secret     = "bar"
+module "authentik-app-mainsail" {
+  source = "../_modules/authentik/proxy_app"
+
+  name     = "Mainsail"
+  group    = "main"
+  internal = ""
+  external = "https://mainsail.chkpwd.com"
   access_group = [
     authentik_group.main.id
   ]
 }
+
+# module "authentik-app-miniflux" {
+#   source = "../_modules/authentik/oauth_app"
+#   name                = "miniflux"
+#   group               = "main"
+#   provider_type       = "openidconnect"
+#   authorization_url   = "https://miniflux.chkpwd.com"
+#   consumer_key        = "foo"
+#   consumer_secret     = "bar"
+#   access_group = [
+#     authentik_group.main.id
+#   ]
+# }
