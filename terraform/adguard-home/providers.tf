@@ -2,7 +2,7 @@ terraform {
   required_providers {
     adguard = {
       source = "gmichels/adguard"
-      version = "1.0.3"
+      version = "1.0.4"
     }
     sops = { 
       source = "carlpett/sops"
