@@ -87,7 +87,7 @@ module "authentik-app-mainsail" {
 
   app_values = {
     meta_description = "3D Printing Software"
-    icon_url         = "https://raw.githubusercontent.com/mainsail-crew/docs/master/assets/img/logo.png"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/mainsail.png"
   }
 
   access_group = [authentik_group.main.id]
@@ -99,7 +99,7 @@ module "authentik-app-miniflux" {
   group            = "main"
   oauth2_values = {
     client_id        = "miniflux"
-    client_secret    = "eScTw5ISay1eup8DbTKm4SxKQmf7X6fwRWl3iP6FKyy1i3i9gQrB6IFRa5IIQxlI"
+    client_secret    = "${data.sops_file.authentik-secrets.data["authentik_miniflux_client_secret"]}"
   }
   app_values = {
     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/miniflux.png"

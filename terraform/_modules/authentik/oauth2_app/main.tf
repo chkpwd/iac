@@ -1,6 +1,7 @@
 resource "authentik_provider_oauth2" "oauth2" {
   name                  = "${lower(var.name)}"
-  client_id             = var.oauth2_values.client_id != null ? var.oauth2_values.client_id : null
+  client_id             = var.oauth2_values.client_id
+  client_secret         = var.oauth2_values.client_secret
   authentication_flow   = data.authentik_flow.default-source-authentication.id
   authorization_flow    = data.authentik_flow.default-authorization-flow.id
   access_token_validity = "minutes=10"
