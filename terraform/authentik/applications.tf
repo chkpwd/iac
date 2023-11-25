@@ -1,77 +1,111 @@
 module "authentik-app-sonarr" {
   source = "../_modules/authentik/proxy_app"
-  name     = "Sonarr"
-  icon_url = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/sonarr.png"
-  group    = "main"
-  meta_description = "Series Management"
-  internal = ""
-  external = "https://sonarr.k8s.chkpwd.com"
-  access_group = [
-    authentik_group.main.id
-  ]
+  name   = "Sonarr"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://sonarr.k8s.chkpwd.com"
+    mode     = "forward_single" # Assuming the mode
+  }
+
+  app_values = {
+    meta_description = "Series Management"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/sonarr.png"
+  }
+
+  access_group = [authentik_group.main.id]
 }
 
 module "authentik-app-radarr" {
   source = "../_modules/authentik/proxy_app"
-  name     = "Radarr"
-  icon_url =  "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/radarr.png"
-  group    = "main"
-  meta_description = "Movie Management"
-  internal = ""
-  external = "https://radarr.k8s.chkpwd.com"
-  access_group = [
-    authentik_group.main.id
-  ]
+  name   = "Radarr"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://radarr.k8s.chkpwd.com"
+    mode     = "forward_single"
+  }
+
+  app_values = {
+    meta_description = "Movie Management"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/radarr.png"
+  }
+
+  access_group = [authentik_group.main.id]
 }
 
 module "authentik-app-prowlarr" {
   source = "../_modules/authentik/proxy_app"
-  name     = "Prowlarr"
-  icon_url = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/prowlarr.png"
-  group    = "main"
-  meta_description = "Indexer Management"
-  internal = ""
-  external = "https://prowlarr.k8s.chkpwd.com"
-  access_group = [
-    authentik_group.main.id
-  ]
+  name   = "Prowlarr"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://prowlarr.k8s.chkpwd.com"
+    mode     = "forward_single"
+  }
+
+  app_values = {
+    meta_description = "Indexer Management"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/prowlarr.png"
+  }
+
+  access_group = [authentik_group.main.id]
 }
 
 module "authentik-app-sabnzbd" {
   source = "../_modules/authentik/proxy_app"
-  name     = "Sabnzbd"
-  icon_url = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/sabnzbd.png"
-  group    = "main"
-  meta_description = "Usenet Downloader"
-  internal = ""
-  external = "https://sabnzbd.k8s.chkpwd.com"
-  access_group = [
-    authentik_group.main.id
-  ]
+  name   = "Sabnzbd"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://sabnzbd.k8s.chkpwd.com"
+    mode     = "forward_single"
+  }
+
+  app_values = {
+    meta_description = "Usenet Downloader"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/sabnzbd.png"
+  }
+
+  access_group = [authentik_group.main.id]
 }
 
 module "authentik-app-mainsail" {
   source = "../_modules/authentik/proxy_app"
-  name     = "Mainsail"
-  icon_url = "https://raw.githubusercontent.com/mainsail-crew/docs/master/assets/img/logo.png"
-  group    = "main"
-  meta_description = "3D Printing Software"
-  internal = ""
-  external = "https://mainsail.chkpwd.com"
+  name   = "Mainsail"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://mainsail.chkpwd.com"
+    mode     = "forward_single"
+  }
+
+  app_values = {
+    meta_description = "3D Printing Software"
+    icon_url         = "https://raw.githubusercontent.com/mainsail-crew/docs/master/assets/img/logo.png"
+  }
+
+  access_group = [authentik_group.main.id]
+}
+
+module "authentik-app-miniflux" {
+  source           = "../_modules/authentik/oauth2_app"
+  name             = "Miniflux"
+  group            = "main"
+  oauth2_values = {
+    client_id        = "miniflux"
+    client_secret    = "eScTw5ISay1eup8DbTKm4SxKQmf7X6fwRWl3iP6FKyy1i3i9gQrB6IFRa5IIQxlI"
+  }
+  app_values = {
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/miniflux.png"
+    meta_description = "RSS Feed Reader"
+  }
   access_group = [
     authentik_group.main.id
   ]
 }
-
-# module "authentik-app-miniflux" {
-#   source = "../_modules/authentik/oauth_app"
-#   name                = "miniflux"
-#   group               = "main"
-#   provider_type       = "openidconnect"
-#   authorization_url   = "https://miniflux.chkpwd.com"
-#   consumer_key        = "foo"
-#   consumer_secret     = "bar"
-#   access_group = [
-#     authentik_group.main.id
-#   ]
-# }
