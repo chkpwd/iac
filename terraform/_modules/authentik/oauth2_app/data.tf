@@ -9,3 +9,7 @@ data "authentik_flow" "default-source-authentication" {
 data "authentik_flow" "default-source-enrollment" {
   slug = "default-source-enrollment"
 }
+
+data "authentik_certificate_key_pair" "generated" {
+  name = "authentik Self-signed Certificate"
+}
