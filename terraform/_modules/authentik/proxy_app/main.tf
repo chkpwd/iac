@@ -1,12 +1,12 @@
 resource "authentik_provider_proxy" "provider" {
   name                         = "${lower(var.name)}"
-  internal_host                = var.internal == "" ? null : var.internal
-  external_host                = var.external
-  mode                         = var.internal == "" ? "forward_single" : "proxy"
+  internal_host                = var.proxy_values.internal
+  external_host                = var.proxy_values.external
+  mode                         = var.proxy_values.internal == "" ? "forward_single" : "proxy" # Can't be empty
   authorization_flow           = data.authentik_flow.default-authorization-flow.id
-  skip_path_regex              = var.skip_path_regex
-  internal_host_ssl_validation = var.internal_host_ssl_validation
-  jwks_sources                 = var.jwks_sources
+  skip_path_regex              = var.proxy_values.skip_path_regex
+  internal_host_ssl_validation = var.proxy_values.internal_host_ssl_validation
+  jwks_sources                 = var.proxy_values.jwks_sources
   access_token_validity        = "hours=8"
   lifecycle {
     ignore_changes = [ jwks_sources ]
@@ -17,9 +17,9 @@ resource "authentik_application" "app" {
   name              = var.name
   slug              = replace(lower(var.name), " ", "-")
   protocol_provider = authentik_provider_proxy.provider.id
-  meta_icon         = var.icon_url
-  meta_publisher    = var.meta_publisher
-  meta_description  = var.meta_description 
+  meta_icon         = var.app_values.icon_url
+  meta_publisher    = var.app_values.meta_publisher
+  meta_description  = var.app_values.meta_description 
   group             = var.group
 }
 
