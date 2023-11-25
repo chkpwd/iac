@@ -1,7 +1,7 @@
 module "authentik-app-sonarr" {
   source = "../_modules/authentik/proxy_app"
   name     = "Sonarr"
-  icon_url = "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@master/png/sonarr.png"
+  icon_url = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/sonarr.png"
   group    = "main"
   meta_description = "Series Management"
   internal = ""
@@ -14,7 +14,7 @@ module "authentik-app-sonarr" {
 module "authentik-app-radarr" {
   source = "../_modules/authentik/proxy_app"
   name     = "Radarr"
-  icon_url =  "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@master/png/radarr.png"
+  icon_url =  "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/radarr.png"
   group    = "main"
   meta_description = "Movie Management"
   internal = ""
@@ -27,7 +27,7 @@ module "authentik-app-radarr" {
 module "authentik-app-prowlarr" {
   source = "../_modules/authentik/proxy_app"
   name     = "Prowlarr"
-  icon_url = "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@master/png/prowlarr.png"
+  icon_url = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/prowlarr.png"
   group    = "main"
   meta_description = "Indexer Management"
   internal = ""
@@ -40,7 +40,7 @@ module "authentik-app-prowlarr" {
 module "authentik-app-sabnzbd" {
   source = "../_modules/authentik/proxy_app"
   name     = "Sabnzbd"
-  icon_url = "https://cdn.jsdelivr.net/gh/walkxcode/dashboard-icons@master/png/sabnzbd.png"
+  icon_url = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/sabnzbd.png"
   group    = "main"
   meta_description = "Usenet Downloader"
   internal = ""
