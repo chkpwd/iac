@@ -27,6 +27,8 @@ hassio_daemon_options:
 docker_daemon_options:
   exec-opt: "native.cgroupdriver=systemd" # HAOS hasn't updated to cgroup v2
   data-root: "/mnt/data/docker"
+  storage-driver: overlay2
+  log-driver: journald
 
 packages:
   - apparmor
