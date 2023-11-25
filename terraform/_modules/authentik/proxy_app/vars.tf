@@ -24,6 +24,11 @@ variable "meta_publisher" {
   default = null
 }
 
+variable "meta_description" {
+  type    = string
+  default = null
+}
+
 variable "skip_path_regex" {
   type    = string
   default = null

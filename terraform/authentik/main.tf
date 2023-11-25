@@ -6,7 +6,6 @@ resource "authentik_service_connection_kubernetes" "main" {
 resource "authentik_outpost" "main" {
   name = "authentik Embedded Outpost"
   protocol_providers = [
-    module.authentik-app-podinfo.provider_id,
     module.authentik-app-sonarr.provider_id,
     module.authentik-app-radarr.provider_id,
     module.authentik-app-prowlarr.provider_id,
