@@ -16,9 +16,9 @@ data "sops_file" "oci-secrets" {
 }
 
 provider "oci" {
-  tenancy_ocid = "${data.sops_file.oci-secrets.data["oci_tenancy_ocid"]}"
-  user_ocid = "${data.sops_file.oci-secrets.data["user_oci"]}"
-  fingerprint = "${data.sops_file.oci-secrets.data["oci_fingerprint"]}"
+  tenancy_ocid = data.sops_file.oci-secrets.data["oci_tenancy_ocid"]
+  user_ocid = data.sops_file.oci-secrets.data["user_oci"]
+  fingerprint = data.sops_file.oci-secrets.data["oci_fingerprint"]
   private_key_path = var.private_key_path
-  region = "us-ashburn-1"
+  region = "us-ashburn-1" 
 }

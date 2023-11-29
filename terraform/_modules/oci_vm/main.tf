@@ -1,5 +1,5 @@
 data "oci_identity_availability_domain" "ad" {
-  compartment_id = "${data.sops_file.oci-secrets.data["oci_tenancy_ocid"]}"
+  compartment_id = data.sops_file.oci-secrets.data["oci_tenancy_ocid"]
   ad_number      = var.oci_availability_domain_number
 }
 
@@ -17,7 +17,7 @@ locals {
 resource "oci_core_instance" "instance" {
   display_name          = var.instance_spec.name
   availability_domain   = data.oci_identity_availability_domain.ad.name
-  compartment_id        = "${data.sops_file.oci-secrets.data["oci_tenancy_ocid"]}"
+  compartment_id        = data.sops_file.oci-secrets.data["oci_tenancy_ocid"]
   shape                 = var.instance_spec.shape
   state                 = "RUNNING"
   preserve_boot_volume  = false
@@ -53,8 +53,8 @@ resource "oci_core_instance" "instance" {
 }
 
 resource "oci_core_network_security_group" "nsg" {
-  compartment_id  = "${data.sops_file.oci-secrets.data["oci_tenancy_ocid"]}"
-  vcn_id          = "${data.sops_file.oci-secrets.data["oci_vcn_ocid"]}"
+  compartment_id  = data.sops_file.oci-secrets.data["oci_tenancy_ocid"]
+  vcn_id          = oci_core_vcn.main.id
   display_name    = "${var.instance_spec.name} NSG"
 }
 
