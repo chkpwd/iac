@@ -11,6 +11,7 @@ variable "instance_spec" {
     shape     = string
     image_id  = string
     network   = object({
+      vcn_id                    = string
       subnet_id                 = string
       vnic_label                = optional(string, "Primaryvnic")
       hostname                  = optional(string)

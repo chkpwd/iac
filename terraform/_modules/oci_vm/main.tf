@@ -54,7 +54,7 @@ resource "oci_core_instance" "instance" {
 
 resource "oci_core_network_security_group" "nsg" {
   compartment_id  = data.sops_file.oci-secrets.data["oci_tenancy_ocid"]
-  vcn_id          = oci_core_vcn.main.id
+  vcn_id          = var.instance_spec.network.vcn_id
   display_name    = "${var.instance_spec.name} NSG"
 }
 
