@@ -1,4 +1,4 @@
-machine_name  = "WSrv22-DE-Temp"
+machine_name  = "WSRV22-DE-Temp"
 os_version    = "2022"
 os_family     = "windows"
 guest_os_type = "windows9_64Guest"
