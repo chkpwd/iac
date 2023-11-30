@@ -1,14 +1,15 @@
 {
     "files.associations": {
-        "iac/**/*.yml": "ansible",
-        "iac/**/*.yaml": "ansible",
+        "ansible/**/*.yml": "ansible",
+        "ansible/**/*.yaml": "ansible",
         "*.sops.yaml": "yaml",
         "*.tf": "terraform",
         "*.tfvars": "terraform",
         "*.j2": "ansible-jinja",
         "*.hcl": "terraform",
-        "*.pkrvars.hcl": "terraform-vars",
-        "*.pkrtpl.hcl": ""
+        "*.pkrvars.hcl": "hcl",
+        "*.pkrtpl.hcl": "hcl",
+        "*.pkr.hcl": "hcl"
     },
     "[ansible]": {
         "editor.insertSpaces": true,
