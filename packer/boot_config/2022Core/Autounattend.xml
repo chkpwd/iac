@@ -169,18 +169,18 @@
                 <SynchronousCommand wcm:action="add">
                     <CommandLine>cmd.exe /c powershell -Command "Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force"</CommandLine>
                     <Description>Set Execution Policy</Description>
-                    <Order>3</Order>
+                    <Order>1</Order>
                     <RequiresUserInput>true</RequiresUserInput>
+                </SynchronousCommand>
+                <SynchronousCommand>
+                    <Order>2</Order>
+                    <Description>Run vmtools install</Description>
+                    <CommandLine>powershell.exe -File A:\Install-VMwareTools.ps1</CommandLine>
                 </SynchronousCommand>
                 <SynchronousCommand wcm:action="add">
                     <CommandLine>powershell.exe -File A:\Setup-OpenSSH.ps1</CommandLine>
                     <Description>Setup SSH on host</Description>
-                    <Order>5</Order>
-                </SynchronousCommand>
-                <SynchronousCommand>
-                    <Order>9</Order>
-                    <Description>Run vmtools install</Description>
-                    <CommandLine>powershell.exe -File A:\Install-VMwareTools.ps1</CommandLine>
+                    <Order>3</Order>
                 </SynchronousCommand>
             </FirstLogonCommands>
 
