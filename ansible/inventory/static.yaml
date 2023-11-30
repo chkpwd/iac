@@ -63,7 +63,6 @@ all:
         media-srv-01:
         home-assistant:
         ct-01-ec2:
-        boot-server:
         mgmt-srv-01:
         dns-srv-02:
         hosting-srv-01:
@@ -93,7 +92,7 @@ all:
       hosts:
         media-srv-01:
 
-    cloud:
+    aws:
       vars:
         ansible_remote_user: admin
         ansible_ssh_user: admin
@@ -102,10 +101,23 @@ all:
       hosts:
         ct-01-ec2:
           ansible_host:	54.145.97.133
+
+    oci:
+      vars:
+        ansible_remote_user: ubuntu
+        ansible_ssh_user: ubuntu
+        ansible_ssh_private_key_file: ~/.ssh/oci
+        common_user: ubuntu
+      hosts:
         ct-01-oci:
-          ansible_host:	129.158.58.120
+          ansible_host:	129.80.54.203
         ct-02-oci:
-          ansible_host:	129.158.58.120
+          ansible_host:	141.148.13.11
+
+    cloud:
+      children:
+        aws:
+        oci:
 
     dns_servers:
       hosts:
