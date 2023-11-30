@@ -1,5 +1,5 @@
 # Create new user
-$username = "hyoga"   
+$username = "chkpwd"   
 $password = ConvertTo-SecureString "DefaultPass@" -AsPlainText -Force
 $logFile = "C:\Automation\Packer\new_user.log"
 
