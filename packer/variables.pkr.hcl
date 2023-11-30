@@ -50,7 +50,7 @@ variable "os_version" {
   type    = string
 }
 variable "os_iso_path" {
-  type    = list(string)
+  type    = string
 }
 variable "guest_os_type" {
   type    = string
