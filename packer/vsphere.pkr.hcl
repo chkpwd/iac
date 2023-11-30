@@ -84,7 +84,7 @@ source "vsphere-iso" "windows" {
   boot_wait           = "3s"
 
   # VM Settings
-  vm_name     		    = var.machine_name
+  vm_name     		      = var.machine_name
   ip_wait_timeout       = "45m"
   shutdown_command      = "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\""
   shutdown_timeout      = "15m"
