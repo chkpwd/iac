@@ -1,57 +1,161 @@
-$VerbosePreference = "Continue"
+<#
+.FUNCTIONALITY
+This is a VMWare tools install script that re-attempts the install if it finds that the VMWARE tools service has failed to install on the first attempt 1
 
-#$wmi_operatingsystem = Get-WmiObject -Class win32_operatingsystem
-# Checks if using Server 2008
-#if([int]$wmi_operatingsystem.version.Substring(0,1) -le 6) { # Server 2008
-#    Write-Verbose "Using 10.2.5 tools for 2008R2 (this is for compatability issues with later tools versions that breaks guest customization."
-#    $url = 'https://packages.vmware.com/tools/releases/10.2.5/windows/x64/VMware-tools-10.2.5-8068406-x86_64.exe'
-#} else { # Anything above 2008
-#    Write-Verbose "Latest Tools selected (not 2008R2)"
+.SYNOPSIS
+- This script can be used as part of automating windows 10/2019 builds via autounattend.xml with packer.io based builds
+- The Packer instance requires the VMWare tools service to be running at the end of the build, else, it will fail
+- Due to an issue Windows "VMware tools service" failing to install on the first attempt, the code in this script compltes a re-install of the VMWARE tools package
+- The below code is mostly based on the script within the following blog post:
+- https://scriptech.io/automatically-reinstalling-vmware-tools-on-server2016-after-the-first-attempt-fails-to-install-the-vmtools-service/
 
-    $content = Invoke-WebRequest -UseBasicParsing -Uri "https://packages.vmware.com/tools/releases/latest/windows/x64/"
-    $version = ($content.Links | Where-Object {$_.href -like "VMware-tools*" }).href
+.NOTES
+Change log
 
-    $url = "https://packages.vmware.com/tools/releases/latest/windows/x64/$($version)"
-#}
+July 24, 2020
+- Initial version
 
-# install vmware tools
-$file = 'tools.exe'
-$path = "C:\Windows\Temp\$file"
-$timeout = 30 # Timeout in minutes for it to fail this job
-$wc = New-Object System.Net.WebClient
-$wc.DownloadFile($url,$path)
-$args = '/s /v /qn reboot=r'
-Write-Verbose "Tools download successful. Install starting."
-$timer = [Diagnostics.Stopwatch]::StartNew()
-Start-Process -FilePath $path -ArgumentList $args -PassThru
+Nov 28, 2021
+- Added Write-CustomLog function
 
-function Test-VMInstall {
-    $RegKey = (Get-ChildItem 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\')
+Nov 30, 2021
+- Updated code to ID correct log name
+- Added Show-Status function
 
-    foreach ($key in $RegKey) {
-        if ((Get-ItemProperty -Path $key.PSPath).DisplayName -match "vmware") {
-            return $true
-        }
+Feb 13, 2022
+- Logging changed to new file, rather than adding to existing WinPackerBuild-date.txt file
+
+Nov 30, 2023
+- stylistic changes
+- Updated shoutouts
+
+.DESCRIPTION
+Author oreynolds@gmail.com and Tim from the scriptech.io blog
+https://scriptech.io/automatically-reinstalling-vmware-tools-on-server2016-after-the-first-attempt-fails-to-install-the-vmtools-service/
+
+.EXAMPLE
+./Install-VMTools.ps1
+
+.NOTES
+
+.Link
+https://scriptech.io/automatically-reinstalling-vmware-tools-on-server2016-after-the-first-attempt-fails-to-install-the-vmtools-service/
+https://github.com/getvpro/Build-Packer
+https://github.com/getvpro/Build-Packer/blob/master/Scripts/Install-VMTools.ps1
+https://github.com/tigattack
+
+#>
+
+function Get-VMToolsInstalled {
+
+    if (((Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall") | Where-Object { $_.GetValue( "DisplayName" ) -like "*VMware Tools*" } ).Length -gt 0) {
+        [int]$Version = "32"
     }
-    return $false
+
+    if (((Get-ChildItem "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall") | Where-Object { $_.GetValue( "DisplayName" ) -like "*VMware Tools*" } ).Length -gt 0) {
+        [int]$Version = "64"
+    }
+
+    return $Version
 }
 
-$toolswait = $true
+function Show-Status {
+    Write-Output "VMware tools is installed."
+    Start-Sleep -Seconds 5
+}
 
-While ($toolswait){
-    if(!(Test-VMInstall)){
-        if($timer.Elaspsed.TotalMinutes -gt $timeout) {
-            Write-Verbose "Tools not detected within timeout. Failing job."
-            Exit 1
-        }
-        Write-Verbose "Tools not detected yet."
-        Write-Verbose "Time left until timeout: $([math]::Round($timeout - $timer.Elapsed.TotalMinutes)) minutes."
-        Write-Verbose "Sleeping 10 seconds before checking again."
-        Start-Sleep -Seconds 10
+if (-not (Test-Path C:\Automation\Packer)) {
+    New-Item -Path C:\Automation\Packer -ItemType Directory | Out-Null
+}
+$ScriptLog = "C:\Automation\Packer\Install-VMTools.log"
+
+Start-Transcript $ScriptLog -Force
+
+### 1 - Set the current working directory to whichever drive corresponds to the mounted VMWare Tools installation ISO
+
+Set-Location E:\
+
+### 2 - Install attempt #1
+Write-Output "`nInitiating VMware Tools installation (attempt no. 1)"
+
+Start-Process "setup64.exe" -ArgumentList '/s /v "/qb REBOOT=R"' -Wait
+
+### 3 - After the installation is finished, check to see if the 'VMTools' service enters the 'Running' state every 2 seconds for 10 seconds
+$Running = $false
+$iRepeat = 0
+
+while (-not $Running -and $iRepeat -lt 5) {
+    Write-Output "`nPausing for 2 seconds before checking state of VMware tools service..."
+
+    Start-Sleep -Seconds 2
+
+    $status = (Get-Service "VMTools" -ErrorAction SilentlyContinue).Status
+
+    if ($status -notlike "Running") {
+        Write-Output "`nVMware Tools service is not running."
+        $iRepeat++
+    }
+    else {
+        Write-Output "`nVMware Tools service is running after first attempt."
+        $Running = $true
+    }
+}
+
+### 4 - if the service never enters the 'Running' state, re-install VMWare Tools
+if (-not $Running) {
+
+    # Uninstall VMWare Tools
+    Write-Output "`nUninstalling VMware Tools after first attempt failed..."
+
+    if (Get-VMToolsInstalled -eq "32") {
+        $GUID = (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object { $_.DisplayName -Like '*VMWARE Tools*' }).PSChildName
     } else {
-        $toolswait = $false
+        $GUID = (Get-ItemProperty HKLM:\Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object { $_.DisplayName -Like '*VMWARE Tools*' }).PSChildName
     }
+
+    ### 5 - Un-install VMWARe tools based on 32-bit/64-bit install GUIDs captured via Get-VMToolsIsInstalled function
+
+    Start-Process -FilePath msiexec.exe -ArgumentList "/X $GUID /quiet /norestart" -Wait
+
+    Write-Output "`nInitiating VMware Tools installation (attempt no. 2)"
+
+    #Install VMWare Tools
+    Start-Process "setup64.exe" -ArgumentList '/s /v "/qb REBOOT=R"' -Wait
+
+    ### 6 - Re-check again if VMTools service has been installed and is started
+
+    $iRepeat = 0
+    while (-not $Running -and $iRepeat -lt 5) {
+
+        Write-Output "`nPausing for 2 seconds before checking state of VMware tools service..."
+
+        Start-Sleep -Seconds 2
+
+        $status = (Get-Service "VMTools" -ErrorAction SilentlyContinue).Status
+
+        if ($status -notlike "Running") {
+        Write-Output "`nVMware Tools service is not running."
+        $iRepeat++
+        }
+        else {
+        Write-Output "`nVMware Tools service is running after second attempt."
+        $Running = $true
+        }
+
+    }
+
+    ### 7 if after the reinstall, the service is still not running, this is a failed deployment
+
+    if (-not $Running) {
+        Write-Output "VMWare Tools is still NOT installed correctly `n
+        This window will remain open for 5 minutes, then exit."
+
+        Stop-Transcript
+        Start-Sleep -Seconds 300
+        EXIT 1
+
+    }
+
 }
 
-Write-Verbose "VMTools detected, sleeping 200 seconds for installer cleanup."
-Start-Sleep -Seconds 200
+Stop-Transcript
