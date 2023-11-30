@@ -13,7 +13,7 @@ source "vsphere-iso" "linux" {
   insecure_connection   = true
   convert_to_template   = true
   folder                = var.vcenter_folder
-  notes                 = "Version: ${ local.build_version }\nBuild Date: ${ local.build_date }\ISO: ${ var.os_iso_url }"
+  notes                 = "Version: ${ local.build_version }\nBuild Date: ${ local.build_date }\nISO: ${ var.os_iso_url }"
 
   # VM Settings
   vm_name       = var.machine_name
@@ -88,7 +88,7 @@ source "vsphere-iso" "windows" {
   folder              = var.vcenter_folder
   boot_command        = var.boot_command
   boot_wait           = "3s"
-  notes                 = "Version: ${ local.build_version }\nBuild Date: ${ local.build_date }\ISO: ${ var.os_iso_url }"
+  notes               = "Version: ${ local.build_version }\nBuild Date: ${ local.build_date }\nISO: ${ var.os_iso_url }"
 
   # VM Settings
   vm_name     		      = var.machine_name
@@ -96,10 +96,10 @@ source "vsphere-iso" "windows" {
   shutdown_command      = "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\""
   shutdown_timeout      = "15m"
   vm_version            = var.vm_hardware_version
-  iso_paths             = [var.os_iso_path]
+  iso_paths             = var.os_iso_path
   iso_checksum          = var.iso_checksum
   guest_os_type         = var.guest_os_type
-  disk_controller_type  = ["pvscsi"]
+  disk_controller_type  = var.vhd_controller_type
 
   network_adapters {
     # For windows, the vmware tools network drivers are required to be connected by floppy before tools is installed
