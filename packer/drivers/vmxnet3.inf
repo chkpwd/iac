@@ -1,8 +1,21 @@
 
 ;
 ; vmxnet3.inf
-; Copyright (c) 2008 - 2019 VMware, Inc.
+; Copyright (c) 2008-2022 VMware, Inc. All rights reserved.
 ;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -35,21 +48,31 @@ Signature     = "$Windows NT$"
 Class         = Net
 ClassGUID     = {4d36e972-e325-11ce-bfc1-08002be10318}
 Provider      = %VMware%
-DriverVer     = 07/11/2019, 1.8.16.0
+DriverVer     = 06/06/2022, 1.9.9.0
 DriverPackageType = PlugAndPlay
 CatalogFile   = vmxnet3.cat
+PnpLockdown   = 1
 
+; Build for 3 different driver versions that support Windows versions:
+; - x86 and x64 6.1 -
+; - x86 and x64 6.2, 6.3 and later.
+; - arm64 10.0.22000 and later
 [Manufacturer]
-%VMware%     = vmxnet3,NTx86,NTx86.6.0.1,NTx86.6.0,NTx86.6.1,NTx86.6.2,NTia64,NTamd64,NTamd64.6.0.1,NTamd64.6.0,NTamd64.6.1,NTamd64.6.2
+
+
+
+
+
+
+%VMware%     = vmxnet3,NTamd64.10.0...20124
+
+
+
+
 
 [ControlFlags]
 ExcludeFromSelect = *
 
-; MSFT docs incorrectly claim that 6.1 can be used for Server 2008
-; The best we can do to detect NDIS 6.0 vs. NDIS 6.1 is to detect
-; Vista vs. Server 2008, which is 6.0.1 (6.0, product type = 1 for
-; VER_NT_WORKSTATION) for Vista and just 6.0 (6.0, product type !=
-; 1, i.e., VER_NT_DOMAIN_CONTROLLER or VER_NT_SERVER).
 
 
 
@@ -57,324 +80,62 @@ ExcludeFromSelect = *
 
 
 
-; pre-Vista x86
-[vmxnet3.NTx86]
 
 
 
 
 
-; Vista x86
-[vmxnet3.NTx86.6.0.1]
-
-
-%loc.vmxnet3.DeviceDesc% = vmxnet3.ndis6.x86.ndi,    PCI\VEN_15AD&DEV_07B0
-
-
-; Server 2008 x86
-[vmxnet3.NTx86.6.0]
-
-
-%loc.vmxnet3.DeviceDesc% = vmxnet3.ndis61.x86.ndi,   PCI\VEN_15AD&DEV_07B0
-
-
-; Win 7 x86
-[vmxnet3.NTx86.6.1]
-
-
-%loc.vmxnet3.DeviceDesc% = vmxnet3.ndis620.x86.ndi,   PCI\VEN_15AD&DEV_07B0
-
-
-; Win 8 x86
-[vmxnet3.NTx86.6.2]
-
-
-%loc.vmxnet3.DeviceDesc% = vmxnet3.ndis630.x86.ndi,   PCI\VEN_15AD&DEV_07B0
-
-
-; pre-Vista x64
-[vmxnet3.NTamd64]
 
 
 
 
 
-; Vista x64
-[vmxnet3.NTamd64.6.0.1]
-
-
-%loc.vmxnet3.DeviceDesc% = vmxnet3.ndis6.x64.ndi,    PCI\VEN_15AD&DEV_07B0
-
-
-; Server 2008 x64
-[vmxnet3.NTamd64.6.0]
-
-
-%loc.vmxnet3.DeviceDesc% = vmxnet3.ndis61.x64.ndi,   PCI\VEN_15AD&DEV_07B0
-
-
-; Win 7 / Server 2008 R2 x64
-[vmxnet3.NTamd64.6.1]
-
-
-%loc.vmxnet3.DeviceDesc% = vmxnet3.ndis620.x64.ndi,   PCI\VEN_15AD&DEV_07B0
-
-
-; Win 8 / Server 2012 x64
-[vmxnet3.NTamd64.6.2]
-
-
+; Win Server 2022/Win11 x64
+[vmxnet3.NTamd64.10.0...20124]
 %loc.vmxnet3.DeviceDesc% = vmxnet3.ndis630.x64.ndi,   PCI\VEN_15AD&DEV_07B0
 
 
-[vmxnet3.NTia64]
 
-;
-; NDIS5 x86
-;
 
-[vmxnet3.ndis5.x86.ndi.NT]
-Characteristics    = 0x84
-BusType            = 5
-AddReg             = vmxnet3.ndis5.reg,vmxnet3.commonSettings.reg
-AddReg             = vmxnet3.ndis5Settings.reg
-; AddReg             = vmxnet3.advancedSettings.reg
-DelReg             = OldAdaptiveRing.remove.reg
-CopyFiles          = vmxnet3.CopyFiles
-*IfType            = 6		; IF_TYPE_ETHERNET_CSMACD
-*MediaType         = 0		; NdisMedium802_3
-*PhysicalMediaType = 14		; NdisPhysicalMedium802_3
 
-[vmxnet3.ndis5.x86.ndi.NT.Services]
-AddService = vmxnet3ndis5, 2, vmxnet3.ndis5.x86.Service, common.EventLog
 
-[vmxnet3.ndis5.x86.Service]
-DisplayName     = %loc.vmxnet3.ndis5.DispName%
-ServiceType     = 1 ;%SERVICE_KERNEL_DRIVER%
-StartType       = 3 ;%SERVICE_DEMAND_START%
-ErrorControl    = 1 ;%SERVICE_ERROR_NORMAL%
-ServiceBinary   = %12%\vmxnet3.sys
-LoadOrderGroup  = NDIS
-AddReg          = Disable.reg
 
-;
-; NDIS5 x64
-;
 
-[vmxnet3.ndis5.x64.ndi.NT]
-Characteristics    = 0x84
-BusType            = 5
-AddReg             = vmxnet3.ndis5.reg,vmxnet3.commonSettings.reg
-AddReg             = vmxnet3.ndis5Settings.reg
-; AddReg             = vmxnet3.advancedSettings.reg
-DelReg             = OldAdaptiveRing.remove.reg
-CopyFiles          = vmxnet3.CopyFiles
-*IfType            = 6		; IF_TYPE_ETHERNET_CSMACD
-*MediaType         = 0		; NdisMedium802_3
-*PhysicalMediaType = 14		; NdisPhysicalMedium802_3
 
-[vmxnet3.ndis5.x64.ndi.NT.Services]
-AddService = vmxnet3ndis5, 2, vmxnet3.ndis5.x64.Service, common.EventLog
 
-[vmxnet3.ndis5.x64.Service]
-DisplayName     = %loc.vmxnet3.ndis5.DispName%
-ServiceType     = 1 ;%SERVICE_KERNEL_DRIVER%
-StartType       = 3 ;%SERVICE_DEMAND_START%
-ErrorControl    = 1 ;%SERVICE_ERROR_NORMAL%
-ServiceBinary   = %12%\vmxnet3.sys
-LoadOrderGroup  = NDIS
-AddReg          = Disable.reg
 
-;
-; NDIS5 common
-;
 
-[vmxnet3.ndis5.reg]
-HKR, Ndi,            Service,    0, "vmxnet3ndis5"
-HKR, Ndi\Interfaces, UpperRange, 0, "ndis5"
-HKR, Ndi\Interfaces, LowerRange, 0, "ethernet"
 
-;
-; NDIS6.0 x86
-;
 
-[vmxnet3.ndis6.x86.ndi.NT]
-Characteristics    = 0x84
-BusType            = 5
-AddReg             = vmxnet3.ndis6.reg,vmxnet3.commonSettings.reg
-AddReg             = vmxnet3.ndis6Settings.reg
-; AddReg             = vmxnet3.advancedSettings.reg
-DelReg             = Rss.remove.reg
-DelReg             = OldAdaptiveRing.remove.reg
-CopyFiles          = vmxnet3.CopyFiles
-*IfType            = 6		; IF_TYPE_ETHERNET_CSMACD
-*MediaType         = 0		; NdisMedium802_3
-*PhysicalMediaType = 14		; NdisPhysicalMedium802_3
 
-[vmxnet3.ndis6.x86.ndi.NT.HW]
-Include            = machine.inf
-Needs              = PciIoSpaceNotRequired
-AddReg             = enableMSI.reg
 
-[vmxnet3.ndis6.x86.ndi.NT.Services]
-AddService = vmxnet3ndis6, 2, vmxnet3.ndis6.x86.Service, common.EventLog
 
-;
-; NDIS6.0 x64
-;
 
-[vmxnet3.ndis6.x64.ndi.NT]
-Characteristics    = 0x84
-BusType            = 5
-AddReg             = vmxnet3.ndis6.reg,vmxnet3.commonSettings.reg
-AddReg             = vmxnet3.ndis6Settings.reg
-; AddReg             = vmxnet3.advancedSettings.reg
-DelReg             = Rss.remove.reg
-DelReg             = OldAdaptiveRing.remove.reg
-CopyFiles          = vmxnet3.CopyFiles
-*IfType            = 6		; IF_TYPE_ETHERNET_CSMACD
-*MediaType         = 0		; NdisMedium802_3
-*PhysicalMediaType = 14		; NdisPhysicalMedium802_3
 
-[vmxnet3.ndis6.x64.ndi.NT.HW]
-Include            = machine.inf
-Needs              = PciIoSpaceNotRequired
-AddReg             = enableMSI.reg
 
-[vmxnet3.ndis6.x64.ndi.NT.Services]
-AddService = vmxnet3ndis6, 2, vmxnet3.ndis6.x64.Service, common.EventLog
 
-;
-; NDIS6.1 x86
-;
 
-[vmxnet3.ndis61.x86.ndi.NT]
-Characteristics    = 0x84
-BusType            = 5
-AddReg             = vmxnet3.ndis6.reg,vmxnet3.commonSettings.reg
-AddReg             = vmxnet3.ndis6Settings.reg,
-AddReg             = rss.reg, vmxnet3.ndisPre620RssSettings.reg
-; AddReg             = vmxnet3.advancedSettings.reg
-DelReg             = OldAdaptiveRing.remove.reg
-CopyFiles          = vmxnet3.CopyFiles
-*IfType            = 6		; IF_TYPE_ETHERNET_CSMACD
-*MediaType         = 0		; NdisMedium802_3
-*PhysicalMediaType = 14		; NdisPhysicalMedium802_3
 
-[vmxnet3.ndis61.x86.ndi.NT.HW]
-Include            = machine.inf
-Needs              = PciIoSpaceNotRequired
-AddReg             = enableMSI.reg
 
-[vmxnet3.ndis61.x86.ndi.NT.Services]
-AddService = vmxnet3ndis6, 2, vmxnet3.ndis6.x86.Service, common.EventLog
 
-;
-; NDIS6.1 x64
-;
 
-[vmxnet3.ndis61.x64.ndi.NT]
-Characteristics    = 0x84
-BusType            = 5
-AddReg             = vmxnet3.ndis6.reg,vmxnet3.commonSettings.reg
-AddReg             = vmxnet3.ndis6Settings.reg
-AddReg             = rss.reg, vmxnet3.ndisPre620RssSettings.reg
-; AddReg             = vmxnet3.advancedSettings.reg
-DelReg             = OldAdaptiveRing.remove.reg
-CopyFiles          = vmxnet3.CopyFiles
-*IfType            = 6		; IF_TYPE_ETHERNET_CSMACD
-*MediaType         = 0		; NdisMedium802_3
-*PhysicalMediaType = 14		; NdisPhysicalMedium802_3
 
-[vmxnet3.ndis61.x64.ndi.NT.HW]
-Include            = machine.inf
-Needs              = PciIoSpaceNotRequired
-AddReg             = enableMSI.reg
 
-[vmxnet3.ndis61.x64.ndi.NT.Services]
-AddService = vmxnet3ndis6, 2, vmxnet3.ndis6.x64.Service, common.EventLog
 
-;
-; NDIS6.20 x86
-;
 
-[vmxnet3.ndis620.x86.ndi.NT]
-Characteristics    = 0x84
-BusType            = 5
-AddReg             = vmxnet3.ndis6.reg,vmxnet3.commonSettings.reg
-AddReg             = vmxnet3.ndis6Settings.reg
-AddReg             = vmxnet3.ndis620Settings.reg
-AddReg             = rss.reg, vmxnet3.ndis620RssSettings.reg
-; AddReg             = vmxnet3.advancedSettings.reg
-DelReg             = Pre620RssSettings.remove.reg
-DelReg             = OldAdaptiveRing.remove.reg
-CopyFiles          = vmxnet3.CopyFiles
-*IfType            = 6		; IF_TYPE_ETHERNET_CSMACD
-*MediaType         = 0		; NdisMedium802_3
-*PhysicalMediaType = 14		; NdisPhysicalMedium802_3
 
-[vmxnet3.ndis620.x86.ndi.NT.HW]
-Include            = machine.inf
-Needs              = PciIoSpaceNotRequired
-AddReg             = enableMSI.reg
 
-[vmxnet3.ndis620.x86.ndi.NT.Services]
-AddService = vmxnet3ndis6, 2, vmxnet3.ndis6.x86.Service, common.EventLog
 
-;
-; NDIS6.20 x64
-;
 
-[vmxnet3.ndis620.x64.ndi.NT]
-Characteristics    = 0x84
-BusType            = 5
-AddReg             = vmxnet3.ndis6.reg,vmxnet3.commonSettings.reg
-AddReg             = vmxnet3.ndis6Settings.reg
-AddReg             = vmxnet3.ndis620Settings.reg
-AddReg             = rss.reg, vmxnet3.ndis620RssSettings.reg
-; AddReg             = vmxnet3.advancedSettings.reg
-DelReg             = Pre620RssSettings.remove.reg
-DelReg             = OldAdaptiveRing.remove.reg
-CopyFiles          = vmxnet3.CopyFiles
-*IfType            = 6		; IF_TYPE_ETHERNET_CSMACD
-*MediaType         = 0		; NdisMedium802_3
-*PhysicalMediaType = 14		; NdisPhysicalMedium802_3
 
-[vmxnet3.ndis620.x64.ndi.NT.HW]
-Include            = machine.inf
-Needs              = PciIoSpaceNotRequired
-AddReg             = enableMSI.reg
 
-[vmxnet3.ndis620.x64.ndi.NT.Services]
-AddService = vmxnet3ndis6, 2, vmxnet3.ndis6.x64.Service, common.EventLog
 
-;
-; NDIS6.30 x86
-;
 
-[vmxnet3.ndis630.x86.ndi.NT]
-Characteristics    = 0x84
-BusType            = 5
-AddReg             = vmxnet3.ndis6.reg,vmxnet3.commonSettings.reg
-AddReg             = vmxnet3.ndis6Settings.reg
-AddReg             = vmxnet3.ndis620Settings.reg
-AddReg             = vmxnet3.ndis630Settings.reg
-AddReg             = rss.reg, vmxnet3.ndis620RssSettings.reg
-; AddReg             = vmxnet3.advancedSettings.reg
-DelReg             = Pre620RssSettings.remove.reg
-DelReg             = OldAdaptiveRing.remove.reg
-CopyFiles          = vmxnet3.CopyFiles
-*IfType            = 6		; IF_TYPE_ETHERNET_CSMACD
-*MediaType         = 0		; NdisMedium802_3
-*PhysicalMediaType = 14		; NdisPhysicalMedium802_3
 
-[vmxnet3.ndis630.x86.ndi.NT.HW]
-Include            = machine.inf
-Needs              = PciIoSpaceNotRequired
-AddReg             = enableMSI.reg
 
-[vmxnet3.ndis630.x86.ndi.NT.Services]
-AddService = vmxnet3ndis6, 2, vmxnet3.ndis6.x86.Service, common.EventLog
+
+
+
 
 ;
 ; NDIS6.30 x64
@@ -397,27 +158,27 @@ CopyFiles          = vmxnet3.CopyFiles
 *PhysicalMediaType = 14		; NdisPhysicalMedium802_3
 
 [vmxnet3.ndis630.x64.ndi.NT.HW]
-Include            = machine.inf
-Needs              = PciIoSpaceNotRequired
+
+
+
+
+
+; To reduce I/O resource usage in Windows 10,  use this entry:
+Include            = pci.inf
+Needs              = PciIoSpaceNotRequired.HW
+
 AddReg             = enableMSI.reg
 
 [vmxnet3.ndis630.x64.ndi.NT.Services]
 AddService = vmxnet3ndis6, 2, vmxnet3.ndis6.x64.Service, common.EventLog
+
+
 
 ;
 ; NDIS6 common.  Driver now has support for NDIS 6.20
 ; but the filename remains 'n61' to eliminate the
 ; need to update the installer and other components.
 ;
-
-[vmxnet3.ndis6.x86.Service]
-DisplayName     = %loc.vmxnet3.ndis6.DispName%
-ServiceType     = 1 ;%SERVICE_KERNEL_DRIVER%
-StartType       = 3 ;%SERVICE_DEMAND_START%
-ErrorControl    = 1 ;%SERVICE_ERROR_NORMAL%
-ServiceBinary   = %12%\vmxnet3.sys
-LoadOrderGroup  = NDIS
-AddReg          = Disable.reg,vmware_installers_addreg
 
 [vmxnet3.ndis6.x64.Service]
 DisplayName     = %loc.vmxnet3.ndis6.DispName%
@@ -433,8 +194,8 @@ HKR, Ndi,            Service,    0, "vmxnet3ndis6"
 HKR, Ndi\Interfaces, UpperRange, 0, "ndis5"
 HKR, Ndi\Interfaces, LowerRange, 0, "ethernet"
 
-; Set a default device policy that says to use all processors so 
-; the driver/device is not affected by a change in the system's 
+; Set a default device policy that says to use all processors so
+; the driver/device is not affected by a change in the system's
 ; default affinity policy.
 
 [enableMSI.reg]
@@ -463,8 +224,6 @@ HKR, , TypesSupported,   0x00010001, 7
 ; HKR,Parameters,DisableAutoMask,0x00010001,1
 
 [vmware_installers_addreg]
-HKR,, %vmxnet3.installers.value.name%, %FLG_ADDREG_KEYONLY%, %vmxnet3.installers.value.windows%
-;; FLG_ADDREG_KEYONLY
 HKR,, %vmxnet3.installers.value.name%, 0x00010002, %vmxnet3.installers.value.windows%
 ;; FLG_ADDREG_NOCLOBBER | FLG_ADDREG_TYPE_MULTI_SZ
 
@@ -475,14 +234,6 @@ HKR,, %vmxnet3.installers.value.name%, 0x00010002, %vmxnet3.installers.value.win
 [OldAdaptiveRing.remove.reg]
 HKR,,*EnableAdaptiveRing
 HKR, Ndi\params\*EnableAdaptiveRing
-
-[vmxnet3.ndis5Settings.reg]
-HKR, Ndi\params\*LsoV1IPv4, ParamDesc, 0, %LsoV1IPv4Ndis5%
-HKR, Ndi\params\*LsoV1IPv4, Type,      0, "enum"
-HKR, Ndi\params\*LsoV1IPv4, Default,   0, "1"
-HKR, Ndi\params\*LsoV1IPv4, Optional,  0, "0"
-HKR, Ndi\params\*LsoV1IPv4\enum, "0",  0, %Disabled%
-HKR, Ndi\params\*LsoV1IPv4\enum, "1",  0, %Enabled%
 
 [vmxnet3.ndis6Settings.reg]
 HKR, Ndi\params\*TCPChecksumOffloadIPv6, ParamDesc, 0, %TCPChecksumOffloadIPv6%
@@ -523,6 +274,8 @@ HKR, Ndi\params\*LsoV2IPv6, Default,   0, "1"
 HKR, Ndi\params\*LsoV2IPv6, Optional,  0, "0"
 HKR, Ndi\params\*LsoV2IPv6\enum, "0",  0, %Disabled%
 HKR, Ndi\params\*LsoV2IPv6\enum, "1",  0, %Enabled%
+
+HKR,, LimitTSOTxd, 0, "1"
 
 [vmxnet3.ndis620Settings.reg]
 
@@ -638,27 +391,29 @@ HKR, Ndi\params\*MaxRssProcessors\enum, "2",  0, %num2%
 HKR, Ndi\params\*MaxRssProcessors\enum, "4",  0, %num4%
 HKR, Ndi\params\*MaxRssProcessors\enum, "8",  0, %num8%
 
-HKR, Ndi\params\*NumRSSqueues, ParamDesc,     0, %NumRSSqueues%
-HKR, Ndi\params\*NumRSSqueues, Type,          0, "enum"
-HKR, Ndi\params\*NumRSSqueues, Default,       0, "8"
-HKR, Ndi\params\*NumRSSqueues, Optional,      0, "1"
-HKR, Ndi\params\*NumRSSqueues\enum, "1",      0, %num1%
-HKR, Ndi\params\*NumRSSqueues\enum, "2",      0, %num2%
-HKR, Ndi\params\*NumRSSqueues\enum, "4",      0, %num4%
-HKR, Ndi\params\*NumRSSqueues\enum, "8",      0, %num8%
+HKR, Ndi\params\*NumRSSQueues, ParamDesc,     0, %NumRSSQueues%
+HKR, Ndi\params\*NumRSSQueues, Type,          0, "enum"
+HKR, Ndi\params\*NumRSSQueues, Default,       0, "8"
+HKR, Ndi\params\*NumRSSQueues, Optional,      0, "0"
+HKR, Ndi\params\*NumRSSQueues\enum, "1",      0, %num1%
+HKR, Ndi\params\*NumRSSQueues\enum, "2",      0, %num2%
+HKR, Ndi\params\*NumRSSQueues\enum, "4",      0, %num4%
+HKR, Ndi\params\*NumRSSQueues\enum, "8",      0, %num8%
 
 [Pre620RssSettings.remove.reg]
 HKR, Ndi\params\MaxRxQueues
 
-[vmxnet3.ndisPre620RssSettings.reg]
-HKR, Ndi\params\MaxRxQueues, ParamDesc,     0, %MaxRxQueues%
-HKR, Ndi\params\MaxRxQueues, Type,          0, "enum"
-HKR, Ndi\params\MaxRxQueues, Default,       0, "8"
-HKR, Ndi\params\MaxRxQueues, Optional,      0, "1"
-HKR, Ndi\params\MaxRxQueues\enum, "1",      0, %num1%
-HKR, Ndi\params\MaxRxQueues\enum, "2",      0, %num2%
-HKR, Ndi\params\MaxRxQueues\enum, "4",      0, %num4%
-HKR, Ndi\params\MaxRxQueues\enum, "8",      0, %num8%
+
+
+
+
+
+
+
+
+
+
+
 
 [Rss.reg]
 HKR, Ndi\params\*RSS, ParamDesc, 0, %RSS%
@@ -677,10 +432,12 @@ HKR, Ndi\params\MaxTxQueues\enum, "2",      0, %num2%
 HKR, Ndi\params\MaxTxQueues\enum, "4",      0, %num4%
 HKR, Ndi\params\MaxTxQueues\enum, "8",      0, %num8%
 
-[Rss.remove.reg]
-HKR, Ndi\params\*RSS
-HKR, Ndi\params\MaxRxQueues
-HKR, Ndi\params\MaxTxQueues
+
+
+
+
+
+
 
 [vmxnet3.commonSettings.reg]
 ; only kidding yourself if you think changing this will affect device
@@ -719,7 +476,7 @@ HKR, Ndi\params\VlanId, Type,      0, "dword"
 HKR, Ndi\params\VlanId, Default,   0, "0"
 HKR, Ndi\params\VlanId, Optional,  0, "1"
 HKR, Ndi\params\VlanId, Min,       0, "0"
-HKR, Ndi\params\VlanId, Max,       0, "4095"
+HKR, Ndi\params\VlanId, Max,       0, "4094"
 HKR, Ndi\params\VlanId, Step,      0, "1"
 
 HKR,, EnableMonitorMode, 0, "0"
@@ -731,11 +488,12 @@ HKR, Ndi\params\*JumboPacket, ParamDesc,    0, %JumboPacket%
 ; HKR, Ndi\params\*JumboPacket\enum, "1514",  0, %Standard1500%
 ; HKR, Ndi\params\*JumboPacket\enum, "9014",  0, %Jumbo9000%
 
-HKR, Ndi\params\*JumboPacket, Type,         0, "int"
+HKR, Ndi\params\*JumboPacket, Type,         0, "dword"
 HKR, Ndi\params\*JumboPacket, Default,      0, "1514"
 HKR, Ndi\params\*JumboPacket, Optional,     0, "0"
 HKR, Ndi\params\*JumboPacket, Min,          0, "1514"
 HKR, Ndi\params\*JumboPacket, Max,          0, "9014"
+HKR, Ndi\params\*JumboPacket, Step,         0, "1"
 
 HKR, Ndi\params\*InterruptModeration, ParamDesc, 0, %InterruptModeration%
 HKR, Ndi\params\*InterruptModeration, Type,      0, "enum"
@@ -887,55 +645,57 @@ HKR, Ndi\params\NumRxBuffersLarge\enum, "3072",   0, %num3072%
 HKR, Ndi\params\NumRxBuffersLarge\enum, "4096",   0, %num4096%
 HKR, Ndi\params\NumRxBuffersLarge\enum, "8192",   0, %num8192%
 
-[vmxnet3.advancedSettings.reg]
 
-; InterruptModerationLevel
-; *TCPUDPChecksumOffloadIPv4 (0 dis, 1 1x, 2 rt, 3 both)
-; *TCPUDPChecksumOffloadIPv6 (0 dis, 1 1x, 2 rt, 3 both)
 
-HKR, Ndi\params\RxBufferReserve, ParamDesc, 0, %RxBufferReserve%
-HKR, Ndi\params\RxBufferReserve, Type,      0, "dword"
-HKR, Ndi\params\RxBufferReserve, Default,   0, "10"
-HKR, Ndi\params\RxBufferReserve, Optional,  0, "1"
-HKR, Ndi\params\RxBufferReserve, Min,       0, "2"
-HKR, Ndi\params\RxBufferReserve, Max,       0, "1024"
-HKR, Ndi\params\RxBufferReserve, Step,      0, "1"
 
-HKR, Ndi\params\NumTxBuffers, ParamDesc,     0, %NumTxBuffers%
-HKR, Ndi\params\NumTxBuffers, Type,          0, "enum"
-HKR, Ndi\params\NumTxBuffers, Default,       0, "16"
-HKR, Ndi\params\NumTxBuffers, Optional,      0, "1"
-HKR, Ndi\params\NumTxBuffers\enum, "16",     0, %num16%
-HKR, Ndi\params\NumTxBuffers\enum, "32",     0, %num32%
-HKR, Ndi\params\NumTxBuffers\enum, "64",     0, %num64%
-HKR, Ndi\params\NumTxBuffers\enum, "128",    0, %num128%
-HKR, Ndi\params\NumTxBuffers\enum, "256",    0, %num256%
-HKR, Ndi\params\NumTxBuffers\enum, "512",    0, %num512%
-HKR, Ndi\params\NumTxBuffers\enum, "1024",   0, %num1024%
 
-HKR, Ndi\params\MaxTSOv1Payload, ParamDesc,     0, %MaxTSOv1Payload%
-HKR, Ndi\params\MaxTSOv1Payload, Type,          0, "enum"
-HKR, Ndi\params\MaxTSOv1Payload, Default,       0, "64512"
-HKR, Ndi\params\MaxTSOv1Payload, Optional,      0, "1"
-HKR, Ndi\params\MaxTSOv1Payload\enum, "16384",  0, %16K%
-HKR, Ndi\params\MaxTSOv1Payload\enum, "24576",  0, %24K%
-HKR, Ndi\params\MaxTSOv1Payload\enum, "32768",  0, %32K%
-HKR, Ndi\params\MaxTSOv1Payload\enum, "49152",  0, %48K%
-HKR, Ndi\params\MaxTSOv1Payload\enum, "64512",  0, %63K%
-HKR, Ndi\params\MaxTSOv1Payload\enum, "65416",  0, %64K%
 
-HKR, Ndi\params\MaxTSOv2Payload, ParamDesc,     0, %MaxTSOv2Payload%
-HKR, Ndi\params\MaxTSOv2Payload, Type,          0, "enum"
-HKR, Ndi\params\MaxTSOv2Payload, Default,       0, "262144"
-HKR, Ndi\params\MaxTSOv2Payload, Optional,      0, "1"
-HKR, Ndi\params\MaxTSOv2Payload\enum, "49152",  0, %48K%
-HKR, Ndi\params\MaxTSOv2Payload\enum, "64512",  0, %63K%
-HKR, Ndi\params\MaxTSOv2Payload\enum, "65536",  0, %64K%
-HKR, Ndi\params\MaxTSOv2Payload\enum, "81920",  0, %80K%
-HKR, Ndi\params\MaxTSOv2Payload\enum, "98304",  0, %96K%
-HKR, Ndi\params\MaxTSOv2Payload\enum, "131072", 0, %128K%
-HKR, Ndi\params\MaxTSOv2Payload\enum, "196608", 0, %192K%
-HKR, Ndi\params\MaxTSOv2Payload\enum, "262144", 0, %256K%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ;-----------------------------------------------------------------------------
 ; DestinationDirs
@@ -954,8 +714,10 @@ vmxnet3.sys = 1,,
 vmxnet3.CopyFiles  = 12
 DefaultDestDir               = 12
 
-[VMwarePathInfo]
-OriginalInfSourcePath = %1%
+
+
+
+
 
 ;
 ; US English
@@ -1007,7 +769,6 @@ TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
 UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
 OffloadIpOptions  = "Offload IP Options"
 OffloadTcpOptions = "Offload TCP Options"
-LsoV1IPv4Ndis5 = "IPv4 TCP Segmentation Offload"
 TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
 UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
 LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
@@ -1016,7 +777,7 @@ LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
 RSS = "Receive Side Scaling"
 RssBaseProcNumber = "RSS Base Processor Number"
 MaxRssProcessors  = "Maximum number of RSS Processors"
-NumRSSqueues = "Maximum number of RSS queues"
+NumRSSQueues = "Maximum number of RSS queues"
 RxThrottle = "Receive Throttle"
 RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
 RscIPv4 ="Recv Segment Coalescing (IPv4)"
@@ -1137,7 +898,6 @@ TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
 UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
 OffloadIpOptions  = "Offload IP Options"
 OffloadTcpOptions = "Offload TCP Options"
-LsoV1IPv4Ndis5 = "IPv4 TCP Segmentation Offload"
 TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
 UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
 LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
@@ -1146,7 +906,7 @@ LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
 RSS = "Receive Side Scaling"
 RssBaseProcNumber = "RSS Base Processor Number"
 MaxRssProcessors  = "Maximum number of RSS Processors"
-NumRSSqueues = "Maximum number of RSS queues"
+NumRSSQueues = "Maximum number of RSS queues"
 RxThrottle = "Receive Throttle"
 RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
 RscIPv4 ="Recv Segment Coalescing (IPv4)"
@@ -1267,7 +1027,6 @@ TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
 UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
 OffloadIpOptions  = "Offload IP Options"
 OffloadTcpOptions = "Offload TCP Options"
-LsoV1IPv4Ndis5 = "IPv4 TCP Segmentation Offload"
 TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
 UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
 LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
@@ -1276,7 +1035,7 @@ LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
 RSS = "Receive Side Scaling"
 RssBaseProcNumber = "RSS Base Processor Number"
 MaxRssProcessors  = "Maximum number of RSS Processors"
-NumRSSqueues = "Maximum number of RSS queues"
+NumRSSQueues = "Maximum number of RSS queues"
 RxThrottle = "Receive Throttle"
 RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
 RscIPv4 ="Recv Segment Coalescing (IPv4)"
@@ -1397,7 +1156,6 @@ TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
 UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
 OffloadIpOptions  = "Offload IP Options"
 OffloadTcpOptions = "Offload TCP Options"
-LsoV1IPv4Ndis5 = "IPv4 TCP Segmentation Offload"
 TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
 UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
 LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
@@ -1406,7 +1164,7 @@ LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
 RSS = "Receive Side Scaling"
 RssBaseProcNumber = "RSS Base Processor Number"
 MaxRssProcessors  = "Maximum number of RSS Processors"
-NumRSSqueues = "Maximum number of RSS queues"
+NumRSSQueues = "Maximum number of RSS queues"
 RxThrottle = "Receive Throttle"
 RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
 RscIPv4 ="Recv Segment Coalescing (IPv4)"
@@ -1527,7 +1285,6 @@ TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
 UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
 OffloadIpOptions  = "Offload IP Options"
 OffloadTcpOptions = "Offload TCP Options"
-LsoV1IPv4Ndis5 = "IPv4 TCP Segmentation Offload"
 TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
 UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
 LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
@@ -1536,7 +1293,7 @@ LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
 RSS = "Receive Side Scaling"
 RssBaseProcNumber = "RSS Base Processor Number"
 MaxRssProcessors  = "Maximum number of RSS Processors"
-NumRSSqueues = "Maximum number of RSS queues"
+NumRSSQueues = "Maximum number of RSS queues"
 RxThrottle = "Receive Throttle"
 RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
 RscIPv4 ="Recv Segment Coalescing (IPv4)"
@@ -1657,7 +1414,6 @@ TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
 UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
 OffloadIpOptions  = "Offload IP Options"
 OffloadTcpOptions = "Offload TCP Options"
-LsoV1IPv4Ndis5 = "IPv4 TCP Segmentation Offload"
 TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
 UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
 LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
@@ -1666,7 +1422,7 @@ LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
 RSS = "Receive Side Scaling"
 RssBaseProcNumber = "RSS Base Processor Number"
 MaxRssProcessors  = "Maximum number of RSS Processors"
-NumRSSqueues = "Maximum number of RSS queues"
+NumRSSQueues = "Maximum number of RSS queues"
 RxThrottle = "Receive Throttle"
 RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
 RscIPv4 ="Recv Segment Coalescing (IPv4)"
@@ -1787,7 +1543,6 @@ TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
 UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
 OffloadIpOptions  = "Offload IP Options"
 OffloadTcpOptions = "Offload TCP Options"
-LsoV1IPv4Ndis5 = "IPv4 TCP Segmentation Offload"
 TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
 UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
 LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
@@ -1796,7 +1551,7 @@ LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
 RSS = "Receive Side Scaling"
 RssBaseProcNumber = "RSS Base Processor Number"
 MaxRssProcessors  = "Maximum number of RSS Processors"
-NumRSSqueues = "Maximum number of RSS queues"
+NumRSSQueues = "Maximum number of RSS queues"
 RxThrottle = "Receive Throttle"
 RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
 RscIPv4 ="Recv Segment Coalescing (IPv4)"
@@ -1917,7 +1672,6 @@ TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
 UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
 OffloadIpOptions  = "Offload IP Options"
 OffloadTcpOptions = "Offload TCP Options"
-LsoV1IPv4Ndis5 = "IPv4 TCP Segmentation Offload"
 TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
 UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
 LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
@@ -1926,7 +1680,7 @@ LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
 RSS = "Receive Side Scaling"
 RssBaseProcNumber = "RSS Base Processor Number"
 MaxRssProcessors  = "Maximum number of RSS Processors"
-NumRSSqueues = "Maximum number of RSS queues"
+NumRSSQueues = "Maximum number of RSS queues"
 RxThrottle = "Receive Throttle"
 RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
 RscIPv4 ="Recv Segment Coalescing (IPv4)"
@@ -2047,7 +1801,6 @@ TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
 UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
 OffloadIpOptions  = "Offload IP Options"
 OffloadTcpOptions = "Offload TCP Options"
-LsoV1IPv4Ndis5 = "IPv4 TCP Segmentation Offload"
 TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
 UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
 LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
@@ -2056,7 +1809,7 @@ LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
 RSS = "Receive Side Scaling"
 RssBaseProcNumber = "RSS Base Processor Number"
 MaxRssProcessors  = "Maximum number of RSS Processors"
-NumRSSqueues = "Maximum number of RSS queues"
+NumRSSQueues = "Maximum number of RSS queues"
 RxThrottle = "Receive Throttle"
 RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
 RscIPv4 ="Recv Segment Coalescing (IPv4)"
