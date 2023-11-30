@@ -37,8 +37,8 @@ module "ct-01-oci" {
     shape                        = "VM.Standard.E2.1.Micro" 
     image_id                     = "ocid1.image.oc1.iad.aaaaaaaacwawwkkpizhbin2dmcrelcqjhqgji6nuloizwl6xix4dwezgrfyq"
     network                      = {
-      vcn_id                     = data.sops_file.oci-secrets.data["oci_vcn_ocid"]
-      subnet_id                  = data.sops_file.oci-secrets.data["oci_subnet_ocid"]
+      vcn_id                     = oci_core_vcn.main.id
+      subnet_id                  = oci_core_subnet.homelab.id
       vnic_label                 = "Primaryvnic"
       hostname                   = "ct-01-x86"
       assign_public_ip           = true
@@ -66,8 +66,8 @@ module "ct-02-oci" {
     shape                        = "VM.Standard.E2.1.Micro" 
     image_id                     = "ocid1.image.oc1.iad.aaaaaaaacwawwkkpizhbin2dmcrelcqjhqgji6nuloizwl6xix4dwezgrfyq"
     network                      = {
-      vcn_id                     = data.sops_file.oci-secrets.data['oci_vcn_ocid']
-      subnet_id                  = data.sops_file.oci-secrets.data['oci_subnet_ocid']
+      vcn_id                     = oci_core_vcn.main.id
+      subnet_id                  = oci_core_subnet.homelab.id
       vnic_label                 = "Primaryvnic"
       hostname                   = "ct-02-x86"
       assign_public_ip           = true
