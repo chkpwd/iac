@@ -37,7 +37,7 @@ source "vsphere-iso" "linux" {
   RAM_hot_plug    = true
   RAM_reserve_all = true
 
-  disk_controller_type =  ["lsilogic-sas"]
+  disk_controller_type =  var.vhd_controller_type
 
   storage {
     disk_size             = var.root_disk_size
@@ -48,7 +48,7 @@ source "vsphere-iso" "linux" {
   iso_url      = var.os_iso_url
 
   network_adapters {
-    network      =  var.network_name
+    network      = var.network_name
     network_card = var.nic_type
   }
 
@@ -140,7 +140,7 @@ source "vsphere-iso" "windows" {
     "./scripts/Install-VMWareTools.ps1",
     "./scripts/Fix-Firewall.ps1",
     "./files/TaskbarLayout.xml",
-    "./drivers"
+    "./files/drivers"
   ]
 }
 

@@ -1,0 +1,1920 @@
+
+;
+; vmxnet3.inf
+; Copyright (c) 2008-2023 VMware, Inc. All rights reserved.
+;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[version]
+Signature     = "$Windows NT$"
+Class         = Net
+ClassGUID     = {4d36e972-e325-11ce-bfc1-08002be10318}
+Provider      = %VMware%
+DriverVer     = 08/28/2023, 1.9.14.0
+DriverPackageType = PlugAndPlay
+CatalogFile   = vmxnet3.cat
+PnpLockdown   = 1
+
+; Build for 3 different driver versions that support Windows versions:
+; - x86 and x64 6.1 -
+; - x86 and x64 6.2, 6.3 and later.
+; - arm64 10.0.16299 and later
+[Manufacturer]
+
+
+
+
+
+
+%VMware%     = vmxnet3,NTamd64.10.0...20124
+
+
+
+
+
+[ControlFlags]
+ExcludeFromSelect = *
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+; Win Server 2022/Win11 x64
+[vmxnet3.NTamd64.10.0...20124]
+%loc.vmxnet3.DeviceDesc% = vmxnet3.ndis630.x64.ndi,   PCI\VEN_15AD&DEV_07B0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;
+; NDIS6.30 x64
+;
+
+[vmxnet3.ndis630.x64.ndi.NT]
+Characteristics    = 0x84
+BusType            = 5
+AddReg             = vmxnet3.ndis6.reg,vmxnet3.commonSettings.reg
+AddReg             = vmxnet3.ndis6Settings.reg
+AddReg             = vmxnet3.ndis620Settings.reg
+AddReg             = vmxnet3.ndis630Settings.reg
+AddReg             = rss.reg, vmxnet3.ndis620RssSettings.reg
+; AddReg             = vmxnet3.advancedSettings.reg
+DelReg             = Pre620RssSettings.remove.reg
+DelReg             = OldAdaptiveRing.remove.reg
+CopyFiles          = vmxnet3.CopyFiles
+*IfType            = 6		; IF_TYPE_ETHERNET_CSMACD
+*MediaType         = 0		; NdisMedium802_3
+*PhysicalMediaType = 14		; NdisPhysicalMedium802_3
+
+[vmxnet3.ndis630.x64.ndi.NT.HW]
+
+
+
+
+
+; To reduce I/O resource usage in Windows 10,  use this entry:
+Include            = pci.inf
+Needs              = PciIoSpaceNotRequired.HW
+
+AddReg             = enableMSI.reg
+
+[vmxnet3.ndis630.x64.ndi.NT.Services]
+AddService = vmxnet3ndis6, 2, vmxnet3.ndis6.x64.Service, common.EventLog
+
+
+
+;
+; NDIS6 common.  Driver now has support for NDIS 6.20
+; but the filename remains 'n61' to eliminate the
+; need to update the installer and other components.
+;
+
+[vmxnet3.ndis6.x64.Service]
+DisplayName     = %loc.vmxnet3.ndis6.DispName%
+ServiceType     = 1 ;%SERVICE_KERNEL_DRIVER%
+StartType       = 3 ;%SERVICE_DEMAND_START%
+ErrorControl    = 1 ;%SERVICE_ERROR_NORMAL%
+ServiceBinary   = %12%\vmxnet3.sys
+LoadOrderGroup  = NDIS
+AddReg          = Disable.reg,vmware_installers_addreg
+
+[vmxnet3.ndis6.reg]
+HKR, Ndi,            Service,    0, "vmxnet3ndis6"
+HKR, Ndi\Interfaces, UpperRange, 0, "ndis5"
+HKR, Ndi\Interfaces, LowerRange, 0, "ethernet"
+
+; Set a default device policy that says to use all processors so
+; the driver/device is not affected by a change in the system's
+; default affinity policy.
+
+[enableMSI.reg]
+HKR, Interrupt Management, , %FLG_ADDREG_KEYONLY%
+HKR, Interrupt Management\MessageSignaledInterruptProperties, , %FLG_ADDREG_KEYONLY%
+HKR, Interrupt Management\MessageSignaledInterruptProperties, MSISupported, %FLG_ADDREG_TYPE_DWORD%, 1
+HKR,"Interrupt Management\Affinity Policy", , %FLG_ADDREG_KEYONLY%
+HKR,"Interrupt Management\Affinity Policy", "DevicePolicy", %FLG_ADDREG_TYPE_DWORD%, 3
+HKR, Interrupt Management\MessageSignaledInterruptProperties, MessageNumberLimit, %FLG_ADDREG_TYPE_DWORD%, 10
+; HKR, Interrupt Management\MessageSignaledInterruptProperties, MessageNumberLimit, %FLG_ADDREG_TYPE_DWORD%, 1
+
+;
+; all common
+;
+
+[common.EventLog]
+AddReg = common.AddEventLog.reg
+
+[common.AddEventLog.reg]
+HKR, , EventMessageFile, 0x00020000, "%%SystemRoot%%\System32\netevent.dll"
+HKR, , TypesSupported,   0x00010001, 7
+
+[Disable.reg]
+; HKR,Parameters,DisableMSI,0x00010001,1
+; HKR,Parameters,DisableMSI-x,0x00010001,1
+; HKR,Parameters,DisableAutoMask,0x00010001,1
+
+[vmware_installers_addreg]
+
+
+
+
+HKR,, %vmxnet3.installers.value.name%, 0x00010002, %vmxnet3.installers.value.windows%
+;; FLG_ADDREG_NOCLOBBER | FLG_ADDREG_TYPE_MULTI_SZ
+
+
+;
+; UI settings
+;
+
+[OldAdaptiveRing.remove.reg]
+HKR,,*EnableAdaptiveRing
+HKR, Ndi\params\*EnableAdaptiveRing
+
+[vmxnet3.ndis6Settings.reg]
+HKR, Ndi\params\*TCPChecksumOffloadIPv6, ParamDesc, 0, %TCPChecksumOffloadIPv6%
+HKR, Ndi\params\*TCPChecksumOffloadIPv6, Type,      0, "enum"
+HKR, Ndi\params\*TCPChecksumOffloadIPv6, Default,   0, "3"
+HKR, Ndi\params\*TCPChecksumOffloadIPv6, Optional,  0, "0"
+HKR, Ndi\params\*TCPChecksumOffloadIPv6\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*TCPChecksumOffloadIPv6\enum, "1",  0, %TxEnabled%
+HKR, Ndi\params\*TCPChecksumOffloadIPv6\enum, "2",  0, %RxEnabled%
+HKR, Ndi\params\*TCPChecksumOffloadIPv6\enum, "3",  0, %TxRxEnabled%
+
+HKR, Ndi\params\*UDPChecksumOffloadIPv6, ParamDesc, 0, %UDPChecksumOffloadIPv6%
+HKR, Ndi\params\*UDPChecksumOffloadIPv6, Type,      0, "enum"
+HKR, Ndi\params\*UDPChecksumOffloadIPv6, Default,   0, "3"
+HKR, Ndi\params\*UDPChecksumOffloadIPv6, Optional,  0, "0"
+HKR, Ndi\params\*UDPChecksumOffloadIPv6\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*UDPChecksumOffloadIPv6\enum, "1",  0, %TxEnabled%
+HKR, Ndi\params\*UDPChecksumOffloadIPv6\enum, "2",  0, %RxEnabled%
+HKR, Ndi\params\*UDPChecksumOffloadIPv6\enum, "3",  0, %TxRxEnabled%
+
+HKR, Ndi\params\*LsoV1IPv4, ParamDesc, 0, %LsoV1IPv4Ndis6%
+HKR, Ndi\params\*LsoV1IPv4, Type,      0, "enum"
+HKR, Ndi\params\*LsoV1IPv4, Default,   0, "1"
+HKR, Ndi\params\*LsoV1IPv4, Optional,  0, "0"
+HKR, Ndi\params\*LsoV1IPv4\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*LsoV1IPv4\enum, "1",  0, %Enabled%
+
+HKR, Ndi\params\*LsoV2IPv4, ParamDesc, 0, %LsoV2IPv4%
+HKR, Ndi\params\*LsoV2IPv4, Type,      0, "enum"
+HKR, Ndi\params\*LsoV2IPv4, Default,   0, "1"
+HKR, Ndi\params\*LsoV2IPv4, Optional,  0, "0"
+HKR, Ndi\params\*LsoV2IPv4\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*LsoV2IPv4\enum, "1",  0, %Enabled%
+
+HKR, Ndi\params\*LsoV2IPv6, ParamDesc, 0, %LsoV2IPv6%
+HKR, Ndi\params\*LsoV2IPv6, Type,      0, "enum"
+HKR, Ndi\params\*LsoV2IPv6, Default,   0, "1"
+HKR, Ndi\params\*LsoV2IPv6, Optional,  0, "0"
+HKR, Ndi\params\*LsoV2IPv6\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*LsoV2IPv6\enum, "1",  0, %Enabled%
+
+HKR,, LimitTSOTxd, 0, "1"
+
+[vmxnet3.ndis620Settings.reg]
+
+HKR, Ndi\params\RxThrottle, ParamDesc, 0, %RxThrottle%
+HKR, Ndi\params\RxThrottle, Type,      0, "dword"
+HKR, Ndi\params\RxThrottle, Default,   0, "0"
+HKR, Ndi\params\RxThrottle, Optional,  0, "1"
+HKR, Ndi\params\RxThrottle, Min,       0, "0"
+HKR, Ndi\params\RxThrottle, Max,       0, "4096"
+HKR, Ndi\params\RxThrottle, Step,      0, "10"
+
+
+HKR, Ndi\params\RxThrottleOnNDISAll, ParamDesc, 0, %RxThrottleOnNDISAll%
+HKR, Ndi\params\RxThrottleOnNDISAll, Type,      0, "dword"
+HKR, Ndi\params\RxThrottleOnNDISAll, Default,   0, "0"
+HKR, Ndi\params\RxThrottleOnNDISAll, Optional,  0, "1"
+HKR, Ndi\params\RxThrottleOnNDISAll, Min,       0, "0"
+HKR, Ndi\params\RxThrottleOnNDISAll, Max,       0, "4096"
+HKR, Ndi\params\RxThrottleOnNDISAll, Step,      0, "16"
+
+[vmxnet3.ndis630Settings.reg]
+
+HKR, Ndi\params\*RscIPv4, ParamDesc, 0, %RscIPv4%
+HKR, Ndi\params\*RscIPv4, Type,      0, "enum"
+HKR, Ndi\params\*RscIPv4, Default,   0, "1"
+HKR, Ndi\params\*RscIPv4, Optional,  0, "0"
+HKR, Ndi\params\*RscIPv4\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*RscIPv4\enum, "1",  0, %Enabled%
+
+HKR, Ndi\params\*RscIPv6, ParamDesc, 0, %RscIPv6%
+HKR, Ndi\params\*RscIPv6, Type,      0, "enum"
+HKR, Ndi\params\*RscIPv6, Default,   0, "1"
+HKR, Ndi\params\*RscIPv6, Optional,  0, "0"
+HKR, Ndi\params\*RscIPv6\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*RscIPv6\enum, "1",  0, %Enabled%
+
+HKR, Ndi\params\TxDataDescLength, ParamDesc,     0, %TxDataDescLength%
+HKR, Ndi\params\TxDataDescLength, Type,          0, "enum"
+HKR, Ndi\params\TxDataDescLength, Default,       0, "128"
+HKR, Ndi\params\TxDataDescLength, Optional,      0, "1"
+HKR, Ndi\params\TxDataDescLength\enum, "128",    0, %num128%
+HKR, Ndi\params\TxDataDescLength\enum, "256",    0, %num256%
+HKR, Ndi\params\TxDataDescLength\enum, "512",    0, %num512%
+HKR, Ndi\params\TxDataDescLength\enum, "1024",   0, %num1024%
+HKR, Ndi\params\TxDataDescLength\enum, "2048",   0, %num2048%
+
+HKR, Ndi\params\CoalSchemeMode, ParamDesc, 0, %CoalSchemeMode%
+HKR, Ndi\params\CoalSchemeMode, Type,      0, "enum"
+HKR, Ndi\params\CoalSchemeMode, Default,   0, "4"
+HKR, Ndi\params\CoalSchemeMode, Optional,  0, "0"
+HKR, Ndi\params\CoalSchemeMode\enum, "0",  0, %Disabled%
+HKR, Ndi\params\CoalSchemeMode\enum, "1",  0, %Adaptive%
+HKR, Ndi\params\CoalSchemeMode\enum, "2",  0, %Static%
+HKR, Ndi\params\CoalSchemeMode\enum, "3",  0, %RBC%
+HKR, Ndi\params\CoalSchemeMode\enum, "4",  0, %Default%
+
+HKR, Ndi\params\IntrRate, ParamDesc, 0, %IntrRate%
+HKR, Ndi\params\IntrRate, Type,      0, "dword"
+HKR, Ndi\params\IntrRate, Default,   0, "4000"
+HKR, Ndi\params\IntrRate, Optional,  0, "1"
+HKR, Ndi\params\IntrRate, Min,       0, "100"
+HKR, Ndi\params\IntrRate, Max,       0, "100000"
+HKR, Ndi\params\IntrRate, Step,      0, "1"
+
+HKR, Ndi\params\TxDepth, ParamDesc, 0, %TxDepth%
+HKR, Ndi\params\TxDepth, Type,      0, "dword"
+HKR, Ndi\params\TxDepth, Default,   0, "64"
+HKR, Ndi\params\TxDepth, Optional,  0, "1"
+HKR, Ndi\params\TxDepth, Min,       0, "1"
+HKR, Ndi\params\TxDepth, Max,       0, "128"
+HKR, Ndi\params\TxDepth, Step,      0, "1"
+
+HKR, Ndi\params\TxCompDepth, ParamDesc, 0, %TxCompDepth%
+HKR, Ndi\params\TxCompDepth, Type,      0, "dword"
+HKR, Ndi\params\TxCompDepth, Default,   0, "64"
+HKR, Ndi\params\TxCompDepth, Optional,  0, "1"
+HKR, Ndi\params\TxCompDepth, Min,       0, "1"
+HKR, Ndi\params\TxCompDepth, Max,       0, "128"
+HKR, Ndi\params\TxCompDepth, Step,      0, "1"
+
+HKR, Ndi\params\RxDepth, ParamDesc, 0, %RxDepth%
+HKR, Ndi\params\RxDepth, Type,      0, "dword"
+HKR, Ndi\params\RxDepth, Default,   0, "64"
+HKR, Ndi\params\RxDepth, Optional,  0, "1"
+HKR, Ndi\params\RxDepth, Min,       0, "1"
+HKR, Ndi\params\RxDepth, Max,       0, "128"
+HKR, Ndi\params\RxDepth, Step,      0, "1"
+;
+; Pre-NDIS 6.20 uses 'MaxRxQueues' to constrain the
+; number of rx queues.  NDIS 6.20 and later use
+; standardized *MaxRssProcessors since this caps
+; the number of RSS processors, which in turn caps
+; the number of rx queues (and does so in a way
+; that uses fewer MSI-x vectors).
+;
+
+[vmxnet3.ndis620RssSettings.reg]
+
+HKR, Ndi\params\*RssBaseProcNumber, ParamDesc, 0, %RssBaseProcNumber%
+HKR, Ndi\params\*RssBaseProcNumber, Type,      0, "dword"
+HKR, Ndi\params\*RssBaseProcNumber, Default,   0, "0"
+HKR, Ndi\params\*RssBaseProcNumber, Optional,  0, "1"
+HKR, Ndi\params\*RssBaseProcNumber, Min,       0, "0"
+HKR, Ndi\params\*RssBaseProcNumber, Max,       0, "63"
+HKR, Ndi\params\*RssBaseProcNumber, Step,      0, "1"
+
+HKR, Ndi\params\*MaxRssProcessors, ParamDesc, 0, %MaxRssProcessors%
+HKR, Ndi\params\*MaxRssProcessors, Type,      0, "enum"
+HKR, Ndi\params\*MaxRssProcessors, Default,   0, "8"
+HKR, Ndi\params\*MaxRssProcessors, Optional,  0, "1"
+HKR, Ndi\params\*MaxRssProcessors\enum, "1",  0, %num1%
+HKR, Ndi\params\*MaxRssProcessors\enum, "2",  0, %num2%
+HKR, Ndi\params\*MaxRssProcessors\enum, "4",  0, %num4%
+HKR, Ndi\params\*MaxRssProcessors\enum, "8",  0, %num8%
+
+HKR, Ndi\params\*NumRSSQueues, ParamDesc,     0, %NumRSSQueues%
+HKR, Ndi\params\*NumRSSQueues, Type,          0, "enum"
+HKR, Ndi\params\*NumRSSQueues, Default,       0, "8"
+HKR, Ndi\params\*NumRSSQueues, Optional,      0, "0"
+HKR, Ndi\params\*NumRSSQueues\enum, "1",      0, %num1%
+HKR, Ndi\params\*NumRSSQueues\enum, "2",      0, %num2%
+HKR, Ndi\params\*NumRSSQueues\enum, "4",      0, %num4%
+HKR, Ndi\params\*NumRSSQueues\enum, "8",      0, %num8%
+
+[Pre620RssSettings.remove.reg]
+HKR, Ndi\params\MaxRxQueues
+
+
+
+
+
+
+
+
+
+
+
+
+
+[Rss.reg]
+HKR, Ndi\params\*RSS, ParamDesc, 0, %RSS%
+HKR, Ndi\params\*RSS, Type,      0, "enum"
+HKR, Ndi\params\*RSS, Default,   0, "1"
+HKR, Ndi\params\*RSS, Optional,  0, "0"
+HKR, Ndi\params\*RSS\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*RSS\enum, "1",  0, %Enabled%
+
+HKR, Ndi\params\MaxTxQueues, ParamDesc,     0, %MaxTxQueues%
+HKR, Ndi\params\MaxTxQueues, Type,          0, "enum"
+HKR, Ndi\params\MaxTxQueues, Default,       0, "8"
+HKR, Ndi\params\MaxTxQueues, Optional,      0, "1"
+HKR, Ndi\params\MaxTxQueues\enum, "1",      0, %num1%
+HKR, Ndi\params\MaxTxQueues\enum, "2",      0, %num2%
+HKR, Ndi\params\MaxTxQueues\enum, "4",      0, %num4%
+HKR, Ndi\params\MaxTxQueues\enum, "8",      0, %num8%
+
+
+
+
+
+
+
+
+[vmxnet3.commonSettings.reg]
+; only kidding yourself if you think changing this will affect device
+HKR, Ndi\params\*SpeedDuplex, ParamDesc, 0, %SpeedDuplex%
+HKR, Ndi\params\*SpeedDuplex, Type,      0, "enum"
+HKR, Ndi\params\*SpeedDuplex, Default,   0, "0"
+HKR, Ndi\params\*SpeedDuplex, Optional,  0, "0"
+HKR, Ndi\params\*SpeedDuplex\enum, "0",  0, %AutoNegotiation%
+HKR, Ndi\params\*SpeedDuplex\enum, "1",  0, %10Half%
+HKR, Ndi\params\*SpeedDuplex\enum, "2",  0, %10Full%
+HKR, Ndi\params\*SpeedDuplex\enum, "3",  0, %100Half%
+HKR, Ndi\params\*SpeedDuplex\enum, "4",  0, %100Full%
+HKR, Ndi\params\*SpeedDuplex\enum, "5",  0, %1000Half%
+HKR, Ndi\params\*SpeedDuplex\enum, "6",  0, %1000Full%
+HKR, Ndi\params\*SpeedDuplex\enum, "7",  0, %10000Full%
+
+HKR, Ndi\params\NetworkAddress, ParamDesc, 0, %NetworkAddress%
+HKR, Ndi\params\NetworkAddress, Type,      0, "edit"
+HKR, Ndi\params\NetworkAddress, Default,   0, ""
+HKR, Ndi\params\NetworkAddress, LimitText, 0, "12"
+HKR, Ndi\params\NetworkAddress, UpperCase, 0, "1"
+HKR, Ndi\params\NetworkAddress, Optional,  0, "1"
+
+HKR, Ndi\params\*PriorityVLANTag, ParamDesc, 0, %PriorityVLANTag%
+HKR, Ndi\params\*PriorityVLANTag, Type,      0, "enum"
+HKR, Ndi\params\*PriorityVLANTag, Default,   0, "3"
+HKR, Ndi\params\*PriorityVLANTag, Optional,  0, "0"
+HKR, Ndi\params\*PriorityVLANTag\enum, "0",  0, %PriorityVlanDisabled%
+HKR, Ndi\params\*PriorityVLANTag\enum, "1",  0, %PriorityEnabled%
+HKR, Ndi\params\*PriorityVLANTag\enum, "2",  0, %VlanEnabled%
+HKR, Ndi\params\*PriorityVLANTag\enum, "3",  0, %PriorityVlanEnabled%
+
+; use edit so can type in?
+HKR, Ndi\params\VlanId, ParamDesc, 0, %VlanId%
+HKR, Ndi\params\VlanId, Type,      0, "dword"
+HKR, Ndi\params\VlanId, Default,   0, "0"
+HKR, Ndi\params\VlanId, Optional,  0, "1"
+HKR, Ndi\params\VlanId, Min,       0, "0"
+HKR, Ndi\params\VlanId, Max,       0, "4094"
+HKR, Ndi\params\VlanId, Step,      0, "1"
+
+HKR,, EnableMonitorMode, 0, "0"
+
+HKR, Ndi\params\*JumboPacket, ParamDesc,    0, %JumboPacket%
+; HKR, Ndi\params\*JumboPacket, Type,         0, "enum"
+; HKR, Ndi\params\*JumboPacket, Default,      0, "1514"
+; HKR, Ndi\params\*JumboPacket, Optional,     0, "0"
+; HKR, Ndi\params\*JumboPacket\enum, "1514",  0, %Standard1500%
+; HKR, Ndi\params\*JumboPacket\enum, "9014",  0, %Jumbo9000%
+
+HKR, Ndi\params\*JumboPacket, Type,         0, "dword"
+HKR, Ndi\params\*JumboPacket, Default,      0, "1514"
+HKR, Ndi\params\*JumboPacket, Optional,     0, "0"
+HKR, Ndi\params\*JumboPacket, Min,          0, "1514"
+HKR, Ndi\params\*JumboPacket, Max,          0, "9014"
+HKR, Ndi\params\*JumboPacket, Step,         0, "1"
+
+HKR, Ndi\params\*InterruptModeration, ParamDesc, 0, %InterruptModeration%
+HKR, Ndi\params\*InterruptModeration, Type,      0, "enum"
+HKR, Ndi\params\*InterruptModeration, Default,   0, "1"
+HKR, Ndi\params\*InterruptModeration, Optional,  0, "0"
+HKR, Ndi\params\*InterruptModeration\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*InterruptModeration\enum, "1",  0, %Enabled%
+
+HKR, Ndi\params\OffloadVlanEncap, ParamDesc, 0, %OffloadVlanEncap%
+HKR, Ndi\params\OffloadVlanEncap, Type,      0, "enum"
+HKR, Ndi\params\OffloadVlanEncap, Default,   0, "1"
+HKR, Ndi\params\OffloadVlanEncap, Optional,  0, "0"
+HKR, Ndi\params\OffloadVlanEncap\enum, "0",  0, %Disabled%
+HKR, Ndi\params\OffloadVlanEncap\enum, "1",  0, %Enabled%
+
+HKR, Ndi\params\EnableWakeOnLan, ParamDesc, 0, %EnableWakeOnLan%
+HKR, Ndi\params\EnableWakeOnLan, Type,      0, "enum"
+HKR, Ndi\params\EnableWakeOnLan, Default,   0, "1"
+HKR, Ndi\params\EnableWakeOnLan, Optional,  0, "0"
+HKR, Ndi\params\EnableWakeOnLan\enum, "0",  0, %Disabled%
+HKR, Ndi\params\EnableWakeOnLan\enum, "1",  0, %Enabled%
+
+HKR, Ndi\params\*WakeOnPattern, ParamDesc, 0, %WakeOnPattern%
+HKR, Ndi\params\*WakeOnPattern, Type,      0, "enum"
+HKR, Ndi\params\*WakeOnPattern, Default,   0, "1"
+HKR, Ndi\params\*WakeOnPattern, Optional,  0, "0"
+HKR, Ndi\params\*WakeOnPattern\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*WakeOnPattern\enum, "1",  0, %Enabled%
+
+HKR, Ndi\params\*WakeOnMagicPacket, ParamDesc, 0, %WakeOnMagicPacket%
+HKR, Ndi\params\*WakeOnMagicPacket, Type,      0, "enum"
+HKR, Ndi\params\*WakeOnMagicPacket, Default,   0, "1"
+HKR, Ndi\params\*WakeOnMagicPacket, Optional,  0, "0"
+HKR, Ndi\params\*WakeOnMagicPacket\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*WakeOnMagicPacket\enum, "1",  0, %Enabled%
+
+HKR, Ndi\params\*IPChecksumOffloadIPv4, ParamDesc, 0, %IPChecksumOffloadIPv4%
+HKR, Ndi\params\*IPChecksumOffloadIPv4, Type,      0, "enum"
+HKR, Ndi\params\*IPChecksumOffloadIPv4, Default,   0, "3"
+HKR, Ndi\params\*IPChecksumOffloadIPv4, Optional,  0, "0"
+HKR, Ndi\params\*IPChecksumOffloadIPv4\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*IPChecksumOffloadIPv4\enum, "1",  0, %TxEnabled%
+HKR, Ndi\params\*IPChecksumOffloadIPv4\enum, "2",  0, %RxEnabled%
+HKR, Ndi\params\*IPChecksumOffloadIPv4\enum, "3",  0, %TxRxEnabled%
+
+HKR, Ndi\params\*TCPChecksumOffloadIPv4, ParamDesc, 0, %TCPChecksumOffloadIPv4%
+HKR, Ndi\params\*TCPChecksumOffloadIPv4, Type,      0, "enum"
+HKR, Ndi\params\*TCPChecksumOffloadIPv4, Default,   0, "3"
+HKR, Ndi\params\*TCPChecksumOffloadIPv4, Optional,  0, "0"
+HKR, Ndi\params\*TCPChecksumOffloadIPv4\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*TCPChecksumOffloadIPv4\enum, "1",  0, %TxEnabled%
+HKR, Ndi\params\*TCPChecksumOffloadIPv4\enum, "2",  0, %RxEnabled%
+HKR, Ndi\params\*TCPChecksumOffloadIPv4\enum, "3",  0, %TxRxEnabled%
+
+HKR, Ndi\params\*UDPChecksumOffloadIPv4, ParamDesc, 0, %UDPChecksumOffloadIPv4%
+HKR, Ndi\params\*UDPChecksumOffloadIPv4, Type,      0, "enum"
+HKR, Ndi\params\*UDPChecksumOffloadIPv4, Default,   0, "3"
+HKR, Ndi\params\*UDPChecksumOffloadIPv4, Optional,  0, "0"
+HKR, Ndi\params\*UDPChecksumOffloadIPv4\enum, "0",  0, %Disabled%
+HKR, Ndi\params\*UDPChecksumOffloadIPv4\enum, "1",  0, %TxEnabled%
+HKR, Ndi\params\*UDPChecksumOffloadIPv4\enum, "2",  0, %RxEnabled%
+HKR, Ndi\params\*UDPChecksumOffloadIPv4\enum, "3",  0, %TxRxEnabled%
+
+HKR, Ndi\params\OffloadIpOptions, ParamDesc, 0, %OffloadIpOptions%
+HKR, Ndi\params\OffloadIpOptions, Type,      0, "enum"
+HKR, Ndi\params\OffloadIpOptions, Default,   0, "1"
+HKR, Ndi\params\OffloadIpOptions, Optional,  0, "0"
+HKR, Ndi\params\OffloadIpOptions\enum, "0",  0, %Disabled%
+HKR, Ndi\params\OffloadIpOptions\enum, "1",  0, %Enabled%
+
+HKR, Ndi\params\OffloadTcpOptions, ParamDesc, 0, %OffloadTcpOptions%
+HKR, Ndi\params\OffloadTcpOptions, Type,      0, "enum"
+HKR, Ndi\params\OffloadTcpOptions, Default,   0, "1"
+HKR, Ndi\params\OffloadTcpOptions, Optional,  0, "0"
+HKR, Ndi\params\OffloadTcpOptions\enum, "0",  0, %Disabled%
+HKR, Ndi\params\OffloadTcpOptions\enum, "1",  0, %Enabled%
+
+HKR, Ndi\params\MaxRxRing1Length, ParamDesc,     0, %MaxRxRing1Length%
+HKR, Ndi\params\MaxRxRing1Length, Type,          0, "enum"
+HKR, Ndi\params\MaxRxRing1Length, Default,       0, "512"
+HKR, Ndi\params\MaxRxRing1Length, Optional,      0, "1"
+HKR, Ndi\params\MaxRxRing1Length\enum, "32",     0, %num32%
+HKR, Ndi\params\MaxRxRing1Length\enum, "64",     0, %num64%
+HKR, Ndi\params\MaxRxRing1Length\enum, "128",    0, %num128%
+HKR, Ndi\params\MaxRxRing1Length\enum, "256",    0, %num256%
+HKR, Ndi\params\MaxRxRing1Length\enum, "512",    0, %num512%
+HKR, Ndi\params\MaxRxRing1Length\enum, "630",    0, %num630%
+HKR, Ndi\params\MaxRxRing1Length\enum, "768",    0, %num768%
+HKR, Ndi\params\MaxRxRing1Length\enum, "896",    0, %num896%
+HKR, Ndi\params\MaxRxRing1Length\enum, "1024",   0, %num1024%
+HKR, Ndi\params\MaxRxRing1Length\enum, "2048",   0, %num2048%
+HKR, Ndi\params\MaxRxRing1Length\enum, "4096",   0, %num4096%
+
+HKR, Ndi\params\MaxRxRing2Length, ParamDesc,     0, %MaxRxRing2Length%
+HKR, Ndi\params\MaxRxRing2Length, Type,          0, "enum"
+HKR, Ndi\params\MaxRxRing2Length, Default,       0, "512"
+HKR, Ndi\params\MaxRxRing2Length, Optional,      0, "1"
+HKR, Ndi\params\MaxRxRing2Length\enum, "32",     0, %num32%
+HKR, Ndi\params\MaxRxRing2Length\enum, "64",     0, %num64%
+HKR, Ndi\params\MaxRxRing2Length\enum, "128",    0, %num128%
+HKR, Ndi\params\MaxRxRing2Length\enum, "256",    0, %num256%
+HKR, Ndi\params\MaxRxRing2Length\enum, "512",    0, %num512%
+HKR, Ndi\params\MaxRxRing2Length\enum, "1024",   0, %num1024%
+HKR, Ndi\params\MaxRxRing2Length\enum, "2048",   0, %num2048%
+HKR, Ndi\params\MaxRxRing2Length\enum, "4096",   0, %num4096%
+
+HKR, Ndi\params\MaxTxRingLength, ParamDesc,     0, %MaxTxRingLength%
+HKR, Ndi\params\MaxTxRingLength, Type,          0, "enum"
+HKR, Ndi\params\MaxTxRingLength, Default,       0, "512"
+HKR, Ndi\params\MaxTxRingLength, Optional,      0, "1"
+HKR, Ndi\params\MaxTxRingLength\enum, "32",     0, %num32%
+HKR, Ndi\params\MaxTxRingLength\enum, "64",     0, %num64%
+HKR, Ndi\params\MaxTxRingLength\enum, "128",    0, %num128%
+HKR, Ndi\params\MaxTxRingLength\enum, "256",    0, %num256%
+HKR, Ndi\params\MaxTxRingLength\enum, "512",    0, %num512%
+HKR, Ndi\params\MaxTxRingLength\enum, "1024",   0, %num1024%
+HKR, Ndi\params\MaxTxRingLength\enum, "2048",   0, %num2048%
+HKR, Ndi\params\MaxTxRingLength\enum, "4096",   0, %num4096%
+
+HKR, Ndi\params\NumRxBuffersSmall, ParamDesc,     0, %NumRxBuffersSmall%
+HKR, Ndi\params\NumRxBuffersSmall, Type,          0, "enum"
+HKR, Ndi\params\NumRxBuffersSmall, Default,       0, "1024"
+HKR, Ndi\params\NumRxBuffersSmall, Optional,      0, "1"
+HKR, Ndi\params\NumRxBuffersSmall\enum, "64",     0, %num64%
+HKR, Ndi\params\NumRxBuffersSmall\enum, "128",    0, %num128%
+HKR, Ndi\params\NumRxBuffersSmall\enum, "256",    0, %num256%
+HKR, Ndi\params\NumRxBuffersSmall\enum, "512",    0, %num512%
+HKR, Ndi\params\NumRxBuffersSmall\enum, "768",    0, %num768%
+HKR, Ndi\params\NumRxBuffersSmall\enum, "1024",   0, %num1024%
+HKR, Ndi\params\NumRxBuffersSmall\enum, "1536",   0, %num1536%
+HKR, Ndi\params\NumRxBuffersSmall\enum, "2048",   0, %num2048%
+HKR, Ndi\params\NumRxBuffersSmall\enum, "3072",   0, %num3072%
+HKR, Ndi\params\NumRxBuffersSmall\enum, "4096",   0, %num4096%
+HKR, Ndi\params\NumRxBuffersSmall\enum, "8192",   0, %num8192%
+
+HKR, Ndi\params\NumRxBuffersLarge, ParamDesc,     0, %NumRxBuffersLarge%
+HKR, Ndi\params\NumRxBuffersLarge, Type,          0, "enum"
+HKR, Ndi\params\NumRxBuffersLarge, Default,       0, "1024"
+HKR, Ndi\params\NumRxBuffersLarge, Optional,      0, "1"
+HKR, Ndi\params\NumRxBuffersLarge\enum, "64",     0, %num64%
+HKR, Ndi\params\NumRxBuffersLarge\enum, "128",    0, %num128%
+HKR, Ndi\params\NumRxBuffersLarge\enum, "256",    0, %num256%
+HKR, Ndi\params\NumRxBuffersLarge\enum, "512",    0, %num512%
+HKR, Ndi\params\NumRxBuffersLarge\enum, "768",    0, %num768%
+HKR, Ndi\params\NumRxBuffersLarge\enum, "1024",   0, %num1024%
+HKR, Ndi\params\NumRxBuffersLarge\enum, "1536",   0, %num1536%
+HKR, Ndi\params\NumRxBuffersLarge\enum, "2048",   0, %num2048%
+HKR, Ndi\params\NumRxBuffersLarge\enum, "3072",   0, %num3072%
+HKR, Ndi\params\NumRxBuffersLarge\enum, "4096",   0, %num4096%
+HKR, Ndi\params\NumRxBuffersLarge\enum, "8192",   0, %num8192%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+;-----------------------------------------------------------------------------
+; DestinationDirs
+;
+
+[vmxnet3.CopyFiles]
+vmxnet3.sys,,,2
+
+[SourceDisksNames]
+1 = %DiskDescription%,vmxnet3.sys,,
+
+[SourceDisksFiles]
+vmxnet3.sys = 1,,
+
+[DestinationDirs]
+vmxnet3.CopyFiles  = 12
+DefaultDestDir               = 12
+
+
+
+
+
+
+;
+; US English
+;
+[Strings]
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Common non-Localizable strings section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FLG_ADDREG_KEYONLY        = 0x00000010
+FLG_ADDREG_TYPE_DWORD     = 0x00010001
+
+VMware                         = "VMware, Inc."
+DiskDescription                = "vmxnet3 Driver Disk 1"
+
+
+
+
+vmxnet3.installers.value.name    = "vwdk.installers"
+
+vmxnet3.installers.value.windows = "Windows"
+SpeedDuplex = "Speed & Duplex"
+AutoNegotiation = "Auto Negotiation"
+10Half    = "10 Mbps Half Duplex"
+10Full    = "10 Mbps Full Duplex"
+100Half   = "100 Mbps Half Duplex"
+100Full   = "100 Mbps Full Duplex"
+1000Half  = "1.0 Gbps Half Duplex"
+1000Full  = "1.0 Gbps Full Duplex"
+10000Full = "10 Gbps Full Duplex"
+NetworkAddress = "MAC Address"
+PriorityVLANTag = "Priority / VLAN tag"
+PriorityVlanDisabled = "Priority & VLAN Disabled"
+PriorityEnabled = "Priority Enabled"
+VlanEnabled = "VLAN Enabled"
+PriorityVlanEnabled = "Priority & VLAN Enabled"
+VlanId = "VLAN ID"
+JumboPacket = "Jumbo Packet"
+Standard1500 = "Standard 1500"
+Jumbo9000    = "Jumbo 9000"
+InterruptModeration = "Interrupt Moderation"
+Disabled = "Disabled"
+Enabled  = "Enabled"
+OffloadVlanEncap = "Offload tagged traffic"
+EnableWakeOnLan = "Wake-on-LAN"
+WakeOnMagicPacket = "Wake on magic packet"
+WakeOnPattern = "Wake on pattern match"
+IPChecksumOffloadIPv4 = "IPv4 Checksum Offload"
+TxEnabled = "Tx Enabled"
+RxEnabled = "Rx Enabled"
+TxRxEnabled = "Rx & Tx Enabled"
+TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
+UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
+OffloadIpOptions  = "Offload IP Options"
+OffloadTcpOptions = "Offload TCP Options"
+TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
+UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
+LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
+LsoV2IPv4 = "Large Send Offload V2 (IPv4)"
+LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
+RSS = "Receive Side Scaling"
+RssBaseProcNumber = "RSS Base Processor Number"
+MaxRssProcessors  = "Maximum number of RSS Processors"
+NumRSSQueues = "Maximum number of RSS queues"
+RxThrottle = "Receive Throttle"
+RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
+RscIPv4 ="Recv Segment Coalescing (IPv4)"
+RscIPv6 ="Recv Segment Coalescing (IPv6)"
+CoalSchemeMode = "Interrupt Coalescing Scheme Mode"
+Adaptive = "Adaptive"
+Static = "Static"
+RBC = "RBC"
+Default = "Default Scheme"
+IntrRate = "Interrupt Rate"
+TxDepth = "Tx Depth"
+TxCompDepth = "Tx Completion Depth"
+RxDepth = "Rx Depth"
+
+num1    = "1"
+num2    = "2"
+num4    = "4"
+num8    = "8"
+num16   = "16"
+num32   = "32"
+num64   = "64"
+num128  = "128"
+num256  = "256"
+num512  = "512"
+num630  = "630"
+num768  = "768"
+num896  = "896"
+num1024 = "1024"
+num1536 = "1536"
+num2048 = "2048"
+num3072 = "3072"
+num4096 = "4096"
+num8192 = "8192"
+
+16K = "16 K"
+24K = "24 K"
+32K = "32 K"
+48K = "48 K"
+63K = "63 K"
+64K = "64 K"
+80K = "80 K"
+96K = "96 K"
+128K = "128 K"
+192K = "192 K"
+256K = "256 K"
+
+RxBufferReserve   = "Low Rx Buffer Reserve"
+MaxRxRing1Length = "Rx Ring #1 Size"
+MaxRxRing2Length = "Rx Ring #2 Size"
+MaxTxRingLength = "Tx Ring Size"
+TxDataDescLength = "Tx Data Descriptor Length"
+RxDataDescLength = "Rx Data Descriptor Length"
+NumRxBuffersSmall = "Small Rx Buffers"
+NumRxBuffersLarge = "Large Rx Buffers"
+NumTxBuffers = "Tx Buffers"
+MaxRxQueues = "Max Rx Queues"
+MaxTxQueues = "Max Tx Queues"
+MaxTSOv1Payload = "Max TSOv1 Payload"
+MaxTSOv2Payload = "Max TSOv2 Payload"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Strings section for US English language systems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+loc.vmxnet3.DeviceDesc     = "vmxnet3 Ethernet Adapter"
+loc.vmxnet3.ndis5.DispName = "vmxnet3 NDIS 5 Ethernet Adapter Driver"
+loc.vmxnet3.ndis6.DispName = "vmxnet3 NDIS 6 Ethernet Adapter Driver"
+
+
+
+;
+; German
+;
+[Strings.0407]
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Common non-Localizable strings section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FLG_ADDREG_KEYONLY        = 0x00000010
+FLG_ADDREG_TYPE_DWORD     = 0x00010001
+
+VMware                         = "VMware, Inc."
+DiskDescription                = "vmxnet3 Driver Disk 1"
+
+
+
+
+vmxnet3.installers.value.name    = "vwdk.installers"
+
+vmxnet3.installers.value.windows = "Windows"
+SpeedDuplex = "Speed & Duplex"
+AutoNegotiation = "Auto Negotiation"
+10Half    = "10 Mbps Half Duplex"
+10Full    = "10 Mbps Full Duplex"
+100Half   = "100 Mbps Half Duplex"
+100Full   = "100 Mbps Full Duplex"
+1000Half  = "1.0 Gbps Half Duplex"
+1000Full  = "1.0 Gbps Full Duplex"
+10000Full = "10 Gbps Full Duplex"
+NetworkAddress = "MAC Address"
+PriorityVLANTag = "Priority / VLAN tag"
+PriorityVlanDisabled = "Priority & VLAN Disabled"
+PriorityEnabled = "Priority Enabled"
+VlanEnabled = "VLAN Enabled"
+PriorityVlanEnabled = "Priority & VLAN Enabled"
+VlanId = "VLAN ID"
+JumboPacket = "Jumbo Packet"
+Standard1500 = "Standard 1500"
+Jumbo9000    = "Jumbo 9000"
+InterruptModeration = "Interrupt Moderation"
+Disabled = "Disabled"
+Enabled  = "Enabled"
+OffloadVlanEncap = "Offload tagged traffic"
+EnableWakeOnLan = "Wake-on-LAN"
+WakeOnMagicPacket = "Wake on magic packet"
+WakeOnPattern = "Wake on pattern match"
+IPChecksumOffloadIPv4 = "IPv4 Checksum Offload"
+TxEnabled = "Tx Enabled"
+RxEnabled = "Rx Enabled"
+TxRxEnabled = "Rx & Tx Enabled"
+TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
+UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
+OffloadIpOptions  = "Offload IP Options"
+OffloadTcpOptions = "Offload TCP Options"
+TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
+UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
+LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
+LsoV2IPv4 = "Large Send Offload V2 (IPv4)"
+LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
+RSS = "Receive Side Scaling"
+RssBaseProcNumber = "RSS Base Processor Number"
+MaxRssProcessors  = "Maximum number of RSS Processors"
+NumRSSQueues = "Maximum number of RSS queues"
+RxThrottle = "Receive Throttle"
+RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
+RscIPv4 ="Recv Segment Coalescing (IPv4)"
+RscIPv6 ="Recv Segment Coalescing (IPv6)"
+CoalSchemeMode = "Interrupt Coalescing Scheme Mode"
+Adaptive = "Adaptive"
+Static = "Static"
+RBC = "RBC"
+Default = "Default Scheme"
+IntrRate = "Interrupt Rate"
+TxDepth = "Tx Depth"
+TxCompDepth = "Tx Completion Depth"
+RxDepth = "Rx Depth"
+
+num1    = "1"
+num2    = "2"
+num4    = "4"
+num8    = "8"
+num16   = "16"
+num32   = "32"
+num64   = "64"
+num128  = "128"
+num256  = "256"
+num512  = "512"
+num630  = "630"
+num768  = "768"
+num896  = "896"
+num1024 = "1024"
+num1536 = "1536"
+num2048 = "2048"
+num3072 = "3072"
+num4096 = "4096"
+num8192 = "8192"
+
+16K = "16 K"
+24K = "24 K"
+32K = "32 K"
+48K = "48 K"
+63K = "63 K"
+64K = "64 K"
+80K = "80 K"
+96K = "96 K"
+128K = "128 K"
+192K = "192 K"
+256K = "256 K"
+
+RxBufferReserve   = "Low Rx Buffer Reserve"
+MaxRxRing1Length = "Rx Ring #1 Size"
+MaxRxRing2Length = "Rx Ring #2 Size"
+MaxTxRingLength = "Tx Ring Size"
+TxDataDescLength = "Tx Data Descriptor Length"
+RxDataDescLength = "Rx Data Descriptor Length"
+NumRxBuffersSmall = "Small Rx Buffers"
+NumRxBuffersLarge = "Large Rx Buffers"
+NumTxBuffers = "Tx Buffers"
+MaxRxQueues = "Max Rx Queues"
+MaxTxQueues = "Max Tx Queues"
+MaxTSOv1Payload = "Max TSOv1 Payload"
+MaxTSOv2Payload = "Max TSOv2 Payload"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Strings section for German language systems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+loc.vmxnet3.DeviceDesc     = "Ethernet-Adapter f¸r vmxnet3"
+loc.vmxnet3.ndis5.DispName = "Ethernet-Adaptertreiber f¸r vmxnet3 NDIS 5"
+loc.vmxnet3.ndis6.DispName = "Ethernet-Adaptertreiber f¸r vmxnet3 NDIS 6"
+
+
+
+;
+; Spanish
+;
+[Strings.0C0A]
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Common non-Localizable strings section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FLG_ADDREG_KEYONLY        = 0x00000010
+FLG_ADDREG_TYPE_DWORD     = 0x00010001
+
+VMware                         = "VMware, Inc."
+DiskDescription                = "vmxnet3 Driver Disk 1"
+
+
+
+
+vmxnet3.installers.value.name    = "vwdk.installers"
+
+vmxnet3.installers.value.windows = "Windows"
+SpeedDuplex = "Speed & Duplex"
+AutoNegotiation = "Auto Negotiation"
+10Half    = "10 Mbps Half Duplex"
+10Full    = "10 Mbps Full Duplex"
+100Half   = "100 Mbps Half Duplex"
+100Full   = "100 Mbps Full Duplex"
+1000Half  = "1.0 Gbps Half Duplex"
+1000Full  = "1.0 Gbps Full Duplex"
+10000Full = "10 Gbps Full Duplex"
+NetworkAddress = "MAC Address"
+PriorityVLANTag = "Priority / VLAN tag"
+PriorityVlanDisabled = "Priority & VLAN Disabled"
+PriorityEnabled = "Priority Enabled"
+VlanEnabled = "VLAN Enabled"
+PriorityVlanEnabled = "Priority & VLAN Enabled"
+VlanId = "VLAN ID"
+JumboPacket = "Jumbo Packet"
+Standard1500 = "Standard 1500"
+Jumbo9000    = "Jumbo 9000"
+InterruptModeration = "Interrupt Moderation"
+Disabled = "Disabled"
+Enabled  = "Enabled"
+OffloadVlanEncap = "Offload tagged traffic"
+EnableWakeOnLan = "Wake-on-LAN"
+WakeOnMagicPacket = "Wake on magic packet"
+WakeOnPattern = "Wake on pattern match"
+IPChecksumOffloadIPv4 = "IPv4 Checksum Offload"
+TxEnabled = "Tx Enabled"
+RxEnabled = "Rx Enabled"
+TxRxEnabled = "Rx & Tx Enabled"
+TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
+UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
+OffloadIpOptions  = "Offload IP Options"
+OffloadTcpOptions = "Offload TCP Options"
+TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
+UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
+LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
+LsoV2IPv4 = "Large Send Offload V2 (IPv4)"
+LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
+RSS = "Receive Side Scaling"
+RssBaseProcNumber = "RSS Base Processor Number"
+MaxRssProcessors  = "Maximum number of RSS Processors"
+NumRSSQueues = "Maximum number of RSS queues"
+RxThrottle = "Receive Throttle"
+RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
+RscIPv4 ="Recv Segment Coalescing (IPv4)"
+RscIPv6 ="Recv Segment Coalescing (IPv6)"
+CoalSchemeMode = "Interrupt Coalescing Scheme Mode"
+Adaptive = "Adaptive"
+Static = "Static"
+RBC = "RBC"
+Default = "Default Scheme"
+IntrRate = "Interrupt Rate"
+TxDepth = "Tx Depth"
+TxCompDepth = "Tx Completion Depth"
+RxDepth = "Rx Depth"
+
+num1    = "1"
+num2    = "2"
+num4    = "4"
+num8    = "8"
+num16   = "16"
+num32   = "32"
+num64   = "64"
+num128  = "128"
+num256  = "256"
+num512  = "512"
+num630  = "630"
+num768  = "768"
+num896  = "896"
+num1024 = "1024"
+num1536 = "1536"
+num2048 = "2048"
+num3072 = "3072"
+num4096 = "4096"
+num8192 = "8192"
+
+16K = "16 K"
+24K = "24 K"
+32K = "32 K"
+48K = "48 K"
+63K = "63 K"
+64K = "64 K"
+80K = "80 K"
+96K = "96 K"
+128K = "128 K"
+192K = "192 K"
+256K = "256 K"
+
+RxBufferReserve   = "Low Rx Buffer Reserve"
+MaxRxRing1Length = "Rx Ring #1 Size"
+MaxRxRing2Length = "Rx Ring #2 Size"
+MaxTxRingLength = "Tx Ring Size"
+TxDataDescLength = "Tx Data Descriptor Length"
+RxDataDescLength = "Rx Data Descriptor Length"
+NumRxBuffersSmall = "Small Rx Buffers"
+NumRxBuffersLarge = "Large Rx Buffers"
+NumTxBuffers = "Tx Buffers"
+MaxRxQueues = "Max Rx Queues"
+MaxTxQueues = "Max Tx Queues"
+MaxTSOv1Payload = "Max TSOv1 Payload"
+MaxTSOv2Payload = "Max TSOv2 Payload"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Strings section for International Spanish language systems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+loc.vmxnet3.DeviceDesc     = "Adaptador Ethernet vmxnet3"
+loc.vmxnet3.ndis5.DispName = "Controlador de adaptador Ethernet NDIS 5 vmxnet3"
+loc.vmxnet3.ndis6.DispName = "Controlador de adaptador Ethernet NDIS 6 vmxnet3"
+
+
+
+;
+; French
+;
+[Strings.040C]
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Common non-Localizable strings section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FLG_ADDREG_KEYONLY        = 0x00000010
+FLG_ADDREG_TYPE_DWORD     = 0x00010001
+
+VMware                         = "VMware, Inc."
+DiskDescription                = "vmxnet3 Driver Disk 1"
+
+
+
+
+vmxnet3.installers.value.name    = "vwdk.installers"
+
+vmxnet3.installers.value.windows = "Windows"
+SpeedDuplex = "Speed & Duplex"
+AutoNegotiation = "Auto Negotiation"
+10Half    = "10 Mbps Half Duplex"
+10Full    = "10 Mbps Full Duplex"
+100Half   = "100 Mbps Half Duplex"
+100Full   = "100 Mbps Full Duplex"
+1000Half  = "1.0 Gbps Half Duplex"
+1000Full  = "1.0 Gbps Full Duplex"
+10000Full = "10 Gbps Full Duplex"
+NetworkAddress = "MAC Address"
+PriorityVLANTag = "Priority / VLAN tag"
+PriorityVlanDisabled = "Priority & VLAN Disabled"
+PriorityEnabled = "Priority Enabled"
+VlanEnabled = "VLAN Enabled"
+PriorityVlanEnabled = "Priority & VLAN Enabled"
+VlanId = "VLAN ID"
+JumboPacket = "Jumbo Packet"
+Standard1500 = "Standard 1500"
+Jumbo9000    = "Jumbo 9000"
+InterruptModeration = "Interrupt Moderation"
+Disabled = "Disabled"
+Enabled  = "Enabled"
+OffloadVlanEncap = "Offload tagged traffic"
+EnableWakeOnLan = "Wake-on-LAN"
+WakeOnMagicPacket = "Wake on magic packet"
+WakeOnPattern = "Wake on pattern match"
+IPChecksumOffloadIPv4 = "IPv4 Checksum Offload"
+TxEnabled = "Tx Enabled"
+RxEnabled = "Rx Enabled"
+TxRxEnabled = "Rx & Tx Enabled"
+TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
+UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
+OffloadIpOptions  = "Offload IP Options"
+OffloadTcpOptions = "Offload TCP Options"
+TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
+UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
+LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
+LsoV2IPv4 = "Large Send Offload V2 (IPv4)"
+LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
+RSS = "Receive Side Scaling"
+RssBaseProcNumber = "RSS Base Processor Number"
+MaxRssProcessors  = "Maximum number of RSS Processors"
+NumRSSQueues = "Maximum number of RSS queues"
+RxThrottle = "Receive Throttle"
+RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
+RscIPv4 ="Recv Segment Coalescing (IPv4)"
+RscIPv6 ="Recv Segment Coalescing (IPv6)"
+CoalSchemeMode = "Interrupt Coalescing Scheme Mode"
+Adaptive = "Adaptive"
+Static = "Static"
+RBC = "RBC"
+Default = "Default Scheme"
+IntrRate = "Interrupt Rate"
+TxDepth = "Tx Depth"
+TxCompDepth = "Tx Completion Depth"
+RxDepth = "Rx Depth"
+
+num1    = "1"
+num2    = "2"
+num4    = "4"
+num8    = "8"
+num16   = "16"
+num32   = "32"
+num64   = "64"
+num128  = "128"
+num256  = "256"
+num512  = "512"
+num630  = "630"
+num768  = "768"
+num896  = "896"
+num1024 = "1024"
+num1536 = "1536"
+num2048 = "2048"
+num3072 = "3072"
+num4096 = "4096"
+num8192 = "8192"
+
+16K = "16 K"
+24K = "24 K"
+32K = "32 K"
+48K = "48 K"
+63K = "63 K"
+64K = "64 K"
+80K = "80 K"
+96K = "96 K"
+128K = "128 K"
+192K = "192 K"
+256K = "256 K"
+
+RxBufferReserve   = "Low Rx Buffer Reserve"
+MaxRxRing1Length = "Rx Ring #1 Size"
+MaxRxRing2Length = "Rx Ring #2 Size"
+MaxTxRingLength = "Tx Ring Size"
+TxDataDescLength = "Tx Data Descriptor Length"
+RxDataDescLength = "Rx Data Descriptor Length"
+NumRxBuffersSmall = "Small Rx Buffers"
+NumRxBuffersLarge = "Large Rx Buffers"
+NumTxBuffers = "Tx Buffers"
+MaxRxQueues = "Max Rx Queues"
+MaxTxQueues = "Max Tx Queues"
+MaxTSOv1Payload = "Max TSOv1 Payload"
+MaxTSOv2Payload = "Max TSOv2 Payload"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Strings section for French language systems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+loc.vmxnet3.DeviceDesc     = "Adaptateur Ethernet vmxnet3"
+loc.vmxnet3.ndis5.DispName = "Pilote d'adaptateur Ethernet vmxnet3 NDIS†5"
+loc.vmxnet3.ndis6.DispName = "Pilote d'adaptateur Ethernet vmxnet3 NDIS†6"
+
+
+
+;
+; Italian
+;
+[Strings.0410]
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Common non-Localizable strings section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FLG_ADDREG_KEYONLY        = 0x00000010
+FLG_ADDREG_TYPE_DWORD     = 0x00010001
+
+VMware                         = "VMware, Inc."
+DiskDescription                = "vmxnet3 Driver Disk 1"
+
+
+
+
+vmxnet3.installers.value.name    = "vwdk.installers"
+
+vmxnet3.installers.value.windows = "Windows"
+SpeedDuplex = "Speed & Duplex"
+AutoNegotiation = "Auto Negotiation"
+10Half    = "10 Mbps Half Duplex"
+10Full    = "10 Mbps Full Duplex"
+100Half   = "100 Mbps Half Duplex"
+100Full   = "100 Mbps Full Duplex"
+1000Half  = "1.0 Gbps Half Duplex"
+1000Full  = "1.0 Gbps Full Duplex"
+10000Full = "10 Gbps Full Duplex"
+NetworkAddress = "MAC Address"
+PriorityVLANTag = "Priority / VLAN tag"
+PriorityVlanDisabled = "Priority & VLAN Disabled"
+PriorityEnabled = "Priority Enabled"
+VlanEnabled = "VLAN Enabled"
+PriorityVlanEnabled = "Priority & VLAN Enabled"
+VlanId = "VLAN ID"
+JumboPacket = "Jumbo Packet"
+Standard1500 = "Standard 1500"
+Jumbo9000    = "Jumbo 9000"
+InterruptModeration = "Interrupt Moderation"
+Disabled = "Disabled"
+Enabled  = "Enabled"
+OffloadVlanEncap = "Offload tagged traffic"
+EnableWakeOnLan = "Wake-on-LAN"
+WakeOnMagicPacket = "Wake on magic packet"
+WakeOnPattern = "Wake on pattern match"
+IPChecksumOffloadIPv4 = "IPv4 Checksum Offload"
+TxEnabled = "Tx Enabled"
+RxEnabled = "Rx Enabled"
+TxRxEnabled = "Rx & Tx Enabled"
+TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
+UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
+OffloadIpOptions  = "Offload IP Options"
+OffloadTcpOptions = "Offload TCP Options"
+TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
+UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
+LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
+LsoV2IPv4 = "Large Send Offload V2 (IPv4)"
+LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
+RSS = "Receive Side Scaling"
+RssBaseProcNumber = "RSS Base Processor Number"
+MaxRssProcessors  = "Maximum number of RSS Processors"
+NumRSSQueues = "Maximum number of RSS queues"
+RxThrottle = "Receive Throttle"
+RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
+RscIPv4 ="Recv Segment Coalescing (IPv4)"
+RscIPv6 ="Recv Segment Coalescing (IPv6)"
+CoalSchemeMode = "Interrupt Coalescing Scheme Mode"
+Adaptive = "Adaptive"
+Static = "Static"
+RBC = "RBC"
+Default = "Default Scheme"
+IntrRate = "Interrupt Rate"
+TxDepth = "Tx Depth"
+TxCompDepth = "Tx Completion Depth"
+RxDepth = "Rx Depth"
+
+num1    = "1"
+num2    = "2"
+num4    = "4"
+num8    = "8"
+num16   = "16"
+num32   = "32"
+num64   = "64"
+num128  = "128"
+num256  = "256"
+num512  = "512"
+num630  = "630"
+num768  = "768"
+num896  = "896"
+num1024 = "1024"
+num1536 = "1536"
+num2048 = "2048"
+num3072 = "3072"
+num4096 = "4096"
+num8192 = "8192"
+
+16K = "16 K"
+24K = "24 K"
+32K = "32 K"
+48K = "48 K"
+63K = "63 K"
+64K = "64 K"
+80K = "80 K"
+96K = "96 K"
+128K = "128 K"
+192K = "192 K"
+256K = "256 K"
+
+RxBufferReserve   = "Low Rx Buffer Reserve"
+MaxRxRing1Length = "Rx Ring #1 Size"
+MaxRxRing2Length = "Rx Ring #2 Size"
+MaxTxRingLength = "Tx Ring Size"
+TxDataDescLength = "Tx Data Descriptor Length"
+RxDataDescLength = "Rx Data Descriptor Length"
+NumRxBuffersSmall = "Small Rx Buffers"
+NumRxBuffersLarge = "Large Rx Buffers"
+NumTxBuffers = "Tx Buffers"
+MaxRxQueues = "Max Rx Queues"
+MaxTxQueues = "Max Tx Queues"
+MaxTSOv1Payload = "Max TSOv1 Payload"
+MaxTSOv2Payload = "Max TSOv2 Payload"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Strings section for Italian language systems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+loc.vmxnet3.DeviceDesc     = "Adattatore Ethernet vmxnet3"
+loc.vmxnet3.ndis5.DispName = "Driver adattatore Ethernet vmxnet3 NDIS 5"
+loc.vmxnet3.ndis6.DispName = "Driver adattatore Ethernet vmxnet3 NDIS 6"
+
+
+
+;
+; Japanese
+;
+[Strings.0411]
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Common non-Localizable strings section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FLG_ADDREG_KEYONLY        = 0x00000010
+FLG_ADDREG_TYPE_DWORD     = 0x00010001
+
+VMware                         = "VMware, Inc."
+DiskDescription                = "vmxnet3 Driver Disk 1"
+
+
+
+
+vmxnet3.installers.value.name    = "vwdk.installers"
+
+vmxnet3.installers.value.windows = "Windows"
+SpeedDuplex = "Speed & Duplex"
+AutoNegotiation = "Auto Negotiation"
+10Half    = "10 Mbps Half Duplex"
+10Full    = "10 Mbps Full Duplex"
+100Half   = "100 Mbps Half Duplex"
+100Full   = "100 Mbps Full Duplex"
+1000Half  = "1.0 Gbps Half Duplex"
+1000Full  = "1.0 Gbps Full Duplex"
+10000Full = "10 Gbps Full Duplex"
+NetworkAddress = "MAC Address"
+PriorityVLANTag = "Priority / VLAN tag"
+PriorityVlanDisabled = "Priority & VLAN Disabled"
+PriorityEnabled = "Priority Enabled"
+VlanEnabled = "VLAN Enabled"
+PriorityVlanEnabled = "Priority & VLAN Enabled"
+VlanId = "VLAN ID"
+JumboPacket = "Jumbo Packet"
+Standard1500 = "Standard 1500"
+Jumbo9000    = "Jumbo 9000"
+InterruptModeration = "Interrupt Moderation"
+Disabled = "Disabled"
+Enabled  = "Enabled"
+OffloadVlanEncap = "Offload tagged traffic"
+EnableWakeOnLan = "Wake-on-LAN"
+WakeOnMagicPacket = "Wake on magic packet"
+WakeOnPattern = "Wake on pattern match"
+IPChecksumOffloadIPv4 = "IPv4 Checksum Offload"
+TxEnabled = "Tx Enabled"
+RxEnabled = "Rx Enabled"
+TxRxEnabled = "Rx & Tx Enabled"
+TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
+UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
+OffloadIpOptions  = "Offload IP Options"
+OffloadTcpOptions = "Offload TCP Options"
+TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
+UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
+LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
+LsoV2IPv4 = "Large Send Offload V2 (IPv4)"
+LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
+RSS = "Receive Side Scaling"
+RssBaseProcNumber = "RSS Base Processor Number"
+MaxRssProcessors  = "Maximum number of RSS Processors"
+NumRSSQueues = "Maximum number of RSS queues"
+RxThrottle = "Receive Throttle"
+RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
+RscIPv4 ="Recv Segment Coalescing (IPv4)"
+RscIPv6 ="Recv Segment Coalescing (IPv6)"
+CoalSchemeMode = "Interrupt Coalescing Scheme Mode"
+Adaptive = "Adaptive"
+Static = "Static"
+RBC = "RBC"
+Default = "Default Scheme"
+IntrRate = "Interrupt Rate"
+TxDepth = "Tx Depth"
+TxCompDepth = "Tx Completion Depth"
+RxDepth = "Rx Depth"
+
+num1    = "1"
+num2    = "2"
+num4    = "4"
+num8    = "8"
+num16   = "16"
+num32   = "32"
+num64   = "64"
+num128  = "128"
+num256  = "256"
+num512  = "512"
+num630  = "630"
+num768  = "768"
+num896  = "896"
+num1024 = "1024"
+num1536 = "1536"
+num2048 = "2048"
+num3072 = "3072"
+num4096 = "4096"
+num8192 = "8192"
+
+16K = "16 K"
+24K = "24 K"
+32K = "32 K"
+48K = "48 K"
+63K = "63 K"
+64K = "64 K"
+80K = "80 K"
+96K = "96 K"
+128K = "128 K"
+192K = "192 K"
+256K = "256 K"
+
+RxBufferReserve   = "Low Rx Buffer Reserve"
+MaxRxRing1Length = "Rx Ring #1 Size"
+MaxRxRing2Length = "Rx Ring #2 Size"
+MaxTxRingLength = "Tx Ring Size"
+TxDataDescLength = "Tx Data Descriptor Length"
+RxDataDescLength = "Rx Data Descriptor Length"
+NumRxBuffersSmall = "Small Rx Buffers"
+NumRxBuffersLarge = "Large Rx Buffers"
+NumTxBuffers = "Tx Buffers"
+MaxRxQueues = "Max Rx Queues"
+MaxTxQueues = "Max Tx Queues"
+MaxTSOv1Payload = "Max TSOv1 Payload"
+MaxTSOv2Payload = "Max TSOv2 Payload"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Strings section for Japanese language systems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+loc.vmxnet3.DeviceDesc     = "vmxnet3 ÉCÅ[ÉTÉlÉbÉg ÉAÉ_ÉvÉ^"
+loc.vmxnet3.ndis5.DispName = "vmxnet3 NDIS 5 ÉCÅ[ÉTÉlÉbÉg ÉAÉ_ÉvÉ^ ÉhÉâÉCÉo"
+loc.vmxnet3.ndis6.DispName = "vmxnet3 NDIS 6 ÉCÅ[ÉTÉlÉbÉg ÉAÉ_ÉvÉ^ ÉhÉâÉCÉo"
+
+
+
+;
+; Korean
+;
+[Strings.0412]
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Common non-Localizable strings section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FLG_ADDREG_KEYONLY        = 0x00000010
+FLG_ADDREG_TYPE_DWORD     = 0x00010001
+
+VMware                         = "VMware, Inc."
+DiskDescription                = "vmxnet3 Driver Disk 1"
+
+
+
+
+vmxnet3.installers.value.name    = "vwdk.installers"
+
+vmxnet3.installers.value.windows = "Windows"
+SpeedDuplex = "Speed & Duplex"
+AutoNegotiation = "Auto Negotiation"
+10Half    = "10 Mbps Half Duplex"
+10Full    = "10 Mbps Full Duplex"
+100Half   = "100 Mbps Half Duplex"
+100Full   = "100 Mbps Full Duplex"
+1000Half  = "1.0 Gbps Half Duplex"
+1000Full  = "1.0 Gbps Full Duplex"
+10000Full = "10 Gbps Full Duplex"
+NetworkAddress = "MAC Address"
+PriorityVLANTag = "Priority / VLAN tag"
+PriorityVlanDisabled = "Priority & VLAN Disabled"
+PriorityEnabled = "Priority Enabled"
+VlanEnabled = "VLAN Enabled"
+PriorityVlanEnabled = "Priority & VLAN Enabled"
+VlanId = "VLAN ID"
+JumboPacket = "Jumbo Packet"
+Standard1500 = "Standard 1500"
+Jumbo9000    = "Jumbo 9000"
+InterruptModeration = "Interrupt Moderation"
+Disabled = "Disabled"
+Enabled  = "Enabled"
+OffloadVlanEncap = "Offload tagged traffic"
+EnableWakeOnLan = "Wake-on-LAN"
+WakeOnMagicPacket = "Wake on magic packet"
+WakeOnPattern = "Wake on pattern match"
+IPChecksumOffloadIPv4 = "IPv4 Checksum Offload"
+TxEnabled = "Tx Enabled"
+RxEnabled = "Rx Enabled"
+TxRxEnabled = "Rx & Tx Enabled"
+TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
+UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
+OffloadIpOptions  = "Offload IP Options"
+OffloadTcpOptions = "Offload TCP Options"
+TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
+UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
+LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
+LsoV2IPv4 = "Large Send Offload V2 (IPv4)"
+LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
+RSS = "Receive Side Scaling"
+RssBaseProcNumber = "RSS Base Processor Number"
+MaxRssProcessors  = "Maximum number of RSS Processors"
+NumRSSQueues = "Maximum number of RSS queues"
+RxThrottle = "Receive Throttle"
+RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
+RscIPv4 ="Recv Segment Coalescing (IPv4)"
+RscIPv6 ="Recv Segment Coalescing (IPv6)"
+CoalSchemeMode = "Interrupt Coalescing Scheme Mode"
+Adaptive = "Adaptive"
+Static = "Static"
+RBC = "RBC"
+Default = "Default Scheme"
+IntrRate = "Interrupt Rate"
+TxDepth = "Tx Depth"
+TxCompDepth = "Tx Completion Depth"
+RxDepth = "Rx Depth"
+
+num1    = "1"
+num2    = "2"
+num4    = "4"
+num8    = "8"
+num16   = "16"
+num32   = "32"
+num64   = "64"
+num128  = "128"
+num256  = "256"
+num512  = "512"
+num630  = "630"
+num768  = "768"
+num896  = "896"
+num1024 = "1024"
+num1536 = "1536"
+num2048 = "2048"
+num3072 = "3072"
+num4096 = "4096"
+num8192 = "8192"
+
+16K = "16 K"
+24K = "24 K"
+32K = "32 K"
+48K = "48 K"
+63K = "63 K"
+64K = "64 K"
+80K = "80 K"
+96K = "96 K"
+128K = "128 K"
+192K = "192 K"
+256K = "256 K"
+
+RxBufferReserve   = "Low Rx Buffer Reserve"
+MaxRxRing1Length = "Rx Ring #1 Size"
+MaxRxRing2Length = "Rx Ring #2 Size"
+MaxTxRingLength = "Tx Ring Size"
+TxDataDescLength = "Tx Data Descriptor Length"
+RxDataDescLength = "Rx Data Descriptor Length"
+NumRxBuffersSmall = "Small Rx Buffers"
+NumRxBuffersLarge = "Large Rx Buffers"
+NumTxBuffers = "Tx Buffers"
+MaxRxQueues = "Max Rx Queues"
+MaxTxQueues = "Max Tx Queues"
+MaxTSOv1Payload = "Max TSOv1 Payload"
+MaxTSOv2Payload = "Max TSOv2 Payload"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Strings section for Korean language systems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+loc.vmxnet3.DeviceDesc     = "vmxnet3 ¿Ã¥ı≥› æÓ¥≈Õ"
+loc.vmxnet3.ndis5.DispName = "vmxnet3 NDIS 5 ¿Ã¥ı≥› æÓ¥≈Õ µÂ∂Û¿Ãπˆ"
+loc.vmxnet3.ndis6.DispName = "vmxnet3 NDIS 6 ¿Ã¥ı≥› æÓ¥≈Õ µÂ∂Û¿Ãπˆ"
+
+
+
+;
+; Chinese (Simplified)
+;
+[Strings.0804]
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Common non-Localizable strings section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FLG_ADDREG_KEYONLY        = 0x00000010
+FLG_ADDREG_TYPE_DWORD     = 0x00010001
+
+VMware                         = "VMware, Inc."
+DiskDescription                = "vmxnet3 Driver Disk 1"
+
+
+
+
+vmxnet3.installers.value.name    = "vwdk.installers"
+
+vmxnet3.installers.value.windows = "Windows"
+SpeedDuplex = "Speed & Duplex"
+AutoNegotiation = "Auto Negotiation"
+10Half    = "10 Mbps Half Duplex"
+10Full    = "10 Mbps Full Duplex"
+100Half   = "100 Mbps Half Duplex"
+100Full   = "100 Mbps Full Duplex"
+1000Half  = "1.0 Gbps Half Duplex"
+1000Full  = "1.0 Gbps Full Duplex"
+10000Full = "10 Gbps Full Duplex"
+NetworkAddress = "MAC Address"
+PriorityVLANTag = "Priority / VLAN tag"
+PriorityVlanDisabled = "Priority & VLAN Disabled"
+PriorityEnabled = "Priority Enabled"
+VlanEnabled = "VLAN Enabled"
+PriorityVlanEnabled = "Priority & VLAN Enabled"
+VlanId = "VLAN ID"
+JumboPacket = "Jumbo Packet"
+Standard1500 = "Standard 1500"
+Jumbo9000    = "Jumbo 9000"
+InterruptModeration = "Interrupt Moderation"
+Disabled = "Disabled"
+Enabled  = "Enabled"
+OffloadVlanEncap = "Offload tagged traffic"
+EnableWakeOnLan = "Wake-on-LAN"
+WakeOnMagicPacket = "Wake on magic packet"
+WakeOnPattern = "Wake on pattern match"
+IPChecksumOffloadIPv4 = "IPv4 Checksum Offload"
+TxEnabled = "Tx Enabled"
+RxEnabled = "Rx Enabled"
+TxRxEnabled = "Rx & Tx Enabled"
+TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
+UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
+OffloadIpOptions  = "Offload IP Options"
+OffloadTcpOptions = "Offload TCP Options"
+TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
+UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
+LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
+LsoV2IPv4 = "Large Send Offload V2 (IPv4)"
+LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
+RSS = "Receive Side Scaling"
+RssBaseProcNumber = "RSS Base Processor Number"
+MaxRssProcessors  = "Maximum number of RSS Processors"
+NumRSSQueues = "Maximum number of RSS queues"
+RxThrottle = "Receive Throttle"
+RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
+RscIPv4 ="Recv Segment Coalescing (IPv4)"
+RscIPv6 ="Recv Segment Coalescing (IPv6)"
+CoalSchemeMode = "Interrupt Coalescing Scheme Mode"
+Adaptive = "Adaptive"
+Static = "Static"
+RBC = "RBC"
+Default = "Default Scheme"
+IntrRate = "Interrupt Rate"
+TxDepth = "Tx Depth"
+TxCompDepth = "Tx Completion Depth"
+RxDepth = "Rx Depth"
+
+num1    = "1"
+num2    = "2"
+num4    = "4"
+num8    = "8"
+num16   = "16"
+num32   = "32"
+num64   = "64"
+num128  = "128"
+num256  = "256"
+num512  = "512"
+num630  = "630"
+num768  = "768"
+num896  = "896"
+num1024 = "1024"
+num1536 = "1536"
+num2048 = "2048"
+num3072 = "3072"
+num4096 = "4096"
+num8192 = "8192"
+
+16K = "16 K"
+24K = "24 K"
+32K = "32 K"
+48K = "48 K"
+63K = "63 K"
+64K = "64 K"
+80K = "80 K"
+96K = "96 K"
+128K = "128 K"
+192K = "192 K"
+256K = "256 K"
+
+RxBufferReserve   = "Low Rx Buffer Reserve"
+MaxRxRing1Length = "Rx Ring #1 Size"
+MaxRxRing2Length = "Rx Ring #2 Size"
+MaxTxRingLength = "Tx Ring Size"
+TxDataDescLength = "Tx Data Descriptor Length"
+RxDataDescLength = "Rx Data Descriptor Length"
+NumRxBuffersSmall = "Small Rx Buffers"
+NumRxBuffersLarge = "Large Rx Buffers"
+NumTxBuffers = "Tx Buffers"
+MaxRxQueues = "Max Rx Queues"
+MaxTxQueues = "Max Tx Queues"
+MaxTSOv1Payload = "Max TSOv1 Payload"
+MaxTSOv2Payload = "Max TSOv2 Payload"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Strings section for Simplified Chinese language systems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+loc.vmxnet3.DeviceDesc     = "vmxnet3 “‘Ã´Õ¯  ≈‰∆˜"
+loc.vmxnet3.ndis5.DispName = "vmxnet3 NDIS 5 “‘Ã´Õ¯  ≈‰∆˜«˝∂Ø≥Ã–Ú"
+loc.vmxnet3.ndis6.DispName = "vmxnet3 NDIS 6 “‘Ã´Õ¯  ≈‰∆˜«˝∂Ø≥Ã–Ú"
+
+
+
+;
+; Chinese (Traditional)
+;
+[Strings.0404]
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Common non-Localizable strings section
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+FLG_ADDREG_KEYONLY        = 0x00000010
+FLG_ADDREG_TYPE_DWORD     = 0x00010001
+
+VMware                         = "VMware, Inc."
+DiskDescription                = "vmxnet3 Driver Disk 1"
+
+
+
+
+vmxnet3.installers.value.name    = "vwdk.installers"
+
+vmxnet3.installers.value.windows = "Windows"
+SpeedDuplex = "Speed & Duplex"
+AutoNegotiation = "Auto Negotiation"
+10Half    = "10 Mbps Half Duplex"
+10Full    = "10 Mbps Full Duplex"
+100Half   = "100 Mbps Half Duplex"
+100Full   = "100 Mbps Full Duplex"
+1000Half  = "1.0 Gbps Half Duplex"
+1000Full  = "1.0 Gbps Full Duplex"
+10000Full = "10 Gbps Full Duplex"
+NetworkAddress = "MAC Address"
+PriorityVLANTag = "Priority / VLAN tag"
+PriorityVlanDisabled = "Priority & VLAN Disabled"
+PriorityEnabled = "Priority Enabled"
+VlanEnabled = "VLAN Enabled"
+PriorityVlanEnabled = "Priority & VLAN Enabled"
+VlanId = "VLAN ID"
+JumboPacket = "Jumbo Packet"
+Standard1500 = "Standard 1500"
+Jumbo9000    = "Jumbo 9000"
+InterruptModeration = "Interrupt Moderation"
+Disabled = "Disabled"
+Enabled  = "Enabled"
+OffloadVlanEncap = "Offload tagged traffic"
+EnableWakeOnLan = "Wake-on-LAN"
+WakeOnMagicPacket = "Wake on magic packet"
+WakeOnPattern = "Wake on pattern match"
+IPChecksumOffloadIPv4 = "IPv4 Checksum Offload"
+TxEnabled = "Tx Enabled"
+RxEnabled = "Rx Enabled"
+TxRxEnabled = "Rx & Tx Enabled"
+TCPChecksumOffloadIPv4 = "TCP Checksum Offload (IPv4)"
+UDPChecksumOffloadIPv4 = "UDP Checksum Offload (IPv4)"
+OffloadIpOptions  = "Offload IP Options"
+OffloadTcpOptions = "Offload TCP Options"
+TCPChecksumOffloadIPv6 = "TCP Checksum Offload (IPv6)"
+UDPChecksumOffloadIPv6 = "UDP Checksum Offload (IPv6)"
+LsoV1IPv4Ndis6 = "IPv4 TSO Offload"
+LsoV2IPv4 = "Large Send Offload V2 (IPv4)"
+LsoV2IPv6 = "Large Send Offload V2 (IPv6)"
+RSS = "Receive Side Scaling"
+RssBaseProcNumber = "RSS Base Processor Number"
+MaxRssProcessors  = "Maximum number of RSS Processors"
+NumRSSQueues = "Maximum number of RSS queues"
+RxThrottle = "Receive Throttle"
+RxThrottleOnNDISAll = "Receive Throttle for NDIS ALL"
+RscIPv4 ="Recv Segment Coalescing (IPv4)"
+RscIPv6 ="Recv Segment Coalescing (IPv6)"
+CoalSchemeMode = "Interrupt Coalescing Scheme Mode"
+Adaptive = "Adaptive"
+Static = "Static"
+RBC = "RBC"
+Default = "Default Scheme"
+IntrRate = "Interrupt Rate"
+TxDepth = "Tx Depth"
+TxCompDepth = "Tx Completion Depth"
+RxDepth = "Rx Depth"
+
+num1    = "1"
+num2    = "2"
+num4    = "4"
+num8    = "8"
+num16   = "16"
+num32   = "32"
+num64   = "64"
+num128  = "128"
+num256  = "256"
+num512  = "512"
+num630  = "630"
+num768  = "768"
+num896  = "896"
+num1024 = "1024"
+num1536 = "1536"
+num2048 = "2048"
+num3072 = "3072"
+num4096 = "4096"
+num8192 = "8192"
+
+16K = "16 K"
+24K = "24 K"
+32K = "32 K"
+48K = "48 K"
+63K = "63 K"
+64K = "64 K"
+80K = "80 K"
+96K = "96 K"
+128K = "128 K"
+192K = "192 K"
+256K = "256 K"
+
+RxBufferReserve   = "Low Rx Buffer Reserve"
+MaxRxRing1Length = "Rx Ring #1 Size"
+MaxRxRing2Length = "Rx Ring #2 Size"
+MaxTxRingLength = "Tx Ring Size"
+TxDataDescLength = "Tx Data Descriptor Length"
+RxDataDescLength = "Rx Data Descriptor Length"
+NumRxBuffersSmall = "Small Rx Buffers"
+NumRxBuffersLarge = "Large Rx Buffers"
+NumTxBuffers = "Tx Buffers"
+MaxRxQueues = "Max Rx Queues"
+MaxTxQueues = "Max Tx Queues"
+MaxTSOv1Payload = "Max TSOv1 Payload"
+MaxTSOv2Payload = "Max TSOv2 Payload"
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;Strings section for Traditional Chinese language systems
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+loc.vmxnet3.DeviceDesc     = "vmxnet3 §A§”∫Ù∏Ù§∂≠±•d"
+loc.vmxnet3.ndis5.DispName = "vmxnet3 NDIS 5 §A§”∫Ù∏Ù§∂≠±•d≈X∞ µ{¶°"
+loc.vmxnet3.ndis6.DispName = "vmxnet3 NDIS 6 §A§”∫Ù∏Ù§∂≠±•d≈X∞ µ{¶°"
+
+

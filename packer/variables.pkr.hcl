@@ -47,9 +47,11 @@ variable "iso_checksum" {
   type    = string
 }
 variable "os_version" {
+  default = ""
   type    = string
 }
 variable "os_iso_path" {
+  default = ""
   type    = string
 }
 variable "guest_os_type" {
@@ -77,7 +79,8 @@ variable "mem_size" {
 }
 variable "os_family" {
   description = "OS Family builds the paths needed for packer"
-  type    = string
+  default     = ""
+  type        = string
 }
 variable "os_iso_url" {
   description = "The download url for the ISO"
