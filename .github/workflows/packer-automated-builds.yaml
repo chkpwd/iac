@@ -1,4 +1,4 @@
-name: Packer-Driven Debian 12 Deployment
+name: Packer-Driven Automated Deployments
 
 on:
   schedule:
@@ -28,8 +28,15 @@ env:
 
 jobs:
   packer:
+    strategy:
+      matrix:
+        include:
+          - os: linux
+            version: 12Deb
+          - os: windows
+            version: 22H2-W10
     runs-on: ubuntu-latest
-    name: Run Packer
+    name: Packer Build ${{ matrix.os }}-${{ matrix.version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -75,7 +82,7 @@ jobs:
       - name: Build image
         id: build
         run: |
-            packer build -force --only vsphere-iso.linux --var-file=./linux/12Deb.pkrvars.hcl \
+            packer build -force --only vsphere-iso.${{ matrix.os }} --var-file=./${{ matrix.os }}/${{ matrix.version }}.pkrvars.hcl \
             -var "vcenter_server=172.16.16.6" \
             -var "vcenter_host=172.16.16.3" \
             -var "vcenter_password=${{ secrets.VCENTER_PASSWORD }}" \
