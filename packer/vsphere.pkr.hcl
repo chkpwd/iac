@@ -27,17 +27,17 @@ source "vsphere-iso" "linux" {
   ssh_username = var.connection_username
   ssh_password = var.connection_password
 
-  # Needed for TPM
   vTPM         = var.enable_tpm
   firmware     = "efi"
+
+  cdrom_type   = var.cdrom_controller_type
+  disk_controller_type =  var.vhd_controller_type
 
   CPUs            = var.num_cores
   RAM             = var.mem_size
   CPU_hot_plug    = true
   RAM_hot_plug    = true
   RAM_reserve_all = true
-
-  disk_controller_type =  var.vhd_controller_type
 
   storage {
     disk_size             = var.root_disk_size
@@ -107,13 +107,18 @@ source "vsphere-iso" "windows" {
   ]
   iso_checksum          = var.iso_checksum
   guest_os_type         = var.guest_os_type
-  disk_controller_type  = var.vhd_controller_type
 
-  network_adapters {
-    # For windows, the vmware tools network drivers are required to be connected by floppy before tools is installed
-    network      = var.network_name
-    network_card = var.nic_type
-  }
+  vTPM                  = var.enable_tpm
+  firmware              = "efi"
+
+  disk_controller_type  = var.vhd_controller_type
+  cdrom_type   = var.cdrom_controller_type
+
+  CPUs                  = var.num_cores
+  cpu_cores             = var.num_cores
+  CPU_hot_plug          = true
+  RAM                   = var.mem_size
+  RAM_hot_plug          = true
 
   # SSH Communicator Settings
   communicator              = "ssh"
@@ -128,12 +133,12 @@ source "vsphere-iso" "windows" {
     disk_thin_provisioned = true
   }
 
-  CPUs                  = var.num_cores
-  cpu_cores             = var.num_cores
-  CPU_hot_plug          = true
-  RAM                   = var.mem_size
-  RAM_hot_plug          = true
-  firmware              = "efi"
+  network_adapters {
+    # For windows, the vmware tools network drivers are required to be connected by floppy before tools is installed
+    network      = var.network_name
+    network_card = var.nic_type
+  }
+
   floppy_files          = [
     "./boot_config/${var.os_version}/Autounattend.xml",
     "./scripts/Setup-OpenSSH.ps1",

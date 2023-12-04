@@ -100,6 +100,21 @@
                     <WillShowUI>OnError</WillShowUI>
                 </OSImage>
             </ImageInstall>
+            <RunSynchronousCommand>
+                <Order>1</Order>
+                <!-- This sets a bypass for TPM 2.0 check -->
+                <Path>cmd /c reg add "HKLM\SYSTEM\Setup\LabConfig" /f /v BypassTPMCheck /t REG_DWORD /d 1</Path>
+            </RunSynchronousCommand>
+            <RunSynchronousCommand>
+                <Order>2</Order>
+                <!-- This sets a bypass for Secure Boot check -->
+                <Path>cmd /c reg add "HKLM\SYSTEM\Setup\LabConfig" /f /v BypassSecureBootCheck /t REG_DWORD /d 1</Path>
+            </RunSynchronousCommand>
+            <RunSynchronousCommand>
+                <Order>3</Order>
+                <!-- This sets a bypass for RAM check -->
+                <Path>cmd /c reg add "HKLM\SYSTEM\Setup\LabConfig" /f /v BypassRAMCheck /t REG_DWORD /d 1</Path>
+            </RunSynchronousCommand>
             <UserData>
                 <ProductKey>
                     <key>W269N-WFGWX-YVC9B-4J6C9-T83GX</key>

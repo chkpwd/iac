@@ -121,3 +121,8 @@ variable "listen_address" {
   default = ""
   type    = string
 }
+
+variable "cdrom_controller_type" {
+  default = "ide"
+  type    = string
+}
