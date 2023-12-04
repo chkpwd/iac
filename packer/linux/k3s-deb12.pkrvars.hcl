@@ -5,6 +5,7 @@ iso_checksum_type   = "sha256"
 num_cores           = "1"
 mem_size            = "1024"
 root_disk_size      = "32000"
+vhd_controller_type = ["pvscsi"]
 guest_os_type       = "debian12_64Guest"
 machine_name        = "k3s-deb12"
 domain              = "local.chkpwd.com"
