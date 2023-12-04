@@ -98,7 +98,7 @@ source "vsphere-iso" "windows" {
   # VM Settings
   vm_name     		      = var.machine_name
   ip_wait_timeout       = "45m"
-  shutdown_command      = "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\""
+  shutdown_command      = "shutdown /s /t 10 /f /d p:4:1 /c 'Packer Shutdown'"
   shutdown_timeout      = "15m"
   vm_version            = var.vm_hardware_version
   iso_paths             = [
@@ -140,7 +140,7 @@ source "vsphere-iso" "windows" {
     "./scripts/Install-VMWareTools.ps1",
     "./scripts/Fix-Firewall.ps1",
     "./files/TaskbarLayout.xml",
-    "./files/drivers"
+    // "./files/drivers"
   ]
 }
 
