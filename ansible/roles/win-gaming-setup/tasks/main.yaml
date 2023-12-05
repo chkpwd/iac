@@ -43,6 +43,9 @@
 - name: Registry Edits
   ansible.builtin.include_tasks: registry.yaml
 
+- name: Configure sunshine
+  ansible.builtin.include_tasks: sunshine.yaml
+
 - name: Define Taskbar Layout
   ansible.windows.win_powershell:
     script: |

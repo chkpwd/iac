@@ -1,0 +1,8 @@
+---
+- name: Configure Sunshine
+  ansible.windows.win_powershell:
+    script: |
+      & "{{ sunshine_path }}\\scripts\\{{ item }}"
+  loop: "{{ sunshine_scripts }}"
+  loop_control:
+    label: "Executing Script: {{ item }}"
