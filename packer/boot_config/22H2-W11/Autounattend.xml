@@ -22,6 +22,12 @@
         </component>
 
         <component name="Microsoft-Windows-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <RunSynchronous>
+                <RunSynchronousCommand>
+                    <Order>1</Order>
+                    <Path>cmd /c reg add "HKLM\SYSTEM\Setup\LabConfig" /f /v BypassTPMCheck /t REG_DWORD /d 1</Path>
+                </RunSynchronousCommand>
+            </RunSynchronous>
             <DiskConfiguration>
                 <Disk wcm:action="add">
                     <DiskID>0</DiskID>
@@ -100,21 +106,6 @@
                     <WillShowUI>OnError</WillShowUI>
                 </OSImage>
             </ImageInstall>
-            <RunSynchronousCommand>
-                <Order>1</Order>
-                <!-- This sets a bypass for TPM 2.0 check -->
-                <Path>cmd /c reg add "HKLM\SYSTEM\Setup\LabConfig" /f /v BypassTPMCheck /t REG_DWORD /d 1</Path>
-            </RunSynchronousCommand>
-            <RunSynchronousCommand>
-                <Order>2</Order>
-                <!-- This sets a bypass for Secure Boot check -->
-                <Path>cmd /c reg add "HKLM\SYSTEM\Setup\LabConfig" /f /v BypassSecureBootCheck /t REG_DWORD /d 1</Path>
-            </RunSynchronousCommand>
-            <RunSynchronousCommand>
-                <Order>3</Order>
-                <!-- This sets a bypass for RAM check -->
-                <Path>cmd /c reg add "HKLM\SYSTEM\Setup\LabConfig" /f /v BypassRAMCheck /t REG_DWORD /d 1</Path>
-            </RunSynchronousCommand>
             <UserData>
                 <ProductKey>
                     <key>W269N-WFGWX-YVC9B-4J6C9-T83GX</key>
@@ -123,9 +114,7 @@
                 <FullName>vagrant</FullName>
                 <Organization></Organization>
             </UserData>
-
         </component>
-
     </settings>
 
     <settings pass="specialize">

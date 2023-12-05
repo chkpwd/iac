@@ -27,7 +27,6 @@ source "vsphere-iso" "linux" {
   ssh_username = var.connection_username
   ssh_password = var.connection_password
 
-  vTPM         = var.enable_tpm
   firmware     = "efi"
 
   cdrom_type   = var.cdrom_controller_type
@@ -108,7 +107,6 @@ source "vsphere-iso" "windows" {
   iso_checksum          = var.iso_checksum
   guest_os_type         = var.guest_os_type
 
-  vTPM                  = var.enable_tpm
   firmware              = "efi"
 
   disk_controller_type  = var.vhd_controller_type
@@ -145,7 +143,6 @@ source "vsphere-iso" "windows" {
     "./scripts/Install-VMWareTools.ps1",
     "./scripts/Fix-Firewall.ps1",
     "./files/TaskbarLayout.xml",
-    // "./files/drivers"
   ]
 }
 
@@ -181,27 +178,10 @@ build {
       "scripts/Enable-Other-Updates.ps1",
       "scripts/Install-Chocolatey.ps1",
       "scripts/Build.ps1",
-      "scripts/Setup-NewUser.ps1"
-    ]
-  }
-  provisioner "powershell" {
-    execute_command = "{{.Path}}; exit $LastExitCode"
-    elevated_user = var.connection_username
-    elevated_password = var.connection_password
-    scripts = [
-      "scripts/Compile-DotNet-Assemblies.ps1",
+      "scripts/Setup-NewUser.ps1",
       "scripts/Remove-UpdateCache.ps1",
       "scripts/Invoke-Defrag.ps1",
       "scripts/Reset-EmptySpace.ps1"
     ]
   }
-  // provisioner "windows-update" { # This requires windows-update-provisioner https://github.com/rgl/packer-provisioner-windows-update
-  //   pause_before = "30s"
-  //   search_criteria = "IsInstalled=0"
-  //   filters = [
-  //     "exclude:$_.Title -like '*VMware*'",
-  //     "exclude:$_.Title -like '*Preview*'",
-  //     "include:$true"
-  //   ]
-  // }
 }

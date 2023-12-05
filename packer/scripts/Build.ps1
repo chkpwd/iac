@@ -170,13 +170,16 @@ try {
 
 	}
 
-
 	# Set timezone
 	Write-Output "`nSetting timezone to EST."
 	Set-TimeZone -Id 'Eastern Standard Time'
 
-}
-catch {
+	# Compile DotNet Assemblies
+	Start-Process -FilePath C:\windows\microsoft.net\framework\v4.0.30319\ngen.exe -ArgumentList 'update /force /queue'
+	Start-Process -FilePath C:\windows\microsoft.net\framework64\v4.0.30319\ngen.exe -ArgumentList 'update /force /queue'
+	Start-Process -FilePath C:\windows\microsoft.net\framework\v4.0.30319\ngen.exe -ArgumentList 'executequeueditems'
+	Start-Process -FilePath C:\windows\microsoft.net\framework64\v4.0.30319\ngen.exe -ArgumentList 'executequeueditems'
+} catch {
 
 	Write-Output "Error: $($_.Exception.Message)"
 	Write-Output "Exiting in 90 seconds...`n"
@@ -185,7 +188,6 @@ catch {
 
   Exit 1
 
-}
-finally {
+} finally {
 	Stop-Transcript
 }

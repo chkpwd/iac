@@ -6,10 +6,10 @@ $ArraySize= 64kb
 $SpaceToLeave= $Volume.Size * 0.05
 $FileSize= $Volume.FreeSpace - $SpacetoLeave
 $ZeroArray= new-object byte[]($ArraySize)
- 
+
 $Stream= [io.File]::OpenWrite($FilePath)
 try {
-   $CurFileSize = 0
+    $CurFileSize = 0
     while($CurFileSize -lt $FileSize) {
         $Stream.Write($ZeroArray,0, $ZeroArray.Length)
         $CurFileSize +=$ZeroArray.Length

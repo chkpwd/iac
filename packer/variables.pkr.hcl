@@ -113,10 +113,7 @@ variable "preseed" {
   default     = ""
   type        = string
 }
-variable "enable_tpm"  {
-  default = "false"
-  type    = bool
-}
+
 variable "listen_address" {
   default = ""
   type    = string
