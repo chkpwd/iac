@@ -179,7 +179,7 @@ build {
       "scripts/Install-Chocolatey.ps1",
       "scripts/Build.ps1",
       "scripts/Setup-NewUser.ps1",
-      "scripts/Remove-UpdateCache.ps1",
+      "scripts/Remove-UpdateCache.ps1", # This fails on Windows 11
       "scripts/Invoke-Defrag.ps1",
       "scripts/Reset-EmptySpace.ps1"
     ]
