@@ -1,0 +1,35 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app intel-device-plugins-operator
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: intel-device-plugins-operator
+      version: 0.28.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: intel
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    fullnameOverride: *app
+
+    resources:
+      requests:
+        cpu: 15m
+        memory: 64M
+      limits:
+        cpu: 15m
+        memory: 64M
