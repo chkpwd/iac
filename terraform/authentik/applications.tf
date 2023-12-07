@@ -109,3 +109,22 @@ module "authentik-app-miniflux" {
     authentik_group.main.id
   ]
 }
+
+module "authentik-app-jellyfin" {
+  source = "../_modules/authentik/proxy_app"
+  name   = "Jellyfin"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://jellyfin.k8s.chkpwd.com"
+    mode     = "forward_single"
+  }
+
+  app_values = {
+    meta_description = "Usenet Downloader"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/jellyfin.png"
+  }
+
+  access_group = [authentik_group.main.id]
+}
