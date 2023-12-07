@@ -63,10 +63,11 @@ spec:
               PROWLARR__INSTANCE_NAME: Prowlarr
               PROWLARR__PORT: &port 9696
               PROWLARR__APPLICATION_URL: "https://{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
-              PROWLARR__LOG_LEVEL: info
               PROWLARR__API_KEY: ${API_KEY_PROWLARR}
               PROWLARR__AUTHENTICATION_METHOD: External
               PROWLARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
+              PROWLARR__THEME: dark
+              PROWLARR__LOG_LEVEL: info
 
             resources:
               requests:
