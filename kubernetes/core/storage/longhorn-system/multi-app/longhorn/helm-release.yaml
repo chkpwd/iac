@@ -44,7 +44,7 @@ spec:
       createPrometheusRules: true
 
     defaultSettings:
-      backupTarget: nfs://cockpit.${LOCAL_DOMAIN}:/mnt/data/backup/longhorn
+      backupTarget: nfs://nas-srv-01.${LOCAL_DOMAIN}:/volume1/vault-01/backups/kubernetes/longhorn
       backupstorePollInterval: 60
       orphanAutoDeletion: true
       concurrentAutomaticEngineUpgradePerNodeLimit: 3

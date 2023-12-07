@@ -88,8 +88,8 @@ spec:
       media:
         enabled: true
         type: nfs
-        server: "cockpit.${LOCAL_DOMAIN}"
-        path: /mnt/data/downloads/script-server
+        server: "nas-srv-01.${LOCAL_DOMAIN}"
+        path: /volume1/vault-01/static_media/personal/misc/script-server
         mountPath: /data
 
     resources:

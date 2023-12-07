@@ -9,8 +9,8 @@ spec:
     storage: 1Mi
   accessModes: ["ReadWriteMany"]
   nfs:
-    server: "cockpit.${LOCAL_DOMAIN}"
-    path: /mnt/data/images
+    server: "nas-srv-01.${LOCAL_DOMAIN}"
+    path: /volume1/vault-01/static_media/images
   mountOptions:
     - nfsvers=4.2
     - nconnect=8
