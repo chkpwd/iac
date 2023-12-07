@@ -122,7 +122,7 @@ module "win11-gaming-01" {
   vm_name                   = "win11-gaming-01"
   vm_template               = "W11-22H2-Temp"
   network_spec = {
-    network_id              = "Lab"
+    network_id              = "IoT"
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
