@@ -65,6 +65,7 @@ spec:
               RADARR__APPLICATION_URL: "https://{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
               RADARR__API_KEY: ${API_KEY_RADARR}
               RADARR__AUTHENTICATION_METHOD: External
+              RADARR__THEME: dark
               RADARR__LOG_LEVEL: info
 
             resources:
