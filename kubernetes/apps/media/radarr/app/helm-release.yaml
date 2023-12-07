@@ -64,7 +64,7 @@ spec:
               RADARR__PORT: &port 7878
               RADARR__APPLICATION_URL: "https://{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
               RADARR__API_KEY: ${API_KEY_RADARR}
-              RADARR__AUTHENTICATION_METHOD: None
+              RADARR__AUTHENTICATION_METHOD: External
               RADARR__LOG_LEVEL: info
 
             resources:
