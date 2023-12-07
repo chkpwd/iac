@@ -13,11 +13,14 @@
 
 - name: Mount NFS share from TrueNAS
   ansible.posix.mount:
-    src: "cockpit:/mnt/data"
+    src: "nas-srv-01:/volume1/vault-01/{{ item }}"
     path: "{{ media_path }}"
     opts: rw,sync,hard,nofail
     state: mounted
     fstype: nfs
+  loop: '{{ media_nfs_shares }}'
+  loop_control:
+    - label: "Mounting: {{ item }}"
 
 - name: Configure Pigz Backup for Plex
   ansible.builtin.include_tasks: setup_backup.yaml

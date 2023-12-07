@@ -9,3 +9,8 @@ media_path: /home/{{ common_user }}/media
 backup_path: /home/{{ common_user }}/media/backup/plex
 
 discord_media_webhook: "{{ DISCORD_PLEX_BACKUP_WEBHOOK }}"
+
+media_nfs_shares:
+  - media
+  - downloads
+  - backups
