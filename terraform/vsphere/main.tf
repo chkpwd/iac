@@ -46,7 +46,7 @@ module "hosting-srv-01" {
   source                    = "../_modules/vsphere_vm"
   vm_name                   = "hosting-srv-01"
   vm_template               = "deb-12-template"
-  vm_datastore              = "NVME-30C"
+  vm_datastore              = "main-nvme"
   network_spec = {
     network_id              = "Lab"
   }
