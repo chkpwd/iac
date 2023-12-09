@@ -84,7 +84,7 @@ ARG KREW_VERSION=v0.4.4
 ARG VIDDY_VERSION=v0.4.0
 
 # renovate: datasource=github-releases depName=derailed/k9s
-ARG K9S_VERSION=v0.28.2
+ARG K9S_VERSION=v0.29.1
 
 # renovate: datasource=github-releases depName=pulumi/pulumi
 ARG PULUMI_VERSION=v3.94.2
