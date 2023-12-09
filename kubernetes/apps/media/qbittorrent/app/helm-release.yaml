@@ -63,6 +63,8 @@ spec:
             env:
               TZ: "${TZ}"
               QBITTORRENT__PORT: &port 8080
+              QBT_Preferences__WebUI__AlternativeUIEnabled: 'false'
+              QBT_BitTorrent__Session__DefaultSavePath: '/media/_media_downloads/torrents'
     
             resources:
               requests:
