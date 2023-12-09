@@ -64,7 +64,13 @@ spec:
               TZ: "${TZ}"
               QBITTORRENT__PORT: &port 8080
               QBT_Preferences__WebUI__AlternativeUIEnabled: 'false'
-              QBT_BitTorrent__Session__DefaultSavePath: '/media/_media_downloads/torrents'
+              QBT_BitTorrent__Session__DefaultSavePath: '/data/complete'
+              QBT_BitTorrent__Session__TempPath: '/data/incomplete'
+              QBT_BitTorrent__Session__TempPathEnabled: 'true'
+              QBT_BitTorrent__Session__FinishedTorrentExportDirectory: '/data/files'
+              QBT_BitTorrent__Session__TorrentExportDirectory: '/data/files'
+              QBT_BitTorrent__Session__Port: '50413'
+              QBT_BitTorrent__WebUI__RootFolder: 'true'
     
             resources:
               requests:
@@ -112,11 +118,11 @@ spec:
               - *host
 
     persistence:
-      torrents:
+      data:
         enabled: true
         type: nfs
         server: "nas-srv-01.${LOCAL_DOMAIN}"
-        path: /volume1/vault-01/media/_media_downloads/torrents
+        path: /volume1/vault-01/downloads/torrent
       add-ons:
         enabled: true
         type: emptyDir
