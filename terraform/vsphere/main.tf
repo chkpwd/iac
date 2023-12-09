@@ -1,30 +1,3 @@
-#===============================================================================
-# vSphere Modules
-#===============================================================================
-
-module "cockpit" {
-  source                    = "../_modules/vsphere_vm"
-  vm_name                   = "cockpit"
-  vm_template               = "deb-12-template"
-  network_spec = {
-    network_id              = "LAN"
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id ]
-    folder                  = vsphere_folder.media.path
-    cpu                     = 2
-    memory                  = 1024 * 4
-    disk_size               = 48
-    additional_disks = [
-      {
-        size                = null
-        datastore_id        = data.vsphere_datastore.media_datastore.id
-        attach_disk         = true
-      }
-    ]
-  }
-}
-
 module "media-srv-01" {
   source                    = "../_modules/vsphere_vm"
   vm_name                   = "media-srv-01"
