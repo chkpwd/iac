@@ -52,6 +52,10 @@ resource "radarr_media_management" "media_settings_configs" {
   enable_media_info                           = true
 }
 
-resource "radarr_root_folder" "movies" {
-  path = "/data/movies"
+resource "radarr_root_folder" "anime" {
+  path = "/data/films/anime_movies"
+}
+
+resource "radarr_root_folder" "standard" {
+  path = "/data/films/standard_movies"
 }
