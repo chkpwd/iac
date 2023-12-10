@@ -5,7 +5,25 @@ metadata:
   name: media-plex
   namespace: flux-system
 spec:
+  dependsOn:
+    - name: media-plex-config
   path: ./kubernetes/apps/media/plex/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: media-plex-config
+  namespace: flux-system
+spec:
+  path: ./kubernetes/apps/media/plex/config
   prune: true
   sourceRef:
     kind: GitRepository

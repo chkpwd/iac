@@ -62,6 +62,13 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: "${TZ}"
+              ADVERTISE_IP: &plex_lb "${PLEX_LB_ADDRESS}"
+              ALLOWED_NETWORKS: "172.16.0.0/12"
+              PLEX_CLAIM:
+                valueFrom:
+                  secretKeyRef:
+                    name: plex-secrets
+                    key: PLEX_CLAIM
 
             probes:
               liveness: &probes
@@ -98,7 +105,7 @@ spec:
     service:
       main:
         annotations:
-          metallb.universe.tf/loadBalancerIPs: ${PLEX_LB_ADDRESS}
+          metallb.universe.tf/loadBalancerIPs: *plex_lb
         type: LoadBalancer
         externalTrafficPolicy: Local
         ports:
