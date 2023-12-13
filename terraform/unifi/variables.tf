@@ -1,9 +1,8 @@
 variable "vlans" {
   type = map(string)
   default = {
-    "media" = "10"
-    "iot"   = "20"
-    "lab"   = "30"
+    "iot"   = "10"
+    "lab"   = "20"
   }
   description = "Mapping of vlan IDs"
 }
