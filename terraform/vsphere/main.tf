@@ -1,59 +1,10 @@
-#===============================================================================
-# vSphere Modules
-#===============================================================================
-
-module "cockpit" {
-  source                    = "../_modules/vsphere_vm"
-  vm_name                   = "cockpit"
-  vm_template               = "deb-12-template"
-  network_spec = {
-    network_id              = "LAN"
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id ]
-    folder                  = vsphere_folder.media.path
-    cpu                     = 2
-    memory                  = 1024 * 4
-    disk_size               = 48
-    additional_disks = [
-      {
-        size                = null
-        datastore_id        = data.vsphere_datastore.media_datastore.id
-        attach_disk         = true
-      }
-    ]
-  }
-}
-
-module "media-srv-01" {
-  source                    = "../_modules/vsphere_vm"
-  vm_name                   = "media-srv-01"
-  vm_template               = "deb-12-template"
-  network_spec = {
-    network_id              = "Media"
-  }
-  spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.media.id, vsphere_tag.docker.id ]
-    folder                  = vsphere_folder.media.path
-    cpu                     = 2
-    memory                  = 1024 * 2
-    memory_reservation      = true
-    disk_size               = 16
-    additional_disks = [
-      {
-        size                = 25
-      }
-    ]
-  }
-}
-
 module "win-srv-2022" {
   source                    = "../_modules/vsphere_vm"
   count                     = 1
   vm_name                   = "win-srv-2022"
   vm_template               = "WSRV22-DE-Temp"
   network_spec = {
-    network_id              = "IoT"
+    network_id              = "IOT"
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
@@ -73,9 +24,9 @@ module "hosting-srv-01" {
   source                    = "../_modules/vsphere_vm"
   vm_name                   = "hosting-srv-01"
   vm_template               = "deb-12-template"
-  vm_datastore              = "NVME-30C"
+  vm_datastore              = "main-nvme"
   network_spec = {
-    network_id              = "Lab"
+    network_id              = "LAB"
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id, vsphere_tag.gaming.id ]
@@ -97,7 +48,7 @@ module "win10-gaming-01" {
   vm_name                   = "win10-gaming-01"
   vm_template               = "W10-22H2-Temp"
   network_spec = {
-    network_id              = "Lab"
+    network_id              = "LAB"
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
@@ -122,7 +73,7 @@ module "win11-gaming-01" {
   vm_name                   = "win11-gaming-01"
   vm_template               = "W11-22H2-Temp"
   network_spec = {
-    network_id              = "IoT"
+    network_id              = "IOT"
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
