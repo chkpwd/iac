@@ -3,21 +3,13 @@ resource "opnsense_interfaces_vlan" "vlan01" {
   parent = "em0"
   tag = 10
   priority = 0
-  description = "Media VLAN"
+  description = "IOT VLAN"
 }
 
 resource "opnsense_interfaces_vlan" "vlan02" {
   device = "vlan02"
   parent = "em0"
   tag = 20
-  priority = 0
-  description = "IoT VLAN"
-}
-
-resource "opnsense_interfaces_vlan" "vlan03" {
-  device = "vlan03"
-  parent = "em0"
-  tag = 30
   priority = 0
   description = "LAB VLAN"
 }
