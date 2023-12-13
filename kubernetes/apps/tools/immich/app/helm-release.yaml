@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: immich
-      version: 0.1.3
+      version: 0.2.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -29,7 +29,7 @@ spec:
         reloader.stakater.com/auto: "true"
 
     image:
-      tag: &appVersion v1.87.0
+      tag: &appVersion v1.90.2
 
     postgres:
       enabled: false
@@ -66,7 +66,22 @@ spec:
       image:
         repository: ghcr.io/immich-app/immich-server
         tag: *appVersion
-        pullPolicy: &pullPolicy IfNotPresent
+        pullPolicy: IfNotPresent
+      ingress:
+        main:
+          enabled: true
+          ingressClassName: ext-ingress
+          annotations:
+            external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+            nginx.ingress.kubernetes.io/proxy-body-size: "0"
+          hosts:
+            - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - hosts:
+                - *host
       resources:
         requests:
           cpu: 20m
@@ -91,38 +106,6 @@ spec:
 
     machine-learning:
       enabled: false
-
-    web:
-      enabled: true
-      image:
-        repository: ghcr.io/immich-app/immich-web
-        tag: *appVersion
-        pullPolicy: *pullPolicy
-      resources:
-        requests:
-          cpu: 15m
-          memory: 105Mi
-
-    proxy:
-      ingress:
-        main:
-          enabled: true
-          ingressClassName: ext-ingress
-          annotations:
-            external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
-            nginx.ingress.kubernetes.io/proxy-body-size: "0"
-          hosts:
-            - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
-              paths:
-                - path: /
-                  pathType: Prefix
-          tls:
-            - hosts:
-                - *host
-      resources:
-        requests:
-          cpu: 15m
-          memory: 105Mi
 
     env:
       DB_DATABASE_NAME:

@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: weave-gitops
-      version: 4.0.35
+      version: 4.0.36
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -33,7 +33,7 @@ spec:
 
     image:
       repository: ghcr.io/weaveworks/wego-app
-      tag: v0.37.0
+      tag: v0.38.0
 
     envVars:
       - name: WEAVE_GITOPS_FEATURE_TENANCY

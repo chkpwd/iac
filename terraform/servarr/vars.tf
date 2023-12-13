@@ -1,7 +1,7 @@
 variable local_domain {
   type = string
-  default = "local.chkpwd.com"
-  description = "Media Host IP Address"
+  default = "k8s.chkpwd.com"
+  description = "Proxy Address"
 }
 
 variable cluster_media_domain {

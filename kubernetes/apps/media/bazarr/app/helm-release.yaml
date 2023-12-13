@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.3.0
+      version: 2.4.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -57,7 +57,7 @@ spec:
           main:
             image:
               repository: ghcr.io/onedr0p/bazarr
-              tag: 1.3.1
+              tag: 1.4.0
 
             env:
               TZ: "${TZ}"
@@ -133,4 +133,4 @@ spec:
         enabled: true
         type: nfs
         server: "nas-srv-01.${LOCAL_DOMAIN}"
-        path: /volume1/vault-01/media/
+        path: /volume1/vault-01/media

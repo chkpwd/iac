@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.3.0
+      version: 2.4.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -47,7 +47,7 @@ spec:
           main:
             image:
               repository: ghcr.io/actualbudget/actual-server
-              tag: 23.11.0
+              tag: 23.12.1
               pullPolicy: IfNotPresent
 
             resources:

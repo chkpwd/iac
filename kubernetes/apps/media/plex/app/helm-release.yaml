@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: &app jellyfin
+  name: &app plex
   namespace: media
 spec:
   interval: 15m
@@ -57,15 +57,18 @@ spec:
         containers:
           main:
             image:
-              repository: ghcr.io/onedr0p/jellyfin
-              tag: 10.8.11
+              repository: ghcr.io/onedr0p/plex
+              tag: 1.32.8.7639-fb6452ebf
               pullPolicy: IfNotPresent
             env:
               TZ: "${TZ}"
-              DOTNET_SYSTEM_IO_DISABLEFILELOCKING: "true"
-              JELLYFIN_FFmpeg__probesize: 50000000
-              JELLYFIN_FFmpeg__analyzeduration: 50000000
-              JELLYFIN_PublishedServerUrl: &loadBalancerIP ${JELLYFIN_LB_ADDRESS}
+              ADVERTISE_IP: &plex_lb "${PLEX_LB_ADDRESS}"
+              ALLOWED_NETWORKS: "172.16.0.0/12"
+              PLEX_CLAIM:
+                valueFrom:
+                  secretKeyRef:
+                    name: plex-secrets
+                    key: PLEX_CLAIM
 
             probes:
               liveness: &probes
@@ -73,8 +76,8 @@ spec:
                 custom: true
                 spec:
                   httpGet:
-                    path: /health
-                    port: &port 8096
+                    path: /identity
+                    port: &port 32400
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
@@ -83,19 +86,26 @@ spec:
               startup:
                 enabled: false
 
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: 
+                  - ALL
+
             resources:
               requests:
                 # gpu.intel.com/i915: 1
-                cpu: 100m
-                memory: 512Mi
+                cpu: 200m
+                memory: 1Gi
               limits:
                 # gpu.intel.com/i915: 1
-                memory: 4Gi
+                memory: 2Gi
 
     service:
       main:
         annotations:
-          metallb.universe.tf/loadBalancerIPs: ${JELLYFIN_LB_ADDRESS}
+          metallb.universe.tf/loadBalancerIPs: *plex_lb
         type: LoadBalancer
         externalTrafficPolicy: Local
         ports:
@@ -107,11 +117,6 @@ spec:
         enabled: true
         primary: true
         className: int-ingress
-        annotations:
-          nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.security.${CLUSTER_DOMAIN}:9000/outpost.goauthentik.io/auth/nginx
-          nginx.ingress.kubernetes.io/auth-signin: /outpost.goauthentik.io/start?rd=$escaped_request_uri
-          nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
-          nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
         hosts:
           - host: &host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
             paths:
@@ -128,10 +133,6 @@ spec:
         className: ext-ingress
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
-          nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.security.${CLUSTER_DOMAIN}:9000/outpost.goauthentik.io/auth/nginx
-          nginx.ingress.kubernetes.io/auth-signin: /outpost.goauthentik.io/start?rd=$escaped_request_uri
-          nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
-          nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
@@ -150,13 +151,11 @@ spec:
         type: nfs
         server: "nas-srv-01.${LOCAL_DOMAIN}"
         path: /volume1/vault-01/media
+        globalMounts:
+          - path: /data
+            readOnly: true
       transcode:
         enabled: true
         type: emptyDir
         globalMounts:
           - path: /transcode
-      cache:
-        enabled: true
-        type: emptyDir
-        globalMounts:
-          - path: /cache

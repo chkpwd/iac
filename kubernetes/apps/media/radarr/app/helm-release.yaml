@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.3.0
+      version: 2.4.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -56,7 +56,7 @@ spec:
           main:
             image:
               repository: ghcr.io/onedr0p/radarr-develop
-              tag: 5.2.2.8288
+              tag: 5.2.4.8328
               pullPolicy: IfNotPresent
             env:
               TZ: "${TZ}"
@@ -136,4 +136,9 @@ spec:
         enabled: true
         type: nfs
         server: "nas-srv-01.${LOCAL_DOMAIN}"
-        path: /volume1/vault-01/media/
+        path: /volume1/vault-01/media/films
+      downloads:
+        enabled: true
+        type: nfs
+        server: "nas-srv-01.${LOCAL_DOMAIN}"
+        path: /volume1/vault-01/downloads

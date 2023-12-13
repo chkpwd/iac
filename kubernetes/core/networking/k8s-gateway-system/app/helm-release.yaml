@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: k8s-gateway
-      version: 2.0.4
+      version: 2.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -30,7 +30,7 @@ spec:
     image:
       registry: quay.io
       repository: oriedge/k8s_gateway
-      tag: v0.3.4
+      tag: v0.4.0
 
     service:
       type: LoadBalancer

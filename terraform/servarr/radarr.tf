@@ -52,6 +52,22 @@ resource "radarr_media_management" "media_settings_configs" {
   enable_media_info                           = true
 }
 
-resource "radarr_root_folder" "movies" {
-  path = "/data/movies"
+resource "radarr_root_folder" "anime" {
+  path = "/data/films/anime_movies"
+}
+
+resource "radarr_root_folder" "standard" {
+  path = "/data/films/standard_movies"
+}
+
+resource "radarr_remote_path_mapping" "sabnzbd" {
+  host        = "sabnzbd.media.svc.cluster.local"
+  remote_path = "/data/complete/"
+  local_path  = "/downloads/usenet/complete/"
+}
+
+resource "radarr_remote_path_mapping" "qbittorrent" {
+  host        = "qbittorrent.media.svc.cluster.local"
+  remote_path = "/data/complete/"
+  local_path  = "/downloads/torrent/complete/"
 }

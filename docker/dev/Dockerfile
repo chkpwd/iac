@@ -1,4 +1,4 @@
-ARG BASE_IMAGE_TAG=lunar-20231004
+ARG BASE_IMAGE_TAG=lunar-20231128
 
 FROM ubuntu:${BASE_IMAGE_TAG}
 
@@ -54,7 +54,7 @@ ARG YT_DLP_VERSION=2023.11.16
 ARG KORB_VERSION=v2.2.0
 
 # renovate: datasource=github-releases depName=atuinsh/atuin
-ARG ATUIN_VERSION=v17.0.1
+ARG ATUIN_VERSION=v17.1.0
 
 # renovate: datasource=github-releases depName=helm/helm
 ARG HELM_VERSION=v3.13.2
@@ -69,7 +69,7 @@ ARG PET_VERSION=v0.5.0
 ARG TELLER_VERSION=v1.5.6
 
 # renovate: datasource=github-releases depName=twpayne/chezmoi
-ARG CHEZMOI_VERSION=v2.41.0
+ARG CHEZMOI_VERSION=v2.42.2
 
 # renovate: datasource=github-tags depName=kubernetes/kubernetes
 ARG KUBECTL_VERSION=v1.28.4
@@ -84,10 +84,10 @@ ARG KREW_VERSION=v0.4.4
 ARG VIDDY_VERSION=v0.4.0
 
 # renovate: datasource=github-releases depName=derailed/k9s
-ARG K9S_VERSION=v0.28.2
+ARG K9S_VERSION=v0.29.1
 
 # renovate: datasource=github-releases depName=pulumi/pulumi
-ARG PULUMI_VERSION=v3.94.2
+ARG PULUMI_VERSION=v3.96.2
 
 # renovate: datasource=github-releases depName=hashicorp/terraform
 ARG TERRAFORM_VERSION=v1.6.5
@@ -99,7 +99,7 @@ ARG SOPS_VERSION=v3.8.1
 ARG BW_CLI_VERSION=cli-v2023.9.1
 
 # renovate: datasource=github-releases depName=loft-sh/vcluster
-ARG VCLUSTER_VERSION=v0.17.1
+ARG VCLUSTER_VERSION=v0.18.0
 
 # renovate: datasource=github-releases depName=FairwindsOps/nova
 ARG NOVA_VERSION=v3.7.0
@@ -205,10 +205,10 @@ RUN bash -c "rm -rf /tmp/*"
 COPY --from=docker.io/istio/istioctl:1.20.0 /usr/local/bin/istioctl /usr/bin/istioctl
 COPY --from=docker.io/fluxcd/flux-cli:v2.1.2 /usr/local/bin/flux /usr/bin/flux
 COPY --from=docker.io/klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bin/hugo
-COPY --from=gcr.io/kaniko-project/executor:v1.18.0 /kaniko/executor /usr/bin/kaniko
-COPY --from=quay.io/coreos/etcd:v3.5.10 /usr/local/bin/etcdctl /usr/bin/etcdctl
+COPY --from=gcr.io/kaniko-project/executor:v1.19.0 /kaniko/executor /usr/bin/kaniko
+COPY --from=quay.io/coreos/etcd:v3.5.11 /usr/local/bin/etcdctl /usr/bin/etcdctl
 COPY --from=docker.io/hashicorp/packer:light-1.9.4 /bin/packer /usr/bin/packer
-COPY --from=docker.io/digitalocean/doctl:1.100.0 /app/doctl /usr/bin/doctl
+COPY --from=docker.io/digitalocean/doctl:1.101.0 /app/doctl /usr/bin/doctl
 COPY --from=docker.io/vmware/govc:v0.33.0 /govc /usr/bin/govc
 
 # UPX all of the binaries

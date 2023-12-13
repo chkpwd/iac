@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.3.0
+      version: 2.4.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -56,7 +56,7 @@ spec:
           main:
             image:
               repository: ghcr.io/onedr0p/sonarr-develop
-              tag: 4.0.0.731
+              tag: 4.0.0.733
               pullPolicy: IfNotPresent
             env:
               TZ: "${TZ}"
@@ -139,3 +139,8 @@ spec:
         type: nfs
         server: "nas-srv-01.${LOCAL_DOMAIN}"
         path: /volume1/vault-01/media/series
+      downloads:
+        enabled: true
+        type: nfs
+        server: "nas-srv-01.${LOCAL_DOMAIN}"
+        path: /volume1/vault-01/downloads
