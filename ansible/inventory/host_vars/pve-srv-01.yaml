@@ -1,9 +1,0 @@
----
-vfio_pci_ids: [ 10de:2484, 10de:228b ]
-
-linux_cmdline_args:
-  - quiet
-  - amd_iommu=on
-  - iommu=pt
-  - vfio_pci.disable_vga=1
-  - initcall_blacklist=sysfb_init
