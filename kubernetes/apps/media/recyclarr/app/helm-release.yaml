@@ -71,6 +71,13 @@ spec:
                     name: media-secrets
                     key: API_KEY_RADARR
 
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: 
+                drop:
+                  - ALL
+
             resources:
               requests:
                 cpu: 5m
