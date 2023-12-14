@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: &app intel-device-plugins-operator
+  name: intel-device-plugins-operator
   namespace: tools
 spec:
   interval: 15m
@@ -22,14 +22,3 @@ spec:
   upgrade:
     remediation:
       retries: 3
-
-  values:
-    fullnameOverride: *app
-
-    resources:
-      requests:
-        cpu: 15m
-        memory: 64M
-      limits:
-        cpu: 15m
-        memory: 64M
