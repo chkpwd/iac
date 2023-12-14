@@ -84,6 +84,22 @@ spec:
                     key: port
               INITIAL_API_KEY: ${API_KEY_SHLINK}
 
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /rest/health
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+
             resources:
               requests:
                 cpu: 10m
