@@ -2,8 +2,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - reloader-system/ks.yaml
-  # - system-upgrade-system/ks.yaml
-  - kubevirt-system/ks.yaml
   - weave-gitops-system/ks.yaml
+  # - system-upgrade-system/ks.yaml
+  # - kubevirt-system/ks.yaml
   # - intel-device-plugin-system/ks.yaml
   # - node-feature-discovery-system/ks.yaml
