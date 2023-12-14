@@ -92,8 +92,7 @@ spec:
         type: configMap
         defaultMode: 0755
         globalMounts:
-          - path: /config/config.yaml
-            subPath: config.yaml
+          - path: /config
             readOnly: true
       media:
         enabled: true
