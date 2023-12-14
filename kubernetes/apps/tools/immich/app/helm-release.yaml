@@ -42,9 +42,9 @@ spec:
       auth:
         enabled: false
       persistence:
-        enabled: false  # Disable PVC persistence
+        enabled: false
         medium: ""  # Specify the medium for emptyDir (can be "" or "Memory")
-        sizeLimit: "8Gi"  # Optional: set a size limit for the emptyDir volume
+        sizeLimit: "8Gi"
         path: /data
       resources:
         requests:
