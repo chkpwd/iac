@@ -16,11 +16,10 @@ data:
         ytdl_options:
           format: "bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4] / bv*+ba/b"
           ignoreerrors: True
-          break_on_existing: False
-          break_on_reject: False
+          break_on_existing: True
+          break_on_reject: True
           final_ext: mp4
           cachedir: "/tmp/ytdl-sub/"
-          cookiefile: "/config/cookies-rw.txt"
 
         date_range:
           before: "{download_before}"
@@ -41,6 +40,16 @@ data:
           download_before: "now"
           download_after: "19000101"
 
+        nfo_tags:
+          nfo_name: "{video_name}.nfo"
+          nfo_root: "episodedetails"
+          tags:
+            title: "{title}"
+            season: "{season}"
+            episode: "{episode}"
+            year: "{upload_year}"
+            aired: "{upload_date_standardized}"
+
         video_tags:
             title: "{title}"
             date: "{upload_date}"
@@ -52,6 +61,22 @@ data:
 
               Video Description:
               {description}
+
+        chapters:
+          embed_chapters: True
+          allow_chapters_from_comments: False
+          remove_chapters_regex:
+            - "Intro"
+            - "Outro"
+          sponsorblock_categories:
+            - "outro"
+            - "selfpromo"
+            - "preview"
+            - "interaction"
+            - "sponsor"
+            - "music_offtopic"
+            - "intro"
+          remove_sponsorblock_categories: "all"
 
       yt_playlist:
         preset:
@@ -73,8 +98,9 @@ data:
 
         overrides:
           date: "{upload_date}"
+          season: "{upload_year}"
           episode: "{download_index}"
-          episode_padded: "{download_index_padded6}"
+          episode_padded: "{upload_month_padded}{upload_day_padded}"
           episode_file_name: "S{season}E{episode_padded} - {title_sanitized}"
           episode_path: "{episode_file_name}"
 
@@ -85,7 +111,7 @@ data:
       yt_playlist_one_season:
         preset: yt_playlist
         overrides:
-          season: "00"
+          season: "0"
           tv_show_name: "{subscription_name}"
 
       yt_channel:
@@ -103,38 +129,95 @@ data:
       download:
         url: "https://www.youtube.com/@AntonPutra"
       overrides:
-        season: "00"
+        season: "0"
         tv_show_name: Anton Putra
-        download_after: "20231001"
+        download_after: "20231201"
     the_devops_guy:
       preset: "yt_channel"
       download:
         url: "https://www.youtube.com/@MarcelDempers"
       overrides:
-        season: "00"
+        season: "0"
         tv_show_name: The DevOps Guy
-        download_after: "20231001"
+        download_after: "20231201"
     devops_journey:
       preset: "yt_channel"
       download:
         url: "https://www.youtube.com/@DevOpsJourney"
       overrides:
-        season: "00"
+        season: "0"
         tv_show_name: DevOps Journey
-        download_after: "20231001"
+        download_after: "20231201"
     be_a_better_dev:
       preset: "yt_channel"
       download:
         url: "https://www.youtube.com/@BeABetterDev"
       overrides:
-        season: "00"
+        season: "0"
         tv_show_name: Be A Better Dev
-        download_after: "20231001"
+        download_after: "20231201"
     travis_media:
       preset: "yt_channel"
       download:
         url: "https://www.youtube.com/@TravisMedia"
       overrides:
-        season: "00"
+        season: "0"
         tv_show_name: Travis Media
-        download_after: "20231001"
+        download_after: "20231201"
+    engineering_with_morris:
+      preset: "yt_channel"
+      download:
+        url: "https://www.youtube.com/@EngineeringWithMorris"
+      overrides:
+        season: "0"
+        tv_show_name: Engineering With Morris
+        download_after: "20231201"
+    jeff_geerling:
+      preset: "yt_channel"
+      download:
+        url: "https://www.youtube.com/@JeffGeerling"
+      overrides:
+        season: "0"
+        tv_show_name: Jeff Geerling
+        download_after: "20231201"
+    devops_toolkit:
+      preset: "yt_channel"
+      download:
+        url: "https://www.youtube.com/@DevOpsToolkit"
+      overrides:
+        season: "0"
+        tv_show_name: DevOps Toolkit
+        download_after: "20231201"
+    jims_garage:
+      preset: "yt_channel"
+      download:
+        url: "https://www.youtube.com/@Jims-Garage"
+      overrides:
+        season: "0"
+        tv_show_name: Jims Garage
+        download_after: "20231201"
+    teaching_tech:
+      preset: "yt_channel"
+      download:
+        url: "https://www.youtube.com/@TeachingTech"
+      overrides:
+        season: "0"
+        tv_show_name: Teaching Tech
+        download_after: "20231201"
+    devops_toolbox:
+      preset: "yt_channel"
+      download:
+        url: "https://www.youtube.com/@devopstoolbox"
+      overrides:
+        season: "0"
+        tv_show_name: DevOps Toolbox
+        download_after: "20231201"
+    lost_in_tech_3d:
+      preset: "yt_channel"
+      download:
+        url: "https://www.youtube.com/@LostInTech3D"
+      overrides:
+        season: "0"
+        tv_show_name: Lost In Tech 3D
+        download_after: "20231201"
+
