@@ -22,3 +22,7 @@ spec:
   upgrade:
     remediation:
       retries: 3
+
+  dependsOn:
+    - name: node-feature-discovery
+      namespace: kube-system
