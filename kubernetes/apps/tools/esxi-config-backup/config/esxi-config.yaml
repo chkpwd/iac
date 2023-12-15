@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: esxi-backup-config
+  namespace: media
+data:
+  config.yaml: |
+    esxi_hosts:
+      - hostname: octane.local.chkpwd.com
+        username: root
+        password: ${ESXI_HOST1_PWD}
