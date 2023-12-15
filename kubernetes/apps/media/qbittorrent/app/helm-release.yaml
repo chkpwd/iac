@@ -73,19 +73,7 @@ spec:
               QBT_BitTorrent__WebUI__RootFolder: 'true'
     
             probes:
-              liveness: &probes
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/v2/app/version
-                    port: *port
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
-              startup:
+              liveness:
                 enabled: false
 
             resources:
