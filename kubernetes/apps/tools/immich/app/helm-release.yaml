@@ -2,14 +2,14 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: &app immich
+  name: immich
   namespace: tools
 spec:
   interval: 15m
   chart:
     spec:
       chart: immich
-      version: 0.2.0
+      version: 0.3.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -29,7 +29,7 @@ spec:
         reloader.stakater.com/auto: "true"
 
     image:
-      tag: &appVersion v1.90.2
+      tag: &appVersion "v1.91.0"
 
     postgres:
       enabled: false
@@ -133,5 +133,4 @@ spec:
           secretKeyRef:
             name: immich-pguser-immich
             key: uri
-      TYPESENSE_ENABLED: false
       LOG_LEVEL: verbose
