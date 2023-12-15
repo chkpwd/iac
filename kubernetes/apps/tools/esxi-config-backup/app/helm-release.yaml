@@ -53,11 +53,8 @@ spec:
           main:
             image:
               repository: ghcr.io/tigattack/esxi-config-backup
-              tag: v1.0.0
-
-            env:
-              BACKUP_DIRECTORY: /esxi-backups
-              VALIDATE_HOST_CERTS: false
+              tag: v1.1.0
+              pullPolicy: IfNotPresent
 
             securityContext:
               allowPrivilegeEscalation: false
@@ -85,3 +82,9 @@ spec:
           - path: /app/config.yml
             subPath: config.yml
             readOnly: true
+      backup:
+        enabled: true
+        type: nfs
+        server: "nas-srv-01.${LOCAL_DOMAIN}"
+        path: /volume1/vault-01/backups/vmware
+        mountPath: /app/backups
