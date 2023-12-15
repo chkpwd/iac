@@ -43,23 +43,22 @@ spec:
           backoffLimit: 1
 
         pod:
-          securityContext:
-            runAsUser: &context 1999
-            runAsGroup: *context
-            fsGroup: *context
-            fsGroupChangePolicy: "OnRootMismatch"
+          # securityContext:
+          #   runAsUser: &context 1999
+          #   runAsGroup: *context
+          #   fsGroup: *context
+          #   fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
           main:
             image:
               repository: ghcr.io/tigattack/esxi-config-backup
-              tag: v1.1.0
+              tag: "1.1.0"
               pullPolicy: IfNotPresent
 
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities: { drop: ["ALL"] }
+            # securityContext:
+            #   allowPrivilegeEscalation: false
+            #   capabilities: { drop: ["ALL"] }
 
             resources:
               requests:
@@ -75,16 +74,19 @@ spec:
     persistence:
       config:
         enabled: true
-        name: "{{ .Release.Name }}-config"
+        name: "{{ .Release.Name }}"
         type: configMap
         defaultMode: 0755
         globalMounts:
           - path: /app/config.yml
             subPath: config.yml
             readOnly: true
-      backup:
+      backups:
         enabled: true
         type: nfs
         server: "nas-srv-01.${LOCAL_DOMAIN}"
         path: /volume1/vault-01/backups/vmware
-        mountPath: /app/backups
+        advancedMounts:
+          main:
+            main:
+              - path: /app/backups

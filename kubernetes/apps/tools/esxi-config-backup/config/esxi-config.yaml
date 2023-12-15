@@ -6,6 +6,11 @@ metadata:
   namespace: tools
 data:
   config.yml: |
+    ---
+    backup_retention_days: 0
+    validate_host_certs: false
+    backup_directory: /app/backups
+
     esxi_hosts:
       - hostname: octane.local.chkpwd.com
         username: root
