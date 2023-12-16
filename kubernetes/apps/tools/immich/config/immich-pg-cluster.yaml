@@ -5,7 +5,7 @@ metadata:
   name: immich
   namespace: tools
 spec:
-  image: tensorchord/pgvecto-rs:pg15-v0.1.11
+  image: kindjeff/pgo-pgvector:ubi8-15.2-0
   postgresVersion: 15
 
   patroni:
@@ -16,6 +16,8 @@ spec:
         pg_hba:
           - hostnossl all all 10.42.0.0/16 md5
           - hostssl all all 0.0.0.0/0 md5
+        parameters:
+          shared_preload_libraries: vector
 
   instances:
     - dataVolumeClaimSpec:

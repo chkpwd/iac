@@ -42,12 +42,12 @@ spec:
           failedJobsHistory: 1
           backoffLimit: 1
 
-        pod:
-          # securityContext:
-          #   runAsUser: &context 1999
-          #   runAsGroup: *context
-          #   fsGroup: *context
-          #   fsGroupChangePolicy: "OnRootMismatch"
+        # pod:
+        #   securityContext:
+        #     runAsUser: &context 1999
+        #     runAsGroup: *context
+        #     fsGroup: *context
+        #     fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
           main:
