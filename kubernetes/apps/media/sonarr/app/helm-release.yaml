@@ -46,10 +46,10 @@ spec:
 
         pod:
           enableServiceLinks: false
-          securityContext:
-            runAsUser: &context 1000
-            runAsGroup: *context
-            fsGroup: *context
+          securityContext: &secContext
+            runAsUser: &user 1026
+            runAsGroup: &group 100
+            fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:

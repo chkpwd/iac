@@ -46,7 +46,7 @@ spec:
 
         pod:
           enableServiceLinks: false
-          securityContext:
+          securityContext: &secContext
             runAsUser: &user 1026
             runAsGroup: &group 100
             fsGroup: *group
@@ -59,6 +59,11 @@ spec:
               tag: trixie-20231120-slim
               pullPolicy: IfNotPresent
 
+            command:
+              - bash
+              - -c
+              - sleep infinity
+
             env:
               UID: *user
               GID: *group
@@ -66,6 +71,14 @@ spec:
             probes:
               liveness:
                 enabled: false
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              <<: *secContext
+              capabilities:
+                drop:
+                  - ALL
 
             resources:
               requests:
