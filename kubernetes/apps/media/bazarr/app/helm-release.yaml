@@ -48,9 +48,9 @@ spec:
         pod:
           enableServiceLinks: false
           securityContext:
-            runAsUser: &context 1000
-            runAsGroup: *context
-            fsGroup: *context
+            runAsUser: 1026
+            runAsGroup: &group 100
+            fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
@@ -76,7 +76,7 @@ spec:
                 spec:
                   httpGet:
                     path: /api
-                    port: &port 6767
+                    port: *port
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
@@ -84,6 +84,12 @@ spec:
               readiness: *probes
               startup:
                 enabled: false
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
 
             resources:
               requests:

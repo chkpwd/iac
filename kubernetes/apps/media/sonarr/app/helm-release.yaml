@@ -46,8 +46,8 @@ spec:
 
         pod:
           enableServiceLinks: false
-          securityContext: &secContext
-            runAsUser: &user 1026
+          securityContext:
+            runAsUser: 1026
             runAsGroup: &group 100
             fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
@@ -84,6 +84,12 @@ spec:
               readiness: *probes
               startup:
                 enabled: false
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
 
             resources:
               requests:
