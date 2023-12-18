@@ -45,6 +45,11 @@ spec:
 
         pod:
           enableServiceLinks: false
+          securityContext:
+            runAsUser: &user 1026
+            runAsGroup: &group 100
+            fsGroup: *group
+            fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
           main:
@@ -61,13 +66,17 @@ spec:
                 ytdl-sub --log-level=debug \
                         --config=/config/config.yaml \
                         sub /config/subscriptions.yaml
-                # Change ownership and permissions
-                find "${MEDIA_FOLDER}" -user root -exec chown 568:568 "{}" \; -exec chmod 777 "{}" \;
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
 
             env:
               TZ: "${TZ}"
-              PUID: 1000
-              PGID: 1000
+              PUID: *user
+              PGID: *group
               MEDIA_FOLDER: /media/youtube
 
             resources:
