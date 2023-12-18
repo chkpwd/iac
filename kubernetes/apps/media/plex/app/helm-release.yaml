@@ -49,9 +49,9 @@ spec:
           # nodeSelector:
           #   intel.feature.node.kubernetes.io/gpu: "true"
           securityContext:
-            runAsUser: &context 1000
-            runAsGroup: *context
-            fsGroup: *context
+            runAsUser: 1026
+            runAsGroup: &group 100
+            fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:

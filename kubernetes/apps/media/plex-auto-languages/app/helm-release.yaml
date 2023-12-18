@@ -37,6 +37,11 @@ spec:
 
         pod:
           enableServiceLinks: false
+          securityContext:
+            runAsUser: &context 1999
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
           main:
@@ -49,6 +54,13 @@ spec:
               PLEX_URL: http://media.${LOCAL_DOMAIN}:32400
               REFRESH_LIBRARY_ON_SCAN: "false"
               PLEX_TOKEN: ${APP_PLEX_TOKEN}
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
 
             resources:
               requests:
