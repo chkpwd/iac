@@ -48,7 +48,7 @@ spec:
           enableServiceLinks: false
           securityContext:
             runAsNonRoot: true
-            runAsUser: &context 568
+            runAsUser: &context 1999
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
@@ -83,6 +83,7 @@ spec:
 
             securityContext:
               allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
               capabilities:
                 drop:
                   - ALL
@@ -117,3 +118,12 @@ spec:
         tls:
           - hosts:
               - *host
+
+    persistence:
+      config:
+        enabled: true
+        type: emptyDir
+        medium: Memory
+        size: 100Mi
+        globalMounts:
+          - path: /tmp/.yarn-cache
