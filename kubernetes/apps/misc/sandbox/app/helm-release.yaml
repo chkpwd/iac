@@ -33,6 +33,7 @@ spec:
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
+
         replicas: 1
 
         statefulset:
@@ -87,6 +88,23 @@ spec:
               limits:
                 memory: 64Mi
 
+          secondary:
+            image:
+              repository: registry.k8s.io/git-sync/git-sync
+              tag: v4.1.0
+            args:
+              - --repo=https://github.com/WDaan/VueTorrent
+              - --ref=latest-release
+              - --period=86400s
+              - --root=/add-ons
+
+            resources:
+              requests:
+                cpu: 10m
+                memory: 25Mi
+              limits:
+                memory: 50Mi
+
     service:
       main:
         enabled: false
@@ -101,3 +119,8 @@ spec:
         type: nfs
         server: "nas-srv-01.${LOCAL_DOMAIN}"
         path: /volume1/testing-vault/test
+      add-ons:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /add-ons
