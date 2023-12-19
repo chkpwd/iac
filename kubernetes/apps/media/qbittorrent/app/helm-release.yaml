@@ -54,6 +54,17 @@ spec:
             fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
 
+        initContainers:
+          init-ui:
+            image:
+              repository: registry.k8s.io/git-sync/git-sync
+              tag: v4.1.0
+            args:
+              - --repo=https://github.com/WDaan/VueTorrent
+              - --ref=latest-release
+              - --period=86400s
+              - --root=/add-ons
+
         containers:
           main:
             image:
@@ -101,22 +112,6 @@ spec:
               limits:
                 memory: 2000Mi
 
-          secondary:
-            image: 
-              repository: registry.k8s.io/git-sync/git-sync
-              tag: v4.1.0
-            args:
-              - --repo=https://github.com/WDaan/VueTorrent
-              - --branch=latest-release
-              - --wait=86400
-              - --root=/add-ons
-    
-            resources:
-              requests:
-                cpu: 10m
-                memory: 100Mi
-              limits:
-                memory: 125Mi
     service:
       main:
         ports:
@@ -148,7 +143,5 @@ spec:
       add-ons:
         enabled: true
         type: emptyDir
-        advancedMounts:
-          main:
-            secondary:
-              - path: /add-ons
+        globalMounts:
+          - path: /add-ons
