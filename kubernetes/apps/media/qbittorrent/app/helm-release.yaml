@@ -31,7 +31,6 @@ spec:
       main:
         enabled: true
         type: statefulset
-        strategy: 
         annotations:
           reloader.stakater.com/auto: "true"
 
@@ -53,17 +52,6 @@ spec:
             runAsGroup: &group 100
             fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
-
-        initContainers:
-          init-ui:
-            image:
-              repository: registry.k8s.io/git-sync/git-sync
-              tag: v4.1.0
-            args:
-              - --repo=https://github.com/WDaan/VueTorrent
-              - --ref=latest-release
-              - --period=86400s
-              - --root=/add-ons
 
         containers:
           main:
@@ -94,12 +82,12 @@ spec:
                 valueFrom:
                   fieldRef:
                     fieldPath: status.podIP
-    
+
             probes:
               liveness:
                 enabled: false
 
-            securityContext:
+            securityContext: &securityContext
               allowPrivilegeEscalation: false
               capabilities:
                 drop:
@@ -111,6 +99,25 @@ spec:
                 memory: 250Mi
               limits:
                 memory: 2000Mi
+
+          secondary:
+            image:
+              repository: registry.k8s.io/git-sync/git-sync
+              tag: v4.1.0
+            args:
+              - --repo=https://github.com/WDaan/VueTorrent
+              - --ref=latest-release
+              - --period=86400s
+              - --root=/add-ons
+
+            securityContext: *securityContext
+
+            resources:
+              requests:
+                cpu: 10m
+                memory: 25Mi
+              limits:
+                memory: 50Mi
 
     service:
       main:
