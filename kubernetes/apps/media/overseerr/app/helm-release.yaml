@@ -120,10 +120,9 @@ spec:
               - *host
 
     persistence:
-      config:
+      tmp:
         enabled: true
         type: emptyDir
         medium: Memory
         size: 100Mi
-        globalMounts:
-          - path: /tmp
+
