@@ -48,7 +48,7 @@ spec:
           enableServiceLinks: false
           securityContext:
             runAsNonRoot: true
-            runAsUser: &context 568
+            runAsUser: &context 1999
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
@@ -65,8 +65,25 @@ spec:
               LOG_LEVEL: "info"
               PORT: &port 5055
 
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/status
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+
             securityContext:
               allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
               capabilities:
                 drop:
                   - ALL
@@ -101,3 +118,10 @@ spec:
         tls:
           - hosts:
               - *host
+
+    persistence:
+      tmp:
+        enabled: true
+        type: emptyDir
+        medium: Memory
+        size: 100Mi

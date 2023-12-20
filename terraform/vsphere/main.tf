@@ -26,7 +26,7 @@ module "win-srv-2022" {
   vm_name                   = "win-srv-2022"
   vm_template               = "WSRV22-DE-Temp"
   network_spec = {
-    network_id              = "IoT"
+    network_id              = "IOT"
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
@@ -48,7 +48,7 @@ module "hosting-srv-01" {
   vm_template               = "deb-12-template"
   vm_datastore              = "main-nvme"
   network_spec = {
-    network_id              = "Lab"
+    network_id              = "LAB"
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id, vsphere_tag.gaming.id ]
@@ -70,7 +70,7 @@ module "win11-gaming-01" {
   vm_name                   = "win11-gaming-01"
   vm_template               = "W11-22H2-Temp"
   network_spec = {
-    network_id              = "IoT"
+    network_id              = "IOT"
   }
   spec = {
     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]

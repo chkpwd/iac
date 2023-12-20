@@ -47,16 +47,16 @@ spec:
         pod:
           enableServiceLinks: false
           securityContext:
-            runAsUser: &context 1000
-            runAsGroup: *context
-            fsGroup: *context
+            runAsUser: 1026
+            runAsGroup: &group 100
+            fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
           main:
             image:
               repository: ghcr.io/onedr0p/sonarr-develop
-              tag: 4.0.0.733
+              tag: 4.0.0.738
               pullPolicy: IfNotPresent
             env:
               TZ: "${TZ}"
@@ -68,6 +68,28 @@ spec:
               SONARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
               SONARR__THEME: dark
               SONARR__LOG_LEVEL: info
+
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
 
             resources:
               requests:
@@ -138,9 +160,4 @@ spec:
         enabled: true
         type: nfs
         server: "nas-srv-01.${LOCAL_DOMAIN}"
-        path: /volume1/vault-01/media/series
-      downloads:
-        enabled: true
-        type: nfs
-        server: "nas-srv-01.${LOCAL_DOMAIN}"
-        path: /volume1/vault-01/downloads
+        path: /volume1/vault-01/media

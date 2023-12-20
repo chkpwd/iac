@@ -46,12 +46,12 @@ spec:
 
         pod:      
           enableServiceLinks: false
-          # nodeSelector:
-          #   intel.feature.node.kubernetes.io/gpu: "true"
+          nodeSelector:
+            intel.feature.node.kubernetes.io/gpu: "true"
           securityContext:
-            runAsUser: &context 1000
-            runAsGroup: *context
-            fsGroup: *context
+            runAsUser: 1026
+            runAsGroup: &group 100
+            fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
@@ -95,11 +95,11 @@ spec:
 
             resources:
               requests:
-                # gpu.intel.com/i915: 1
+                gpu.intel.com/i915: 1
                 cpu: 200m
                 memory: 1Gi
               limits:
-                # gpu.intel.com/i915: 1
+                gpu.intel.com/i915: 1
                 memory: 2Gi
 
     service:

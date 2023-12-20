@@ -5,6 +5,7 @@ metadata:
   name: immich
   namespace: tools
 spec:
+  image: ghcr.io/chkpwd/cdpgvecto.rs:ubi8-15.5-0-v0.1.11
   postgresVersion: 15
 
   patroni:
@@ -15,6 +16,8 @@ spec:
         pg_hba:
           - hostnossl all all 10.42.0.0/16 md5
           - hostssl all all 0.0.0.0/0 md5
+        parameters:
+          shared_preload_libraries: "vectors.so"
 
   instances:
     - dataVolumeClaimSpec:

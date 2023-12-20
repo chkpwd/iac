@@ -31,32 +31,36 @@ stages:
       commands:
         - apt install parted nfs-common open-iscsi
 
-  boot:
-    - name: "Setup Keymap"
-      system_firstboot:
-        keymap: us
+boot:
+  - name: "Setup Keymap"
+    system_firstboot:
+      keymap: us
 
-    - name: "Setup Hostname"
-      hostname: "cattles-k3s-{{ trunc 4 .MachineID }}"
+  - name: "Setup Hostname"
+    hostname: "cattles-k3s-{{ trunc 4 .MachineID }}"
 
-    - name: "Partition Drive"
-      if: >-
-        [ $(fdisk -lo type /dev/nvme0n1 | tail -n 1) != "Linux" ]
-      commands:
-        - parted /dev/nvme0n1 --script -a optimal -- mklabel gpt mkpart longhorn ext4 0% 100%
+  - name: "Formats /dev/nvme0n1 as ext4 if Kairos is on an SD device and /dev/nvme0n1 is unformatted"
+    if: >-
+      [[ $(lsblk -o NAME,LABEL | grep OEM) =~ "-sd" ]] &&
+      [[ ! $(fdisk -lo type /dev/nvme0n1 | tail -n 1) =~ "Linux" ]]
+    commands:
+      - parted /dev/nvme0n1 --script -a optimal -- mklabel gpt mkpart longhorn ext4 0% 100%
+      - &partition mkfs.ext4 -F /dev/nvme0n1p1
 
-    - name: "Format Partition"
-      if: >-
-        [ $(lsblk -no FSTYPE /dev/nvme0n1p1) != "ext4" ]
-      commands:
-        - mkfs.ext4 -F /dev/nvme0n1p1
+  - name: "Creates an ext4 partition on /dev/nvme0n1p1 if not present and Kairos is on an SD device"
+    if: >-
+      [[ $(lsblk -o NAME,LABEL | grep OEM) =~ "-sd" ]] &&
+      [[ $(lsblk -no FSTYPE /dev/nvme0n1p1) != "ext4" ]]
+    commands:
+      - *partition
 
-    - name: "Mount drive under default longhorn location"
-      if: >-
-        [ -e /dev/nvme0n1p1 ] && [ -e /dev/sda ]
-      commands:
-        - umount /var/lib/longhorn
-        - mount -o rw /dev/nvme0n1p1 /var/lib/longhorn
+  - name: "Mount /dev/nvme0n1p1 under /var/lib/longhorn if it exists and Kairos is installed to /dev/sdX"
+    if: >-
+      [[ $(lsblk -o NAME,LABEL | grep OEM) =~ "-sd" ]] &&
+      [[ $(lsblk -no FSTYPE /dev/nvme0n1p1) == "ext4" ]]
+    commands:
+      - umount /var/lib/longhorn
+      - mount -o rw /dev/nvme0n1p1 /var/lib/longhorn
 
     - name: "Define Environment Variables"
       environment:
@@ -64,7 +68,6 @@ stages:
         CONTAINERD_ADDRESS: /run/k3s/containerd/containerd.sock
         CONTAINERD_NAMESPACE: k8s.io
 
-    # -- Init Flux Namespace
     - name: "Add flux-system namespace manifest"
       files:
         - path: /var/lib/rancher/k3s/server/manifests/flux-system.yaml
@@ -74,8 +77,7 @@ stages:
             metadata:
               name: flux-system
 
-    # -- Init SOPS Secrets
-    - name: "Download SOPS secret"
+    - name: "Add SOPS secret"
       files:
         - path: /var/lib/rancher/k3s/server/manifests/sops-secret.yaml
           content: |

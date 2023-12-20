@@ -1,0 +1,33 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: intel-device-plugins-gpu
+  namespace: system
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: intel-device-plugins-operator
+      version: 0.28.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: intel
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  dependsOn:
+    - name: intel-device-plugins-operator
+      namespace: kube-system
+
+  values:
+    name: intel-gpu-plugin
+    sharedDevNum: 3
+    nodeFeatureRule: false

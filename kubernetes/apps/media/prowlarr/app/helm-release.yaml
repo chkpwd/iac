@@ -47,7 +47,7 @@ spec:
         pod:
           enableServiceLinks: false
           securityContext:
-            runAsUser: &context 568
+            runAsUser: &context 1999
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
@@ -68,6 +68,29 @@ spec:
               PROWLARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
               PROWLARR__THEME: dark
               PROWLARR__LOG_LEVEL: info
+
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
 
             resources:
               requests:

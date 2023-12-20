@@ -36,11 +36,11 @@ spec:
 
         cronjob:
           concurrencyPolicy: Forbid
-          schedule: '@0 2 15 * *'
+          schedule: '0 2 15 * *'
           startingDeadlineSeconds: 30
           successfulJobsHistory: 1
           failedJobsHistory: 1
-          backoffLimit: 6
+          backoffLimit: 1
 
         pod:
           securityContext:
@@ -70,6 +70,13 @@ spec:
                   secretKeyRef:
                     name: media-secrets
                     key: API_KEY_RADARR
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: 
+                drop:
+                  - ALL
 
             resources:
               requests:

@@ -37,7 +37,7 @@ spec:
         pod:
           enableServiceLinks: false
           securityContext:
-            runAsUser: &context 0
+            runAsUser: &context 1999
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
@@ -49,6 +49,13 @@ spec:
               repository: ghcr.io/corentinth/it-tools
               tag: 2023.8.16-9bd4ad4
               pullPolicy: IfNotPresent
+
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+                add: ["NET_BIND_SERVICE"]
 
             resources:
               requests:
@@ -80,3 +87,12 @@ spec:
         tls:
           - hosts:
               - *host
+
+    persistence:
+      config:
+        enabled: true
+        type: emptyDir
+        medium: Memory
+        size: 100Mi
+        globalMounts:
+          - path: /var/cache/nginx

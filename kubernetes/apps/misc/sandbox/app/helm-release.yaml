@@ -1,0 +1,126 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app sandbox
+  namespace: misc
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 2.4.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    global:
+      fullnameOverride: *app
+
+    controllers:
+      main:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        replicas: 1
+
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              accessMode: ReadWriteOnce
+              size: 100Mi
+              storageClass: longhorn-media
+              globalMounts:
+                - path: /config
+
+        pod:
+          enableServiceLinks: false
+          securityContext: &secContext
+            runAsUser: &user 1026
+            runAsGroup: &group 100
+            fsGroup: *group
+            fsGroupChangePolicy: "OnRootMismatch"
+
+        containers:
+          main:
+            image:
+              repository: debian
+              tag: trixie-20231120-slim
+              pullPolicy: IfNotPresent
+
+            command:
+              - bash
+              - -c
+              - sleep infinity
+
+            env:
+              UID: *user
+              GID: *group
+
+            probes:
+              liveness:
+                enabled: false
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              <<: *secContext
+              capabilities:
+                drop:
+                  - ALL
+
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 64Mi
+
+          secondary:
+            image:
+              repository: registry.k8s.io/git-sync/git-sync
+              tag: v4.1.0
+            args:
+              - --repo=https://github.com/WDaan/VueTorrent
+              - --ref=latest-release
+              - --period=86400s
+              - --root=/add-ons
+
+            resources:
+              requests:
+                cpu: 10m
+                memory: 25Mi
+              limits:
+                memory: 50Mi
+
+    service:
+      main:
+        enabled: false
+
+    ingress:
+      main:
+        enabled: false
+
+    persistence:
+      data:
+        enabled: true
+        type: nfs
+        server: "nas-srv-01.${LOCAL_DOMAIN}"
+        path: /volume1/testing-vault/test
+      add-ons:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /add-ons

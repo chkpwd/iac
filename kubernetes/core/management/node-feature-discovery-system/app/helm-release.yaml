@@ -1,0 +1,63 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app node-feature-discovery
+  namespace: system
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: node-feature-discovery
+      version: 0.14.3
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: nfd
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    fullnameOverride: *app
+
+    enableNodeFeatureApi: true
+
+    master:
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: [ "ALL" ]
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+
+      resources:
+        requests:
+          cpu: 21m
+          memory: 51Mi
+        limits:
+          memory: 51Mi
+
+    worker:
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: [ "ALL" ]
+        readOnlyRootFilesystem: true
+        runAsNonRoot: true
+
+      resources:
+        requests:
+          cpu: 5m
+          memory: 48Mi
+        limits:
+          memory: 48Mi
+
+
+    prometheus:
+      enable: false

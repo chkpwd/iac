@@ -31,7 +31,6 @@ spec:
       main:
         enabled: true
         type: statefulset
-        strategy: 
         annotations:
           reloader.stakater.com/auto: "true"
 
@@ -49,9 +48,9 @@ spec:
         pod:
           enableServiceLinks: false
           securityContext:
-            runAsUser: &context 1000
-            runAsGroup: *context
-            fsGroup: *context
+            runAsUser: 1026
+            runAsGroup: &group 100
+            fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
@@ -63,15 +62,37 @@ spec:
             env:
               TZ: "${TZ}"
               QBITTORRENT__PORT: &port 8080
-              QBT_Preferences__WebUI__AlternativeUIEnabled: 'false'
-              QBT_BitTorrent__Session__DefaultSavePath: '/data/complete'
-              QBT_BitTorrent__Session__TempPath: '/data/incomplete'
+              QBT_Preferences__WebUI__AuthSubnetWhitelistEnabled: true
+              QBT_Preferences__WebUI__AuthSubnetWhitelist: |-
+                10.42.0.0/16, 172.16.16.0/24
+              QBT_BitTorrent__Session__InterfaceName: eth0
+              QBT_Preferences__WebUI__AlternativeUIEnabled: 'true'
+              QBT_Preferences__WebUI__RootFolder: '/add-ons/VueTorrent'
+              QBT_Preferences__WebUI__LocalHostAuth: false
+              QBT_Preferences__WebUI__UseUPNP: false
+              QBT_Preferences__WebUI__Password_PBKDF2: "@ByteArray(sd8RNLizKfQzbP1q3XW1gQ==:UmGO7Xe1odEVZRAdv5Ofeuhvumut+NyZp2DTE3Ae6gFGxx3IWjcTwMJkBttS7N1aQSzWTV35hYaPKJJuh94RGQ==)"
+              QBT_BitTorrent__Session__DefaultSavePath: '/data/downloads/torrent/complete'
+              QBT_BitTorrent__Session__TempPath: '/data/downloads/torrent/incomplete'
               QBT_BitTorrent__Session__TempPathEnabled: 'true'
-              QBT_BitTorrent__Session__FinishedTorrentExportDirectory: '/data/files'
-              QBT_BitTorrent__Session__TorrentExportDirectory: '/data/files'
+              QBT_BitTorrent__Session__FinishedTorrentExportDirectory: '/data/downloads/torrent/files'
+              QBT_BitTorrent__Session__TorrentExportDirectory: '/data/downloads/torrent/files'
               QBT_BitTorrent__Session__Port: '50413'
-              QBT_BitTorrent__WebUI__RootFolder: 'true'
-    
+              QBT_BitTorrent__Session__Interface: eth0
+              QBT_BitTorrent__Session__InterfaceAddress:
+                valueFrom:
+                  fieldRef:
+                    fieldPath: status.podIP
+
+            probes:
+              liveness:
+                enabled: false
+
+            securityContext: &securityContext
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+
             resources:
               requests:
                 cpu: 10m
@@ -80,21 +101,22 @@ spec:
                 memory: 2000Mi
 
           secondary:
-            image: 
+            image:
               repository: registry.k8s.io/git-sync/git-sync
               tag: v4.1.0
             args:
               - --repo=https://github.com/WDaan/VueTorrent
-              - --branch=latest-release
-              - --wait=86400
+              - --ref=latest-release
+              - --period=86400s
               - --root=/add-ons
-    
+
             resources:
               requests:
                 cpu: 10m
-                memory: 100Mi
+                memory: 25Mi
               limits:
-                memory: 125Mi
+                memory: 50Mi
+
     service:
       main:
         ports:
@@ -122,11 +144,9 @@ spec:
         enabled: true
         type: nfs
         server: "nas-srv-01.${LOCAL_DOMAIN}"
-        path: /volume1/vault-01/downloads/torrent
+        path: /volume1/vault-01/media
       add-ons:
         enabled: true
         type: emptyDir
-        advancedMounts:
-          main:
-            secondary:
-              - path: /add-ons
+        globalMounts:
+          - path: /add-ons

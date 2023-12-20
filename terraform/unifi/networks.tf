@@ -8,19 +8,10 @@ resource "unifi_network" "lab" {
 }
 
 resource "unifi_network" "iot" {
-  name    = "IoT"
+  name    = "IOT"
   purpose = "vlan-only"
 
   vlan_id      = var.vlans["iot"]
-  dhcp_enabled = false
-  site         = var.site
-}
-
-resource "unifi_network" "media" {
-  name    = "Media"
-  purpose = "vlan-only"
-
-  vlan_id      = var.vlans["media"]
   dhcp_enabled = false
   site         = var.site
 }

@@ -1,0 +1,92 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: &app esxi-backup-config
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 2.4.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    global:
+      fullnameOverride: *app
+
+    controllers:
+      main:
+        enabled: true
+        type: cronjob
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        cronjob:
+          concurrencyPolicy: Forbid
+          schedule: '0 0 * * *'
+          startingDeadlineSeconds: 30
+          successfulJobsHistory: 1
+          failedJobsHistory: 1
+          backoffLimit: 1
+
+        # pod:
+        #   securityContext:
+        #     runAsUser: &context 1999
+        #     runAsGroup: *context
+        #     fsGroup: *context
+        #     fsGroupChangePolicy: "OnRootMismatch"
+
+        containers:
+          main:
+            image:
+              repository: ghcr.io/tigattack/esxi-config-backup
+              tag: "1.1.0"
+              pullPolicy: IfNotPresent
+
+            # securityContext:
+            #   allowPrivilegeEscalation: false
+            #   capabilities: { drop: ["ALL"] }
+
+            resources:
+              requests:
+                cpu: 5m
+                memory: 36M
+              limits:
+                memory: 128M
+
+    service:
+      main:
+        enabled: false
+
+    persistence:
+      config:
+        enabled: true
+        name: "{{ .Release.Name }}"
+        type: configMap
+        defaultMode: 0755
+        globalMounts:
+          - path: /app/config.yml
+            subPath: config.yml
+            readOnly: true
+      backups:
+        enabled: true
+        type: nfs
+        server: "nas-srv-01.${LOCAL_DOMAIN}"
+        path: /volume1/vault-01/backups/vmware
+        advancedMounts:
+          main:
+            main:
+              - path: /app/backups

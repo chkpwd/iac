@@ -37,7 +37,7 @@ spec:
         pod:
           enableServiceLinks: false
           securityContext:
-            runAsUser: &context 65532
+            runAsUser: &context 1999
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
@@ -48,6 +48,30 @@ spec:
               repository: ghcr.io/chkpwd/winxuu
               tag: 2.0.3
               pullPolicy: IfNotPresent
+
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              <<: *secContext
+              capabilities:
+                drop:
+                  - ALL
 
             resources:
               requests:

@@ -47,9 +47,9 @@ spec:
         pod:
           enableServiceLinks: false
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            fsGroup: 1000
+            runAsUser: 1026
+            runAsGroup: &group 100
+            fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
@@ -70,6 +70,28 @@ spec:
                 {{ .Release.Name }}.media.svc.cluster,
                 {{ .Release.Name }}.media.${CLUSTER_DOMAIN},
                 {{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}
+
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api?mode=version
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
 
             resources:
               requests:
@@ -139,7 +161,7 @@ spec:
         enabled: true
         type: nfs
         server: "nas-srv-01.${LOCAL_DOMAIN}"
-        path: /volume1/vault-01/downloads/usenet
+        path: /volume1/vault-01/media
       # sabnzbd-config:
       #   enabled: true
       #   name: "{{ .Release.Name }}-config"
