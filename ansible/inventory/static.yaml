@@ -31,12 +31,9 @@ all:
 
     linux:
       hosts:
-        media-srv-01:
         home-assistant:
-
         kubes-cp-[1:3]:
         mgmt-srv-01:
-        dns-srv-02:
         hosting-srv-01:
 
     windows:
@@ -50,11 +47,9 @@ all:
 
     docker_hosts:
       hosts:
-        media-srv-01:
         home-assistant:
         ct-01-ec2:
         mgmt-srv-01:
-        dns-srv-02:
         hosting-srv-01:
 
     k3s_cluster:
@@ -76,10 +71,6 @@ all:
       vars:
         ansible_user: pi
         ansible_become_user: pi
-
-    media_server:
-      hosts:
-        media-srv-01:
 
     aws:
       vars:
@@ -111,7 +102,6 @@ all:
     dns_servers:
       hosts:
         mgmt-srv-01:
-        dns-srv-02:
     
     game_servers:
       hosts:
