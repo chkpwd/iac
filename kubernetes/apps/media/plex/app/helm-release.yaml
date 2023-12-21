@@ -27,6 +27,18 @@ spec:
     global:
       fullNameOverride: *app
 
+    defaultPodOptions:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key: app.kubernetes.io/name
+                    operator: In
+                    values:
+                      - jellyfin
+                      - sabnzbd
+
     controllers:
       main:
         enabled: true
