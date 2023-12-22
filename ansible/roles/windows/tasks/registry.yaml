@@ -48,6 +48,10 @@
     data: 0
     type: dword
 
+- name: Restore old context menu
+  ansible.windows.win_regedit:
+    path: HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32
+
 # https://docs.microsoft.com/en-us/mem/configmgr/core/plan-design/security/enable-tls-1-2-client#configure-for-strong-cryptography
 - name: Miscellaneous | Configure .NET SchUseStrongCrypto
   ansible.windows.win_regedit:
