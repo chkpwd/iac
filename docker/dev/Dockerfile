@@ -17,7 +17,7 @@ RUN apt-get update && \
     # Development Tools
     build-essential file pwgen git vim htop jq yq ldap-utils \
     rsync rclone software-properties-common pkg-config \
-    libxmlsec1-dev golang-go npm nodejs upx-ucl jqp \
+    libxmlsec1-dev golang-go npm nodejs upx-ucl jqp alien \
     # SSH Tools
     openssh-server openssh-client sshpass \
     # Network Tools
@@ -27,11 +27,11 @@ RUN apt-get update && \
     # Text Processing and Viewing
     bat fzf tree \
     # Python Tools
-    pipx python3-dev python3-pip python3-venv python3-setuptools \
+    python3-dev python3-pip python3-venv python3-setuptools \
     # Zsh and Plugins
     zsh zsh-autosuggestions zsh-syntax-highlighting \
     # Miscellaneous Tools
-    direnv age hugo && \
+    direnv age hugo ffmpeg && \
     # SSH Config
     ssh-keygen -A && \
     mkdir -p /run/sshd && \
@@ -86,9 +86,6 @@ ARG VIDDY_VERSION=v0.4.0
 # renovate: datasource=github-releases depName=derailed/k9s
 ARG K9S_VERSION=v0.29.1
 
-# renovate: datasource=github-releases depName=pulumi/pulumi
-ARG PULUMI_VERSION=v3.96.2
-
 # renovate: datasource=github-releases depName=hashicorp/terraform
 ARG TERRAFORM_VERSION=v1.6.5
 
@@ -142,9 +139,6 @@ RUN \
     curl -L "https://github.com/bitwarden/sdk/releases/download/bws-${BWS_SDK_VERSION}/bws-x86_64-unknown-linux-gnu-${BWS_SDK_VERSION#v}.zip" > /tmp/bws.zip && \
     unzip /tmp/bws.zip -d /tmp && \
     mv /tmp/bws /usr/bin/ && \
-    # Download and install pulumi
-    curl -L "https://get.pulumi.com/releases/sdk/pulumi-${PULUMI_VERSION}-linux-x64.tar.gz" | tar xvzf - -C /tmp --strip-components=1 && \
-    mv /tmp/pulumi* /usr/bin/ && \
     # Download and install terraform
     curl -LO "https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION#v}/terraform_${TERRAFORM_VERSION#v}_linux_amd64.zip" && \
     unzip "terraform_${TERRAFORM_VERSION#v}_linux_amd64.zip" -d /tmp && \
@@ -153,9 +147,6 @@ RUN \
     curl -L "https://github.com/knqyf263/pet/releases/download/${PET_VERSION}/pet_${PET_VERSION#v}_linux_amd64.deb" > pet.deb && \
     dpkg -i pet.deb && \
     rm -f pet.deb && \
-    # Download and install Teller
-    curl -L "https://github.com/tellerops/teller/releases/download/${TELLER_VERSION}/teller_${TELLER_VERSION#v}_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
-    mv /tmp/teller /usr/bin/teller && \
     # Download and install chezmoi
     curl -L "https://github.com/twpayne/chezmoi/releases/download/${CHEZMOI_VERSION}/chezmoi_${CHEZMOI_VERSION#v}_linux_amd64.deb" > chezmoi.deb && \
     dpkg -i chezmoi.deb && \
@@ -197,9 +188,9 @@ RUN \
     apt-get update && \
     apt-get install -y docker-ce docker-ce-cli \
     containerd.io docker-buildx-plugin \
-    docker-compose-plugin
-
-RUN bash -c "rm -rf /tmp/*"
+    docker-compose-plugin && \
+    # Cleanup tmp files
+    bash -c "rm -rf /tmp/*"
 
 # Copy Commands for Various Tools
 COPY --from=docker.io/istio/istioctl:1.20.1 /usr/local/bin/istioctl /usr/bin/istioctl
@@ -208,14 +199,13 @@ COPY --from=docker.io/klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bi
 COPY --from=gcr.io/kaniko-project/executor:v1.19.0 /kaniko/executor /usr/bin/kaniko
 COPY --from=quay.io/coreos/etcd:v3.5.11 /usr/local/bin/etcdctl /usr/bin/etcdctl
 COPY --from=docker.io/hashicorp/packer:light-1.9.4 /bin/packer /usr/bin/packer
-COPY --from=docker.io/digitalocean/doctl:1.101.0 /app/doctl /usr/bin/doctl
 COPY --from=docker.io/vmware/govc:v0.33.0 /govc /usr/bin/govc
 
 # UPX all of the binaries
-RUN for item in bw bws nova pluto terraform pulumi pet  \
+RUN for item in bw bws nova pluto terraform pet  \
     kubectl stern krew viddy k9s helm sops vcluster \
     pluto curl istioctl flux hugo kaniko chezmoi kairosctl \
-    etcdctl doctl govc packer korb atuin teller; do \
+    etcdctl govc packer; do \
     upx $(which $item); \
     done
 
@@ -227,40 +217,17 @@ RUN su -c "ssh-keygen -t ed25519 -b 2048 -f /home/$DEV/.ssh/id_ed25519 -qN ''" $
 USER $DEV
 
 # Python
+RUN python3 -m venv ~/.venv && \
+    export PATH="/home/$DEV/.venv/bin:$PATH"
+
 RUN for pkg in \
-        ansible-base \
+        ansible \
         ansible-lint \
         poetry \
         molecule \
     ; do \
-        pipx install $pkg; \
+        ~/.venv/bin/python -m pip install $pkg; \
     done
-
-
-# Set ZSH Custom Dir
-ENV ZSH_CUSTOM=/home/$DEV/.oh-my-zsh/custom
-
-# ZSH Setup
-RUN \
-    # Install ZSH
-    curl -L https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh > /tmp/install.sh && \
-    chmod +x /tmp/install.sh && \
-    yes | ./tmp/install.sh && \
-    rm /tmp/install.sh && \
-    echo $ZSH_CUSTOM && \
-    mkdir -p $ZSH_CUSTOM/completions && \
-    chmod -R 755 $ZSH_CUSTOM/completions && \
-    curl -L https://gist.githubusercontent.com/raw/88d7f239615905dcad6b74e8e4b0fbbf -o $HOME/.zshrc && \
-    curl -L https://raw.githubusercontent.com/agkozak/zsh-z/master/zsh-z.plugin.zsh > $ZSH_CUSTOM/plugins/zsh-z && \
-    # Auto Complete for Tools
-    helm completion zsh > $ZSH_CUSTOM/completions/helm.zsh && \
-    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/completion/_kubectx.zsh > $ZSH_CUSTOM/completions/_kubectx.zsh && \
-    curl -L https://raw.githubusercontent.com/ahmetb/kubectx/master/completion/_kubens.zsh > $ZSH_CUSTOM/completions/_kubens.zsh && \
-    flux completion zsh > $ZSH_CUSTOM/completions/flux.zsh && \
-    hugo completion zsh > $ZSH_CUSTOM/completions/hugo.zsh && \
-    echo 'autoload -U bashcompinit && \
-    bashcompinit && \
-    eval "$(register-python-argcomplete pipx)"' > $ZSH_CUSTOM/completions/pipx.zsh
 
 # Bitwarden CLI Configuration
 ENV BWS_ACCESS_TOKEN=
