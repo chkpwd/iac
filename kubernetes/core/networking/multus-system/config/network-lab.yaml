@@ -1,0 +1,23 @@
+---
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: multus-lab
+spec:
+  config: |-
+    {
+      "cniVersion": "0.3.0",
+      "type": "macvlan",
+      "master": "enp0s31f6",
+      "mode": "bridge",
+      "ipam": {
+        "type": "host-local",
+        "subnet": "172.16.20.0/24",
+        "rangeStart": "172.16.20.20",
+        "rangeEnd": "172.16.20.25",
+        "routes": [
+          { "dst": "0.0.0.0/0" }
+        ],
+        "gateway": "172.16.20.1"
+      }
+    }
