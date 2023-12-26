@@ -37,8 +37,8 @@ spec:
         pullPolicy: *pullPolicy
 
       paths:
-        config: /etc/cni/net.d
-        bin: /opt/cni/bin
+        config: /var/lib/rancher/k3s/agent/etc/cni/net.d
+        bin: /var/lib/rancher/k3s/data/current/bin
 
       logLevel: verbose
 
