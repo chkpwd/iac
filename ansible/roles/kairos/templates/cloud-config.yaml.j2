@@ -1,5 +1,7 @@
 #cloud-config
 
+hostname: "cattles-k3s-{{ trunc 4 .MachineID }}"
+
 users:
   - name: chkpwd
     shell: /bin/bash
@@ -36,9 +38,6 @@ boot:
     system_firstboot:
       keymap: us
 
-  - name: "Setup Hostname"
-    hostname: "cattles-k3s-{{ trunc 4 .MachineID }}"
-
   - name: "Formats /dev/nvme0n1 as ext4 if Kairos is on an SD device and /dev/nvme0n1 is unformatted"
     if: >-
       [[ $(lsblk -o NAME,LABEL | grep OEM) =~ "-sd" ]] &&
@@ -62,37 +61,37 @@ boot:
       - umount /var/lib/longhorn
       - mount -o rw /dev/nvme0n1p1 /var/lib/longhorn
 
-    - name: "Define Environment Variables"
-      environment:
-        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-        CONTAINERD_ADDRESS: /run/k3s/containerd/containerd.sock
-        CONTAINERD_NAMESPACE: k8s.io
+  - name: "Define Environment Variables"
+    environment:
+      KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+      CONTAINERD_ADDRESS: /run/k3s/containerd/containerd.sock
+      CONTAINERD_NAMESPACE: k8s.io
 
-    - name: "Add flux-system namespace manifest"
-      files:
-        - path: /var/lib/rancher/k3s/server/manifests/flux-system.yaml
-          content: |
-            apiVersion: v1
-            kind: Namespace
-            metadata:
-              name: flux-system
+  - name: "Add flux-system namespace manifest"
+    files:
+      - path: /var/lib/rancher/k3s/server/manifests/flux-system.yaml
+        content: |
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: flux-system
 
-    - name: "Add SOPS secret"
-      files:
-        - path: /var/lib/rancher/k3s/server/manifests/sops-secret.yaml
-          content: |
-            apiVersion: v1
-            kind: Secret
-            metadata:
-              name: sops-age
-              namespace: flux-system
-            type: Opaque
-            data:
-              sops.asc: {[ AGE_KEY_SECRET_BASE64 ]}
+  - name: "Add SOPS secret"
+    files:
+      - path: /var/lib/rancher/k3s/server/manifests/sops-secret.yaml
+        content: |
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: sops-age
+            namespace: flux-system
+          type: Opaque
+          data:
+            sops.asc: {[ AGE_KEY_SECRET_BASE64 ]}
 
-    - name: "Set modprobe modules"
-      modules:
-        - iscsi_tcp
+  - name: "Set modprobe modules"
+    modules:
+      - iscsi_tcp
 
 kubevip:
   enabled: true
