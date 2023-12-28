@@ -76,7 +76,7 @@ stages:
               namespace: flux-system
             type: Opaque
             data:
-              sops.asc: {[ AGE_KEY_SECRET_BASE64 ]}
+              age.agekey: {[ AGE_KEY_SECRET_BASE64 ]}
 
     - name: "Set modprobe modules"
       modules:

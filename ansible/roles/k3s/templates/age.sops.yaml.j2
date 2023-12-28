@@ -1,8 +1,8 @@
 apiVersion: v1
-data:
-  age.agekey: "{{ AGE_KEY_SECRET_BASE64 }}"
 kind: Secret
 metadata:
   name: sops-age
   namespace: "{{ flux_namespace }}"
 type: Opaque
+data:
+  age.agekey: "{{ AGE_KEY_SECRET_BASE64 }}"
