@@ -84,7 +84,7 @@ stages:
 
 kubevip:
   enabled: true
-  eip: "172.16.16.99"
+  eip: {[ kairos_kubevip_address ]}
 
 k3s:
   enabled: true
@@ -101,7 +101,7 @@ p2p:
     create: false
     use: false
 
-  network_token: "b3RwOgogIGRodDoKICAgIGludGVydmFsOiA5MjIzMzcyMDM2ODU0Nzc1ODA3CiAgICBrZXk6IEtWZDBMc1h0bUJpbGxyU2JDVGE4OWJOTTRaeUlGY1ZKakFiMVpsVTVUMkYKICAgIGxlbmd0aDogNDMKICBjcnlwdG86CiAgICBpbnRlcnZhbDogOTIyMzM3MjAzNjg1NDc3NTgwNwogICAga2V5OiBmbEp3NE53RDRNQnlLc1JXZHVLMGNoanM4QlMzcVpVclF6aEF2ekhRd3pvCiAgICBsZW5ndGg6IDQzCnJvb206IHUzM1FSaFZmZnJSb21HcnNGMlZJd2R6d08wcFk3dUFMR3I0RDFFZjdRUm4KcmVuZGV6dm91czogYkpKaG1BUERHWFRmajJ6N2NTSjlqTk1Ca1doTThMZnFSODZpMG9uWlFBbgptZG5zOiAwdmNVenRxMk4xVFlGNWQzYTQ5M2hHNnJidHZjVVdQbGFaT21DY2VPenhZCm1heF9tZXNzYWdlX3NpemU6IDIwOTcxNTIwCg=="
+  network_token: {[ P2P_NETWORK_TOKEN ]}
 
   auto:
     enable: true
