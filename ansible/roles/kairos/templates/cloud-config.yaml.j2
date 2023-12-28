@@ -5,8 +5,8 @@ hostname: "cattles-k3s-{{ trunc 4 .MachineID }}"
 users:
   - name: chkpwd
     shell: /bin/bash
-    groups: [ admin ]
-    ssh_authorized_keys: [ github:chkpwd ]
+    groups: [ "admin" ]
+    ssh_authorized_keys: [ "github:chkpwd" ]
 
 install:
   auto: true
@@ -16,7 +16,7 @@ install:
   grub_options:
     saved_entry: "Kairos"
 
-  extra-dirs-rootfs: &longhorn [ /var/lib/longhorn ]
+  extra-dirs-rootfs: &longhorn [ "/var/lib/longhorn" ]
 
 upgrade:
   extra-dirs-rootfs: *longhorn
@@ -33,69 +33,58 @@ stages:
       commands:
         - apt install parted nfs-common open-iscsi
 
-boot:
-  - name: "Setup Keymap"
-    system_firstboot:
-      keymap: us
+    - name: "Format NVME Drive"
+      commands:
+        - parted /dev/nvme0n1 --script -a optimal -- mklabel gpt mkpart longhorn ext4 0% 100%
+        - mkfs.ext4 -F /dev/nvme0n1p1
 
-  - name: "Formats /dev/nvme0n1 as ext4 if Kairos is on an SD device and /dev/nvme0n1 is unformatted"
-    if: >-
-      [[ $(lsblk -o NAME,LABEL | grep OEM) =~ "-sd" ]] &&
-      [[ ! $(fdisk -lo type /dev/nvme0n1 | tail -n 1) =~ "Linux" ]]
-    commands:
-      - parted /dev/nvme0n1 --script -a optimal -- mklabel gpt mkpart longhorn ext4 0% 100%
-      - &partition mkfs.ext4 -F /dev/nvme0n1p1
+  initramfs:
+    - name: Increase number of open files
+      sysctl:
+        fs.inotify.max_user_instances: "8192"
+        fs.inotify.max_user_watches: "524288"
 
-  - name: "Creates an ext4 partition on /dev/nvme0n1p1 if not present and Kairos is on an SD device"
-    if: >-
-      [[ $(lsblk -o NAME,LABEL | grep OEM) =~ "-sd" ]] &&
-      [[ $(lsblk -no FSTYPE /dev/nvme0n1p1) != "ext4" ]]
-    commands:
-      - *partition
+    - name: "Mount Longhorn filesystem"
+      commands:
+        - umount /var/lib/longhorn
+        - mount -o rw /dev/nvme0n1p1 /var/lib/longhorn
 
-  - name: "Mount /dev/nvme0n1p1 under /var/lib/longhorn if it exists and Kairos is installed to /dev/sdX"
-    if: >-
-      [[ $(lsblk -o NAME,LABEL | grep OEM) =~ "-sd" ]] &&
-      [[ $(lsblk -no FSTYPE /dev/nvme0n1p1) == "ext4" ]]
-    commands:
-      - umount /var/lib/longhorn
-      - mount -o rw /dev/nvme0n1p1 /var/lib/longhorn
+  boot:
+    - name: "Define Environment Variables"
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        CONTAINERD_ADDRESS: /run/k3s/containerd/containerd.sock
+        CONTAINERD_NAMESPACE: k8s.io
 
-  - name: "Define Environment Variables"
-    environment:
-      KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-      CONTAINERD_ADDRESS: /run/k3s/containerd/containerd.sock
-      CONTAINERD_NAMESPACE: k8s.io
+    - name: "Add flux-system namespace manifest"
+      files:
+        - path: /var/lib/rancher/k3s/server/manifests/flux-system.yaml
+          content: |
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              name: flux-system
 
-  - name: "Add flux-system namespace manifest"
-    files:
-      - path: /var/lib/rancher/k3s/server/manifests/flux-system.yaml
-        content: |
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-            name: flux-system
+    - name: "Add SOPS secret"
+      files:
+        - path: /var/lib/rancher/k3s/server/manifests/sops-secret.yaml
+          content: |
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              name: sops-age
+              namespace: flux-system
+            type: Opaque
+            data:
+              sops.asc: {[ AGE_KEY_SECRET_BASE64 ]}
 
-  - name: "Add SOPS secret"
-    files:
-      - path: /var/lib/rancher/k3s/server/manifests/sops-secret.yaml
-        content: |
-          apiVersion: v1
-          kind: Secret
-          metadata:
-            name: sops-age
-            namespace: flux-system
-          type: Opaque
-          data:
-            sops.asc: {[ AGE_KEY_SECRET_BASE64 ]}
-
-  - name: "Set modprobe modules"
-    modules:
-      - iscsi_tcp
+    - name: "Set modprobe modules"
+      modules:
+        - iscsi_tcp
 
 kubevip:
   enabled: true
-  eip: {[ kairos_kubevip_address ]}
+  eip: "172.16.16.99"
 
 k3s:
   enabled: true
@@ -112,7 +101,7 @@ p2p:
     create: false
     use: false
 
-  network_token: {[ P2P_NETWORK_TOKEN ]}
+  network_token: "b3RwOgogIGRodDoKICAgIGludGVydmFsOiA5MjIzMzcyMDM2ODU0Nzc1ODA3CiAgICBrZXk6IEtWZDBMc1h0bUJpbGxyU2JDVGE4OWJOTTRaeUlGY1ZKakFiMVpsVTVUMkYKICAgIGxlbmd0aDogNDMKICBjcnlwdG86CiAgICBpbnRlcnZhbDogOTIyMzM3MjAzNjg1NDc3NTgwNwogICAga2V5OiBmbEp3NE53RDRNQnlLc1JXZHVLMGNoanM4QlMzcVpVclF6aEF2ekhRd3pvCiAgICBsZW5ndGg6IDQzCnJvb206IHUzM1FSaFZmZnJSb21HcnNGMlZJd2R6d08wcFk3dUFMR3I0RDFFZjdRUm4KcmVuZGV6dm91czogYkpKaG1BUERHWFRmajJ6N2NTSjlqTk1Ca1doTThMZnFSODZpMG9uWlFBbgptZG5zOiAwdmNVenRxMk4xVFlGNWQzYTQ5M2hHNnJidHZjVVdQbGFaT21DY2VPenhZCm1heF9tZXNzYWdlX3NpemU6IDIwOTcxNTIwCg=="
 
   auto:
     enable: true
