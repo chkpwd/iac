@@ -9,3 +9,11 @@ resource "authentik_group" "main" {
   users        = [ authentik_user.main.id ]
   is_superuser = false
 }
+
+resource "authentik_token" "media" {
+  user = authentik_user.main.id
+  identifier = "media"
+  expiring = false
+  description = "Media token"
+  intent = "app_password"
+}
