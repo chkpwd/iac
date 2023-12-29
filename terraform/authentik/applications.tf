@@ -6,7 +6,7 @@ module "authentik-app-sonarr" {
   proxy_values = {
     internal = ""
     external = "https://sonarr.k8s.chkpwd.com"
-    mode     = "forward_single" # Assuming the mode
+    mode     = "forward_single"
   }
 
   app_values = {
