@@ -158,7 +158,6 @@ RUN \
     # Download and install krew
     curl -L "https://github.com/kubernetes-sigs/krew/releases/download/${KREW_VERSION}/krew-linux_amd64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/krew-linux_amd64 /usr/bin/krew && \
-    krew install virt ctx ns && \
     # Download and install viddy
     curl -L "https://github.com/sachaos/viddy/releases/download/${VIDDY_VERSION}/viddy_Linux_x86_64.tar.gz" | tar xvzf - -C /tmp && \
     mv /tmp/viddy /usr/bin/viddy && \
@@ -215,6 +214,9 @@ RUN su -c "ssh-keygen -t ed25519 -b 2048 -f /home/$DEV/.ssh/id_ed25519 -qN ''" $
 
 # User Setup
 USER $DEV
+
+# Install Kubectl Plugins
+RUN krew install virt ctx ns
 
 # Python
 RUN python3 -m venv ~/.venv && \
