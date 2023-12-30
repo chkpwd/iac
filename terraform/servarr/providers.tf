@@ -35,5 +35,6 @@ provider "radarr" {
 
 provider "prowlarr" {
   url     = "https://prowlarr.${var.local_domain}"
-  api_key = "${data.sops_file.servarr-secrets.data["prowlarr_api_key"]}"
+  #authorization = "Basic ${base64encode("chkpwd:M19aEmRlMSuV52heEBDFme0jUKsHlfBRHwXpdHrseBaXo3CRYqucvStckl80")}"
+  # api_key = "${data.sops_file.servarr-secrets.data["prowlarr_api_key"]}"
 }
