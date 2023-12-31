@@ -42,7 +42,7 @@ spec:
               size: 2Gi
               storageClass: longhorn-config
               globalMounts:
-                - path: /unifi
+                - path: /usr/lib/unifi/data
 
         pod:
           enableServiceLinks: false
@@ -55,15 +55,13 @@ spec:
         containers:
           main:
             image:
-              repository: jacobalberty/unifi
-              tag: v7.5.176
+              repository: ghcr.io/goofball222/unifi
+              tag: 8.0.24-ubuntu
               pullPolicy: IfNotPresent
             env:
               RUNAS_UID0: "false"
-              UNIFI_UID: "999"
-              UNIFI_GID: "999"
-              UNIFI_STDOUT: "true"
-              JVM_INIT_HEAP_SIZE:
+              PUID: "999"
+              PGID: "999"
               JVM_MAX_HEAP_SIZE: "1024M"
 
             resources:
@@ -108,3 +106,12 @@ spec:
         tls:
           - hosts:
               - *host
+
+    # persistence:
+    #   logs:
+    #     enabled: true
+    #     type: emptyDir
+    #     storageClass: longhorn-misc
+    #     size: 1Gi
+    #     globalMounts:
+    #       - path: /usr/lib/unifi/logs
