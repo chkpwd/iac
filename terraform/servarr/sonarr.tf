@@ -54,21 +54,9 @@ resource "sonarr_media_management" "media_settings_configs" {
 }
 
 resource "sonarr_root_folder" "series" {
-  path = "/data/standard_series"
+  path = "/data/series/standard_series"
 }
 
 resource "sonarr_root_folder" "anime" {
-  path = "/data/anime_series"
-}
-
-resource "sonarr_remote_path_mapping" "sabnzbd" {
-  host        = "sabnzbd.media.svc.cluster.local"
-  remote_path = "/data/complete/"
-  local_path  = "/downloads/usenet/complete/"
-}
-
-resource "sonarr_remote_path_mapping" "sabnzbd" {
-  host        = "sabnzbd.media.svc.cluster.local"
-  remote_path = "/data/complete/"
-  local_path  = "/downloads/torrent/complete/"
+  path = "/data/series/anime_series"
 }
