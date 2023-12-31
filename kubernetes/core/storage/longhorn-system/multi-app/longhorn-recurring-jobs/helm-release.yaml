@@ -16,6 +16,9 @@ spec:
         name: tyzbit
         namespace: flux-system
 
+  upgrade:
+    force: true # force resource updates through a replacement strategy
+
   values:
     minuteStep: 5
     hourStep: 2
@@ -65,5 +68,11 @@ spec:
         backup:
           - interval: 24h
             retain: 1
+        filesystem-trim:
+          - interval: 24h
+      "Misc":
+        options:
+          parameters:
+            numberOfReplicas: "1"
         filesystem-trim:
           - interval: 24h
