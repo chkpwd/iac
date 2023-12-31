@@ -74,16 +74,16 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-              capabilities: 
+              capabilities:
                 drop:
                   - ALL
 
             resources:
               requests:
                 cpu: 5m
-                memory: 36M
+                memory: 36Mi
               limits:
-                memory: 128M
+                memory: 200Mi
 
     service:
       main:
@@ -98,3 +98,9 @@ spec:
           - path: /config/recyclarr.yml
             subPath: recyclarr.yml
             readOnly: true
+      config:
+        enabled: true
+        type: emptyDir
+        medium: Memory
+        globalMounts:
+          - /config
