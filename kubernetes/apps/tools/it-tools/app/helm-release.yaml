@@ -89,10 +89,25 @@ spec:
               - *host
 
     persistence:
-      config:
+      cache:
         enabled: true
         type: emptyDir
         medium: Memory
-        size: 100Mi
+        size: 1Mi
         globalMounts:
           - path: /var/cache/nginx
+      nginx:
+        enabled: true
+        type: emptyDir
+        medium: Memory
+        size: 1Mi
+        globalMounts:
+          - path: /var/run
+            subPath: nginx.pid
+      logs:
+        enabled: true
+        type: emptyDir
+        medium: Memory
+        size: 1Mi
+        globalMounts:
+          - path: /var/log/nginx
