@@ -6,6 +6,11 @@ metadata:
   namespace: tools
 spec:
   postgresVersion: 15
+  # dataSource:
+  #   volumes:
+  #     pgDataVolume:
+  #       pvcName: shlink-pvc-backup
+  #       directory: shlink
   instances:
     - dataVolumeClaimSpec:
         storageClassName: longhorn-database
@@ -23,6 +28,11 @@ spec:
 
   backups:
     pgbackrest:
+      restore:
+        enabled: true
+        repoName: repo1
+        options:
+          - --db-include=shlink
       manual:
         repoName: repo1
         options:
