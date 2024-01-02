@@ -7,7 +7,6 @@ metadata:
 spec:
   image: ghcr.io/chkpwd/cdpgvecto.rs:ubi8-15.5-0-v0.1.11
   postgresVersion: 15
-
   patroni:
     dynamicConfiguration:
       synchronous_mode: true
@@ -26,7 +25,7 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 5Gi
+            storage: 10Gi
 
   users:
     - name: immich
