@@ -195,7 +195,7 @@ RUN \
 COPY --from=docker.io/istio/istioctl:1.20.1 /usr/local/bin/istioctl /usr/bin/istioctl
 COPY --from=docker.io/fluxcd/flux-cli:v2.2.2 /usr/local/bin/flux /usr/bin/flux
 COPY --from=docker.io/klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bin/hugo
-COPY --from=gcr.io/kaniko-project/executor:v1.19.0 /kaniko/executor /usr/bin/kaniko
+COPY --from=gcr.io/kaniko-project/executor:v1.19.2 /kaniko/executor /usr/bin/kaniko
 COPY --from=quay.io/coreos/etcd:v3.5.11 /usr/local/bin/etcdctl /usr/bin/etcdctl
 COPY --from=docker.io/hashicorp/packer:light-1.9.4 /bin/packer /usr/bin/packer
 COPY --from=docker.io/vmware/govc:v0.34.1 /govc /usr/bin/govc
