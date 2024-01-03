@@ -72,8 +72,8 @@ spec:
         containers:
           main:
             image:
-              repository: ghcr.io/onedr0p/jellyfin
-              tag: 10.8.11
+              repository: jellyfin/jellyfin
+              tag: 10.8.13-1
               pullPolicy: IfNotPresent
             env:
               TZ: "${TZ}"
@@ -110,7 +110,7 @@ spec:
     service:
       main:
         annotations:
-          metallb.universe.tf/loadBalancerIPs: ${JELLYFIN_LB_ADDRESS}
+          metallb.universe.tf/loadBalancerIPs: *loadBalancerIP
         type: LoadBalancer
         externalTrafficPolicy: Local
         ports:
