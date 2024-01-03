@@ -2,19 +2,6 @@
 name: Kubernetes Pluto
 
 on:
-  push:
-    branches: [ main ]
-    paths: [ kubernetes/** ]
-  pull_request:
-    branches: [ master ]
-    paths: [ kubernetes/** ]
-  workflow_dispatch:
-    inputs:
-      debug:
-        description: 'Debug mode'
-        type: boolean
-        required: false
-        default: false
   schedule:
     - cron: '0 0 * * 1'
 
