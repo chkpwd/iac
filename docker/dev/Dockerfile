@@ -57,7 +57,7 @@ ARG KORB_VERSION=v2.2.0
 ARG ATUIN_VERSION=v17.1.0
 
 # renovate: datasource=github-releases depName=helm/helm
-ARG HELM_VERSION=v3.13.2
+ARG HELM_VERSION=v3.13.3
 
 # renovate: datasource=github-releases depName=bitwarden/sdk
 ARG BWS_SDK_VERSION=v0.3.0
