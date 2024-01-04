@@ -100,6 +100,8 @@ module "authentik-app-miniflux" {
   oauth2_values = {
     client_id        = "miniflux"
     client_secret    = "${data.sops_file.authentik-secrets.data["authentik_miniflux_client_secret"]}"
+    property_mappings = data.authentik_scope_mapping.scopes.ids
+    redirect_uris = ["https://miniflux.chkpwd.com/oauth2/oidc/callback"]
   }
   app_values = {
     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/miniflux.png"

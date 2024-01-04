@@ -6,6 +6,7 @@ resource "authentik_provider_oauth2" "oauth2" {
   authorization_flow    = data.authentik_flow.default-authorization-flow.id
   access_token_validity = "minutes=10"
   property_mappings     = var.oauth2_values.property_mappings
+  redirect_uris         = var.oauth2_values.redirect_uris
   signing_key           = data.authentik_certificate_key_pair.generated.id
   lifecycle {
     ignore_changes      = [client_secret]

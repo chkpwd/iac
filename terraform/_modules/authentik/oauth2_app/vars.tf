@@ -16,6 +16,7 @@ variable "oauth2_values" {
     consumer_secret = optional(string)
     client_secret = optional(string)
     property_mappings = optional(list(string))
+    redirect_uris = optional(list(string))
   })
 }
 
