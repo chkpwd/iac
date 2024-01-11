@@ -20,12 +20,8 @@ jobs:
           - helmrelease
           - kustomization
     steps:
-      - name: Token Generation
-        uses: tibdex/github-app-token@v2.1.0
-        id: generate-token
-        with:
-          app_id: "${{ secrets.BOT_APP_ID }}"
-          private_key: "${{ secrets.BOT_APP_PRIVATE_KEY }}"
+      - name: Setup Flux CLI
+        uses: fluxcd/flux2/action@v2
 
       - name: Diff Resources
         uses: allenporter/flux-local/action/diff@3.2.0
@@ -39,7 +35,6 @@ jobs:
         name: Create PR Comments
         uses: mshick/add-pr-comment@v2.8.1
         with:
-          repo-token: "${{ steps.generate-token.outputs.token }}"
           message-id: "${{ github.event.pull_request.number }}/${{ matrix.cluster_path }}/${{ matrix.resources }}"
           message-failure: Diff was not successful
           message: |
