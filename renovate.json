@@ -27,9 +27,7 @@
         "docker/.+\\.ya?ml$",
         "kubernetes/.+\\.ya?ml$",
         "packer/.+\\.hcl$",
-        "pulumi/.+\\.ya?ml$",
-        "terraform/.+\\tf.$",
-        "vagrant/.+/Vagrantfile$"
+        "terraform/.+\\tf.$"
       ],
       "matchStrings": [
         "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( versioning=(?<versioning>\\S+))?\n.*?\"(?<currentValue>.*)\"\n"
@@ -38,5 +36,11 @@
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }
   ],
-    "packageRules": []
+    "packageRules": [
+      {
+        "matchUpdateTypes": ["minor", "patch"],
+        "matchCurrentVersion": "!/^0/",
+        "automerge": true
+      }
+    ]
 }
