@@ -45,7 +45,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # renovate: datasource=github-releases depName=kairos-io/provider-kairos
-ARG KAIROS_VERSION=v2.6.1
+ARG KAIROS_VERSION=v2.6.3
 
 # renovate: datasource=github-tags depName=yt-dlp/yt-dlp
 ARG YT_DLP_VERSION=2023.11.16
