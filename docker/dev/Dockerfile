@@ -48,7 +48,7 @@ RUN apt-get update && \
 ARG KAIROS_VERSION=v2.6.3
 
 # renovate: datasource=github-tags depName=yt-dlp/yt-dlp
-ARG YT_DLP_VERSION=2023.11.16
+ARG YT_DLP_VERSION=2023.12.30
 
 # renovate: datasource=github-releases depName=BeryJu/korb
 ARG KORB_VERSION=v2.2.0
