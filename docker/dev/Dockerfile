@@ -75,7 +75,7 @@ ARG CHEZMOI_VERSION=v2.44.0
 ARG KUBECTL_VERSION=v1.29.0
 
 # renovate: datasource=github-releases depName=stern/stern
-ARG STERN_VERSION=v1.27.0
+ARG STERN_VERSION=v1.28.0
 
 # renovate: datasource=github-releases depName=kubernetes-sigs/krew
 ARG KREW_VERSION=v0.4.4
