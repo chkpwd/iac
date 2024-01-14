@@ -24,7 +24,7 @@ variable "vcenter_host" {
   type    = string
 }
 variable "vcenter_datastore" {
-  default = "NVME-30A"
+  default = "main-nvme"
   type    = string
 }
 variable "vcenter_folder" {
