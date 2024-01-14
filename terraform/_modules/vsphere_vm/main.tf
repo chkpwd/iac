@@ -14,20 +14,20 @@ resource "vsphere_virtual_machine" "main" {
   num_cpus  = var.spec.cpu
   memory    = var.spec.memory
   guest_id  = data.vsphere_virtual_machine.template.guest_id
-  scsi_type = var.spec.scsi_type != null ? var.spec.scsi_type : null
+  scsi_type = null != var.spec.scsi_type ? var.spec.scsi_type : null
   nested_hv_enabled = var.spec.enable_hv
 
   sync_time_with_host = true
   memory_reservation  = var.spec.memory_reservation == true ? var.spec.memory : null
   firmware = "efi"
 
-  pci_device_id = var.spec.pci_device != null ? var.spec.pci_device : null
+  pci_device_id = null != var.spec.pci_device ? var.spec.pci_device : null
 
   network_interface {
     network_id   = data.vsphere_network.network.id
     adapter_type = "vmxnet3"
     use_static_mac = var.network_spec.static_mac_addr
-    mac_address  = var.network_spec.mac_address != null ? var.network_spec.mac_address : null
+    mac_address  = null != var.network_spec.mac_address ? var.network_spec.mac_address : null
   }
 
   disk {
@@ -92,4 +92,6 @@ resource "vsphere_virtual_machine" "main" {
       hv_mode
     ]
   }
+
+  extra_config = null != var.spec.extra_config ? var.spec.extra_config : null
 }

@@ -65,6 +65,7 @@ variable "spec" {
       datastore_id   = optional(string)
       attach_disk    = optional(bool)
     })))
+    extra_config = optional(map(string))
   })
 }
 
