@@ -51,7 +51,7 @@ module "win11-gaming-01" {
     network_id              = "IOT"
   }
   spec = {
-    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id, vsphere_tag.gaming.id ]
     folder                  = vsphere_folder.gaming_windows.path
     cpu                     = 8
     memory                  = 1024 * 16
