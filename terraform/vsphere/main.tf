@@ -56,7 +56,7 @@ module "win11-gaming-01" {
     cpu                     = 8
     memory                  = 1024 * 16
     memory_reservation      = true
-    pci_device              = [ data.vsphere_host_pci_device.nvidia_1050ti.id ]
+    pci_device              = [ data.vsphere_host_pci_device.nvidia_1050ti.id, data.vsphere_host_pci_device.nvidia_1050ti_audio.id ]
     disk_size               = 75
     additional_disks = [ 
       {

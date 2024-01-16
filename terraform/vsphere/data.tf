@@ -14,5 +14,10 @@ data "vsphere_host_pci_device" "nvidia_1080" {
 
 data "vsphere_host_pci_device" "nvidia_1050ti" {
   host_id    = data.vsphere_host.main.id
-  name_regex = "1050"
+  name_regex = "1050.*|NVIDIA.*Audio.*"
+}
+
+data "vsphere_host_pci_device" "nvidia_1050ti_audio" {
+  host_id    = data.vsphere_host.main.id
+  name_regex = "GP107GL High Definition Audio Controller"  # Adjust based on the actual audio device name
 }
