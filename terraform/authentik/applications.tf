@@ -113,15 +113,9 @@ module "authentik-app-miniflux" {
 }
 
 module "authentik-app-jellyfin" {
-  source = "../_modules/authentik/proxy_app"
+  source = "../_modules/authentik/ldap_app"
   name   = "Jellyfin"
   group  = "main"
-
-  proxy_values = {
-    internal = ""
-    external = "https://jellyfin.k8s.chkpwd.com"
-    mode     = "forward_single"
-  }
 
   app_values = {
     meta_description = "Usenet Downloader"
