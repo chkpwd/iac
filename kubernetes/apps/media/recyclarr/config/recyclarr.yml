@@ -20,6 +20,18 @@ sonarr:
       - name: HD-1080p
         reset_unmatched_scores:
           enabled: true
+        upgrade:
+          allowed: true
+          until_quality: Bluray-1080p
+          until_score: 10000
+        min_format_score: 0
+        quality_sort: top
+        qualities:
+          - name: Bluray-1080p
+          - name: WEB 1080p
+            qualities:
+              - WEBDL-1080p
+              - WEBRip-1080p
 
     # Release profiles from the guide to sync to Sonarr v3 (Sonarr v4 does not use this!)
     # Use `recyclarr sonarr --list-release-profiles` for values you can put here.
@@ -86,6 +98,24 @@ radarr:
     quality_definition:
       type: movie
       preferred_ratio: 0.5
+
+    quality_profiles:
+      - name: HD-1080p
+        reset_unmatched_scores:
+          enabled: true
+        upgrade:
+          allowed: true
+          until_quality: Bluray-1080p
+          until_score: 10000
+        min_format_score: 0
+        quality_sort: top
+        qualities:
+          - name: Bluray-1080p
+          - name: WEB 1080p
+            qualities:
+              - WEBDL-1080p
+              - WEBRip-1080p
+          - name: Bluray-720p
 
     custom_formats:
       # A list of custom formats to sync to Radarr.
