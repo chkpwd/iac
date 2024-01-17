@@ -54,7 +54,7 @@
 
 - name: Apply secondary disk partitioning
   ansible.builtin.include_tasks: disk.yaml
-  when: ansible_facts['devices'] | dict2items | map(attribute='key') | regex_findall('sd') | length > 1
+  when: ansible_facts['devices'] | dict2items | selectattr('key', 'contains', 'sd')
 
 - name: Copy the public SSH key
   ansible.posix.authorized_key:
