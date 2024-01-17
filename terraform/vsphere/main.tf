@@ -20,27 +20,22 @@
 #   }
 # }
 
-# module "hosting-srv-01" {
-#   source                    = "../_modules/vsphere_vm"
-#   vm_name                   = "hosting-srv-01"
-#   vm_template               = "deb-12-template"
-#   vm_datastore              = "main-nvme"
-#   network_spec = {
-#     network_id              = "LAN"
-#   }
-#   spec = {
-#     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id, vsphere_tag.docker.id ]
-#     folder                  = vsphere_folder.gaming_linux.path
-#     cpu                     = 2
-#     memory                  = 1024 * 12
-#     disk_size               = 16
-#     additional_disks = [ 
-#       {
-#         size                = 300
-#       } 
-#     ]
-#   }
-# }
+module "test-vm" {
+  source                    = "../_modules/vsphere_vm"
+  vm_name                   = "test-vm"
+  vm_template               = "deb-12-template"
+  vm_datastore              = "main-nvme"
+  network_spec = {
+    network_id              = "LAN"
+  }
+  spec = {
+    tags                    = [ vsphere_tag.cattle.id, vsphere_tag.linux.id ]
+    folder                  = vsphere_folder.linux.path
+    cpu                     = 2
+    memory                  = 1024 * 2
+    disk_size               = 16
+  }
+}
 
 module "win11-gaming-01" {
   source                    = "../_modules/vsphere_vm"
