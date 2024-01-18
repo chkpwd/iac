@@ -37,11 +37,11 @@ spec:
 
         pod:
           enableServiceLinks: false
-          securityContext:
-            runAsUser: &context 1999
-            runAsGroup: *context
-            fsGroup: *context
-            fsGroupChangePolicy: "OnRootMismatch"
+          # securityContext:
+          #   runAsUser: &context 1999
+          #   runAsGroup: *context
+          #   fsGroup: *context
+          #   fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
           main:
@@ -63,18 +63,18 @@ spec:
               #     secretKeyRef:
               #       name: script-server-secrets
               #       key: allowed_users
-              full_history:
-                valueFrom:
-                  secretKeyRef:
-                    name: script-server-secrets
-                    key: full_history_viewers
+              # full_history:
+              #   valueFrom:
+              #     secretKeyRef:
+              #       name: script-server-secrets
+              #       key: full_history_viewers
 
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities:
-                drop:
-                  - ALL
+            # securityContext:
+            #   allowPrivilegeEscalation: false
+            #   readOnlyRootFilesystem: true
+            #   capabilities:
+            #     drop:
+            #       - ALL
 
             resources:
               requests:
@@ -119,6 +119,7 @@ spec:
         size: 300Mi
         globalMounts:
           - path: /app/conf/conf.json
+            subPath: conf.json
       runners:
         enabled: true
         name: "{{ .Release.Name }}-runners-cm"
@@ -131,3 +132,8 @@ spec:
         type: configMap
         globalMounts:
           - path: /app/conf/scripts
+      logs:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /app/conf/logs
