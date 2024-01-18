@@ -87,7 +87,7 @@ spec:
       main:
         ports:
           http:
-            port: 8000
+            port: 5000
 
     ingress:
       main:
@@ -121,17 +121,13 @@ spec:
           - path: /app/conf/conf.json
       runners:
         enabled: true
-        type: persistentVolumeClaim
-        storageClass: longhorn-config
-        accessMode: ReadWriteOnce
-        size: 200Mi
+        name: "{{ .Release.Name }}-runners-cm"
+        type: configMap
         globalMounts:
           - path: /app/conf/runners
       scripts:
         enabled: true
-        type: persistentVolumeClaim
-        storageClass: longhorn-config
-        accessMode: ReadWriteOnce
-        size: 200Mi
+        name: "{{ .Release.Name }}-scripts-cm"
+        type: configMap
         globalMounts:
           - path: /app/conf/scripts
