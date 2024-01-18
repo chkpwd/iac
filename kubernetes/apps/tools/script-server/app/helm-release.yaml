@@ -27,33 +27,61 @@ spec:
     global:
       fullnameOverride: *app
 
-    controller:
-      annotations:
-        reloader.stakater.com/auto: "true"
+    controllers:
+      main:
+        enabled: true
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
 
-    image:
-      repository: bugy/script-server
-      tag: 1.18.0
+        pod:
+          enableServiceLinks: false
+          securityContext:
+            runAsUser: &context 1999
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
 
-    env:
-      port: 5000
-      title: "Chk's Script Server"
-      expiration_days: 7
-      access:
-        valueFrom:
-          secretKeyRef:
-            name: script-server-secrets
-            key: username
-      allowed_users:
-        valueFrom:
-          secretKeyRef:
-            name: script-server-secrets
-            key: allowed_users
-      full_history:
-        valueFrom:
-          secretKeyRef:
-            name: script-server-secrets
-            key: full_history_viewers
+        containers:
+          main:
+            image:
+              repository: bugy/script-server
+              tag: 1.18.0
+              pullPolicy: IfNotPresent
+            env:
+              port: 5000
+              title: "Chk's Script Server"
+              expiration_days: 7
+              access:
+                valueFrom:
+                  secretKeyRef:
+                    name: script-server-secrets
+                    key: username
+              allowed_users:
+                valueFrom:
+                  secretKeyRef:
+                    name: script-server-secrets
+                    key: allowed_users
+              full_history:
+                valueFrom:
+                  secretKeyRef:
+                    name: script-server-secrets
+                    key: full_history_viewers
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+
+            resources:
+              requests:
+                cpu: 50m
+                memory: 100Mi
+              limits:
+                memory: 200Mi
 
     service:
       main:
@@ -61,40 +89,49 @@ spec:
           http:
             port: 8000
 
-    hostname: *app
-
     ingress:
       main:
         enabled: true
         ingressClassName: ext-ingress
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.security.${CLUSTER_DOMAIN}:9000/outpost.goauthentik.io/auth/nginx
+          nginx.ingress.kubernetes.io/auth-signin: /outpost.goauthentik.io/start?rd=$escaped_request_uri
+          nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
+          nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
+                pathType: Prefix
+                service:
+                  name: main
+                  port: http
         tls:
           - hosts:
               - *host
 
-    volumeClaimTemplates:
-      - name: config
-        mountPath: /config
-        accessMode: ReadWriteOnce
-        size: 1Gi
-        storageClass: longhorn-media
-
     persistence:
-      media:
+      config:
         enabled: true
-        type: nfs
-        server: "nas-srv-01.${LOCAL_DOMAIN}"
-        path: /volume1/vault-01/static_media/personal/misc/script-server
-        mountPath: /data
-
-    resources:
-      requests:
-        cpu: 50m
-        memory: 100Mi
-      limits:
-        memory: 200Mi
+        accessMode: ReadWriteOnce
+        storageClass: longhorn-media
+        size: 300Mi
+        globalMounts:
+          - path: /app/conf/conf.json
+      runners:
+        enabled: true
+        type: persistentVolumeClaim
+        storageClass: longhorn-config
+        accessMode: ReadWriteOnce
+        size: 200Mi
+        globalMounts:
+          - path: /app/conf/runners
+      scripts:
+        enabled: true
+        type: persistentVolumeClaim
+        storageClass: longhorn-config
+        accessMode: ReadWriteOnce
+        size: 200Mi
+        globalMounts:
+          - path: /app/conf/scripts

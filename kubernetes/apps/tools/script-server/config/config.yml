@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: script-server-cm
+  namespace: tools
+data:
+  runners: |
+    {
+      "name": "sample script",
+      "description": "sample script description",
+      "script_path": "/app/scripts/sample.sh"
+    }
