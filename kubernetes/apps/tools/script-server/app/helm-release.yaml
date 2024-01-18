@@ -53,16 +53,16 @@ spec:
               port: 5000
               title: "Chk's Script Server"
               expiration_days: 7
-              access:
-                valueFrom:
-                  secretKeyRef:
-                    name: script-server-secrets
-                    key: username
-              allowed_users:
-                valueFrom:
-                  secretKeyRef:
-                    name: script-server-secrets
-                    key: allowed_users
+              # access:
+              #   valueFrom:
+              #     secretKeyRef:
+              #       name: script-server-secrets
+              #       key: username
+              # allowed_users:
+              #   valueFrom:
+              #     secretKeyRef:
+              #       name: script-server-secrets
+              #       key: allowed_users
               full_history:
                 valueFrom:
                   secretKeyRef:
