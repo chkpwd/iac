@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: script-server-runners-cm
+  namespace: tools
+data:
+  test-script: |
+    {
+      "name": "Ping Tester",
+      "description": "sample script description",
+      "script_path": "/app/scripts/ping.sh"
+    }
