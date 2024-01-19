@@ -114,9 +114,8 @@ spec:
     persistence:
       config:
         enabled: true
-        accessMode: ReadWriteOnce
-        storageClass: longhorn-media
-        size: 300Mi
+        name: "{{ .Release.Name }}-config-cm"
+        type: configMap
         globalMounts:
           - path: /app/conf/conf.json
             subPath: conf.json

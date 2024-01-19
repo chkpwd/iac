@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: script-server-config-cm
+  namespace: tools
+data:
+  conf.json: |
+    {
+      "port": 5000,
+      "title": "Chk's Script Server",
+      "access": {
+        "allowed_users": [ "chkpwd" ],
+        "admin_users": [ "chkpwd" ],
+        "trusted_ips": [ "192.168.0.1", "192.168.0.2" ]
+      },
+      "logging": {
+        "execution_file": "$DATE-$ID.log",
+        "execution_date_format": "%y-%m-%d_%H-%M"
+      }
+    }
