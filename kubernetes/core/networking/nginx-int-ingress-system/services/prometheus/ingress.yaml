@@ -1,0 +1,22 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: &app prometheus
+  namespace: networking
+spec:
+  ingressClassName: int-ingress
+  rules:
+    - host: &host prometheus.${K8S_GATEWAY_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: *app
+                port:
+                  number: 9090
+  tls:
+    - hosts:
+        - *host
