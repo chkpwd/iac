@@ -1,0 +1,34 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/infra.contrib.fluxcd.io/terraform_v1alpha2.json
+apiVersion: infra.contrib.fluxcd.io/v1alpha1
+kind: Terraform
+metadata:
+  name: authentik
+  namespace: security
+spec:
+  interval: 12h
+  approvePlan: auto
+  cloud:
+    hostname: app.terraform.io
+    organization: chkpwd
+    workspaces:
+      name: authentik
+    # token: not needed if referencing token from secret 
+  cliConfigSecretRef:
+    name: tf-controller-secrets
+    namespace: flux-system
+  path: ./terraform/authentik
+  sourceRef:
+    kind: OCIRepository
+    name: terraform
+    namespace: flux-system
+  runnerPodTemplate:
+    spec:
+      volumeMounts:
+        - name: tf-cloud-sops-key
+          mountPath: /home/runner/.config/sops/age
+          subPath: keys.txt
+      volumes:
+        - name: tf-cloud-sops-key
+          secret:
+            secretName: tf-controller-secrets
