@@ -39,9 +39,9 @@ spec:
       recurringJobSelector:
         enable: false
 
-    monitoring:
-      enabled: true
-      createPrometheusRules: true
+    metrics:
+      serviceMonitor:
+        enabled: true
 
     defaultSettings:
       backupTarget: nfs://nas-srv-01.${LOCAL_DOMAIN}:/volume1/vault-01/backups/kubernetes/longhorn
