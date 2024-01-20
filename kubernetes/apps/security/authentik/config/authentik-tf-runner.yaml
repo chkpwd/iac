@@ -25,7 +25,7 @@ spec:
     spec:
       volumeMounts:
         - name: tf-cloud-sops-key
-          mountPath: /home/runner/.config/sops/age
+          mountPath: /home/runner/.config/sops/age/keys.txt
           subPath: keys.txt
       volumes:
         - name: tf-cloud-sops-key
