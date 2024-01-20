@@ -45,6 +45,7 @@ service_definitions:
     volumes:
       - "{{ configuration_path }}/nginx-webserver/default.conf:/etc/nginx/conf.d/default.conf:ro"
       - "{{ configuration_path }}/nginx-webserver/files:/files"
+    state: stopped
 
   - name: netbootxyz
     image: ghcr.io/netbootxyz/netbootxyz:0.6.9-nbxyz2
@@ -56,3 +57,4 @@ service_definitions:
     volumes:
       - "{{ configuration_path }}/netbootxyz:/config"
       - "{{ configuration_path }}/netbootxyz/data:/assets"
+    state: stopped
