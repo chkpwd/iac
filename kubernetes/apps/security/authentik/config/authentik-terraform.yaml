@@ -13,11 +13,10 @@ spec:
     organization: chkpwd
     workspaces:
       name: authentik
-    # token: not needed if referencing token from secret 
   cliConfigSecretRef:
-    name: tf-controller-secrets
+    name: tf-cloud-secrets
     namespace: flux-system
-  path: ./terraform/authentik
+  path: ./authentik
   sourceRef:
     kind: OCIRepository
     name: tf-files
