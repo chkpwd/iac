@@ -19,8 +19,8 @@ spec:
     namespace: flux-system
   path: ./terraform/authentik
   sourceRef:
-    kind: GitRepository
-    name: chkpwd-ops
+    kind: OCIRepository
+    name: tf-files
     namespace: flux-system
   runnerPodTemplate:
     spec:

@@ -1,0 +1,10 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: OCIRepository
+metadata:
+  name: tf-files
+spec:
+  interval: 30m
+  url: oci://ghcr.io/chkpwd/manifests/terraform
+  ref:
+    tag: main
