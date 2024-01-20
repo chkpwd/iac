@@ -3,6 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: OCIRepository
 metadata:
   name: tf-files
+  namespace: flux-system
 spec:
   interval: 30m
   url: oci://ghcr.io/chkpwd/manifests/terraform
