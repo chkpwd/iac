@@ -7,7 +7,7 @@ metadata:
 spec:
   dependsOn:
   - name: flux-system-tf-controller-config
-  path: ./kubernetes/apps/flux-system/tf-controller/app
+  path: ./kubernetes/core/management/tf-controller-system/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -23,7 +23,7 @@ metadata:
   name: flux-system-tf-controller-config
   namespace: flux-system
 spec:
-  path: ./kubernetes/apps/flux-system/tf-controller/config
+  path: ./kubernetes/core/management/tf-controller-system/config
   prune: true
   sourceRef:
     kind: GitRepository
