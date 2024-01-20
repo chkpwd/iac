@@ -149,7 +149,7 @@ spec:
       ingress:
         enabled: true
         ingressClassName: int-ingress
-        hosts: [ &prometheus-host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}" ]
+        hosts: [ &prometheus-host "k8s-{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}" ]
         path: /
         pathType: Prefix
         tls:
