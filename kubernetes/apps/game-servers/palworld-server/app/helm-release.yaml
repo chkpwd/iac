@@ -1,0 +1,132 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: &app palworld-server
+  namespace: game-servers
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 2.5.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    global:
+      fullnameOverride: *app
+
+    controllers:
+      main:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        replicas: 1
+
+        statefulset:
+          volumeClaimTemplates:
+            - name: data
+              accessMode: ReadWriteOnce
+              size: 500Mi
+              storageClass: longhorn-game-servers
+              globalMounts:
+                - path: /palworld
+
+        pod:
+          enableServiceLinks: false
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: &group 1000
+            fsGroup: *group
+            fsGroupChangePolicy: "OnRootMismatch"
+
+        containers:
+          main:
+            image:
+              repository: palworld-server-docker
+              tag: 0.10.0
+
+            env:
+              PUID: 1000
+              PGID: 1000
+              PORT: &port 8211
+              PLAYERS: 16
+              MULTITHREADING: false
+              RCON_ENABLED: true
+              RCON_PORT: 25575
+              # ADMIN_PASSWORD:
+              #   valueFrom:
+              #     secretKeyRef:
+              #       name: palworld-server-secrets
+              #       key: ADMIN_PASSWORD
+              COMMUNITY: false  # Enable this if you want your server to show up in the community servers tab, USE WITH SERVER_PASSWORD!
+              UPDATE_ON_BOOT: true
+              # Enable the environment variables below if you have COMMUNITY: true
+              # SERVER_PASSWORD: "worldofpals"
+              # SERVER_NAME: "World of Pals"
+
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                    - sh
+                    - -c
+                    - 'pgrep "PalServer-Linux" > /dev/null || exit 1'
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+
+            # securityContext:
+            #   allowPrivilegeEscalation: false
+            #   capabilities:
+            #     drop:
+            #       - ALL
+
+            resources:
+              requests:
+                cpu: 100m
+                memory: 500Mi
+              limits:
+                memory: 800Mi
+
+    service:
+      main:
+        annotations:
+          metallb.universe.tf/loadBalancerIPs: ${PALWORLD_LB_ADDRESS}
+        type: LoadBalancer
+        externalTrafficPolicy: Local
+        ports:
+          http:
+            port: *port
+            protocol: UDP
+          server:
+            enabled: true
+            port: 27015
+            protocol: UDP
+          rcon:
+            port: 25575
+            protocol: TCP
+
+    ingress:
+      main:
+        enabled: false
