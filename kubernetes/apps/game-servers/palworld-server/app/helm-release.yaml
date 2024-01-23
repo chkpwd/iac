@@ -85,10 +85,10 @@ spec:
                 spec:
                   exec:
                     command:
-                    - sh
+                    - bash
                     - -c
                     - 'pgrep "PalServer-Linux" > /dev/null || exit 1'
-                  initialDelaySeconds: 0
+                  initialDelaySeconds: 30
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 3
