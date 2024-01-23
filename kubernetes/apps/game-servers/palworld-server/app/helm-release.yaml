@@ -100,23 +100,6 @@ spec:
               limits:
                 memory: 6Gi
 
-          secondary:
-            image:
-              repository: filebrowser/filebrowser
-              tag: v2
-
-            env:
-              TZ: "${TZ}"
-
-            args: ["-d", "/db/database.db"]
-
-            resources:
-              requests:
-                cpu: 10m
-                memory: 100Mi
-              limits:
-                memory: 150Mi
-
             # securityContext:
             #   allowPrivilegeEscalation: false
             #   capabilities:
@@ -140,26 +123,7 @@ spec:
           rcon:
             port: 25575
             protocol: TCP
-      secondary:
-        nameOverride: filebrowser
-        controller: main
-        ports:
-          files:
-            port: 80
 
     ingress:
       main:
-        enabled: true
-        className: int-ingress
-        hosts:
-          - host: &host palworld-server-fb.${K8S_GATEWAY_DOMAIN}
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  name: secondary
-                  port: files
-        tls:
-          - hosts:
-              - *host
-            secretName: palworld-server-tls
+        enabled: false
