@@ -40,18 +40,18 @@ spec:
           volumeClaimTemplates:
             - name: data
               accessMode: ReadWriteOnce
-              size: 500Mi
+              size: 2Gi
               storageClass: longhorn-game-servers
               globalMounts:
-                - path: /palworld
+                - path: /palworld/
 
         pod:
           enableServiceLinks: false
-          securityContext:
-            runAsUser: 1000
-            runAsGroup: &group 1000
-            fsGroup: *group
-            fsGroupChangePolicy: "OnRootMismatch"
+          # securityContext:
+          #   runAsUser: 1000
+          #   runAsGroup: &group 1000
+          #   fsGroup: *group
+          #   fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
           main:
@@ -78,23 +78,23 @@ spec:
               # SERVER_PASSWORD: "worldofpals"
               # SERVER_NAME: "World of Pals"
 
-            probes:
-              liveness: &probes
-                enabled: true
-                custom: true
-                spec:
-                  exec:
-                    command:
-                    - bash
-                    - -c
-                    - 'pgrep "PalServer-Linux" > /dev/null || exit 1'
-                  initialDelaySeconds: 30
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
-              startup:
-                enabled: false
+            # probes:
+            #   liveness: &probes
+            #     enabled: true
+            #     custom: true
+            #     spec:
+            #       exec:
+            #         command:
+            #         - bash
+            #         - -c
+            #         - 'pgrep "PalServer-Linux" > /dev/null || exit 1'
+            #       initialDelaySeconds: 30
+            #       periodSeconds: 10
+            #       timeoutSeconds: 1
+            #       failureThreshold: 3
+            #   readiness: *probes
+            #   startup:
+            #     enabled: false
 
             # securityContext:
             #   allowPrivilegeEscalation: false
