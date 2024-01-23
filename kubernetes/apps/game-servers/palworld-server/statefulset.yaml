@@ -34,21 +34,15 @@ spec:
               value: "false"
             - name: RCON_PORT
               value: "25575"
-            # Uncomment and fill in the secret details if needed
-            # - name: ADMIN_PASSWORD
-            #   valueFrom:
-            #     secretKeyRef:
-            #       name: palworld-server-secrets
-            #       key: ADMIN_PASSWORD
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: palworld-server-secrets
+                  key: ADMIN_PASSWORD
             - name: COMMUNITY
               value: "false"
             - name: UPDATE_ON_BOOT
               value: "true"
-            # Uncomment the following lines if you have COMMUNITY: true
-            # - name: SERVER_PASSWORD
-            #   value: "worldofpals"
-            # - name: SERVER_NAME
-            #   value: "World of Pals"
           ports:
             - containerPort: 8211
               protocol: UDP

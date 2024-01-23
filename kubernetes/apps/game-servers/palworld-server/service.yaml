@@ -4,8 +4,11 @@ kind: Service
 metadata:
   name: palworld-server
   namespace: game-servers
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: ${PALWORLD_LB_ADDRESS}
 spec:
-  type: ClusterIP
+  type: LoadBalancer
+  externalTrafficPolicy: Local
   selector:
     app: palworld-server
   ports:
