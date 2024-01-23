@@ -75,23 +75,23 @@ spec:
               COMMUNITY: false
               UPDATE_ON_BOOT: true
 
-            # probes:
-            #   liveness: &probes
-            #     enabled: true
-            #     custom: true
-            #     spec:
-            #       exec:
-            #         command:
-            #         - bash
-            #         - -c
-            #         - 'pgrep "PalServer-Linux" > /dev/null || exit 1'
-            #       initialDelaySeconds: 30
-            #       periodSeconds: 10
-            #       timeoutSeconds: 1
-            #       failureThreshold: 3
-            #   readiness: *probes
-            #   startup:
-            #     enabled: false
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                    - bash
+                    - -c
+                    - 'pgrep "PalServer-Linux" > /dev/null || exit 1'
+                  initialDelaySeconds: 60
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
 
             # securityContext:
             #   allowPrivilegeEscalation: false
