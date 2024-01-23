@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: &app palworld-server
+  namespace: game-servers
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  selector:
+    matchLabels:
+      app: *app
+  serviceName: *app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: *app
+    spec:
+      containers:
+        - name: *app
+          image: thijsvanloef/palworld-server-docker:v0.10.0
+          env:
+            PUID: 1000
+            PGID: 1000
+            PORT: &port 8211
+            PLAYERS: 16
+            MULTITHREADING: false
+            RCON_ENABLED: true
+            RCON_PORT: 25575
+            # ADMIN_PASSWORD:
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: palworld-server-secrets
+            #       key: ADMIN_PASSWORD
+            COMMUNITY: false  # Enable this if you want your server to show up in the community servers tab, USE WITH SERVER_PASSWORD!
+            UPDATE_ON_BOOT: true
+            # Enable the environment variables below if you have COMMUNITY: true
+            # SERVER_PASSWORD: "worldofpals"
+            # SERVER_NAME: "World of Pals"
+          ports:
+            - containerPort: *port
+              protocol: UDP
+              name: server
+            - containerPort: 27015
+              protocol: UDP
+              name: query
+            - containerPort: 25575
+              protocol: TCP
+              name: rcon
+          volumeMounts:
+            - name: palworld-data
+              subPath: palworld
+              mountPath: /palworld
+          resources:
+            requests:
+              cpu: 500m
+              memory: 500Mi
+            limits:
+              memory: 6Gi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: palworld-server
