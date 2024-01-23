@@ -2,15 +2,23 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: ubuntu
+  namespace: game-servers
   labels:
     app: ubuntu
 spec:
   containers:
-  - image: ubuntu
-    command:
-      - "sleep"
-      - "604800"
-    imagePullPolicy: IfNotPresent
-    name: ubuntu
+    - image: ubuntu
+      command:
+        - "sleep"
+        - "604800"
+      imagePullPolicy: IfNotPresent
+      name: ubuntu
+      volumeMounts:
+        - name: volume
+          mountPath: /inside-container
+      resources: {}
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: pvc-claim
   restartPolicy: Always
-
