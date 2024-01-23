@@ -40,10 +40,10 @@ spec:
           volumeClaimTemplates:
             - name: data
               accessMode: ReadWriteOnce
-              size: 2Gi
+              size: 60Gi
               storageClass: longhorn-game-servers
               globalMounts:
-                - path: /palworld/
+                - path: /palworld
 
         pod:
           enableServiceLinks: false
@@ -60,23 +60,20 @@ spec:
               tag: v0.10.0
 
             env:
-              PUID: 1000
-              PGID: 1000
+              # PUID: 1000
+              # PGID: 1000
               PORT: &port 8211
               PLAYERS: 16
               MULTITHREADING: false
-              RCON_ENABLED: true
+              RCON_ENABLED: false
               RCON_PORT: 25575
-              # ADMIN_PASSWORD:
-              #   valueFrom:
-              #     secretKeyRef:
-              #       name: palworld-server-secrets
-              #       key: ADMIN_PASSWORD
-              COMMUNITY: false  # Enable this if you want your server to show up in the community servers tab, USE WITH SERVER_PASSWORD!
+              ADMIN_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: palworld-server-secrets
+                    key: ADMIN_PASSWORD
+              COMMUNITY: false
               UPDATE_ON_BOOT: true
-              # Enable the environment variables below if you have COMMUNITY: true
-              # SERVER_PASSWORD: "worldofpals"
-              # SERVER_NAME: "World of Pals"
 
             # probes:
             #   liveness: &probes
@@ -104,11 +101,10 @@ spec:
 
             resources:
               requests:
-                cpu: 100m
+                cpu: 500m
                 memory: 500Mi
               limits:
-                memory: 800Mi
-
+                memory: 6Gi
     service:
       main:
         annotations:
