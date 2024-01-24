@@ -87,7 +87,7 @@ ARG VIDDY_VERSION=v0.4.0
 ARG K9S_VERSION=v0.31.7
 
 # renovate: datasource=github-releases depName=hashicorp/terraform
-ARG TERRAFORM_VERSION=v1.7.0
+ARG TERRAFORM_VERSION=v1.7.1
 
 # renovate: datasource=github-releases depName=getsops/sops
 ARG SOPS_VERSION=v3.8.1
