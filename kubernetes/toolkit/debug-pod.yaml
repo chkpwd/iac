@@ -14,7 +14,7 @@ spec:
       imagePullPolicy: IfNotPresent
       name: ubuntu
       volumeMounts:
-        - name: volume
+        - name: data
           mountPath: /inside-container
       resources: {}
   volumes:
