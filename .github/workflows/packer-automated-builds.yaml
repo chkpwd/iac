@@ -35,7 +35,7 @@ jobs:
           - os: linux
             version: 12Deb
           - os: windows
-            version: 22H2-W10
+            version: 22H2-W11
     runs-on: ubuntu-latest
     name: Packer Build ${{ matrix.os }}-${{ matrix.version }}
     steps:
@@ -74,6 +74,13 @@ jobs:
         id: setup
         with:
           version: ${{ github.event.inputs.packer_version || env.PRODUCT_VERSION }}
+
+      - name: Generate SSH Key
+        id: generate-ssh-key
+        if: ${{ matrix.os == 'windows' }}
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keygen -t rsa -b 4096 -f ~/.ssh/main -q -N ""
 
       - name: Initialize Packer configuration
         id: init
