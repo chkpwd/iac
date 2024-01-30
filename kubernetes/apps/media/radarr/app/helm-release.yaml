@@ -88,7 +88,7 @@ spec:
           secondary:
             image:
               repository: ghcr.io/onedr0p/exportarr
-              tag: v1.6.0
+              tag: v1.6.1
             env:
               PORT: &metricsPort 9707
               URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:7878"
