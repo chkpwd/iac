@@ -60,10 +60,13 @@ spec:
               tag: v0.10.0
 
             env:
-              # PUID: 1000
-              # PGID: 1000
               PORT: &port 8211
               PLAYERS: 16
+              SERVER_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: palworld-server-secrets
+                    key: SERVER_PASSWORD
               MULTITHREADING: false
               RCON_ENABLED: false
               RCON_PORT: 25575
@@ -72,8 +75,10 @@ spec:
                   secretKeyRef:
                     name: palworld-server-secrets
                     key: ADMIN_PASSWORD
-              COMMUNITY: false
+              COMMUNITY: true
               UPDATE_ON_BOOT: true
+              SERVER_NAME: "Chkpwd - Palworld 01"
+              SERVER_DESCRIPTION: "Chkpwd's Pokemon: Gotta catch em all!"
 
             probes:
               liveness: &probes
