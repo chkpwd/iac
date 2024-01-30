@@ -14,15 +14,5 @@ data "vsphere_host_pci_device" "nvidia_1080" {
 
 data "vsphere_host_pci_device" "nvidia_1080_audio" {
   host_id    = data.vsphere_host.main.id
-  name_regex = "GP107GL High Definition Audio Controller"
-}
-
-data "vsphere_host_pci_device" "nvidia_1050ti" {
-  host_id    = data.vsphere_host.main.id
-  name_regex = "1050"
-}
-
-data "vsphere_host_pci_device" "nvidia_1050ti_audio" {
-  host_id    = data.vsphere_host.main.id
-  name_regex = "GP107GL High Definition Audio Controller"
+  name_regex = "GP104 High Definition Audio Controller"
 }

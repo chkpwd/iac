@@ -36,7 +36,6 @@ module "test-vm" {
     disk_size               = 16
   }
 }
-
 module "win11-gaming-01" {
   source                    = "../_modules/vsphere_vm"
   count                     = 1
