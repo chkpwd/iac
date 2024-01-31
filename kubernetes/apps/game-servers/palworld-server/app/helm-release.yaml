@@ -47,11 +47,6 @@ spec:
 
         pod:
           enableServiceLinks: false
-          # securityContext:
-          #   runAsUser: 1000
-          #   runAsGroup: &group 1000
-          #   fsGroup: *group
-          #   fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
           main:
@@ -112,12 +107,6 @@ spec:
               limits:
                 memory: 16Gi
 
-            # securityContext:
-            #   allowPrivilegeEscalation: false
-            #   capabilities:
-            #     drop:
-            #       - ALL
-
     service:
       main:
         annotations:
@@ -139,16 +128,3 @@ spec:
     ingress:
       main:
         enabled: false
-
-    persistence:
-      cache:
-        enabled: true
-        type: emptyDir
-        globalMounts:
-          - path: /palworld/Pal/Binaries
-            subPath: binaries
-          - path: /palworld/Pal/Content
-            subPath: content
-      tmp:
-        enabled: true
-        type: emptyDir
