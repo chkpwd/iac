@@ -74,11 +74,12 @@ spec:
                     key: ADMIN_PASSWORD
               COMMUNITY: true
               UPDATE_ON_BOOT: true
-              PAL_EGG_DEFAULT_HATCHING_TIME: 10.000000
-              DEATH_PENALTY: Item
-              ENABLE_PLAYER_TO_PLAYER_DAMAGE: true
-              ENABLE_FRIENDLY_FIRE: true
-              IS_PVP: true
+              # Server Settings Variables
+              PAL_EGG_DEFAULT_HATCHING_TIME: "10.000000"
+              DEATH_PENALTY: "Item"
+              ENABLE_PLAYER_TO_PLAYER_DAMAGE: "True"
+              ENABLE_FRIENDLY_FIRE: "True"
+              IS_PVP: "True"
 
             probes:
               liveness: &probes
