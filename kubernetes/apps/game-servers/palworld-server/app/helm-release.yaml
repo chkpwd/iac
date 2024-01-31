@@ -60,7 +60,11 @@ spec:
               tag: v0.10.0
 
             env:
-              PORT: &port 8211
+              TZ: ${TZ}
+              PORT: &server 8211
+              PUBLIC_IP: ${PUBLIC_IP}
+              PUBLIC_PORT: *server
+              QUERY_PORT: &query 27015
               PLAYERS: 16
               SERVER_PASSWORD:
                 valueFrom:
@@ -69,7 +73,8 @@ spec:
                     key: SERVER_PASSWORD
               MULTITHREADING: false
               RCON_ENABLED: true
-              RCON_PORT: 25575
+              RCON_PORT: &rcon 25575
+              BACKUP_ENABLED: false
               ADMIN_PASSWORD:
                 valueFrom:
                   secretKeyRef:
@@ -77,8 +82,10 @@ spec:
                     key: ADMIN_PASSWORD
               COMMUNITY: true
               UPDATE_ON_BOOT: true
-              SERVER_NAME: "Chkpwd - Palworld 01"
+              SERVER_NAME: "Chkpwd's Server"
               SERVER_DESCRIPTION: "Pokemon: Gotta catch em all!"
+              PAL_EGG_DEFAULT_HATCHING_TIME: 10.000000
+              DEATH_PENALTY: Item
 
             probes:
               liveness: &probes
@@ -119,16 +126,29 @@ spec:
         externalTrafficPolicy: Local
         ports:
           http:
-            port: *port
+            port: *server
             protocol: UDP
           server:
             enabled: true
-            port: 27015
+            port: *query
             protocol: UDP
           rcon:
-            port: 25575
+            port: *rcon
             protocol: TCP
 
     ingress:
       main:
         enabled: false
+
+    persistence:
+      cache:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /palworld/Pal/Binaries
+            subPath: binaries
+          - path: /palworld/Pal/Content
+            subPath: content
+      tmp:
+        enabled: true
+        type: emptyDir
