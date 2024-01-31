@@ -110,6 +110,8 @@ spec:
         type: LoadBalancer
         externalTrafficPolicy: Local
         ports:
+          http:
+            enabled: false
           server:
             port: *server
             protocol: UDP
