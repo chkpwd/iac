@@ -110,12 +110,8 @@ spec:
         type: LoadBalancer
         externalTrafficPolicy: Local
         ports:
-          http:
-            port: *server
-            protocol: UDP
           server:
-            enabled: true
-            port: *query
+            port: *server
             protocol: UDP
           rcon:
             port: *rcon
