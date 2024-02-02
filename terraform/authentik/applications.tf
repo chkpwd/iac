@@ -130,3 +130,22 @@ module "authentik-app-jellyfin" {
 
   access_group = [authentik_group.main.id]
 }
+
+module "authentik-app-sabnzbd" {
+  source = "../_modules/authentik/proxy_app"
+  name   = "Maintainerr"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://maintainerr.k8s.chkpwd.com"
+    mode     = "forward_single"
+  }
+
+  app_values = {
+    meta_description = "Media Recycler"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/maintainerr.png"
+  }
+
+  access_group = [authentik_group.main.id]
+}
