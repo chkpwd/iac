@@ -12,6 +12,7 @@ resource "authentik_outpost" "main" {
     module.authentik-app-sabnzbd.provider_id,
     module.authentik-app-mainsail.provider_id,
     module.authentik-app-jellyfin.provider_id,
+    module.authentik-app-maintainerr.provider_id,
   ]
   service_connection = authentik_service_connection_kubernetes.main.id
 }
