@@ -6,3 +6,8 @@
   loop: "{{ sunshine_scripts }}"
   loop_control:
     label: "Executing Script: {{ item }}"
+
+- name: Configure Sunshine Apps
+  ansible.builtin.win_copy:
+    src: files/apps.json
+    dest: "{{ sunshine_path }}\\config\\apps.json"

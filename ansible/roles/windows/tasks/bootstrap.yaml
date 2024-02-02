@@ -17,5 +17,5 @@
 
 - name: Copy folder contents recursively
   ansible.windows.win_copy:
-    src: templates
+    src: files
     dest: "{{ ansible_facts.env.TEMP }}"
