@@ -13,6 +13,9 @@ resource "authentik_outpost" "main" {
     module.authentik-app-mainsail.provider_id,
     module.authentik-app-jellyfin.provider_id,
     module.authentik-app-maintainerr.provider_id,
+    module.authentik-app-runwhen-local.provider_id,
+    module.authentik-app-bazarr.provider_id,
+    module.authentik-app-qbittorrent.provider_id,
   ]
   service_connection = authentik_service_connection_kubernetes.main.id
 }
