@@ -10,6 +10,7 @@
 - hosts: cloud
   roles:
     - { role: compose }
+  tags: containers
 
 - name: Postconfigure services
   ansible.builtin.import_playbook: post_configuration.yaml
