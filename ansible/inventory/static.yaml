@@ -87,22 +87,9 @@ all:
         ct-01-ec2:
           ansible_host:	54.145.97.133
 
-    oci:
-      vars:
-        ansible_remote_user: ubuntu
-        ansible_ssh_user: ubuntu
-        ansible_ssh_private_key_file: ~/.ssh/oci
-        common_user: ubuntu
-      hosts:
-        ct-01-oci:
-          ansible_host:	129.80.54.203
-        ct-02-oci:
-          ansible_host:	141.148.13.11
-
     cloud:
       children:
         aws:
-        oci:
 
     dns_servers:
       hosts:
