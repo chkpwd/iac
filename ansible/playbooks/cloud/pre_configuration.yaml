@@ -1,12 +1,11 @@
 ---
 - name: Configure SWAG instance
-  hosts: cloud
+  hosts: ct-01-ec2
   become: true
 
   tasks:
 
     - name: Create necessary directories
-      delegate_to: ct-01-ec2
       ansible.builtin.file: # noqa risky-file-permissions
         path: "{{ item }}"
         state: directory
@@ -16,7 +15,6 @@
         - "{{ configuration_path }}/wireguard/wg_confs/"
 
     - name: Create wireguard config
-      delegate_to: ct-01-ec2
       ansible.builtin.copy:
         content: |
           [Interface]
@@ -35,14 +33,12 @@
         mode: '600'
 
     - name: Template NGINX config
-      delegate_to: ct-01-ec2
       ansible.builtin.template:
         src: ../../templates/nginx.conf.j2
         dest: "{{ configuration_path }}/swag/nginx/site-confs/default.conf"
         mode: '664'
 
     - name: Copy Cloudflare config
-      delegate_to: ct-01-ec2
       ansible.builtin.copy:
         content: |
           dns_cloudflare_api_token = "{{ SWAG_CF_API_TOKEN }}"
@@ -50,7 +46,6 @@
         mode: '400'
 
     - name: Create network(s)
-      delegate_to: ct-01-ec2
       community.docker.docker_network:
         name: "{{ item.name }}"
         ipam_config:
