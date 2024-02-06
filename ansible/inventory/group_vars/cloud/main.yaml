@@ -72,8 +72,9 @@ uptime_kuma_monitors:
     parent: *services_group
 
   - name: Plex Server
-    type: https
+    type: http
     url: https://plex.chkpwd.com
+    accepted_statuscodes: '401'
     parent: *services_group
 
   # Sites
