@@ -58,3 +58,10 @@ service_definitions:
       - "{{ configuration_path }}/netbootxyz:/config"
       - "{{ configuration_path }}/netbootxyz/data:/assets"
     state: stopped
+
+  - name: bws-cache
+    image: ghcr.io/ripplefcl/bws-cache:latest
+    env:
+      ORG_ID: "0228643f-4148-4629-b9b4-b06e001d9cce"
+      SECRET_TTL: "3600"
+    ports: [5000:5000]
