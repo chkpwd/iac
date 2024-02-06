@@ -21,7 +21,7 @@
           PrivateKey = {{ WIREGUARD_CLIENT_PRIVATE_KEY }}
           ListenPort = {{ WIREGUARD_PORT }}
           Address = 10.6.6.5/24
-          DNS = 172.16.16.1, local.chkpwd.com
+          DNS = 10.6.6.1, local.chkpwd.com
 
           [Peer]
           PublicKey = {{ WIREGUARD_PEER_PUBLIC_KEY }}
