@@ -12,6 +12,9 @@
   "kubernetes": {
     "fileMatch": ["kubernetes/.+\\.ya?ml$"]
   },
+  "ansible": {
+    "fileMatch": ["ansible/.*?[^/]+\\.ya?ml$"]
+  },
     "regexManagers": [
     {
       "description": "Process Dockerfile(s) in Docker Directory",
@@ -23,6 +26,7 @@
     {
       "description": "Process all other tools in the root of the directory",
       "fileMatch": [
+        "ansible/inventory/host_vars/.+\\.ya?ml$",
         "ansible/.+\\.ya?ml$",
         "docker/.+\\.ya?ml$",
         "kubernetes/.+\\.ya?ml$",
