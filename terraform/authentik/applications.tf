@@ -7,6 +7,10 @@ module "authentik-app-sonarr" {
     internal = ""
     external = "https://sonarr.k8s.chkpwd.com"
     mode     = "forward_single"
+    skip_path_regex = <<EOF
+^/api
+^/metrics
+EOF
   }
 
   app_values = {
@@ -26,6 +30,10 @@ module "authentik-app-radarr" {
     internal = ""
     external = "https://radarr.k8s.chkpwd.com"
     mode     = "forward_single"
+    skip_path_regex = <<EOF
+^/api
+^/metrics
+EOF
   }
 
   app_values = {
@@ -45,6 +53,10 @@ module "authentik-app-prowlarr" {
     internal = ""
     external = "https://prowlarr.k8s.chkpwd.com"
     mode     = "forward_single"
+    skip_path_regex = <<EOF
+^/api
+^/metrics
+EOF
   }
 
   app_values = {
@@ -64,6 +76,10 @@ module "authentik-app-sabnzbd" {
     internal = ""
     external = "https://sabnzbd.k8s.chkpwd.com"
     mode     = "forward_single"
+    skip_path_regex = <<EOF
+^/api
+^/metrics
+EOF
   }
 
   app_values = {
@@ -159,6 +175,10 @@ module "authentik-app-bazarr" {
     internal = ""
     external = "https://bazarr.k8s.chkpwd.com"
     mode     = "forward_single"
+    skip_path_regex = <<EOF
+^/api
+^/metrics
+EOF
   }
 
   app_values = {
@@ -178,6 +198,10 @@ module "authentik-app-qbittorrent" {
     internal = ""
     external = "https://qbittorrent.k8s.chkpwd.com"
     mode     = "forward_single"
+    skip_path_regex = <<EOF
+^/api
+^/metrics
+EOF
   }
 
   app_values = {
