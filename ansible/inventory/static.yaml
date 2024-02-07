@@ -6,12 +6,6 @@ all:
   children:
     hypervisors:
       esxi_hosts:
-      proxmox_nodes:
-
-    proxmox_nodes:
-      hosts:
-        pve-srv-01:
-          ansible_ssh_user: root
 
     vsphere:
       children:
@@ -27,14 +21,12 @@ all:
         docker_hosts:
         media_server:
         k3s_cluster:
-      hosts:
 
     linux:
       hosts:
         home-assistant:
         kubes-cp-[1:3]:
         mgmt-srv-01:
-        hosting-srv-01:
         test-vm:
 
     windows:
@@ -55,7 +47,6 @@ all:
         home-assistant:
         ct-01-ec2:
         mgmt-srv-01:
-        hosting-srv-01:
 
     k3s_cluster:
       children:
@@ -90,15 +81,6 @@ all:
     cloud:
       children:
         aws:
-
-    dns_servers:
-      hosts:
-        mgmt-srv-01:
-    
-    game_servers:
-      hosts:
-        hosting-srv-01:
-          ansible_ssh_user: chkpwd
 
     onprem:
       children:
