@@ -14,6 +14,10 @@ spec:
   resources:
     - apiVersion: source.toolkit.fluxcd.io/v1
       kind: GitRepository
+      name: chkpwd-ops
+      namespace: flux-system
+    - apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
       name: k3s-onprem
       namespace: flux-system
     - apiVersion: kustomize.toolkit.fluxcd.io/v1
