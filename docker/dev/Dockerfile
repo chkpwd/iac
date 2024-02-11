@@ -63,7 +63,7 @@ ARG HELM_VERSION=v3.14.0
 ARG BWS_SDK_VERSION=v0.3.0
 
 # renovate: datasource=github-releases depName=knqyf263/pet
-ARG PET_VERSION=v0.6.0
+ARG PET_VERSION=v0.6.1
 
 # renovate: datasource=github-releases depName=tellerops/teller
 ARG TELLER_VERSION=v1.5.6
