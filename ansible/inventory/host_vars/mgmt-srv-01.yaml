@@ -60,8 +60,9 @@ service_definitions:
     state: stopped
 
   - name: bws-cache
-    image: ghcr.io/ripplefcl/bws-cache:pr-27
+    image: ghcr.io/ripplefcl/bws-cache:pr-28
     env:
       ORG_ID: "0228643f-4148-4629-b9b4-b06e001d9cce"
       SECRET_TTL: "3600"
+      DEBUG: "True"
     ports: [5000:5000]
