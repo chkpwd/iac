@@ -1,5 +1,5 @@
 preseed             = "debian12"
-os_iso_url          = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.5.0-amd64-netinst.iso"
+os_iso_url          = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.4.0-amd64-netinst.iso" # renovate: datasource=custom.debian depName=debian
 iso_checksum        = "013f5b44670d81280b5b1bc02455842b250df2f0c6763398feb69af1a805a14f"
 iso_checksum_type   = "sha256"
 num_cores           = "1"
