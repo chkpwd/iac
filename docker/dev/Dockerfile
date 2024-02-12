@@ -198,7 +198,7 @@ COPY --from=docker.io/klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bi
 COPY --from=gcr.io/kaniko-project/executor:v1.20.1 /kaniko/executor /usr/bin/kaniko
 COPY --from=quay.io/coreos/etcd:v3.5.12 /usr/local/bin/etcdctl /usr/bin/etcdctl
 COPY --from=docker.io/hashicorp/packer:light-1.9.4 /bin/packer /usr/bin/packer
-COPY --from=docker.io/vmware/govc:v0.34.2 /govc /usr/bin/govc
+COPY --from=docker.io/vmware/govc:v0.35.0 /govc /usr/bin/govc
 
 # UPX all of the binaries
 RUN for item in bw bws nova pluto terraform pet  \
