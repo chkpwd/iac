@@ -1,0 +1,10 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: twinki14
+  namespace: flux-system
+spec:
+  interval: 30m
+  url: https://twinki14.github.io/palworld-server-chart
+  timeout: 3m
