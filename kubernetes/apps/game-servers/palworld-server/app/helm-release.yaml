@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: &app palworld-server
+  name: palworld-server
   namespace: game-servers
 spec:
   interval: 15m
@@ -28,86 +28,87 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
 
-      storage:
-        external: true
-        externalName: "data-palworld-server-0"
-        preventDelete: false
-        size: 60Gi
-        storageClassName: longhorn-game-servers
-
-      image:
-        name: thijsvanloef/palworld-server-docker
-        tag: v0.24.2
-        imagePullPolicy: IfNotPresent
-
-      ports:
-        - name: game
-          containerPort: 8211
-          protocol: UDP
-        - name: rcon
-          containerPort: 25575
-          protocol: UDP
-
-      strategy: Recreate
-
-      service:
-        enabled: true
-        annotations:
-          metallb.universe.tf/loadBalancerIPs: ${PALWORLD_LB_ADDRESS}
-        type: LoadBalancer
-        ports:
-          - name: game
-            port: 8211
-            protocol: UDP
-            targetPort: 8211
-          - name: rcon
-            port: 25575
-            protocol: UDP
-            targetPort: 25575
-
-      config:
-        puid: 1000
-        pgid: 1000
-        port: 8211
-        max_players: 16
-        multithreading: true
-        rcon:
-          enable: false
-          port: 25575
-          password: ""
-        community:
-          enable: false
-          password: ""
-        server_name: "Chkpwd - Palworld Server"
-        timezone: ${TZ}
-        server_description: "Pokemon: Gotta catch em all!"
-        update_on_boot: true
-        daily_reboot:
-          enable: true
-          time: "0 6 * * *"
-          role: &reboot_svc_account "palworld-daily-reboot"
-          service: *reboot_svc_account
-      env:
-        SERVER_PASSWORD:
-          valueFrom:
-            secretKeyRef:
-              name: palworld-server-secrets
-              key: SERVER_PASSWORD
-        ADMIN_PASSWORD:
-          valueFrom:
-            secretKeyRef:
-              name: palworld-server-secrets
-              key: ADMIN_PASSWORD
-        BACKUP_ENABLED: false
-        PAL_EGG_DEFAULT_HATCHING_TIME: "10.000000"
-        DEATH_PENALTY: "Item"
-        ENABLE_PLAYER_TO_PLAYER_DAMAGE: true
-        ENABLE_FRIENDLY_FIRE: true
-        IS_PVP: true
-
       resources:
         requests:
           cpu: 500m
           memory: 8Gi
         limits:
           memory: 12Gi
+
+    storage:
+      external: true
+      externalName: "data-palworld-server-0"
+      preventDelete: false
+      size: 60Gi
+      storageClassName: longhorn-game-servers
+
+    image:
+      name: thijsvanloef/palworld-server-docker
+      tag: v0.24.2
+      imagePullPolicy: IfNotPresent
+
+    ports:
+      - name: game
+        containerPort: 8211
+        protocol: UDP
+      - name: rcon
+        containerPort: 25575
+        protocol: UDP
+
+    strategy: Recreate
+
+    service:
+      enabled: true
+      annotations:
+        metallb.universe.tf/loadBalancerIPs: ${PALWORLD_LB_ADDRESS}
+      type: LoadBalancer
+      ports:
+        - name: game
+          port: 8211
+          protocol: UDP
+          targetPort: 8211
+        - name: rcon
+          port: 25575
+          protocol: UDP
+          targetPort: 25575
+
+    config:
+      puid: 1000
+      pgid: 1000
+      port: 8211
+      max_players: 16
+      multithreading: true
+      rcon:
+        enable: false
+        port: 25575
+        password: ""
+      community:
+        enable: false
+        password: ""
+      server_name: "Chkpwd - Palworld Server"
+      timezone: ${TZ}
+      server_description: "Pokemon: Gotta catch em all!"
+      update_on_boot: true
+      daily_reboot:
+        enable: true
+        time: "0 6 * * *"
+        role: &reboot_svc_account "palworld-daily-reboot"
+        service: *reboot_svc_account
+
+    env:
+      SERVER_PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: palworld-server-secrets
+            key: SERVER_PASSWORD
+      ADMIN_PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: palworld-server-secrets
+            key: ADMIN_PASSWORD
+      BACKUP_ENABLED: false
+      PAL_EGG_DEFAULT_HATCHING_TIME: "10.000000"
+      DEATH_PENALTY: "Item"
+      ENABLE_PLAYER_TO_PLAYER_DAMAGE: true
+      ENABLE_FRIENDLY_FIRE: true
+      IS_PVP: true
