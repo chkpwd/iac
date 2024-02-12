@@ -22,15 +22,6 @@
     name: "{{ inventory_hostname }}"
   register: hostname
 
-# - name: Chocolatey - Install dependencies
-#   chocolatey.chocolatey.win_chocolatey:
-#     name: "{{ item }}"
-#     state: present
-#   loop:
-#     - "{{ chocolates }}"
-#   loop_control:
-#     label: "Chocolate: {{ item }}"
-
 - name: Scoops - Install dependencies
   community.windows.win_scoop:
     name: "{{ item }}"
@@ -49,7 +40,10 @@
 - name: Define Taskbar Layout
   ansible.windows.win_powershell:
     script: |
-      Import-StartLayout -LayoutPath "TaskbarLayout.xml" -MountPath "{{ ansible_facts.env.TEMP }}\templates\TaskbarLayout.xml"
+      Import-StartLayout -LayoutPath "TaskbarLayout.xml" -MountPath "{{ ansible_facts.env.TEMP }}\files\TaskbarLayout.xml"
+
+- name: Run Sunshine Scripts
+  ansible.builtin.include_tasks: sunshine.yaml
 
 - name: Change power plan to Balanced
   community.windows.win_power_plan:

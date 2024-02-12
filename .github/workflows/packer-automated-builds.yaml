@@ -30,6 +30,7 @@ env:
 jobs:
   packer:
     strategy:
+      max-parallel: 1
       matrix:
         include:
           - os: linux
@@ -37,6 +38,7 @@ jobs:
           - os: windows
             version: 22H2-W11
     runs-on: ubuntu-latest
+    continue-on-error: true
     name: Packer Build ${{ matrix.os }}-${{ matrix.version }}
     steps:
       - name: Checkout

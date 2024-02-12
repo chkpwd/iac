@@ -89,6 +89,7 @@
             url: "{{ item.url if item.type | default('http') == 'http' else omit }}"
             hostname: "{{ item.url if item.type | default('http') in ['ping', 'port'] else omit }}"
             port: "{{ item.port if item.type | default('http') == 'port' else omit }}"
+            accepted_statuscodes: "{{ item.accepted_statuscodes | default([]) if item.type | default('http') == 'http' else omit }}"
             notification_names: "{{ 'Discord' if item.type | default('http') != 'group' else omit }}"
             state: "{{ item.state | default('present') }}"
           loop: "{{ uptime_kuma_monitors }}"

@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: longhorn
-      version: 1.5.3
+      version: 1.6.0
       interval: 10m
       sourceRef:
         kind: HelmRepository
@@ -39,7 +39,7 @@ spec:
       recurringJobSelector:
         enable: false
 
-    metrics: # This does nothing in this current release, hoping 1.6.x will fix it
+    metrics:
       serviceMonitor:
         enabled: true
 
@@ -66,21 +66,3 @@ spec:
       snapshotDataIntegrityCronjob: 0 8 */7 * *
       upgradeChecker: false
       v2DataEngine: false
----
-apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
-metadata:
-  name: longhorn # Remove when new version is released
-  namespace: storage
-  labels:
-    name: longhorn-servicemonitor
-    serviceMonitorSelector: prometheus
-spec:
-  selector:
-    matchLabels:
-      app: longhorn-manager
-  namespaceSelector:
-    matchNames:
-    - storage
-  endpoints:
-    - port: manager

@@ -174,14 +174,24 @@ build {
     elevated_user = var.connection_username
     elevated_password = var.connection_password
     scripts = [
-      "scripts/Disable-UAC.ps1", # I re-enable UAC with ansible post deployment
+      "scripts/Modify-UAC.ps1",
       "scripts/Enable-Other-Updates.ps1",
       "scripts/Install-Chocolatey.ps1",
       "scripts/Build.ps1",
       "scripts/Setup-NewUser.ps1",
       // "scripts/Remove-UpdateCache.ps1", # This fails on Windows 11
       "scripts/Invoke-Defrag.ps1",
-      "scripts/Reset-EmptySpace.ps1"
+      "scripts/Reset-EmptySpace.ps1",
+      "scripts/Modify-UAC.ps1"
+    ]
+  }
+  provisioner "windows-update" { # This requires windows-update-provisioner https://github.com/rgl/packer-provisioner-windows-update
+    pause_before = "30s"
+    search_criteria = "IsInstalled=0"
+    filters = [
+      "exclude:$_.Title -like '*VMware*'",
+      "exclude:$_.Title -like '*Preview*'",
+      "include:$true"
     ]
   }
 }

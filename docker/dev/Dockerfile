@@ -54,7 +54,7 @@ ARG YT_DLP_VERSION=2023.12.30
 ARG KORB_VERSION=v2.2.0
 
 # renovate: datasource=github-releases depName=atuinsh/atuin
-ARG ATUIN_VERSION=v17.2.1
+ARG ATUIN_VERSION=v18.0.1
 
 # renovate: datasource=github-releases depName=helm/helm
 ARG HELM_VERSION=v3.14.0
@@ -63,13 +63,13 @@ ARG HELM_VERSION=v3.14.0
 ARG BWS_SDK_VERSION=v0.3.0
 
 # renovate: datasource=github-releases depName=knqyf263/pet
-ARG PET_VERSION=v0.5.0
+ARG PET_VERSION=v0.6.1
 
 # renovate: datasource=github-releases depName=tellerops/teller
 ARG TELLER_VERSION=v1.5.6
 
 # renovate: datasource=github-releases depName=twpayne/chezmoi
-ARG CHEZMOI_VERSION=v2.45.0
+ARG CHEZMOI_VERSION=v2.46.1
 
 # renovate: datasource=github-tags depName=kubernetes/kubernetes
 ARG KUBECTL_VERSION=v1.29.1
@@ -84,10 +84,10 @@ ARG KREW_VERSION=v0.4.4
 ARG VIDDY_VERSION=v0.4.0
 
 # renovate: datasource=github-releases depName=derailed/k9s
-ARG K9S_VERSION=v0.31.7
+ARG K9S_VERSION=v0.31.8
 
 # renovate: datasource=github-releases depName=hashicorp/terraform
-ARG TERRAFORM_VERSION=v1.7.1
+ARG TERRAFORM_VERSION=v1.7.3
 
 # renovate: datasource=github-releases depName=getsops/sops
 ARG SOPS_VERSION=v3.8.1
@@ -192,11 +192,11 @@ RUN \
     bash -c "rm -rf /tmp/*"
 
 # Copy Commands for Various Tools
-COPY --from=docker.io/istio/istioctl:1.20.2 /usr/local/bin/istioctl /usr/bin/istioctl
-COPY --from=docker.io/fluxcd/flux-cli:v2.2.2 /usr/local/bin/flux /usr/bin/flux
+COPY --from=docker.io/istio/istioctl:1.20.3 /usr/local/bin/istioctl /usr/bin/istioctl
+COPY --from=docker.io/fluxcd/flux-cli:v2.2.3 /usr/local/bin/flux /usr/bin/flux
 COPY --from=docker.io/klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bin/hugo
-COPY --from=gcr.io/kaniko-project/executor:v1.20.0 /kaniko/executor /usr/bin/kaniko
-COPY --from=quay.io/coreos/etcd:v3.5.11 /usr/local/bin/etcdctl /usr/bin/etcdctl
+COPY --from=gcr.io/kaniko-project/executor:v1.20.1 /kaniko/executor /usr/bin/kaniko
+COPY --from=quay.io/coreos/etcd:v3.5.12 /usr/local/bin/etcdctl /usr/bin/etcdctl
 COPY --from=docker.io/hashicorp/packer:light-1.9.4 /bin/packer /usr/bin/packer
 COPY --from=docker.io/vmware/govc:v0.34.2 /govc /usr/bin/govc
 

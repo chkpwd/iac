@@ -1,25 +1,3 @@
-# module "win-srv-2022" {
-#   source                    = "../_modules/vsphere_vm"
-#   count                     = 1
-#   vm_name                   = "win-srv-2022"
-#   vm_template               = "WSRV22-DE-Temp"
-#   network_spec = {
-#     network_id              = "IOT"
-#   }
-#   spec = {
-#     tags                    = [ vsphere_tag.cattle.id, vsphere_tag.windows.id ]
-#     folder                  = vsphere_folder.windows.path
-#     cpu                     = 4
-#     memory                  = 1024 * 8
-#     disk_size               = 48
-#     additional_disks = [
-#       {
-#         size                = 100
-#       }
-#     ]
-#   }
-# }
-
 module "test-vm" {
   source                    = "../_modules/vsphere_vm"
   vm_name                   = "test-vm"
@@ -36,7 +14,6 @@ module "test-vm" {
     disk_size               = 16
   }
 }
-
 module "win11-gaming-01" {
   source                    = "../_modules/vsphere_vm"
   count                     = 1

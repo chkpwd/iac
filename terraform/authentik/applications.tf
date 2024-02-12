@@ -7,6 +7,10 @@ module "authentik-app-sonarr" {
     internal = ""
     external = "https://sonarr.k8s.chkpwd.com"
     mode     = "forward_single"
+    skip_path_regex = <<EOF
+^/api
+^/metrics
+EOF
   }
 
   app_values = {
@@ -26,6 +30,10 @@ module "authentik-app-radarr" {
     internal = ""
     external = "https://radarr.k8s.chkpwd.com"
     mode     = "forward_single"
+    skip_path_regex = <<EOF
+^/api
+^/metrics
+EOF
   }
 
   app_values = {
@@ -45,6 +53,10 @@ module "authentik-app-prowlarr" {
     internal = ""
     external = "https://prowlarr.k8s.chkpwd.com"
     mode     = "forward_single"
+    skip_path_regex = <<EOF
+^/api
+^/metrics
+EOF
   }
 
   app_values = {
@@ -64,6 +76,10 @@ module "authentik-app-sabnzbd" {
     internal = ""
     external = "https://sabnzbd.k8s.chkpwd.com"
     mode     = "forward_single"
+    skip_path_regex = <<EOF
+^/api
+^/metrics
+EOF
   }
 
   app_values = {
@@ -126,6 +142,90 @@ module "authentik-app-jellyfin" {
   app_values = {
     meta_description = "Usenet Downloader"
     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/jellyfin.png"
+  }
+
+  access_group = [authentik_group.main.id]
+}
+
+module "authentik-app-maintainerr" {
+  source = "../_modules/authentik/proxy_app"
+  name   = "Maintainerr"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://maintainerr.k8s.chkpwd.com"
+    mode     = "forward_single"
+  }
+
+  app_values = {
+    meta_description = "Media Recycler"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/maintainerr.png"
+  }
+
+  access_group = [authentik_group.main.id]
+}
+
+module "authentik-app-bazarr" {
+  source = "../_modules/authentik/proxy_app"
+  name   = "Bazarr"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://bazarr.k8s.chkpwd.com"
+    mode     = "forward_single"
+    skip_path_regex = <<EOF
+^/api
+^/metrics
+EOF
+  }
+
+  app_values = {
+    meta_description = "Series Management"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/bazarr.png"
+  }
+
+  access_group = [authentik_group.main.id]
+}
+
+module "authentik-app-qbittorrent" {
+  source = "../_modules/authentik/proxy_app"
+  name   = "Qbittorrent"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://qbittorrent.k8s.chkpwd.com"
+    mode     = "forward_single"
+    skip_path_regex = <<EOF
+^/api
+^/metrics
+EOF
+  }
+
+  app_values = {
+    meta_description = "Series Management"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/qbittorrent.png"
+  }
+
+  access_group = [authentik_group.main.id]
+}
+
+module "authentik-app-runwhen-local" {
+  source = "../_modules/authentik/proxy_app"
+  name   = "Runwhen Local"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://runwhen-local.chkpwd.com"
+    mode     = "forward_single"
+  }
+
+  app_values = {
+    meta_description = "Usenet Downloader"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/runwhen-local.png"
   }
 
   access_group = [authentik_group.main.id]

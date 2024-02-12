@@ -4,7 +4,7 @@ ansible_user: chkpwd
 
 service_definitions:
   - name: prometheus
-    image: prom/prometheus:v2.47.2
+    image: prom/prometheus:v2.49.1
     user: 1000:1000
     command:
       - --config.file=/etc/prometheus/prometheus.yml
@@ -18,7 +18,7 @@ service_definitions:
     ports: [9090:9090]
 
   - name: grafana
-    image: grafana/grafana:10.1.5
+    image: grafana/grafana:10.3.1
     user: 1000:1000
     env:
       GF_DAGF_FEATURE_TOGGLES_ENABLE: publicDashboards
@@ -48,7 +48,7 @@ service_definitions:
     state: stopped
 
   - name: netbootxyz
-    image: ghcr.io/netbootxyz/netbootxyz:0.6.9-nbxyz2
+    image: ghcr.io/netbootxyz/netbootxyz:0.7.0-nbxyz2
     env:
       MENU_VERSION: 2.0.73
     ports:
@@ -58,3 +58,11 @@ service_definitions:
       - "{{ configuration_path }}/netbootxyz:/config"
       - "{{ configuration_path }}/netbootxyz/data:/assets"
     state: stopped
+
+  - name: bws-cache
+    image: ghcr.io/ripplefcl/bws-cache:pr-28
+    env:
+      ORG_ID: "0228643f-4148-4629-b9b4-b06e001d9cce"
+      SECRET_TTL: "3600"
+      DEBUG: "True"
+    ports: [5000:5000]

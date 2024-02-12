@@ -4,15 +4,18 @@
     "config:base"
   ],
   "flux": {
-    "fileMatch": ["kubernetes/.+\\.ya?ml$"]
+    "fileMatch": ["(^|/)kubernetes/.+\\.ya?ml$"]
   },
   "helm-values": {
-    "fileMatch": ["kubernetes/.+\\.ya?ml$"]
+    "fileMatch": ["(^|/)kubernetes/.+\\.ya?ml$"]
   },
   "kubernetes": {
-    "fileMatch": ["kubernetes/.+\\.ya?ml$"]
+    "fileMatch": ["(^|/)kubernetes/.+\\.ya?ml$"]
   },
-    "regexManagers": [
+  "ansible": {
+    "fileMatch": ["(^|/)ansible/.*?[^/]+\\.ya?ml$"]
+  },
+  "regexManagers": [
     {
       "description": "Process Dockerfile(s) in Docker Directory",
       "fileMatch": ["docker\\/dev\\/Dockerfile"],
@@ -23,6 +26,7 @@
     {
       "description": "Process all other tools in the root of the directory",
       "fileMatch": [
+        "ansible/inventory/host_vars/.+\\.ya?ml$",
         "ansible/.+\\.ya?ml$",
         "docker/.+\\.ya?ml$",
         "kubernetes/.+\\.ya?ml$",
@@ -34,9 +38,30 @@
       ],
       "datasourceTemplate": "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    },
+    {
+      "description": "Process Packer ISO's Releases",
+      "fileMatch": [
+        "packer/linux/.+\\.hcl$"
+      ],
+      "matchStrings": [
+        "debian-(?<currentValue>\\d+\\.\\d+\\.\\d+)-amd64-netinst.iso\" # renovate: datasource=(?<datasource>[a-z-]+) depName=(?<depName>[^\\s]+)"
+      ],
+      "datasourceTemplate": "custom.debian",
+      "versioningTemplate": "semver"
     }
   ],
+  "customDatasources": {
+    "debian": {
+      "defaultRegistryUrlTemplate": "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/",
+      "format": "html"
+    }
+  },
     "packageRules": [
+      {
+        "matchDatasources": ["custom.debian"],
+        "extractVersion": "debian-[0-9]\\+.[0-9]\\+.[0-9]\\+-amd64-netinst.iso"
+      },
       {
         "matchUpdateTypes": ["patch"],
         "matchCurrentVersion": "!/^0/",

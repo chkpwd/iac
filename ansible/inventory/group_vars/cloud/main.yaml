@@ -31,11 +31,6 @@ uptime_kuma_monitors:
     url: 172.16.16.4
     parent: *services_group
 
-  - name: DNS-SRV-02
-    type: ping
-    url: 172.16.16.5
-    parent: *services_group
-
   - name: vCenter
     type: ping
     url: 172.16.16.6
@@ -68,17 +63,18 @@ uptime_kuma_monitors:
 
   - name: NAS
     type: ping
-    url: 172.16.16.15
+    url: 172.16.16.5
     parent: *services_group
 
   - name: Home Assistant
     type: ping
-    url: 172.16.16.16
+    url: 172.16.16.8
     parent: *services_group
 
   - name: Plex Server
-    type: ping
-    url: 172.16.20.10
+    type: http
+    url: https://plex.chkpwd.com
+    accepted_statuscodes: '401'
     parent: *services_group
 
   # Sites

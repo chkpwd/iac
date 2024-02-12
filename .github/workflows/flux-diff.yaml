@@ -21,7 +21,7 @@ jobs:
           - kustomization
     steps:
       - name: Setup Flux CLI
-        uses: fluxcd/flux2/action@v2.2.2
+        uses: fluxcd/flux2/action@v2.2.3
 
       - name: Diff Resources
         uses: allenporter/flux-local/action/diff@4.3.1
@@ -32,7 +32,7 @@ jobs:
 
       - if: ${{ steps.diff.outputs.diff != '' }}
         name: Create PR Comments
-        uses: mshick/add-pr-comment@v2.8.1
+        uses: mshick/add-pr-comment@v2.8.2
         with:
           message-id: "${{ github.event.pull_request.number }}/${{ matrix.cluster_path }}/${{ matrix.resources }}"
           message-failure: Diff was not successful

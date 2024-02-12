@@ -1,0 +1,19 @@
+{{ range .Alerts -}}
+{{ if .Labels.severity -}}
+**Severity:** {{ .Labels.severity }}
+{{- end }}
+{{- if not (or (eq .Labels.alertname "DatasourceNoData") (eq .Labels.alertname "DatasourceError")) }}
+
+**Description:** {{ .Annotations.description }}
+{{- end }}
+
+**Details:**
+{{- range .Labels.SortedPairs }}
+* *{{ .Name }}:* `{{ .Value }}`
+{{- end }}
+
+**Links:**
+* [Alert Source]({{ .GeneratorURL }})
+{{ if eq .Status "firing" -}}
+* [Silence Alert]({{ .SilenceURL }}){{ end }}
+{{ end }}

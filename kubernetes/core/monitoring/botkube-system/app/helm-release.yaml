@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: botkube
-      version: v1.7.0
+      version: v1.8.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -31,7 +31,7 @@ spec:
     image:
       repository: ghcr.io/kubeshop/botkube
       pullPolicy: IfNotPresent
-      tag: v1.7.0
+      tag: v1.8.0
 
     settings:
       clusterName: k3s-onprem
@@ -92,7 +92,7 @@ spec:
     plugins:
       repositories:
         botkube:
-          url: https://github.com/kubeshop/botkube/releases/download/v1.4.1/plugins-index.yaml
+          url: https://github.com/kubeshop/botkube/releases/download/v1.8.0/plugins-index.yaml
 
     actions:
       'describe-created-resource':
