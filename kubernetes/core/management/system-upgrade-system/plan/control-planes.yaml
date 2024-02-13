@@ -6,19 +6,15 @@ metadata:
   namespace: system-upgrade
 spec:
   # renovate: datasource=github-releases depName=k3s-io/k3s
-  version: "v1.29.1+k3s2"
+  version: "debian-bookworm-standard-amd64-generic-v2.5.0-k3sv1.29.0+k3s1"
   serviceAccountName: system-upgrade
   concurrency: 1
-  cordon: true
+  cordon: false
+  drain:
+    force: false
+    disableEviction: true
   nodeSelector:
     matchExpressions:
       - { key: node-role.kubernetes.io/control-plane, operator: Exists }
-  # tolerations:
-  #   - { effect: NoSchedule, operator: Exists }
-  #   - { effect: NoExecute, operator: Exists }
-  #   - { key: node-role.kubernetes.io/control-plane, effect: NoSchedule, operator: Exists }
-  #   - { key: node-role.kubernetes.io/master, effect: NoSchedule, operator: Exists }
-  #   - { key: node-role.kubernetes.io/etcd, effect: NoExecute, operator: Exists }
-  #   - { key: CriticalAddonsOnly, operator: Exists }
   upgrade:
-    image: rancher/k3s-upgrade
+    image: quay.io/kairos/debian
