@@ -96,16 +96,8 @@ spec:
           service: *reboot_svc_account
 
         env:
-          SERVER_PASSWORD:
-            valueFrom:
-              secretKeyRef:
-                name: palworld-server-secrets
-                key: SERVER_PASSWORD
-          ADMIN_PASSWORD:
-            valueFrom:
-              secretKeyRef:
-                name: palworld-server-secrets
-                key: ADMIN_PASSWORD
+          SERVER_PASSWORD: ${PALWORLD_SERVER_PWD}
+          ADMIN_PASSWORD: ${PALWORLD_ADMIN_PWD}
           BACKUP_ENABLED: false
           PAL_EGG_DEFAULT_HATCHING_TIME: "10.000000"
           DEATH_PENALTY: "Item"
