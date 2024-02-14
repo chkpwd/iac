@@ -21,6 +21,8 @@ spec:
     kind: OCIRepository
     name: tf-files
     namespace: flux-system
+  writeOutputsToSecret:
+    name: authentik-tf-outputs
   runnerPodTemplate:
     spec:
       volumeMounts:
