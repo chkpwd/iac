@@ -10,49 +10,49 @@ resource "vsphere_tag_category" "guest_machines_category" {
 }
 
 resource "vsphere_tag" "cattle" {
-  name        = "cattle_node"
+  name        = "cattle"
   category_id = vsphere_tag_category.guest_machines_category.id
   description = "Pulumi is better"
 }
 
 resource "vsphere_tag" "docker" {
-  name        = "docker_node"
+  name        = "docker"
   category_id = vsphere_tag_category.guest_machines_category.id
   description = "/s virtual machines"
 }
 
 resource "vsphere_tag" "gaming" {
-  name        = "gaming_node"
+  name        = "gaming"
   category_id = vsphere_tag_category.guest_machines_category.id
   description = "I don't even game anymore"
 }
 
 resource "vsphere_tag" "kubernetes" {
-  name        = "kubernetes_node"
+  name        = "kubernetes"
   category_id = vsphere_tag_category.guest_machines_category.id
   description = "Pretends to be a developer"
 }
 
 resource "vsphere_tag" "dev" {
-  name        = "dev_node"
+  name        = "dev"
   category_id = vsphere_tag_category.guest_machines_category.id
   description = "Pretends to be a developer"
 }
 
 resource "vsphere_tag" "windows" {
-  name        = "windows_node"
+  name        = "windows"
   category_id = vsphere_tag_category.guest_machines_category.id
   description = "Crappy OS"
 }
 
 resource "vsphere_tag" "linux" {
-  name        = "linux_node"
+  name        = "linux"
   category_id = vsphere_tag_category.guest_machines_category.id
   description = "Based OS"
 }
 
 resource "vsphere_tag" "media" {
-  name        = "media_node"
+  name        = "media"
   category_id = vsphere_tag_category.guest_machines_category.id
   description = "Consumerism at it's finest"
 }
