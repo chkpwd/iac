@@ -1,0 +1,23 @@
+plugin: vmware_vm_inventory
+strict: False
+hostname: vcenter.local.chkpwd.com
+username: administrator@vsphere.local.chkpwd.com
+password: "{{ lookup('bws_cache', 'infra-vsphere-password').value }}"
+validate_certs: False
+with_tags: True
+hostnames:
+  - "config.name"
+compose:
+  ansible_host: "guest.ipAddress"
+properties:
+  - "config.name"
+  - "config.guestId"
+  - "guest.ipAddress"
+  - "summary.runtime.powerState"
+  - "guest.ipStack"
+keyed_groups:
+  - key: tags
+    separator: ""
+filters:
+  - "'guest_machines' in tag_category"
+with_nested_properties: true
