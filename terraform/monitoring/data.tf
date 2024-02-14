@@ -2,7 +2,7 @@ resource "grafana_data_source" "rpi-prometheus" {
   type                = "prometheus"
   name                = "mgmt-srv-01-prometheus"
   uid                 = "mgmt-srv-01-prometheus"
-  url                 = "https://rpi-prometheus.kchkpwd8s.chkpwd.com"
+  url                 = "https://rpi-prometheus.k8s.chkpwd.com"
   is_default          = true
   basic_auth_enabled  = true
   basic_auth_username = "chkpwd"
