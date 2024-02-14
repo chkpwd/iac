@@ -62,7 +62,7 @@ if [[ -z $(yq -r '.data.accessToken' "$CHEZMOI_CONF") ]]; then
     export BW_SESSION=$(/usr/bin/bw login --apikey $BW_CLIENTID $BW_CLIENTSECRET --raw)
   else
     setup_chezmoi_conf
-    access_token=$(yq e '.data.accessToken' "$CHEZMOI_CONF")
+    access_token=$(yq -re '.data.accessToken' "$CHEZMOI_CONF")
     export BW_SESSION=$(/usr/bin/bw login --apikey $access_token --raw)
   fi
 fi
