@@ -32,15 +32,6 @@ all:
     windows:
       vars:
         ansible_become_method: runas
-      hosts:
-        chk-dev-win11:
-          ansible_host: 172.16.16.100
-          ansible_user: chkpwd
-          ansible_become_user: chkpwd
-        win11-gaming-01:
-          ansible_host: 172.16.10.6
-          ansible_user: chkpwd
-          ansible_become_user: chkpwd
 
     docker_hosts:
       hosts:
@@ -69,11 +60,6 @@ all:
         ansible_become_user: pi
 
     aws:
-      vars:
-        ansible_remote_user: admin
-        ansible_ssh_user: admin
-        ansible_ssh_private_key_file: ~/.ssh/aws
-        common_user: admin
       hosts:
         ct-01-ec2:
           ansible_host:	54.145.97.133
