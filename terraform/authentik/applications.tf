@@ -159,7 +159,7 @@ module "authentik-app-maintainerr" {
   }
 
   app_values = {
-    meta_description = "Media Recycler"
+    meta_description = "Media Recycler & Cleanup"
     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/maintainerr.png"
   }
 
