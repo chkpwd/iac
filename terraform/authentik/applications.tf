@@ -102,7 +102,7 @@ module "authentik-app-mainsail" {
   }
 
   app_values = {
-    meta_description = "3D Printing Software"
+    meta_description = "Klipper Management System"
     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/mainsail.png"
   }
 
