@@ -35,7 +35,10 @@ spec:
       volumes:
         - name: tf-cloud-sops-key
           secret:
-            secretName: tf-controller-secrets
+            secretName: sops-secrets
+            items:
+              - key: terraform.tfrc
+                path: keys.txt
         - name: tf-unifi-ssh-key
           secret:
             secretName: unifi-controller-secrets
