@@ -39,7 +39,7 @@ service_definitions:
     state: stopped
 
   - name: nginx-webserver
-    image: nginx:1.25.3-alpine3.18-slim
+    image: nginx:1.25.4-alpine3.18-slim
     ports:
       - 8081:80
     volumes:
