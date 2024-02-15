@@ -1,0 +1,41 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/infra.contrib.fluxcd.io/terraform_v1alpha2.json
+apiVersion: infra.contrib.fluxcd.io/v1alpha2
+kind: Terraform
+metadata:
+  name: unifi-controller
+  namespace: flux-system
+spec:
+  interval: 12h
+  approvePlan: auto
+  cloud:
+    hostname: app.terraform.io
+    organization: chkpwd
+    workspaces:
+      name: unifi
+  cliConfigSecretRef:
+    name: tf-cloud-secrets
+    namespace: flux-system
+  path: ./unifi
+  sourceRef:
+    kind: OCIRepository
+    name: tf-files
+    namespace: flux-system
+  writeOutputsToSecret:
+    name: unifi-tf-outputs
+  runnerPodTemplate:
+    spec:
+      volumeMounts:
+        - name: tf-cloud-sops-key
+          mountPath: /home/runner/.config/sops/age/keys.txt
+          subPath: keys.txt
+        - name: tf-unifi-ssh-key
+          mountPath: /home/runner/.ssh/unifi
+          subPath: unifi
+      volumes:
+        - name: tf-cloud-sops-key
+          secret:
+            secretName: tf-controller-secrets
+        - name: tf-unifi-ssh-key
+          secret:
+            secretName: unifi-controller-secrets
