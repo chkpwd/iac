@@ -84,7 +84,7 @@ ARG KREW_VERSION=v0.4.4
 ARG VIDDY_VERSION=v0.4.0
 
 # renovate: datasource=github-releases depName=derailed/k9s
-ARG K9S_VERSION=v0.31.8
+ARG K9S_VERSION=v0.31.9
 
 # renovate: datasource=github-releases depName=hashicorp/terraform
 ARG TERRAFORM_VERSION=v1.7.3
