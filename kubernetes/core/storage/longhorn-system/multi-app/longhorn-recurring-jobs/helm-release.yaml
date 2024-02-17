@@ -70,6 +70,12 @@ spec:
             retain: 1
         filesystem-trim:
           - interval: 24h
+      "Cattles":
+        options:
+          parameters:
+            numberOfReplicas: "1"
+        filesystem-trim:
+          - interval: 24h
       "Misc":
         options:
           parameters:
