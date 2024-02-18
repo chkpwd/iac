@@ -86,6 +86,7 @@ spec:
                 memory: 211Mi
 
           secondary:
+            dependsOn: main
             image:
               repository: ghcr.io/onedr0p/exportarr
               tag: v1.6.1

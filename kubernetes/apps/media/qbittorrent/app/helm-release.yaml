@@ -101,6 +101,7 @@ spec:
                 memory: 2000Mi
 
           secondary:
+            dependsOn: main
             image:
               repository: registry.k8s.io/git-sync/git-sync
               tag: v4.2.1

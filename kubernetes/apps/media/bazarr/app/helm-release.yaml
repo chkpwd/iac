@@ -99,6 +99,7 @@ spec:
                 memory: 336Mi
 
           secondary:
+            dependsOn: main
             image:
               repository: ghcr.io/onedr0p/exportarr
               tag: vmaster
