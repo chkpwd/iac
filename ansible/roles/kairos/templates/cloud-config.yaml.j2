@@ -38,6 +38,11 @@ stages:
         - parted /dev/nvme0n1 --script -a optimal -- mklabel gpt mkpart longhorn ext4 0% 100%
         - mkfs.ext4 -F /dev/nvme0n1p1
 
+    - name: "Add Cilium Helm Chart to K3S AddOns Directory"
+      downloads:
+        - url: https://raw.githubusercontent.com/chkpwd/kairos/main/multi-node-k3s/manifests/cilium-values.yaml
+          path: /var/lib/rancher/k3s/server/manifests/cilium-crd.yaml
+
   initramfs:
     - name: Increase number of open files
       sysctl:
