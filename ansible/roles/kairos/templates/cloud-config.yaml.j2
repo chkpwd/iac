@@ -27,10 +27,6 @@ reset:
 growpart:
   devices: ["/"]
 
-kubevip:
-  enabled: true
-  eip: 172.16.16.45
-
 stages:
   after-install-chroot:
     - name: "Install Longhorn Prerequisites"
@@ -44,8 +40,10 @@ stages:
 
     - name: "Add Cilium Helm Chart to K3S AddOns Directory"
       downloads:
-        - url: https://raw.githubusercontent.com/chkpwd/kairos/main/multi-node-k3s/manifests/cilium-values.yaml
+        - url: https://raw.githubusercontent.com/chkpwd/kairos/main/multi-node-k3s/manifests/kubevip-values.yaml
           path: /var/lib/rancher/k3s/server/manifests/cilium-crd.yaml
+        - url: https://raw.githubusercontent.com/chkpwd/kairos/main/multi-node-k3s/manifests/cilium-values.yaml
+          path: /var/lib/rancher/k3s/server/manifests/kubevip.yaml
 
     - name: "Determine Bootstrap Node"
       files:
