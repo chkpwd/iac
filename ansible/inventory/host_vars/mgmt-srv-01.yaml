@@ -33,10 +33,9 @@ service_definitions:
     image: quay.io/kairos/auroraboot:latest
     command: --cloud-config /files/cloud-config.yaml /files/auroraboot-config.yaml
     volumes:
-      - "{{ configuration_path }}/auroraboot/storage:/storage"
       - "{{ configuration_path }}/auroraboot/files:/files"
+      - "{{ configuration_path }}/auroraboot/tmp:/tmp"
     network_mode: host
-    state: stopped
 
   - name: nginx-webserver
     image: nginx:1.25.4-alpine3.18-slim
