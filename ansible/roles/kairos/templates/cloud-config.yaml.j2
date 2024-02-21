@@ -43,6 +43,38 @@ stages:
         - url: https://raw.githubusercontent.com/chkpwd/kairos/main/multi-node-k3s/manifests/cilium-values.yaml
           path: /var/lib/rancher/k3s/server/manifests/cilium-crd.yaml
 
+    - name: "Determine Bootstrap Node"
+      files:
+        - path: /oem/60_k3s_config.yaml
+          permissions: 0666
+          content: |
+            {{- $first := false -}}
+            {{- $macs := list "00:50:56:bc:69:5c" "00:50:56:bc:7a:47" "00:50:56:bc:78:e2" -}}
+            {{- range $net := .Values.network -}}
+              {{- if eq $net.macaddress (first $macs) -}}
+                {{- $first = true -}}
+              {{ end -}}
+            {{- end -}}
+            k3s:
+              enabled: true
+              replace_args: true
+              env:
+                K3S_TOKEN: "b3RwOgogIGRodDoKICAgIGludGVydmFsOiA5MDAwCiAgICBrZXk6IEJDd0dnZXBuYzNCYTJMSnJwdHlaU1ZHZXBJanJaemVSa0VvSkw4bUlvbncKICAgIGxlbmd0aDogNDMKICBjcnlwdG86CiAgICBpbnRlcnZhbDogOTAwMAogICAga2V5OiBYeWFCQnZRR01ndklFTXJFOFY1cW5mQmlBZ05jbFRKWkVsOVNLMVREU2RiCiAgICBsZW5ndGg6IDQzCnJvb206IDJkZ05CRmV2Ujd4MVZYTnR3UlBLYlE3Q1pBNGo0SUZ5NXYxTkZtbDYzeEsKcmVuZGV6dm91czogOVk4b09TVFNwUHV0N2RuNGkxQ3RnaWFvS0pJS0xKcFFReVIwQWVheFdySwptZG5zOiBxS2puVmVqdG85cEVRODZ0Wk1veE5sdVkycm01NnZ0Z0ZWbmlMWHc1cjhCCm1heF9tZXNzYWdlX3NpemU6IDIwOTcxNTIwCg=="
+              args:
+            {{- if $first }}
+                - --cluster-init
+            {{- else }}
+                - --server https://172.16.16.45:6443
+            {{- end }}
+                - --tls-san "172.16.16.45"
+                - --disable traefik,servicelb,local-storage,metrics-server
+                - --flannel-backend none
+                - --disable-network-policy
+                - --service-cidr 172.24.0.0/16
+                - --cluster-cidr 172.23.0.0/16
+                - --disable-kube-proxy
+                - --write-kubeconfig-mode 0644
+
   initramfs:
     - name: Increase number of open files
       sysctl:
@@ -90,27 +122,4 @@ stages:
 
 kubevip:
   enabled: true
-  eip: {[ kairos_kubevip_address ]}
-
-k3s:
-  enabled: true
-  args:
-    - --disable=traefik,servicelb,metrics-server,local-storage
-    - --write-kubeconfig-mode 0644
-
-# -- p2p network configs
-p2p:
-  network_id: cattle-k3s
-  disable_dht: true # Discover nodes only in the local network
-
-  vpn:
-    create: false
-    use: false
-
-  network_token: {[ P2P_NETWORK_TOKEN ]}
-
-  auto:
-    enable: true
-    ha:
-      enable: true
-      master_nodes: 2
+  eip: 172.16.16.45
