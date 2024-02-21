@@ -52,13 +52,15 @@ stages:
         - path: /oem/60_k3s_config.yaml
           permissions: 0666
           content: |
+            #cloud-config
             {{- $first := false -}}
             {{- $macs := list "00:50:56:bc:69:5c" "00:50:56:bc:7a:47" "00:50:56:bc:78:e2" -}}
             {{- range $net := .Values.network -}}
               {{- if eq $net.macaddress (first $macs) -}}
                 {{- $first = true -}}
               {{ end -}}
-            {{- end -}}
+            {{- end }}
+
             k3s:
               enabled: true
               replace_args: true
