@@ -49,19 +49,28 @@ stages:
           permissions: 0666
           content: |
             #cloud-config
+            {{- $nodes := list "00:50:56:bc:69:5c" "00:50:56:bc:7a:47" "00:50:56:bc:78:e2" -}}
+            {{- $uniqueIDs := list "01" "02" "03" -}}
+            {{- $hostname := "localhost" -}}
             {{- $first := false -}}
-            {{- $macs := list "00:50:56:bc:69:5c" "00:50:56:bc:7a:47" "00:50:56:bc:78:e2" -}}
-            {{- range $net := .Values.network -}}
-              {{- if eq $net.macaddress (first $macs) -}}
-                {{- $first = true -}}
-              {{ end -}}
+
+            {{- range $index, $net := .Values.network -}}
+              {{- range $macIndex, $mac := $nodes -}}
+                {{- if eq $net.macaddress $mac -}}
+                  {{- $hostname = printf "cattle-k3s-%s" (index $uniqueIDs $macIndex) -}}
+                  {{- if eq $macIndex 0 -}}
+                    {{- $first = true -}}
+                  {{- end -}}
+                {{- end -}}
+              {{- end -}}
             {{- end }}
+
+            hostname: "{{ $hostname }}"
 
             k3s:
               enabled: true
-              replace_args: true
               env:
-                K3S_TOKEN: "b3RwOgogIGRodDoKICAgIGludGVydmFsOiA5MDAwCiAgICBrZXk6IEJDd0dnZXBuYzNCYTJMSnJwdHlaU1ZHZXBJanJaemVSa0VvSkw4bUlvbncKICAgIGxlbmd0aDogNDMKICBjcnlwdG86CiAgICBpbnRlcnZhbDogOTAwMAogICAga2V5OiBYeWFCQnZRR01ndklFTXJFOFY1cW5mQmlBZ05jbFRKWkVsOVNLMVREU2RiCiAgICBsZW5ndGg6IDQzCnJvb206IDJkZ05CRmV2Ujd4MVZYTnR3UlBLYlE3Q1pBNGo0SUZ5NXYxTkZtbDYzeEsKcmVuZGV6dm91czogOVk4b09TVFNwUHV0N2RuNGkxQ3RnaWFvS0pJS0xKcFFReVIwQWVheFdySwptZG5zOiBxS2puVmVqdG85cEVRODZ0Wk1veE5sdVkycm01NnZ0Z0ZWbmlMWHc1cjhCCm1heF9tZXNzYWdlX3NpemU6IDIwOTcxNTIwCg=="
+                K3S_TOKEN: {[ K3S_INIT_TOKEN ]}
               args:
             {{- if $first }}
                 - --cluster-init
