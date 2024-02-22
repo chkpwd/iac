@@ -4,7 +4,7 @@ ansible_user: chkpwd
 
 service_definitions:
   - name: prometheus
-    image: prom/prometheus:v2.49.1
+    image: prom/prometheus:v2.50.0
     user: 1000:1000
     command:
       - --config.file=/etc/prometheus/prometheus.yml
