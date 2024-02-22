@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: immich-nfs-volume
+spec:
+  storageClassName: longhorn-media
+  capacity:
+    storage: 1Mi
+  accessModes: ["ReadWriteMany"]
+  nfs:
+    server: "nas-srv-01.${LOCAL_DOMAIN}"
+    path: /volume1/vault-01/static_media/images
+  mountOptions:
+    - nfsvers=4
+    - nconnect=8
+    - hard
+    - noatime
+    - rsize=131072
+    - wsize=131072
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-pvc
+  namespace: tools
+spec:
+  accessModes: ["ReadWriteMany"]
+  storageClassName: longhorn-media
+  resources:
+    requests:
+      storage: 1Mi

@@ -1,0 +1,136 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: immich
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: immich
+      version: 0.3.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: immich
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    controller:
+      annotations:
+        reloader.stakater.com/auto: "true"
+
+    image:
+      tag: &appVersion "v1.94.1"
+
+    postgres:
+      enabled: false
+
+    redis:
+      image:
+        tag: 7.0.11-debian-11-r18
+      enabled: true
+      architecture: standalone
+      auth:
+        enabled: false
+      persistence:
+        enabled: false
+        medium: ""  # Specify the medium for emptyDir (can be "" or "Memory")
+        sizeLimit: "8Gi"
+        path: /data
+      resources:
+        requests:
+          cpu: 5m
+          memory: 10Mi
+        limits:
+          memory: 10Mi
+
+    typesense:
+      enabled: false
+
+    immich:
+      persistence:
+        library:
+          existingClaim: immich-pvc
+
+    server:
+      enabled: true
+      image:
+        repository: ghcr.io/immich-app/immich-server
+        tag: *appVersion
+        pullPolicy: IfNotPresent
+      ingress:
+        main:
+          enabled: true
+          ingressClassName: ext-ingress
+          annotations:
+            external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+            nginx.ingress.kubernetes.io/proxy-body-size: "0"
+          hosts:
+            - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+              paths:
+                - path: /
+                  pathType: Prefix
+          tls:
+            - hosts:
+                - *host
+      resources:
+        requests:
+          cpu: 20m
+          memory: 600Mi
+
+    microservices:
+      enabled: true
+      controller:
+        replicas: 1
+      persistence:
+        geodata-cache:
+          enabled: true
+          size: 1Gi
+          type: emptyDir
+          accessMode: ReadWriteMany
+      resources:
+        requests:
+          cpu: 10m
+          memory: 300Mi
+        limits:
+          memory: 1000Mi
+
+    machine-learning:
+      enabled: false
+
+    env:
+      DB_DATABASE_NAME:
+        valueFrom: 
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: dbname
+      DB_HOSTNAME:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: host
+      DB_USERNAME:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: user
+      DB_PASSWORD:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: password
+      DB_URL:
+        valueFrom:
+          secretKeyRef:
+            name: immich-pguser-immich
+            key: uri
+      LOG_LEVEL: verbose
