@@ -34,50 +34,61 @@ spec:
         secret.reloader.stakater.com/reload: *app
 
       env:
-        AUTHENTIK_POSTGRESQL__HOST:
-          secretKeyRef:
-            name: authentik-pguser-authentik
-            key: host
-        AUTHENTIK_POSTGRESQL__NAME:
-          secretKeyRef:
-            name: authentik-pguser-authentik
-            key: dbname
-        AUTHENTIK_POSTGRESQL__USER:
-          secretKeyRef:
-            name: authentik-pguser-authentik
-            key: user
-        AUTHENTIK_POSTGRESQL__PASSWORD:
-          secretKeyRef:
-            name: authentik-pguser-authentik
-            key: password
-        AUTHENTIK_POSTGRESQL__PORT:
-          secretKeyRef:
-            name: authentik-pguser-authentik
-            key: port
-        AUTHENTIK_EMAIL__USERNAME:
-          secretKeyRef:
-            name: authentik-secrets
-            key: email_address
-        AUTHENTIK_EMAIL__PASSWORD:
-          secretKeyRef:
-            name: authentik-secrets
-            key: app_password
-        AUTHENTIK_SECRET_KEY:
-          secretKeyRef:
-            name: authentik-secrets
-            key: secret_key
-        AUTHENTIK_BOOTSTRAP_PASSWORD:
-          secretKeyRef:
-            name: authentik-secrets
-            key: bootstrap_password
-        AUTHENTIK_BOOTSTRAP_TOKEN:
-          secretKeyRef:
-            name: authentik-secrets
-            key: bootstrap_token
-        AUTHENTIK_BOOTSTRAP_EMAIL:
-          secretKeyRef:
-            name: authentik-secrets
-            key: bootstrap_email
+        - name: AUTHENTIK_POSTGRESQL__HOST
+          valueFrom:
+            secretKeyRef:
+              name: authentik-pguser-authentik
+              key: host
+        - name: AUTHENTIK_POSTGRESQL__NAME
+          valueFrom:
+            secretKeyRef:
+              name: authentik-pguser-authentik
+              key: dbname
+        - name: AUTHENTIK_POSTGRESQL__USER
+          valueFrom:
+            secretKeyRef:
+              name: authentik-pguser-authentik
+              key: user
+        - name: AUTHENTIK_POSTGRESQL__PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: authentik-pguser-authentik
+              key: password
+        - name: AUTHENTIK_POSTGRESQL__PORT
+          valueFrom:
+            secretKeyRef:
+              name: authentik-pguser-authentik
+              key: port
+        - name: AUTHENTIK_EMAIL__USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: authentik-secrets
+              key: email_address
+        - name: AUTHENTIK_EMAIL__PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: authentik-secrets
+              key: app_password
+        - name: AUTHENTIK_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: authentik-secrets
+              key: secret_key
+        - name: AUTHENTIK_BOOTSTRAP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: authentik-secrets
+              key: bootstrap_password
+        - name: AUTHENTIK_BOOTSTRAP_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: authentik-secrets
+              key: bootstrap_token
+        - name: AUTHENTIK_BOOTSTRAP_EMAIL
+          valueFrom:
+            secretKeyRef:
+              name: authentik-secrets
+              key: bootstrap_email
 
     server:
       replicas: 1
