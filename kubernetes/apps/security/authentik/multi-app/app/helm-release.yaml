@@ -91,7 +91,13 @@ spec:
               key: bootstrap_email
 
     server:
+      name: server
+
       replicas: 1
+
+      pdb:
+        # -- Deploy a [PodDistrubtionBudget] for the authentik server
+        enabled: false
 
       ingress:
         enabled: true
@@ -120,12 +126,20 @@ spec:
     worker:
       replicas: 1
 
+      pdb:
+        # -- Deploy a [PodDistrubtionBudget] for the authentik server
+        enabled: false
+
       resources:
         requests:
           cpu: 11m
           memory: 604Mi
         limits:
           memory: 629Mi
+
+    serviceAccount:
+      # -- Create service account. Needed for managed outposts
+      create: true
 
     kubernetesIntegration: true
 
@@ -139,6 +153,10 @@ spec:
         host: smtp.gmail.com
         port: 465
         use_ssl: false
+
+    prometheus:
+      rules:
+        enabled: false
 
     postgresql:
       enabled: false
