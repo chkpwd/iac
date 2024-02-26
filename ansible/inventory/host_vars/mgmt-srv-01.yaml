@@ -64,3 +64,11 @@ service_definitions:
       ORG_ID: "0228643f-4148-4629-b9b4-b06e001d9cce"
       SECRET_TTL: "3600"
     ports: [5000:5000]
+
+  - name: apex-legends-exporter
+    image: ghcr.io/chkpwd/apex-legends-exporter:1.0.0
+    env:
+      USER_ID: "2848619454"
+      PLATFORM: "PC"
+      API_KEY: "{{ lookup('bws_cache', 'public-api-apex-legends-key').value }}"
+    ports: [5050:5000]
