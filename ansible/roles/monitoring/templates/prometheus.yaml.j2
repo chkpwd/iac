@@ -12,27 +12,12 @@ scrape_configs:
       username: chkpwd
       password: "{{ USR_PASSWORD_SOPS }}"
 
-  - job_name: 'exportarr-sonarr'
-    scheme: https
-    static_configs:
-      - targets: ['sonarr.k8s.chkpwd.com']
-
-  - job_name: 'exportarr-radarr'
-    scheme: https
-    static_configs:
-      - targets: ['radarr.k8s.chkpwd.com']
-
-  - job_name: 'exportarr-bazarr'
-    scheme: https
-    static_configs:
-      - targets: ['bazarr.k8s.chkpwd.com']
-
-  - job_name: 'exportarr-prowlarr'
-    scheme: https
-    static_configs:
-      - targets: ['prowlarr.k8s.chkpwd.com']
-
   - job_name: 'opnsense-node-exporter'
     scheme: http
     static_configs:
       - targets: ['172.16.16.1:9100']
+
+  - job_name: 'apex-legends-exporter'
+    scheme: http
+    static_configs:
+      - targets: ['172.16.16.4:5050']
