@@ -1,3 +1,7 @@
+locals {
+  folder_names = ["games", "infrastructure", "kubernetes", "media"]
+}
+
 resource "grafana_contact_point" "discord" {
   name = "discord"
 
@@ -15,6 +19,8 @@ resource "grafana_notification_policy" "default" {
   group_interval  = "5m"
 }
 
-resource "grafana_folder" "alerts" {
-  title = "Alerts Folder - Terraform"
+resource "grafana_folder" "main" {
+  for_each = toset(local.folder_names)
+
+  title = each.value
 }
