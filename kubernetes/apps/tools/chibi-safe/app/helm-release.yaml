@@ -115,3 +115,9 @@ spec:
         size: 1Mi
         globalMounts:
           - path: /home/node/chibisafe/logs
+      tmp:
+        enabled: true
+        type: emptyDir
+        medium: Memory
+        size: 100Mi
+
