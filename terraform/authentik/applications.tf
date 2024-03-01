@@ -230,3 +230,22 @@ module "authentik-app-runwhen-local" {
 
   access_group = [authentik_group.main.id]
 }
+
+module "authentik-app-lubelogger" {
+  source           = "../_modules/authentik/oauth2_app"
+  name             = "Lubelogger"
+  group            = "main"
+  oauth2_values = {
+    client_id        = "lubelogger"
+    client_secret    = "1bcc17d1a1c7f32de3cb37ab3bebf525"
+    property_mappings = data.authentik_scope_mapping.scopes.ids
+    redirect_uris = ["https://lubelogger.chkpwd.com/Login/RemoteAuth"]
+  }
+  app_values = {
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/lubelogger.png"
+    meta_description = "Vehicle Maintenance Tool"
+  }
+  access_group = [
+    authentik_group.main.id
+  ]
+}
