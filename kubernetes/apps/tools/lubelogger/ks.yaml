@@ -24,6 +24,7 @@ metadata:
   name: tools-lubelogger-config
   namespace: flux-system
 spec:
+  targetNamespace: tools
   path: ./kubernetes/apps/tools/lubelogger/config
   prune: true
   sourceRef:
