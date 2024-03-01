@@ -5,6 +5,7 @@ metadata:
   name: tools-lubelogger
   namespace: flux-system
 spec:
+  targetNamespace: tools
   dependsOn:
     - name: tools-lubelogger-config
   path: ./kubernetes/apps/tools/lubelogger/app
