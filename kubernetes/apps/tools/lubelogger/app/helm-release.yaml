@@ -1,0 +1,110 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2beta2.json
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: &app lubelogger
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 2.6.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+
+  values:
+    global:
+      fullnameOverride: *app
+
+    controllers:
+      main:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
+
+        pod:
+          enableServiceLinks: false
+
+        containers:
+          main:
+            image:
+              repository: ghcr.io/hargata/lubelogger
+              tag: v1.2.3
+            env:
+              TZ: ${TZ}
+            envFrom:
+              - secretRef:
+                  name: "{{ .Release.Name }}-secrets"
+
+            resources:
+              requests:
+                cpu: 15m
+                memory: 80M
+              limits:
+                memory: 256M
+
+    service:
+      main:
+        ports:
+          http:
+            port: 8080
+
+    ingress:
+      main:
+        enabled: true
+        className: internal
+        annotations:
+          gethomepage.dev/enabled: "true"
+          gethomepage.dev/group: Home
+          gethomepage.dev/name: lubelog
+          gethomepage.dev/icon: lubelog.png
+          gethomepage.dev/description: Car Service Tracking
+        hosts:
+          - host: &host "{{ .Release.Name }}.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  name: main
+                  port: http
+        tls:
+          - hosts:
+              - *host
+
+    persistence:
+      app:
+        enabled: true
+        existingClaim: *app
+        globalMounts:
+          - path: /App/config
+            subPath: config
+          - path: /App/data
+            subPath: data
+          - path: /App/wwwroot/translations
+            subPath: translations
+          - path: /App/wwwroot/documents
+            subPath: documents
+          - path: /App/wwwroot/images
+            subPath: images
+          - path: /App/log
+            subPath: log
+          - path: /root/.aspnet/DataProtection-Keys
+            subPath: keys
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /App/wwwroot/temp
