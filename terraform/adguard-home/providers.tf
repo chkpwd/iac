@@ -11,15 +11,20 @@ terraform {
   }
 }
 
-data "sops_file" "adguard-home-secrets" {
-  source_file = "../terraform.sops.yaml"
+data "http" "bws_lookup" {
+  url = "http://mgmt-srv-01:5000/key/infra-adguard-home-secrets"
+
+  request_headers = {
+    Accept = "application/json"
+    Authorization = "Bearer ${var.BWS_ACCESS_TOKEN}"
+  }
 }
 
 # configuration for adguard home
 provider "adguard" {
   host     = "172.16.16.1:8080"
   username = "admin"
-  password = "${data.sops_file.adguard-home-secrets.data["adguard_home_password"]}"
+  password = jsondecode(data.http.bws_lookup.response_body).value.password
   scheme   = "http" # defaults to https
   timeout  = 5
 }
