@@ -47,12 +47,6 @@ spec:
 
         pod:
           enableServiceLinks: false
-          securityContext:
-            runAsUser: &context 1999
-            runAsGroup: *context
-            fsGroup: *context
-            fsGroupChangePolicy: "OnRootMismatch"
-            allowPrivilegeEscalation: false
 
         containers:
           main:
