@@ -36,26 +36,6 @@ spec:
           reloader.stakater.com/auto: "true"
         replicas: 1
 
-        statefulset:
-          volumeClaimTemplates:
-            - name: config
-              accessMode: ReadWriteOnce
-              size: 500Mi
-              storageClass: longhorn-config
-              globalMounts:
-                - path: /App/data
-                  subPath: data
-                - path: /App/wwwroot/translations
-                  subPath: translations
-                - path: /App/wwwroot/documents
-                  subPath: documents
-                - path: /App/wwwroot/images
-                  subPath: images
-                - path: /App/log
-                  subPath: log
-                - path: /root/.aspnet/DataProtection-Keys
-                  subPath: keys
-
         pod:
           enableServiceLinks: false
 
@@ -102,6 +82,23 @@ spec:
               - *host
 
     persistence:
+      main:
+        enabled: true
+        type: persistentVolumeClaim
+        size: 500Mi
+        globalMounts:
+          - path: /App/data
+            subPath: data
+          - path: /App/wwwroot/translations
+            subPath: translations
+          - path: /App/wwwroot/documents
+            subPath: documents
+          - path: /App/wwwroot/images
+            subPath: images
+          - path: /App/log
+            subPath: log
+          - path: /root/.aspnet/DataProtection-Keys
+            subPath: keys
       tmp:
         type: emptyDir
         globalMounts:
