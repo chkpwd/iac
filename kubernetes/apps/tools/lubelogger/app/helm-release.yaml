@@ -86,6 +86,7 @@ spec:
         enabled: true
         type: persistentVolumeClaim
         size: 500Mi
+        accessMode: ReadWriteOnce
         globalMounts:
           - path: /App/data
             subPath: data
