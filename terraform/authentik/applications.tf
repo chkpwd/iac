@@ -115,7 +115,7 @@ module "authentik-app-miniflux" {
   group            = "main"
   oauth2_values = {
     client_id        = "miniflux"
-    client_secret    = "${data.sops_file.authentik-secrets.data["authentik_miniflux_client_secret"]}"
+    client_secret    = data.external.bws_lookup.result["mf_client_secret"]
     property_mappings = data.authentik_scope_mapping.scopes.ids
     redirect_uris = ["https://miniflux.chkpwd.com/oauth2/oidc/callback"]
   }
@@ -237,7 +237,7 @@ module "authentik-app-lubelogger" {
   group            = "main"
   oauth2_values = {
     client_id        = "lubelogger"
-    client_secret    = "1bcc17d1a1c7f32de3cb37ab3bebf525"
+    client_secret    = data.external.bws_lookup.result["ll_client_secret"]
     property_mappings = data.authentik_scope_mapping.scopes.ids
     redirect_uris = ["https://lubelogger.chkpwd.com/Login/RemoteAuth"]
   }

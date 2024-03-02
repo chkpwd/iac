@@ -11,11 +11,18 @@ terraform {
   }
 }
 
+data "external" "bws_lookup" {
+  program = ["python3","../bws_lookup.py"]
+  query = {
+    key = "ns-security-authentik,ns-tools-lubelogger,ns-tools-miniflux"
+  }
+}
+
 data "sops_file" "authentik-secrets" {
   source_file = "../terraform.sops.yaml"
 }
 
 provider "authentik" {
   url   = "https://authentik.chkpwd.com"
-  token = data.sops_file.authentik-secrets.data["authentik_token"]
+  token = data.external.bws_lookup.result["bootstrap_token"]
 }

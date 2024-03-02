@@ -1,7 +1,7 @@
 resource "authentik_user" "main" {
   username = "chkpwd"
   name     = "Default User"
-  password = data.sops_file.authentik-secrets.data["authentik_main_group_pwd"]
+  password = data.external.bws_lookup.result["main_user_password"]
 }
 
 resource "authentik_group" "main" {
