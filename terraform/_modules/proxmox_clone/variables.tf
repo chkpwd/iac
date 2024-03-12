@@ -12,14 +12,26 @@ variable "machine" {
     id   = number
     tags = optional(list(string))
     enable_agent = optional(bool)
-    started = optional(bool)
-    on_boot = optional(bool)
     bios = optional(string)
     tpm = optional(object({
       datastore_id = optional(string)
       version = optional(string)
     }))
   })
+}
+
+variable "clone" {
+  type = object({
+    vm_id = number
+    full = optional(bool)
+    datastore_id = optional(string)
+    node_name = optional(string)
+    retries = optional(number)
+  })
+  default = {
+    full = true
+    retries = 1
+  }
 }
 
 variable "startup" {
@@ -44,11 +56,11 @@ variable "spec" {
       hotplugged = optional(number)
       type = optional(string)
     }))
-    memory = optional(object({
+    memory = object({
       dedicated = optional(number)
       floating = optional(number)
       shared = optional(number) 
-    }))
+    })
     disk = optional(object({
       cache = optional(string)
       size = optional(number)
@@ -57,31 +69,12 @@ variable "spec" {
       interface = optional(string)
       datastore_id = optional(string)
     }))
-    network = optional(object({
+    network = object({
       bridge = optional(string)
       mac_address = optional(string)
       model = optional(string)
       vlan_id = optional(number)
-    }))
-    scsi_hardware = optional(string)
-    initialization = optional(object({
-      ip_config = object({
-        ipv4 = optional(object({
-          address = optional(string)
-          gateway = optional(string) 
-        }))
-        ipv6 = optional(object({
-          address = optional(string)
-          gateway = optional(string) 
-        }))
-      })
-      user_account = optional(object({
-        keys = optional(string)
-        password = optional(string)
-        username = optional(string) 
-      }))
-      user_data_file_id = optional(string)
-    }))
+    })
   })
   default = {
     cpu = {
@@ -100,6 +93,5 @@ variable "spec" {
     network = {
       bridge = "vmbr1"
     }
-    scsi_hardware = "virtio-scsi-pci"
   }
 }

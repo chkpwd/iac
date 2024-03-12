@@ -14,11 +14,7 @@ module "test-vm" {
     enable_agent = true
     bios = "seabios"
   }
-  startup = {
-    order = 3
-    up_delay = 60
-    down_delay = 60
-  }
+
   spec = {
     cpu = {
       cores = 2
@@ -29,9 +25,38 @@ module "test-vm" {
     }
     disk = {
       size = 32
+      interface = "scsi0"
     }
     network = {
       bridge = "vmbr0"
     }
   }
 }
+
+# module "test-vm" {
+#   source = "../_modules/proxmox_clone"
+#   machine = {
+#     name = "testing-vm-clone"
+#     id = 100
+#     tags = [ "test1", "test2", "test3" ]
+#     enable_agent = true
+#     bios = "seabios"
+#   }
+
+#   spec = {
+#     cpu = {
+#       cores = 2
+#       hotplugged = 2
+#     }
+#     memory = {
+#       dedicated = 2048
+#     }
+#     disk = {
+#       size = 32
+#       interface = "scsi0"
+#     }
+#     network = {
+#       bridge = "vmbr0"
+#     }
+#   }
+# }

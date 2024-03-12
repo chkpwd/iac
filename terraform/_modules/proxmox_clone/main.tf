@@ -8,14 +8,17 @@ resource "proxmox_virtual_environment_vm" "main" {
   tags        = var.machine.tags
   name        = var.machine.name
 
-  started = var.machine.started
-  on_boot = var.machine.on_boot
+  node_name = var.node
+  vm_id     = var.machine.id
 
-  agent {
-    enabled = var.machine.enable_agent
+  clone {
+    vm_id = var.clone.vm_id
+    full = var.clone.full
+    datastore_id = var.clone.datastore_id
+    node_name = var.clone.node_name
+    retries = var.clone.retries
   }
 
-  node_name = var.node
   bios = var.machine.bios
 
   cpu {
@@ -25,8 +28,6 @@ resource "proxmox_virtual_environment_vm" "main" {
     hotplugged = var.spec.cpu.hotplugged
     type = var.spec.cpu.type
   }
-
-  scsi_hardware = var.spec.scsi_hardware
 
   disk {
     cache        = var.spec.disk.cache
@@ -38,23 +39,24 @@ resource "proxmox_virtual_environment_vm" "main" {
     bridge = var.spec.network.bridge
   }
 
-  dynamic "initialization" {
-    for_each = null != var.spec.initialization ? var.spec.initialization : {}
-
-    content {
-      ip_config {
-        ipv4 {
-          address = var.spec.initialization.ip_config.ipv4.address
-          gateway = var.spec.initialization.ip_config.ipv4.gateway
-        }
+  initialization {
+    ip_config {
+      ipv4 {
+        address = "dhcp"
       }
-      user_account {
-        keys     = var.spec.initialization.user_account.keys
-        password = var.spec.initialization.user_account.password
-        username = var.spec.initialization.user_account.username
-      }
-      user_data_file_id = null != var.spec.initialization.user_account ? {} : var.initialization.user_data_file_id 
     }
+
+    # user_account {
+    #   keys     = [trimspace(tls_private_key.ubuntu_vm_key.public_key_openssh)]
+    #   password = random_password.ubuntu_vm_password.result
+    #   username = "ubuntu"
+    # }
+
+    # user_data_file_id = proxmox_virtual_environment_file.cloud_config.id
+  }
+
+  operating_system {
+    type = "l26"
   }
 
   dynamic "tpm_state" {
@@ -65,4 +67,6 @@ resource "proxmox_virtual_environment_vm" "main" {
       datastore_id = var.machine.tpm.datastore_id
     }
   }
+
+  # serial_device {}
 }
