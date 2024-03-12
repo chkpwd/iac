@@ -24,5 +24,5 @@ data "sops_file" "authentik-secrets" {
 
 provider "authentik" {
   url   = "https://authentik.chkpwd.com"
-  token = data.external.bws_lookup.result["bootstrap_token"]
+  token = data.external.bws_lookup.result["ns-security-authentik_bootstrap_token"]
 }

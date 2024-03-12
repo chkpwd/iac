@@ -1,7 +1,7 @@
 resource "authentik_user" "main" {
   username = "chkpwd"
   name     = "Default User"
-  password = data.external.bws_lookup.result["main_user_password"]
+  password = data.external.bws_lookup.result["ns-security-authentik_main_user_password"]
 }
 
 resource "authentik_group" "main" {
