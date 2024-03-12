@@ -26,6 +26,11 @@ variable "startup" {
     up_delay   = optional(string)
     down_delay = optional(string)
   })
+  default = {
+    order = null
+    up_delay = null
+    down_delay = null
+  }
 }
 
 variable "spec" {
@@ -57,25 +62,54 @@ variable "spec" {
       vlan_id = optional(number)
     })
   })
+  default = {
+    cpu = {
+      cores = 1
+      hotplugged = 0
+    }
+    memory = {
+      dedicated = 1024
+    }
+    disk = {
+      cache = "none"
+      size = 8
+      interface = "scsi"
+      datastore_id = "nvme-pool"
+    }
+    network = {
+      bridge = "vmbr1"
+    }
+  }
 }
 
 variable "initialization" {
   type = object({
     ip_config = object({
-      ipv4 = object({
+      ipv4 = optional(object({
         address = optional(string)
         gateway = optional(string) 
-      })
-      ipv6 = object({
+      }))
+      ipv6 = optional(object({
         address = optional(string)
         gateway = optional(string) 
-      })
+      }))
     })
-    user_account = object({
+    user_account = optional(object({
       keys = optional(string)
       password = optional(string)
       username = optional(string) 
-    })
+    }))
     user_data_file_id = optional(string)
   })
+  default = {
+    ip_config = {
+      ipv4 = {
+        address = "dhcp"
+      }
+    }
+    user_account = {
+      username = "chkpwd"
+      password = "foobar"
+    }
+  }
 }

@@ -28,10 +28,7 @@ module "test-vm" {
       dedicated = 2048
     }
     disk = {
-      cache = "none"
       size = 32
-      interface = "scsi0"
-      datastore_id = "nvme-pool"
     }
     network = {
       bridge = "vmbr0"
