@@ -1,3 +1,9 @@
+resource "random_password" "main" {
+  length           = 16
+  override_special = "_%@"
+  special          = true
+}
+
 resource "proxmox_virtual_environment_vm" "main" {
   tags        = var.machine.tags
   name        = var.machine.name
