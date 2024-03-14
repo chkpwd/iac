@@ -1,3 +1,7 @@
-variable main_node {
-  default = "pve1"
+variable node {
+  default = "pve-srv-01"
+}
+
+variable datastore {
+  default = "nvme-pool"
 }

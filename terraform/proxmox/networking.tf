@@ -1,5 +1,5 @@
-resource "proxmox_virtual_environment_time" "first_node_time" {
-  node_name = "pve1"
+resource "proxmox_virtual_environment_time" "main" {
+  node_name = var.node
   time_zone = "America/New_York"
 }
 
@@ -14,7 +14,7 @@ resource "proxmox_virtual_environment_dns" "main" {
 }
 
 resource "proxmox_virtual_environment_network_linux_bridge" "vmbr1" {
-  node_name  = "pve1"
+  node_name  = var.node
   name       = "vmbr1"
   vlan_aware = true
 

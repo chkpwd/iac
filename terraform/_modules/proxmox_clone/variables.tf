@@ -1,8 +1,8 @@
-variable "node" {
-  default = "pve1"
+variable node {
+  default = "pve-srv-01"
 }
 
-variable "datastore" {
+variable datastore {
   default = "nvme-pool"
 }
 
@@ -59,7 +59,7 @@ variable "spec" {
     memory = object({
       dedicated = optional(number)
       floating = optional(number)
-      shared = optional(number) 
+      shared = optional(number)
     })
     disk = optional(object({
       cache = optional(string)

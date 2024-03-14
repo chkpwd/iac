@@ -32,37 +32,40 @@ resource "proxmox_virtual_environment_vm" "main" {
     cache        = var.spec.disk.cache
     datastore_id = var.spec.disk.datastore_id
     interface    = var.spec.disk.interface
+    file_id      = var.spec.disk.file_id
+    iothread     = var.spec.disk.iothread
+    discard      = var.spec.disk.discard
   }
 
   network_device {
     bridge = var.spec.network.bridge
   }
 
+  dynamic "tpm_state" {
+    for_each = var.machine.tpm != null ? var.machine.tpm : {}
+
+    content {
+      version      = tpm_state.value.version
+      datastore_id = tpm_state.value.datastore_id
+    }
+  }
+
   dynamic "initialization" {
-    for_each = null != var.spec.initialization ? var.spec.initialization : {}
+    for_each = var.spec.initialization != null ? [var.spec.initialization] : []
 
     content {
       ip_config {
         ipv4 {
-          address = var.spec.initialization.ip_config.ipv4.address
-          gateway = var.spec.initialization.ip_config.ipv4.gateway
+          address = initialization.value.ip_config.ipv4.address
+          gateway = initialization.value.ip_config.ipv4.gateway
         }
       }
       user_account {
-        keys     = var.spec.initialization.user_account.keys
-        password = var.spec.initialization.user_account.password
-        username = var.spec.initialization.user_account.username
+        keys     = initialization.value.user_account.keys
+        password = initialization.value.user_account.password
+        username = initialization.value.user_account.username
       }
-      user_data_file_id = null != var.spec.initialization.user_account ? {} : var.initialization.user_data_file_id 
-    }
-  }
-
-  dynamic "tpm_state" {
-    for_each = null != var.machine.tpm ? var.machine.tpm : {}
-
-    content {
-      version = var.machine.tpm.version
-      datastore_id = var.machine.tpm.datastore_id
+      user_data_file_id = initialization.value.user_account != null ? null : initialization.value.user_data_file_id
     }
   }
 }

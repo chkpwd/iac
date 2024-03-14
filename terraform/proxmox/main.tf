@@ -18,7 +18,6 @@ module "test-vm" {
   spec = {
     cpu = {
       cores = 2
-      hotplugged = 2
     }
     memory = {
       dedicated = 2048
@@ -26,6 +25,8 @@ module "test-vm" {
     disk = {
       size = 32
       interface = "scsi0"
+      datastore_id = "nvme-pool"
+      file_id = proxmox_virtual_environment_download_file.ubuntu_noble_cloud_image.id
     }
     network = {
       bridge = "vmbr0"

@@ -1,8 +1,8 @@
-variable "node" {
-  default = "pve1"
+variable node {
+  default = "pve-srv-01"
 }
 
-variable "datastore" {
+variable datastore {
   default = "nvme-pool"
 }
 
@@ -47,12 +47,14 @@ variable "spec" {
     memory = optional(object({
       dedicated = optional(number)
       floating = optional(number)
-      shared = optional(number) 
+      shared = optional(number)
     }))
     disk = optional(object({
       cache = optional(string)
       size = optional(number)
       discard = optional(string)
+      iothread = optional(bool)
+      file_id = optional(string)
       file_format = optional(string)
       interface = optional(string)
       datastore_id = optional(string)
@@ -68,17 +70,17 @@ variable "spec" {
       ip_config = object({
         ipv4 = optional(object({
           address = optional(string)
-          gateway = optional(string) 
+          gateway = optional(string)
         }))
         ipv6 = optional(object({
           address = optional(string)
-          gateway = optional(string) 
+          gateway = optional(string)
         }))
       })
       user_account = optional(object({
         keys = optional(string)
         password = optional(string)
-        username = optional(string) 
+        username = optional(string)
       }))
       user_data_file_id = optional(string)
     }))
@@ -96,6 +98,7 @@ variable "spec" {
       size = 8
       interface = "scsi0"
       datastore_id = "nvme-pool"
+      iothread = true
     }
     network = {
       bridge = "vmbr1"
