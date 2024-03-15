@@ -20,7 +20,7 @@ results = []
 
 for key in key_name:
     bws_response = requests.get(
-        f"http://172.16.16.4:5000/key/{key}",
+        f"http://mgmt-srv-01:5000/key/{key}",
         headers={"Authorization": f"Bearer {access_token}"},
         timeout=10,
     ).json()
