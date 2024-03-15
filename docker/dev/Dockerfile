@@ -72,7 +72,7 @@ ARG TELLER_VERSION=v1.5.6
 ARG CHEZMOI_VERSION=v2.47.1
 
 # renovate: datasource=github-tags depName=kubernetes/kubernetes
-ARG KUBECTL_VERSION=v1.29.2
+ARG KUBECTL_VERSION=v1.29.3
 
 # renovate: datasource=github-releases depName=stern/stern
 ARG STERN_VERSION=v1.28.0
