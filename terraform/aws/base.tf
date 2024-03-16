@@ -41,17 +41,17 @@ resource "aws_route_table_association" "main" {
 resource "aws_security_group" "main" {
   name        = "tf-security-group"
   description = "Default security group for Terraform"
-  vpc_id      = aws_vpc.main.id 
+  vpc_id      = aws_vpc.main.id
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [ "${data.sops_file.aws-secrets.data["public_address"]}/32" ]
+    cidr_blocks = [ "${data.external.bws_lookup.result["infra-network-secrets_public_ip"]}/32" ]
   }
 
   egress {
-    from_port   = 0 
+    from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
