@@ -58,13 +58,6 @@ spec:
             - apiGroups: ["*"]
               resources: ["*"]
               verbs: ["get", "watch", "list"]
-        'flux-read-patch':
-          # -- Set it to `true` when using Flux executor plugin to enable `flux diff`.
-          create: false
-          rules:
-            - apiGroups: ["*"]
-              resources: ["*"]
-              verbs: ["get", "watch", "list", "patch"]
 
     communications:
       default-group:
@@ -77,7 +70,6 @@ spec:
               bindings:
                 executors:
                   - k8s-default-tools
-                  - flux
                 sources:
                   - k8s-recommendation-events
                   - k8s-all-events
@@ -133,12 +125,6 @@ spec:
           enabled: true
         botkube/helm:
           enabled: true
-      flux:
-        botkube/flux:
-          enabled: true
-          config:
-            log:
-              level: info
 
     aliases:
       k:
@@ -169,7 +155,3 @@ spec:
       kind: Secret
       name: botkube-secret
       valuesKey: BOTKUBE_DISCORD_CHANNEL_ID
-    - targetPath: executors.flux.github.auth.accessToken
-      kind: Secret
-      name: botkube-secret
-      valuesKey: FLUX_BOTKUBE_GITHUB_TOKEN
