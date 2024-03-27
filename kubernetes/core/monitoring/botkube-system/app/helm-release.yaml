@@ -142,6 +142,12 @@ spec:
       limits:
         memory: 1000Mi
 
+    ## Parameters for anonymous analytics collection.
+    analytics:
+      # -- If true, sending anonymous analytics is disabled. To learn what date we collect,
+      # see [Privacy Policy](https://docs.botkube.io/privacy#privacy-policy).
+      disable: false
+
   valuesFrom:
     - targetPath: communications.default-group.discord.token
       kind: Secret
