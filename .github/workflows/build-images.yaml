@@ -3,16 +3,15 @@ name: Docker Build Container Images
 on:
   push:
     branches: [ main ]
-    paths: 
-      - 'docker/**/**'
+    paths:
+      - 'containers/**/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        context: 
-          - 'dev'
+        context:
           - 'galene'
           - 'web-terminal'
     steps:
