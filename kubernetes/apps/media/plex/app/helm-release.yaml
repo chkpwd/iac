@@ -59,8 +59,7 @@ spec:
               globalMounts:
                 - path: /config
 
-        pod:      
-          enableServiceLinks: false
+        pod:
           nodeSelector:
             intel.feature.node.kubernetes.io/gpu: "true"
           securityContext:
@@ -105,7 +104,7 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities:
-                drop: 
+                drop:
                   - ALL
 
             resources:

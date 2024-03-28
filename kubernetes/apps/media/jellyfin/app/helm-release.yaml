@@ -60,7 +60,6 @@ spec:
                 - path: /config
 
         pod:      
-          enableServiceLinks: false
           nodeSelector:
             intel.feature.node.kubernetes.io/gpu: "true"
           securityContext:

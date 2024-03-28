@@ -35,14 +35,6 @@ spec:
           reloader.stakater.com/auto: "true"
         replicas: 1
 
-        pod:
-          enableServiceLinks: false
-          # securityContext:
-          #   runAsUser: &context 1999
-          #   runAsGroup: *context
-          #   fsGroup: *context
-          #   fsGroupChangePolicy: "OnRootMismatch"
-
         containers:
           main:
             image:

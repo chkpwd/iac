@@ -36,7 +36,6 @@ spec:
         replicas: 1
 
         pod:
-          enableServiceLinks: false
           securityContext:
             runAsUser: &context 1000
             runAsGroup: *context

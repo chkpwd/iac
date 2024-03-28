@@ -45,7 +45,6 @@ spec:
                 - path: /usr/lib/unifi/data
 
         pod:
-          enableServiceLinks: false
           securityContext:
             runAsUser: &context 999
             runAsGroup: *context

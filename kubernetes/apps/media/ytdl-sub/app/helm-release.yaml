@@ -44,7 +44,6 @@ spec:
           backoffLimit: 6
 
         pod:
-          enableServiceLinks: false
           securityContext:
             runAsUser: &user 1026
             runAsGroup: &group 100
@@ -55,7 +54,7 @@ spec:
           main:
             image:
               repository: ghcr.io/jmbannon/ytdl-sub
-              tag: 2023.10.25.post3 
+              tag: 2023.10.25.post3
               pullPolicy: IfNotPresent
 
             command:
