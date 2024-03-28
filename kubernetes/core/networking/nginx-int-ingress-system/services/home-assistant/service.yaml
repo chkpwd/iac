@@ -6,7 +6,7 @@ metadata:
   namespace: networking
 spec:
   type: ExternalName
-  externalName: haos.${LOCAL_DOMAIN}
+  externalName: haos-srv-01.${LOCAL_DOMAIN}
   ports:
     - name: http
       port: &port 8123
