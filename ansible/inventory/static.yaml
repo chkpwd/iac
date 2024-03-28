@@ -5,16 +5,9 @@ all:
       ansible_connection: local
   children:
     hypervisors:
-      esxi_hosts:
-
-    vsphere:
-      children:
-        esxi_hosts:
-        vcenter:
-
-    esxi_hosts:
-      hosts:
-        octane:
+      proxmox:
+        hosts:
+          pve-srv-01:
 
     guests:
       children:
@@ -24,10 +17,9 @@ all:
 
     linux:
       hosts:
-        home-assistant:
+        haos-srv-01:
         kubes-cp-[1:3]:
         mgmt-srv-01:
-        test-vm:
 
     windows:
       vars:
@@ -35,7 +27,7 @@ all:
 
     docker_hosts:
       hosts:
-        home-assistant:
+        haos-srv-01:
         ct-01-ec2:
         mgmt-srv-01:
 
@@ -70,7 +62,11 @@ all:
 
     onprem:
       children:
-        vsphere:
+        hypervisors:
+        guests:
+        linux:
+        windows:
+        printers:
 
     datacenter:
       children:
