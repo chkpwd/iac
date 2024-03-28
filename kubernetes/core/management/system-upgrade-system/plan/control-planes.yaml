@@ -3,11 +3,11 @@ apiVersion: upgrade.cattle.io/v1
 kind: Plan
 metadata:
   name: server
-  namespace: system-upgrade
+  namespace: k8s-system-upgrade
 spec:
   # renovate: datasource=github-releases depName=k3s-io/k3s
   version: "bookworm-standard-amd64-generic-v2.5.0-k3sv1.29.0-k3s1"
-  serviceAccountName: system-upgrade
+  serviceAccountName: k8s-system-upgrade
   concurrency: 1
   cordon: false
   drain:
