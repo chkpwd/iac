@@ -4,8 +4,10 @@ import logging
 import os
 import requests
 
+
 class InvalidToken(Exception):
     pass
+
 
 logging.basicConfig(filename='tf.log', encoding='utf-8', level=logging.DEBUG)
 
@@ -29,12 +31,16 @@ for key in key_name:
 
     try:
         results.append(bws_response['value'])
-    except KeyError:
-        raise InvalidToken("Token is invalid or does not have permissions to read value")
+    except KeyError as exc:
+        raise InvalidToken(
+            "Token is invalid or does not have permissions to read value"
+        ) from exc
 
 flat = {}
 
 for name, value in zip(key_name, results):
-    flat.update({f"{name}_{dict_key}":dict_value for dict_key, dict_value in value.items()})
+    flat.update({f"{name}_{dict_key}": dict_value for dict_key,
+                dict_value in value.items()})
 
+logging.debug(flat)
 print(json.dumps(flat))
