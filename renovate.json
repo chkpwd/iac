@@ -17,13 +17,6 @@
   },
   "regexManagers": [
     {
-      "description": "Process Dockerfile(s) in Docker Directory",
-      "fileMatch": ["docker\\/dev\\/Dockerfile"],
-      "matchStrings": [
-        "# renovate: datasource=(?<datasource>[a-z-]+?) depName=(?<depName>[^\\s]+?)(?: (lookupName|packageName)=(?<packageName>[^\\s]+?))?(?: versioning=(?<versioning>[a-z-0-9]+?))?\\s(?:ENV|ARG) .+?_VERSION[ =]\"?(?<currentValue>.+?)\"?\\s"
-      ]
-    },
-    {
       "description": "Process all other tools in the root of the directory",
       "fileMatch": [
         "ansible/inventory/host_vars/.+\\.ya?ml$",
