@@ -4,7 +4,7 @@ terraform {
       source = "gmichels/adguard"
       version = "1.1.5"
     }
-    sops = { 
+    sops = {
       source = "carlpett/sops"
       version = "1.0.0"
     }
@@ -22,7 +22,7 @@ data "external" "bws_lookup" {
 provider "adguard" {
   host     = "172.16.16.1:8080"
   username = "admin"
-  password = data.external.bws_lookup.result["password"]
+  password = data.external.bws_lookup.result["infra-adguard-home_password"]
   scheme   = "http" # defaults to https
   timeout  = 5
 }
