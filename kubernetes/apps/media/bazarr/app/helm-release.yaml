@@ -12,6 +12,7 @@ spec:
       chart: app-template
       version: 3.0.4
       interval: 30m
+      reconcileStrategy: Revision
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -29,7 +30,7 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      bazarr:
+      main:
         enabled: true
         type: statefulset
         annotations:
@@ -98,7 +99,7 @@ spec:
               limits:
                 memory: 336Mi
 
-          exportarr:
+          metrics:
             dependsOn: app
             image:
               repository: ghcr.io/onedr0p/exportarr
@@ -120,13 +121,13 @@ spec:
     service:
       app:
         primary: true
-        controller: app
+        controller: main
         ports:
           http:
             port: *port
-      exportarr:
+      metrics:
         nameOverride: metrics
-        controller: app
+        controller: main
         ports:
           metrics:
             port: *metricsPort
@@ -150,7 +151,7 @@ spec:
               - path: /metrics
                 pathType: Prefix
                 service:
-                  identifier: secondary
+                  identifier: metrics
                   port: metrics
         tls:
           - hosts:
