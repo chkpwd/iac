@@ -19,6 +19,13 @@ terraform {
   }
 }
 
+data "external" "bws_lookup" {
+  program = ["python3","../bws_lookup.py"]
+  query = {
+    key = "common-secrets,infra-network-secrets,cloud-aws-proxy-secrets,cloudflare-dns-secrets"
+  }
+}
+
 data "sops_file" "cloudflare-secrets" {
   source_file = "../terraform.sops.yaml"
 }

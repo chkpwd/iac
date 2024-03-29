@@ -3,8 +3,8 @@ resource "cloudflare_record" "main" {
   proxied = true
   ttl     = 1
   type    = "A"
-  value   = data.sops_file.cloudflare-secrets.data["public_address"]
-  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
+  value   = data.external.bws_lookup.result["infra-network-secrets_public_ip"]
+  zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
 }
 
 resource "cloudflare_record" "www_main" {
@@ -12,8 +12,8 @@ resource "cloudflare_record" "www_main" {
   proxied = true
   ttl     = 1
   type    = "A"
-  value   = data.sops_file.cloudflare-secrets.data["public_address"]
-  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
+  value   = data.external.bws_lookup.result["infra-network-secrets_public_ip"]
+  zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
 }
 
 resource "cloudflare_record" "uptime" {
@@ -22,5 +22,5 @@ resource "cloudflare_record" "uptime" {
   ttl     = 1
   type    = "A"
   value   = data.tfe_outputs.aws.values.ct-01-ec2_public_ip
-  zone_id = data.sops_file.cloudflare-secrets.data["cloudflare_zone_id"]
+  zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
 }
