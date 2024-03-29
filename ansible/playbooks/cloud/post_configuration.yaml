@@ -38,7 +38,7 @@
           api_url: "{{ uptime_kuma_url }}"
           api_username: uptime
           api_password: "{{ UPTIME_KUMA_PASSWORD }}"
-        lucasheld.uptime_kuma.login: 
+        lucasheld.uptime_kuma.login:
           <<: *uptimekuma_passwd_defaults
           api_2fa: "{{ two_factor_token }}"
       block:
