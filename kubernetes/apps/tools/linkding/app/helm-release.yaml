@@ -48,7 +48,7 @@ spec:
           main:
             image:
               repository: sissbruecker/linkding
-              tag: 1.24.2
+              tag: 1.25.0
 
             env:
               LD_SUPERUSER_NAME: chkpwd
@@ -85,6 +85,7 @@ spec:
                   secretKeyRef:
                     name: linkding-pguser-linkding
                     key: password
+              PGSSLCERT: /tmp/postgresql.crt
 
             securityContext:
               allowPrivilegeEscalation: false
