@@ -21,7 +21,7 @@ uptime_kuma_monitors:
     url: 172.16.16.2
     parent: *services_group
 
-  - name: ESXi-1
+  - name: PVE-SRV-01
     type: ping
     url: 172.16.16.3
     parent: *services_group
@@ -29,11 +29,6 @@ uptime_kuma_monitors:
   - name: MGMT-SRV-01
     type: ping
     url: 172.16.16.4
-    parent: *services_group
-
-  - name: vCenter
-    type: ping
-    url: 172.16.16.6
     parent: *services_group
 
   - name: Unifi AP
