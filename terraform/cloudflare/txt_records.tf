@@ -22,6 +22,6 @@ resource "cloudflare_record" "aws_instance_proxy_txt" {
   type    = "TXT"
   value   = data.external.bws_lookup.result["cloud-aws-proxy-secrets_swag_txt_record"]
   proxied = false
-  comment = "Terraform - SPF - email"
+  comment = "Terraform - AWS Instance Proxy - TXT Record"
   zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
 }

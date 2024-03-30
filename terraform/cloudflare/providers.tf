@@ -31,5 +31,5 @@ data "sops_file" "cloudflare-secrets" {
 }
 
 provider "cloudflare" {
-  api_token = data.sops_file.cloudflare-secrets.data["cloudflare_zone_token"]
+  api_token = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_token"]
 }
