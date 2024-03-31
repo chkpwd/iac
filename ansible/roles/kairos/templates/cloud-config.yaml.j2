@@ -41,7 +41,7 @@ stages:
         - url: https://raw.githubusercontent.com/chkpwd/kairos/main/multi-node-k3s/manifests/kubevip-values.yaml
           path: /var/lib/rancher/k3s/server/manifests/kubevip.yaml
         - url: https://raw.githubusercontent.com/chkpwd/kairos/main/multi-node-k3s/manifests/cilium-values.yaml
-          path: /var/lib/rancher/k3s/server/manifests/cilium-crd.yaml
+          path: /var/lib/rancher/k3s/server/manifests/cilium.yaml
 
     - name: "Determine Bootstrap Node"
       files:
@@ -49,7 +49,7 @@ stages:
           permissions: 0666
           content: |
             #cloud-config
-            {{- $nodes := list "00:50:56:bc:69:5c" "00:50:56:bc:7a:47" "00:50:56:bc:78:e2" -}}
+            {{- $nodes := list "6c:4b:90:46:b6:c1" "6c:4b:90:05:76:db" "6c:4b:90:58:6d:96" -}}
             {{- $uniqueIDs := list "01" "02" "03" -}}
             {{- $hostname := "localhost" -}}
             {{- $first := false -}}
@@ -75,7 +75,7 @@ stages:
             {{- if $first }}
                 - --cluster-init
             {{- else }}
-                - --server https://172.16.16.45:6443
+                - --server https://172.16.16.13:6443
             {{- end }}
                 - --tls-san "172.16.16.45"
                 - --disable traefik,servicelb,local-storage,metrics-server
