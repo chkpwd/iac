@@ -9,7 +9,13 @@ class InvalidToken(Exception):
     pass
 
 
-logging.basicConfig(filename='tf.log', encoding='utf-8', level=logging.DEBUG)
+if os.environ.get("TF_LOG") == "DEBUG":
+    logging.basicConfig(
+        filename='bws-lookup.log',
+        encoding='utf-8',
+        level=logging.DEBUG
+    )
+
 
 access_token = os.environ.get("BWS_ACCESS_TOKEN")
 if not access_token:
