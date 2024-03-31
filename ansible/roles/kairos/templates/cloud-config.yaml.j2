@@ -77,7 +77,7 @@ stages:
             {{- else }}
                 - --server https://172.16.16.13:6443
             {{- end }}
-                - --tls-san "172.16.16.45"
+                - --tls-san "172.16.16.13"
                 - --disable traefik,servicelb,local-storage,metrics-server
                 - --flannel-backend none
                 - --disable-network-policy
