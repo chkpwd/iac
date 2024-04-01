@@ -60,7 +60,7 @@ spec:
       service:
         enabled: true
         annotations:
-          metallb.universe.tf/loadBalancerIPs: ${PALWORLD_LB_ADDRESS}
+          io.cilium/lb-ipam-ips: ${PALWORLD_LB_ADDRESS}
         type: LoadBalancer
         ports:
           - name: game

@@ -27,7 +27,7 @@ spec:
     fullnameOverride: *app
 
     commonAnnotations:
-      metallb.universe.tf/loadBalancerIPs: ${ARK_CLUSTER_LB_ADDRESS}
+      io.cilium/lb-ipam-ips: ${ARK_CLUSTER_LB_ADDRESS}
 
     image:
       repository: drpsychick/arkserver
@@ -45,7 +45,7 @@ spec:
 
     hostNetwork: false
     hostPort: false
-    
+
     clusterName: *app
 
     mods: []
@@ -57,15 +57,15 @@ spec:
     # Global extraEnvVars for all servers
     extraEnvVars:
       - name: am_ark_ServerPVE
-        value: 'True'
+        value: "True"
       - name: am_arkopt_DisableStructureDecayPvE
-        value: 'True'
+        value: "True"
       - name: am_arkopt_AllowFlyerCarryPvE
-        value: 'True'
+        value: "True"
       - name: am_arkopt_ForceAllowCaveFlyers
-        value: 'True'
+        value: "True"
       - name: am_arkopt_OverrideStructurePlatformPrevention
-        value: 'True'
+        value: "True"
 
     # Servers in the ARK cluster
     servers:

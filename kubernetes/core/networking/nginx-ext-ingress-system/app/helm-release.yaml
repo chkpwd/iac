@@ -33,7 +33,7 @@ spec:
       service:
         enabled: true
         annotations:
-          metallb.universe.tf/loadBalancerIPs: ${NGINX_LB_EXT_ADDRESS}
+          io.cilium/lb-ipam-ips: ${NGINX_LB_EXT_ADDRESS}
         type: LoadBalancer
         externalTrafficPolicy: Cluster
 

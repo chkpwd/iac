@@ -119,7 +119,7 @@ spec:
     service:
       main:
         annotations:
-          metallb.universe.tf/loadBalancerIPs: *plex_lb
+          io.cilium/lb-ipam-ips: *plex_lb
         type: LoadBalancer
         externalTrafficPolicy: Local
         ports:

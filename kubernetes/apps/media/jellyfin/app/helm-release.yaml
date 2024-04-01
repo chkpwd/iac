@@ -112,7 +112,7 @@ spec:
       app:
         controller: main
         annotations:
-          metallb.universe.tf/loadBalancerIPs: *loadBalancerIP
+          io.cilium/lb-ipam-ips: *loadBalancerIP
         type: LoadBalancer
         externalTrafficPolicy: Local
         ports:

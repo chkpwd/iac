@@ -73,7 +73,7 @@ spec:
     service:
       main:
         annotations:
-          metallb.universe.tf/loadBalancerIPs: ${UNIFI_LB_ADDRESS}
+          io.cilium/lb-ipam-ips: ${UNIFI_LB_ADDRESS}
         type: LoadBalancer
         externalTrafficPolicy: Local
         ports:
