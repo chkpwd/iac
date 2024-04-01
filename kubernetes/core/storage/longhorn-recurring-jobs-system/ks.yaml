@@ -6,6 +6,8 @@ metadata:
   namespace: flux-system
 spec:
   targetNamespace: storage
+  dependsOn:
+    - name: core-storage-longhorn
   path: ./kubernetes/core/storage/longhorn-recurring-jobs-system/app
   prune: true
   sourceRef:
