@@ -5,8 +5,6 @@ metadata:
   name: core-cilium-config
   namespace: flux-system
 spec:
-  dependsOn:
-    - name: core-cilium
   path: ./kubernetes/core/networking/cilium-system/config
   prune: true
   sourceRef:
