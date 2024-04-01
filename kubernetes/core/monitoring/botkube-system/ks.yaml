@@ -5,6 +5,7 @@ metadata:
   name: core-monitoring-botkube
   namespace: flux-system
 spec:
+  targetNamespace: monitoring
   dependsOn:
     - name: core-monitoring-botkube-config
   path: ./kubernetes/core/monitoring/botkube-system/app
@@ -23,6 +24,7 @@ metadata:
   name: core-monitoring-botkube-config
   namespace: flux-system
 spec:
+  targetNamespace: monitoring
   path: ./kubernetes/core/monitoring/botkube-system/config
   prune: true
   sourceRef:

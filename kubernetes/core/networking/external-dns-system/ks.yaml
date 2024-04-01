@@ -5,6 +5,7 @@ metadata:
   name: networking-external-dns
   namespace: flux-system
 spec:
+  targetNamespace: networking
   path: ./kubernetes/core/networking/external-dns-system/app
   prune: true
   sourceRef:

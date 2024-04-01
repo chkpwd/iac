@@ -5,6 +5,7 @@ metadata:
   name: core-monitoring-prometheus-system
   namespace: flux-system
 spec:
+  targetNamespace: monitoring
   path: ./kubernetes/core/monitoring/prometheus-system/app
   prune: true
   sourceRef:

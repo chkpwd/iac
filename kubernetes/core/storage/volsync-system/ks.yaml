@@ -5,6 +5,7 @@ metadata:
   name: core-storage-volsync
   namespace: flux-system
 spec:
+  targetNamespace: storage
   path: ./kubernetes/core/storage/volsync-system/app
   prune: true
   sourceRef:

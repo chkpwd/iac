@@ -5,6 +5,7 @@ metadata:
   name: core-multus
   namespace: flux-system
 spec:
+  targetNamespace: networking
   path: ./kubernetes/core/networking/multus-system/app
   prune: true
   sourceRef:
@@ -21,6 +22,7 @@ metadata:
   name: core-multus-config
   namespace: flux-system
 spec:
+  targetNamespace: networking
   dependsOn:
     - name: core-multus
   path: ./kubernetes/core/networking/multus-system/config

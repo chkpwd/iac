@@ -5,6 +5,7 @@ metadata:
   name: core-networking-k8s-gateway
   namespace: flux-system
 spec:
+  targetNamespace: networking
   path: ./kubernetes/core/networking/k8s-gateway-system/app
   prune: true
   sourceRef:

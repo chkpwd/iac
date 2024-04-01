@@ -3,7 +3,6 @@ apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: &app external-dns
-  namespace: networking
 spec:
   interval: 15m
   chart:
@@ -66,18 +65,18 @@ spec:
     policy: sync
 
     sources: ["crd", "ingress"]
-    
+
     txtPrefix: k3s.
     txtOwnerId: "ingress-onprem"
 
     logLevel: info
     logFormat: text
-    
+
     domainFilters: [ "${EXTERNAL_DOMAIN}" ]
 
     serviceMonitor:
       enabled: true
-    
+
     resources:
       requests:
         cpu: 10m
