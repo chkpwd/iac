@@ -37,9 +37,7 @@ spec:
       port: 53
       annotations:
         io.cilium/lb-ipam-ips: "${K8S_GATEWAY_LB_ADDRESS}"
-      externalTrafficPolicy: Local
-      loadBalancerIPs:
-        - ${K8S_GATEWAY_LB_ADDRESS}
+      externalTrafficPolicy: Cluster
 
     domain: k8s.chkpwd.com
 
