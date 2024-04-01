@@ -5,6 +5,7 @@ metadata:
   name: media-recyclarr
   namespace: flux-system
 spec:
+  targetNamespace: media
   dependsOn:
     - name: media-recyclarr-config
   path: ./kubernetes/apps/media/recyclarr/app
@@ -23,6 +24,7 @@ metadata:
   name: media-recyclarr-config
   namespace: flux-system
 spec:
+  targetNamespace: media
   path: ./kubernetes/apps/media/recyclarr/config
   prune: true
   sourceRef:

@@ -5,6 +5,7 @@ metadata:
   name: tools-runwhen-local
   namespace: flux-system
 spec:
+  targetNamespace: tools
   dependsOn:
     - name: tools-runwhen-local-config
   path: ./kubernetes/apps/tools/runwhen-local/app
@@ -23,6 +24,7 @@ metadata:
   name: tools-runwhen-local-config
   namespace: flux-system
 spec:
+  targetNamespace: tools
   path: ./kubernetes/apps/tools/runwhen-local/config
   prune: true
   sourceRef:

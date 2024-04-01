@@ -5,9 +5,10 @@ metadata:
   name: tools-miniflux
   namespace: flux-system
 spec:
+  targetNamespace: tools
   dependsOn:
     - name: tools-miniflux-config
-  path: ./kubernetes/apps/tools/miniflux/app
+  path: ./kubernetes/apps/tools/miniflux/multi-app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -23,6 +24,7 @@ metadata:
   name: tools-miniflux-config
   namespace: flux-system
 spec:
+  targetNamespace: tools
   path: ./kubernetes/apps/tools/miniflux/config
   prune: true
   sourceRef:

@@ -1,0 +1,121 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: &app linkding
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 2.6.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    global:
+      fullnameOverride: *app
+
+    controllers:
+      main:
+        enabled: true
+        type: deployment
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        replicas: 1
+
+        pod:
+          securityContext:
+            runAsUser: &context 0
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
+
+        containers:
+          main:
+            image:
+              repository: sissbruecker/linkding
+              tag: 1.25.0
+
+            env:
+              LD_SUPERUSER_NAME: chkpwd
+              LD_SUPERUSER_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: linkding-secrets
+                    key: LD_SUPERUSER_PASSWORD
+              LD_CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+              LD_DISABLE_URL_VALIDATION: true
+              LD_DB_ENGINE: "postgres"
+              LD_DB_HOST:
+                valueFrom:
+                  secretKeyRef:
+                    name: linkding-pguser-linkding
+                    key: host
+              LD_DB_PORT:
+                valueFrom:
+                  secretKeyRef:
+                    name: linkding-pguser-linkding
+                    key: port
+              LD_DB_DATABASE:
+                valueFrom:
+                  secretKeyRef:
+                    name: linkding-pguser-linkding
+                    key: dbname
+              LD_DB_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: linkding-pguser-linkding
+                    key: user
+              LD_DB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: linkding-pguser-linkding
+                    key: password
+              PGSSLCERT: /tmp/postgresql.crt
+
+            securityContext:
+              allowPrivilegeEscalation: false
+
+            resources:
+              requests:
+                cpu: 12m
+                memory: 64M
+              limits:
+                memory: 256M
+
+    service:
+      main:
+        ports:
+          http:
+            port: 9090
+
+    ingress:
+      main:
+        enabled: true
+        className: ext-ingress
+        annotations:
+          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+        hosts:
+          - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  name: main
+                  port: http
+        tls:
+          - hosts:
+              - *host

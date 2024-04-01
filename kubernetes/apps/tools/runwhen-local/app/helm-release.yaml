@@ -3,13 +3,12 @@ apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: &app runwhen-local
-  namespace: tools
 spec:
   interval: 15m
   chart:
     spec:
       chart: runwhen-local
-      version: 
+      version:
       interval: 30m
       sourceRef:
         kind: HelmRepository

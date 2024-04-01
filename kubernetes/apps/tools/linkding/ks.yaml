@@ -5,9 +5,10 @@ metadata:
   name: tools-linkding
   namespace: flux-system
 spec:
+  targetNamespace: tools
   dependsOn:
     - name: tools-linkding-config
-  path: ./kubernetes/apps/tools/linkding/app
+  path: ./kubernetes/apps/tools/linkding/multi-app
   prune: true
   sourceRef:
     kind: GitRepository

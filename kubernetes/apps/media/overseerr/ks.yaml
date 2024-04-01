@@ -5,6 +5,7 @@ metadata:
   name: media-overseerr
   namespace: flux-system
 spec:
+  targetNamespace: media
   path: ./kubernetes/apps/media/overseerr/app
   prune: true
   sourceRef:

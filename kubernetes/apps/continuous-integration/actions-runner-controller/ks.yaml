@@ -5,6 +5,7 @@
 #   name: actions-runner-controller
 #   namespace: flux-system
 # spec:
+#   targetNamespace: continuous-integration
 #   path: ./kubernetes/apps/continuous-integration/actions-runner-controller/app
 #   prune: true
 #   sourceRef:
@@ -21,6 +22,7 @@
 #   name: actions-runners
 #   namespace: flux-system
 # spec:
+#   targetNamespace: continuous-integration
 #   path: ./kubernetes/apps/continuous-integration/actions-runner-controller/runners
 #   prune: true
 #   sourceRef:

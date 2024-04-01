@@ -5,6 +5,7 @@ metadata:
   name: networking-twingate-connector
   namespace: flux-system
 spec:
+  targetNamespace: networking
   dependsOn:
     - name: networking-twingate-connector-config
   path: ./kubernetes/apps/networking/twingate-connector/app
@@ -23,6 +24,7 @@ metadata:
   name: networking-twingate-connector-config
   namespace: flux-system
 spec:
+  targetNamespace: networking
   path: ./kubernetes/apps/networking/twingate-connector/config
   prune: true
   sourceRef:

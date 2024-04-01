@@ -5,6 +5,7 @@ metadata:
   name: media-radarr
   namespace: flux-system
 spec:
+  targetNamespace: media
   path: ./kubernetes/apps/media/radarr/app
   prune: true
   sourceRef:

@@ -5,6 +5,7 @@ metadata:
   name: media-maintainerr
   namespace: flux-system
 spec:
+  targetNamespace: media
   path: ./kubernetes/apps/media/maintainerr/app
   prune: true
   sourceRef:

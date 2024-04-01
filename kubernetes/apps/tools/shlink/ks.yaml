@@ -5,6 +5,7 @@ metadata:
   name: tools-shlink
   namespace: flux-system
 spec:
+  targetNamespace: tools
   dependsOn:
     - name: tools-shlink-config
   path: ./kubernetes/apps/tools/shlink/multi-app
@@ -23,6 +24,7 @@ metadata:
   name: tools-shlink-config
   namespace: flux-system
 spec:
+  targetNamespace: tools
   path: ./kubernetes/apps/tools/shlink/config
   prune: true
   sourceRef:

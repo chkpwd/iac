@@ -5,6 +5,7 @@ metadata:
   name: media-plex
   namespace: flux-system
 spec:
+  targetNamespace: media
   dependsOn:
     - name: media-plex-config
   path: ./kubernetes/apps/media/plex/app
@@ -23,6 +24,7 @@ metadata:
   name: media-plex-config
   namespace: flux-system
 spec:
+  targetNamespace: media
   path: ./kubernetes/apps/media/plex/config
   prune: true
   sourceRef:

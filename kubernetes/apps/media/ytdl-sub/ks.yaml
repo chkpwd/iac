@@ -5,6 +5,7 @@ metadata:
   name: media-ytdl-sub
   namespace: flux-system
 spec:
+  targetNamespace: media
   dependsOn:
     - name: media-ytdl-sub-config
   path: ./kubernetes/apps/media/ytdl-sub/app
@@ -23,6 +24,7 @@ metadata:
   name: media-ytdl-sub-config
   namespace: flux-system
 spec:
+  targetNamespace: media
   path: ./kubernetes/apps/media/ytdl-sub/config
   prune: true
   sourceRef:

@@ -5,6 +5,7 @@ metadata:
   name: media-qbittorrent
   namespace: flux-system
 spec:
+  targetNamespace: media
   path: ./kubernetes/apps/media/qbittorrent/app
   prune: true
   sourceRef:

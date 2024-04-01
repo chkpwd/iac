@@ -5,6 +5,7 @@ metadata:
   name: game-servers-ark-cluster
   namespace: flux-system
 spec:
+  targetNamespace: game-servers
   path: ./kubernetes/apps/game-servers/ark-cluster/app
   prune: true
   sourceRef:

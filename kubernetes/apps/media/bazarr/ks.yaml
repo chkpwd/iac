@@ -5,6 +5,7 @@ metadata:
   name: media-bazarr
   namespace: flux-system
 spec:
+  targetNamespace: media
   path: ./kubernetes/apps/media/bazarr/app
   prune: true
   sourceRef:

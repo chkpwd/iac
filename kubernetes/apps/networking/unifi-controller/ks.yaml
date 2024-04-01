@@ -5,6 +5,7 @@ metadata:
   name: networking-unifi-controller
   namespace: flux-system
 spec:
+  targetNamespace: networking
   dependsOn:
     - name: networking-unifi-controller-config
   path: ./kubernetes/apps/networking/unifi-controller/app
@@ -23,6 +24,7 @@ metadata:
   name: networking-unifi-controller-config
   namespace: flux-system
 spec:
+  targetNamespace: networking
   path: ./kubernetes/apps/networking/unifi-controller/config
   prune: true
   sourceRef:

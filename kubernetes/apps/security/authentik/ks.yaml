@@ -5,6 +5,7 @@ metadata:
   name: security-authentik
   namespace: flux-system
 spec:
+  targetNamespace: security
   dependsOn:
     - name: security-authentik-config
   path: ./kubernetes/apps/security/authentik/multi-app
@@ -23,6 +24,7 @@ metadata:
   name: security-authentik-config
   namespace: flux-system
 spec:
+  targetNamespace:
   path: ./kubernetes/apps/security/authentik/config
   prune: true
   sourceRef:
