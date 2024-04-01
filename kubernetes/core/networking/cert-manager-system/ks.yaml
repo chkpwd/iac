@@ -2,11 +2,12 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-cert-manager
+  name: core-networking-cert-manager
   namespace: flux-system
 spec:
+  targetNamespace: networking
   dependsOn:
-    - name: core-cert-manager-config
+    - name: core-networking-cert-manager-config
   path: ./kubernetes/core/networking/cert-manager-system/app
   prune: true
   sourceRef:
@@ -20,9 +21,10 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-cert-manager-config
+  name: core-networking-cert-manager-config
   namespace: flux-system
 spec:
+  targetNamespace: networking
   path: ./kubernetes/core/networking/cert-manager-system/config
   prune: true
   sourceRef:
@@ -35,11 +37,12 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-cert-manager-issuers
+  name: core-networking-cert-manager-issuers
   namespace: flux-system
 spec:
+  targetNamespace: networking
   dependsOn:
-    - name: core-cert-manager
+    - name: core-networking-cert-manager
   path: ./kubernetes/core/networking/cert-manager-system/issuers
   prune: true
   sourceRef:
@@ -52,11 +55,12 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-cert-manager-certificates
+  name: core-networking-cert-manager-certificates
   namespace: flux-system
 spec:
+  targetNamespace: networking
   dependsOn:
-    - name: core-cert-manager
+    - name: core-networking-cert-manager
   path: ./kubernetes/core/networking/cert-manager-system/certificates
   prune: true
   sourceRef:

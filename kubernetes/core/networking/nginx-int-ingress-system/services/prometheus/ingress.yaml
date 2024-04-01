@@ -3,7 +3,6 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: &app prometheus
-  namespace: networking
 spec:
   ingressClassName: int-ingress
   rules:
