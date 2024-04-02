@@ -5,6 +5,10 @@ metadata:
   name: shlink
 spec:
   postgresVersion: 15
+  dataSource:
+    volumes:
+      pgDataVolume:
+        pvcName: shlink-pvc-backup
   instances:
     - dataVolumeClaimSpec:
         storageClassName: longhorn-database
