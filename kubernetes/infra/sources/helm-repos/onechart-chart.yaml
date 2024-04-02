@@ -1,0 +1,10 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: onechart
+  namespace: flux-system
+spec:
+  interval: 30m
+  url: https://chart.onechart.dev
+  timeout: 3m
