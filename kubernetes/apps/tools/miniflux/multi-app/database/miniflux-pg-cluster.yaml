@@ -5,6 +5,10 @@ metadata:
   name: miniflux
 spec:
   postgresVersion: 15
+  dataSource:
+    volumes:
+      pgDataVolume:
+        pvcName: miniflux-00-lqh6-pgdata
   instances:
     - dataVolumeClaimSpec:
         storageClassName: longhorn-database
