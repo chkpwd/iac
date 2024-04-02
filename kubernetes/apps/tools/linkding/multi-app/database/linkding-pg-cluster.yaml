@@ -5,6 +5,10 @@ metadata:
   name: linkding
 spec:
   postgresVersion: 15
+  dataSource:
+    volumes:
+      pgDataVolume:
+        pvcName: linkding-00-676x-pgdata
   instances:
     - dataVolumeClaimSpec:
         storageClassName: longhorn-database
