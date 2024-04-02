@@ -154,7 +154,7 @@ spec:
         tls:
           - hosts:
               - *prometheus-host
-            secretName: chkpwd-cert-production
+            secretName: "security/chkpwd-cert-production"
       prometheusSpec:
         replicas: 1
         replicaExternalLabelName: "replica"
