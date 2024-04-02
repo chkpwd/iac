@@ -24,6 +24,7 @@ metadata:
   name: tools-linkding-config
   namespace: flux-system
 spec:
+  targetNamespace: tools
   path: ./kubernetes/apps/tools/linkding/config
   prune: true
   sourceRef:
