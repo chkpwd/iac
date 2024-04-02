@@ -1,0 +1,41 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: capacitor
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: capacitor
+      version: 0.23.7
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: onechart
+        namespace: flux-system
+
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+
+  values:
+    image:
+      repository: ghcr.io/gimlet-io/capacitor
+      tag: v0.3.3
+
+    containerPort: 9000
+
+    probe:
+      enabled: true
+      path: /
+
+    resources:
+      ignoreLimits: true
+
+    serviceAccount: capacitor
