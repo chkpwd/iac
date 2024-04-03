@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.0.4
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -42,7 +42,7 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/actualbudget/actual-server
               tag: 24.3.0
@@ -55,12 +55,12 @@ spec:
               limits:
                 memory: 336Mi
 
-    service:
-      main:
-        primary: true
-        ports:
-          http:
-            port: 5006
+      service:
+        app:
+          controller: main
+          ports:
+            http:
+              port: 5006
 
     ingress:
       main:
@@ -74,7 +74,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  identifier: app
                   port: http
         tls:
           - hosts:
