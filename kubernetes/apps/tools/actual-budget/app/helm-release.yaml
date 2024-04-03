@@ -55,12 +55,12 @@ spec:
               limits:
                 memory: 336Mi
 
-      service:
-        app:
-          controller: main
-          ports:
-            http:
-              port: 5006
+    service:
+      app:
+        controller: main
+        ports:
+          http:
+            port: 5006
 
     ingress:
       main:
