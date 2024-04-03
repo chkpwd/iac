@@ -148,13 +148,15 @@ spec:
       ingress:
         enabled: true
         ingressClassName: int-ingress
+        annotations:
+          cert-manager.io/cluster-issuer: letsencrypt-production
         hosts: [ &prometheus-host "k8s-{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}" ]
         path: /
         pathType: Prefix
         tls:
           - hosts:
               - *prometheus-host
-            secretName: "security/chkpwd-cert-production"
+            secretName: prometheus-tls
       prometheusSpec:
         replicas: 1
         replicaExternalLabelName: "replica"
