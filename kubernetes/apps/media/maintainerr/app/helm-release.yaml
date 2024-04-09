@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,7 +27,7 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      maintainerr:
         enabled: true
         type: deployment
         annotations:
@@ -42,7 +42,7 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/jorenn92/maintainerr
               tag: 2.0.3
@@ -65,13 +65,15 @@ spec:
                 memory: 512Mi
 
     service:
-      main:
+      app:
+        primary: true
+        controller: maintainerr
         ports:
           http:
             port: 6246
 
     ingress:
-      main:
+      maintainerr:
         enabled: true
         className: int-ingress
         annotations:
@@ -85,7 +87,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  identifier: app
                   port: http
         tls:
           - hosts:
