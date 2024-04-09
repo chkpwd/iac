@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -42,11 +42,12 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
 
     controllers:
-      main:
+      sabnzbd:
         enabled: true
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
+
         replicas: 1
 
         statefulset:
@@ -66,7 +67,7 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/onedr0p/sabnzbd
               tag: 4.2.3
@@ -113,8 +114,8 @@ spec:
               limits:
                 memory: 8000Mi
 
-          secondary:
-            dependsOn: main
+          metrics:
+            dependsOn: app
             image:
               repository: ghcr.io/onedr0p/exportarr
               tag: v2.0.1
@@ -132,20 +133,21 @@ spec:
                 memory: 125Mi
 
     service:
-      main:
+      app:
         primary: true
+        controller: sabnzbd
         ports:
           http:
             port: *port
-      secondary:
+      metrics:
         nameOverride: metrics
-        controller: main
+        controller: sabnzbd
         ports:
           metrics:
             port: *metricsPort
 
     ingress:
-      main:
+      internal:
         enabled: true
         className: int-ingress
         annotations:
@@ -159,12 +161,12 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  identifier: app
                   port: http
               - path: /metrics
                 pathType: Prefix
                 service:
-                  name: secondary
+                  identifier: metrics
                   port: metrics
         tls:
           - hosts:
