@@ -29,7 +29,7 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      bazarr:
         enabled: true
         type: statefulset
         annotations:
@@ -132,7 +132,7 @@ spec:
             port: *metricsPort
 
     ingress:
-      main:
+      app:
         className: int-ingress
         annotations:
           nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.security.${CLUSTER_DOMAIN}:9000/outpost.goauthentik.io/auth/nginx
