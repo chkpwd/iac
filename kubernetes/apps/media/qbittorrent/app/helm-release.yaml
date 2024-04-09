@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,7 +27,7 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      qbittorrent:
         enabled: true
         type: statefulset
         annotations:
@@ -52,7 +52,7 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/onedr0p/qbittorrent
               tag: 4.6.4
@@ -64,17 +64,17 @@ spec:
               QBT_Preferences__WebUI__AuthSubnetWhitelist: |-
                 10.42.0.0/16, 172.16.16.0/24
               QBT_BitTorrent__Session__InterfaceName: eth0
-              QBT_Preferences__WebUI__AlternativeUIEnabled: 'true'
-              QBT_Preferences__WebUI__RootFolder: '/add-ons/VueTorrent'
+              QBT_Preferences__WebUI__AlternativeUIEnabled: "true"
+              QBT_Preferences__WebUI__RootFolder: "/add-ons/VueTorrent"
               QBT_Preferences__WebUI__LocalHostAuth: false
               QBT_Preferences__WebUI__UseUPNP: false
               QBT_Preferences__WebUI__Password_PBKDF2: "@ByteArray(sd8RNLizKfQzbP1q3XW1gQ==:UmGO7Xe1odEVZRAdv5Ofeuhvumut+NyZp2DTE3Ae6gFGxx3IWjcTwMJkBttS7N1aQSzWTV35hYaPKJJuh94RGQ==)"
-              QBT_BitTorrent__Session__DefaultSavePath: '/data/downloads/torrent/complete'
-              QBT_BitTorrent__Session__TempPath: '/data/downloads/torrent/incomplete'
-              QBT_BitTorrent__Session__TempPathEnabled: 'true'
-              QBT_BitTorrent__Session__FinishedTorrentExportDirectory: '/data/downloads/torrent/files'
-              QBT_BitTorrent__Session__TorrentExportDirectory: '/data/downloads/torrent/files'
-              QBT_BitTorrent__Session__Port: '50413'
+              QBT_BitTorrent__Session__DefaultSavePath: "/data/downloads/torrent/complete"
+              QBT_BitTorrent__Session__TempPath: "/data/downloads/torrent/incomplete"
+              QBT_BitTorrent__Session__TempPathEnabled: "true"
+              QBT_BitTorrent__Session__FinishedTorrentExportDirectory: "/data/downloads/torrent/files"
+              QBT_BitTorrent__Session__TorrentExportDirectory: "/data/downloads/torrent/files"
+              QBT_BitTorrent__Session__Port: "50413"
               QBT_BitTorrent__Session__Interface: eth0
               QBT_BitTorrent__Session__InterfaceAddress:
                 valueFrom:
@@ -98,8 +98,8 @@ spec:
               limits:
                 memory: 2000Mi
 
-          secondary:
-            dependsOn: main
+          metrics:
+            dependsOn: app
             image:
               repository: registry.k8s.io/git-sync/git-sync
               tag: v4.2.1
@@ -117,13 +117,14 @@ spec:
                 memory: 50Mi
 
     service:
-      main:
+      app:
+        controller: qbittorrent
         ports:
           http:
             port: *port
 
     ingress:
-      main:
+      internal:
         enabled: true
         ingressClassName: int-ingress
         annotations:
@@ -137,7 +138,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  identifier: app
                   port: http
         tls:
           - hosts:
