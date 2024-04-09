@@ -73,7 +73,7 @@ spec:
             port: 6246
 
     ingress:
-      main:
+      internal:
         enabled: true
         className: int-ingress
         annotations:
@@ -102,7 +102,5 @@ spec:
         globalMounts:
           - path: /opt/data
       tmp:
-
         type: emptyDir
         medium: Memory
-        size: 100Mi

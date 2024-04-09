@@ -119,7 +119,7 @@ spec:
             port: *port
 
     ingress:
-      app:
+      internal:
         className: int-ingress
         annotations:
           nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.security.${CLUSTER_DOMAIN}:9000/outpost.goauthentik.io/auth/nginx
