@@ -126,7 +126,7 @@ spec:
     ingress:
       internal:
         enabled: true
-        ingressClassName: int-ingress
+        className: int-ingress
         annotations:
           nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.security.${CLUSTER_DOMAIN}:9000/outpost.goauthentik.io/auth/nginx
           nginx.ingress.kubernetes.io/auth-signin: /outpost.goauthentik.io/start?rd=$escaped_request_uri
