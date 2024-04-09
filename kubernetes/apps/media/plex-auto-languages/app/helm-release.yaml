@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,7 +27,7 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      plex-auto-languages:
         enabled: true
         type: deployment
         annotations:
@@ -42,7 +42,7 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: docker.io/remirigal/plex-auto-languages
               tag: v1.2.3
@@ -67,16 +67,10 @@ spec:
               limits:
                 memory: 125Mi
 
-    service:
-      main:
-        enabled: false
-
-    ingress:
-      main:
-        enabled: false
-
     persistence:
-      local:
-        enabled: true
+      config:
         type: emptyDir
-        mountPath: /.local
+      local:
+        type: emptyDir
+        globalMounts:
+          - path: /.local
