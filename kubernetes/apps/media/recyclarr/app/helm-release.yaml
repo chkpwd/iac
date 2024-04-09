@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,7 +27,7 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      recyclarr:
         enabled: true
         type: cronjob
         annotations:
@@ -35,7 +35,7 @@ spec:
 
         cronjob:
           concurrencyPolicy: Forbid
-          schedule: '0 2 * * 1'
+          schedule: "0 2 * * 1"
           startingDeadlineSeconds: 30
           successfulJobsHistory: 1
           failedJobsHistory: 1
@@ -49,13 +49,13 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/recyclarr/recyclarr
               tag: 6.0.2
 
-            command: ['/app/recyclarr/recyclarr']
-            args: ['sync']
+            command: ["/app/recyclarr/recyclarr"]
+            args: ["sync"]
 
             env:
               TZ: ${TZ}
@@ -83,13 +83,8 @@ spec:
               limits:
                 memory: 200Mi
 
-    service:
-      main:
-        enabled: false
-
     persistence:
       config-file:
-        enabled: true
         type: configMap
         name: recyclarr-cm
         globalMounts:
@@ -97,8 +92,6 @@ spec:
             subPath: recyclarr.yml
             readOnly: true
       config:
-        enabled: true
         type: emptyDir
-        medium: Memory
         globalMounts:
           - path: /config
