@@ -44,7 +44,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
 
     controllers:
-      main:
+      jellyfin:
         enabled: true
         type: statefulset
         annotations:
@@ -109,7 +109,7 @@ spec:
 
     service:
       app:
-        controller: main
+        controller: jellyfin
         annotations:
           io.cilium/lb-ipam-ips: *loadBalancerIP
         type: LoadBalancer
@@ -119,7 +119,7 @@ spec:
             port: *port
 
     ingress:
-      main:
+      app:
         className: int-ingress
         annotations:
           nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-embedded-outpost.security.${CLUSTER_DOMAIN}:9000/outpost.goauthentik.io/auth/nginx
