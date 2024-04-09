@@ -27,7 +27,7 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      prowlarr:
         enabled: true
         type: statefulset
         annotations:
@@ -51,7 +51,7 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/onedr0p/prowlarr
               tag: 1.15.0.4361
@@ -96,8 +96,8 @@ spec:
               limits:
                 memory: 156Mi
 
-          secondary:
-            dependsOn: main
+          metrics:
+            dependsOn: app
             image:
               repository: ghcr.io/onedr0p/exportarr
               tag: v2.0.1
@@ -116,20 +116,21 @@ spec:
                 memory: 125Mi
 
     service:
-      main:
+      app:
         primary: true
+        controller: prowlarr
         ports:
           http:
             port: *port
-      secondary:
+      metrics:
         nameOverride: metrics
-        controller: main
+        controller: prowlarr
         ports:
           metrics:
             port: *metricsPort
 
     ingress:
-      main:
+      internal:
         enabled: true
         className: int-ingress
         annotations:
@@ -143,12 +144,12 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  identifier: app
                   port: http
               - path: /metrics
                 pathType: Prefix
                 service:
-                  name: secondary
+                  identifier: metrics
                   port: metrics
         tls:
           - hosts:
