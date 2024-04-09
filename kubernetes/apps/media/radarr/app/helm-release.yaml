@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,7 +27,7 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      radarr:
         enabled: true
         type: statefulset
         annotations:
@@ -51,7 +51,7 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/onedr0p/radarr-develop
               tag: 5.4.5.8715
@@ -83,8 +83,8 @@ spec:
               limits:
                 memory: 211Mi
 
-          secondary:
-            dependsOn: main
+          metrics:
+            dependsOn: app
             image:
               repository: ghcr.io/onedr0p/exportarr
               tag: v2.0.1
@@ -102,20 +102,21 @@ spec:
                 memory: 125Mi
 
     service:
-      main:
+      app:
         primary: true
+        controller: radarr
         ports:
           http:
             port: *port
-      secondary:
+      metrics:
         nameOverride: metrics
-        controller: main
+        controller: radarr
         ports:
           metrics:
             port: *metricsPort
 
     ingress:
-      main:
+      internal:
         enabled: true
         className: int-ingress
         annotations:
@@ -129,12 +130,12 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  identifier: app
                   port: http
               - path: /metrics
                 pathType: Prefix
                 service:
-                  name: secondary
+                  identifier: metrics
                   port: metrics
         tls:
           - hosts:
