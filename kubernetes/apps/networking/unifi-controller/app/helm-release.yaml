@@ -74,7 +74,7 @@ spec:
         annotations:
           io.cilium/lb-ipam-ips: ${UNIFI_LB_ADDRESS}
         type: LoadBalancer
-        externalTrafficPolicy: Local
+        externalTrafficPolicy: Cluster
         ports:
           http:
             port: 8443

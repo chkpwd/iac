@@ -113,7 +113,7 @@ spec:
         annotations:
           io.cilium/lb-ipam-ips: *loadBalancerIP
         type: LoadBalancer
-        externalTrafficPolicy: Local
+        externalTrafficPolicy: Cluster
         ports:
           http:
             port: *port

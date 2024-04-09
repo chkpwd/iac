@@ -58,6 +58,7 @@ spec:
             image:
               repository: ghcr.io/onedr0p/bazarr
               tag: 1.4.2
+              pullPolicy: IfNotPresent
 
             env:
               TZ: "${TZ}"

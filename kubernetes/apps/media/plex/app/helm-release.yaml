@@ -47,6 +47,7 @@ spec:
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
+
         replicas: 1
 
         statefulset:
@@ -73,6 +74,7 @@ spec:
               repository: ghcr.io/onedr0p/plex
               tag: 1.32.8.7639-fb6452ebf
               pullPolicy: IfNotPresent
+
             env:
               TZ: "${TZ}"
               ADVERTISE_IP: &plex_lb "${PLEX_LB_ADDRESS}"
@@ -90,7 +92,7 @@ spec:
                 spec:
                   httpGet:
                     path: /identity
-                    port: 32400
+                    port: &port 32400
                   initialDelaySeconds: 0
                   periodSeconds: 10
                   timeoutSeconds: 1
@@ -121,10 +123,10 @@ spec:
         annotations:
           io.cilium/lb-ipam-ips: *plex_lb
         type: LoadBalancer
-        externalTrafficPolicy: Local
+        externalTrafficPolicy: Cluster
         ports:
           http:
-            port: 32400
+            port: *port
 
     ingress:
       internal:
@@ -135,7 +137,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: app
+                  identifier: app
                   port: http
         tls:
           - hosts:
