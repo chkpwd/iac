@@ -42,7 +42,7 @@ spec:
                 topologyKey: "kubernetes.io/hostname"
 
     controllers:
-      main:
+      plex:
         enabled: true
         type: statefulset
         annotations:
@@ -68,7 +68,7 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/onedr0p/plex
               tag: 1.32.8.7639-fb6452ebf
@@ -116,7 +116,8 @@ spec:
                 memory: 2Gi
 
     service:
-      main:
+      app:
+        controller: plex
         annotations:
           io.cilium/lb-ipam-ips: *plex_lb
         type: LoadBalancer
@@ -126,9 +127,7 @@ spec:
             port: *port
 
     ingress:
-      main:
-        enabled: true
-        primary: true
+      app:
         className: int-ingress
         hosts:
           - host: &host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
@@ -136,23 +135,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
-                  port: http
-        tls:
-          - hosts:
-              - *host
-      secondary:
-        enabled: true
-        className: ext-ingress
-        annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
-        hosts:
-          - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  name: main
+                  name: app
                   port: http
         tls:
           - hosts:
