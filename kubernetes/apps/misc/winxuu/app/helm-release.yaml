@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,10 +27,11 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      winxuu:
         enabled: true
         annotations:
           reloader.stakater.com/auto: "true"
+
         replicas: 1
 
         pod:
@@ -41,7 +42,7 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/chkpwd/winxuu
               tag: 2.2.0
@@ -75,13 +76,14 @@ spec:
                 memory: 100Mi
 
     service:
-      main:
+      app:
+        controller: winxuu
         ports:
           http:
             port: *port
 
     ingress:
-      main:
+      external:
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         enabled: true
