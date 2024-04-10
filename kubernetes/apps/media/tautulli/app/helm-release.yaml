@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,7 +27,7 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      tautulli:
         enabled: true
         type: statefulset
         annotations:
@@ -51,7 +51,7 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/onedr0p/tautulli
               tag: 2.13.4
@@ -91,13 +91,14 @@ spec:
                 memory: 125Mi
 
     service:
-      main:
+      app:
+        controller: tautulli
         ports:
           http:
             port: *port
 
     ingress:
-      main:
+      internal:
         enabled: true
         className: int-ingress
         hosts:
@@ -106,7 +107,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  identifier: app
                   port: http
         tls:
           - hosts:
