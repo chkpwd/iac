@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,14 +27,15 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      shlink:
         enabled: true
         annotations:
           reloader.stakater.com/auto: "true"
+
         replicas: 1
 
         containers:
-          main:
+          app:
             image:
               repository: shlinkio/shlink
               tag: 3.7.4-non-root
@@ -104,13 +105,14 @@ spec:
                 memory: 500Mi
 
     service:
-      main:
+      app:
+        controller: shlink
         ports:
           http:
             port: *port
 
     ingress:
-      main:
+      external:
         enabled: true
         className: ext-ingress
         annotations:
@@ -121,7 +123,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  identifier: app
                   port: http
         tls:
           - hosts:
