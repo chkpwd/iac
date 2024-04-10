@@ -37,6 +37,15 @@ spec:
 
         replicas: 1
 
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: &uid 1999
+            runAsGroup: *uid
+            fsGroup: *uid
+            fsGroupChangePolicy: "Always"
+            seccompProfile: { type: "RuntimeDefault" }
+
         containers:
           app:
             image:
@@ -82,12 +91,6 @@ spec:
 
             securityContext:
               allowPrivilegeEscalation: false
-              runAsNonRoot: true
-              runAsUser: &uid 1999
-              runAsGroup: *uid
-              fsGroup: *uid
-              fsGroupChangePolicy: "Always"
-              seccompProfile: { type: "RuntimeDefault" }
 
             resources:
               requests:
