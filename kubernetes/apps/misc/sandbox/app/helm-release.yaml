@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,7 +27,7 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      sandbox:
         enabled: true
         type: deployment
         annotations:
@@ -36,15 +36,11 @@ spec:
         replicas: 1
 
         containers:
-          main:
+          app:
             image:
               repository: nginx
               tag: stable-alpine3.17-slim
               pullPolicy: IfNotPresent
-
-            probes:
-              liveness:
-                enabled: false
 
             resources:
               requests:
@@ -54,14 +50,15 @@ spec:
                 memory: 64Mi
 
     service:
-      main:
+      app:
         enabled: true
+        controller: sandbox
         ports:
           http:
             port: 80
 
     ingress:
-      main:
+      internal:
         enabled: true
         className: int-ingress
         hosts:
@@ -70,7 +67,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  identifier: app
                   port: http
         tls:
           - hosts:
