@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,7 +27,7 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      unifi-controller:
         enabled: true
         type: statefulset
         annotations:
@@ -51,7 +51,7 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/goofball222/unifi
               tag: 8.1.113-ubuntu
@@ -70,7 +70,8 @@ spec:
                 memory: 789Mi
 
     service:
-      main:
+      app:
+        controller: unifi-controller
         annotations:
           io.cilium/lb-ipam-ips: ${UNIFI_LB_ADDRESS}
         type: LoadBalancer
@@ -88,7 +89,7 @@ spec:
             protocol: UDP
 
     ingress:
-      main:
+      internal:
         annotations:
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
         enabled: true
@@ -99,7 +100,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  identifier: app
                   port: http
         tls:
           - hosts:
