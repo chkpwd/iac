@@ -37,13 +37,6 @@ spec:
 
         replicas: 1
 
-        pod:
-          securityContext:
-            runAsUser: &context 0
-            runAsGroup: *context
-            fsGroup: *context
-            fsGroupChangePolicy: "OnRootMismatch"
-
         containers:
           app:
             image:
@@ -89,6 +82,12 @@ spec:
 
             securityContext:
               allowPrivilegeEscalation: false
+              runAsNonRoot: true
+              runAsUser: &uid 1999
+              runAsGroup: *uid
+              fsGroup: *uid
+              fsGroupChangePolicy: "Always"
+              seccompProfile: { type: "RuntimeDefault" }
 
             resources:
               requests:
