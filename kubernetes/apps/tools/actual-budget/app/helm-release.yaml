@@ -28,7 +28,7 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      actual-budget:
         enabled: true
         annotations:
           reloader.stakater.com/auto: "true"
@@ -58,13 +58,13 @@ spec:
 
     service:
       app:
-        controller: main
+        controller: actual-budget
         ports:
           http:
             port: 5006
 
     ingress:
-      main:
+      external:
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         enabled: true
@@ -83,11 +83,10 @@ spec:
 
     persistence:
       config:
-        enabled: true
         accessMode: ReadWriteOnce
         storageClass: longhorn-config
         size: 2Gi
         advancedMounts:
-          main:
-            main:
+          actual-budget:
+            actual-budget:
               - path: /data
