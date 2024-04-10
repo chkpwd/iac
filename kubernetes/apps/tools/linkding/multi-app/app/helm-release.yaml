@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 2.6.0
+      version: 3.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -27,7 +27,7 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      main:
+      linkding:
         enabled: true
         type: deployment
         strategy: RollingUpdate
@@ -44,7 +44,7 @@ spec:
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
-          main:
+          app:
             image:
               repository: sissbruecker/linkding
               tag: 1.27.1
@@ -97,13 +97,14 @@ spec:
                 memory: 256M
 
     service:
-      main:
+      app:
+        controller: linkding
         ports:
           http:
             port: 9090
 
     ingress:
-      main:
+      external:
         enabled: true
         className: ext-ingress
         annotations:
@@ -114,7 +115,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  name: main
+                  identifier: app
                   port: http
         tls:
           - hosts:
