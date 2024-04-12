@@ -123,3 +123,9 @@ spec:
         tls:
           - hosts:
               - *host
+
+    persistence:
+      data:
+        type: emptyDir
+        globalMounts:
+          - path: /etc/linkding/data
