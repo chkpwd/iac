@@ -40,19 +40,6 @@ spec:
       CACHE_EXPIRE: '300'
       CACHE_CONTENT_EXPIRE: '3600'
 
-    envFrom: []
-
-    podSecurityContext: {}
-      # fsGroup: 2000
-
-    securityContext: {}
-      # capabilities:
-      #   drop:
-      #   - ALL
-      # readOnlyRootFilesystem: true
-      # runAsNonRoot: true
-      # runAsUser: 1000
-
     service:
       type: ClusterIP
       port: 80
@@ -71,7 +58,6 @@ spec:
         - hosts:
           - *host
 
-
     resources:
       requests:
         cpu: 10m
@@ -88,16 +74,6 @@ spec:
         tag: 7.0.7-alpine
         imagePullPolicy: IfNotPresent
 
-      containerPort: 6379
-      # -- Redis service port
-      servicePort: 6379
-
-      networkPolicy:
-        # -- Create NetworkPolicy objects for all components
-        create: false
-        # -- Default deny all ingress traffic
-        defaultDenyIngress: false
-
       # -- Redis pod-level security context
       securityContext:
         runAsNonRoot: true
@@ -113,7 +89,6 @@ spec:
 
     puppeteer:
       enabled: true
-
       name: puppeteer
 
       replicaCount: 2
@@ -122,9 +97,6 @@ spec:
         repository: browserless/chrome
         tag: 1.60.2-puppeteer-21.3.6
         pullPolicy: IfNotPresent
-      # -- Puppeteer container port
-      containerPort: 3000
-      servicePort: 3000
 
       securityContext:
         runAsNonRoot: true
