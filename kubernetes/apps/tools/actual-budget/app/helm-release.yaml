@@ -83,10 +83,8 @@ spec:
 
     persistence:
       config:
-        accessMode: ReadWriteOnce
-        storageClass: longhorn-config
-        size: 2Gi
+        type: emptyDir
         advancedMounts:
           actual-budget:
             actual-budget:
-              - path: /data
+              - path: /data/server-files
