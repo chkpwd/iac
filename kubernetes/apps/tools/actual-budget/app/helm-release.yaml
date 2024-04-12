@@ -46,7 +46,7 @@ spec:
           app:
             image:
               repository: ghcr.io/actualbudget/actual-server
-              tag: 24.3.0
+              tag: 24.4.0
               pullPolicy: IfNotPresent
 
             resources:
@@ -83,8 +83,10 @@ spec:
 
     persistence:
       config:
-        type: emptyDir
+        accessMode: ReadWriteOnce
+        storageClass: longhorn-config
+        size: 2Gi
         advancedMounts:
           actual-budget:
-            actual-budget:
-              - path: /data/server-files
+            app:
+              - path: /data
