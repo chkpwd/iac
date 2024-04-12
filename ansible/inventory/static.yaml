@@ -5,9 +5,10 @@ all:
       ansible_connection: local
   children:
     hypervisors:
-      proxmox:
-        hosts:
-          pve-srv-01:
+      children:
+        proxmox:
+          hosts:
+            pve-srv-01:
 
     guests:
       children:
