@@ -2,17 +2,17 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
-  name: &app rsshub
+  name: rsshub
 spec:
   interval: 15m
   chart:
     spec:
       chart: rsshub
-      version: 0.2.9
+      version: 0.6.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
-        name: nsl
+        name: gabe565
         namespace: flux-system
 
   install:
@@ -23,86 +23,42 @@ spec:
       retries: 3
 
   values:
-    replicaCount: 2
-
     image:
-      repository: ghcr.io/diygod/rsshub
+      repository: diygod/rsshub
       pullPolicy: IfNotPresent
-      tag: "2024-04-11"
+      tag: latest
+
+    controller:
+      strategy: RollingUpdate
 
     env:
-      # More information in https://docs.rsshub.app/install/config
       NODE_ENV: production
-      # cache type redis/memory
-      CACHE_TYPE: redis
-      CACHE_EXPIRE: '300'
-      CACHE_CONTENT_EXPIRE: '3600'
 
     service:
-      type: ClusterIP
-      port: 80
+      main:
+        ports:
+          http:
+            port: 1200
 
     ingress:
-      enabled: true
-      className: ext-ingress
-      annotations:
-        external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
-      hosts:
-        - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
-          paths:
-            - path: /
-              pathType: Prefix
-      tls:
-        - hosts:
-          - *host
-
-    resources:
-      requests:
-        cpu: 10m
-        memory: 128Mi
-      limits:
-        memory: 128Mi
+      main:
+        enabled: true
+        annotations:
+          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+        className: ext-ingress
+        hosts:
+          - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
+        tls:
+          - hosts:
+              - *host
 
     redis:
       enabled: true
-      name: redis
-
-      image:
-        repository: redis
-        tag: 7.0.7-alpine
-        imagePullPolicy: IfNotPresent
-
-      # -- Redis pod-level security context
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 999
-
-      # -- Resource limits and requests for redis
-      resources:
-        requests:
-          cpu: 100m
-          memory: 64Mi
-        limits:
-          memory: 128Mi
-
-    puppeteer:
-      enabled: true
-      name: puppeteer
-
-      replicaCount: 2
-
-      image:
-        repository: browserless/chrome
-        tag: 1.60.2-puppeteer-21.3.6
-        pullPolicy: IfNotPresent
-
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 999
-
-      resources:
-        requests:
-          cpu: 100m
-          memory: 64Mi
-        limits:
-          memory: 128Mi
+      replica:
+        replicaCount: 1

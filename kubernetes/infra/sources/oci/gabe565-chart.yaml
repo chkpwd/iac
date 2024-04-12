@@ -2,9 +2,10 @@
 apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: HelmRepository
 metadata:
-  name: nsl
+  name: gabe565
   namespace: flux-system
 spec:
+  type: oci
   interval: 30m
-  url: https://naturalselectionlabs.github.io/helm-charts
+  url: oci://ghcr.io/gabe565/charts/rsshub
   timeout: 3m
