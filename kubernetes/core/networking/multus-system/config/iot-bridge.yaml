@@ -1,0 +1,36 @@
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: iot-bridge
+spec:
+  config: |
+    {
+      "cniVersion": "1.0.0",
+      "name": "iot-bridge",
+      "plugins": [
+          {
+            "type": "bridge",
+            "bridge": "bridge-iot-1",
+            "preserveDefaultVlan": true,
+            "isGateway": true,
+            "vlan": 10,
+            "ipam": {
+              "type": "static",
+              "addresses": [
+                {
+                  "address": "172.16.10.7/24",
+                  "gateway": "172.16.10.1"
+                }
+              ],
+              "routes": [
+                { "dst": "172.16.10.0/24" }
+              ],
+              "dns": {
+                "nameservers" : ["172.16.10.1"],
+                "domain": "local.chkpwd.com",
+                "search": [ "local.chkpwd.com" ]
+              }
+            }
+          }
+        ]
+    }
