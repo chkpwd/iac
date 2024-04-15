@@ -16,16 +16,10 @@ spec:
             "vlanId": 10,
             "ipam": {
               "type": "host-local",
-              "ranges": [
-                [
-                  {
-                    "subnet": "172.16.10.0/24",
-                    "rangeStart": "172.16.10.15",
-                    "rangeEnd": "172.16.10.20",
-                    "gateway": "172.16.10.1"
-                  }
-                ]
-              ]
+              "subnet": "172.16.10.0/24"
+            },
+            "dns": {
+              "nameservers": [ "172.16.10.1", "8.8.8.8" ]
             }
           }
         ]

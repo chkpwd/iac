@@ -10,17 +10,26 @@ spec:
       "plugins": [
           {
             "type": "bridge",
-            "bridge": "vmbr1",
-            "vlan": 10,
+            "bridge": "bridge-iot-1",
             "preserveDefaultVlan": true,
             "isGateway": true,
-            "ipMasq": true,
+            "vlan": 10,
             "ipam": {
-              "type": "host-local",
-              "subnet": "172.16.10.0/24",
+              "type": "static",
+              "addresses": [
+                {
+                  "address": "172.16.10.7/24",
+                  "gateway": "172.16.10.1"
+                }
+              ],
               "routes": [
-                { "dst": "0.0.0.0/0" }
-              ]
+                { "dst": "172.16.10.0/24" }
+              ],
+              "dns": {
+                "nameservers" : ["172.16.10.1"],
+                "domain": "local.chkpwd.com",
+                "search": [ "local.chkpwd.com" ]
+              }
             }
           }
         ]
