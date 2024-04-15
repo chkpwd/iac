@@ -24,10 +24,18 @@ spec:
   values:
     cni:
       exclusive: false
-
+    image:
+      # ? https://github.com/cilium/cilium/issues/20942
+      override: "quay.io/cilium/cilium-ci:e14988e02ce8d0f3451b177a4f97a3833df65ab3"
+    operator:
+      # ? https://github.com/cilium/cilium/issues/20942
+      image:
+        override: "quay.io/cilium/operator-generic-ci:e14988e02ce8d0f3451b177a4f97a3833df65ab3"
+      rollOutPods: true
     autoDirectNodeRoutes: true
     bpf:
       masquerade: true
+      hostLegacyRouting: true
     bgp:
       enabled: false
     containerRuntime:
@@ -64,11 +72,16 @@ spec:
       algorithm: maglev
       mode: snat
     localRedirectPolicy: true
-    operator:
-      replicas: 1
-      rollOutPods: true
     rollOutCiliumPods: true
     routingMode: native
+    gatewayAPI:
+      # This will automatically set enable-envoy-config as well.
+      enabled: true
+      # -- SecretsNamespace is the namespace in which envoy SDS will retrieve TLS secrets from.
+      secretsNamespace:
+        create: false
+        name: security
+        sync: true
     securityContext:
       capabilities:
         ciliumAgent:
