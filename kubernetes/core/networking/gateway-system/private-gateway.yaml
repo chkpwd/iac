@@ -1,0 +1,43 @@
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: ReferenceGrant
+metadata:
+  name: allowfromns-gateway
+  namespace: security
+spec:
+  from:
+  - group: gateway.networking.k8s.io
+    kind: Gateway
+    namespace: networking
+  to:
+  - group: ""
+    kind: Secret
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: private
+  namespace: networking
+spec:
+  gatewayClassName: cilium
+  infrastructure:
+    annotations:
+      io.cilium/lb-ipam-ips: 172.16.16.40
+  listeners:
+  - protocol: HTTP
+    port: 80
+    name: http
+    allowedRoutes:
+      namespaces:
+        from: Same
+  - protocol: HTTPS
+    port: 443
+    name: https
+    tls:
+      certificateRefs:
+      - kind: Secret
+        name: chkpwd-cert-production
+        namespace: security
+    allowedRoutes:
+      namespaces:
+        from: All
