@@ -103,6 +103,7 @@ spec:
         ingressClassName: ext-ingress
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          cert-manager.io/cluster-issuer: letsencrypt-production
         hosts:
           - &host "authentik.${EXTERNAL_DOMAIN}"
         paths: ["/"]
