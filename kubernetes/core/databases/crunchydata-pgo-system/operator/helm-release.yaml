@@ -9,11 +9,12 @@ spec:
     spec:
       chart: pgo
       version: 5.5.1
+      interval: 30m
       sourceRef:
         kind: HelmRepository
         name: crunchydata
         namespace: flux-system
-      interval: 5m
+
   install:
     crds: CreateReplace
   upgrade:
