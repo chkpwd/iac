@@ -1,0 +1,17 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: core-databases-mongodb-operator
+  namespace: flux-system
+spec:
+  targetNamespace: databases
+  path: ./kubernetes/core/databases/mongodb-operator-system/operator
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 15m
+  retryInterval: 1m
+  timeout: 5m
