@@ -6,12 +6,30 @@ metadata:
   namespace: flux-system
 spec:
   targetNamespace: tools
+  dependsOn:
+    - name: tools-your-spotify-config
   path: ./kubernetes/apps/tools/your-spotify/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
   wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tools-your-spotify-config
+  namespace: flux-system
+spec:
+  targetNamespace: tools
+  path: ./kubernetes/apps/tools/your-spotify/config
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
   interval: 30m
   retryInterval: 1m
   timeout: 5m
