@@ -1,0 +1,159 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.1.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: &app your-spotify
+  namespace: tools
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.1.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    global:
+      fullnameOverride: *app
+
+    defaultPodOptions:
+      securityContext: {}
+
+    controllers:
+      your-spotify-server:
+        strategy: &strategy RollingUpdate
+        rollingUpdate: &rollingUpdate
+          unavailable: 0
+        replicas: 1
+
+        containers:
+          api:
+            image:
+              repository: yooooomi/your_spotify_server
+              tag: 1.10.1
+              pullPolicy: &pullPolicy IfNotPresent
+
+            env:
+              TZ: ${TZ}
+              API_ENDPOINT: https://your-spotify-api.${EXTERNAL_DOMAIN}
+              CLIENT_ENDPOINT: &client https://your-spotify.${EXTERNAL_DOMAIN}
+              CORS: *client
+              MONGO_ENDPOINT: mongodb://your-spotify-mongodb:27017/your_spotify
+
+            envFrom:
+            - secretRef:
+                name: your-spotify
+
+            probes: &probes
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+
+      your-spotify-client:
+        strategy: *strategy
+        rollingUpdate: *rollingUpdate
+
+        containers:
+          client:
+            image:
+              repository: yooooomi/your_spotify_client
+              tag: 1.10.1
+              pullPolicy: *pullPolicy
+
+            env:
+              TZ: ${TZ}
+              API_ENDPOINT: https://your-spotify-api.${EXTERNAL_DOMAIN}
+
+            probes: *probes
+
+      your-spotify-mongodb:
+        type: statefulset
+        rollingUpdate: *rollingUpdate
+
+        statefulset:
+          podManagementPolicy: OrderedReady
+
+        containers:
+          database:
+            image:
+              repository: docker.io/library/mongo
+              tag: 6.0.4-focal
+              pullPolicy: *pullPolicy
+
+            probes: *probes
+
+    service:
+      api:
+        controller: your-spotify-server
+        primary: true
+        ports:
+          http:
+            port: 8080
+      client:
+        controller: your-spotify-client
+        ports:
+          http:
+            port: 3000
+      mongodb:
+        controller: your-spotify-mongodb
+        ports:
+          http:
+            port: 27017
+
+    ingress:
+      api:
+        annotations:
+          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+        enabled: true
+        className: ext-ingress
+        hosts:
+          - host: &api-host "your-spotify-api.${EXTERNAL_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: api
+                  port: http
+        tls:
+          - hosts:
+              - *api-host
+      client:
+        annotations:
+          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+        enabled: true
+        className: ext-ingress
+        hosts:
+          - host: &client-host "your-spotify.${EXTERNAL_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: client
+                  port: http
+        tls:
+          - hosts:
+              - *client-host
+
+    persistence:
+      config:
+        accessMode: ReadWriteOnce
+        storageClass: longhorn-database
+        size: 1Gi
+        advancedMounts:
+          mongodb:
+            main:
+              - path: /data/db
