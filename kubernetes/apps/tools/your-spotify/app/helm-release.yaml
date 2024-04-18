@@ -46,14 +46,14 @@ spec:
 
             env:
               TZ: ${TZ}
-              API_ENDPOINT: https://your-spotify-api.${EXTERNAL_DOMAIN}
+              API_ENDPOINT: https://your-spotify.${EXTERNAL_DOMAIN}/api
               CLIENT_ENDPOINT: &client https://your-spotify.${EXTERNAL_DOMAIN}
               CORS: *client
               MONGO_ENDPOINT: mongodb://your-spotify-mongodb:27017/your_spotify
 
             envFrom:
             - secretRef:
-                name: your-spotify
+                name: your-spotify-secrets
 
             probes: &probes
               liveness:
@@ -76,7 +76,7 @@ spec:
 
             env:
               TZ: ${TZ}
-              API_ENDPOINT: https://your-spotify-api.${EXTERNAL_DOMAIN}
+              API_ENDPOINT: https://your-spotify.${EXTERNAL_DOMAIN}/api
 
             probes: *probes
 
@@ -115,22 +115,6 @@ spec:
             port: 27017
 
     ingress:
-      api:
-        annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
-        enabled: true
-        className: ext-ingress
-        hosts:
-          - host: &api-host "your-spotify-api.${EXTERNAL_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: api
-                  port: http
-        tls:
-          - hosts:
-              - *api-host
       client:
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
@@ -144,6 +128,11 @@ spec:
                 service:
                   identifier: client
                   port: http
+              - path: /api
+                pathType: Prefix
+                service:
+                  identifier: api
+                  port: http
         tls:
           - hosts:
               - *client-host
@@ -154,6 +143,6 @@ spec:
         storageClass: longhorn-database
         size: 1Gi
         advancedMounts:
-          mongodb:
-            main:
+          your-spotify-mongodb:
+            database:
               - path: /data/db
