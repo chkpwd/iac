@@ -38,7 +38,7 @@ spec:
         replicas: 1
 
         containers:
-          api:
+          server:
             image:
               repository: yooooomi/your_spotify_server
               tag: 1.10.1
@@ -46,14 +46,14 @@ spec:
 
             env:
               TZ: ${TZ}
-              API_ENDPOINT: https://your-spotify-api.${EXTERNAL_DOMAIN}
-              CLIENT_ENDPOINT: &client https://your-spotify.${EXTERNAL_DOMAIN}
-              CORS: *client
+              API_ENDPOINT: https://your-spotify.${EXTERNAL_DOMAIN}/api
+              CLIENT_ENDPOINT: https://your-spotify.${EXTERNAL_DOMAIN}
+              CORS: "https://your-spotify.${EXTERNAL_DOMAIN},https://your-spotify.${EXTERNAL_DOMAIN}/api"
               MONGO_ENDPOINT: mongodb://your-spotify-mongodb:27017/your_spotify
 
             envFrom:
             - secretRef:
-                name: your-spotify
+                name: your-spotify-secrets
 
             probes: &probes
               liveness:
@@ -76,7 +76,7 @@ spec:
 
             env:
               TZ: ${TZ}
-              API_ENDPOINT: https://your-spotify-api.${EXTERNAL_DOMAIN}
+              API_ENDPOINT: https://your-spotify.${EXTERNAL_DOMAIN}/api
 
             probes: *probes
 
@@ -97,40 +97,27 @@ spec:
             probes: *probes
 
     service:
-      api:
+      server:
+        nameOverride: server
         controller: your-spotify-server
         primary: true
         ports:
           http:
             port: 8080
       client:
+        nameOverride: client
         controller: your-spotify-client
         ports:
           http:
             port: 3000
       mongodb:
+        nameOverride: mongodb
         controller: your-spotify-mongodb
         ports:
           http:
             port: 27017
 
     ingress:
-      api:
-        annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
-        enabled: true
-        className: ext-ingress
-        hosts:
-          - host: &api-host "your-spotify-api.${EXTERNAL_DOMAIN}"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: api
-                  port: http
-        tls:
-          - hosts:
-              - *api-host
       client:
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
@@ -144,6 +131,11 @@ spec:
                 service:
                   identifier: client
                   port: http
+              - path: /api
+                pathType: Prefix
+                service:
+                  identifier: server
+                  port: http
         tls:
           - hosts:
               - *client-host
@@ -154,6 +146,6 @@ spec:
         storageClass: longhorn-database
         size: 1Gi
         advancedMounts:
-          mongodb:
-            main:
+          your-spotify-mongodb:
+            database:
               - path: /data/db
