@@ -31,8 +31,8 @@ spec:
       securityContext: {}
 
     controllers:
-      your-spotify-server:
-        strategy: &strategy RollingUpdate
+      your-spotify:
+        strategy: RollingUpdate
         rollingUpdate: &rollingUpdate
           unavailable: 0
         replicas: 1
@@ -63,11 +63,6 @@ spec:
               startup:
                 enabled: true
 
-      your-spotify-client:
-        strategy: *strategy
-        rollingUpdate: *rollingUpdate
-
-        containers:
           client:
             image:
               repository: yooooomi/your_spotify_client
@@ -97,19 +92,19 @@ spec:
             probes: *probes
 
     service:
+      client:
+        nameOverride: client
+        controller: your-spotify
+        ports:
+          http:
+            port: 3000
       server:
         nameOverride: server
-        controller: your-spotify-server
+        controller: your-spotify
         primary: true
         ports:
           http:
             port: 8080
-      client:
-        nameOverride: client
-        controller: your-spotify-client
-        ports:
-          http:
-            port: 3000
       mongodb:
         nameOverride: mongodb
         controller: your-spotify-mongodb
@@ -121,24 +116,23 @@ spec:
       client:
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+          nginx.ingress.kubernetes.io/rewrite-target: /
         enabled: true
         className: ext-ingress
         hosts:
-          - host: &client-host "your-spotify.${EXTERNAL_DOMAIN}"
+          - host: "your-spotify.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
                 service:
                   identifier: client
                   port: http
-              - path: /api/
+              - path: /api
                 pathType: Prefix
                 service:
                   identifier: server
                   port: http
-        tls:
-          - hosts:
-              - *client-host
 
     persistence:
       config:
