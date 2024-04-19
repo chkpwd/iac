@@ -116,8 +116,7 @@ spec:
       client:
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
-          nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-          nginx.ingress.kubernetes.io/rewrite-target: /
+          nginx.ingress.kubernetes.io/rewrite-target: / # ? Needed for api requests
         enabled: true
         className: ext-ingress
         hosts:
