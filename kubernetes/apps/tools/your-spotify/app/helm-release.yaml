@@ -31,10 +31,11 @@ spec:
       securityContext: {}
 
     controllers:
-      your-spotify:
-        strategy: RollingUpdate
+      your-spotify-server:
+        strategy: &strategy RollingUpdate
         rollingUpdate: &rollingUpdate
           unavailable: 0
+
         replicas: 1
 
         containers:
@@ -63,6 +64,13 @@ spec:
               startup:
                 enabled: true
 
+      your-spotify-client:
+        strategy: *strategy
+        rollingUpdate: *rollingUpdate
+
+        replicas: 1
+
+        containers:
           client:
             image:
               repository: yooooomi/your_spotify_client
@@ -92,19 +100,19 @@ spec:
             probes: *probes
 
     service:
-      client:
-        nameOverride: client
-        controller: your-spotify
-        ports:
-          http:
-            port: 3000
       server:
         nameOverride: server
-        controller: your-spotify
+        controller: your-spotify-server
         primary: true
         ports:
           http:
             port: 8080
+      client:
+        nameOverride: client
+        controller: your-spotify-client
+        ports:
+          http:
+            port: 3000
       mongodb:
         nameOverride: mongodb
         controller: your-spotify-mongodb
@@ -116,7 +124,7 @@ spec:
       client:
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
-          nginx.ingress.kubernetes.io/rewrite-target: / # ? Needed for api requests
+          nginx.ingress.kubernetes.io/rewrite-target: /
         enabled: true
         className: ext-ingress
         hosts:
