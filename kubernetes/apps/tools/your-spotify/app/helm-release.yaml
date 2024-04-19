@@ -49,7 +49,7 @@ spec:
               TZ: ${TZ}
               API_ENDPOINT: https://your-spotify.${EXTERNAL_DOMAIN}/api
               CLIENT_ENDPOINT: https://your-spotify.${EXTERNAL_DOMAIN}
-              CORS: "https://your-spotify.${EXTERNAL_DOMAIN},https://your-spotify.${EXTERNAL_DOMAIN}/api"
+              CORS: "https://your-spotify.${EXTERNAL_DOMAIN}"
               MONGO_ENDPOINT: mongodb://your-spotify-mongodb:27017/your_spotify
 
             envFrom:
@@ -124,18 +124,19 @@ spec:
       client:
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
-          nginx.ingress.kubernetes.io/rewrite-target: /
+          nginx.ingress.kubernetes.io/rewrite-target: /$2
+          nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
         enabled: true
         className: ext-ingress
         hosts:
           - host: "your-spotify.${EXTERNAL_DOMAIN}"
             paths:
-              - path: /
+              - path: /(.*)
                 pathType: Prefix
                 service:
                   identifier: client
                   port: http
-              - path: /api
+              - path: /api(/|$)/(.*)
                 pathType: Prefix
                 service:
                   identifier: server
