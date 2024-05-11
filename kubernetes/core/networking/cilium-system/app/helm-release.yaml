@@ -37,6 +37,11 @@ spec:
       socketPath: /var/run/k3s/containerd/containerd.sock
     endpointRoutes:
       enabled: true
+    gatewayAPI:
+      enabled: true
+      secretsNamespace:
+        create: false
+        name: networking
     hubble:
       enabled: true
       relay:
