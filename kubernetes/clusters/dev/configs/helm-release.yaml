@@ -1,5 +1,6 @@
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: &app dev-cluster
@@ -111,5 +112,5 @@ spec:
         ---
       # The contents of manifests-template will be templated using helm
       # this allows you to use helm values inside, e.g.: {{ .Release.Name }}
-      manifestsTemplate: ''
+      manifestsTemplate: ""
       helm: []

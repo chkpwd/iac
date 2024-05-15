@@ -1,5 +1,6 @@
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: &app botkube
@@ -51,7 +52,7 @@ spec:
     # [Ref doc](https://kubernetes.io/docs/admin/authorization/rbac/).
     rbac:
       groups:
-        'botkube-plugins-default':
+        "botkube-plugins-default":
           create: true
           rules:
             - apiGroups: ["*"]
@@ -81,9 +82,9 @@ spec:
       enabled: false
 
     actions:
-      'describe-created-resource':
+      "describe-created-resource":
         enabled: false
-      'show-logs-on-error':
+      "show-logs-on-error":
         enabled: true
 
     sources:

@@ -1,5 +1,6 @@
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2beta2
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: &app runwhen-local
@@ -38,9 +39,9 @@ spec:
         enabled: true
         namespaces: []
         rules:
-        - apiGroups: [""]
-          resources: ["*"]
-          verbs: ["get", "watch", "list"]
+          - apiGroups: [""]
+            resources: ["*"]
+            verbs: ["get", "watch", "list"]
 
       clusterRoleView:
         enabled: true
@@ -71,8 +72,8 @@ spec:
       workspaceOwnerEmail: runwhen-local@chkpwd.com
       papiURL: undefined
       defaultLocation: undefined
-      defaultLOD: 2                 # This setting will discover all namespaces not specified in namespaceLODs with the greatest level of detail/depth
-      namespaceLODs:                # Specific discovery depth overrides on a per-namespace basis. 0 = ignore, 1 = simple/basic discovery, 2 = detailed discovery
+      defaultLOD: 2 # This setting will discover all namespaces not specified in namespaceLODs with the greatest level of detail/depth
+      namespaceLODs: # Specific discovery depth overrides on a per-namespace basis. 0 = ignore, 1 = simple/basic discovery, 2 = detailed discovery
         kube-system: 0
         kube-public: 0
         kube-node-lease: 0
