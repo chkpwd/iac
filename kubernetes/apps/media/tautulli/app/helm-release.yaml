@@ -58,10 +58,20 @@ spec:
               repository: ghcr.io/onedr0p/tautulli
               tag: 2.13.4
               pullPolicy: IfNotPresent
+            command: ["/usr/local/bin/python", "Tautulli.py"]
+            args:
+              [
+                "--config",
+                "/config/config.ini",
+                "--datadir",
+                "/config",
+                "--port",
+                "80",
+              ]
             env:
               TZ: "${TZ}"
               LOG_LEVEL: "info"
-              PORT: &port 8181
+              PORT: &port 80
 
             probes:
               liveness: &probes
