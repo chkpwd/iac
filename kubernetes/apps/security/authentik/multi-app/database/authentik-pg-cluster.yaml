@@ -5,6 +5,10 @@ metadata:
   name: authentik
 spec:
   postgresVersion: 15
+  dataSource:
+    volumes:
+      pgDataVolume:
+        pvcName: authentik-00-5ml9-pgdata
   instances:
     - dataVolumeClaimSpec:
         storageClassName: longhorn-database
@@ -32,7 +36,7 @@ spec:
             volumeClaimSpec:
               storageClassName: longhorn-database
               accessModes:
-              - "ReadWriteOnce"
+                - "ReadWriteOnce"
               resources:
                 requests:
                   storage: 1Gi
