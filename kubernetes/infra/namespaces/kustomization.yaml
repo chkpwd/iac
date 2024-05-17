@@ -2,18 +2,14 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - development.yaml
   - media.yaml
   - personal.yaml
   - cattles.yaml
-  - continuous-integration.yaml
   - tools.yaml
   - monitoring.yaml
   - networking.yaml
   - security.yaml
   - databases.yaml
   - system.yaml
-  - clusters.yaml
   - storage.yaml
   - misc.yaml
-  - game-servers.yaml
