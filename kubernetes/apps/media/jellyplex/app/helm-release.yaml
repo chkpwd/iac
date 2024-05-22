@@ -1,0 +1,92 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.1.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app jellyplex
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.1.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    global:
+      fullnameOverride: *app
+
+    controllers:
+      jellyplex:
+        enabled: true
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        replicas: 1
+
+        pod:
+          securityContext:
+            runAsUser: 1026
+            runAsGroup: &group 100
+            fsGroup: *group
+            fsGroupChangePolicy: "OnRootMismatch"
+
+        containers:
+          app:
+            image:
+              repository: ghcr.io/luigi311/jellyplex-watched
+              tag: 5.1-alpine
+              pullPolicy: IfNotPresent
+            env:
+              TZ: ${TZ}
+              DRYRUN: "False"
+              DEBUG: "False"
+              DEBUG_LEVEL: "info"
+              ## If set to true then the script will only run once and then exit
+              RUN_ONLY_ONCE: "True"
+              LOGFILE: "log.log"
+              ## where played shows will be written to
+              MARK_FILE: "mark.log"
+              REQUEST_TIMEOUT: 300
+              GENERATE_GUIDS: "True"
+              GENERATE_LOCATIONS: "True"
+              MAX_THREADS: 32
+              PLEX_BASEURL: "http://plex.media.svc.cluster.local:32400"
+              SSL_BYPASS: "False"
+              SYNC_FROM_PLEX_TO_JELLYFIN: "True"
+              SYNC_FROM_JELLYFIN_TO_PLEX: "False"
+              SYNC_FROM_PLEX_TO_PLEX: "False"
+              SYNC_FROM_JELLYFIN_TO_JELLYFIN: "False"
+              JELLYFIN_BASEURL: "http://jellyfin.media.svc.cluster.local:8096"
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+
+            resources:
+              requests:
+                cpu: 136m
+                memory: 309Mi
+              limits:
+                memory: 336Mi
+
+            envFrom:
+              - secretRef:
+                  name: jellyplex-secret
+    service:
+      app:
+        enabled: false
