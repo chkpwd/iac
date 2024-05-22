@@ -91,3 +91,9 @@ spec:
       app:
         enabled: false
         controller: jellyplex
+
+    persistence:
+      logs:
+        type: emptyDir
+        globalMounts:
+          - path: log.log
