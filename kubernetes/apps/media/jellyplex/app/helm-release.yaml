@@ -30,11 +30,9 @@ spec:
     controllers:
       jellyplex:
         enabled: true
-        type: deployment
+        type: cronjob
         annotations:
           reloader.stakater.com/auto: "true"
-
-        replicas: 1
 
         cronjob:
           concurrencyPolicy: Forbid
