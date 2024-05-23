@@ -1,4 +1,4 @@
----
+--
 # yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.1.0/charts/library/common/values.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
@@ -62,7 +62,7 @@ spec:
               DEBUG_LEVEL: "info"
               ## If set to true then the script will only run once and then exit
               RUN_ONLY_ONCE: "True"
-              LOGFILE: "log.log"
+              LOGFILE: "/tmp/log.log"
               ## where played shows will be written to
               MARK_FILE: "mark.log"
               REQUEST_TIMEOUT: 300
@@ -102,4 +102,4 @@ spec:
       logs:
         type: emptyDir
         globalMounts:
-          - path: log.log
+          - path: /tmp
