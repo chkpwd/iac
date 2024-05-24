@@ -36,7 +36,8 @@ spec:
       tag: v0.14.2
       pullPolicy: IfNotPresent
 
-    provider: cloudflare
+    provider:
+      name: cloudflare
 
     cloudflare:
       email: ${CLOUDFLARE_EMAIL}
