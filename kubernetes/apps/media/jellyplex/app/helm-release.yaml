@@ -64,18 +64,22 @@ spec:
               RUN_ONLY_ONCE: "True"
               LOGFILE: "/tmp/log.log"
               ## where played shows will be written to
-              MARK_FILE: "mark.log"
+              MARK_FILE: "/tmp/mark.log"
               REQUEST_TIMEOUT: 300
               GENERATE_GUIDS: "True"
               GENERATE_LOCATIONS: "True"
               MAX_THREADS: 32
               PLEX_BASEURL: "http://plex.media.svc.cluster.local:32400"
               JELLYFIN_BASEURL: "http://jellyfin.media.svc.cluster.local:8096"
-              SSL_BYPASS: "False"
+              SSL_BYPASS: "True"
               SYNC_FROM_PLEX_TO_JELLYFIN: "True"
               SYNC_FROM_JELLYFIN_TO_PLEX: "True"
               SYNC_FROM_PLEX_TO_PLEX: "False"
               SYNC_FROM_JELLYFIN_TO_JELLYFIN: "False"
+
+            envFrom:
+              - secretRef:
+                  name: servarr-secrets
 
             securityContext:
               allowPrivilegeEscalation: false
@@ -90,9 +94,6 @@ spec:
               limits:
                 memory: 336Mi
 
-            envFrom:
-              - secretRef:
-                  name: servarr-secrets
     service:
       app:
         enabled: false
