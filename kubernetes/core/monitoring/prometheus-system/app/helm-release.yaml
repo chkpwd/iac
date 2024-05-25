@@ -23,6 +23,11 @@ spec:
     remediation:
       retries: 3
 
+  valuesFrom:
+    - kind: ConfigMap
+      name: flux-metrics
+      valuesKey: flux-metrics.yaml
+
   values:
     crds:
       enabled: true
