@@ -16,17 +16,18 @@ resource "authentik_outpost" "main" {
     module.authentik-app-runwhen-local.provider_id,
     module.authentik-app-bazarr.provider_id,
     module.authentik-app-qbittorrent.provider_id,
+    module.authentik-app-stirling-pdf.provider_id,
   ]
   service_connection = authentik_service_connection_kubernetes.main.id
 }
 
 resource "authentik_provider_ldap" "main" {
-  name        = "authentik LDAP Provider"
-  bind_mode   = "direct"
-  base_dn     = "dc=ldap,dc=goauthentik,dc=io"
-  bind_flow   = data.authentik_flow.default-authentication-flow.id
+  name         = "authentik LDAP Provider"
+  bind_mode    = "direct"
+  base_dn      = "dc=ldap,dc=goauthentik,dc=io"
+  bind_flow    = data.authentik_flow.default-authentication-flow.id
   search_group = authentik_group.main.id
-  mfa_support = "true"
+  mfa_support  = "true"
 }
 
 resource "authentik_source_plex" "main" {

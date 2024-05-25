@@ -4,9 +4,9 @@ module "authentik-app-sonarr" {
   group  = "main"
 
   proxy_values = {
-    internal = ""
-    external = "https://sonarr.k8s.chkpwd.com"
-    mode     = "forward_single"
+    internal        = ""
+    external        = "https://sonarr.k8s.chkpwd.com"
+    mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
 ^/metrics
@@ -27,9 +27,9 @@ module "authentik-app-radarr" {
   group  = "main"
 
   proxy_values = {
-    internal = ""
-    external = "https://radarr.k8s.chkpwd.com"
-    mode     = "forward_single"
+    internal        = ""
+    external        = "https://radarr.k8s.chkpwd.com"
+    mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
 ^/metrics
@@ -50,9 +50,9 @@ module "authentik-app-prowlarr" {
   group  = "main"
 
   proxy_values = {
-    internal = ""
-    external = "https://prowlarr.k8s.chkpwd.com"
-    mode     = "forward_single"
+    internal        = ""
+    external        = "https://prowlarr.k8s.chkpwd.com"
+    mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
 ^/metrics
@@ -73,9 +73,9 @@ module "authentik-app-sabnzbd" {
   group  = "main"
 
   proxy_values = {
-    internal = ""
-    external = "https://sabnzbd.k8s.chkpwd.com"
-    mode     = "forward_single"
+    internal        = ""
+    external        = "https://sabnzbd.k8s.chkpwd.com"
+    mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
 ^/metrics
@@ -110,14 +110,14 @@ module "authentik-app-mainsail" {
 }
 
 module "authentik-app-miniflux" {
-  source           = "../_modules/authentik/oauth2_app"
-  name             = "Miniflux"
-  group            = "main"
+  source = "../_modules/authentik/oauth2_app"
+  name   = "Miniflux"
+  group  = "main"
   oauth2_values = {
-    client_id        = "miniflux"
-    client_secret    = data.external.bws_lookup.result["ns-tools-miniflux_client_secret"]
+    client_id         = "miniflux"
+    client_secret     = data.external.bws_lookup.result["ns-tools-miniflux_client_secret"]
     property_mappings = data.authentik_scope_mapping.scopes.ids
-    redirect_uris = ["https://miniflux.chkpwd.com/oauth2/oidc/callback"]
+    redirect_uris     = ["https://miniflux.chkpwd.com/oauth2/oidc/callback"]
   }
   app_values = {
     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/miniflux.png"
@@ -172,9 +172,9 @@ module "authentik-app-bazarr" {
   group  = "main"
 
   proxy_values = {
-    internal = ""
-    external = "https://bazarr.k8s.chkpwd.com"
-    mode     = "forward_single"
+    internal        = ""
+    external        = "https://bazarr.k8s.chkpwd.com"
+    mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
 ^/metrics
@@ -195,9 +195,9 @@ module "authentik-app-qbittorrent" {
   group  = "main"
 
   proxy_values = {
-    internal = ""
-    external = "https://qbittorrent.k8s.chkpwd.com"
-    mode     = "forward_single"
+    internal        = ""
+    external        = "https://qbittorrent.k8s.chkpwd.com"
+    mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
 ^/metrics
@@ -212,20 +212,39 @@ EOF
   access_group = [authentik_group.main.id]
 }
 
-module "authentik-app-runwhen-local" {
+module "authentik-app-stirling-pdf" {
   source = "../_modules/authentik/proxy_app"
   name   = "Runwhen Local"
   group  = "main"
 
   proxy_values = {
     internal = ""
-    external = "https://runwhen-local.chkpwd.com"
+    external = "https://stirling-pdf.chkpwd.com"
     mode     = "forward_single"
   }
 
   app_values = {
     meta_description = "Usenet Downloader"
-    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/runwhen-local.png"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/stirling-pdf.png"
+  }
+
+  access_group = [authentik_group.main.id]
+}
+
+module "authentik-app-stirling-pdf" {
+  source = "../_modules/authentik/proxy_app"
+  name   = "Stirling PDF"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://stirling-pdf.chkpwd.com"
+    mode     = "forward_single"
+  }
+
+  app_values = {
+    meta_description = "PDF Management"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/stirling-pdf.png"
   }
 
   access_group = [authentik_group.main.id]
