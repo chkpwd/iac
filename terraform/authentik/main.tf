@@ -10,14 +10,33 @@ resource "authentik_outpost" "main" {
     module.authentik-app-radarr.provider_id,
     module.authentik-app-prowlarr.provider_id,
     module.authentik-app-sabnzbd.provider_id,
-    module.authentik-app-mainsail.provider_id,
     module.authentik-app-jellyfin.provider_id,
     module.authentik-app-maintainerr.provider_id,
-    module.authentik-app-runwhen-local.provider_id,
     module.authentik-app-bazarr.provider_id,
     module.authentik-app-qbittorrent.provider_id,
-    module.authentik-app-stirling-pdf.provider_id,
   ]
+  service_connection = authentik_service_connection_kubernetes.main.id
+}
+
+resource "authentik_outpost" "secondary" {
+  name = "authentik External Ingress Outpost"
+  type = "proxy"
+  protocol_providers = [
+    module.authentik-app-stirling-pdf.provider_id,
+    module.authentik-app-runwhen-local.provider_id,
+    module.authentik-app-mainsail.provider_id,
+  ]
+  config = jsonencode({
+    "authentik_host"                 = "https://authentik.chkpwd.com"
+    "authentik_host_insecure"        = false
+    "object_naming_template"         = "ak-outpost-%(name)s"
+    "kubernetes_replicas"            = 1
+    "kubernetes_namespace"           = "security"
+    "kubernetes_ingress_secret_name" = "authentik-ext-ingress-outpost-tls"
+    "kubernetes_service_type"        = "ClusterIP"
+    "kubernetes_disabled_components" = ["traefix middleware"]
+    "kubernetes_ingress_class_name"  = "ext-ingress"
+  })
   service_connection = authentik_service_connection_kubernetes.main.id
 }
 
