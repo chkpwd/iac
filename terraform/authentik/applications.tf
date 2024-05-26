@@ -212,20 +212,20 @@ EOF
   access_group = [authentik_group.main.id]
 }
 
-module "authentik-app-stirling-pdf" {
+module "authentik-app-runwhen-local" {
   source = "../_modules/authentik/proxy_app"
   name   = "Runwhen Local"
   group  = "main"
 
   proxy_values = {
     internal = ""
-    external = "https://stirling-pdf.chkpwd.com"
+    external = "https://runwhen-local.chkpwd.com"
     mode     = "forward_single"
   }
 
   app_values = {
     meta_description = "Usenet Downloader"
-    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/stirling-pdf.png"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/runwhen-local.png"
   }
 
   access_group = [authentik_group.main.id]
@@ -243,7 +243,7 @@ module "authentik-app-stirling-pdf" {
   }
 
   app_values = {
-    meta_description = "PDF Management"
+    meta_description = "PDF Tool"
     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/stirling-pdf.png"
   }
 
