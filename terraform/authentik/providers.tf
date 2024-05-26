@@ -1,20 +1,20 @@
 terraform {
   required_providers {
     authentik = {
-      source = "goauthentik/authentik"
+      source  = "goauthentik/authentik"
       version = "2024.2.0"
     }
     sops = {
-      source = "carlpett/sops"
+      source  = "carlpett/sops"
       version = "1.0.0"
     }
   }
 }
 
 data "external" "bws_lookup" {
-  program = ["python3","../bws_lookup.py"]
+  program = ["python3", "../bws_lookup.py"]
   query = {
-    key = "ns-security-authentik,ns-tools-lubelogger,ns-tools-miniflux"
+    key = "ns-security-authentik,ns-tools-miniflux"
   }
 }
 
