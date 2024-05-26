@@ -88,7 +88,7 @@ spec:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
           nginx.ingress.kubernetes.io/proxy-body-size: 50m
           nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-          nginx.ingress.kubernetes.io/auth-signin: https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}/outpost.goauthentik.io/start?rd=$escaped_request_uri
+          nginx.ingress.kubernetes.io/auth-signin: https://stirling-pdf.${EXTERNAL_DOMAIN}/outpost.goauthentik.io/start?rd=$escaped_request_uri
         hosts:
           - host: &host "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
