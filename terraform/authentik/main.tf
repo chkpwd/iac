@@ -23,8 +23,6 @@ resource "authentik_outpost" "secondary" {
   type = "proxy"
   protocol_providers = [
     module.authentik-app-stirling-pdf.provider_id,
-    module.authentik-app-runwhen-local.provider_id,
-    module.authentik-app-mainsail.provider_id,
   ]
   config = jsonencode({
     "authentik_host"                 = "https://authentik.chkpwd.com"
