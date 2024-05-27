@@ -85,7 +85,7 @@ spec:
         enabled: true
         className: ext-ingress
         annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          external-dns.alpha.kubernetes.io/hostname: stirling-pdf.${EXTERNAL_DOMAIN}
           nginx.ingress.kubernetes.io/proxy-body-size: 50m
           nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
           nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-external-ingress-outpostak-outpost.security.${CLUSTER_DOMAIN}:9000/outpost.goauthentik.io/auth/nginx
