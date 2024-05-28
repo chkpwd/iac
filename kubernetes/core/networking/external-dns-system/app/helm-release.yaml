@@ -62,8 +62,7 @@ spec:
       - --crd-source-apiversion=externaldns.k8s.io/v1alpha1
       - --crd-source-kind=DNSEndpoint
       - --cloudflare-dns-records-per-page=1000
-
-    annotationFilter: external-dns.alpha.kubernetes.io/exclude notin (true)
+      - --annotation-filter=external-dns.alpha.kubernetes.io/exclude notin (true)
 
     policy: sync
 
