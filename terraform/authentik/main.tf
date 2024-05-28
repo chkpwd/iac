@@ -30,6 +30,7 @@ resource "authentik_outpost" "secondary" {
     "object_naming_template"         = "ak-outpost-%(name)s"
     "kubernetes_replicas"            = 1
     "kubernetes_namespace"           = "security"
+    "kubernetes_ingress_annotations" = { "external-dns.alpha.kubernetes.io/exclude" = "true" }
     "kubernetes_ingress_secret_name" = "authentik-ext-ingress-outpost-tls"
     "kubernetes_service_type"        = "ClusterIP"
     "kubernetes_disabled_components" = ["traefix middleware"]
