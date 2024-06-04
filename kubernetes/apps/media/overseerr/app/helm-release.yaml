@@ -121,6 +121,14 @@ spec:
               - *host
 
     persistence:
+      cache:
+        type: emptyDir
+        globalMounts:
+          - path: /app/config/cache
+      logs:
+        type: emptyDir
+        globalMounts:
+          - path: /app/config/logs
       tmp:
         enabled: true
         type: emptyDir
