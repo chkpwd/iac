@@ -16,7 +16,7 @@ spec:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 1Gi
+            storage: 2Gi
 
   users:
     - name: miniflux
@@ -36,7 +36,7 @@ spec:
             volumeClaimSpec:
               storageClassName: longhorn-database
               accessModes:
-              - "ReadWriteOnce"
+                - "ReadWriteOnce"
               resources:
                 requests:
                   storage: 1Gi

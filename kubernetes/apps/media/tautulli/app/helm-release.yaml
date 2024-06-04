@@ -40,7 +40,7 @@ spec:
           volumeClaimTemplates:
             - name: config
               accessMode: ReadWriteOnce
-              size: 200Mi
+              size: 512Mi
               storageClass: longhorn-media
               globalMounts:
                 - path: /config
