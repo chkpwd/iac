@@ -4,7 +4,6 @@
   become: true
 
   tasks:
-
     - name: Create necessary directories
       ansible.builtin.file: # noqa risky-file-permissions
         path: "{{ item }}"
@@ -26,24 +25,24 @@
           [Peer]
           PublicKey = {{ WIREGUARD_PEER_PUBLIC_KEY }}
           AllowedIPs = 0.0.0.0/0
-          Endpoint = {{ PUBLIC_IP_ADDRESS }}:{{ WIREGUARD_PORT }}
+          Endpoint = {{ lookup('bws_cache', 'infra-network-secrets').value.public_ip }}:{{ WIREGUARD_PORT }}
         dest: "{{ configuration_path }}/wireguard/wg_confs/wg0.conf"
         owner: "root"
         group: "root"
-        mode: '600'
+        mode: "600"
 
     - name: Template NGINX config # noqa no-relative-paths
       ansible.builtin.template:
         src: ../../templates/nginx.conf.j2
         dest: "{{ configuration_path }}/swag/nginx/site-confs/default.conf"
-        mode: '664'
+        mode: "664"
 
     - name: Copy Cloudflare config
       ansible.builtin.copy:
         content: |
           dns_cloudflare_api_token = "{{ SWAG_CF_API_TOKEN }}"
         dest: "{{ configuration_path }}/swag/dns-conf/cloudflare.ini"
-        mode: '400'
+        mode: "400"
 
     - name: Create network(s)
       community.docker.docker_network:
