@@ -66,12 +66,6 @@ uptime_kuma_monitors:
     url: 172.16.16.8
     parent: *services_group
 
-  - name: Plex Server
-    type: http
-    url: https://plex.chkpwd.com
-    accepted_statuscodes: '401'
-    parent: *services_group
-
   # Sites
   - name: WinXuu
     type: ping
