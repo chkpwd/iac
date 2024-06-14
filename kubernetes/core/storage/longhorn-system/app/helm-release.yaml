@@ -27,7 +27,7 @@ spec:
       ingressClassName: int-ingress
       annotations:
         cert-manager.io/cluster-issuer: letsencrypt-production
-      host: longhorn.${K8S_GATEWAY_DOMAIN}
+      host: longhorn.${LOCAL_DOMAIN}
       tls: true
       secureBackends: true
       tlsSecret: longhorn-tls

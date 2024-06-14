@@ -55,7 +55,7 @@ spec:
           enabled: true
           className: int-ingress
           hosts:
-            - &host "hubble.${K8S_GATEWAY_DOMAIN}"
+            - &host "hubble.${LOCAL_DOMAIN}"
           tls:
             - hosts:
                 - *host

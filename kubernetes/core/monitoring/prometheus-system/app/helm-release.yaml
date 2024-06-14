@@ -156,8 +156,7 @@ spec:
         ingressClassName: int-ingress
         annotations:
           cert-manager.io/cluster-issuer: letsencrypt-production
-        hosts:
-          [&prometheus-host "k8s-{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"]
+        hosts: [&prometheus-host "k8s-{{ .Release.Name }}.${LOCAL_DOMAIN}"]
         path: /
         pathType: Prefix
         tls:

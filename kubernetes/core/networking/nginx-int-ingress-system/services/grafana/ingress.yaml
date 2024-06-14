@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: int-ingress
   rules:
-    - host: &host grafana.${K8S_GATEWAY_DOMAIN}
+    - host: &host grafana.${LOCAL_DOMAIN}
       http:
         paths:
           - path: /

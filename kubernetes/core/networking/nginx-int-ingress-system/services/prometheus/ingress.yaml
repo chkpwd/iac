@@ -6,7 +6,7 @@ metadata:
 spec:
   ingressClassName: int-ingress
   rules:
-    - host: &host rpi-prometheus.${K8S_GATEWAY_DOMAIN}
+    - host: &host rpi-prometheus.${LOCAL_DOMAIN}
       http:
         paths:
           - path: /

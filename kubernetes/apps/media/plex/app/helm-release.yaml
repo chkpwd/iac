@@ -133,7 +133,7 @@ spec:
       internal:
         className: int-ingress
         hosts:
-          - host: &host "{{ .Release.Name }}.${K8S_GATEWAY_DOMAIN}"
+          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
