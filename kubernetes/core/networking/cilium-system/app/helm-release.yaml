@@ -54,6 +54,8 @@ spec:
         ingress:
           enabled: true
           className: int-ingress
+          annotations:
+            external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
           hosts:
             - &host "hubble.${LOCAL_DOMAIN}"
           tls:

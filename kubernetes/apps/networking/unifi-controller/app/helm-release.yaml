@@ -94,6 +94,7 @@ spec:
       internal:
         annotations:
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+          external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
         enabled: true
         className: int-ingress
         hosts:

@@ -113,6 +113,8 @@ spec:
       internal:
         enabled: true
         className: int-ingress
+        annotations:
+          external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
         hosts:
           - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
