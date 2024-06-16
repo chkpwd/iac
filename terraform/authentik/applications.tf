@@ -147,25 +147,6 @@ module "authentik-app-jellyfin" {
   access_group = [authentik_group.main.id]
 }
 
-module "authentik-app-maintainerr" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "Maintainerr"
-  group  = "main"
-
-  proxy_values = {
-    internal = ""
-    external = "https://maintainerr.k8s.chkpwd.com"
-    mode     = "forward_single"
-  }
-
-  app_values = {
-    meta_description = "Media Recycler & Cleanup"
-    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/maintainerr.png"
-  }
-
-  access_group = [authentik_group.main.id]
-}
-
 module "authentik-app-bazarr" {
   source = "../_modules/authentik/proxy_app"
   name   = "Bazarr"
@@ -234,7 +215,7 @@ module "authentik-app-runwhen-local" {
 module "authentik-app-stirling-pdf" {
   source = "../_modules/authentik/proxy_app"
   name   = "Stirling PDF"
-  group  = "main"
+  group  = "secondary"
 
   proxy_values = {
     internal = ""
@@ -247,5 +228,5 @@ module "authentik-app-stirling-pdf" {
     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/stirling-pdf.png"
   }
 
-  access_group = [authentik_group.main.id]
+  access_group = [authentik_group.main.id, authentik_group.secondary.id]
 }
