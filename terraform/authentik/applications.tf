@@ -5,7 +5,7 @@ module "authentik-app-sonarr" {
 
   proxy_values = {
     internal        = ""
-    external        = "https://sonarr.k8s.chkpwd.com"
+    external        = "https://sonarr.local.chkpwd.com"
     mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
@@ -28,7 +28,7 @@ module "authentik-app-radarr" {
 
   proxy_values = {
     internal        = ""
-    external        = "https://radarr.k8s.chkpwd.com"
+    external        = "https://radarr.local.chkpwd.com"
     mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
@@ -51,7 +51,7 @@ module "authentik-app-prowlarr" {
 
   proxy_values = {
     internal        = ""
-    external        = "https://prowlarr.k8s.chkpwd.com"
+    external        = "https://prowlarr.local.chkpwd.com"
     mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
@@ -74,7 +74,7 @@ module "authentik-app-sabnzbd" {
 
   proxy_values = {
     internal        = ""
-    external        = "https://sabnzbd.k8s.chkpwd.com"
+    external        = "https://sabnzbd.local.chkpwd.com"
     mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
@@ -135,7 +135,7 @@ module "authentik-app-jellyfin" {
 
   proxy_values = {
     internal = ""
-    external = "https://jellyfin.k8s.chkpwd.com"
+    external = "https://jellyfin.local.chkpwd.com"
     mode     = "forward_single"
   }
 
@@ -154,7 +154,7 @@ module "authentik-app-bazarr" {
 
   proxy_values = {
     internal        = ""
-    external        = "https://bazarr.k8s.chkpwd.com"
+    external        = "https://bazarr.local.chkpwd.com"
     mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
@@ -177,7 +177,7 @@ module "authentik-app-qbittorrent" {
 
   proxy_values = {
     internal        = ""
-    external        = "https://qbittorrent.k8s.chkpwd.com"
+    external        = "https://qbittorrent.local.chkpwd.com"
     mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
