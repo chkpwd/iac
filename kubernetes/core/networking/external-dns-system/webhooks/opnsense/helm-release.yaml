@@ -30,6 +30,16 @@ spec:
 
     logLevel: debug
 
+    podSecurityContext:
+      fsGroup: 65534
+
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop: ["ALL"]
+
     provider:
       name: webhook
 
@@ -70,7 +80,10 @@ spec:
           timeoutSeconds: 5
 
     extraArgs:
+      - --events
+      - --ingress-class=int-ingress
       - --ignore-ingress-tls-spec
+      - --annotation-filter=external-dns.alpha.kubernetes.io/exclude notin (true)
 
     policy: sync
 
@@ -79,3 +92,10 @@ spec:
     registry: noop
 
     domainFilters: ["local.chkpwd.com"]
+
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100Mi
+      limits:
+        memory: 250Mi
