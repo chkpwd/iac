@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: kairos-config
+        name: Copy Kairos config
+        entry: .pre-commit/move_kairos_config.py
+        language: python
+        files: roles/kairos/templates/cloud-config.yaml.j2
