@@ -2,7 +2,7 @@ resource "grafana_data_source" "rpi-prometheus" {
   type                = "prometheus"
   name                = "mgmt-srv-01-prometheus"
   uid                 = "mgmt-srv-01-prometheus"
-  url                 = "https://rpi-prometheus.k8s.chkpwd.com"
+  url                 = "https://rpi-prometheus.local.chkpwd.com"
   is_default          = true
   basic_auth_enabled  = true
   basic_auth_username = "chkpwd"
@@ -21,11 +21,11 @@ resource "grafana_data_source" "rpi-prometheus" {
   })
 }
 
-resource "grafana_data_source" "k8s-prometheus" {
-  type                = "prometheus"
-  name                = "kairos-k3s-prometheus"
-  uid                 = "kairos-k3s-prometheus"
-  url                 = "https://k8s-prometheus.k8s.chkpwd.com"
+resource "grafana_data_source" "local-prometheus" {
+  type = "prometheus"
+  name = "kairos-k3s-prometheus"
+  uid  = "kairos-k3s-prometheus"
+  url  = "https://k8s-prometheus.local.chkpwd.com"
 
   json_data_encoded = jsonencode({
     prometheusType    = "Prometheus"
