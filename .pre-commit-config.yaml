@@ -1,3 +1,4 @@
+---
 repos:
   - repo: local
     hooks:
@@ -5,4 +6,4 @@ repos:
         name: Copy Kairos config
         entry: .pre-commit/move_kairos_config.py
         language: python
-        files: roles/kairos/templates/cloud-config.yaml.j2
+        files: ansible/roles/kairos/templates/cloud-config.yaml.j2
