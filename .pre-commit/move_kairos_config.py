@@ -1,13 +1,16 @@
+#!/usr/bin/env python3
+
 """Move kairos files to another directory"""
 
-import os
 import shutil
+from pathlib import Path
 
-HOME_DIR = os.getenv("HOME")
+if __name__ == "__main__":
+    src_file = Path.home().joinpath(
+        "code", "iac", "ansible", "roles", "kairos", "templates", "cloud-config.yaml.j2"
+    )
+    dest_file = Path.home().joinpath(
+        "code", "kairos", "multi-node-k3s", "cloud-config.example.yaml"
+    )
 
-
-def move_kairos_config():
-    """Move kairos cloud-config.yaml.j2 to kairos/multi-node-k3s"""
-    src = "../roles/kairos/templates/cloud-config.yaml.j2"
-    dest = f"{HOME_DIR}/kairos/multi-node-k3s/cloud-config.yaml.j2"
-    shutil.move(src, dest)
+    shutil.copy(src_file, dest_file)
