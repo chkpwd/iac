@@ -78,8 +78,8 @@ spec:
 
             env:
               TZ: "${TZ}"
-              ADVERTISE_IP: &plex_lb "${PLEX_LB_ADDRESS}"
-              ALLOWED_NETWORKS: "172.16.0.0/12"
+              PLEX_ADVERTISE_URL: &plex_lb "${PLEX_LB_ADDRESS}"
+              PLEX_NO_AUTH_NETWORKS: "172.16.16.0/24"
               PLEX_CLAIM:
                 valueFrom:
                   secretKeyRef:
