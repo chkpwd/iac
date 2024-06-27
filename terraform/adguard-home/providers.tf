@@ -1,18 +1,14 @@
 terraform {
   required_providers {
     adguard = {
-      source = "gmichels/adguard"
+      source  = "gmichels/adguard"
       version = "1.3.0"
-    }
-    sops = {
-      source = "carlpett/sops"
-      version = "1.0.0"
     }
   }
 }
 
 data "external" "bws_lookup" {
-  program = ["python3","../bws_lookup.py"]
+  program = ["python3", "../bws_lookup.py"]
   query = {
     key = "infra-adguard-home"
   }

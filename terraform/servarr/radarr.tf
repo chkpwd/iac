@@ -1,12 +1,12 @@
 resource "radarr_download_client_sabnzbd" "sabnzbd" {
-  enable            = true
-  priority          = 1
-  name              = "sabnzbd"
-  host              = "sabnzbd.${var.cluster_media_domain}"
-  url_base          = "/"
-  port              = var.ports["sabnzbd"]
-  movie_category    = "movies"
-  api_key           = "${data.sops_file.servarr-secrets.data["sabnzbd_api_key"]}"
+  enable         = true
+  priority       = 1
+  name           = "sabnzbd"
+  host           = "sabnzbd.${var.cluster_media_domain}"
+  url_base       = "/"
+  port           = var.ports["sabnzbd"]
+  movie_category = "movies"
+  api_key        = data.external.bws_lookup.result["infra-media-secrets_sabnzbd_api_key"]
 }
 
 resource "radarr_download_client_qbittorrent" "qbittorrent" {
@@ -21,13 +21,13 @@ resource "radarr_download_client_qbittorrent" "qbittorrent" {
 }
 
 resource "radarr_naming" "media_naming_configs" {
-  include_quality            = false
+  #include_quality            = false
   rename_movies              = true
   replace_illegal_characters = true
-  replace_spaces             = false
-  colon_replacement_format   = "dash"
-  standard_movie_format      = "{Movie OriginalTitle} ({Release Year}) [{Quality Title} {MediaInfo VideoBitDepth}bit {MediaInfo VideoCodec} {MediaInfo VideoDynamicRangeType} {MediaInfo AudioLanguages} {MediaInfo AudioCodec} {MediaInfo AudioChannels} -{Release Group}]{imdb-{ImdbId}}{tmdb-{TmdbId}}{edition-{Edition Tags}}"
-  movie_folder_format        = "{Movie Title} ({Release Year}) [imdbid-{ImdbId}]"
+  #replace_spaces             = false
+  colon_replacement_format = "dash"
+  standard_movie_format    = "{Movie OriginalTitle} ({Release Year}) [{Quality Title} {MediaInfo VideoBitDepth}bit {MediaInfo VideoCodec} {MediaInfo VideoDynamicRangeType} {MediaInfo AudioLanguages} {MediaInfo AudioCodec} {MediaInfo AudioChannels} -{Release Group}]{imdb-{ImdbId}}{tmdb-{TmdbId}}{edition-{Edition Tags}}"
+  movie_folder_format      = "{Movie Title} ({Release Year}) [imdbid-{ImdbId}]"
 }
 
 resource "radarr_media_management" "media_settings_configs" {
@@ -56,6 +56,10 @@ resource "radarr_root_folder" "anime" {
   path = "/data/films/anime_movies"
 }
 
-resource "radarr_root_folder" "standard" {
-  path = "/data/films/standard_movies"
+resource "radarr_root_folder" "standard_1080p" {
+  path = "/data/films/standard_movies/1080p"
+}
+
+resource "radarr_root_folder" "standard_4k" {
+  path = "/data/films/standard_movies/4k"
 }

@@ -9,7 +9,7 @@ data "unifi_network" "lan" {
 
 resource "unifi_wlan" "lan" {
   name       = "Eiha"
-  passphrase = data.sops_file.unifi-secrets.data["unifi_wlan_lan_pwd"]
+  passphrase = data.external.bws_lookup.result["infra-network-secrets_unifi_wlan_lan_pwd"]
   security   = "wpapsk"
 
   # enable WPA2/WPA3 support
@@ -24,7 +24,7 @@ resource "unifi_wlan" "lan" {
 
 resource "unifi_wlan" "iot" {
   name       = "IoT-Eiha"
-  passphrase = data.sops_file.unifi-secrets.data["unifi_wlan_iot_pwd"]
+  passphrase = data.external.bws_lookup.result["infra-network-secrets_unifi_wlan_iot_pwd"]
   security   = "wpapsk"
 
   # enable WPA2/WPA3 support
@@ -39,7 +39,7 @@ resource "unifi_wlan" "iot" {
 
 resource "unifi_wlan" "lab" {
   name       = "Lab-Eiha"
-  passphrase = data.sops_file.unifi-secrets.data["unifi_wlan_lab_pwd"]
+  passphrase = data.external.bws_lookup.result["infra-network-secrets_unifi_wlan_lab_pwd"]
   security   = "wpapsk"
 
   # enable WPA2/WPA3 support
@@ -47,8 +47,8 @@ resource "unifi_wlan" "lab" {
   wpa3_transition = true
   pmf_mode        = "optional"
 
-  network_id    = unifi_network.lab.id
-  ap_group_ids  = [data.unifi_ap_group.main.id]
+  network_id   = unifi_network.lab.id
+  ap_group_ids = [data.unifi_ap_group.main.id]
 
   user_group_id = data.unifi_user_group.main.id
 }

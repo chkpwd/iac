@@ -17,7 +17,7 @@ resource "grafana_data_source" "rpi-prometheus" {
   })
 
   secure_json_data_encoded = jsonencode({
-    basicAuthPassword = data.sops_file.grafana-secrets.data["rpi_prometheus_password"]
+    basicAuthPassword = data.external.bws_lookup.result["infra-monitoring-secrets_rpi_prometheus_password"]
   })
 }
 

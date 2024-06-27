@@ -5,7 +5,7 @@ resource "sonarr_download_client_sabnzbd" "sabnzbd" {
   host     = "sabnzbd.${var.cluster_media_domain}"
   url_base = "/"
   port     = var.ports["sabnzbd"]
-  api_key  = "${data.sops_file.servarr-secrets.data["sabnzbd_api_key"]}"
+  api_key  = data.external.bws_lookup.result["infra-media-secrets_sabnzbd_api_key"]
 }
 
 resource "sonarr_download_client_qbittorrent" "qbittorrent" {

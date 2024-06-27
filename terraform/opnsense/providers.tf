@@ -4,19 +4,19 @@ terraform {
       source  = "browningluke/opnsense"
       version = "0.10.1"
     }
-    sops = {
-      source  = "carlpett/sops"
-      version = "1.0.0"
-    }
   }
 }
 
-data "sops_file" "opnsense-secrets" {
-  source_file = "../terraform.sops.yaml"
+data "external" "bws_lookup" {
+  program = ["python3", "../bws_lookup.py"]
+  query = {
+    key = "infra-network-secrets"
+  }
 }
 
 provider "opnsense" {
-  uri        = data.sops_file.opnsense-secrets.data["opnsense_uri"]
-  api_key    = data.sops_file.opnsense-secrets.data["opnsense_api_key"]
-  api_secret = data.sops_file.opnsense-secrets.data["opnsense_api_secret"]
+  uri        = data.external.bws_lookup.result["infra-network-secrets_opnsense_uri"]
+  api_key    = data.external.bws_lookup.result["infra-network-secrets_opnsense_api_key"]
+  api_secret = data.external.bws_lookup.result["infra-network-secrets_opnsense_api_secret"]
 }
+

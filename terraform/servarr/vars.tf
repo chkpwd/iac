@@ -1,12 +1,12 @@
-variable local_domain {
-  type = string
-  default = "k8s.chkpwd.com"
+variable "local_domain" {
+  type        = string
+  default     = "local.chkpwd.com"
   description = "Proxy Address"
 }
 
-variable cluster_media_domain {
-  type = string
-  default = "media.svc.cluster.local"
+variable "cluster_media_domain" {
+  type        = string
+  default     = "media.svc.cluster.local"
   description = "Cluster Media Namespace Domain"
 }
 

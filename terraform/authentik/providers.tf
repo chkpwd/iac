@@ -4,22 +4,14 @@ terraform {
       source  = "goauthentik/authentik"
       version = "2024.4.2"
     }
-    sops = {
-      source  = "carlpett/sops"
-      version = "1.0.0"
-    }
   }
 }
 
 data "external" "bws_lookup" {
   program = ["python3", "../bws_lookup.py"]
   query = {
-    key = "ns-security-authentik,ns-tools-miniflux"
+    key = "ns-security-authentik,ns-tools-miniflux,infra-media-secrets"
   }
-}
-
-data "sops_file" "authentik-secrets" {
-  source_file = "../terraform.sops.yaml"
 }
 
 provider "authentik" {

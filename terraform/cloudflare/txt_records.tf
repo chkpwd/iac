@@ -2,7 +2,7 @@ resource "cloudflare_record" "github_txt" {
   name    = "_github-challenge-chkpwd-org.chkpwd.com"
   ttl     = 1
   type    = "TXT"
-  value   = data.sops_file.cloudflare-secrets.data["git_txt_record_value"]
+  value   = data.external.bws_lookup.result["cloud-github-secrets_git_txt_record"]
   zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
 }
 
