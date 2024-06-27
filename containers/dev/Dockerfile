@@ -192,7 +192,7 @@ RUN \
     bash -c "rm -rf /tmp/*"
 
 # Copy Commands for Various Tools
-COPY --from=docker.io/istio/istioctl:1.22.1 /usr/local/bin/istioctl /usr/bin/istioctl
+COPY --from=docker.io/istio/istioctl:1.22.2 /usr/local/bin/istioctl /usr/bin/istioctl
 COPY --from=docker.io/fluxcd/flux-cli:v2.3.0 /usr/local/bin/flux /usr/bin/flux
 COPY --from=docker.io/klakegg/hugo:0.111.3-ext-ubuntu /usr/lib/hugo/hugo /usr/bin/hugo
 COPY --from=gcr.io/kaniko-project/executor:v1.23.1 /kaniko/executor /usr/bin/kaniko
