@@ -58,9 +58,6 @@ spec:
             external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
           hosts:
             - &host "hubble.${LOCAL_DOMAIN}"
-          tls:
-            - hosts:
-                - *host
     ipam:
       mode: kubernetes
     ipv4NativeRoutingCIDR: 172.23.0.0/16

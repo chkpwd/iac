@@ -160,10 +160,6 @@ spec:
         hosts: [&prometheus-host "k8s-{{ .Release.Name }}.${LOCAL_DOMAIN}"]
         path: /
         pathType: Prefix
-        tls:
-          - hosts:
-              - *prometheus-host
-            secretName: prometheus-tls
       prometheusSpec:
         replicas: 1
         replicaExternalLabelName: "replica"
