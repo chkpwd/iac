@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 3.2.1
+      version: 3.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -47,7 +47,7 @@ spec:
           app:
             image:
               repository: ghcr.io/jorenn92/maintainerr
-              tag: 2.0.4
+              tag: 2.0.3
               pullPolicy: IfNotPresent
 
             securityContext:
