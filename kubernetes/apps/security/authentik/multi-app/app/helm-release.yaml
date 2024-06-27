@@ -109,6 +109,9 @@ spec:
           - &host "authentik.${EXTERNAL_DOMAIN}"
         paths: ["/"]
         pathType: Prefix
+        tls:
+          - hosts:
+              - *host
 
       metrics:
         serviceMonitor:
