@@ -212,6 +212,25 @@ module "authentik-app-runwhen-local" {
   access_group = [authentik_group.main.id]
 }
 
+module "authentik-app-maintainerr" {
+  source = "../_modules/authentik/proxy_app"
+  name   = "Maintainerr"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://maintainerr.local.chkpwd.com"
+    mode     = "forward_single"
+  }
+
+  app_values = {
+    meta_description = "Media Cleanup Tool"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/maintainerr.png"
+  }
+
+  access_group = [authentik_group.main.id]
+}
+
 module "authentik-app-stirling-pdf" {
   source = "../_modules/authentik/proxy_app"
   name   = "Stirling PDF"
