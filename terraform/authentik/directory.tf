@@ -1,3 +1,9 @@
+resource "random_password" "temp_password" {
+  length           = 32
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
 resource "authentik_user" "main" {
   username = "chkpwd"
   name     = "Default User"
@@ -10,6 +16,12 @@ resource "authentik_user" "secondary" {
   password = data.external.bws_lookup.result["ns-security-authentik_secondary_user_password"]
 }
 
+resource "authentik_user" "temp_user" {
+  username = "temp"
+  name     = "Temporary User"
+  password = random_password.temp_password.result
+}
+
 resource "authentik_group" "main" {
   name         = "main"
   users        = [authentik_user.main.id]
@@ -18,7 +30,7 @@ resource "authentik_group" "main" {
 
 resource "authentik_group" "secondary" {
   name         = "secondary"
-  users        = [authentik_user.secondary.id]
+  users        = [authentik_user.temp_user.id, authentik_user.secondary.id]
   is_superuser = false
 }
 
