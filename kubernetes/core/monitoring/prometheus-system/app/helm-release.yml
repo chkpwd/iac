@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+#.yml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -26,7 +26,7 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: flux-metrics
-      valuesKey: flux-metrics.yaml
+      valuesKey: flux-metrics.yml
 
   values:
     crds:
