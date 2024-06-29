@@ -38,14 +38,14 @@ stages:
 
     - name: "Add Cilium Helm Chart to K3S AddOns Directory"
       downloads:
-        - url: https://raw.githubusercontent.com/chkpwd/kairos/main/multi-node-k3s/manifests/kubevip-values.yaml
-          path: /var/lib/rancher/k3s/server/manifests/kubevip.yaml
-        - url: https://raw.githubusercontent.com/chkpwd/kairos/main/multi-node-k3s/manifests/cilium-values.yaml
-          path: /var/lib/rancher/k3s/server/manifests/cilium.yaml
+        - url: https://raw.githubusercontent.com/chkpwd/kairos/main/multi-node-k3s/manifests/kubevip-values.yml
+          path: /var/lib/rancher/k3s/server/manifests/kubevip.yml
+        - url: https://raw.githubusercontent.com/chkpwd/kairos/main/multi-node-k3s/manifests/cilium-values.yml
+          path: /var/lib/rancher/k3s/server/manifests/cilium.yml
 
     - name: "Determine Bootstrap Node"
       files:
-        - path: /oem/60_k3s_config.yaml
+        - path: /oem/60_k3s_config.yml
           permissions: 0666
           content: |
             #cloud-config
@@ -94,20 +94,20 @@ stages:
 
     - name: "Mount Longhorn filesystem"
       commands:
-        # -- https://github.com/kairos-io/packages/blob/3482fed51f21a2155b60a0aa9ac91b1d839d1029/packages/static/kairos-overlay-files/files/system/oem/00_rootfs_uki.yaml#L43
+        # -- https://github.com/kairos-io/packages/blob/3482fed51f21a2155b60a0aa9ac91b1d839d1029/packages/static/kairos-overlay-files/files/system/oem/00_rootfs_uki.yml#L43
         - umount /var/lib/longhorn
         - mount -o rw /dev/nvme0n1p1 /var/lib/longhorn
 
   boot:
     - name: "Define Environment Variables"
       environment:
-        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+        KUBECONFIG: /etc/rancher/k3s/k3s.yml
         CONTAINERD_ADDRESS: /run/k3s/containerd/containerd.sock
         CONTAINERD_NAMESPACE: k8s.io
 
     - name: "Add flux-system namespace manifest"
       files:
-        - path: /var/lib/rancher/k3s/server/manifests/flux-system.yaml
+        - path: /var/lib/rancher/k3s/server/manifests/flux-system.yml
           content: |
             apiVersion: v1
             kind: Namespace
@@ -116,7 +116,7 @@ stages:
 
     - name: "Add SOPS secret"
       files:
-        - path: /var/lib/rancher/k3s/server/manifests/sops-secret.yaml
+        - path: /var/lib/rancher/k3s/server/manifests/sops-secret.yml
           content: |
             apiVersion: v1
             kind: Secret

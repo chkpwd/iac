@@ -50,10 +50,10 @@
 
 
 - name: Apply user configurations for {{ common_user }}
-  ansible.builtin.include_tasks: user.yaml
+  ansible.builtin.include_tasks: user.yml
 
 - name: Apply secondary disk partitioning
-  ansible.builtin.include_tasks: disk.yaml
+  ansible.builtin.include_tasks: disk.yml
   when: ansible_facts['devices'] | dict2items | selectattr('key', 'contains', 'sd') | length > 1
 
 - name: Copy the public SSH key

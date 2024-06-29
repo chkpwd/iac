@@ -11,10 +11,10 @@ kube_vip_namespace: "kube-system"
 
 k3s_server_manifests_urls:
   # Kube-vip RBAC
-  - url: https://raw.githubusercontent.com/kube-vip/kube-vip/main/docs/manifests/rbac.yaml
-    filename: custom-kube-vip-rbac.yaml
+  - url: https://raw.githubusercontent.com/kube-vip/kube-vip/main/docs/manifests/rbac.yml
+    filename: custom-kube-vip-rbac.yml
 k3s_server_pod_manifests_templates:
-  - kube-vip-static-pod.yaml.j2
+  - kube-vip-static-pod.yml.j2
 
 k3s_registration_address: "{{ kube_vip_address }}"
 

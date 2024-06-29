@@ -1,6 +1,6 @@
 ---
 - name: Preconfigure HAOS
-  ansible.builtin.include_tasks: preconfigure-haos.yaml
+  ansible.builtin.include_tasks: preconfigure-haos.yml
 
 - name: Get HAOS pkgs
   delegate_to: localhost

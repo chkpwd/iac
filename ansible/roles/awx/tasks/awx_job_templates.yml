@@ -5,7 +5,7 @@
     organization: "{{ awx_org }}"
     inventory: "static_inventory"
     project: "Git"
-    playbook: "ansible/playbooks/get_macaddress.yaml"
+    playbook: "ansible/playbooks/get_macaddress.yml"
     limit: "linux"
     diff_mode: true
     credentials:
@@ -20,7 +20,7 @@
     organization: "{{ awx_org }}"
     inventory: "static_inventory"
     project: "Git"
-    playbook: "ansible/playbooks/dynamic_task_call.yaml"
+    playbook: "ansible/playbooks/dynamic_task_call.yml"
     limit: "linux"
     diff_mode: true
     extra_vars:

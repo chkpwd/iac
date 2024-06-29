@@ -7,7 +7,7 @@
   become: true
 
 - name: Install plugins
-  ansible.builtin.import_tasks: install_plugins.yaml
+  ansible.builtin.import_tasks: install_plugins.yml
 
 - name: Enable the Cockpit service
   ansible.builtin.service:

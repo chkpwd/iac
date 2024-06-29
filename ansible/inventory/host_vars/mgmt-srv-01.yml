@@ -12,8 +12,8 @@ service_definitions:
       - --storage.tsdb.retention.time=14d
       - --storage.tsdb.retention.size=5GB
     volumes:
-      - "{{ configuration_path }}/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml:ro"
-      - "{{ configuration_path }}/prometheus/web.yaml:/etc/prometheus/web.yml:ro"
+      - "{{ configuration_path }}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+      - "{{ configuration_path }}/prometheus/web.yml:/etc/prometheus/web.yml:ro"
       - "{{ configuration_path }}/prometheus/data:/prometheus/data"
     ports: [9090:9090]
 
@@ -31,7 +31,7 @@ service_definitions:
 
   - name: auroraboot
     image: quay.io/kairos/auroraboot:latest
-    command: --cloud-config /files/cloud-config.yaml /files/auroraboot-config.yaml
+    command: --cloud-config /files/cloud-config.yml /files/auroraboot-config.yml
     volumes:
       - "{{ configuration_path }}/auroraboot/files:/files"
       - "{{ configuration_path }}/auroraboot/tmp:/tmp"

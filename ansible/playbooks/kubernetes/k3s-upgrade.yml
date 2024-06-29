@@ -19,6 +19,6 @@
         - k3s_control_node is defined
         - k3s_control_node
       ansible.builtin.template:
-        src: templates/kube-vip-static-pod.yaml.j2
-        dest: "{{ k3s_server_pod_manifests_dir }}/kube-vip-static-pod.yaml"
+        src: templates/kube-vip-static-pod.yml.j2
+        dest: "{{ k3s_server_pod_manifests_dir }}/kube-vip-static-pod.yml"
         mode: preserve

@@ -8,7 +8,7 @@
 
 - name: AWX | Credentials
   ansible.builtin.include_tasks:
-    file: awx_credentials.yaml
+    file: awx_credentials.yml
 
 - name: Add Git repository as Project
   awx.awx.project:
@@ -23,19 +23,19 @@
 
 - name: AWX | Inventory
   ansible.builtin.include_tasks:
-    file: awx_inventory.yaml
+    file: awx_inventory.yml
 
 - name: AWX | Inventory Sources
   ansible.builtin.include_tasks:
-    file: awx_inventory_sources.yaml
+    file: awx_inventory_sources.yml
 
 - name: AWX | EE
   ansible.builtin.include_tasks:
-    file: awx_ee.yaml
+    file: awx_ee.yml
 
 - name: AWX | Job Templates
   ansible.builtin.include_tasks:
-    file: awx_job_templates.yaml
+    file: awx_job_templates.yml
 
 - name: Add Discord Notification
   awx.awx.notification_template:
