@@ -1,0 +1,7 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - intel-device-plugin-system/ks.yml
+  - node-feature-discovery-system/ks.yml
+  - system-upgrade-system/ks.yml

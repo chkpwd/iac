@@ -1,0 +1,96 @@
+---
+#.yml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.1.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app ytdl-sub
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.2.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    global:
+      fullnameOverride: *app
+    controllers:
+      ytdl-sub:
+        enabled: true
+        type: cronjob
+        annotations:
+          reloader.stakater.com/auto: "true"
+        cronjob:
+          concurrencyPolicy: Forbid
+          schedule: "0 0 * * *"
+          ttlSecondsAfterFinished: 86400
+          startingDeadlineSeconds: 30
+          successfulJobsHistory: 1
+          failedJobsHistory: 1
+          backoffLimit: 6
+        pod:
+          securityContext:
+            runAsUser: &user 1026
+            runAsGroup: &group 100
+            fsGroup: *group
+            fsGroupChangePolicy: "OnRootMismatch"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/jmbannon/ytdl-sub
+              tag: 2023.10.25.post3
+              pullPolicy: IfNotPresent
+            command:
+              - bash
+              - -c
+              - |
+                set -e
+                ytdl-sub --log-level=debug \
+                        --config=/config/config.yml \
+                        sub /config/subscriptions.yml
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+            env:
+              TZ: "${TZ}"
+              PUID: *user
+              PGID: *group
+              MEDIA_FOLDER: /media/youtube
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                memory: 2000Mi
+    persistence:
+      config:
+        name: "{{ .Release.Name }}-config"
+        type: configMap
+        defaultMode: 0755
+        globalMounts:
+          - path: /config
+            readOnly: true
+      media:
+        type: nfs
+        server: "nas-srv-01.${LOCAL_DOMAIN}"
+        path: /volume1/vault-01/media/youtube
+        advancedMounts:
+          ytdl-sub:
+            ytdl-sub:
+              - path: /media/youtube
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp/ytdl-sub
