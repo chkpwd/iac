@@ -15,25 +15,21 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     global:
       fullnameOverride: *app
-
     controllers:
       recyclarr:
         enabled: true
         type: cronjob
         annotations:
           reloader.stakater.com/auto: "true"
-
         cronjob:
           concurrencyPolicy: Forbid
           schedule: "0 2 * * 1"
@@ -41,23 +37,19 @@ spec:
           successfulJobsHistory: 1
           failedJobsHistory: 1
           backoffLimit: 1
-
         pod:
           securityContext:
             runAsUser: &context 1999
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
-
         containers:
           app:
             image:
               repository: ghcr.io/recyclarr/recyclarr
               tag: 6.0.2
-
             command: ["/app/recyclarr/recyclarr"]
             args: ["sync"]
-
             env:
               TZ: ${TZ}
               API_KEY_SONARR:
@@ -70,20 +62,17 @@ spec:
                   secretKeyRef:
                     name: media-secrets
                     key: API_KEY_RADARR
-
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
                 drop:
                   - ALL
-
             resources:
               requests:
                 cpu: 5m
                 memory: 36Mi
               limits:
                 memory: 200Mi
-
     persistence:
       config-file:
         type: configMap
