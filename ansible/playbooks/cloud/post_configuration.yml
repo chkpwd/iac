@@ -39,7 +39,7 @@
           api_username: uptime
           api_password: "{{ UPTIME_KUMA_PASSWORD }}"
         lucasheld.uptime_kuma.login:
-          <<: *uptimekuma_passwd_defaults
+          !!merge <<: *uptimekuma_passwd_defaults
           api_2fa: "{{ two_factor_token }}"
       block:
         - name: Set credentials
@@ -101,12 +101,14 @@
           lucasheld.uptime_kuma.status_page:
             slug: "{{ item.slug }}"
             title: "{{ item.title }}"
+            theme: "{{ item.theme | default('auto') }}"
             description: "{{ item.description | default(omit) }}"
             publicGroupList: "{{ item.publicGroupList | default(omit) }}"
             showPoweredBy: "{{ item.showPoweredBy | default(false) }}"
             published: "{{ item.published | default(true) }}"
             icon: "{{ item.icon | default(omit) }}"
             state: "{{ item.state | default('present') }}"
+            customCSS: "{{ lookup('ansible.builtin.url', item.custom_css_url, split_lines=False) | default(omit) }}"
           loop: "{{ uptime_kuma_status_pages }}"
           loop_control:
             label: "{{ item.title }}"

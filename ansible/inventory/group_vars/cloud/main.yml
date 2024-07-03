@@ -1,3 +1,4 @@
+---
 sites:
   - url: uptime.{{ remote_domain }}
     name: wireguard
@@ -6,86 +7,62 @@ sites:
 remote_domain: chkpwd.com
 
 uptime_kuma_monitors:
-  # Groups
-  - name: &services_group Services Ping
-    type: group
+  network_devices:
+    - name: OPNsense
+      type: ping
+      url:
+    - name: Switch
+      type: ping
+      url: 172.16.16.2
+    - name: Unifi AP
+      type: ping
+      url: 172.16.16.9
 
-  # Services
-  - name: OPNsense
-    type: ping
-    url: 172.16.16.1
-    parent: *services_group
+  infrastructure:
+    - name: PVE-SRV-01
+      type: ping
+      url:
+    - name: MGMT-SRV-01
+      type: ping
+      url: 172.16.16.4
+    - name: NAS
+      type: ping
+      url: 172.16.16.5
 
-  - name: Switch
-    type: ping
-    url: 172.16.16.2
-    parent: *services_group
+    - name: Home Assistant
+      type: ping
+      url: 172.16.16.8
 
-  - name: PVE-SRV-01
-    type: ping
-    url: 172.16.16.3
-    parent: *services_group
+  kubernetes:
+    - name: Kubernetes Node 1
+      type: ping
+      url: 172.16.16.10
 
-  - name: MGMT-SRV-01
-    type: ping
-    url: 172.16.16.4
-    parent: *services_group
+    - name: Kubernetes Node 2
+      type: ping
+      url: 172.16.16.11
 
-  - name: Unifi AP
-    type: ping
-    url: 172.16.16.9
-    parent: *services_group
+    - name: Kubernetes Node 3
+      type: ping
+      url: 172.16.16.12
 
-  - name: Kubernetes Node 1
-    type: ping
-    url: 172.16.16.10
-    parent: *services_group
-
-  - name: Kubernetes Node 2
-    type: ping
-    url: 172.16.16.11
-    parent: *services_group
-
-  - name: Kubernetes Node 3
-    type: ping
-    url: 172.16.16.12
-    parent: *services_group
-
-  - name: Kube-VIP LoadBalancer
-    type: ping
-    url: 172.16.16.13
-    parent: *services_group
-
-  - name: NAS
-    type: ping
-    url: 172.16.16.5
-    parent: *services_group
-
-  - name: Home Assistant
-    type: ping
-    url: 172.16.16.8
-    parent: *services_group
-
-  # Sites
-  - name: WinXuu
-    type: ping
-    url: winxuu.chkpwd.com
-
-  - name: Tig's Blog
-    type: ping
-    url: blog.tiga.tech
+    - name: Kube-VIP LoadBalancer
+      type: ping
+      url: 172.16.16.13
 
 uptime_kuma_status_pages:
   - title: "Chkpwd's Monitoring"
     description: "Hosted Services"
     slug: default
+    theme: dark
+    custom_css_url: 'https://gist.githubusercontent.com/chkpwd/5cce63dc617d9ee2a17249e8f711eb02/raw/1048d10e0de8d1bb039d79387d09fc3f32fe97f4/uptime-kuma.css'
     publicGroupList:
-      - name: Hosted Services Monitoring
+      - name: Infrastructure Devices
         weight: 1
-        monitorList:
-          - name: *services_group
-      - name: Site Monitoring
+        monitorList: "{{ uptime_kuma_monitors.infrastructure | ansible.utils.keep_keys(target=['name']) }}"
+      - name: Network Devices
         weight: 2
-        monitorList:
-          - name: WinXuu
-          - name: Tig's Blog
+        monitorList: "{{ uptime_kuma_monitors.network_devices | ansible.utils.keep_keys(target=['name']) }}"
+      - name: Kubernetes
+        weight: 3
+        monitorList: "{{ uptime_kuma_monitors.kubernetes | ansible.utils.keep_keys(target=['name']) }}"
