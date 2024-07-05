@@ -56,8 +56,25 @@ spec:
         Size: "1Gi"
       storageClassName: "longhorn-game-servers"
 
+    import_save:
+      enabled: true
+      source_url: "https://github.com/chkpwd/iac/raw/main/kubernetes/apps/game-servers/factorio/config/init.zip"
+      reimport_on_change: true
+      # reimport from the source_url AND OVERWRITE PREVIOUS SAVE every time pod is initialized. good for demos or testing
+      reimport_every_time: false
+
     mods:
-      enabled: false
+      enabled: true
+      portal:
+        - alien-biomes
+        - alien-biomes-hr-terrain
+        - flib
+        - factoryplanner
+        - far-reach
+        - fnei
+        - helfimalib
+        - resources-scanner
+        - squeak-through-2
 
     factorioServer:
       save_name: "chkpwd_factorio"
