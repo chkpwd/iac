@@ -24,6 +24,8 @@ spec:
       retries: 3
 
   values:
+    fullnameOverride: *app
+
     replicaCount: 1
 
     image:
@@ -71,7 +73,7 @@ spec:
 
     server_settings:
       name: chkpwd_factorio.txt
-      description: "Factorio running on kube4wetties "
+      description: "Factorio running on kube4wetties"
       tags:
         - game
         - tags
@@ -92,10 +94,6 @@ spec:
       only_admins_can_pause_the_game: true
       autosave_only_on_server: true
       non_blocking_saving: true
-      minimum_segment_size: 25
-      minimum_segment_size_peer_count: 20
-      maximum_segment_size: 100
-      maximum_segment_size_peer_count: 10
 
     rcon:
       external: false
