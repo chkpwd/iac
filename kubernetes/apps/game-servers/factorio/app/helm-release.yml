@@ -57,11 +57,7 @@ spec:
       storageClassName: "longhorn-game-servers"
 
     import_save:
-      enabled: true
-      source_url: "https://github.com/chkpwd/iac/raw/main/kubernetes/apps/game-servers/factorio/config/init.zip"
-      reimport_on_change: true
-      # reimport from the source_url AND OVERWRITE PREVIOUS SAVE every time pod is initialized. good for demos or testing
-      reimport_every_time: false
+      enabled: false
 
     mods:
       enabled: true
@@ -76,9 +72,12 @@ spec:
         - resources-scanner
         - squeak-through-2
 
+    map_gen_settings:
+      seed: "377121039"
+
     factorioServer:
-      save_name: "chkpwd_factorio"
-      generate_new_save: true
+      save_name: "default"
+      generate_new_save: false
       update_mods_on_start: false
       load_latest_save: true
 
@@ -96,7 +95,7 @@ spec:
         - tags
       max_players: 5
       visibility:
-        public: true
+        public: false
         lan: true
       require_user_verification: true
       max_upload_in_kilobytes_per_second: 0
@@ -119,5 +118,3 @@ spec:
       - "chkpwd"
       - "ripplefcl"
 
-    white_list: []
-    ban_list: []
