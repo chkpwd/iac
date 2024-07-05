@@ -11,6 +11,23 @@ spec:
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: game-servers-factorio-config
+  namespace: flux-system
+spec:
+  targetNamespace: game-servers
+  path: ./kubernetes/apps/game-servers/factorio/config
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
   wait: false
   interval: 30m
   retryInterval: 1m

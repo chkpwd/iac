@@ -40,9 +40,10 @@ spec:
 
     resources:
       requests:
-        memory: 512Mi
         cpu: 500m
-      limits: {}
+        memory: 512Mi
+      limits:
+        memory: 1Gi
 
     strategy:
       type: Recreate
@@ -63,8 +64,10 @@ spec:
       load_latest_save: true
 
     serverPassword:
-      game_password: 'testing'
-      # passwordSecret: ''
+      passwordSecret: "factorio-secret"
+
+    account:
+      accountSecret: "factorio-secret"
 
     server_settings:
       name: chkpwd_factorio.txt
@@ -74,9 +77,8 @@ spec:
         - tags
       max_players: 5
       visibility:
-        public: false
+        public: true
         lan: true
-
       require_user_verification: true
       max_upload_in_kilobytes_per_second: 0
       max_upload_slots: 5
