@@ -1,0 +1,106 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.1.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app factorio
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: factorio-server-charts
+      version: 1.2.5
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: factorio-server-charts
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    replicaCount: 1
+
+    image:
+      repository: "factoriotools/factorio"
+      pullPolicy: Always
+      tag: "1.1.109"
+
+    service:
+      type: LoadBalancer
+      port: 31497
+      externalTrafficPolicy: Cluster
+      annotations:
+        io.cilium/lb-ipam-ips: ${FACTORIO_LB_ADDRESS}
+
+    resources:
+      requests:
+        memory: 512Mi
+        cpu: 500m
+      limits: {}
+
+    strategy:
+      type: Recreate
+
+    persistence:
+      enabled: true
+      dataDir:
+        Size: "1Gi"
+      storageClassName: "longhorn-game-servers"
+
+    mods:
+      enabled: false
+
+    factorioServer:
+      save_name: "chkpwd_factorio"
+      generate_new_save: true
+      update_mods_on_start: false
+      load_latest_save: true
+
+    serverPassword:
+      game_password: 'testing'
+      # passwordSecret: ''
+
+    server_settings:
+      name: chkpwd_factorio.txt
+      description: "Factorio running on kube4wetties "
+      tags:
+        - game
+        - tags
+      max_players: 5
+      visibility:
+        public: false
+        lan: true
+
+      require_user_verification: true
+      max_upload_in_kilobytes_per_second: 0
+      max_upload_slots: 5
+      minimum_latency_in_ticks: 0
+      ignore_player_limit_for_returning_players: false
+      allow_commands: admins-only
+      autosave_interval: 10
+      autosave_slots: 5
+      afk_autokick_interval: 0
+      auto_pause: true
+      only_admins_can_pause_the_game: true
+      autosave_only_on_server: true
+      non_blocking_saving: true
+      minimum_segment_size: 25
+      minimum_segment_size_peer_count: 20
+      maximum_segment_size: 100
+      maximum_segment_size_peer_count: 10
+
+    rcon:
+      external: false
+
+    admin_list:
+      - "chkpwd"
+      - "ripplefcl"
+
+    white_list: []
+    ban_list: []
