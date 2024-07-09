@@ -4,5 +4,6 @@ timeout := "300s"
 default:
   just --list
 
-# Bootstrap flux
-bootstrap:
+# Get all pods in an errored state
+erroneous-pods:
+  kubectl get pods -A | grep -Ev 'Running|Completed'

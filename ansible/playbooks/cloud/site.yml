@@ -1,0 +1,17 @@
+---
+- name: Set up cloud instances
+  ansible.builtin.import_playbook: setup_instances.yml
+  tags: setup
+    
+- name: Preconfigure services
+  ansible.builtin.import_playbook: pre_configuration.yml
+  tags: pre_config
+
+- hosts: cloud
+  roles:
+    - { role: compose }
+  tags: containers
+
+- name: Postconfigure services
+  ansible.builtin.import_playbook: post_configuration.yml
+  tags: post_config

@@ -1,0 +1,17 @@
+- name: Install Cockpit
+  ansible.builtin.apt:
+    name: cockpit
+    state: "{{ cp_state }}"
+    install_recommends: false
+    update_cache: true
+  become: true
+
+- name: Install plugins
+  ansible.builtin.import_tasks: install_plugins.yml
+
+- name: Enable the Cockpit service
+  ansible.builtin.service:
+    name: "{{ cp_service }}"
+    state: started
+    enabled: true
+  become: true

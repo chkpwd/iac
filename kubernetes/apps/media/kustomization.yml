@@ -1,0 +1,18 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - sonarr/ks.yml
+  - maintainerr/ks.yml
+  - radarr/ks.yml
+  - overseerr/ks.yml
+  - bazarr/ks.yml
+  - recyclarr/ks.yml
+  - sabnzbd/ks.yml
+  - qbittorrent/ks.yml
+  - plex-auto-languages/ks.yml
+  - jellyfin/ks.yml
+  - plex/ks.yml
+  - prowlarr/ks.yml
+  - tautulli/ks.yml
+  - jellyplex/ks.yml

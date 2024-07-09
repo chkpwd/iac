@@ -1,0 +1,104 @@
+---
+- name: Pre-configure Nodes
+  ansible.builtin.include_tasks: preconfigure-nodes.yml
+
+- name: Check if cluster is installed
+  check_mode: false
+  ansible.builtin.stat:
+    path: /etc/rancher/k3s/config.yml
+  register: k3s_check_installed
+
+- name: Ignore manifests templates and urls if the cluster is already installed
+  when: k3s_check_installed.stat.exists
+  ansible.builtin.set_fact:
+    k3s_server_manifests_templates: []
+    k3s_server_manifests_urls: []
+
+- name: Install dependencies
+  ansible.builtin.apt:
+    update_cache: true
+    name: "{{ dependencies }}"
+    state: present
+
+- name: Enable iscsi modprobe module
+  community.general.modprobe:
+    name: iscsi_tcp
+    state: present
+
+- name: Build a cluster with HA control plane
+  include_role:
+    name: xanmanning.k3s
+  vars:
+    k3s_state: installed
+
+- name: Control remote_user escalation
+  vars: 
+    common_user_dir: "/home/{{ lookup('env', 'USER') }}"
+  block:
+    - name: Copy kubeconfig file
+      become: false
+      run_once: true
+      ansible.builtin.fetch:
+        src: "/etc/rancher/k3s/k3s.yml"
+        dest: "{{ common_user_dir }}/.kube/config"
+        flat: true
+      when:
+        - k3s_control_node | default(false)
+
+    - name: Update kubeconfig with the correct IPv4 address
+      delegate_to: localhost
+      become: false
+      run_once: true
+      ansible.builtin.replace:
+        path: "{{ common_user_dir }}/.kube/config"
+        regexp: "https://127.0.0.1:6443"
+        replace: "https://{{ kube_vip_address }}:6443"
+        owner: "ubuntu"
+        group: "ubuntu"
+        mode: "0600"
+
+    - name: Create Flux Namespace
+      delegate_to: localhost
+      run_once: true
+      kubernetes.core.k8s:
+        name: "{{ flux_namespace }}"
+        api_version: v1
+        kind: Namespace
+        state: present
+        kubeconfig: "{{ common_user_dir }}/.kube/config"
+      retries: 3
+
+    - name: Create SOPs secret
+      delegate_to: localhost
+      run_once: true
+      kubernetes.core.k8s:
+        state: present
+        template: templates/age.sops.yml.j2 
+        kubeconfig: "{{ common_user_dir }}/.kube/config"
+      become: false
+      retries: 3
+
+    # Generate all kustomize outputs
+    - name: Generate kustomize outputs
+      delegate_to: localhost
+      command:
+        cmd: "kubectl kustomize {{ role_path }}/files/{{ item }}"
+      register: kustomize_outputs
+      loop:
+        - crd
+        - bootstrap_flux
+        - apply_flux
+      changed_when: false
+
+    # Apply the kustomized manifests
+    - name: Apply kustomized manifests using server-side apply
+      delegate_to: localhost
+      become: false
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ item.stdout | from_yml_all }}"
+        apply: yes
+        kubeconfig: "{{ common_user_dir }}/.kube/config"
+        server_side_apply:
+          field_manager: ansible
+      loop: "{{ kustomize_outputs.results }}"

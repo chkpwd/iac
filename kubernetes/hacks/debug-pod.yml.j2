@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ pod_name }}
+  namespace: {{ namespace }}
+  labels:
+    app: {{ pod_name }}
+spec:
+  containers:
+    - image: {{ image }}
+      command:
+        - "sleep"
+        - "604800"
+      imagePullPolicy: IfNotPresent
+      name: {{ pod_name }}
+      volumeMounts:
+        - name: data
+          mountPath: /inside-container
+      resources: {}
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: {{ pvc-claim }}
+  restartPolicy: Always
+

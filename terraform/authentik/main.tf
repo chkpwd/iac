@@ -13,6 +13,7 @@ resource "authentik_outpost" "main" {
     module.authentik-app-jellyfin.provider_id,
     module.authentik-app-bazarr.provider_id,
     module.authentik-app-qbittorrent.provider_id,
+    module.authentik-app-maintainerr.provider_id,
   ]
   config = jsonencode({
     "log_level"                      = "info"
