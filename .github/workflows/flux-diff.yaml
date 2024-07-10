@@ -24,7 +24,7 @@ jobs:
         uses: fluxcd/flux2/action@v2.3.0
 
       - name: Diff Resources
-        uses: allenporter/flux-local/action/diff@5.3.1
+        uses: allenporter/flux-local/action/diff@5.4.0
         id: diff
         with:
           path: "${{ matrix.cluster_path }}/infra/flux"
