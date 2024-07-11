@@ -27,6 +27,9 @@ spec:
     global:
       fullnameOverride: *app
 
+    defaultPodOptions:
+      hostname: *app
+
     controllers:
       jellyplex:
         enabled: true
