@@ -2,10 +2,10 @@
 - name: Create a login user
   ansible.builtin.user:
     name: "{{ common_user }}"
-    password: "*"
+    password: $y$j9T$Xf74ndlfs.EWF2kvNVPTF/$i121vNYyGsSX9jpKXjzHboCS7aw1cx0gADi3z/YDAXD
     shell: /bin/bash
     groups: "sudo"
-    uid: 5000
+    uid: "{{ common_user_uid }}"
     comment: "Default Admin User"
     state: present
   become: true
@@ -20,11 +20,11 @@
     recurse: false
   become: true
 
-- name: Allow sudo group to have passwordless sudo
-  ansible.builtin.lineinfile:
-    path: /etc/sudoers
-    state: present
-    regexp: '^%sudo'
-    line: '%sudo ALL=(ALL) NOPASSWD: ALL'
-    validate: '/usr/sbin/visudo -cf %s'
-  become: true
+# - name: Allow sudo group to have passwordless sudo
+#   ansible.builtin.lineinfile:
+#     path: /etc/sudoers
+#     state: present
+#     regexp: '^%sudo'
+#     line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+#     validate: '/usr/sbin/visudo -cf %s'
+#   become: true

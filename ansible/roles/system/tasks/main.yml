@@ -1,3 +1,4 @@
+---
 - name: Install essential packages # noqa package-latest
   ansible.builtin.apt:
     name: "{{ packages }}"
@@ -36,13 +37,7 @@
 
 - name: Register logrotate service status
   set_fact:
-    logrotate_status: >-
-      {{ 
-        ansible_facts['services']['logrotate.service']
-        if 'logrotate.service' in ansible_facts['services']
-        else 'unknown'
-      }}
-
+    logrotate_status: "{{ \n  ansible_facts['services']['logrotate.service']\n  if 'logrotate.service' in ansible_facts['services']\n  else 'unknown'\n}}\n        #magic___^_^___line"
 - name: Check if logrotate service is failed
   ansible.builtin.debug:
     msg: "logrotate service has failed"
@@ -78,4 +73,5 @@
     name: administrator
     state: absent
     force: true
+  when: ansible_ssh_user == "administrator"
   become: true

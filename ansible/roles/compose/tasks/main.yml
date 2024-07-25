@@ -1,3 +1,4 @@
+---
 - name: Check if multiple disks
   ansible.builtin.stat:
     path: /mnt/data
@@ -68,3 +69,4 @@
   loop_control:
     label: "{{ item.name }}"
   register: deploy_containers
+  tags: deploy_containers
