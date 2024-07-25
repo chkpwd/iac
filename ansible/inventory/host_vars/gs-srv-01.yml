@@ -1,0 +1,12 @@
+common_user: chkpwd
+common_user_uid: 1000
+service_definitions:
+  - name: ark-server
+    image: ghcr.io/gameservermanagers/gameserver:ark
+    volumes:
+      - "{{ configuration_path }}/ark-server:/data"
+    ports:
+      - 27015:27015/udp
+      - 7777:7777/udp
+      - 7778:7778/udp
+      - 27020:27020/tcp

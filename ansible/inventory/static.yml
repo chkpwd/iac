@@ -31,6 +31,13 @@ all:
         haos-srv-01:
         ct-01-ec2:
         mgmt-srv-01:
+        gs-srv-01:
+
+    game_servers:
+      hosts:
+        gs-srv-01:
+      vars:
+        ansible_ssh_user: root
 
     k3s_cluster:
       children:
@@ -47,7 +54,7 @@ all:
 
     printers:
       hosts:
-        rampart:
+        print-srv-01:
       vars:
         ansible_user: pi
         ansible_become_user: pi
@@ -55,7 +62,7 @@ all:
     aws:
       hosts:
         ct-01-ec2:
-          ansible_host:	44.200.120.216
+          ansible_host: 44.200.120.216
 
     cloud:
       children:

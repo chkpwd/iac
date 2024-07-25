@@ -1,0 +1,6 @@
+---
+- name: Restart Ark Server Container
+  community.docker.docker_container:
+    name: ark-server
+    state: started
+    restart: true

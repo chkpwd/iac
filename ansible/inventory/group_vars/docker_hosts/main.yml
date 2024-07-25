@@ -1,12 +1,9 @@
 ---
-# System Configurations
-common_user: "chkpwd"
-
 # Docker Configurations
 docker_edition: 'ce'
 docker_package_state: latest
 docker_users: "{{ common_user }}"
-docker_services: 
+docker_services:
   - name: Docker Service
     value: docker.service
   - name: Docker Socket

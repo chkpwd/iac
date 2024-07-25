@@ -1,0 +1,88 @@
+##################################
+####### Instance Settings ########
+##################################
+# PLACE INSTANCE SETTINGS HERE
+## These settings will apply to a specific instance.
+#### Game Server Settings ####
+
+## Predefined Parameters | https://docs.linuxgsm.com/configuration/start-parameters
+ip="0.0.0.0"
+port="7777"
+queryport="27015"
+# Default Map: TheIsland, Ragnarok, CrystalIsles, Aberration_P, ScorchedEarth_P, TheCenter, Extinction, Valguero_P, Genesis, Gen2
+defaultmap="Fjordur"
+altsavedirectoryname="${defaultmap}"
+
+## Server Parameters | https://docs.linuxgsm.com/configuration/start-parameters#additional-parameters
+## Game Server Docs | https://ark.wiki.gg/wiki/Server_configuration
+startparameters="${defaultmap}?AltSaveDirectoryName=${altsavedirectoryname} -MultiHome=${ip} -Port=${port} -QueryPort=${queryport} -AutoManagedMods -Crossplay -PublicIPForEpic=${publicip}"
+
+#### LinuxGSM Settings ####
+
+## LinuxGSM Stats
+# Send useful stats to LinuxGSM developers.
+# https://docs.linuxgsm.com/configuration/linuxgsm-stats
+# (on|off)
+stats="on"
+
+## Notification Alerts
+# (on|off)
+
+# Display IP | https://docs.linuxgsm.com/alerts#display-ip
+displayip=""
+
+# More info | https://docs.linuxgsm.com/alerts#more-info
+postalert="off"
+
+# Alert on Start/Stop/Restart
+statusalert="on"
+
+# Discord Alerts | https://docs.linuxgsm.com/alerts/discord
+discordalert="on"
+discordwebhook="{{ lookup('bws_cache', 'infra-game-servers-secrets').value.discord_webhook }}"
+
+## Updating | https://docs.linuxgsm.com/commands/update
+updateonstart="on"
+
+## Backup | https://docs.linuxgsm.com/commands/backup
+maxbackups="4"
+maxbackupdays="30"
+stoponbackup="on"
+
+## Logging | https://docs.linuxgsm.com/features/logging
+consolelogging="on"
+logdays="7"
+
+## Monitor | https://docs.linuxgsm.com/commands/monitor
+# Query delay time
+querydelay="5"
+
+## ANSI Colors | https://docs.linuxgsm.com/features/ansi-colors
+ansi="on"
+
+#### Advanced Settings ####
+
+## Message Display Time | https://docs.linuxgsm.com/features/message-display-time
+sleeptime="0.5"
+
+## SteamCMD Settings | https://docs.linuxgsm.com/steamcmd
+# Server appid
+appid="376030"
+steamcmdforcewindows="no"
+# SteamCMD Branch | https://docs.linuxgsm.com/steamcmd/branch
+branch=""
+betapassword=""
+# Master Server | https://docs.linuxgsm.com/steamcmd/steam-master-server
+steammaster="true"
+
+## Query mode
+# 1: session only
+# 2: gamedig (gsquery fallback)
+# 3: gamedig
+# 4: gsquery
+# 5: tcp
+querymode="2"
+querytype="protocol-valve"
+
+## Backup Directory
+backupdir="${lgsmdir}/backup"
