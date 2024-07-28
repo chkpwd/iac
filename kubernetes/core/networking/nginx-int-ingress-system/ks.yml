@@ -21,13 +21,13 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-networking-internal-nginx-services
+  name: core-networking-internal-nginx-external-names
   namespace: flux-system
 spec:
   targetNamespace: networking
   dependsOn:
     - name: core-networking-internal-nginx
-  path: ./kubernetes/core/networking/nginx-int-ingress-system/services
+  path: ./kubernetes/core/networking/nginx-int-ingress-system/external-names
   prune: true
   sourceRef:
     kind: GitRepository

@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-assistant-internal
+spec:
+  type: ExternalName
+  externalName: haos-srv-01.${LOCAL_DOMAIN}
+  ports:
+    - name: http
+      port: &port 8123
+      protocol: TCP
+      targetPort: *port
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: &app home-assistant-internal
+  annotations:
+    external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
+spec:
+  ingressClassName: int-ingress
+  rules:
+    - host: home-assistant.${LOCAL_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: *app
+                port:
+                  number: 8123

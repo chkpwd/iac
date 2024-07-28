@@ -1,14 +1,27 @@
 ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opnsense
+spec:
+  type: ExternalName
+  externalName: opnsense.${LOCAL_DOMAIN}
+  ports:
+    - name: http
+      port: &port 80
+      protocol: TCP
+      targetPort: *port
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: &app prometheus
+  name: &app opnsense
   annotations:
     external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
 spec:
   ingressClassName: int-ingress
   rules:
-    - host: &host rpi-prometheus.${LOCAL_DOMAIN}
+    - host: router.${LOCAL_DOMAIN}
       http:
         paths:
           - path: /
@@ -17,4 +30,4 @@ spec:
               service:
                 name: *app
                 port:
-                  number: 9090
+                  number: 80
