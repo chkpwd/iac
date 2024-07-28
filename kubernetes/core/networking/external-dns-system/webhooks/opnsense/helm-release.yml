@@ -43,55 +43,41 @@ spec:
     provider:
       name: webhook
 
-      webhook:
-        image:
-          repository: ghcr.io/crutonjohn/external-dns-opnsense-webhook
-          tag: v0.1.0
+    managedRecordTypesFilters:
+      - A
 
+    sidecars:
+      - name: opnsense-webhook
+        image: ghcr.io/jobs62/opnsense_unbound_external-dns_webhook:v0.4.1
+        ports:
+          - containerPort: 8800
+            name: http
         env:
-          - name: OPNSENSE_API_SECRET
+          - name: OPNSENSE_SECRET
             valueFrom:
               secretKeyRef:
                 name: external-dns-opnsense-secret
                 key: api_secret
-          - name: OPNSENSE_API_KEY
+          - name: OPNSENSE_KEY
             valueFrom:
               secretKeyRef:
                 name: external-dns-opnsense-secret
                 key: api_key
-          - name: OPNSENSE_HOST
+          - name: OPNSENSE_BASE
             value: http://172.16.16.1
-          - name: OPNSENSE_SKIP_TLS_VERIFY
+          - name: OPNSENSE_ALLOW_INVALID_CERTS
             value: "true"
-          - name: LOG_LEVEL
-            value: debug
-
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: http-wh-metrics
-          initialDelaySeconds: 10
-          timeoutSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /readyz
-            port: http-wh-metrics
-          initialDelaySeconds: 10
-          timeoutSeconds: 5
+          - name: OPNSENSE_DOMAIN_FILTERS
+            value: "[\".local\"]"
 
     extraArgs:
-      - --events
       - --ingress-class=int-ingress
       - --ignore-ingress-tls-spec
       - --annotation-filter=external-dns.alpha.kubernetes.io/exclude notin (true)
 
-    policy: sync
-
     sources: ["ingress", "service"]
 
     registry: noop
-
-    domainFilters: ["local.chkpwd.com"]
 
     resources:
       requests:
