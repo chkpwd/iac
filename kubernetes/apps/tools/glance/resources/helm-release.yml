@@ -30,20 +30,10 @@ spec:
     controllers:
       glance:
         enabled: true
-        type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
 
         replicas: 1
-
-        statefulset:
-          volumeClaimTemplates:
-            - name: config
-              accessMode: ReadWriteOnce
-              size: 1Gi
-              storageClass: longhorn-misc
-              globalMounts:
-                - path: /app/glance.yml
 
         pod:
           securityContext:
@@ -116,3 +106,11 @@ spec:
         globalMounts:
           - path: /etc/timezone
           - path: /etc/localtime
+      glance-config:
+        enabled: true
+        name: "{{ .Release.Name }}-config"
+        type: configMap
+        globalMounts:
+          - path: /app/glance.yml
+            subPath: glance.yml
+            readOnly: true
