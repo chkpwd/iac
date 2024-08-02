@@ -5,13 +5,17 @@ metadata:
   name: glance-config
 data:
   glance.yml: |
+    theme:
+      background-color: 240 21 15
+      contrast-multiplier: 1.2
+      primary-color: 217 92 83
+      positive-color: 115 54 76
+      negative-color: 347 70 65
     pages:
-      - name: House
+      - name: Chkpwd News
         columns:
           - size: small
             widgets:
-              - type: calendar
-
               - type: rss
                 limit: 10
                 collapse-after: 3
@@ -38,7 +42,3 @@ data:
               - type: reddit
                 subreddit: selfhosted
 
-          - size: small
-            widgets:
-              - type: weather
-                location: Port Saint Lucie, FL
