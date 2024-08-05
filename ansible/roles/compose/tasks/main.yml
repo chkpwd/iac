@@ -25,7 +25,7 @@
     group: "{{ common_user }}"
     mode: 0755
     state: directory
-  loop: "{{ service_definitions | selectattr('volumes', 'defined') | map(attribute='name') | product([configuration_path]) | map('reverse') | map('join', '/') }}"
+  loop: "{{ service_definitions | selectattr('volumes', 'defined') | map(attribute='volumes') | flatten | map('split', ':') | map('first') }}"
   when: not item is match('.*\.\w{2,4}$')
 
 - name: Install Docker only if not installed
