@@ -70,7 +70,7 @@ stages:
             k3s:
               enabled: true
               env:
-                K3S_TOKEN: {[ K3S_INIT_TOKEN ]}
+                K3S_TOKEN: {[ lookup('bws_cache', 'infra-kairos-secrets').value.k3s_token ]}
               args:
             {{- if $first }}
                 - --cluster-init
@@ -125,7 +125,7 @@ stages:
               namespace: flux-system
             type: Opaque
             data:
-              age.agekey: {[ AGE_KEY_SECRET_BASE64 ]}
+              age.agekey: {[ lookup('bws_cache', 'infra-kairos-secrets').value.age_key_secret_b64 ]}
 
     - name: "Set modprobe modules"
       modules:
