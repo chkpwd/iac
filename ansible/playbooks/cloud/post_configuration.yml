@@ -37,7 +37,7 @@
         lucasheld.uptime_kuma.setup: &uptimekuma_passwd_defaults
           api_url: "{{ uptime_kuma_url }}"
           api_username: uptime
-          api_password: "{{ UPTIME_KUMA_PASSWORD }}"
+          api_password: "{{ lookup('bws_cache', 'cloud-uptime-kuma-secrets').value.portal_password }}"
         lucasheld.uptime_kuma.login:
           !!merge <<: *uptimekuma_passwd_defaults
           api_2fa: "{{ two_factor_token }}"
@@ -77,7 +77,7 @@
             name: Discord
             type: discord
             isDefault: true
-            discordWebhookUrl: "{{ DISCORD_UPTIME_KUMA_WEBHOOK }}"
+            discordWebhookUrl: "{{ lookup('bws_cache', 'cloud-uptime-kuma-secrets').value.webhook_url }}"
             state: present
           tags: notifiers
 

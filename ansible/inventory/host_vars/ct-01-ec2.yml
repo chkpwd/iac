@@ -6,7 +6,7 @@ common_user: admin
 docker_edition: 'ce'
 docker_package_state: latest
 docker_users: "{{ common_user }}"
-docker_services: 
+docker_services:
   - name: Docker Service
     value: docker.service
   - name: Docker Socket
@@ -24,7 +24,7 @@ service_definitions:
       - net_admin # Allows modifications of net utils
       - sys_module # Allows privileged operations on non-root systems
     env: "{{ common_env }}"
-    ports: [3001:3001]
+    ports: ['3001:3001']
     volumes:
       - "{{ configuration_path }}/wireguard:/config"
       - /lib/modules:/lib/modules
@@ -33,22 +33,10 @@ service_definitions:
     networks:
       - name: net_swag
 
-  # - name: twingate-connector
-  #   image: twingate/connector:1.59.0
-  #   env:
-  #     - SSL_CERT_FILE: /etc/ssl/certs/ca-certificates.crt
-  #     - TWINGATE_API_ENDPOINT: /connector.stock
-  #     - TWINGATE_NETWORK: chkpwd
-  #     - TWINGATE_ACCESS_TOKEN: "{{ OCI_TWINGATE_ACCESS_TOKEN }}"
-  #     - TWINGATE_REFRESH_TOKEN: "{{ OCI_TWINGATE_REFRESH_TOKEN }}"
-  #     - TWINGATE_LOG_LEVEL: 3
-  #   sysctls:
-  #     net.ipv4.ping_group_range: "0 2147483647"
-
   - name: uptime-kuma
     image: louislam/uptime-kuma:1.23.13
     volumes:
-      - "{{ configuration_path }}/uptime-kuma:/app/data" 
+      - "{{ configuration_path }}/uptime-kuma:/app/data"
     network_mode: container:wireguard
 
   - name: swag
@@ -57,12 +45,12 @@ service_definitions:
       - 443:443
       - 80:80
     env:
-      <<: *common_env
+      !!merge <<: *common_env
       URL: chkpwd.com
       SUBDOMAINS: wildcard
       VALIDATION: dns
       DNSPLUGIN: cloudflare
-      EMAIL: "{{ CF_EMAIL }}"
+      EMAIL: "{{ lookup('bws_cache', 'common-secrets').value.primary_email_address }}"
       STAGING: "false"
       DOCKER_MODS: linuxserver/mods:swag-auto-reload
     volumes:

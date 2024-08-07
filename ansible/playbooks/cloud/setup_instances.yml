@@ -3,7 +3,7 @@
   hosts: cloud
   become: true
 
-  tasks:
+  pre_tasks:
     - name: Install Packages
       ansible.builtin.apt:
         update_cache: true
@@ -14,8 +14,6 @@
           - iputils-ping
         state: present
 
-    - name: User Administration
-      ansible.builtin.include_tasks: ../../tasks/linux/create_user.yml
-        
-    - name: Docker Containerization | Installation
-      ansible.builtin.include_tasks: ../../tasks/docker/install_docker.yml
+  roles:
+    - linux-setup
+    - docker
