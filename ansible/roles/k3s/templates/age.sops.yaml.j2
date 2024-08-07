@@ -5,4 +5,4 @@ metadata:
   namespace: "{{ flux_namespace }}"
 type: Opaque
 data:
-  age.agekey: "{{ AGE_KEY_SECRET_BASE64 }}"
+  age.agekey: "{{ lookup('bws_cache', 'infra-kairos-secrets').value.age_key_secret_b64 }}"
