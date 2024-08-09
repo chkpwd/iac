@@ -1,0 +1,33 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: semaphore-ui-external
+spec:
+  type: ExternalName
+  externalName: mgmt-srv-01.${LOCAL_DOMAIN}
+  ports:
+    - name: http
+      port: &port 3005
+      protocol: TCP
+      targetPort: *port
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: &app semaphore-ui-external
+  annotations:
+    external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+spec:
+  ingressClassName: ext-ingress
+  rules:
+    - host: semaphore.${EXTERNAL_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: *app
+                port:
+                  number: 3005
