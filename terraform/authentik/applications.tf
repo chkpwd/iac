@@ -268,3 +268,22 @@ module "authentik-app-actual-budget" {
 
   access_group = [authentik_group.main.id, authentik_group.secondary.id]
 }
+
+module "authentik-app-semaphore-ui" {
+  source = "../_modules/authentik/proxy_app"
+  name   = "Semaphore UI"
+  group  = "main"
+
+  proxy_values = {
+    internal = ""
+    external = "https://semaphore.chkpwd.com"
+    mode     = "forward_single"
+  }
+
+  app_values = {
+    meta_description = "CI/CD Tool"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/semaphore.png"
+  }
+
+  access_group = [authentik_group.main.id]
+}

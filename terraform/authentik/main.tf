@@ -35,6 +35,7 @@ resource "authentik_outpost" "secondary" {
   type = "proxy"
   protocol_providers = [
     module.authentik-app-stirling-pdf.provider_id,
+    module.authentik-app-semaphore-ui.provider_id,
   ]
   config = jsonencode({
     "log_level"                      = "info"
