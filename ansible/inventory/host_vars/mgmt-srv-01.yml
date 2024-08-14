@@ -3,23 +3,6 @@ common_user: chkpwd
 ansible_user: chkpwd
 
 service_definitions:
-  - name: semaphore
-    image: semaphoreui/semaphore:v2.10.22
-    user: 1001:1001
-    env:
-      SEMAPHORE_DB_DIALECT: bolt
-      SEMAPHORE_ADMIN: admin
-      SEMAPHORE_ADMIN_PASSWORD: "{{ lookup('bws_cache', 'common-secrets').value.common_password }}"
-      SEMAPHORE_ADMIN_NAME: chkpwd
-      SEMAPHORE_ADMIN_EMAIL: semaphore@chkpwd.com
-      SEMAPHORE_ACCESS_KEY_ENCRYPTION: "pPMEj3T4/Y+cpJkwgTAk5VU4eWTXskPoSY+XxqL5v6w="
-      ANSIBLE_HOST_KEY_CHECKING: 'False'
-    volumes:
-      - "{{ configuration_path }}/semaphore/db:/var/lib/semaphore"
-      - "{{ configuration_path }}/semaphore/config:/etc/semaphore"
-      - "{{ configuration_path }}/semaphore/tmp:/tmp/semaphore"
-    ports: ['3005:3000']
-
   - name: prometheus
     image: prom/prometheus:v2.53.1
     user: 1000:1000
