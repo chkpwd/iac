@@ -5,7 +5,7 @@ ansible_user: chkpwd
 service_definitions:
   - name: semaphore
     image: semaphoreui/semaphore:v2.10.22
-    user: 1000:1000
+    user: 1001:1001
     env:
       SEMAPHORE_DB_DIALECT: bolt
       SEMAPHORE_ADMIN: admin

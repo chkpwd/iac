@@ -1,0 +1,6 @@
+---
+- name: Restart Semaphore
+  community.docker.docker_container:
+    name: semaphore
+    state: started
+    restart: true
