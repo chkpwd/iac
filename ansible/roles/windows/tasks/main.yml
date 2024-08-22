@@ -8,7 +8,7 @@
 
 - name: Change Hostname
   ansible.windows.win_hostname:
-    name: chk-dev-win11
+    name: "{{ windows_hostname }}"
   register: hostname
 
 - name: Install dependencies
@@ -44,7 +44,7 @@
 
 - name: Install Windows Features
   ansible.windows.win_optional_feature:
-    name: 
+    name:
       - Microsoft-Windows-Subsystem-Linux
       - ServicesForNFS-ClientOnly
       - ClientForNFS-Infrastructure

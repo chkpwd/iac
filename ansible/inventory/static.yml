@@ -23,6 +23,8 @@ all:
         mgmt-srv-01:
 
     windows:
+      hosts:
+        chk-gaming-01:
       vars:
         ansible_become_method: runas
 
