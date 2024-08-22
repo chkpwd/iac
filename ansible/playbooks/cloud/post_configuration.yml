@@ -65,7 +65,7 @@
       block:
         - name: Set config
           lucasheld.uptime_kuma.settings:
-            primaryBaseURL: "{{ uptime_kuma_url }}"
+            #primaryBaseURL: "{{ uptime_kuma_url }}" # Removed to allow redirect to status page
             searchEngineIndex: false
             trustProxy: true
             keepDataPeriodDays: 365
