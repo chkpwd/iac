@@ -66,8 +66,7 @@ resource "authentik_source_plex" "main" {
   enabled             = true
   name                = "plex"
   slug                = "plex"
-  authentication_flow = data.authentik_flow.default-authorization-flow.id
-  enrollment_flow     = data.authentik_flow.default-authorization-flow.id
+  authentication_flow = data.authentik_flow.default-source-authentication.id
   client_id           = data.external.bws_lookup.result["infra-media-secrets_main_plex_client_id"]
   plex_token          = data.external.bws_lookup.result["infra-media-secrets_main_plex_token"]
   allow_friends       = true
