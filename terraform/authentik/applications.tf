@@ -116,7 +116,7 @@ module "authentik-app-miniflux" {
   oauth2_values = {
     client_id         = "miniflux"
     client_secret     = data.external.bws_lookup.result["ns-tools-miniflux_client_secret"]
-    property_mappings = data.authentik_scope_mapping.scopes.ids
+    property_mappings = data.authentik_property_mapping_provider_scope.testing.ids
     redirect_uris     = ["https://miniflux.chkpwd.com/oauth2/oidc/callback"]
   }
   app_values = {

@@ -54,12 +54,12 @@ resource "authentik_outpost" "secondary" {
 }
 
 resource "authentik_provider_ldap" "main" {
-  name         = "authentik LDAP Provider"
-  bind_mode    = "direct"
-  base_dn      = "dc=ldap,dc=goauthentik,dc=io"
-  bind_flow    = data.authentik_flow.default-authentication-flow.id
-  search_group = authentik_group.main.id
-  mfa_support  = "true"
+  name      = "authentik LDAP Provider"
+  bind_mode = "direct"
+  base_dn   = "dc=ldap,dc=goauthentik,dc=io"
+  bind_flow = data.authentik_flow.default-authentication-flow.id
+  #search_group = authentik_group.main.id #  FIX: (2024-09-04) Chkpwd => deprecated
+  mfa_support = "true"
 }
 
 resource "authentik_source_plex" "main" {
