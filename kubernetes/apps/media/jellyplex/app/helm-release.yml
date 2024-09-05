@@ -59,7 +59,7 @@ spec:
               tag: 6.1-alpine
               pullPolicy: IfNotPresent
             env:
-              TZ: ${TZ}
+              TZ: "${TZ}"
               DRYRUN: "False"
               DEBUG: "True"
               DEBUG_LEVEL: "debug"
