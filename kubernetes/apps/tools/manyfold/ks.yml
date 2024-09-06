@@ -2,16 +2,16 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: tools-maker-management-platform
+  name: tools-manyfold
   namespace: flux-system
 spec:
   targetNamespace: tools
-  path: ./kubernetes/apps/tools/maker-management-platform/app
+  path: ./kubernetes/apps/tools/manyfold/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
-  wait: true
+  wait: false
   interval: 30m
   retryInterval: 1m
   timeout: 5m
