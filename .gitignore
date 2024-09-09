@@ -4,6 +4,9 @@ ansible/roles/veeam_deploy_v11/files
 # Exclude virtualenv for python
 **/.venv
 
+# Exclude direnv stuff
+.direnv/**
+
 # Prevent sensitive auto-generated Packer variable files from being tracked
 **/secrets.auto.pkrvars.hcl
 
