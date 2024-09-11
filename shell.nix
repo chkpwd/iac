@@ -1,4 +1,4 @@
 {pkgs ? import <nixpkgs> {}}:
 pkgs.mkShell {
-  packages = with pkgs; [terraform fluxcd packer ansible ansible-lint];
+  packages = with pkgs; [terraform packer ansible ansible-lint];
 }
