@@ -1,0 +1,36 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tools-adventurelog
+  namespace: flux-system
+spec:
+  targetNamespace: tools
+  dependsOn:
+    - name: tools-adventurelog-database
+  path: ./kubernetes/apps/tools/adventurelog/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tools-adventurelog-database
+  namespace: flux-system
+spec:
+  targetNamespace: tools
+  path: ./kubernetes/apps/tools/adventurelog/database
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: false
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
