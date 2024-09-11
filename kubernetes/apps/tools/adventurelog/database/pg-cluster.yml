@@ -1,0 +1,39 @@
+---
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  name: adventurelog
+spec:
+  image: registry.developers.crunchydata.com/crunchydata/crunchy-postgres-gis:ubi8-16.4-3.4-0
+  postgresVersion: 16
+  instances:
+    - dataVolumeClaimSpec:
+        storageClassName: longhorn-database
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+
+  users:
+    - name: adventurelog
+      databases:
+        - adventurelog
+      options: "SUPERUSER"
+
+  backups:
+    pgbackrest:
+      manual:
+        repoName: repo1
+        options:
+          - --type=full
+      repos:
+        - name: repo1
+          volume:
+            volumeClaimSpec:
+              storageClassName: longhorn-database
+              accessModes:
+                - "ReadWriteOnce"
+              resources:
+                requests:
+                  storage: 1Gi

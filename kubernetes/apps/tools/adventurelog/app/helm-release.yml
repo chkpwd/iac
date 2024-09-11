@@ -1,0 +1,133 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.1.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app adventurelog
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.4.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    global:
+      fullnameOverride: *app
+
+    controllers:
+      adventurelog:
+        enabled: true
+        type: deployment
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        replicas: 1
+
+        pod:
+        # securityContext:
+        #   runAsNonRoot: true
+        #   runAsUser: &uid 1999
+        #   runAsGroup: *uid
+        #   fsGroup: *uid
+        #   fsGroupChangePolicy: "Always"
+        #   seccompProfile: { type: "RuntimeDefault" }
+
+        containers:
+          web:
+            image:
+              repository: ghcr.io/seanmorley15/adventurelog-frontend
+              tag: v0.6.0
+            env:
+              PUBLIC_SERVER_URL: http://server:8000
+              ORIGIN: http://adventurelog.chkpwd.com:8080
+              BODY_SIZE_LIMIT: Infinity
+          server:
+            image:
+              repository: ghcr.io/seanmorley15/adventurelog-backend
+              tag: v0.6.0
+            envFrom:
+              - secretRef:
+                  name: adventurelog-secrets
+            env:
+              CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+              PGDATABASE: "postgres"
+              PGHOST:
+                valueFrom:
+                  secretKeyRef:
+                    name: adventurelog-pguser-adventurelog
+                    key: host
+              PGUSER:
+                valueFrom:
+                  secretKeyRef:
+                    name: adventurelog-pguser-adventurelog
+                    key: user
+              PGPASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: adventurelog-pguser-adventurelog
+                    key: password
+              PUBLIC_URL: "https://adventurelog.chkpwd.com"
+              DEBUG: "true"
+              FRONTEND_URL: "https://adventurelog.chkpwd.com"
+
+            securityContext:
+              allowPrivilegeEscalation: false
+
+            resources:
+              requests:
+                cpu: 10m
+                memory: 100Mi
+              limits:
+                memory: 256Mi
+
+    service:
+      web:
+        controller: adventurelog
+        ports:
+          http:
+            port: 8080
+      server:
+        controller: adventurelog
+        ports:
+          http:
+            port: 8000
+
+    ingress:
+      external:
+        enabled: true
+        className: ext-ingress
+        annotations:
+          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+        hosts:
+          - host: "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: web
+                  port: 8080
+
+    persistence:
+      data:
+        accessMode: ReadWriteOnce
+        type: persistentVolumeClaim
+        storageClass: longhorn-config
+        size: 2Gi
+        advancedMounts:
+          adventurelog:
+            server:
+              - path: /code/media
