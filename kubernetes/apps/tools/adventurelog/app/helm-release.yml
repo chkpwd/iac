@@ -28,7 +28,46 @@ spec:
       fullnameOverride: *app
 
     controllers:
-      adventurelog:
+      frontend:
+        enabled: true
+        type: deployment
+        strategy: RollingUpdate
+        replicas: 1
+
+        # pod:
+        # securityContext:
+        #   runAsNonRoot: true
+        #   runAsUser: &uid 1999
+        #   runAsGroup: *uid
+        #   fsGroup: *uid
+        #   fsGroupChangePolicy: "Always"
+        #   seccompProfile: { type: "RuntimeDefault" }
+
+        containers:
+          app:
+            image:
+              repository: ghcr.io/seanmorley15/adventurelog-frontend
+              tag: v0.6.0
+            env:
+              PUBLIC_SERVER_URL: "http://{{ .Release.Name }}-backend.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:8000"
+              ORIGIN: https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+              BODY_SIZE_LIMIT: Infinity
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+
+            resources:
+              requests:
+                cpu: 10m
+                memory: 100Mi
+              limits:
+                memory: 256Mi
+
+      backend:
         enabled: true
         type: deployment
         strategy: RollingUpdate
@@ -47,14 +86,6 @@ spec:
         #   seccompProfile: { type: "RuntimeDefault" }
 
         containers:
-          web:
-            image:
-              repository: ghcr.io/seanmorley15/adventurelog-frontend
-              tag: v0.6.0
-            env:
-              PUBLIC_SERVER_URL: "http://{{ .Release.Name }}-server.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:8000"
-              ORIGIN: https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
-              BODY_SIZE_LIMIT: Infinity
           server:
             image:
               repository: ghcr.io/seanmorley15/adventurelog-backend
@@ -83,10 +114,14 @@ spec:
               PUBLIC_URL: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
               FRONTEND_URL: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
               CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
-              DEBUG: "True"
+              DEBUG: "False"
 
             securityContext:
               allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
 
             resources:
               requests:
@@ -95,17 +130,74 @@ spec:
               limits:
                 memory: 256Mi
 
+      proxy:
+        enabled: true
+        type: deployment
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        replicas: 1
+
+        # pod:
+        # securityContext:
+        #   runAsNonRoot: true
+        #   runAsUser: &uid 1999
+        #   runAsGroup: *uid
+        #   fsGroup: *uid
+        #   fsGroupChangePolicy: "Always"
+        #   seccompProfile: { type: "RuntimeDefault" }
+
+        initContainers:
+          chown-nginx-dirs:
+            image:
+              repository: docker.io/library/alpine
+              tag: 3.20
+            command:
+              - /bin/sh
+              - -c
+            args:
+              - |
+                chmod o-rwx /var/cache/nginx /var/run /var/log/nginx
+            securityContext:
+              runAsUser: 0
+
+        containers:
+          main:
+            image:
+              repository: nginx
+              tag: 1.27.1-alpine-slim
+
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+
+            resources:
+              requests:
+                cpu: 10m
+                memory: 50Mi
+              limits:
+                memory: 100Mi
+
     service:
-      web:
-        controller: adventurelog
+      frontend:
+        controller: frontend
         ports:
           http:
             port: 3000
-      server:
-        controller: adventurelog
+      backend:
+        controller: backend
         ports:
           http:
             port: 8000
+      proxy:
+        controller: proxy
+        ports:
+          http:
+            port: 80
 
     ingress:
       external:
@@ -115,26 +207,43 @@ spec:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
           nginx.ingress.kubernetes.io/proxy-body-size: 50m
           nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-          nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-external-ingress-outpost.security.${CLUSTER_DOMAIN}:9000/outpost.goauthentik.io/auth/nginx
-          nginx.ingress.kubernetes.io/auth-signin: /outpost.goauthentik.io/start?rd=$escaped_request_uri
-          nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
-          nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
         hosts:
           - host: "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
                 service:
-                  identifier: web
+                  identifier: frontend
+                  port: http
+              - path: /media/
+                pathType: Prefix
+                service:
+                  identifier: proxy
                   port: http
 
     persistence:
       data:
-        accessMode: ReadWriteOnce
+        accessMode: ReadWriteMany
         type: persistentVolumeClaim
         storageClass: longhorn-config
         size: 2Gi
         advancedMounts:
-          adventurelog:
+          backend:
             server:
               - path: /code/media
+                subPath: media
+          proxy:
+            main:
+              - path: /app/media
+                subPath: media
+      nginx:
+        type: emptyDir
+        advancedMounts:
+          proxy:
+            main: &nginx-dirs
+              - path: /var/cache/nginx
+              - path: /var/run
+                subPath: nginx.pid
+              - path: /var/log/nginx
+            chown-nginx-dirs: *nginx-dirs
+
