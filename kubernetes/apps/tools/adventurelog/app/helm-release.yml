@@ -52,8 +52,8 @@ spec:
               repository: ghcr.io/seanmorley15/adventurelog-frontend
               tag: v0.6.0
             env:
-              PUBLIC_SERVER_URL: http://server:8000
-              ORIGIN: http://adventurelog.chkpwd.com:8080
+              PUBLIC_SERVER_URL: "http://{{ .Release.Name }}-server.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:8000"
+              ORIGIN: https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
               BODY_SIZE_LIMIT: Infinity
           server:
             image:
@@ -63,7 +63,7 @@ spec:
               - secretRef:
                   name: adventurelog-secrets
             env:
-              CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+              DISABLE_REGISTRATION: "False"
               PGDATABASE: "postgres"
               PGHOST:
                 valueFrom:
@@ -80,9 +80,10 @@ spec:
                   secretKeyRef:
                     name: adventurelog-pguser-adventurelog
                     key: password
-              PUBLIC_URL: "https://adventurelog.chkpwd.com"
-              DEBUG: "true"
-              FRONTEND_URL: "https://adventurelog.chkpwd.com"
+              PUBLIC_URL: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+              FRONTEND_URL: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+              CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+              DEBUG: "True"
 
             securityContext:
               allowPrivilegeEscalation: false
@@ -99,7 +100,7 @@ spec:
         controller: adventurelog
         ports:
           http:
-            port: 8080
+            port: 3000
       server:
         controller: adventurelog
         ports:
@@ -112,6 +113,12 @@ spec:
         className: ext-ingress
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          nginx.ingress.kubernetes.io/proxy-body-size: 50m
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+          nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-external-ingress-outpost.security.${CLUSTER_DOMAIN}:9000/outpost.goauthentik.io/auth/nginx
+          nginx.ingress.kubernetes.io/auth-signin: /outpost.goauthentik.io/start?rd=$escaped_request_uri
+          nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
+          nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
         hosts:
           - host: "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
@@ -119,7 +126,7 @@ spec:
                 pathType: Prefix
                 service:
                   identifier: web
-                  port: 8080
+                  port: http
 
     persistence:
       data:
