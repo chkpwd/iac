@@ -148,32 +148,31 @@ spec:
         #   fsGroupChangePolicy: "Always"
         #   seccompProfile: { type: "RuntimeDefault" }
 
-        initContainers:
-          chown-nginx-dirs:
-            image:
-              repository: docker.io/library/alpine
-              tag: 3.20
-            command:
-              - /bin/sh
-              - -c
-            args:
-              - |
-                chmod o-rwx /var/cache/nginx /var/run /var/log/nginx
-            securityContext:
-              runAsUser: 0
-
+        # initContainers:
+        #   chown-nginx-dirs:
+        #     image:
+        #       repository: docker.io/library/alpine
+        #       tag: 3.20
+        #     command:
+        #       - /bin/sh
+        #       - -c
+        #     args:
+        #       - |
+        #         chmod o-rwx /var/cache/nginx /var/run /var/log/nginx
+        #     securityContext:
+        #       runAsUser: 0
         containers:
           main:
             image:
               repository: nginx
               tag: 1.27.1-alpine-slim
 
-            securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: true
-              capabilities:
-                drop:
-                  - ALL
+            # securityContext:
+            #   allowPrivilegeEscalation: false
+            #   readOnlyRootFilesystem: true
+            #   capabilities:
+            #     drop:
+            #       - ALL
 
             resources:
               requests:
@@ -236,14 +235,14 @@ spec:
             main:
               - path: /app/media
                 subPath: media
-      nginx:
-        type: emptyDir
-        advancedMounts:
-          proxy:
-            main: &nginx-dirs
-              - path: /var/cache/nginx
-              - path: /var/run
-                subPath: nginx.pid
-              - path: /var/log/nginx
-            chown-nginx-dirs: *nginx-dirs
-
+      # nginx:
+      #   type: emptyDir
+      #   advancedMounts:
+      #     proxy:
+      #       main: &nginx-dirs
+      #         - path: /var/cache/nginx
+      #         - path: /var/run
+      #           subPath: nginx.pid
+      #         - path: /var/log/nginx
+      #       chown-nginx-dirs: *nginx-dirs
+      #
