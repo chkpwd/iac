@@ -137,16 +137,16 @@ spec:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
           nginx.ingress.kubernetes.io/proxy-body-size: 50m
           nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-          nginx.ingress.kubernetes.io/rewrite-target: /$1
+          nginx.ingress.kubernetes.io/rewrite-target: /$2
         hosts:
           - host: "spotty.${EXTERNAL_DOMAIN}"
             paths:
-              - path: /api(/|$)(.*)
+              - path: /
                 pathType: Prefix
                 service:
                   identifier: web
                   port: http
-              - path: /api
+              - path: /api(/|$)(.*)
                 pathType: Prefix
                 service:
                   identifier: server
