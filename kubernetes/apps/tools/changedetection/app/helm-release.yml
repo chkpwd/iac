@@ -57,10 +57,25 @@ spec:
             image:
               repository: ghcr.io/dgtlmoon/changedetection.io
               tag: "0.46.04"
+              pullPolicy: IfNotPresent
             env:
               PORT: &port 5000
+              USE_X_SETTINGS: 1
+              PLAYWRIGHT_DRIVER_URL: ws://localhost:3000/?stealth=1&--disable-web-security=true&--user-data-dir=~/browserless-cache-123
             probes:
-              liveness:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 5000
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
                 enabled: false
             securityContext:
               allowPrivilegeEscalation: false
@@ -76,9 +91,9 @@ spec:
 
           browser:
             image:
-              pullPolicy: Always
               repository: docker.io/browserless/chrome
               tag: "1-chrome-stable"
+              pullPolicy: IfNotPresent
             env:
               - name: SCREEN_WIDTH
                 value: "1920"
