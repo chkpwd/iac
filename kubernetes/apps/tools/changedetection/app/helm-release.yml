@@ -69,10 +69,10 @@ spec:
                   - ALL
             resources:
               requests:
-                cpu: 10m
-                memory: 150Mi
+                cpu: 25m
+                memory: 145M
               limits:
-                memory: 200Mi
+                memory: 512M
 
           browser:
             image:
@@ -102,10 +102,10 @@ spec:
                 value: "true"
             resources:
               requests:
-                cpu: 10m
-                memory: 25Mi
+                cpu: 25m
+                memory: 979Mi
               limits:
-                memory: 50Mi
+                memory: 1Gi
 
     service:
       app:
