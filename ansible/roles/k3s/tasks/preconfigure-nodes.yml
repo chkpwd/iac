@@ -6,7 +6,7 @@
 
 - name: Get Virtual Disks info
   community.general.parted:
-    device: "/dev/{{ item }}"
+    device: /dev/{{ item }}
     unit: MiB
   register: drive_info
   loop:
@@ -21,7 +21,7 @@
 
 - name: Prepare secondary disk
   community.general.parted:
-    device: "/dev/{{ largest_drive }}"
+    device: /dev/{{ largest_drive }}
     number: 1
     name: data
     label: gpt
@@ -29,19 +29,19 @@
 
 - name: Create ext4 fs on partition
   community.general.filesystem:
-    dev: "/dev/{{ largest_drive }}1"
+    dev: /dev/{{ largest_drive }}1
     fstype: ext4
     state: present
 
 - name: Gather Drives Facts
   ansible.builtin.setup:
     gather_subset:
-      - devices 
+      - devices
 
 - name: Mount device by UUID
   ansible.posix.mount:
     path: "{{ mount_dir }}"
-    src: "UUID={{ ansible_facts['devices'][largest_drive]['partitions'][largest_drive + '1']['uuid'] }}"
+    src: UUID={{ ansible_facts['devices'][largest_drive]['partitions'][largest_drive + '1']['uuid'] }}
     fstype: ext4
     opts: defaults
     passno: 2

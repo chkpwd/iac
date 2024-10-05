@@ -4,17 +4,17 @@
     name: "{{ common_user }}"
     password: $y$j9T$Xf74ndlfs.EWF2kvNVPTF/$i121vNYyGsSX9jpKXjzHboCS7aw1cx0gADi3z/YDAXD
     shell: /bin/bash
-    groups: "sudo"
+    groups: sudo
     uid: "{{ common_user_uid }}"
-    comment: "Default Admin User"
+    comment: Default Admin User
     state: present
   become: true
 
 - name: Chmod the user home directory
   ansible.builtin.file:
-    path: "/home/{{ common_user }}"
+    path: /home/{{ common_user }}
     state: directory
-    mode: 0755
+    mode: "0755"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
     recurse: false
