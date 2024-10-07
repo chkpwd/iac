@@ -59,9 +59,8 @@ spec:
               tag: "0.46.04"
               pullPolicy: IfNotPresent
             env:
-              PORT: &port 5000
-              USE_X_SETTINGS: 1
-              PLAYWRIGHT_DRIVER_URL: ws://localhost:3000/?stealth=1&--disable-web-security=true&--user-data-dir=~/browserless-cache-123
+              PORT: 5000
+              PLAYWRIGHT_DRIVER_URL: ws://changedetection-browserless-0.${CLUSTER_DOMAIN}:3000/?stealth=1&--disable-web-security=true
             probes:
               liveness: &probes
                 enabled: true
@@ -89,7 +88,16 @@ spec:
               limits:
                 memory: 512M
 
-          browser:
+      browserless:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+
+        replicas: 1
+
+        containers:
+          app:
             image:
               repository: docker.io/browserless/chrome
               tag: "1-chrome-stable"
@@ -127,7 +135,12 @@ spec:
         controller: changedetection
         ports:
           http:
-            port: *port
+            port: 5000
+        browserless:
+          controller: browserless
+          ports:
+            http:
+              port: 3000
 
     ingress:
       external:
