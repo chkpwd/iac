@@ -1,33 +1,31 @@
 {
-    "files.associations": {
-        "ansible/**/*.yml": "ansible",
-        "ansible/**/*.yaml": "ansible",
-        "*.sops.yaml": "yaml",
-        "*.tf": "terraform",
-        "*.tfvars": "terraform",
-        "*.j2": "ansible-jinja",
-        "*.hcl": "terraform",
-        "*.pkrvars.hcl": "hcl",
-        "*.pkrtpl.hcl": "hcl",
-        "*.pkr.hcl": "hcl"
-    },
-    "[ansible]": {
-        "editor.insertSpaces": true,
-        "editor.tabSize": 2,
-        "editor.detectIndentation": false,
-        "editor.defaultFormatter": "redhat.ansible"
-    },
-    "[terraform]": {
-        "editor.insertSpaces": true,
-        "editor.tabSize": 2,
-        "editor.detectIndentation": false,
-        "editor.defaultFormatter": "hashicorp.terraform"
-    },
-    "yaml.customTags": [
-        "!secret scalar",
-        "!env_var scalar"
-    ],
-    "editor.stickyScroll.enabled": true,
-    "workbench.tree.enableStickyScroll": true,
-    "ansible.python.interpreterPath": "/home/ubuntu/.venv/bin/python3.11"
+  "files.associations": {
+    "ansible/**/*.yml": "ansible",
+    "ansible/**/*.yaml": "ansible",
+    "*.sops.yaml": "yaml",
+    "*.tf": "terraform",
+    "*.tfvars": "terraform",
+    "*.j2": "ansible-jinja",
+    "*.hcl": "terraform",
+    "*.pkrvars.hcl": "hcl",
+    "*.pkrtpl.hcl": "hcl",
+    "*.pkr.hcl": "hcl"
+  },
+  "[ansible]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+    "editor.defaultFormatter": "redhat.ansible"
+  },
+  "[terraform]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.detectIndentation": false,
+    "editor.defaultFormatter": "hashicorp.terraform"
+  },
+  "yaml.customTags": ["!secret scalar", "!env_var scalar"],
+  "editor.stickyScroll.enabled": true,
+  "workbench.tree.enableStickyScroll": true,
+  "ansible.python.interpreterPath": "/home/ubuntu/.venv/bin/python3.11",
+  "terminal.integrated.defaultProfile.osx": "zsh"
 }
