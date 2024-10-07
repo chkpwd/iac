@@ -8,7 +8,7 @@ repos:
   #       name: Ansible Lint
   #       description: Run configurations on .ansible-lint file
   #       verbose: true
-  #       args: [--force-color, -c, ansible/.ansible-lint, -i, ansible/.ansible-lint-ignore]
+  #       args: [--project-dir=ansible, -c, ansible/.ansible-lint, -i, ansible/.ansible-lint-ignore, --exclude=ansible/.dependencies, --force-color]
   - repo: local
     hooks:
       - id: kairos-config
