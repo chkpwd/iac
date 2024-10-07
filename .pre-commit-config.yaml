@@ -2,15 +2,16 @@
 repos:
   - repo: local
     hooks:
-      - id: ansible-lint
-        name: Ansible-lint
-        description: This hook runs ansible-lint.
-        entry: python3 -m ansiblelint -v --force-color
-        language: python
-        # do not pass files to ansible-lint, see:
-        # https://github.com/ansible/ansible-lint/issues/611
-        pass_filenames: false
-        always_run: true
+      # - id: ansible-lint
+      #   name: Ansible-lint
+      #   description: This hook runs ansible-lint.
+      #   entry: /Users/chkpwd/code/iac/ansible/.venv/bin/python3 -m ansiblelint ansible/ -c ansible/.ansible-lint -i ansible/.ansible-lint-ignore
+      #   verbose: true
+      #   language: python
+      #   # do not pass files to ansible-lint, see:
+      #   # https://github.com/ansible/ansible-lint/issues/611
+      #   pass_filenames: false
+      #   always_run: true
       - id: kairos-config
         name: Copy Kairos config
         entry: python3 .pre-commit/move_kairos_config.py

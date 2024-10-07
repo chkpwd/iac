@@ -1,13 +1,14 @@
+---
 - name: Install and configure rclone
   when: ansible_hostname == "cockpit" or ansible_hostname == "crypto" or ansible_hostname == "localhost"
   ansible.builtin.include_role:
     name: stefangweichinger.ansible_rclone
 
   vars:
-    rclone_version: "1.62.0"
-    rclone_arch: "amd64"
-    rclone_release: "stable"
-    rclone_config_location: "/home/{{ common_user }}/.config/rclone/rclone.conf"
+    rclone_version: 1.62.0
+    rclone_arch: amd64
+    rclone_release: stable
+    rclone_config_location: /home/{{ common_user }}/.config/rclone/rclone.conf
     rclone_configs:
       - name: "{{ rclone.remote_names.media }}"
         properties:

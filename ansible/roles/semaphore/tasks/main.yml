@@ -4,7 +4,7 @@
     path: "{{ item }}"
     owner: 1001
     group: 1001
-    mode: 0755
+    mode: "0755"
     state: directory
   loop: "{{ semaphore_container | selectattr('volumes', 'defined') | map(attribute='volumes') | flatten | map('split', ':') | map('first') }}"
   when: not item is match('.*\.\w{2,4}$')

@@ -4,9 +4,8 @@
   become: true
 
   vars:
-    ansible_user: "administrator"
-    packages: [vim,htop]
-
+    ansible_user: administrator
+    packages: [vim, htop]
   tasks:
     - name: Install essential packages # noqa package-latest
       ansible.builtin.apt:
@@ -17,15 +16,15 @@
       ansible.builtin.lineinfile:
         path: /etc/sudoers
         state: present
-        regexp: '^%sudo'
-        line: '%sudo ALL=(ALL) NOPASSWD: ALL'
-        validate: '/usr/sbin/visudo -cf %s'
+        regexp: ^%sudo
+        line: "%sudo ALL=(ALL) NOPASSWD: ALL"
+        validate: /usr/sbin/visudo -cf %s
 
     - name: Copy the public SSH key
       ansible.posix.authorized_key:
         user: "{{ ansible_user }}"
         state: present
-        key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa main"
+        key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa main
       become: true
 
     - name: Include | logrotate

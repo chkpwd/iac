@@ -15,13 +15,14 @@
         state: present
 
   roles:
-    - linux-setup
+    - linux_setup
     - docker
 
   tasks:
-    - name: expand file system
+    - name: Expand file system
       when: "'mgmt-srv-01' in ansible_nodename"
-      command: "raspi-config nonint do_expand_rootfs"
+      command: raspi-config nonint do_expand_rootfs
+      changed_when: false
 
     - name: Deploy Docker containers # noqa args[module]
       community.docker.docker_container: "{{ item }}"

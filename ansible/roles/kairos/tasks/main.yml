@@ -5,7 +5,7 @@
     dest: "{{ configuration_path }}/auroraboot/files/{{ item.path | splitext | first }}"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
-    mode: 0755
+    mode: "0755"
     variable_start_string: "{["
     variable_end_string: "]}"
   loop: "{{ lookup('community.general.filetree', 'templates/') }}"

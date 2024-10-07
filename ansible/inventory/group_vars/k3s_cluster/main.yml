@@ -1,13 +1,13 @@
 ---
-k3s_release_version: "v1.28.2+k3s1"
+k3s_release_version: v1.28.2+k3s1
 k3s_install_hard_links: true
 k3s_become: true
 k3s_debug: false
 k3s_etcd_datastore: true
 
 kube_vip_address: 172.16.16.13
-kube_vip_interface: "ens192"
-kube_vip_namespace: "kube-system"
+kube_vip_interface: ens192
+kube_vip_namespace: kube-system
 
 k3s_server_manifests_urls:
   # Kube-vip RBAC
@@ -18,5 +18,5 @@ k3s_server_pod_manifests_templates:
 
 k3s_registration_address: "{{ kube_vip_address }}"
 
-common_user: 'chkpwd'
+common_user: chkpwd
 mount_dir: /mnt/data/longhorn

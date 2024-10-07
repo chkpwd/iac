@@ -1,6 +1,6 @@
 ---
 # Docker Configurations
-docker_edition: 'ce'
+docker_edition: ce
 docker_package_state: latest
 docker_users: "{{ common_user }}"
 docker_services:
@@ -8,7 +8,5 @@ docker_services:
     value: docker.service
   - name: Docker Socket
     value: docker.socket
-docker_path: "/opt/docker-confs"
-configuration_path: /opt/docker-confs
-docker_daemon_path: /mnt/data/docker
-temp_docker_daemon_file: "/home/{{ common_user }}/code/iac/ansible/templates/daemon.json.j2"
+docker_path: /opt/docker-confs
+temp_docker_daemon_file: /home/{{ common_user }}/code/iac/ansible/templates/daemon.json.j2

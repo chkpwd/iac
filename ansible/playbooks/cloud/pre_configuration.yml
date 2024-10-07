@@ -27,8 +27,8 @@
           AllowedIPs = 0.0.0.0/0
           Endpoint = {{ lookup('bws_cache', 'infra-network-secrets').value.public_ip }}:{{ lookup('bws_cache', 'cloud-aws-secrets').value.wireguard_port }}
         dest: "{{ configuration_path }}/wireguard/wg_confs/wg0.conf"
-        owner: "root"
-        group: "root"
+        owner: root
+        group: root
         mode: "600"
 
     - name: Template NGINX config # noqa no-relative-paths
@@ -48,9 +48,9 @@
       community.docker.docker_network:
         name: "{{ item.name }}"
         ipam_config:
-          - subnet: "172.23.{{ item.octet }}.0/24"
-            gateway: "172.23.{{ item.octet }}.1"
-            iprange: "172.23.{{ item.octet }}.0/26"
+          - subnet: 172.23.{{ item.octet }}.0/24
+            gateway: 172.23.{{ item.octet }}.1
+            iprange: 172.23.{{ item.octet }}.0/26
       loop:
         - name: net_swag
           octet: 28

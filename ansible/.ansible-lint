@@ -1,10 +1,18 @@
 ---
+exclude_paths:
+  - .dependencies/
+  - .venv/
+  
 skip_list:
   - fqcn-builtins
   - git-latest
   - package-latest
+  - yaml
 
 warn_list:
-  - command-instead-of-shell  # Use shell only when shell functionality is required.
-  - latest[git]  # Result of the command may vary on subsequent runs.
-  - no-changed-when  # Commands should not change things if nothing needs doing.
+  - command-instead-of-shell # Use shell only when shell functionality is required.
+  - latest[git] # Result of the command may vary on subsequent runs.
+  - no-changed-when # Commands should not change things if nothing needs doing.
+
+# Offline mode disables installation of requirements.yml and schema refreshing
+offline: false

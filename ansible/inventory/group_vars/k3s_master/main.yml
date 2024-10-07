@@ -7,7 +7,7 @@ k3s_server:
     - "{{ kube_vip_address }}" # Floating LoadBalancer IP for Control Plane API
     - k3s-vip.local.chkpwd.com
   docker: false
-  flannel-backend: "vxlan" # quote
+  flannel-backend: vxlan # quote
   disable:
     - metrics-server
     - servicelb
@@ -15,9 +15,9 @@ k3s_server:
     - local-storage
   write-kubeconfig-mode: "0644"
   kube-controller-manager-arg:
-    - "bind-address=0.0.0.0"          # Required to monitor kube-controller-manager with kube-prometheus-stack
+    - bind-address=0.0.0.0 # Required to monitor kube-controller-manager with kube-prometheus-stack
   kube-scheduler-arg:
-    - "bind-address=0.0.0.0"          # Required to monitor kube-scheduler with kube-prometheus-stack
-  etcd-expose-metrics: true           # Required to monitor etcd with kube-prometheus-stack
+    - bind-address=0.0.0.0 # Required to monitor kube-scheduler with kube-prometheus-stack
+  etcd-expose-metrics: true # Required to monitor etcd with kube-prometheus-stack
   kube-apiserver-arg:
-    - "anonymous-auth=true"           # Required for HAProxy health-checks
+    - anonymous-auth=true # Required for HAProxy health-checks

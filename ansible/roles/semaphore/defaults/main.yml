@@ -9,11 +9,11 @@ semaphore_container:
       SEMAPHORE_ADMIN_NAME: *name
       SEMAPHORE_ADMIN_EMAIL: semaphore@chkpwd.com
       SEMAPHORE_ACCESS_KEY_ENCRYPTION: "{{ lookup('bws_cache', 'common-secrets').value. }}"
-      SEMAPHORE_PASSWORD_LOGIN_DISABLED: 'true'
-      SEMAPHORE_WEB_ROOT: 'https://semaphore.chkpwd.com'
-      ANSIBLE_HOST_KEY_CHECKING: 'False'
+      SEMAPHORE_PASSWORD_LOGIN_DISABLED: "true"
+      SEMAPHORE_WEB_ROOT: https://semaphore.chkpwd.com
+      ANSIBLE_HOST_KEY_CHECKING: "False"
     volumes:
       - "{{ configuration_path }}/semaphore/db:/var/lib/semaphore"
       - "{{ configuration_path }}/semaphore/config:/etc/semaphore"
       - "{{ configuration_path }}/semaphore/tmp:/tmp/semaphore"
-    ports: ['3005:3000']
+    ports: [3005:3000]

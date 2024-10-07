@@ -1,0 +1,14 @@
+---
+- name: "Checking for user: {{ ansible_user }}"
+  ansible.windows.win_user:
+    name: "{{ ansible_user }}"
+    password: "{{ lookup('bws_cache', 'common-secrets').value.common_password }}"
+    state: present
+    password_never_expires: true
+    groups:
+      - Administrators
+
+- name: Add users to remote interactive login rights
+  ansible.windows.win_user_right:
+    name: SeRemoteInteractiveLogonRight
+    users: "{{ ansible_user }}"

@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: Secret
-metadata:
-  name: sops-age
-  namespace: "{{ flux_namespace }}"
-type: Opaque
-data:
-  age.agekey: "{{ lookup('bws_cache', 'infra-kairos-secrets').value.age_key_secret_b64 }}"

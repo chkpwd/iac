@@ -22,7 +22,7 @@
         path: /etc/docker
         owner: root
         group: root
-        mode: '0755'
+        mode: "0755"
         state: directory
       notify: Stop Docker Services
 
@@ -35,7 +35,7 @@
         dest: /etc/docker/daemon.json
         owner: root
         group: root
-        mode: '0644'
+        mode: "0644"
       when: ansible_facts['devices'] | dict2items | list | length > 1
 
     - name: Start Docker Services
@@ -50,4 +50,3 @@
       ansible.builtin.file:
         path: /var/lib/docker
         state: absent
-

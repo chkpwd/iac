@@ -5,7 +5,7 @@
     dest: "{{ configuration_path }}/prometheus/{{ item.path | splitext | first }}"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
-    mode: 0755
+    mode: "0755"
   loop: "{{ lookup('community.general.filetree', 'templates/') }}"
   loop_control:
     label: "Files: {{ item.path }}"

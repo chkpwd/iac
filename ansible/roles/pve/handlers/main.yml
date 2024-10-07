@@ -1,12 +1,15 @@
 ---
 - name: Update grub
   ansible.builtin.command:
-    cmd: "update-grub"
+    cmd: update-grub
+  register: grub_update
+  changed_when: grub_update.rc != 0
 
 - name: Update initramfs
   ansible.builtin.command:
-    cmd: "update-initramfs -u"
+    cmd: update-initramfs -u
+  register: initramfs_update
+  changed_when: initramfs_update.rc != 0
 
 - name: Reboot pve
   ansible.builtin.reboot:
-

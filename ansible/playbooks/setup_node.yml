@@ -4,9 +4,8 @@
   become: true
 
   vars:
-    ansible_ssh_user: "administrator"
-    packages: [vim,htop]
-
+    ansible_ssh_user: administrator
+    packages: [vim, htop]
   tasks:
     - name: Run role for system Setup
       ansible.builtin.include_role:

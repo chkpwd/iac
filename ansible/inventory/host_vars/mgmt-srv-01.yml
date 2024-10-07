@@ -15,19 +15,19 @@ service_definitions:
       - "{{ configuration_path }}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
       - "{{ configuration_path }}/prometheus/web.yml:/etc/prometheus/web.yml:ro"
       - "{{ configuration_path }}/prometheus/data:/prometheus/data"
-    ports: ['9090:9090']
+    ports: [9090:9090]
 
   - name: grafana
     image: grafana/grafana:11.2.2
     user: 1000:1000
     env:
       GF_DAGF_FEATURE_TOGGLES_ENABLE: publicDashboards
-      GF_INSTALL_PLUGINS: "grafana-clock-panel, grafana-simple-json-datasource"
+      GF_INSTALL_PLUGINS: grafana-clock-panel, grafana-simple-json-datasource
       GF_SECURITY_ADMIN_USER: grafana
       GF_SECURITY_ADMIN_PASSWORD: "{{ lookup('bws_cache', 'common-secrets').value.common_password }}"
     volumes:
       - "{{ configuration_path }}/grafana:/var/lib/grafana"
-    ports: ['3000:3000']
+    ports: [3000:3000]
 
   - name: auroraboot
     image: quay.io/kairos/auroraboot:latest
@@ -38,13 +38,13 @@ service_definitions:
     network_mode: host
     state: stopped
 
-  - name: nginx-webserver
+  - name: nginx_webserver
     image: nginx:1.25.4-alpine3.18-slim
     ports:
       - 8081:80
     volumes:
-      - "{{ configuration_path }}/nginx-webserver/default.conf:/etc/nginx/conf.d/default.conf:ro"
-      - "{{ configuration_path }}/nginx-webserver/files:/files"
+      - "{{ configuration_path }}/nginx_webserver/default.conf:/etc/nginx/conf.d/default.conf:ro"
+      - "{{ configuration_path }}/nginx_webserver/files:/files"
 
   - name: netbootxyz
     image: ghcr.io/netbootxyz/netbootxyz:0.7.1-nbxyz2
@@ -61,15 +61,15 @@ service_definitions:
   - name: bws-cache
     image: ghcr.io/ripplefcl/bws-cache:v1.1.0
     env:
-      ORG_ID: "0228643f-4148-4629-b9b4-b06e001d9cce"
+      ORG_ID: 0228643f-4148-4629-b9b4-b06e001d9cce
       SECRET_TTL: "3600"
       DEBUG: "true"
-    ports: ['5000:5000']
+    ports: [5000:5000]
 
   - name: apex-legends-exporter
     image: ghcr.io/chkpwd/apex-legends-exporter:v2.2.1
     env:
       USER_ID: "2848619454"
-      PLATFORM: "PC"
+      PLATFORM: PC
       API_KEY: "{{ lookup('bws_cache', 'public-api-apex-legends-key').value }}"
-    ports: ['5050:5000']
+    ports: [5050:5000]

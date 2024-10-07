@@ -1,8 +1,8 @@
 ---
 - name: Create new organization
   awx.awx.organization:
-    name: "chkpwd"
-    description: "Default Organization"
+    name: chkpwd
+    description: Default Organization
     state: present
     controller_config_file: "{{ awx_conf }}"
 
@@ -12,11 +12,11 @@
 
 - name: Add Git repository as Project
   awx.awx.project:
-    name: "Git"
+    name: Git
     organization: "{{ awx_org }}"
     scm_type: git
     scm_url: "{{ awx_git_url }}"
-    scm_branch: "main"
+    scm_branch: main
     scm_update_on_launch: true
     state: present
     controller_config_file: "{{ awx_conf }}"
@@ -45,7 +45,7 @@
     notification_configuration:
       url: "{{ DISCORD_AWX_LAB_WEBHOOK }}"
       headers:
-        Content-Type: "application/json"
+        Content-Type: application/json
     messages:
       started:
         message: '{"content": "test"}'

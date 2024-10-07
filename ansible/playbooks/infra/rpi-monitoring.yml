@@ -18,24 +18,22 @@
           - epiphany-browser
 
     - name: Change hostname
-      ansible.builtin.shell: "raspi-config nonint do_hostname {{ ansible_host }}"
-
+      ansible.builtin.command: raspi-config nonint do_hostname {{ ansible_host }}
     - name: Change locale
-      ansible.builtin.shell: "raspi-config nonint do_change_locale en_US.UTF-8"
-    
+      ansible.builtin.command: raspi-config nonint do_change_locale en_US.UTF-8
     - name: Change user password
-      ansible.builtin.shell: "echo '*' | passwd {{ ansible_user }}"
+      ansible.builtin.shell: |
+        set -o pipefail
+        echo '*' | passwd {{ ansible_user }}
 
     - name: Set Boot behaviour
-      ansible.builtin.shell: "raspi-config nonint do_boot_behaviour B2"
-
+      ansible.builtin.command: raspi-config nonint do_boot_behaviour B2
     - name: Enable SSH
-      ansible.builtin.shell: "raspi-config nonint do_ssh 0"
-
+      ansible.builtin.command: raspi-config nonint do_ssh 0
     - name: Configure OpenBox
       ansible.builtin.template:
-        src: ../../templates/raspbian_kiosk.j2
+        src: ../../templates/raspbian_kiosk.j2 # noqa no-relative-paths
         dest: /etc/xdg/openbox/autostart
         owner: root
         group: root
-        mode: 0644
+        mode: "0644"

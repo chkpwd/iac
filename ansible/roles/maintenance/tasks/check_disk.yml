@@ -5,6 +5,7 @@
     set -o pipefail
     df -h /tmp --output=avail | tail -n 1'
   register: disk_usage
+  changed_when: false
 - name: Display free disk space
   ansible.builtin.debug:
-    msg: "Available disk space for /tmp is {{ disk_usage.stdout }}"
+    msg: Available disk space for /tmp is {{ disk_usage.stdout }}

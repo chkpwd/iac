@@ -1,0 +1,27 @@
+---
+- name: Template server cfg files
+  ansible.builtin.template:
+    src: templates/GameUserSettings.ini.j2
+    dest: "{{ configuration_path }}/ark-server/serverfiles/ShooterGame/Saved/Config/LinuxServer/GameUserSettings.ini"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: "0644"
+  notify: Restart Ark Server Container
+
+- name: Template instance cfg files
+  ansible.builtin.template:
+    src: templates/arkserver.cfg.j2
+    dest: "{{ configuration_path }}/ark-server/config-lgsm/arkserver/arkserver.cfg"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: "0644"
+  notify: Restart Ark Server Container
+
+- name: Copy server cfg files
+  ansible.builtin.copy:
+    src: files/
+    dest: "{{ configuration_path }}/ark-server/serverfiles/ShooterGame/Saved/Config/LinuxServer/"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: "0644"
+  notify: Restart Ark Server Container
