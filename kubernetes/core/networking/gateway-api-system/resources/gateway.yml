@@ -8,7 +8,7 @@ spec:
   gatewayClassName: cilium
   infrastructure:
     annotations:
-      io.cilium/lb-ipam-ips: 172.16.16.55
+      lbipam.cilium.io/ips: 172.16.16.55
   listeners:
     - protocol: HTTP
       port: 80

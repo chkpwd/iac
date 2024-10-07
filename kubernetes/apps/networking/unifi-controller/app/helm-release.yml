@@ -75,7 +75,7 @@ spec:
       app:
         controller: unifi-controller
         annotations:
-          io.cilium/lb-ipam-ips: ${UNIFI_LB_ADDRESS}
+          lbipam.cilium.io/ips: ${UNIFI_LB_ADDRESS}
         type: LoadBalancer
         externalTrafficPolicy: Cluster
         ports:

@@ -33,7 +33,7 @@ spec:
       service:
         enabled: true
         annotations:
-          io.cilium/lb-ipam-ips: ${NGINX_LB_EXT_ADDRESS}
+          lbipam.cilium.io/ips: ${NGINX_LB_EXT_ADDRESS}
         type: LoadBalancer
         externalTrafficPolicy: Cluster
 

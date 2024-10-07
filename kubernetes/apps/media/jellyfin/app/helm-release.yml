@@ -111,7 +111,7 @@ spec:
       app:
         controller: jellyfin
         annotations:
-          io.cilium/lb-ipam-ips: *loadBalancerIP
+          lbipam.cilium.io/ips: *loadBalancerIP
         type: LoadBalancer
         externalTrafficPolicy: Cluster
         ports:
