@@ -5,16 +5,24 @@ metadata:
   name: immich
   namespace: tools
 spec:
-  image: ghcr.io/chkpwd/cdpgvecto.rs:ubi8-16.1-0-v0.2.0
+  image: ghcr.io/chkpwd/cdpgvecto.rs:ubi8-16.4-0-v0.3.0
   postgresVersion: 16
   patroni:
     dynamicConfiguration:
       synchronous_mode: true
       postgresql:
         synchronous_commit: "on"
+        pg_hba:
+          - hostnossl immich immich 172.23.0.0/16 md5
+          - hostnossl all all 10.42.0.0/16 md5
+          - hostssl all all 0.0.0.0/0 md5
         parameters:
           shared_preload_libraries: "vectors.so"
           search_path: '"$user", public, vectors'
+
+  databaseInitSQL:
+    name: immich-database-init-sql
+    key: init.sql
 
   instances:
     - dataVolumeClaimSpec:
@@ -29,7 +37,7 @@ spec:
     - name: immich
       databases:
         - immich
-      options: "SUPERUSER"
+    
 
   backups:
     pgbackrest:
@@ -47,3 +55,19 @@ spec:
               resources:
                 requests:
                   storage: 1Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: immich-database-init-sql
+data:
+  init.sql: |-
+    CREATE DATABASE immich;
+    \c immich
+    BEGIN;
+    ALTER DATABASE immich OWNER TO immich;
+    CREATE EXTENSION vectors;
+    CREATE EXTENSION earthdistance CASCADE;
+    ALTER DATABASE immich SET search_path TO "$user", public, vectors;
+    ALTER SCHEMA vectors OWNER TO immich;
+    COMMIT;

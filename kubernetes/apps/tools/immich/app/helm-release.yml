@@ -62,7 +62,21 @@ spec:
           memory: 2048M
 
     machine-learning:
-      enabled: false
+      resources:
+        requests:
+          cpu: 500m
+          memory: 4096M
+      persistence:
+        cache:
+          type: pvc
+          existingClaim: immich-machine-learning-cache
+      probes:
+        liveness:
+          spec:
+            initialDelaySeconds: 120
+        readiness:
+          spec:
+            initialDelaySeconds: 120
 
     env:
       DB_DATABASE_NAME:

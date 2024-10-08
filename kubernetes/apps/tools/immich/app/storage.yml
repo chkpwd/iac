@@ -30,3 +30,15 @@ spec:
   resources:
     requests:
       storage: 1Mi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-machine-learning-cache
+  namespace: tools
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: longhorn-media
+  resources:
+    requests:
+      storage: 10Gi
