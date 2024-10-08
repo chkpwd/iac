@@ -5,6 +5,7 @@ metadata:
   name: tools-immich
   namespace: flux-system
 spec:
+  targetNamespace: tools
   path: ./kubernetes/apps/tools/immich/app
   prune: true
   sourceRef:
