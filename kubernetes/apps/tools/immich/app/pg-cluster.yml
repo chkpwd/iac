@@ -3,7 +3,6 @@ apiVersion: postgres-operator.crunchydata.com/v1beta1
 kind: PostgresCluster
 metadata:
   name: immich
-  namespace: tools
 spec:
   image: ghcr.io/chkpwd/cdpgvecto.rs:ubi8-16.4-0-v0.3.0
   postgresVersion: 16
