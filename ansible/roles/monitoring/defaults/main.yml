@@ -9,9 +9,9 @@ monitoring_service_definitions:
       - --storage.tsdb.retention.time=14d
       - --storage.tsdb.retention.size=5GB
     volumes:
-      - "{{ configuration_path }}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
-      - "{{ configuration_path }}/prometheus/web.yml:/etc/prometheus/web.yml:ro"
-      - "{{ configuration_path }}/prometheus/data:/prometheus/data"
+      - "{{ compose_configuration_path }}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+      - "{{ compose_configuration_path }}/prometheus/web.yml:/etc/prometheus/web.yml:ro"
+      - "{{ compose_configuration_path }}/prometheus/data:/prometheus/data"
     ports: [9090:9090]
 
   - name: grafana
@@ -23,5 +23,5 @@ monitoring_service_definitions:
       GF_SECURITY_ADMIN_USER: grafana
       GF_SECURITY_ADMIN_PASSWORD: "{{ lookup('bws_cache', 'common-secrets').value.common_password }}"
     volumes:
-      - "{{ configuration_path }}/grafana:/var/lib/grafana"
+      - "{{ compose_configuration_path }}/grafana:/var/lib/grafana"
     ports: [3000:3000]

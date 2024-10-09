@@ -2,7 +2,7 @@
 - name: Create default configuration
   ansible.builtin.template:
     src: templates/default.conf.j2
-    dest: "{{ configuration_path }}/nginx_webserver/default.conf"
+    dest: "{{ compose_configuration_path }}/nginx_webserver/default.conf"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
     mode: "0755"
@@ -11,7 +11,7 @@
 - name: Template static files
   ansible.builtin.template:
     src: "{{ item.src }}"
-    dest: "{{ configuration_path }}/nginx_webserver/files/{{ item.path | splitext | first }}"
+    dest: "{{ compose_configuration_path }}/nginx_webserver/files/{{ item.path | splitext | first }}"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
     mode: "0755"
@@ -23,7 +23,7 @@
 - name: Copy static files
   ansible.builtin.copy:
     src: files/
-    dest: "{{ configuration_path }}/nginx_webserver/files/"
+    dest: "{{ compose_configuration_path }}/nginx_webserver/files/"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
     mode: "0755"

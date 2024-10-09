@@ -26,7 +26,7 @@ service_definitions:
     env: "{{ common_env }}"
     ports: [3001:3001]
     volumes:
-      - "{{ configuration_path }}/wireguard:/config"
+      - "{{ compose_configuration_path }}/wireguard:/config"
       - /lib/modules:/lib/modules
     sysctls:
       net.ipv4.conf.all.src_valid_mark: 1
@@ -36,7 +36,7 @@ service_definitions:
   - name: uptime-kuma
     image: louislam/uptime-kuma:1.23.15
     volumes:
-      - "{{ configuration_path }}/uptime-kuma:/app/data"
+      - "{{ compose_configuration_path }}/uptime-kuma:/app/data"
     network_mode: container:wireguard
 
   - name: swag
@@ -54,6 +54,6 @@ service_definitions:
       STAGING: "false"
       DOCKER_MODS: linuxserver/mods:swag-auto-reload
     volumes:
-      - "{{ configuration_path }}/swag:/config"
+      - "{{ compose_configuration_path }}/swag:/config"
     networks:
       - name: net_swag

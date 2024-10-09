@@ -11,7 +11,7 @@
 
 - name: Create dir
   ansible.builtin.file:
-    path: "{{ configuration_path }}"
+    path: "{{ compose_configuration_path }}"
     state: directory
     owner: "{{ common_user }}"
     group: "{{ common_user }}"

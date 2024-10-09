@@ -5,7 +5,7 @@ service_definitions:
   - name: ark-server
     image: ghcr.io/gameservermanagers/gameserver:ark
     volumes:
-      - "{{ configuration_path }}/ark-server:/data"
+      - "{{ compose_configuration_path }}/ark-server:/data"
     ports:
       - 27015:27015/udp
       - 7777:7777/udp

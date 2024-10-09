@@ -12,9 +12,9 @@ service_definitions:
       - --storage.tsdb.retention.time=14d
       - --storage.tsdb.retention.size=5GB
     volumes:
-      - "{{ configuration_path }}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
-      - "{{ configuration_path }}/prometheus/web.yml:/etc/prometheus/web.yml:ro"
-      - "{{ configuration_path }}/prometheus/data:/prometheus/data"
+      - "{{ compose_configuration_path }}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
+      - "{{ compose_configuration_path }}/prometheus/web.yml:/etc/prometheus/web.yml:ro"
+      - "{{ compose_configuration_path }}/prometheus/data:/prometheus/data"
     ports: [9090:9090]
 
   - name: grafana
@@ -26,15 +26,15 @@ service_definitions:
       GF_SECURITY_ADMIN_USER: grafana
       GF_SECURITY_ADMIN_PASSWORD: "{{ lookup('bws_cache', 'common-secrets').value.common_password }}"
     volumes:
-      - "{{ configuration_path }}/grafana:/var/lib/grafana"
+      - "{{ compose_configuration_path }}/grafana:/var/lib/grafana"
     ports: [3000:3000]
 
   - name: auroraboot
     image: quay.io/kairos/auroraboot:latest
     command: --cloud-config /files/cloud-config.yml /files/auroraboot-config.yml
     volumes:
-      - "{{ configuration_path }}/auroraboot/files:/files"
-      - "{{ configuration_path }}/auroraboot/tmp:/tmp"
+      - "{{ compose_configuration_path }}/auroraboot/files:/files"
+      - "{{ compose_configuration_path }}/auroraboot/tmp:/tmp"
     network_mode: host
     state: stopped
 
@@ -43,8 +43,8 @@ service_definitions:
     ports:
       - 8081:80
     volumes:
-      - "{{ configuration_path }}/nginx_webserver/default.conf:/etc/nginx/conf.d/default.conf:ro"
-      - "{{ configuration_path }}/nginx_webserver/files:/files"
+      - "{{ compose_configuration_path }}/nginx_webserver/default.conf:/etc/nginx/conf.d/default.conf:ro"
+      - "{{ compose_configuration_path }}/nginx_webserver/files:/files"
 
   - name: netbootxyz
     image: ghcr.io/netbootxyz/netbootxyz:0.7.1-nbxyz2
@@ -54,8 +54,8 @@ service_definitions:
       - 3001:3000
       - 69:69/udp
     volumes:
-      - "{{ configuration_path }}/netbootxyz:/config"
-      - "{{ configuration_path }}/netbootxyz/data:/assets"
+      - "{{ compose_configuration_path }}/netbootxyz:/config"
+      - "{{ compose_configuration_path }}/netbootxyz/data:/assets"
     state: stopped
 
   - name: bws-cache
@@ -63,7 +63,7 @@ service_definitions:
     env:
       ORG_ID: 0228643f-4148-4629-b9b4-b06e001d9cce
       SECRET_TTL: "3600"
-      DEBUG: "true"
+      DEBUG: "false"
     ports: [5000:5000]
 
   - name: apex-legends-exporter

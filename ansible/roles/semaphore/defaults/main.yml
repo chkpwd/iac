@@ -13,7 +13,7 @@ semaphore_container:
       SEMAPHORE_WEB_ROOT: https://semaphore.chkpwd.com
       ANSIBLE_HOST_KEY_CHECKING: "False"
     volumes:
-      - "{{ configuration_path }}/semaphore/db:/var/lib/semaphore"
-      - "{{ configuration_path }}/semaphore/config:/etc/semaphore"
-      - "{{ configuration_path }}/semaphore/tmp:/tmp/semaphore"
+      - "{{ compose_configuration_path }}/semaphore/db:/var/lib/semaphore"
+      - "{{ compose_configuration_path }}/semaphore/config:/etc/semaphore"
+      - "{{ compose_configuration_path }}/semaphore/tmp:/tmp/semaphore"
     ports: [3005:3000]
