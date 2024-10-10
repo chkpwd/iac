@@ -17,7 +17,6 @@ variable "ports" {
     "prowlarr"    = "9696"
     "radarr"      = "7878"
     "sabnzbd"     = "8080"
-    "qbittorrent" = "8080"
   }
   description = "Mapping of services to their respective ports"
 }

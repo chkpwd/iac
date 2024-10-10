@@ -9,17 +9,6 @@ resource "radarr_download_client_sabnzbd" "sabnzbd" {
   api_key        = data.external.bws_lookup.result["infra-media-secrets_sabnzbd_api_key"]
 }
 
-resource "radarr_download_client_qbittorrent" "qbittorrent" {
-  enable         = true
-  priority       = 1
-  name           = "qbittorrent"
-  host           = "qbittorrent.${var.cluster_media_domain}"
-  url_base       = "/"
-  movie_category = "radarr"
-  port           = var.ports["qbittorrent"]
-  first_and_last = false
-}
-
 resource "radarr_naming" "media_naming_configs" {
   #include_quality            = false
   rename_movies              = true
@@ -52,14 +41,10 @@ resource "radarr_media_management" "media_settings_configs" {
   enable_media_info                           = true
 }
 
-resource "radarr_root_folder" "anime" {
-  path = "/data/films/anime_movies"
-}
-
 resource "radarr_root_folder" "standard_1080p" {
-  path = "/data/films/standard_movies/1080p"
+  path = "/data/films/1080p"
 }
 
 resource "radarr_root_folder" "standard_4k" {
-  path = "/data/films/standard_movies/4k"
+  path = "/data/films/4k"
 }

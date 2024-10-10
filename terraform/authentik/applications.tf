@@ -170,29 +170,6 @@ EOF
   access_group = [authentik_group.main.id]
 }
 
-module "authentik-app-qbittorrent" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "Qbittorrent"
-  group  = "main"
-
-  proxy_values = {
-    internal        = ""
-    external        = "https://qbittorrent.local.chkpwd.com"
-    mode            = "forward_single"
-    skip_path_regex = <<EOF
-^/api
-^/metrics
-EOF
-  }
-
-  app_values = {
-    meta_description = "Series Management"
-    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/qbittorrent.png"
-  }
-
-  access_group = [authentik_group.main.id]
-}
-
 module "authentik-app-runwhen-local" {
   source = "../_modules/authentik/proxy_app"
   name   = "Runwhen Local"

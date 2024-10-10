@@ -29,15 +29,3 @@ resource "prowlarr_download_client_sabnzbd" "sabnzbd" {
   username = data.external.bws_lookup.result["infra-media-secrets_servarr_username"]
   password = data.external.bws_lookup.result["infra-media-secrets_servarr_password"]
 }
-
-resource "prowlarr_download_client_qbittorrent" "qbiittorrent" {
-  enable   = true
-  priority = 2
-  name     = "qbittorrent"
-  host     = "qbittorrent.${var.cluster_media_domain}"
-  url_base = "/"
-  port     = var.ports["qbittorrent"]
-  category = "prowlarr"
-  username = data.external.bws_lookup.result["infra-media-secrets_servarr_username"]
-  password = data.external.bws_lookup.result["infra-media-secrets_servarr_password"]
-}
