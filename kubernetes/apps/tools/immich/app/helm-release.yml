@@ -56,10 +56,18 @@ spec:
               paths:
                 - path: /
                   pathType: Prefix
+      securityContext:
+        readOnlyRootFilesystem: true
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
       resources:
         requests:
-          cpu: 1500m
-          memory: 2048M
+          cpu: "10m"
+          memory: "128Mi"
+        limits:
+          cpu: "3000m"
+          memory: "2Gi"
 
     machine-learning:
       resources:

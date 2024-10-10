@@ -50,6 +50,11 @@ spec:
                   secretKeyRef:
                     name: shlink-secrets
                     key: GEOLITE_LICENSE_KEY
+              INITIAL_API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: shlink-secrets
+                    key: INITIAL_API_KEY
               DEFAULT_SHORT_CODES_LENGTH: 4
               ENABLE_PERIODIC_VISIT_LOCATE: true
               PORT: &port 80
@@ -80,7 +85,6 @@ spec:
                   secretKeyRef:
                     name: shlink-pguser-shlink
                     key: port
-              INITIAL_API_KEY: ${API_KEY_SHLINK}
 
             probes:
               liveness: &probes
