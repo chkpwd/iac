@@ -116,7 +116,7 @@ module "authentik-app-miniflux" {
   oauth2_values = {
     client_id         = "miniflux"
     client_secret     = data.external.bws_lookup.result["ns-tools-miniflux_client_secret"]
-    property_mappings = data.authentik_property_mapping_provider_scope.testing.ids
+    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
     redirect_uris     = ["https://miniflux.chkpwd.com/oauth2/oidc/callback"]
   }
   app_values = {
@@ -263,4 +263,28 @@ module "authentik-app-semaphore-ui" {
   }
 
   access_group = [authentik_group.main.id]
+}
+
+module "authentik-app-immich" {
+  source = "../_modules/authentik/oauth2_app"
+  name   = "Immich"
+  group  = "group"
+  oauth2_values = {
+    client_id         = "immich"
+    client_secret     = data.external.bws_lookup.result["ns-tools-immich_client_secret"]
+    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
+    redirect_uris     = [
+      "app.immich:///oauth-callback",
+      "https://immich.chkpwd.com/auth/login",
+      "https://immich.chkpwd.com/user-settings"
+    ]
+  }
+  app_values = {
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/immich.png"
+    meta_description = "Photo Management"
+  }
+  access_group = [
+    authentik_group.main.id,
+    authentik_group.secondary.id
+  ]
 }
