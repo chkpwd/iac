@@ -63,7 +63,7 @@ spec:
         enabled: true
         className: int-ingress
         hosts:
-          - host: &host "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+          - host: "{{ .Release.Name }}.${LOCAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

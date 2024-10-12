@@ -9,7 +9,7 @@ metadata:
 spec:
   ingressClassName: ext-ingress
   rules:
-    - host: &host "flux-webhook.chkpwd.com"
+    - host: "flux-webhook.chkpwd.com"
       http:
         paths:
           - path: /hook/
