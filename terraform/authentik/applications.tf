@@ -208,25 +208,6 @@ module "authentik-app-maintainerr" {
   access_group = [authentik_group.main.id]
 }
 
-module "authentik-app-stirling-pdf" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "Stirling PDF"
-  group  = "secondary"
-
-  proxy_values = {
-    internal = ""
-    external = "https://stirling-pdf.chkpwd.com"
-    mode     = "forward_single"
-  }
-
-  app_values = {
-    meta_description = "PDF Tool"
-    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/stirling-pdf.png"
-  }
-
-  access_group = [authentik_group.main.id, authentik_group.secondary.id]
-}
-
 module "authentik-app-actual-budget" {
   source = "../_modules/authentik/proxy_app"
   name   = "Actual Budget"
@@ -273,7 +254,7 @@ module "authentik-app-immich" {
     client_id         = "immich"
     client_secret     = data.external.bws_lookup.result["ns-tools-immich_client_secret"]
     property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
-    redirect_uris     = [
+    redirect_uris = [
       "app.immich:///oauth-callback",
       "https://immich.chkpwd.com/auth/login",
       "https://immich.chkpwd.com/user-settings"
@@ -288,3 +269,24 @@ module "authentik-app-immich" {
     authentik_group.secondary.id
   ]
 }
+
+module "authentik-app-stirling-pdf" {
+  source = "../_modules/authentik/oauth2_app"
+  name   = "Stirling PDF"
+  group  = "secondary"
+
+  oauth2_values = {
+    client_id         = "stirling-pdf"
+    client_secret     = data.external.bws_lookup.result["ns-tools-stirling-pdf_oauth_client_secret"]
+    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
+    redirect_uris     = ["https://stirling-pdf.chkpwd.com/oauth2/oidc/callback"]
+  }
+
+  app_values = {
+    meta_description = "PDF Tool"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/stirling-pdf.png"
+  }
+
+  access_group = [authentik_group.main.id, authentik_group.secondary.id]
+}
+
