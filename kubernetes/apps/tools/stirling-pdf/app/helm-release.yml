@@ -121,6 +121,11 @@ spec:
       tmp:
         enabled: true
         type: emptyDir
+      files:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /customFiles/static
       tessdata:
         enabled: true
         type: emptyDir
