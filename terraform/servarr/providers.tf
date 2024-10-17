@@ -6,7 +6,7 @@ terraform {
     }
     prowlarr = {
       source  = "devopsarr/prowlarr"
-      version = "2.4.2"
+      version = "2.4.3"
     }
     radarr = {
       source  = "devopsarr/radarr"
