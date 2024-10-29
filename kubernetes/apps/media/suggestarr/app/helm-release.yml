@@ -47,9 +47,9 @@ spec:
 
         pod:
           securityContext:
-            runAsUser: 1026
-            runAsGroup: &group 100
-            fsGroup: *group
+            runAsUser: &context 1999
+            runAsGroup: *context
+            fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
@@ -110,3 +110,9 @@ spec:
                 service:
                   identifier: app
                   port: http
+
+    persistence:
+      logs:
+        type: emptyDir
+        globalMounts:
+          - path: /app/api_service/
