@@ -59,7 +59,7 @@ spec:
               tag: 1.0.9.1
               pullPolicy: IfNotPresent
               # "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"
-            args: ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf", "--user", "suggestarr", "--logfile", "/tmp/supervisord.log", "--pidfile", "/tmp/supervisord.pid"]
+            args: ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf", "--logfile", "/tmp/supervisord.log", "--pidfile", "/tmp/supervisord.pid"]
             probes:
               liveness: &probes
                 enabled: true
