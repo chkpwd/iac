@@ -102,20 +102,20 @@ spec:
                   identifier: app
                   port: http
 
-    persistence:
-      logs:
-        type: emptyDir
-        globalMounts:
-          - path: /app/api_service/
-      var:
-        type: emptyDir
-        globalMounts:
-          - path: /var/run/
-            tmp:
-        enabled: true
-      tmp:
-        type: emptyDir
-        medium: Memory
-        globalMounts:
-          - subPath: "suggestarr"
-            path: "/tmp"
+    # persistence:
+    #   logs:
+    #     type: emptyDir
+    #     globalMounts:
+    #       - path: /app/api_service/
+    #   var:
+    #     type: emptyDir
+    #     globalMounts:
+    #       - path: /var/run/
+    #         tmp:
+    #     enabled: true
+    #   tmp:
+    #     type: emptyDir
+    #     medium: Memory
+    #     globalMounts:
+    #       - subPath: "suggestarr"
+    #         path: "/tmp"
