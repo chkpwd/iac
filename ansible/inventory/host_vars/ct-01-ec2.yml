@@ -1,6 +1,6 @@
 ---
 # Set the user
-common_user: admin
+common_user_uid: 1000
 
 # Docker Configurations
 docker_edition: ce
@@ -22,11 +22,11 @@ service_definitions:
     image: lscr.io/linuxserver/wireguard:1.0.20210914
     capabilities:
       - net_admin # Allows modifications of net utils
-      - sys_module # Allows privileged operations on non-root systems
+      # - sys_module # No longer needed if host loads the modules already
     env: "{{ common_env }}"
     ports: [3001:3001]
     volumes:
-      - "{{ compose_configuration_path }}/wireguard:/config"
+      - "{{ configuration_path }}/wireguard:/config"
       - /lib/modules:/lib/modules
     sysctls:
       net.ipv4.conf.all.src_valid_mark: 1
@@ -36,7 +36,7 @@ service_definitions:
   - name: uptime-kuma
     image: louislam/uptime-kuma:1.23.15
     volumes:
-      - "{{ compose_configuration_path }}/uptime-kuma:/app/data"
+      - "{{ configuration_path }}/uptime-kuma:/app/data"
     network_mode: container:wireguard
 
   - name: swag
@@ -54,6 +54,6 @@ service_definitions:
       STAGING: "false"
       DOCKER_MODS: linuxserver/mods:swag-auto-reload
     volumes:
-      - "{{ compose_configuration_path }}/swag:/config"
+      - "{{ configuration_path }}/swag:/config"
     networks:
       - name: net_swag
