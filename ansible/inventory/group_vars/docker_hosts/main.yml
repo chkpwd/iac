@@ -9,4 +9,6 @@ docker_services:
   - name: Docker Socket
     value: docker.socket
 docker_path: /opt/docker-confs
-temp_docker_daemon_file: /home/{{ common_user }}/code/iac/ansible/templates/daemon.json.j2
+configuration_path: /opt/docker-confs
+docker_daemon_path: /mnt/data/docker
+temp_docker_daemon_file: /Users/chkpwd/code/iac/ansible/templates/daemon.json.j2
