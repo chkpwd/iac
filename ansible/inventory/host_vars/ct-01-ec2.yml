@@ -40,7 +40,7 @@ service_definitions:
     network_mode: container:wireguard
 
   - name: swag
-    image: "{{ linuxserver_image }}/swag:2.7.2"
+    image: lscr.io/linuxserver/swag:2.7.2
     ports:
       - 443:443
       - 80:80
