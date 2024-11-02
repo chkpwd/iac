@@ -7,7 +7,8 @@
   ansible.builtin.import_playbook: pre_configuration.yml
   tags: pre_config
 
-- hosts: cloud # noqa name[play]
+- name: Deploy Containers
+  hosts: cloud
   roles:
     - { role: compose }
   tags: containers
