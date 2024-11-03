@@ -7,7 +7,7 @@
     name: geerlingguy.docker
 
 - name: Docker Daemon Config
-  when: configure_docker_daemon
+  # when: configure_docker_daemon # not sure why I added this
   block:
     - name: Stop Docker Services
       ansible.builtin.service:
