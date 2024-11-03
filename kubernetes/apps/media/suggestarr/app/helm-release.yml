@@ -45,12 +45,12 @@ spec:
               globalMounts:
                 - path: /app/config/config_files
 
-        pod:
-          securityContext:
-            runAsUser: &context 1999
-            runAsGroup: *context
-            fsGroup: *context
-            fsGroupChangePolicy: "OnRootMismatch"
+        # pod:
+        #   securityContext:
+        #     runAsUser: &context 1999
+        #     runAsGroup: *context
+        #     fsGroup: *context
+        #     fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
           app:
@@ -66,11 +66,11 @@ spec:
               startup:
                 enabled: false
 
-            securityContext:
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop:
-                  - ALL
+            # securityContext:
+            #   allowPrivilegeEscalation: false
+            #   capabilities:
+            #     drop:
+            #       - ALL
 
             resources:
               requests:
@@ -102,9 +102,24 @@ spec:
                   identifier: app
                   port: http
 
-    persistence:
-      var:
-        enabled: true
-        type: emptyDir
-        globalMounts:
-          - path: /var/run/
+    # persistence:
+    #   var:
+    #     enabled: true
+    #     type: emptyDir
+    #     globalMounts:
+    #       - path: /var/run/
+    #   logs:
+    #     enabled: true
+    #     type: emptyDir
+    #     globalMounts:
+    #       - path: /app/
+    #       - path: /var/log
+    #   tmp:
+    #     enabled: true
+    #     type: emptyDir
+    #   cron:
+    #     enabled: true
+    #     type: emptyDir
+    #     globalMounts:
+    #       - subPath: automation-cron
+    #         path: /etc/cron.d/
