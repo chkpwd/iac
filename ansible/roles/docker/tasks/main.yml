@@ -30,8 +30,8 @@
       ansible.builtin.gather_facts:
 
     - name: Set Docker Daemon Config file
-      ansible.builtin.template:
-        src: "{{ temp_docker_daemon_file }}"
+      ansible.builtin.copy:
+        content: "{ \"data-root\": \"{{ docker_daemon_path }}\" }"
         dest: /etc/docker/daemon.json
         owner: root
         group: root
