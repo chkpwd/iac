@@ -1,7 +1,7 @@
 ---
 - name: Install essential packages # noqa package-latest
   ansible.builtin.apt:
-    name: "{{ packages }}"
+    name: "{{ linux_setup_packages }}"
     state: latest
   become: true
 
@@ -55,7 +55,7 @@
   ansible.posix.authorized_key:
     user: "{{ common_user }}"
     state: present
-    key: "{{ ssh_public_key }}"
+    key: "{{ linux_setup_ssh_public_key }}"
   become: true
 
 - name: Disable SSH password auth
