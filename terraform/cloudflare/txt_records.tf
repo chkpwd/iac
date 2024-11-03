@@ -1,4 +1,4 @@
-resource "cloudflare_record" "github_txt" {
+resource "cloudflare_dns_record" "github_txt" {
   name    = "_github-challenge-chkpwd-org.chkpwd.com"
   ttl     = 1
   type    = "TXT"
