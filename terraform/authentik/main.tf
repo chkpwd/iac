@@ -33,7 +33,6 @@ resource "authentik_outpost" "secondary" {
   name = "authentik External Ingress Outpost"
   type = "proxy"
   protocol_providers = [
-    module.authentik-app-stirling-pdf.provider_id,
     module.authentik-app-semaphore-ui.provider_id,
   ]
   config = jsonencode({

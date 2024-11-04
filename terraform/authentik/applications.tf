@@ -270,23 +270,23 @@ module "authentik-app-immich" {
   ]
 }
 
-module "authentik-app-stirling-pdf" {
-  source = "../_modules/authentik/oauth2_app"
-  name   = "Stirling PDF"
-  group  = "secondary"
+# module "authentik-app-stirling-pdf" {
+#   source = "../_modules/authentik/oauth2_app"
+#   name   = "Stirling PDF"
+#   group  = "secondary"
 
-  oauth2_values = {
-    client_id         = "stirling-pdf"
-    client_secret     = data.external.bws_lookup.result["ns-tools-stirling-pdf_oauth_client_secret"]
-    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
-    redirect_uris     = ["https://stirling-pdf.chkpwd.com/oauth2/oidc/callback"]
-  }
+#   oauth2_values = {
+#     client_id         = "stirling-pdf"
+#     client_secret     = data.external.bws_lookup.result["ns-tools-stirling-pdf_oauth2_client_secret"]
+#     property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
+#     redirect_uris     = ["https://stirling-pdf.chkpwd.com/oauth2/oidc/callback"]
+#   }
 
-  app_values = {
-    meta_description = "PDF Tool"
-    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/stirling-pdf.png"
-  }
+#   app_values = {
+#     meta_description = "PDF Tool"
+#     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/stirling-pdf.png"
+#   }
 
-  access_group = [authentik_group.main.id, authentik_group.secondary.id]
-}
+#   access_group = [authentik_group.main.id, authentik_group.secondary.id]
+# }
 
