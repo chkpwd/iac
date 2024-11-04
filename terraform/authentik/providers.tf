@@ -14,7 +14,7 @@ terraform {
 data "external" "bws_lookup" {
   program = ["python3", "../bws_lookup.py"]
   query = {
-    key = "ns-security-authentik,ns-tools-miniflux,infra-media-secrets,ns-tools-miniflux"
+    key = "ns-security-authentik,ns-tools-miniflux,infra-media-secrets,ns-tools-miniflux,ns-tools-immich"
     authentik = "ns-security-authentik_bootstrap_token"
   }
 }
