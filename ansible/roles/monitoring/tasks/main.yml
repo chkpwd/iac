@@ -2,7 +2,7 @@
 - name: Create Prometheus Config
   ansible.builtin.template:
     src: "{{ item.src }}"
-    dest: "{{ compose_configuration_path }}/prometheus/{{ item.path | splitext | first }}"
+    dest: "{{ configuration_path }}/prometheus/{{ item.path | splitext | first }}"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
     mode: "0755"
