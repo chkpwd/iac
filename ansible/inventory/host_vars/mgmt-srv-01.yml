@@ -47,7 +47,7 @@ service_definitions:
       - "{{ compose_configuration_path }}/nginx_webserver/files:/files"
 
   - name: netbootxyz
-    image: ghcr.io/netbootxyz/netbootxyz:0.7.1-nbxyz2
+    image: ghcr.io/netbootxyz/netbootxyz:0.7.3-nbxyz2
     env:
       MENU_VERSION: 2.0.73
     ports:
