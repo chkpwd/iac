@@ -15,7 +15,7 @@ sonarr:
       - template: sonarr-v4-custom-formats-web-1080p
 
     quality_profiles:
-      - name: HD-1080p
+      - name: WEB-1080p
 
     custom_formats:
       - trash_ids:
@@ -25,7 +25,30 @@ sonarr:
           - 06d66ab109d4d2eddb2794d21526d140 # Retags
           - 1b3994c551cbb92a2c781af061f4ab44 # Scene
         assign_scores_to:
-          - name: HD-1080p
+          - name: WEB-1080p
+
+  anime:
+    base_url: http://sonarr.media.svc.cluster.local:8989
+    api_key: !env_var API_KEY_SONARR
+
+    quality_profiles:
+      - name: Remux-1080p - Anime
+
+    include:
+      - template: sonarr-quality-definition-anime
+      - template: sonarr-v4-quality-profile-anime
+      - template: sonarr-v4-custom-formats-anime
+
+    custom_formats:
+      - trash_ids:
+          - 418f50b10f1907201b6cfdf881f467b7 # Anime Dual Audio
+        assign_scores_to:
+          - name: Remux-1080p - Anime
+      - trash_ids:
+          - 9c14d194486c4014d422adc64092d794 # Dubs Only
+        assign_scores_to:
+          - name: Remux-1080p - Anime
+            score: 1000
 
 radarr:
   radarr_main:
@@ -37,12 +60,12 @@ radarr:
     replace_existing_custom_formats: true
 
     include:
-      - template: radarr-quality-definition-sqp-streaming
-      - template: radarr-quality-profile-sqp-1-1080p
-      - template: radarr-custom-formats-sqp-1-1080p
+      - template: radarr-quality-definition-movie
+      - template: radarr-quality-profile-hd-bluray-web
+      - template: radarr-custom-formats-hd-bluray-web
 
     quality_profiles:
-      - name: HD-1080p
+      - name: HD Bluray + WEB
         min_format_score: 2000
 
     custom_formats:
@@ -55,4 +78,4 @@ radarr:
           - 5c44f52a8714fdd79bb4d98e2673be1f # Retags
           - f537cf427b64c38c8e36298f657e4828 # Scene
         assign_scores_to:
-          - name: HD-1080p
+          - name: HD Bluray + WEB
