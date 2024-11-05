@@ -13,9 +13,13 @@ sonarr:
       - template: sonarr-quality-definition-series
       - template: sonarr-v4-quality-profile-web-1080p
       - template: sonarr-v4-custom-formats-web-1080p
+      - template: sonarr-quality-definition-anime
+      - template: sonarr-v4-quality-profile-anime
+      - template: sonarr-v4-custom-formats-anime
 
     quality_profiles:
       - name: WEB-1080p
+      - name: Remux-1080p - Anime
 
     custom_formats:
       - trash_ids:
@@ -26,20 +30,6 @@ sonarr:
           - 1b3994c551cbb92a2c781af061f4ab44 # Scene
         assign_scores_to:
           - name: WEB-1080p
-
-  anime:
-    base_url: http://sonarr.media.svc.cluster.local:8989
-    api_key: !env_var API_KEY_SONARR
-
-    quality_profiles:
-      - name: Remux-1080p - Anime
-
-    include:
-      - template: sonarr-quality-definition-anime
-      - template: sonarr-v4-quality-profile-anime
-      - template: sonarr-v4-custom-formats-anime
-
-    custom_formats:
       - trash_ids:
           - 418f50b10f1907201b6cfdf881f467b7 # Anime Dual Audio
         assign_scores_to:
