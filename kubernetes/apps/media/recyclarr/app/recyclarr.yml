@@ -19,7 +19,11 @@ sonarr:
 
     quality_profiles:
       - name: WEB-1080p
+        reset_unmatched_scores:
+          enabled: true
       - name: Remux-1080p - Anime
+        reset_unmatched_scores:
+          enabled: true
 
     custom_formats:
       - trash_ids:
@@ -60,7 +64,11 @@ radarr:
     quality_profiles:
       - name: HD Bluray + WEB
         min_format_score: 2000
+        reset_unmatched_scores:
+          enabled: true
       - name: UHD Bluray + WEB
+        reset_unmatched_scores:
+          enabled: true
 
     custom_formats:
       - trash_ids:
