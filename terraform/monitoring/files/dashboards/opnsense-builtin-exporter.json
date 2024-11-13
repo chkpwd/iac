@@ -21,24 +21,383 @@
       }
     ]
   },
-  "description": "OPNSense metrics",
+  "description": "Dashboard for the OPNsense Prometheus Exporter\r\n\r\nhttps://github.com/AthennaMind/opnsense-exporter\r\n\r\nFrom the AthennaMind \r\n   Team",
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "gnetId": 19366,
-  "graphTooltip": 1,
-  "id": 16,
-  "links": [],
-  "liveNow": false,
+  "gnetId": 21113,
+  "graphTooltip": 0,
+  "id": 41,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": true,
+      "title": "OPNsense Exporter",
+      "tooltip": "Give us a star",
+      "type": "link",
+      "url": "https://github.com/AthennaMind/opnsense-exporter"
+    }
+  ],
+  "liveNow": true,
   "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "panels": [],
+      "title": "Status",
+      "type": "row"
+    },
     {
       "datasource": {
         "type": "prometheus",
         "uid": "mgmt-srv-01-prometheus"
       },
+      "description": "The current status of OPNsense (1 = up, 0 = down)",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "fixedColor": "yellow",
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "fieldMinMax": false,
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "semi-dark-red",
+                  "index": 1,
+                  "text": "Down"
+                },
+                "1": {
+                  "color": "semi-dark-green",
+                  "index": 0,
+                  "text": "Up"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red"
+              },
+              {
+                "color": "semi-dark-green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "id": 7,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mgmt-srv-01-prometheus"
+          },
+          "editorMode": "code",
+          "expr": "opnsense_up{opnsense_instance=\"$opnsense_instance\"}",
+          "instant": false,
+          "legendFormat": "{{opnsense_instance}} Status",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "OPNSense Status",
+      "transparent": true,
+      "type": "state-timeline"
+    },
+    {
+      "datasource": {
+        "default": true,
+        "type": "prometheus",
+        "uid": "mgmt-srv-01-prometheus"
+      },
+      "description": "The total errors by endpoint returned by the OPNsense API during data fetching\t",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "yellow",
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": -1,
+            "barWidthFactor": 0.6,
+            "drawStyle": "points",
+            "fillOpacity": 0,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "dash": [
+                10,
+                10
+              ],
+              "fill": "dash"
+            },
+            "lineWidth": 1,
+            "pointSize": 4,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 0.01
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mgmt-srv-01-prometheus"
+          },
+          "editorMode": "code",
+          "expr": "sum by (endpoint)(rate(opnsense_exporter_endpoint_errors_total{opnsense_instance=\"$opnsense_instance\"}[$__rate_interval]))",
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "OPNSense Scrape Endpoint Errors",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 22,
+      "panels": [],
+      "title": "Services",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mgmt-srv-01-prometheus"
+      },
+      "description": "Status points of the gateway uptime. \n\n1 - Available \n0 - Unavailable",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "semi-dark-red",
+                  "index": 0,
+                  "text": "Down"
+                },
+                "1": {
+                  "color": "semi-dark-green",
+                  "index": 1,
+                  "text": "UP"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "max": 2,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-red"
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 1,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.1.0-70903",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mgmt-srv-01-prometheus"
+          },
+          "editorMode": "code",
+          "expr": "opnsense_gateways_status{opnsense_instance=\"$opnsense_instance\"}",
+          "format": "heatmap",
+          "instant": false,
+          "legendFormat": "{{name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Gateway Status History",
+      "transparent": true,
+      "type": "state-timeline"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 2,
+      "panels": [],
+      "title": "Gateways",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mgmt-srv-01-prometheus"
+      },
+      "description": "RTT is the average (mean) of the round trip time in milliseconds by name",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
           },
           "custom": {
             "axisBorderShow": false,
@@ -49,16 +408,23 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "scheme",
+            "fillOpacity": 0,
+            "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
             "insertNulls": false,
-            "lineInterpolation": "smooth",
-            "lineWidth": 3,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "dash": [
+                10,
+                10
+              ],
+              "fill": "dash"
+            },
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -73,36 +439,41 @@
               "mode": "off"
             }
           },
+          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
                 "value": 80
               }
             ]
-          }
+          },
+          "unit": "ms"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 3,
-        "w": 4,
+        "h": 9,
+        "w": 9,
         "x": 0,
-        "y": 0
+        "y": 23
       },
-      "id": 17,
+      "id": 4,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "range"
+          ],
+          "displayMode": "table",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -116,13 +487,15 @@
             "uid": "mgmt-srv-01-prometheus"
           },
           "editorMode": "code",
-          "expr": "node_cpu_temperature_celsius{job=\"$scrape_jobs\",cpu=\"0\"}",
-          "legendFormat": "{{cpu}}",
+          "expr": "opnsense_gateways_rtt_milliseconds{opnsense_instance=\"$opnsense_instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Temperature",
+      "title": "Gateway RTT",
+      "transparent": true,
       "type": "timeseries"
     },
     {
@@ -130,434 +503,7 @@
         "type": "prometheus",
         "uid": "mgmt-srv-01-prometheus"
       },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 4,
-        "y": 0
-      },
-      "hideTimeOverride": true,
-      "id": 1,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.2.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_time_seconds{job=\"$scrape_jobs\"} - node_boot_time_seconds{job=\"$scrape_jobs\"}",
-          "interval": "30s",
-          "intervalFactor": 1,
-          "range": true,
-          "refId": "A",
-          "step": 30
-        }
-      ],
-      "timeFrom": "10s",
-      "title": "Uptime",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "default": true,
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 8,
-        "y": 0
-      },
-      "hideTimeOverride": true,
-      "id": 13,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.2.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "100 - (sum(rate(node_cpu_seconds_total{job=\"$scrape_jobs\", mode=\"idle\"}[$__rate_interval])) * 100 / sum(rate(node_cpu_seconds_total{job=\"$scrape_jobs\"}[$__rate_interval])))",
-          "interval": "10s",
-          "intervalFactor": 2,
-          "legendFormat": "",
-          "range": true,
-          "refId": "A",
-          "step": 20
-        }
-      ],
-      "timeFrom": "10s",
-      "title": "CPU Utilization",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 12,
-        "y": 0
-      },
-      "hideTimeOverride": true,
-      "id": 2,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.2.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_memory_free_bytes{job=\"$scrape_jobs\"} + node_memory_inactive_bytes{job=\"$scrape_jobs\"}",
-          "interval": "30s",
-          "intervalFactor": 2,
-          "legendFormat": "",
-          "range": true,
-          "refId": "A",
-          "step": 60
-        }
-      ],
-      "timeFrom": "10s",
-      "title": "Available Memory",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 16,
-        "y": 0
-      },
-      "hideTimeOverride": true,
-      "id": 3,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.2.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_memory_swap_size_bytes{job=\"$scrape_jobs\"} - node_memory_swap_used_bytes{job=\"$scrape_jobs\"}",
-          "interval": "30s",
-          "intervalFactor": 2,
-          "range": true,
-          "refId": "A",
-          "step": 60
-        }
-      ],
-      "timeFrom": "10s",
-      "title": "Free Swap",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 4,
-        "x": 20,
-        "y": 0
-      },
-      "hideTimeOverride": true,
-      "id": 37,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "11.2.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "disableTextWrap": false,
-          "editorMode": "code",
-          "expr": "node_filesystem_free_bytes{job=\"$scrape_jobs\",device=\"/dev/gpt/rootfs\",fstype=\"ufs\"}",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "interval": "30s",
-          "intervalFactor": 2,
-          "range": true,
-          "refId": "A",
-          "step": 60,
-          "useBackend": false
-        }
-      ],
-      "timeFrom": "10s",
-      "title": "Available Storage",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
+      "description": "RTTd is the standard deviation of the round trip time in milliseconds by name",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -572,8 +518,8 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 100,
-            "gradientMode": "none",
+            "fillOpacity": 0,
+            "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -581,29 +527,35 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineStyle": {
+              "dash": [
+                10,
+                10
+              ],
+              "fill": "dash"
+            },
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "never",
-            "spanNulls": true,
+            "showPoints": "auto",
+            "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "normal"
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
             }
           },
+          "fieldMinMax": false,
           "mappings": [],
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -611,76 +563,33 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "ms"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "load 1m"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "load 5m"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "light-red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "load 15m"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "super-light-red",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 0,
-        "y": 3
+        "h": 9,
+        "w": 9,
+        "x": 9,
+        "y": 23
       },
-      "id": 9,
+      "id": 5,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "range"
+          ],
+          "displayMode": "table",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "9.5.3",
       "targets": [
         {
           "datasource": {
@@ -688,46 +597,15 @@
             "uid": "mgmt-srv-01-prometheus"
           },
           "editorMode": "code",
-          "expr": "node_load1{job=\"$scrape_jobs\"}",
-          "interval": "10s",
-          "intervalFactor": 1,
-          "legendFormat": "load 1m",
+          "expr": "opnsense_gateways_rttd_milliseconds{opnsense_instance=\"$opnsense_instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}}",
           "range": true,
-          "refId": "A",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_load5{job=\"$scrape_jobs\"}",
-          "hide": false,
-          "interval": "10s",
-          "intervalFactor": 1,
-          "legendFormat": "load 5m",
-          "range": true,
-          "refId": "B",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_load15{job=\"$scrape_jobs\"}",
-          "hide": false,
-          "interval": "10s",
-          "intervalFactor": 1,
-          "legendFormat": "load 15m",
-          "range": true,
-          "refId": "C",
-          "step": 10
+          "refId": "A"
         }
       ],
-      "title": "Load Average 1m",
+      "title": "Gateway RTTd",
+      "transparent": true,
       "type": "timeseries"
     },
     {
@@ -735,6 +613,7 @@
         "type": "prometheus",
         "uid": "mgmt-srv-01-prometheus"
       },
+      "description": "Gateway Loss Percentage by Gateway Name",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -748,9 +627,9 @@
             "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
-            "drawStyle": "bars",
-            "fillOpacity": 100,
-            "gradientMode": "none",
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -758,13 +637,236 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineStyle": {
+              "dash": [
+                10,
+                10
+              ],
+              "fill": "dash"
+            },
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "never",
-            "spanNulls": true,
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "line+area"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 6,
+        "x": 18,
+        "y": 23
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mgmt-srv-01-prometheus"
+          },
+          "editorMode": "code",
+          "expr": "opnsense_gateways_loss_percentage{opnsense_instance=\"$opnsense_instance\"}",
+          "instant": false,
+          "legendFormat": "{{name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Gateway Loss Percentage",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mgmt-srv-01-prometheus"
+      },
+      "description": "Status points of services uptime\n\n1 - Available \n0 - Unavailable",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "0": {
+                  "color": "semi-dark-red",
+                  "index": 1,
+                  "text": "Down"
+                },
+                "1": {
+                  "color": "semi-dark-green",
+                  "index": 0,
+                  "text": "Up"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 32
+      },
+      "id": 23,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "never",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.1.0-70903",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mgmt-srv-01-prometheus"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "opnsense_services_status{opnsense_instance=\"$opnsense_instance\"}",
+          "format": "heatmap",
+          "instant": false,
+          "legendFormat": "{{name}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Services Status History",
+      "transparent": true,
+      "type": "state-timeline"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 44
+      },
+      "id": 10,
+      "panels": [],
+      "title": "Interfaces",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mgmt-srv-01-prometheus"
+      },
+      "description": "Total received data with applied range function by the Rate Interval selector",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "dash": [
+                10,
+                10
+              ],
+              "fill": "dash"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -773,13 +875,13 @@
               "mode": "off"
             }
           },
+          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -787,46 +889,33 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "decbytes"
         },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "interrupts"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "yellow",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 6,
-        "y": 3
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 45
       },
-      "id": 19,
+      "id": 14,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "p95"
+          ],
+          "displayMode": "table",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "multi",
+          "mode": "single",
           "sort": "none"
         }
       },
-      "pluginVersion": "9.5.3",
       "targets": [
         {
           "datasource": {
@@ -834,17 +923,15 @@
             "uid": "mgmt-srv-01-prometheus"
           },
           "editorMode": "code",
-          "expr": " irate(node_exec_device_interrupts_total{job=\"$scrape_jobs\"}[5m])",
-          "interval": "10s",
-          "intervalFactor": 1,
-          "legendFormat": "interrupts",
-          "metric": "node_intr_total",
+          "expr": "rate(opnsense_interfaces_received_bytes_total{opnsense_instance=\"$opnsense_instance\"}[$rate_interval])",
+          "instant": false,
+          "legendFormat": "{{device}} - {{interface}}",
           "range": true,
-          "refId": "A",
-          "step": 10
+          "refId": "A"
         }
       ],
-      "title": "Interrupts",
+      "title": "[RATE $rate_interval]] Received Bytes By Interface",
+      "transparent": true,
       "type": "timeseries"
     },
     {
@@ -852,18 +939,59 @@
         "type": "prometheus",
         "uid": "mgmt-srv-01-prometheus"
       },
+      "description": "Total transmitted data with applied range function by the Rate Interval selector",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "mode": "palette-classic"
           },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "dash": [
+                10,
+                10
+              ],
+              "fill": "dash"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -871,24 +999,89 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "decbytes"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 12,
-        "y": 3
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 45
       },
-      "id": 10,
+      "id": 12,
       "options": {
-        "displayMode": "lcd",
-        "maxVizHeight": 300,
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "namePlacement": "auto",
-        "orientation": "horizontal",
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "p95"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mgmt-srv-01-prometheus"
+          },
+          "editorMode": "code",
+          "expr": "rate(opnsense_interfaces_transmitted_bytes_total{opnsense_instance=\"$opnsense_instance\"}[$rate_interval])",
+          "instant": false,
+          "legendFormat": "{{device}} - {{interface}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "[RATE $rate_interval] Transmitted Bytes By Interface",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mgmt-srv-01-prometheus"
+      },
+      "description": "MTU of the interface by interface name and device",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "semi-dark-green"
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 45
+      },
+      "id": 13,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "percentChangeColorMode": "standard",
         "reduceOptions": {
           "calcs": [
             "lastNotNull"
@@ -896,9 +1089,9 @@
           "fields": "",
           "values": false
         },
-        "showUnfilled": true,
-        "sizing": "auto",
-        "valueMode": "color"
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
       },
       "pluginVersion": "11.2.2",
       "targets": [
@@ -908,55 +1101,24 @@
             "uid": "mgmt-srv-01-prometheus"
           },
           "editorMode": "code",
-          "expr": "node_exec_forks_total{job=\"$scrape_jobs\"}",
-          "interval": "10s",
-          "intervalFactor": 1,
-          "legendFormat": "Forks",
-          "metric": "node_procs_running",
-          "range": true,
-          "refId": "A",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_exec_system_calls_total{job=\"$scrape_jobs\"}",
-          "interval": "10s",
-          "intervalFactor": 1,
-          "legendFormat": "System Calls",
-          "metric": "node_procs_blocked",
-          "range": true,
-          "refId": "B",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_exec_traps_total{job=\"$scrape_jobs\"}",
-          "hide": false,
-          "interval": "10s",
-          "intervalFactor": 1,
-          "legendFormat": "Traps",
-          "metric": "node_procs_blocked",
-          "range": true,
-          "refId": "C",
-          "step": 10
+          "exemplar": false,
+          "expr": "opnsense_interfaces_mtu_bytes{opnsense_instance=\"$opnsense_instance\"}",
+          "instant": true,
+          "legendFormat": "{{device}} - {{interface}}",
+          "range": false,
+          "refId": "A"
         }
       ],
-      "title": "Processes",
-      "type": "bargauge"
+      "title": "Interfaces [ Device - Name ] MTU",
+      "transparent": true,
+      "type": "stat"
     },
     {
       "datasource": {
         "type": "prometheus",
         "uid": "mgmt-srv-01-prometheus"
       },
+      "description": "Total received data by interface ",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -967,12 +1129,12 @@
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
-            "axisPlacement": "left",
+            "axisPlacement": "auto",
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 0,
-            "gradientMode": "none",
+            "fillOpacity": 29,
+            "gradientMode": "hue",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -980,6 +1142,445 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 0,
+            "pointSize": 2,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 54
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mgmt-srv-01-prometheus"
+          },
+          "editorMode": "code",
+          "expr": "opnsense_interfaces_received_bytes_total{opnsense_instance=\"$opnsense_instance\"}",
+          "instant": false,
+          "legendFormat": "{{device}} - {{interface}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "[TOTAL] Received Bytes By Interface",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mgmt-srv-01-prometheus"
+      },
+      "description": "Total transmitted data by interface",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 29,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 0,
+            "pointSize": 2,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 54
+      },
+      "id": 15,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mgmt-srv-01-prometheus"
+          },
+          "editorMode": "code",
+          "expr": "opnsense_interfaces_transmitted_bytes_total{opnsense_instance=\"$opnsense_instance\"}",
+          "instant": false,
+          "legendFormat": "{{device}} - {{interface}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "[TOTAL] Transmitted Bytes By Interface",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mgmt-srv-01-prometheus"
+      },
+      "description": "Total transmitted data by interface",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 29,
+            "gradientMode": "hue",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 0,
+            "pointSize": 2,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 54
+      },
+      "id": 17,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "step"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mgmt-srv-01-prometheus"
+          },
+          "editorMode": "code",
+          "expr": "opnsense_interfaces_input_errors_total{opnsense_instance=\"$opnsense_instance\"}",
+          "instant": false,
+          "legendFormat": "INPUT Errors {{device}} - {{interface}}",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mgmt-srv-01-prometheus"
+          },
+          "editorMode": "code",
+          "expr": "opnsense_interfaces_input_errors_total{opnsense_instance=\"$opnsense_instance\"}",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "OUTPUT Errors  {{device}} - {{interface}}",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "[TOTAL] Errors By Interface",
+      "transparent": true,
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 63
+      },
+      "id": 18,
+      "panels": [],
+      "title": "ARP",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mgmt-srv-01-prometheus"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "scaleDistribution": {
+              "type": "linear"
+            }
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 64
+      },
+      "id": 21,
+      "options": {
+        "calculate": false,
+        "cellGap": 1,
+        "cellValues": {
+          "decimals": 1,
+          "unit": "none"
+        },
+        "color": {
+          "exponent": 0.5,
+          "fill": "dark-orange",
+          "max": 1,
+          "min": 0,
+          "mode": "scheme",
+          "reverse": true,
+          "scale": "exponential",
+          "scheme": "PiYG",
+          "steps": 2
+        },
+        "exemplars": {
+          "color": "rgba(255,0,255,0.7)"
+        },
+        "filterValues": {
+          "le": 1e-9
+        },
+        "legend": {
+          "show": false
+        },
+        "rowsFrame": {
+          "layout": "auto"
+        },
+        "tooltip": {
+          "mode": "single",
+          "showColorScale": false,
+          "yHistogram": false
+        },
+        "yAxis": {
+          "axisPlacement": "left",
+          "reverse": false,
+          "unit": "none"
+        }
+      },
+      "pluginVersion": "11.2.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mgmt-srv-01-prometheus"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "opnsense_arp_table_entries{opnsense_instance=\"$opnsense_instance\"}",
+          "format": "time_series",
+          "instant": false,
+          "legendFormat": "{{interface_description}} - {{hostname}} - {{mac}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "ARP Table Entries ",
+      "transparent": true,
+      "type": "heatmap"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "mgmt-srv-01-prometheus"
+      },
+      "description": "Rate of Sent and Received ARP requests",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 25,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "dash": [
+                10,
+                10
+              ],
+              "fill": "dash"
+            },
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
@@ -995,13 +1596,13 @@
               "mode": "off"
             }
           },
+          "fieldMinMax": false,
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1009,23 +1610,27 @@
               }
             ]
           },
-          "unit": "short"
+          "unit": "none"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
-        "w": 6,
-        "x": 18,
-        "y": 3
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 76
       },
-      "id": 18,
+      "id": 19,
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "list",
+          "calcs": [
+            "lastNotNull",
+            "mean",
+            "p95"
+          ],
+          "displayMode": "table",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -1039,21 +1644,36 @@
             "uid": "mgmt-srv-01-prometheus"
           },
           "editorMode": "code",
-          "expr": "irate(node_exec_context_switches_total{job=\"$scrape_jobs\"}[$__rate_interval])",
-          "legendFormat": "__auto",
+          "expr": "rate(opnsense_protocol_arp_sent_requests_total{opnsense_instance=\"$opnsense_instance\"}[$rate_interval])",
+          "instant": false,
+          "legendFormat": "Sent",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "mgmt-srv-01-prometheus"
+          },
+          "editorMode": "code",
+          "expr": "rate(opnsense_protocol_arp_received_requests_total{opnsense_instance=\"$opnsense_instance\"}[$rate_interval])",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "Received",
+          "range": true,
+          "refId": "B"
         }
       ],
-      "title": "Context Switches",
+      "title": "[RATE $rate_interval] ARP Requests",
+      "transparent": true,
       "type": "timeseries"
     },
     {
       "datasource": {
-        "default": true,
         "type": "prometheus",
         "uid": "mgmt-srv-01-prometheus"
       },
+      "description": "Total of Sent and Received ARP requests",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1068,8 +1688,8 @@
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "none",
+            "fillOpacity": 25,
+            "gradientMode": "opacity",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
@@ -1077,30 +1697,35 @@
             },
             "insertNulls": false,
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineStyle": {
+              "dash": [
+                10,
+                10
+              ],
+              "fill": "dash"
+            },
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "never",
-            "spanNulls": true,
+            "showPoints": "auto",
+            "spanNulls": false,
             "stacking": {
               "group": "A",
-              "mode": "normal"
+              "mode": "none"
             },
             "thresholdsStyle": {
               "mode": "off"
             }
           },
+          "fieldMinMax": false,
           "mappings": [],
-          "max": 100,
-          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1108,335 +1733,24 @@
               }
             ]
           },
-          "unit": "percent"
+          "unit": "none"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 4,
+        "h": 9,
         "w": 12,
-        "x": 0,
-        "y": 7
+        "x": 12,
+        "y": 76
       },
-      "id": 5,
+      "id": 20,
       "options": {
         "legend": {
           "calcs": [
-            "mean",
-            "max",
-            "min"
+            "lastNotNull",
+            "mean"
           ],
           "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "100 - sum(rate(node_cpu_seconds_total{job=\"$scrape_jobs\"}[1m])) by (mode) * 100 / scalar(count(node_cpu_seconds_total{job=\"$scrape_jobs\",mode=\"user\"}))",
-          "intervalFactor": 10,
-          "legendFormat": "{{ mode }}",
-          "metric": "node_cpu_seconds_total",
-          "range": true,
-          "refId": "A",
-          "step": 10
-        }
-      ],
-      "title": "CPU Usage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 40,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "bytes"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Used"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#890F02",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Free"
-            },
-            "properties": [
-              {
-                "id": "color",
-                "value": {
-                  "fixedColor": "#7EB26D",
-                  "mode": "fixed"
-                }
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 4,
-        "w": 12,
-        "x": 12,
-        "y": 7
-      },
-      "id": 24,
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "min"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "multi",
-          "sort": "desc"
-        }
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_memory_active_bytes{job=\"$scrape_jobs\"}",
-          "interval": "10s",
-          "intervalFactor": 1,
-          "legendFormat": "Active",
-          "range": true,
-          "refId": "A",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_memory_buffer_bytes{job=\"$scrape_jobs\"}",
-          "interval": "10s",
-          "intervalFactor": 1,
-          "legendFormat": "Buffer",
-          "range": true,
-          "refId": "B",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_memory_cache_bytes{job=\"$scrape_jobs\"}",
-          "hide": false,
-          "interval": "10s",
-          "intervalFactor": 1,
-          "legendFormat": "Cache",
-          "range": true,
-          "refId": "C",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_memory_free_bytes{job=\"$scrape_jobs\"}",
-          "hide": false,
-          "interval": "10s",
-          "intervalFactor": 1,
-          "legendFormat": "Free",
-          "range": true,
-          "refId": "D",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_memory_inactive_bytes{job=\"$scrape_jobs\"}",
-          "hide": false,
-          "interval": "10s",
-          "intervalFactor": 1,
-          "legendFormat": "Inactive",
-          "range": true,
-          "refId": "E",
-          "step": 10
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "node_memory_laundry_bytes{job=\"$scrape_jobs\"}",
-          "hide": false,
-          "interval": "10s",
-          "intervalFactor": 1,
-          "legendFormat": "Laundry",
-          "range": true,
-          "refId": "F",
-          "step": 10
-        }
-      ],
-      "title": "Memory Usage",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "binBps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 0,
-        "y": 11
-      },
-      "id": 8,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
           "placement": "bottom",
           "showLegend": true
         },
@@ -1445,7 +1759,6 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "9.5.3",
       "targets": [
         {
           "datasource": {
@@ -1453,13 +1766,11 @@
             "uid": "mgmt-srv-01-prometheus"
           },
           "editorMode": "code",
-          "expr": "irate(node_network_receive_bytes_total{job=\"$scrape_jobs\",device=\"$wan_interface_1\"}[1m])",
-          "intervalFactor": 1,
-          "legendFormat": "In: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
+          "expr": "opnsense_protocol_arp_sent_requests_total{opnsense_instance=\"$opnsense_instance\"}",
+          "instant": false,
+          "legendFormat": "Sent",
           "range": true,
-          "refId": "A",
-          "step": 1
+          "refId": "A"
         },
         {
           "datasource": {
@@ -1467,1688 +1778,106 @@
             "uid": "mgmt-srv-01-prometheus"
           },
           "editorMode": "code",
-          "expr": "-irate(node_network_transmit_bytes_total{job=\"$scrape_jobs\",device=\"$wan_interface_1\"}[1m])",
+          "expr": "opnsense_protocol_arp_received_requests_total{opnsense_instance=\"$opnsense_instance\"}",
           "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Out: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
+          "instant": false,
+          "legendFormat": "Received",
           "range": true,
-          "refId": "B",
-          "step": 1
+          "refId": "B"
         }
       ],
-      "title": "WAN In/Out",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "binBps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 6,
-        "y": 11
-      },
-      "id": 31,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_bytes_total{job=\"$scrape_jobs\",device=\"$lan_interface_1\"}[1m])",
-          "intervalFactor": 1,
-          "legendFormat": "In: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "A",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "-irate(node_network_transmit_bytes_total{job=\"$scrape_jobs\",device=\"$lan_interface_1\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Out: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "B",
-          "step": 1
-        }
-      ],
-      "title": "TRUSTED In/Out",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "binBps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 12,
-        "y": 11
-      },
-      "id": 32,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_bytes_total{job=\"$scrape_jobs\",device=\"$lan_interface_2\"}[1m])",
-          "intervalFactor": 1,
-          "legendFormat": "In: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "A",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "-irate(node_network_transmit_bytes_total{job=\"$scrape_jobs\",device=\"$lan_interface_2\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Out: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "B",
-          "step": 1
-        }
-      ],
-      "title": "IOT In/Out",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "binBps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 6,
-        "x": 18,
-        "y": 11
-      },
-      "id": 25,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_bytes_total{job=\"$scrape_jobs\",device=\"$lan_interface_3\"}[1m])",
-          "intervalFactor": 1,
-          "legendFormat": "In: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "A",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "-irate(node_network_transmit_bytes_total{job=\"$scrape_jobs\",device=\"$lan_interface_3\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Out: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "B",
-          "step": 1
-        }
-      ],
-      "title": "LAB In/Out",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 0,
-        "y": 16
-      },
-      "id": 21,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_packets_total{job=\"$scrape_jobs\",device=\"$wan_interface_1\"}[1m])",
-          "intervalFactor": 1,
-          "legendFormat": "Receive: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "A",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_multicast_total{job=\"$scrape_jobs\",device=\"$wan_interface_1\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Multicasts: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "B",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_drop_total{job=\"$scrape_jobs\",device=\"$wan_interface_1\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Drops: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "C",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_errs_total{job=\"$scrape_jobs\",device=\"$wan_interface_1\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Errors: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "D",
-          "step": 1
-        }
-      ],
-      "title": "WAN Receive Packets",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 6,
-        "y": 16
-      },
-      "id": 33,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_packets_total{job=\"$scrape_jobs\",device=\"$lan_interface_1\"}[1m])",
-          "intervalFactor": 1,
-          "legendFormat": "Receive: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "A",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_multicast_total{job=\"$scrape_jobs\",device=\"$lan_interface_1\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Multicasts: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "B",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_drop_total{job=\"$scrape_jobs\",device=\"$lan_interface_1\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Drops: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "C",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_errs_total{job=\"$scrape_jobs\",device=\"$lan_interface_1\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Errors: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "D",
-          "step": 1
-        }
-      ],
-      "title": "TRUSTED Receive Packets",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 12,
-        "y": 16
-      },
-      "id": 34,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_packets_total{job=\"$scrape_jobs\",device=\"$lan_interface_2\"}[1m])",
-          "intervalFactor": 1,
-          "legendFormat": "Receive: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "A",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_multicast_total{job=\"$scrape_jobs\",device=\"$lan_interface_2\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Multicasts: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "B",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_drop_total{job=\"$scrape_jobs\",device=\"$lan_interface_2\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Drops: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "C",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_errs_total{job=\"$scrape_jobs\",device=\"$lan_interface_2\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Errors: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "D",
-          "step": 1
-        }
-      ],
-      "title": "IOT Receive Packets",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 18,
-        "y": 16
-      },
-      "id": 30,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_packets_total{job=\"$scrape_jobs\",device=\"$lan_interface_3\"}[1m])",
-          "intervalFactor": 1,
-          "legendFormat": "Receive: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "A",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_multicast_total{job=\"$scrape_jobs\",device=\"$lan_interface_3\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Multicasts: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "B",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_drop_total{job=\"$scrape_jobs\",device=\"$lan_interface_3\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Drops: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "C",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_receive_errs_total{job=\"$scrape_jobs\",device=\"$lan_interface_3\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Errors: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "D",
-          "step": 1
-        }
-      ],
-      "title": "LAB Receive Packets",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 0,
-        "y": 22
-      },
-      "id": 29,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_packets_total{job=\"$scrape_jobs\",device=\"$wan_interface_1\"}[1m])",
-          "intervalFactor": 1,
-          "legendFormat": "Receive: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "A",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_multicast_total{job=\"$scrape_jobs\",device=\"$wan_interface_1\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Multicasts: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "B",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_drop_total{job=\"$scrape_jobs\",device=\"$wan_interface_1\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Drops: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "C",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_errs_total{job=\"$scrape_jobs\",device=\"$wan_interface_1\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Errors: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "D",
-          "step": 1
-        }
-      ],
-      "title": "WAN Transmit Packets",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 6,
-        "y": 22
-      },
-      "id": 35,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_packets_total{job=\"$scrape_jobs\",device=\"$lan_interface_1\"}[1m])",
-          "intervalFactor": 1,
-          "legendFormat": "Receive: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "A",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_multicast_total{job=\"$scrape_jobs\",device=\"$lan_interface_1\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Multicasts: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "B",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_drop_total{job=\"$scrape_jobs\",device=\"$lan_interface_1\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Drops: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "C",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_errs_total{job=\"$scrape_jobs\",device=\"$lan_interface_1\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Errors: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "D",
-          "step": 1
-        }
-      ],
-      "title": "TRUSTED Transmit Packets",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 12,
-        "y": 22
-      },
-      "id": 36,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_packets_total{job=\"$scrape_jobs\",device=\"$lan_interface_2\"}[1m])",
-          "intervalFactor": 1,
-          "legendFormat": "Receive: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "A",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_multicast_total{job=\"$scrape_jobs\",device=\"$lan_interface_2\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Multicasts: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "B",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_drop_total{job=\"$scrape_jobs\",device=\"$lan_interface_2\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Drops: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "C",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_errs_total{job=\"$scrape_jobs\",device=\"$lan_interface_2\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Errors: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "D",
-          "step": 1
-        }
-      ],
-      "title": "IOT Transmit Packets",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "mgmt-srv-01-prometheus"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 25,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "auto",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 18,
-        "y": 22
-      },
-      "id": 28,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "9.5.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_packets_total{job=\"$scrape_jobs\",device=\"$lan_interface_3\"}[1m])",
-          "intervalFactor": 1,
-          "legendFormat": "Receive: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "A",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_multicast_total{job=\"$scrape_jobs\",device=\"$lan_interface_3\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Multicasts: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "B",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_drop_total{job=\"$scrape_jobs\",device=\"$lan_interface_3\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Drops: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "C",
-          "step": 1
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "mgmt-srv-01-prometheus"
-          },
-          "editorMode": "code",
-          "expr": "irate(node_network_transmit_errs_total{job=\"$scrape_jobs\",device=\"$lan_interface_3\"}[1m])",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Errors: {{ device }}",
-          "metric": "node_network_receive_bytes_total",
-          "range": true,
-          "refId": "D",
-          "step": 1
-        }
-      ],
-      "title": "LAB Transmit Packets",
+      "title": "[TOTAL] ARP Requests",
+      "transparent": true,
       "type": "timeseries"
     }
   ],
-  "refresh": "5s",
-  "revision": 1,
+  "refresh": "1m",
   "schemaVersion": 39,
-  "tags": [],
+  "tags": [
+    "opnsense",
+    "firewall",
+    "networking",
+    "prometheus-exporter"
+  ],
   "templating": {
     "list": [
       {
         "current": {
           "selected": false,
-          "text": "opnsense-builtin-exporter",
-          "value": "opnsense-builtin-exporter"
+          "text": "mgmt_srv_01",
+          "value": "mgmt_srv_01"
         },
         "datasource": {
           "type": "prometheus",
           "uid": "mgmt-srv-01-prometheus"
         },
-        "definition": "label_values(job)",
+        "definition": "label_values(opnsense_up,opnsense_instance)",
         "hide": 0,
         "includeAll": false,
+        "label": "OPNSense Instance",
         "multi": false,
-        "name": "scrape_jobs",
+        "name": "opnsense_instance",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(job)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "/^opnsense-builtin-*/",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "re0",
-          "value": "re0"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "mgmt-srv-01-prometheus"
-        },
-        "definition": "label_values(device)",
-        "hide": 0,
-        "includeAll": false,
-        "label": "WAN Interface 1",
-        "multi": false,
-        "name": "wan_interface_1",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(device)",
+          "query": "label_values(opnsense_up,opnsense_instance)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-        "sort": 0,
+        "sort": 1,
         "type": "query"
       },
       {
+        "auto": false,
+        "auto_count": 30,
+        "auto_min": "10s",
         "current": {
           "selected": false,
-          "text": "em0",
-          "value": "em0"
+          "text": "1m",
+          "value": "1m"
         },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "mgmt-srv-01-prometheus"
-        },
-        "definition": "label_values(device)",
         "hide": 0,
-        "includeAll": false,
-        "label": "LAN Interface 1",
-        "multi": false,
-        "name": "lan_interface_1",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(device)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
+        "label": "Rate Interval",
+        "name": "rate_interval",
+        "options": [
+          {
+            "selected": true,
+            "text": "1m",
+            "value": "1m"
+          },
+          {
+            "selected": false,
+            "text": "2m",
+            "value": "2m"
+          },
+          {
+            "selected": false,
+            "text": "5m",
+            "value": "5m"
+          },
+          {
+            "selected": false,
+            "text": "10m",
+            "value": "10m"
+          },
+          {
+            "selected": false,
+            "text": "20m",
+            "value": "20m"
+          },
+          {
+            "selected": false,
+            "text": "30m",
+            "value": "30m"
+          }
+        ],
+        "query": "1m,2m,5m,10m,20m,30m",
+        "queryValue": "",
+        "refresh": 2,
         "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "vlan01",
-          "value": "vlan01"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "mgmt-srv-01-prometheus"
-        },
-        "definition": "label_values(device)",
-        "hide": 0,
-        "includeAll": false,
-        "label": "LAN Interface 2",
-        "multi": false,
-        "name": "lan_interface_2",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(device)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "vlan02",
-          "value": "vlan02"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "mgmt-srv-01-prometheus"
-        },
-        "definition": "label_values(device)",
-        "hide": 0,
-        "includeAll": false,
-        "label": "LAN Interface 3",
-        "multi": false,
-        "name": "lan_interface_3",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(device)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "ufs",
-          "value": "ufs"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "mgmt-srv-01-prometheus"
-        },
-        "definition": "label_values(fstype)",
-        "hide": 0,
-        "includeAll": false,
-        "label": "Filesystem Type",
-        "multi": false,
-        "name": "fs_type",
-        "options": [],
-        "query": {
-          "query": "label_values(fstype)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
+        "type": "interval"
       }
     ]
   },
@@ -3168,22 +1897,11 @@
       "1h",
       "2h",
       "1d"
-    ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
     ]
   },
   "timezone": "browser",
-  "title": "OPNSense Builtin",
-  "uid": "a88e6c5d-c5ea-4acc-b079-47c3fc6467f1",
-  "version": 26,
+  "title": "OPNSense Exporter",
+  "uid": "cdmf5fk3ip4aob",
+  "version": 4,
   "weekStart": ""
 }
