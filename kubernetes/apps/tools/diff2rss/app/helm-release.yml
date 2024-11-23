@@ -28,13 +28,13 @@ spec:
       diff2rss:
         enabled: true
         type: deployment
-        strategy: &strategy RollingUpdate
-        rollingUpdate: &rollingUpdate
+        strategy: RollingUpdate
+        rollingUpdate:
           unavailable: 0
         annotations:
           reloader.stakater.com/auto: "true"
 
-        pod: &podSpecs
+        pod:
           securityContext:
             runAsNonRoot: true
             runAsUser: &context 1000
@@ -43,7 +43,7 @@ spec:
             fsGroupChangePolicy: OnRootMismatch
 
         containers:
-          main:
+          app:
             image:
               repository: ghcr.io/chkpwd/diff2rss
               tag: v1.1.0
@@ -57,7 +57,7 @@ spec:
               startup:
                 enabled: true
 
-            securityContext: &securityContext
+            securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
               capabilities: {drop: ['ALL']}
@@ -70,7 +70,7 @@ spec:
                 memory: 200Mi
 
     service:
-      main:
+      app:
         controller: diff2rss
         primary: true
         ports:
@@ -82,12 +82,12 @@ spec:
         enabled: true
         className: ext-ingress
         annotations:
-          external-dns.alpha.kubernetes.io/enabled: "true"
+          external-dns.alpha.kubernetes.io/target: "${EXTERNAL_DOMAIN}"
         hosts:
-          - host: "diff2rss.${EXTERNAL_DOMAIN}"
+          - host: "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
                 service:
-                  identifier: main
+                  identifier: app
                   port: http
