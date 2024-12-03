@@ -170,25 +170,6 @@ EOF
   access_group = [authentik_group.main.id]
 }
 
-module "authentik-app-runwhen-local" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "Runwhen Local"
-  group  = "main"
-
-  proxy_values = {
-    internal = ""
-    external = "https://runwhen-local.chkpwd.com"
-    mode     = "forward_single"
-  }
-
-  app_values = {
-    meta_description = "Usenet Downloader"
-    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/runwhen-local.png"
-  }
-
-  access_group = [authentik_group.main.id]
-}
-
 module "authentik-app-maintainerr" {
   source = "../_modules/authentik/proxy_app"
   name   = "Maintainerr"
