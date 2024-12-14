@@ -19,6 +19,7 @@ service_definitions:
     volumes:
       - "{{ compose_configuration_path }}/nginx_webserver/default.conf:/etc/nginx/conf.d/default.conf:ro"
       - "{{ compose_configuration_path }}/nginx_webserver/files:/files"
+    state: stopped
 
   - name: netbootxyz
     image: ghcr.io/netbootxyz/netbootxyz:0.7.3-nbxyz2
@@ -33,11 +34,13 @@ service_definitions:
     state: stopped
 
   - name: bws-cache
-    image: ghcr.io/ripplefcl/bws-cache:v1.1.0
+    image: ghcr.io/ripplefcl/bws-cache:v2.0.1
     env:
       ORG_ID: 0228643f-4148-4629-b9b4-b06e001d9cce
-      SECRET_TTL: "3600"
-      DEBUG: "false"
+      REQUEST_RATE: "1"
+      REFRESH_RATE: "5"
+      PARSE_SECRET_VALUES: "true"
+      LOG_LEVEL: "warning"
     ports: [5000:5000]
 
   - name: apex-legends-exporter
