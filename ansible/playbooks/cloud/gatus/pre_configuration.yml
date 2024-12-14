@@ -30,9 +30,18 @@
         group: root
         mode: "600"
 
+    - name: Create Gatus config
+      ansible.builtin.copy:
+        content: |
+          {{ gatus_config }}
+        dest: "{{ configuration_path }}/gatus/config.yml"
+        owner: "{{ common_user }}"
+        group: "{{ common_user }}"
+        mode: "664"
+
     - name: Template NGINX config # noqa no-relative-paths
       ansible.builtin.template:
-        src: ../../templates/nginx.conf.j2
+        src: ../../../templates/nginx.conf.j2
         dest: "{{ configuration_path }}/swag/nginx/site-confs/default.conf"
         mode: "664"
 

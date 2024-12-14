@@ -24,7 +24,7 @@ service_definitions:
       - net_admin # Allows modifications of net utils
       # - sys_module # No longer needed if host loads the modules already
     env: "{{ common_env }}"
-    ports: [3001:3001]
+    ports: [8080:8080]
     volumes:
       - "{{ configuration_path }}/wireguard:/config"
       - /lib/modules:/lib/modules
@@ -33,10 +33,10 @@ service_definitions:
     networks:
       - name: net_swag
 
-  - name: uptime-kuma
-    image: louislam/uptime-kuma:1.23.15
+  - name: gatus
+    image: twinproduction/gatus:v5.13.1
     volumes:
-      - "{{ configuration_path }}/uptime-kuma:/app/data"
+      - "{{ configuration_path }}/gatus:/config"
     network_mode: container:wireguard
 
   - name: swag

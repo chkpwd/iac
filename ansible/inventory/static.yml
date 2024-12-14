@@ -44,6 +44,10 @@ all:
         ct-01-ec2:
           ansible_host: 44.192.102.180
 
+    gatus:
+      hosts:
+        ct-01-ec2:
+
     cloud:
       children:
         aws:
