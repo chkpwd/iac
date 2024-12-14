@@ -61,7 +61,7 @@ spec:
             args: ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf", "--logfile", "/tmp/supervisord.log", "--pidfile", "/tmp/supervisord.pid"]
             probes:
               liveness: &probes
-                enabled: true
+                enabled: false
               readiness: *probes
               startup:
                 enabled: false
