@@ -17,7 +17,7 @@ resource "cloudflare_dns_record" "www_main" {
 }
 
 resource "cloudflare_dns_record" "uptime" {
-  name    = "uptime.chkpwd.com"
+  name    = "gatus.chkpwd.com"
   proxied = true
   ttl     = 1
   type    = "A"
