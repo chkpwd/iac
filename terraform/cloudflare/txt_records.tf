@@ -6,7 +6,7 @@ resource "cloudflare_dns_record" "github_txt" {
   zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
 }
 
-resource "cloudflare_record" "cloudflare_email_txt" {
+resource "cloudflare_dns_record" "cloudflare_email_txt" {
   name    = "@"
   ttl     = 1
   type    = "TXT"
@@ -16,7 +16,7 @@ resource "cloudflare_record" "cloudflare_email_txt" {
   zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
 }
 
-resource "cloudflare_record" "aws_instance_proxy_txt" {
+resource "cloudflare_dns_record" "aws_instance_proxy_txt" {
   name    = "@"
   ttl     = 1
   type    = "TXT"
