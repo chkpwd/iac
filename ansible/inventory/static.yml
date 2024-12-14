@@ -3,6 +3,7 @@ all:
   hosts:
     localhost:
       ansible_connection: local
+
   children:
     hypervisors:
       children:
@@ -14,6 +15,8 @@ all:
       hosts:
         haos-srv-01:
         mgmt-srv-01:
+        ct-01-ec2:
+
     windows:
       hosts:
         chk-gaming-01:
@@ -26,6 +29,7 @@ all:
         ct-01-ec2:
         mgmt-srv-01:
         gs-srv-01:
+
     game_servers:
       hosts:
         gs-srv-01:
