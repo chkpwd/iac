@@ -9,15 +9,10 @@ all:
         proxmox:
           hosts:
             pve-srv-01:
-    guests:
-      children:
-        docker_hosts:
-        media_server:
-        k3s_cluster:
+
     linux:
       hosts:
         haos-srv-01:
-        kubes-cp-[1:3]:
         mgmt-srv-01:
     windows:
       hosts:
@@ -37,18 +32,6 @@ all:
       vars:
         ansible_ssh_user: root
 
-    k3s_cluster:
-      children:
-        k3s_master:
-    k3s_master:
-      hosts:
-        kubes-cp-1:
-          ansible_host: 172.16.16.10
-        kubes-cp-2:
-          ansible_host: 172.16.16.11
-        kubes-cp-3:
-          ansible_host: 172.16.16.12
-
     printers:
       hosts:
         print-srv-01:
@@ -67,7 +50,6 @@ all:
     onprem:
       children:
         hypervisors:
-        guests:
         linux:
         windows:
         printers:
