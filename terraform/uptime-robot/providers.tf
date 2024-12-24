@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     uptimerobot = {
-      source = "louy/uptimerobot"
-      version = "0.5.1"
+      source = "bartekbp/uptimerobot"
+      version = "0.9.0"
     }
   }
 }
@@ -14,6 +14,6 @@ data "external" "bws_lookup" {
   }
 }
 
-# provider "uptimerobot" {
-#   api_key = "...."
-# }
+provider "uptimerobot" {
+  api_key = data.external.bws_lookup.result["infra-monitoring-secrets_uptime_robot_api_key"]
+}
