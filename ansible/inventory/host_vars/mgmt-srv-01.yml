@@ -58,8 +58,8 @@ service_definitions:
       - --opnsense.address=172.16.16.1
       - --exporter.instance-label=mgmt_srv_01
       - --web.listen-address=:8080
-      - --web.disable-exporter-metrics=true
-      - --exporter.disable-openvpn=true
+      - --web.disable-exporter-metrics
+      - --exporter.disable-openvpn
     env:
       OPNSENSE_EXPORTER_OPS_API_KEY: "{{ lookup('bws_cache', 'infra-network-secrets').value.opnsense_exporter_api_key }}"
       OPNSENSE_EXPORTER_OPS_API_SECRET: "{{ lookup('bws_cache', 'infra-network-secrets').value.opnsense_exporter_api_secret }}"
