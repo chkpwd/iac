@@ -16,7 +16,10 @@ variable "oauth2_values" {
     consumer_secret = optional(string)
     client_secret = optional(string)
     property_mappings = optional(list(string))
-    redirect_uris = optional(list(string))
+    allowed_redirect_uris = list(object({
+      matching_mode = string
+      url           = string
+    }))
   })
 }
 

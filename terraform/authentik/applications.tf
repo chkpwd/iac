@@ -117,7 +117,12 @@ module "authentik-app-miniflux" {
     client_id         = "miniflux"
     client_secret     = data.external.bws_lookup.result["ns-tools-miniflux_client_secret"]
     property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
-    redirect_uris     = ["https://miniflux.chkpwd.com/oauth2/oidc/callback"]
+    allowed_redirect_uris = [
+      {
+        matching_mode = "strict",
+        url           = "https://miniflux.chkpwd.com/oauth2/oidc/callback",
+      }
+    ]
   }
   app_values = {
     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/miniflux.png"
@@ -209,22 +214,27 @@ module "authentik-app-actual-budget" {
 }
 
 module "authentik-app-semaphore-ui" {
-  source = "../_modules/authentik/proxy_app"
+  source = "../_modules/authentik/oauth2_app"
   name   = "Semaphore UI"
   group  = "main"
-
-  proxy_values = {
-    internal = ""
-    external = "https://semaphore.chkpwd.com"
-    mode     = "forward_single"
+  oauth2_values = {
+    client_id         = "semaphore"
+    client_secret     = data.external.bws_lookup.result["infra-semaphore-secrets_oauth_client_secret"]
+    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
+    allowed_redirect_uris = [
+      {
+        matching_mode = "strict",
+        url           = "https://semaphore.chkpwd.com/api/auth/oidc/authentik/redirect",
+      }
+    ]
   }
-
   app_values = {
-    meta_description = "CI/CD Tool"
     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/semaphore.png"
+    meta_description = "Task Runner"
   }
-
-  access_group = [authentik_group.main.id]
+  access_group = [
+    authentik_group.main.id
+  ]
 }
 
 module "authentik-app-immich" {
@@ -235,10 +245,19 @@ module "authentik-app-immich" {
     client_id         = "immich"
     client_secret     = data.external.bws_lookup.result["ns-tools-immich_client_secret"]
     property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
-    redirect_uris = [
-      "app.immich:///oauth-callback",
-      "https://immich.chkpwd.com/auth/login",
-      "https://immich.chkpwd.com/user-settings"
+    allowed_redirect_uris = [
+      {
+        matching_mode = "strict",
+        url           = "app.immich:///oauth-callback",
+      },
+      {
+        matching_mode = "strict",
+        url           = "https://immich.chkpwd.com/auth/login",
+      },
+      {
+        matching_mode = "strict",
+        url           = "https://immich.chkpwd.com/user-settings",
+      }
     ]
   }
   app_values = {
@@ -270,4 +289,3 @@ module "authentik-app-immich" {
 
 #   access_group = [authentik_group.main.id, authentik_group.secondary.id]
 # }
-
