@@ -4,6 +4,7 @@ resource "authentik_provider_oauth2" "oauth2" {
   client_secret         = var.oauth2_values.client_secret
   authentication_flow   = data.authentik_flow.default-source-authentication.id
   authorization_flow    = data.authentik_flow.default-authorization-flow.id
+  invalidation_flow     = data.authentik_flow.default-provider-invalidation-flow.id
   access_token_validity = "minutes=10"
   property_mappings     = var.oauth2_values.property_mappings
   redirect_uris         = var.oauth2_values.redirect_uris

@@ -25,3 +25,7 @@ data "authentik_property_mapping_provider_scope" "sources" {
     "goauthentik.io/providers/oauth2/scope-profile"
   ]
 }
+
+data "authentik_flow" "default-provider-invalidation-flow" {
+  slug = "default-provider-invalidation-flow"
+}

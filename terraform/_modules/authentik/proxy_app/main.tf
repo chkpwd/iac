@@ -5,6 +5,7 @@ resource "authentik_provider_proxy" "provider" {
   mode                         = var.proxy_values.internal == "" ? "forward_single" : "proxy" # Can't be empty
   authentication_flow          = data.authentik_flow.default-authentication-flow.id
   authorization_flow           = data.authentik_flow.default-authorization-flow.id
+  invalidation_flow            = data.authentik_flow.default-provider-invalidation-flow.id
   skip_path_regex              = var.proxy_values.skip_path_regex
   internal_host_ssl_validation = var.proxy_values.internal_host_ssl_validation
   jwks_sources                 = var.proxy_values.jwks_sources
