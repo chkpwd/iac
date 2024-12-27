@@ -1,19 +1,35 @@
 ---
 semaphore_container:
   - name: semaphore
-    image: semaphoreui/semaphore:v2.10.43
+    image: semaphoreui/semaphore:v2.11.2
     user: 1001:1001
     env:
       SEMAPHORE_DB_DIALECT: bolt
       SEMAPHORE_ADMIN: &name chkpwd
       SEMAPHORE_ADMIN_NAME: *name
-      SEMAPHORE_ADMIN_EMAIL: semaphore@chkpwd.com
-      SEMAPHORE_ACCESS_KEY_ENCRYPTION: "{{ lookup('bws_cache', 'common-secrets').value. }}"
+      SEMAPHORE_ACCESS_KEY_ENCRYPTION: "{{ lookup('bws_cache', 'infra-semaphore-secrets').value.access_key_encryption }}"
       SEMAPHORE_PASSWORD_LOGIN_DISABLED: "true"
       SEMAPHORE_WEB_ROOT: https://semaphore.chkpwd.com
       ANSIBLE_HOST_KEY_CHECKING: "False"
+      TZ: "{{ timezone }}"
     volumes:
-      - "{{ compose_configuration_path }}/semaphore/db:/var/lib/semaphore"
-      - "{{ compose_configuration_path }}/semaphore/config:/etc/semaphore"
-      - "{{ compose_configuration_path }}/semaphore/tmp:/tmp/semaphore"
+      - "{{ configuration_path }}/semaphore/db:/var/lib/semaphore"
+      - "{{ configuration_path }}/semaphore/config:/etc/semaphore"
+      - "{{ configuration_path }}/semaphore/tmp:/tmp/semaphore"
     ports: [3005:3000]
+
+
+semaphore_oidc_config:
+  oidc_providers:
+    authentik:
+      display_name: "Sign in with SSO"
+      provider_url: "https://authentik.chkpwd.com/application/o/semaphore-ui/"
+      client_id: "semaphore"
+      client_secret: "{{ lookup('bws_cache', 'infra-semaphore-secrets').value.oauth_client_secret }}"
+      redirect_url: "https://semaphore.chkpwd.com/api/auth/oidc/authentik/redirect"
+      scopes:
+        - "email"
+        - "openid"
+        - "profile"
+      username_claim: "preferred_username"
+      name_claim: "preferred_username"

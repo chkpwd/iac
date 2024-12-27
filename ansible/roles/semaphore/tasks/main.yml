@@ -14,3 +14,26 @@
   loop: "{{ semaphore_container }}"
   loop_control:
     label: "{{ item.name }}"
+
+- name: Wait for config.json to be created
+  ansible.builtin.wait_for:
+    path: "{{ configuration_path }}/semaphore/config/config.json"
+    state: present
+    delay: 10
+    timeout: 60
+
+- name: Read the current config.json file
+  ansible.builtin.slurp:
+    src: "{{ configuration_path }}/semaphore/config/config.json"
+  register: file_content
+
+- name: Decode and parse the file content as JSON
+  ansible.builtin.set_fact:
+    json_data: "{{ file_content['content'] | b64decode }}"
+
+- name: Write the updated JSON back to the file
+  ansible.builtin.copy:
+    content: "{{ json_data | combine(semaphore_oidc_config) | to_nice_json }}"
+    dest: "{{ configuration_path }}/semaphore/config/config.json"
+    mode: '0644'
+  notify: 'Restart Semaphore'
