@@ -8,13 +8,13 @@ variable "group" {
 
 variable "oauth2_values" {
   type = object({ # Optional type requires object
-    client_id = string
-    provider_type = optional(string)
+    client_id         = string
+    provider_type     = optional(string)
     authorization_url = optional(string)
-    access_token_url = optional(string)
-    consumer_key = optional(string)
-    consumer_secret = optional(string)
-    client_secret = optional(string)
+    access_token_url  = optional(string)
+    consumer_key      = optional(string)
+    consumer_secret   = optional(string)
+    client_secret     = optional(string)
     property_mappings = optional(list(string))
     allowed_redirect_uris = list(object({
       matching_mode = string
