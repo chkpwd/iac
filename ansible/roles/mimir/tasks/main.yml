@@ -1,0 +1,52 @@
+---
+# Required for htpasswd module below
+- name: Install python3-passlib
+  ansible.builtin.apt:
+    name: python3-passlib
+    state: present
+
+- name: Create app directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: '0755'
+    state: directory
+  loop: "{{ mimir_containers | selectattr('volumes', 'defined') | map(attribute='name') | product([configuration_path]) | map('reverse') | map('join', '/') }}"
+  when: not item is match('.*\.\w{2,4}$')
+
+- name: Template NGINX config
+  ansible.builtin.template:
+    src: nginx.conf.j2
+    dest: "{{ mimir_lb_base_path }}/nginx.conf"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: '0664'
+  notify: Restart NGINX
+
+- name: Install htpasswd file for NGINX
+  community.general.htpasswd:
+    path: "{{ mimir_lb_base_path }}/.htpasswd"
+    name: "{{ mimir_lb_user }}"
+    password: "{{ mimir_lb_pass }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: '0644'
+    state: present
+  notify: Restart NGINX
+
+- name: Template Mimir config
+  ansible.builtin.template:
+    src: mimir.yml.j2
+    dest: "{{ mimir_base_path }}/mimir.yml"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: '0664'
+  notify: Restart Mimir
+
+- name: Deploy Docker containers
+  community.docker.docker_container: "{{ item }}" # noqa args[module]
+  loop: "{{ mimir_containers }}"
+  loop_control:
+    label: "{{ item.name }}"
+  notify: Prune Docker images

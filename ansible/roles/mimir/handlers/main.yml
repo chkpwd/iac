@@ -1,0 +1,28 @@
+---
+- name: Prune Docker images
+  community.docker.docker_prune:
+    images: true
+    images_filters:
+      dangling: false
+
+- name: Restart Prometheus
+  community.docker.docker_container:
+    name: prometheus
+    state: started
+    restart: true
+
+- name: Restart Mimir
+  community.docker.docker_container:
+    name: mimir
+    restart: true
+    state: started
+    comparisons:
+      '*': ignore
+
+- name: Restart NGINX
+  community.docker.docker_container:
+    name: mimir-lb
+    restart: true
+    state: started
+    comparisons:
+      '*': ignore
