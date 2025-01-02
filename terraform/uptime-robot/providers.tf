@@ -2,7 +2,7 @@ terraform {
   required_providers {
     uptimerobot = {
       source = "bartekbp/uptimerobot"
-      version = "0.9.0"
+      version = "0.10.0"
     }
   }
 }
