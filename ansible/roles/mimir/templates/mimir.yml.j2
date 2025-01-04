@@ -1,0 +1,84 @@
+# Ref: https://grafana.com/docs/mimir/latest/references/configuration-parameters/
+
+# When set to true, incoming HTTP requests must specify tenant ID in HTTP
+# X-Scope-OrgId header. When set to false, tenant ID from -auth.no-auth-tenant
+# is used instead.
+multitenancy_enabled: false
+
+# Comma-separated list of components to include in the instantiated process. The
+# default value 'all' includes all components that are required to form a
+# functional Grafana Mimir instance in single-binary mode. Use the '-modules'
+# command line flag to get a list of available components, and to see which
+# components are included with 'all'.
+target: all
+
+memberlist:
+  abort_if_cluster_join_fails: false
+  compression_enabled: false
+  join_members: [mimir]
+
+# The common block holds configurations that configure multiple components at a
+# time.
+common:
+  storage:
+    # Backend storage to use. Supported backends are: s3, gcs, azure, swift,
+    # filesystem.
+    backend: s3
+    s3:
+      endpoint: {{ mimir_s3_endpoint }}
+      access_key_id: "{{ mimir_s3_access_key }}"
+      secret_access_key: "{{ mimir_s3_secret_key }}"
+
+blocks_storage:
+  s3:
+    bucket_name: {{ mimir_s3_blocks_bucket }}
+  tsdb:
+    dir: /data/tsdb
+    retention_period: 24h
+    flush_blocks_on_shutdown: true
+
+compactor:
+  data_dir: /data/compactor
+  sharding_ring:
+    kvstore:
+      store: memberlist
+
+distributor:
+  ring:
+    kvstore:
+      store: memberlist
+
+ingester:
+  ring:
+    kvstore:
+      store: memberlist
+    replication_factor: 1
+
+ruler:
+  rule_path: /data/ruler
+
+ruler_storage:
+  s3:
+    bucket_name: {{ mimir_s3_ruler_bucket }}
+
+store_gateway:
+  sharding_ring:
+    replication_factor: 1
+
+# The server block configures the HTTP and gRPC server of the launched
+# service(s).
+server:
+  http_listen_port: {{ mimir_lb_port }}
+  log_level: warn
+  log_format: json
+
+# Shamelessly stolen from tig who also stole it from Jens
+# https://grafana.com/docs/mimir/latest/references/configuration-parameters/#limits
+limits:
+  max_label_names_per_series: 100
+  max_global_series_per_user: 1500000
+  max_global_series_per_metric: 200000
+  ingestion_rate: 25000
+  ruler_max_rules_per_rule_group: 500
+  out_of_order_time_window: 6h
+  compactor_blocks_retention_period: 1y

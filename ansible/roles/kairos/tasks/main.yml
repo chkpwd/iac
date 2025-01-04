@@ -2,7 +2,7 @@
 - name: Create AuroraBoot Config
   ansible.builtin.template:
     src: "{{ item.src }}"
-    dest: "{{ compose_configuration_path }}/auroraboot/files/{{ item.path | splitext | first }}"
+    dest: "{{ configuration_path }}/auroraboot/files/{{ item.path | splitext | first }}"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
     mode: "0755"

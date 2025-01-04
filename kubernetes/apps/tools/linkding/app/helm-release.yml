@@ -57,7 +57,7 @@ spec:
               LD_SUPERUSER_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: linkding-secrets
+                    name: linkding-secret
                     key: LD_SUPERUSER_PASSWORD
               LD_CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
               LD_DISABLE_URL_VALIDATION: true

@@ -1,0 +1,23 @@
+events {
+    worker_connections 1024;
+}
+
+error_log /dev/stdout info;
+
+http {
+    upstream backend {
+        server {{ (mimir_containers | selectattr('image', 'search', 'grafana/mimir') | first).name }}:{{ mimir_lb_port }};
+    }
+
+    server {
+        listen {{ mimir_lb_port }};
+        access_log /dev/stdout;
+        auth_basic "mimir";
+        auth_basic_user_file /etc/nginx/.htpasswd;
+        # request bodies were overflowing the default limit of 8k or 16k (platform dependant)
+        client_body_buffer_size 1M;
+        location / {
+            proxy_pass http://backend;
+        }
+    }
+}

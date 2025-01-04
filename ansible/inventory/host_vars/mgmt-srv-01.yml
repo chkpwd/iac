@@ -5,12 +5,11 @@ ansible_user: chkpwd
 service_definitions:
   - name: auroraboot
     image: quay.io/kairos/auroraboot:latest
-    command: --cloud-config /files/cloud-config.yml /files/auroraboot-config.yml
+    command: --cloud-config /files/cloud-config.yaml /files/auroraboot-config.yaml
     volumes:
       - "{{ compose_configuration_path }}/auroraboot/files:/files"
       - "{{ compose_configuration_path }}/auroraboot/tmp:/tmp"
     network_mode: host
-    state: stopped
 
   - name: nginx_webserver
     image: nginx:1.25.4-alpine3.18-slim
