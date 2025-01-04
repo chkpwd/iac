@@ -4,7 +4,7 @@ mimir_lb_base_path: "{{ configuration_path }}/mimir-lb"
 
 mimir_containers:
   - name: mimir
-    image: grafana/mimir:2.14.2
+    image: grafana/mimir:2.15.0
     command: [-config.file=/etc/mimir/mimir.yml]
     volumes:
       - "{{ mimir_base_path }}/mimir.yml:/etc/mimir/mimir.yml:ro"
