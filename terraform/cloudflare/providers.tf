@@ -6,7 +6,7 @@ terraform {
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "5.0.0-alpha1"
+      version = "5.0.0-rc1"
     }
     tfe = {
       source  = "hashicorp/tfe"
