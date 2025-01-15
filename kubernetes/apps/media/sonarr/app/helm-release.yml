@@ -63,7 +63,11 @@ spec:
               SONARR__INSTANCE_NAME: *app
               SONARR__PORT: &port 8989
               SONARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
-              SONARR__API_KEY: ${API_KEY_SONARR}
+              SONARR__API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sonarr-secrets
+                    key: SONARR_API_KEY
               SONARR__AUTHENTICATION_METHOD: External
               SONARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
               SONARR__THEME: dark
@@ -106,7 +110,11 @@ spec:
             env:
               PORT: &metricsPort 9707
               URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:8989"
-              APIKEY: ${API_KEY_SONARR}
+              APIKEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sonarr-secrets
+                    key: SONARR_API_KEY
             args: ["sonarr"]
 
             resources:

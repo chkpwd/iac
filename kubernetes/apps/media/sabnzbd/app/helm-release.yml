@@ -76,8 +76,6 @@ spec:
             env:
               TZ: "${TZ}"
               SABNZBD__PORT: &port 8080
-              SABNZBD__API_KEY: ${API_KEY_SABNZBD}
-              SABNZBD__NZB_KEY: ${API_KEY_NZBGEEK}
               SABNZBD__HOST_WHITELIST_ENTRIES: >-
                 {{ .Release.Name }},
                 {{ .Release.Name }}.media,
@@ -85,7 +83,9 @@ spec:
                 {{ .Release.Name }}.media.svc.cluster,
                 {{ .Release.Name }}.media.${CLUSTER_DOMAIN},
                 {{ .Release.Name }}.${LOCAL_DOMAIN}
-
+            envFrom:
+              - secretRef:
+                  name: sabnzbd-secrets
             probes:
               liveness: &probes
                 enabled: true
@@ -123,7 +123,11 @@ spec:
             env:
               PORT: &metricsPort 9707
               URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:8080"
-              APIKEY: ${API_KEY_SABNZBD}
+              APIKEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: sabnzbd-secrets
+                    key: SABNZBD_API_KEY
             args: ["sabnzbd"]
 
             resources:

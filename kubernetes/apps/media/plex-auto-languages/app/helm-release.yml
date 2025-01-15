@@ -15,37 +15,30 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     global:
       fullnameOverride: *app
-
     defaultPodOptions:
       hostname: *app
-
     controllers:
       plex-auto-languages:
         enabled: true
         type: deployment
         annotations:
           reloader.stakater.com/auto: "true"
-
         replicas: 1
-
         pod:
           securityContext:
             runAsUser: &context 1999
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
-
         containers:
           app:
             image:
@@ -56,22 +49,23 @@ spec:
               TZ: "${TZ}"
               PLEX_URL: http://media.${LOCAL_DOMAIN}:32400
               REFRESH_LIBRARY_ON_SCAN: "false"
-              PLEX_TOKEN: ${APP_PLEX_TOKEN}
-
+              PLEX_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: plex-auto-languages-secrets
+                    key: PLEX_TOKEN
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities:
                 drop:
                   - ALL
-
             resources:
               requests:
                 cpu: 10m
                 memory: 100Mi
               limits:
                 memory: 125Mi
-
     persistence:
       config:
         type: emptyDir

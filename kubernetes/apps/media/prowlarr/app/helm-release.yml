@@ -63,7 +63,11 @@ spec:
               PROWLARR__INSTANCE_NAME: Prowlarr
               PROWLARR__PORT: &port 9696
               PROWLARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
-              PROWLARR__API_KEY: ${API_KEY_PROWLARR}
+              PROWLARR__API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: prowlarr-secrets
+                    key: PROWLARR_API_KEY
               PROWLARR__AUTHENTICATION_METHOD: External
               PROWLARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
               PROWLARR__THEME: dark
@@ -106,7 +110,11 @@ spec:
             env:
               PORT: &metricsPort 9707
               URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:9696"
-              APIKEY: ${API_KEY_PROWLARR}
+              APIKEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: prowlarr-secrets
+                    key: PROWLARR_API_KEY
               PROWLARR__BACKFILL: true
             args: ["prowlarr"]
 

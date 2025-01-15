@@ -63,7 +63,11 @@ spec:
               RADARR__INSTANCE_NAME: *app
               RADARR__PORT: &port 7878
               RADARR__APPLICATION_URL: "https://{{ .Release.Name }}.${LOCAL_DOMAIN}"
-              RADARR__API_KEY: ${API_KEY_RADARR}
+              RADARR__API_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: radarr-secrets
+                    key: RADARR_API_KEY
               RADARR__AUTHENTICATION_METHOD: External
               RADARR__THEME: dark
               RADARR__LOG_LEVEL: info
@@ -93,7 +97,11 @@ spec:
             env:
               PORT: &metricsPort 9707
               URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:7878"
-              APIKEY: ${API_KEY_RADARR}
+              APIKEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: radarr-secrets
+                    key: RADARR_API_KEY
             args: ["radarr"]
 
             resources:
