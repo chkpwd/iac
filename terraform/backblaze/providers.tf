@@ -2,7 +2,7 @@ terraform {
   required_providers {
     backblaze = {
       source  = "Backblaze/b2"
-      version = "0.9.0"
+      version = "0.10.0"
     }
   }
 }
