@@ -8,7 +8,7 @@ spec:
   externalName: nas-srv-01.${LOCAL_DOMAIN}
   ports:
     - name: http
-      port: &port 5001
+      port: &port 5000
       protocol: TCP
       targetPort: *port
 ---
@@ -30,4 +30,4 @@ spec:
               service:
                 name: *app
                 port:
-                  number: 5001
+                  number: 5000
