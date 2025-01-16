@@ -18,6 +18,8 @@ metadata:
   name: &app proxmox
   annotations:
     external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   ingressClassName: int-ingress
   rules:
