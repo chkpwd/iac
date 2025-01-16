@@ -19,8 +19,6 @@ spec:
     substituteFrom:
       - kind: ConfigMap
         name: global-vars
-      - kind: Secret
-        name: sops-secrets
   patches:
     - patch: |-
         apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -36,8 +34,6 @@ spec:
             substituteFrom:
               - kind: ConfigMap
                 name: global-vars
-              - kind: Secret
-                name: sops-secrets
       target:
         group: kustomize.toolkit.fluxcd.io
         kind: Kustomization

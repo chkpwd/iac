@@ -6,15 +6,15 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: ${CLOUDFLARE_EMAIL}
+    email: unix.chkpwd@gmail.com
     privateKeySecretRef:
       name: letsencrypt-production
     solvers:
       - dns01:
           cloudflare:
-            email: ${CLOUDFLARE_EMAIL}
+            email: unix.chkpwd@gmail.com
             apiTokenSecretRef:
-              name: cloudflare-api-token-secret
+              name: cloudflare-external-secret
               key: api-token
         selector: {}
 ---
@@ -25,14 +25,14 @@ metadata:
 spec:
   acme:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: ${CLOUDFLARE_EMAIL}
+    email: unix.chkpwd@gmail.com
     privateKeySecretRef:
       name: letsencrypt-staging
     solvers:
       - dns01:
           cloudflare:
-            email: ${CLOUDFLARE_EMAIL}
+            email: unix.chkpwd@gmail.com
             apiTokenSecretRef:
-              name: cloudflare-api-token-secret
+              name: cloudflare-external-secret
               key: api-token
         selector: {}
