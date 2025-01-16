@@ -7,8 +7,8 @@ spec:
   type: ExternalName
   externalName: pve-srv-01.${LOCAL_DOMAIN}
   ports:
-    - name: http
-      port: &port 8006
+    - name: https
+      port: &port 443
       protocol: TCP
       targetPort: *port
 ---
@@ -30,4 +30,4 @@ spec:
               service:
                 name: *app
                 port:
-                  number: 8006
+                  number: 443
