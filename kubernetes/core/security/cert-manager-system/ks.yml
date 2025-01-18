@@ -6,66 +6,12 @@ metadata:
   namespace: flux-system
 spec:
   targetNamespace: security
-  dependsOn:
-    - name: core-security-cert-manager-config
   path: ./kubernetes/core/security/cert-manager-system/app
   prune: true
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
   wait: true
-  interval: 30m
-  retryInterval: 1m
-  timeout: 5m
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: core-security-cert-manager-config
-  namespace: flux-system
-spec:
-  targetNamespace: security
-  path: ./kubernetes/core/security/cert-manager-system/config
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: chkpwd-ops
-  interval: 30m
-  retryInterval: 1m
-  timeout: 5m
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: core-security-cert-manager-issuers
-  namespace: flux-system
-spec:
-  targetNamespace: security
-  dependsOn:
-    - name: core-security-cert-manager
-  path: ./kubernetes/core/security/cert-manager-system/issuers
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: chkpwd-ops
-  interval: 30m
-  retryInterval: 1m
-  timeout: 5m
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: core-security-cert-manager-certificates
-  namespace: flux-system
-spec:
-  targetNamespace: security
-  dependsOn:
-    - name: core-security-cert-manager
-  path: ./kubernetes/core/security/cert-manager-system/certificates
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: chkpwd-ops
   interval: 30m
   retryInterval: 1m
   timeout: 5m
