@@ -1,0 +1,23 @@
+---
+common_user_uid: 1000
+
+docker_edition: ce
+docker_package_state: latest
+docker_users: "{{ common_user }}"
+docker_services:
+  - name: Docker Service
+    value: docker.service
+  - name: Docker Socket
+    value: docker.socket
+
+service_definitions:
+  - name: nginx_rtmp
+    image: ghcr.io/chkpwd/nginx-live-stream:auto-1737694866
+    env:
+      TZ: America/New_York
+    ports:
+      - 1935:1935
+      - 80:80
+    volumes:
+      - "{{ configuration_path }}/nginx/default.conf:/etc/nginx/nginx.conf:ro"
+      - "{{ configuration_path }}/nginx/files:/recording"
