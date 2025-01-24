@@ -1,6 +1,6 @@
 ---
 - name: Set up cloud instances
-  ansible.builtin.import_playbook: setup_instances.yml
+  ansible.builtin.import_playbook: ../../setup_instances.yml
   tags: setup
 
 - name: Preconfigure services

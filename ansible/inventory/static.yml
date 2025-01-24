@@ -16,6 +16,7 @@ all:
         haos-srv-01:
         mgmt-srv-01:
         ct-01-ec2:
+        ct-02-ec2:
 
     windows:
       hosts:
@@ -27,6 +28,7 @@ all:
       hosts:
         haos-srv-01:
         ct-01-ec2:
+        ct-02-ec2:
         mgmt-srv-01:
         gs-srv-01:
 
@@ -47,6 +49,8 @@ all:
       hosts:
         ct-01-ec2:
           ansible_host: 44.192.102.180
+        ct-02-ec2:
+          ansible_host: 75.101.242.5
 
     gatus:
       hosts:
