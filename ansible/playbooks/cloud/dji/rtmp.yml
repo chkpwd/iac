@@ -22,6 +22,7 @@
         - aiohttp
       loop_control:
         label: "Installing {{ item }}"
+      tags: packages
 
     - name: Copy nginx configuration
       ansible.builtin.copy:
@@ -30,4 +31,4 @@
         owner: "{{ common_user }}"
         group: "{{ common_user }}"
         mode: "0755"
-
+      tags: files
