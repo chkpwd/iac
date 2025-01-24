@@ -35,7 +35,7 @@ jobs:
       - name: Build and push images
         uses: docker/build-push-action@v6.12.0
         with:
-          context: docker/${{ matrix.context }}
+          context: containers/${{ matrix.context }}
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: |
             ghcr.io/chkpwd/${{ matrix.context }}:latest
