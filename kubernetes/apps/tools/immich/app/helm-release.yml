@@ -44,33 +44,6 @@ spec:
       persistence:
         library:
           existingClaim: immich-pvc
-      configuration:
-        backup:
-          database:
-            enabled: true
-            cronExpression: 0 02 * * *
-            keepLastAmount: 5
-        # oauth:
-        #   autoLaunch: false
-        #   autoRegister: true
-        #   buttonText: Login with Authentik
-        #   clientId: immich
-        #   clientSecret: immich
-        #   enabled: true
-        #   issuerUrl: https://authentik.chkpwd.com/application/o/immich/
-        passwordLogin:
-          enabled: true
-        newVersionCheck:
-          enabled: true
-        trash:
-          enabled: true
-          days: 30
-        library:
-          scan:
-            enabled: true
-            cronExpression: 0 0 * * *
-          watch:
-            enabled: false
 
     server:
       enabled: true
