@@ -48,14 +48,10 @@ spec:
             enabled: true
             cronExpression: 0 02 * * *
             keepLastAmount: 5
-        logging:
-          enabled: true
-          level: log
         oauth:
           autoLaunch: false
           autoRegister: true
           buttonText: Login with Authentik
-          clientId: immich
           enabled: true
           issuerUrl: https://authentik.chkpwd.com/application/o/immich/
         passwordLogin:
