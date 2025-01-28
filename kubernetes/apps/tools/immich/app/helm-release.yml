@@ -36,7 +36,9 @@ spec:
 
     redis:
       enabled: true
-      size: 1Gi
+      master:
+        persistence:
+          enabled: false
 
     immich:
       persistence:
