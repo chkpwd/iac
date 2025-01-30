@@ -25,7 +25,6 @@ spec:
     server:
       image:
         repository: ghcr.io/gabe565/obico/web
-        pullPolicy: IfNotPresent
         tag: sha-4fe7d37376d94fec2f406b210eeda52114437ae2
       command:
         - python
@@ -78,7 +77,6 @@ spec:
     ml-api:
       image:
         repository: ghcr.io/gabe565/obico/ml-api
-        pullPolicy: IfNotPresent
         tag: sha-4fe7d37376d94fec2f406b210eeda52114437ae2
       command:
         - gunicorn
