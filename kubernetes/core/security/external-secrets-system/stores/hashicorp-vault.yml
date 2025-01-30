@@ -1,0 +1,25 @@
+apiVersion: external-secrets.io/v1beta1
+kind: ClusterSecretStore
+metadata:
+  name: vault-kv
+spec:
+  provider:
+    vault:
+      server: "https://vault.chkpwd.com"
+      path: "kv"
+      auth:
+        # kubernetes:
+        #   mountPath: "auth/k8s-${CLUSTER_NAME}"
+        #   role: "external-secrets"
+        #   serviceAccountRef:
+        #     name: "external-secrets"
+        #     namespace: kube-system
+        jwt:
+          path: "k8s-${CLUSTER_NAME}"
+          role: "external-secrets"
+          kubernetesServiceAccountToken:
+            serviceAccountRef:
+              name: "external-secrets"
+              namespace: kube-system
+            audiences:
+              - https://kubernetes.default.svc.cluster.local
