@@ -32,16 +32,6 @@ service_definitions:
       - "{{ compose_configuration_path }}/netbootxyz/data:/assets"
     state: stopped
 
-  - name: bws-cache
-    image: ghcr.io/ripplefcl/bws-cache:v2.3.0
-    env:
-      ORG_ID: 0228643f-4148-4629-b9b4-b06e001d9cce
-      REQUEST_RATE: "1"
-      REFRESH_RATE: "5"
-      PARSE_SECRET_VALUES: "true"
-      LOG_LEVEL: "warning"
-    ports: [5000:5000]
-
   - name: apex-legends-exporter
     image: ghcr.io/chkpwd/apex-legends-exporter:v2.2.1
     env:
@@ -63,3 +53,13 @@ service_definitions:
       OPNSENSE_EXPORTER_OPS_API_KEY: "{{ lookup('bws_cache', 'infra-network-secrets').value.opnsense_exporter_api_key }}"
       OPNSENSE_EXPORTER_OPS_API_SECRET: "{{ lookup('bws_cache', 'infra-network-secrets').value.opnsense_exporter_api_secret }}"
     ports: [8080:8080]
+
+  - name: bws-cache
+    image: ghcr.io/ripplefcl/bws-cache:v2.3.1
+    env:
+      ORG_ID: 0228643f-4148-4629-b9b4-b06e001d9cce
+      REQUEST_RATE: "1"
+      REFRESH_RATE: "5"
+      PARSE_SECRET_VALUES: "true"
+      LOG_LEVEL: "warning"
+    ports: [5000:5000]
