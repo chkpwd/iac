@@ -26,12 +26,6 @@ spec:
       image:
         repository: ghcr.io/gabe565/obico/web
         tag: sha-4fe7d37376d94fec2f406b210eeda52114437ae2
-      command:
-        - python
-        - manage.py
-        - runserver
-        - --noreload
-        - 0.0.0.0:3334
       persistence:
         data:
           enabled: true
@@ -43,11 +37,6 @@ spec:
           type: nfs
           server: "nas-srv-01.${LOCAL_DOMAIN}"
           path: /volume1/vault-01/static_media/obico
-      service:
-        main:
-          ports:
-            http:
-              port: 3334
       ingress:
         internal:
           enabled: true
@@ -78,27 +67,6 @@ spec:
       image:
         repository: ghcr.io/gabe565/obico/ml-api
         tag: sha-4fe7d37376d94fec2f406b210eeda52114437ae2
-      command:
-        - gunicorn
-        - --bind=0.0.0.0:3333
-        - --workers=1
-        - --access-logfile=-
-        - wsgi
-      service:
-        main:
-          ports:
-            http:
-              port: 3333
-    podSecurityContext:
-      runAsUser: 65534
-      runAsGroup: 65534
-      fsGroup: 65534
-    redis:
-      enabled: true
-      auth:
-        enabled: true
-      master:
-        persistence:
-          enabled: false
-      replica:
-        replicaCount: 0
+    resources:
+      requests:
+        memory: 4096M
