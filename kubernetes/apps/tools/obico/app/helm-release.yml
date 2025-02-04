@@ -25,13 +25,19 @@ spec:
     server:
       image:
         repository: ghcr.io/gabe565/obico/web
-        tag: sha-4fe7d37376d94fec2f406b210eeda52114437ae2
+        tag: latest@sha256:20cea9638a82afeb8afb651473a96744d16aa69d112c39167d12ca9362575474
+      env:
+        DJANGO_SECRET_KEY:
+          valueFrom:
+            secretKeyRef:
+              name: obico-secret
+              key: DJANGO_SECRET_KEY
       persistence:
         data:
           enabled: true
           storageClass: longhorn-config
           accessMode: ReadWriteOnce
-          size: 1Gi
+          size: 512M
         media:
           enabled: true
           type: nfs
@@ -67,6 +73,3 @@ spec:
       image:
         repository: ghcr.io/gabe565/obico/ml-api
         tag: sha-4fe7d37376d94fec2f406b210eeda52114437ae2
-    resources:
-      requests:
-        memory: 4096M
