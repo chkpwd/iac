@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app tf-controller
+  name: &app tofu-controller
 spec:
   interval: 15m
   chart:
@@ -24,16 +24,23 @@ spec:
   values:
     fullnameOverride: *app
     replicaCount: 1
-    concurrency: 24
-    caCertValidityDuration: 24h
-    certRotationCheckFrequency: 30m
     image:
+      repository: ghcr.io/flux-iac/tofu-controller
+      pullPolicy: IfNotPresent
       tag: v0.16.0-rc.5
     runner:
       image:
+        repository: ghcr.io/flux-iac/tf-runner
         tag: v0.16.0-rc.5
+        pullPolicy: IfNotPresent
       grpc:
         maxMessageSize: 30
+    logLevel: info
+    allowBreakTheGlass: false
+    clusterDomain: cluster.local
+    concurrency: 24
+    caCertValidityDuration: 24h
+    certRotationCheckFrequency: 30m
     resources:
       limits:
         cpu: 1000m
