@@ -47,10 +47,9 @@ spec:
 
         pod:
           securityContext:
-            runAsNonRoot: true
-            runAsUser: &context 1000
-            runAsGroup: *context
-            fsGroup: *context
+            runAsUser: 1026
+            runAsGroup: &group 100
+            fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
 
         containers:
