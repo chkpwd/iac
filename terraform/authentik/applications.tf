@@ -194,25 +194,6 @@ module "authentik-app-maintainerr" {
   access_group = [authentik_group.main.id]
 }
 
-module "authentik-app-actual-budget" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "Actual Budget"
-  group  = "secondary"
-
-  proxy_values = {
-    internal = ""
-    external = "https://actual-budget.chkpwd.com"
-    mode     = "forward_single"
-  }
-
-  app_values = {
-    meta_description = "Budget Tool"
-    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/actual-budget.png"
-  }
-
-  access_group = [authentik_group.main.id, authentik_group.secondary.id]
-}
-
 module "authentik-app-semaphore-ui" {
   source = "../_modules/authentik/oauth2_app"
   name   = "Semaphore UI"
