@@ -2,11 +2,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-flux-system-tf-controller
+  name: core-flux-system-tofu-controller
   namespace: flux-system
 spec:
   targetNamespace: flux-system
-  path: ./kubernetes/core/system/tf-controller/app
+  path: ./kubernetes/core/system/tofu-controller/app
   prune: true
   sourceRef:
     kind: GitRepository
