@@ -22,6 +22,7 @@ spec:
     remediation:
       retries: 3
   values:
+    fullnameOverride: *app
     replicaCount: 1
     concurrency: 24
     caCertValidityDuration: 24h
