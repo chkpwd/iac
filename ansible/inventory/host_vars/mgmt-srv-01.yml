@@ -41,7 +41,7 @@ service_definitions:
     ports: [5050:5000]
 
   - name: opnsense-exporter
-    image: ghcr.io/athennamind/opnsense-exporter:0.0.6
+    image: ghcr.io/athennamind/opnsense-exporter:0.0.7
     command:
       - --opnsense.protocol=http
       - --opnsense.address=172.16.16.1
