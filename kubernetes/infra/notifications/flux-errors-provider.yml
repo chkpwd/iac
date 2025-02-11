@@ -1,11 +1,11 @@
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Provider
 metadata:
-  name: &name flux-k3s-errors
+  name: &name flux-errors-provider
   namespace: flux-system
 spec:
   type: discord
   channel: *name
   secretRef:
-    name: notif-errors-provider
+    name: notif-errors
   username: k3s-errors-bot

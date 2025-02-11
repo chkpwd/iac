@@ -1,16 +1,13 @@
----
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
 metadata:
-  name: flux-k3s-helm-errors
+  name: flux-git-errors
   namespace: flux-system
 spec:
-  summary: Flux Helm Error
+  summary: Flux GitRepository Error
   providerRef:
-    name: flux-k3s-errors
+    name: flux-errors
   eventSeverity: error
   eventSources:
-    - kind: HelmRepository
-      name: '*'
-    - kind: HelmRelease
+    - kind: GitRepository
       name: '*'

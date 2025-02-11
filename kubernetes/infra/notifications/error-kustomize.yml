@@ -1,13 +1,13 @@
 apiVersion: notification.toolkit.fluxcd.io/v1beta3
 kind: Alert
 metadata:
-  name: flux-k3s-git-errors
+  name: flux-kustomize-errors
   namespace: flux-system
 spec:
-  summary: Flux GitRepository Error
+  summary: Flux Kustomize Error
   providerRef:
-    name: flux-k3s-errors
+    name: flux-errors
   eventSeverity: error
   eventSources:
-    - kind: GitRepository
+    - kind: Kustomization
       name: '*'
