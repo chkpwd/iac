@@ -23,19 +23,3 @@ spec:
     namespace: flux-system
   writeOutputsToSecret:
     name: authentik-tf-outputs
-  runnerPodTemplate:
-    spec:
-      volumeMounts:
-        - name: tf-cloud-sops-key
-          mountPath: /home/runner/.config/sops/age/keys.txt
-          subPath: keys.txt
-        - name: tf-unifi-ssh-key
-          mountPath: /home/runner/.ssh/unifi
-          subPath: unifi
-      volumes:
-        - name: tf-cloud-sops-key
-          secret:
-            secretName: tf-controller-secrets
-        - name: tf-unifi-ssh-key
-          secret:
-            secretName: unifi-controller-secrets
