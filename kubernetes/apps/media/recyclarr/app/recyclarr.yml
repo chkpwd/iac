@@ -26,11 +26,11 @@ sonarr:
               - WEBDL-1080p
               - WEBRip-1080p
               - HDTV-1080p
-          - name: WEB 720p
-          - name: WEB 480p
-          - name: Bluray-1080p
+              - Bluray-1080p
+          - name: HDTV-720p
           - name: Bluray-720p
           - name: Bluray-480p
+          - name: WEBRip-480p
           - name: DVD
       - name: Remux-1080p - Anime
         min_format_score: 0
@@ -44,12 +44,10 @@ sonarr:
           - e1a997ddb54e3ecbfe06341ad323c458 # Obfuscated
           - 06d66ab109d4d2eddb2794d21526d140 # Retags
           - 1b3994c551cbb92a2c781af061f4ab44 # Scene
-          - 9b64dff695c2115facf1b6ea59c9bd07 # x265 (no HDR/DV)
         assign_scores_to:
           - name: WEB-1080p
       - trash_ids:
           - 418f50b10f1907201b6cfdf881f467b7 # Anime Dual Audio
-          - 9b64dff695c2115facf1b6ea59c9bd07 # x265 (no HDR/DV)
         assign_scores_to:
           - name: Remux-1080p - Anime
       - trash_ids:
@@ -93,7 +91,6 @@ radarr:
           - 7357cf5161efbf8c4d5d0c30b4815ee2 # Obfuscated
           - 5c44f52a8714fdd79bb4d98e2673be1f # Retags
           - f537cf427b64c38c8e36298f657e4828 # Scene
-          - 839bea857ed2c0a8e084f3cbdbd65ecb # x265 (no HDR/DV)
         assign_scores_to:
           - name: HD Bluray + WEB
       - trash_ids:
@@ -102,6 +99,5 @@ radarr:
           - 9d27d9d2181838f76dee150882bdc58c # Masters of Cinema
           - db9b4c4b53d312a3ca5f1378f6440fc9 # Vinegar Syndrome
           - eecf3a857724171f968a66cb5719e152 # IMAX
-          - dc98083864ea246d05a42df0d05f81cc # x265 (HD)
         assign_scores_to:
           - name: UHD Bluray + WEB
