@@ -27,34 +27,22 @@ sonarr:
               - WEBRip-1080p
               - HDTV-1080p
               - Bluray-1080p
-          - name: HDTV-720p
-          - name: Bluray-720p
-          - name: Bluray-480p
-          - name: WEBRip-480p
+          - name: WEB 720p
+            qualities:
+              - WEBDL-720p
+              - WEBRip-720p
+              - HDTV-720p
+              - Bluray-720p
+          - name: WEB 480p
+            qualities:
+              - Bluray-480p
+              - WEBRip-480p
+              - WEBDL-480p
           - name: DVD
       - name: Remux-1080p - Anime
         min_format_score: 0
         reset_unmatched_scores:
           enabled: true
-
-    custom_formats:
-      - trash_ids:
-          - 32b367365729d530ca1c124a0b180c64 # Bad Dual Groups
-          - 82d40da2bc6923f41e14394075dd4b03 # No-RlsGroup
-          - e1a997ddb54e3ecbfe06341ad323c458 # Obfuscated
-          - 06d66ab109d4d2eddb2794d21526d140 # Retags
-          - 1b3994c551cbb92a2c781af061f4ab44 # Scene
-        assign_scores_to:
-          - name: WEB-1080p
-      - trash_ids:
-          - 418f50b10f1907201b6cfdf881f467b7 # Anime Dual Audio
-        assign_scores_to:
-          - name: Remux-1080p - Anime
-      - trash_ids:
-          - 9c14d194486c4014d422adc64092d794 # Dubs Only
-        assign_scores_to:
-          - name: Remux-1080p - Anime
-            score: 0
 
 radarr:
   radarr_main:
@@ -81,23 +69,3 @@ radarr:
       - name: UHD Bluray + WEB
         reset_unmatched_scores:
           enabled: true
-
-    custom_formats:
-      - trash_ids:
-          - 7a0d1ad358fee9f5b074af3ef3f9d9ef # hallowed
-          - b6832f586342ef70d9c128d40c07b872 # Bad Dual Groups
-          - 90cedc1fea7ea5d11298bebd3d1d3223 # EVO (no WEBDL)
-          - ae9b7c9ebde1f3bd336a8cbd1ec4c5e5 # No-RlsGroup
-          - 7357cf5161efbf8c4d5d0c30b4815ee2 # Obfuscated
-          - 5c44f52a8714fdd79bb4d98e2673be1f # Retags
-          - f537cf427b64c38c8e36298f657e4828 # Scene
-        assign_scores_to:
-          - name: HD Bluray + WEB
-      - trash_ids:
-          - 570bc9ebecd92723d2d21500f4be314c # Remaster
-          - eca37840c13c6ef2dd0262b141a5482f # 4K Remaster
-          - 9d27d9d2181838f76dee150882bdc58c # Masters of Cinema
-          - db9b4c4b53d312a3ca5f1378f6440fc9 # Vinegar Syndrome
-          - eecf3a857724171f968a66cb5719e152 # IMAX
-        assign_scores_to:
-          - name: UHD Bluray + WEB
