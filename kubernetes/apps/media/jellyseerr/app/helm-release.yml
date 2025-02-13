@@ -65,21 +65,21 @@ spec:
               LOG_LEVEL: "debug"
               PORT: &port 5055
 
-            # probes:
-            #   liveness: &probes
-            #     enabled: true
-            #     custom: true
-            #     spec:
-            #       httpGet:
-            #         path: /api/v1/status
-            #         port: *port
-            #       initialDelaySeconds: 0
-            #       periodSeconds: 10
-            #       timeoutSeconds: 1
-            #       failureThreshold: 3
-            #   readiness: *probes
-            #   startup:
-            #     enabled: false
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/status
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
 
             securityContext:
               allowPrivilegeEscalation: false
@@ -118,14 +118,6 @@ spec:
                   port: http
 
     persistence:
-      # node_modules:
-      #   type: emptyDir
-      #   globalMounts:
-      #     - path: /app/node_modules
-      # next:
-      #   type: emptyDir
-      #   globalMounts:
-      #     - path: /app/.next
       tmp:
         enabled: true
         type: emptyDir
