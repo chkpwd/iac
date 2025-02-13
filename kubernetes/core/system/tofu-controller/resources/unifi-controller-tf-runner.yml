@@ -14,9 +14,12 @@ spec:
     workspaces:
       name: unifi
   cliConfigSecretRef:
-    name: tf-cloud-secrets
+    name: tf-cloud
     namespace: flux-system
   path: ./unifi
+  varsFrom:
+  - kind: Secret
+    name: bws-token
   sourceRef:
     kind: OCIRepository
     name: tf-files
