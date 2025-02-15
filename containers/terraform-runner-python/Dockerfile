@@ -39,4 +39,6 @@ USER root
 COPY --from=builder --chown=65532:65532 /src/.venv /src/.venv
 COPY --from=opentofu --chown=65532:65532 /tmp/tofu /usr/local/bin/terraform
 
+ENV PATH="/src/.venv/bin:$PATH"
+
 USER 65532:65532
