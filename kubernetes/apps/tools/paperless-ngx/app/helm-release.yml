@@ -1,0 +1,126 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.1.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: paperless-ngx
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+
+  values:
+    controllers:
+      paperless-ngx:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        statefulset:
+          podManagementPolicy: Parallel
+          volumeClaimTemplates:
+          - accessMode: ReadWriteOnce
+            globalMounts:
+            - path: /usr/src/paperless/data
+            name: data
+            size: 1Mi
+          - accessMode: ReadWriteOnce
+            globalMounts:
+            - path: /usr/src/paperless/media
+            name: media
+            size: 1Mi
+        containers:
+          app:
+            image:
+              repository: ghcr.io/paperless-ngx/paperless-ngx
+              tag: 2.14.7
+            env:
+              PAPERLESS_ENABLE_HTTP_REMOTE_USER: 'true'
+              PAPERLESS_OCR_PAGES: 2
+              PAPERLESS_REDIS: redis://localhost:6379
+              PAPERLESS_THREADS_PER_WORKER: 1
+              PAPERLESS_TIKA_ENABLED: 1
+              PAPERLESS_TIKA_ENDPOINT: http://localhost:9998
+              PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://localhost:3000
+              PAPERLESS_URL: https://paperless.${LOCAL_DOMAIN}
+              PAPERLESS_WEBSERVER_WORKERS: 1
+            probes:
+              liveness:
+                enabled: true
+                type: HTTP
+              readiness:
+                enabled: true
+                type: HTTP
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+                type: HTTP
+            resources:
+              limits:
+                memory: 1.2Gi
+              requests:
+                cpu: 40m
+                memory: 1.2Gi
+          gotenburg:
+            env:
+              DISABLE_GOOGLE_CHROME: '1'
+            image:
+              repository: gotenberg/gotenberg
+              tag: 8.17.1
+            resources:
+              limits:
+                memory: 30Mi
+              requests:
+                cpu: 10m
+                memory: 30Mi
+          redis:
+            image:
+              repository: redis
+              tag: 7.4.2
+            resources:
+              limits:
+                memory: 50Mi
+              requests:
+                cpu: 10m
+                memory: 18Mi
+          tika:
+            image:
+              repository: ghcr.io/paperless-ngx/tika
+              tag: 2.9.1-minimal
+            resources:
+              limits:
+                memory: 220Mi
+              requests:
+                cpu: 10m
+                memory: 220Mi
+    service:
+      app:
+        controller: paperless-ngx
+        ports:
+          http:
+            port: 8000
+    ingress:
+      app:
+        hosts:
+        - host: paperless.${LOCAL_DOMAIN}
+          paths:
+          - path: /
+            service:
+              identifier: app
+              port: http
