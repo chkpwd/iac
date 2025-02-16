@@ -40,10 +40,8 @@ spec:
             size: 1Mi
         pod:
           securityContext:
-            runAsUser: 1026
-            runAsGroup: &group 100
-            fsGroup: *group
-            fsGroupChangePolicy: "OnRootMismatch"
+            supplementalGroups:
+              - 65542
         containers:
           app:
             image:
@@ -75,7 +73,8 @@ spec:
               PAPERLESS_OCR_LANGUAGES: nld
               PAPERLESS_OCR_LANGUAGE: nld
               PAPERLESS_REDIS: redis://paperless-redis.tools.${CLUSTER_DOMAIN}:6379
-              USERMAP_GID: "65542"
+              USERMAP_UID: "1026"
+              USERMAP_GID: "100"
               PAPERLESS_ADMIN_USER:
                 valueFrom:
                   secretKeyRef:
