@@ -35,29 +35,57 @@ spec:
           volumeClaimTemplates:
           - accessMode: ReadWriteOnce
             globalMounts:
-            - path: /usr/src/paperless/data
+            - path: /config
             name: data
             size: 1Mi
-          - accessMode: ReadWriteOnce
-            globalMounts:
-            - path: /usr/src/paperless/media
-            name: media
-            size: 1Mi
+        pod:
+          securityContext:
+            runAsUser: 1026
+            runAsGroup: &group 100
+            fsGroup: *group
+            fsGroupChangePolicy: "OnRootMismatch"
         containers:
           app:
             image:
               repository: ghcr.io/paperless-ngx/paperless-ngx
               tag: 2.14.7
             env:
-              PAPERLESS_ENABLE_HTTP_REMOTE_USER: 'true'
               PAPERLESS_OCR_PAGES: 2
-              PAPERLESS_REDIS: redis://localhost:6379
               PAPERLESS_THREADS_PER_WORKER: 1
               PAPERLESS_TIKA_ENABLED: 1
-              PAPERLESS_TIKA_ENDPOINT: http://localhost:9998
-              PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://localhost:3000
+              PAPERLESS_TIKA_ENDPOINT: http://tika.tools.${CLUSTER_DOMAIN}:9998
+              PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://gotenberg.tools.${CLUSTER_DOMAIN}:3000
               PAPERLESS_URL: https://paperless.${LOCAL_DOMAIN}
-              PAPERLESS_WEBSERVER_WORKERS: 1
+              PAPERLESS_WEBSERVER_WORKERS: 2
+              PAPERLESS_SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: paperless-secret
+                    key: PAPERLESS_SECRET_KEY
+              PAPERLESS_PORT: "8000"
+              PAPERLESS_TIME_ZONE: ${TZ}
+              PAPERLESS_TASK_WORKERS: "2"
+              PAPERLESS_CONSUMPTION_DIR: /media/import
+              PAPERLESS_EXPORT_DIR: /media/export
+              PAPERLESS_DATA_DIR: /data/config
+              PAPERLESS_MEDIA_ROOT: /data/media
+              PAPERLESS_CONSUMER_POLLING: "60"
+              PAPERLESS_CONSUMER_RECURSIVE: "true"
+              PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: "true"
+              PAPERLESS_OCR_LANGUAGES: nld
+              PAPERLESS_OCR_LANGUAGE: nld
+              PAPERLESS_REDIS: redis://paperless-redis.tools.${CLUSTER_DOMAIN}:6379
+              USERMAP_GID: "65542"
+              PAPERLESS_ADMIN_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: paperless-secret
+                    key: PAPERLESS_ADMIN_USER
+              PAPERLESS_ADMIN_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: paperless-secret
+                    key: PAPERLESS_ADMIN_PASSWORD
             probes:
               liveness:
                 enabled: true
@@ -72,49 +100,74 @@ spec:
                   periodSeconds: 5
                 type: HTTP
             resources:
-              limits:
-                memory: 1.2Gi
               requests:
-                cpu: 40m
-                memory: 1.2Gi
-          gotenburg:
-            env:
-              DISABLE_GOOGLE_CHROME: '1'
-            image:
-              repository: gotenberg/gotenberg
-              tag: 8.17.1
-            resources:
+                cpu: 25m
+                memory: 2Gi
               limits:
-                memory: 30Mi
-              requests:
-                cpu: 10m
-                memory: 30Mi
+                memory: 6Gi
+      redis:
+        containers:
           redis:
             image:
-              repository: redis
-              tag: 7.4.2
+              repository: docker.io/valkey/valkey
+              tag: 8.0.2
             resources:
-              limits:
-                memory: 50Mi
               requests:
-                cpu: 10m
-                memory: 18Mi
+                cpu: 5m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+      tika:
+        containers:
           tika:
             image:
               repository: ghcr.io/paperless-ngx/tika
               tag: 2.9.1-minimal
             resources:
-              limits:
-                memory: 220Mi
               requests:
                 cpu: 10m
                 memory: 220Mi
+              limits:
+                memory: 220Mi
+      gotenburg:
+        containers:
+          gotenberg:
+            image:
+              repository: gotenberg/gotenberg
+              tag: 8.17.1
+            env:
+              DISABLE_GOOGLE_CHROME: '1'
+            resources:
+              requests:
+                cpu: 10m
+                memory: 30Mi
+              limits:
+                memory: 30Mi
     service:
       app:
         controller: paperless-ngx
+        nameOverride: app
         ports:
           http:
             port: 8000
+      redis:
+        controller: redis
+        nameOverride: redis
+        ports:
+          http:
+            port: 6379
+      tika:
+        controller: tika
+        nameOverride: tika
+        ports:
+          http:
+            port: 9998
+      gotenberg:
+        controller: gotenberg
+        nameOverride: gotenberg
+        ports:
+          http:
+            port: 3000
     ingress:
       app:
         hosts:
@@ -124,3 +177,13 @@ spec:
             service:
               identifier: app
               port: http
+    persistence:
+      nas:
+        enabled: true
+        type: nfs
+        server: "nas-srv-01.${LOCAL_DOMAIN}"
+        path: /volume1/vault-01/static_media/documents/paperless-ngx
+        advancedMounts:
+          paperless:
+            app:
+              - path: /media
