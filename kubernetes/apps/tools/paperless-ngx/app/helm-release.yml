@@ -60,7 +60,7 @@ spec:
               PAPERLESS_SECRET_KEY:
                 valueFrom:
                   secretKeyRef:
-                    name: paperless-secret
+                    name: paperless-ngx
                     key: PAPERLESS_SECRET_KEY
               PAPERLESS_PORT: "8000"
               PAPERLESS_TIME_ZONE: ${TZ}
@@ -79,12 +79,12 @@ spec:
               PAPERLESS_ADMIN_USER:
                 valueFrom:
                   secretKeyRef:
-                    name: paperless-secret
+                    name: paperless-ngx
                     key: PAPERLESS_ADMIN_USER
               PAPERLESS_ADMIN_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: paperless-secret
+                    name: paperless-ngx
                     key: PAPERLESS_ADMIN_PASSWORD
             probes:
               liveness:
