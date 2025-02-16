@@ -24,6 +24,13 @@ spec:
       retries: 3
 
   values:
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: "1000"
+        runAsGroup: "100"
+        fsGroup: "100"
+        fsGroupChangePolicy: OnRootMismatch
     controllers:
       paperless-ngx:
         enabled: true
