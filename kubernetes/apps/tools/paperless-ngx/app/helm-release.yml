@@ -40,14 +40,16 @@ spec:
             size: 1Mi
         pod:
           securityContext:
-            supplementalGroups:
-              - 1026
-              - 100
+            fsGroup: 1026
         containers:
           app:
             image:
               repository: ghcr.io/paperless-ngx/paperless-ngx
               tag: 2.14.7
+            securityContext:
+              allowPrivilegeEscalation: false
+              runAsUser: 1000
+              runAsGroup: 1000
             env:
               PAPERLESS_OCR_PAGES: 2
               PAPERLESS_THREADS_PER_WORKER: 1
@@ -69,8 +71,8 @@ spec:
               PAPERLESS_OCR_LANGUAGES: nld
               PAPERLESS_OCR_LANGUAGE: nld
               PAPERLESS_REDIS: redis://paperless-ngx-redis.tools.${CLUSTER_DOMAIN}:6379
-              USERMAP_UID: "1999"
-              USERMAP_GID: "1999"
+              USERMAP_UID: "1000"
+              USERMAP_GID: "1000"
               PAPERLESS_ADMIN_USER:
                 valueFrom:
                   secretKeyRef:
