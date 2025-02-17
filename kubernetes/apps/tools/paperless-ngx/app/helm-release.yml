@@ -37,9 +37,14 @@ spec:
             globalMounts:
             - path: /data/local
             name: data
-            size: 1Mi
+            size: 5Gi
         pod:
           securityContext:
+            runAsUser: &id 1000 # `paperless` user
+            runAsGroup: *id
+            fsGroup: *id
+            fsGroupChangePolicy: "Always"
+            seccompProfile: { type: "RuntimeDefault" }
             supplementalGroups: [1026, 100]
         containers:
           app:
@@ -57,16 +62,15 @@ spec:
               PAPERLESS_PORT: "8000"
               PAPERLESS_TIME_ZONE: ${TZ}
               PAPERLESS_TASK_WORKERS: "2"
-              # PAPERLESS_CONSUMPTION_DIR: /data/shared/import
-              # PAPERLESS_EXPORT_DIR: /data/shared/export
+              PAPERLESS_CONSUMPTION_DIR: /data/shared/import
               PAPERLESS_DATA_DIR: /data/local/config
               PAPERLESS_MEDIA_ROOT: /data/local/media
               PAPERLESS_CONSUMER_POLLING: "60"
               PAPERLESS_CONSUMER_RECURSIVE: "true"
               PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: "true"
-              PAPERLESS_OCR_LANGUAGES: nld
-              PAPERLESS_OCR_LANGUAGE: nld
-              PAPERLESS_REDIS: redis://paperless-ngx-redis.tools.${CLUSTER_DOMAIN}:6379
+              PAPERLESS_OCR_LANGUAGES: eng
+              PAPERLESS_OCR_LANGUAGE: eng
+              PAPERLESS_REDIS: redis://paperless-ngx-redis.tools.${CLUSTER_DOMAIN}:6379"
               PAPERLESS_ADMIN_USER:
                 valueFrom:
                   secretKeyRef:
@@ -82,6 +86,8 @@ spec:
                   secretKeyRef:
                     name: paperless-ngx
                     key: PAPERLESS_SECRET_KEY
+              USERMAP_UID: *id
+              USERMAP_GID: *id
             probes:
               liveness:
                 enabled: true
