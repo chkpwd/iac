@@ -137,8 +137,10 @@ spec:
             image:
               repository: gotenberg/gotenberg
               tag: 8.17.1
-            env:
-              DISABLE_GOOGLE_CHROME: '1'
+            command:
+              - "gotenberg" # Convert .eml files. We do not want to allow external content like tracking pixels or even javascript.
+              - "--chromium-disable-javascript=true"
+              - "--chromium-allow-list=file:///tmp/.*"
             resources:
               requests:
                 cpu: 10m
