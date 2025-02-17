@@ -70,7 +70,7 @@ spec:
               PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: "true"
               PAPERLESS_OCR_LANGUAGES: eng
               PAPERLESS_OCR_LANGUAGE: eng
-              PAPERLESS_REDIS: redis://paperless-ngx-redis.tools.${CLUSTER_DOMAIN}:6379"
+              PAPERLESS_REDIS: redis://paperless-ngx-redis.tools.${CLUSTER_DOMAIN}:6379
               PAPERLESS_ADMIN_USER:
                 valueFrom:
                   secretKeyRef:
@@ -188,4 +188,5 @@ spec:
         advancedMounts:
           paperless-ngx:
             app:
-              - path: /data/shared
+              - subPath: import
+                path: /data/shared/import
