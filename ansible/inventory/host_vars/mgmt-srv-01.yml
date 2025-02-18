@@ -63,3 +63,23 @@ service_definitions:
       PARSE_SECRET_VALUES: "true"
       LOG_LEVEL: "warning"
     ports: [5000:5000]
+
+  - name: syncthing
+    image: lscr.io/linuxserver/syncthing:1.29.2
+    env:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: "{{ timezone }}"
+    volumes:
+      - "{{ compose_configuration_path }}/syncthing/:/config"
+      - "{{ compose_configuration_path }}/syncthing/data:/data"
+    ports:
+      - 8384:8384 # Web UI
+      - 22000:22000/tcp # TCP file transfers
+      - 22000:22000/udp # QUIC file transfers
+      - 21027:21027/udp # Receive local discovery broadcasts
+    healthcheck:
+      test: curl -fkLsS -m 2 127.0.0.1:8384/rest/noauth/health | grep -o --color=never OK || exit 1
+      interval: 1m
+      timeout: 10s
+      retries: 3
