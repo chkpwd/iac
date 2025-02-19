@@ -16,7 +16,7 @@ resource "cloudflare_dns_record" "www_main" {
   zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
 }
 
-resource "cloudflare_dns_record" "uptime" {
+resource "cloudflare_dns_record" "gatus" {
   name    = "gatus.chkpwd.com"
   proxied = true
   ttl     = 1
