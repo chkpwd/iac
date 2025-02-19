@@ -12,6 +12,7 @@
         - "{{ configuration_path }}/swag/dns-conf"
         - "{{ configuration_path }}/swag/nginx/site-confs"
         - "{{ configuration_path }}/wireguard/wg_confs/"
+        - "{{ configuration_path }}/gatus"
 
     - name: Create wireguard config
       ansible.builtin.copy:
