@@ -32,6 +32,11 @@ spec:
             secretKeyRef:
               name: obico-secret
               key: DJANGO_SECRET_KEY
+      securityContext:
+        runAsUser: 1026
+        runAsGroup: &group 100
+        fsGroup: *group
+        fsGroupChangePolicy: "OnRootMismatch"
       persistence:
         data:
           enabled: true
