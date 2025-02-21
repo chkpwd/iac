@@ -25,7 +25,7 @@ spec:
     server:
       image:
         repository: ghcr.io/gabe565/obico/web
-        tag: latest@sha256:90f1ff9c11cf897bfdc07118e5190799e2082e194ef17e64ed67f5a74fd1a092
+        tag: sha-ba70962
       env:
         DJANGO_SECRET_KEY:
           valueFrom:
@@ -72,4 +72,4 @@ spec:
     ml-api:
       image:
         repository: ghcr.io/gabe565/obico/ml-api
-        tag: sha-4fe7d37376d94fec2f406b210eeda52114437ae2
+        tag: sha-ba70962
