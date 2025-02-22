@@ -68,6 +68,20 @@
                   memory: 250Mi
                 limits:
                   memory: 2000Mi
+            vuetorrent:
+              dependsOn: app
+              image:
+                repository: registry.k8s.io/git-sync/git-sync
+                tag: v4.4.0
+              args:
+                - --repo=https://github.com/WDaan/VueTorrent
+                - --ref=latest-release
+                - --period=86400s
+                - --root=/addons
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 25Mi
       service:
         app:
           controller: qbittorrent
