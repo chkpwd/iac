@@ -18,6 +18,8 @@ resource "radarr_download_client_qbittorrent" "qbittorrent" {
   movie_category = "radarr"
   port           = var.ports["qbittorrent"]
   first_and_last = false
+  username       = data.external.bws_lookup.result["infra-media-secrets_servarr_username"]
+  password       = data.external.bws_lookup.result["infra-media-secrets_servarr_password"]
 }
 
 resource "radarr_naming" "media_naming_configs" {

@@ -280,6 +280,10 @@ module "authentik-app-qbittorrent" {
     internal        = ""
     external        = "https://qbittorrent.local.chkpwd.com"
     mode            = "forward_single"
+    skip_path_regex = <<EOF
+^/api
+^/metrics
+EOF
   }
 
   app_values = {

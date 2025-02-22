@@ -17,6 +17,8 @@ resource "sonarr_download_client_qbittorrent" "qbittorrent" {
   tv_category    = "tv-sonarr"
   port           = var.ports["qbittorrent"]
   first_and_last = false
+  username       = data.external.bws_lookup.result["infra-media-secrets_servarr_username"]
+  password       = data.external.bws_lookup.result["infra-media-secrets_servarr_password"]
 }
 
 resource "sonarr_naming" "media_naming_configs" {
