@@ -33,8 +33,6 @@ spec:
       pullPolicy: IfNotPresent
     provider:
       name: cloudflare
-    cloudflare:
-      email: ${CLOUDFLARE_EMAIL}
     podSecurityContext:
       fsGroup: 65534
     securityContext:
@@ -60,7 +58,7 @@ spec:
       - --annotation-filter=external-dns.alpha.kubernetes.io/exclude notin (true)
     policy: sync
     sources: ["crd", "ingress"]
-    txtPrefix: k3s.
+    txtPrefix: k8s.
     txtOwnerId: "ingress-onprem"
     logLevel: info
     logFormat: text
