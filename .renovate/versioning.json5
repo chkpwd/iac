@@ -1,0 +1,13 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  packageRules: [
+    {
+      description: "Loose versioning for non-semver packages",
+      matchDatasources: ["docker"],
+      matchPackageNames: [
+        "ghcr.io/onedr0p/plex",
+      ],
+      versioning: "loose",
+    },
+  ],
+}

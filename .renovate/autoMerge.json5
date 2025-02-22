@@ -1,0 +1,22 @@
+{
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  packageRules: [
+    {
+      description: "Auto merge container patches",
+      matchDatasources: ["docker"],
+      automerge: true,
+      automergeType: "branch",
+      matchUpdateTypes: ["patch"],
+      matchPackagePrefixes: ["ghcr.io/onedr0p", "ghcr.io/bjw-s"],
+      ignoreTests: true,
+    },
+    {
+      description: "Auto merge KPS minors and patches",
+      matchDatasources: ["helm", "docker"],
+      automerge: true,
+      matchUpdateTypes: ["minor", "patch"],
+      matchDepNames: ["kube-prometheus-stack"],
+      ignoreTests: false,
+    },
+  ],
+}

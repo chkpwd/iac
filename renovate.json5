@@ -1,0 +1,43 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "github>chkpwd/renovate",
+    "github>chkpwd/iac//.renovate/autoMerge.json5",
+  ],
+  "ignorePaths": [],
+  "flux": {
+    "fileMatch": [
+      "^kubernetes/.+\\.ya?ml$"
+    ]
+  },
+  "helm-values": {
+    "fileMatch": [
+      "^kubernetes/.+\\.ya?ml$"
+    ]
+  },
+  "kubernetes": {
+    "fileMatch": [
+      "^kubernetes/.+\\.ya?ml$"
+    ]
+  },
+  "ansible": {
+    "fileMatch": [
+      "^ansible/.+\\.ya?ml$"
+    ]
+  },
+  "terraform": {
+    "fileMatch": [
+      "^terraform/.+\\.tf$"
+    ]
+  },
+  "packer": {
+    "fileMatch": [
+      "^packer/.+\\.hcl$"
+    ]
+  },
+  "docker": {
+    "fileMatch": [
+      "^containers/.+\\.ya?ml$"
+    ]
+  }
+}
