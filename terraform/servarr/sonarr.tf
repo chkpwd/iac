@@ -8,6 +8,17 @@ resource "sonarr_download_client_sabnzbd" "sabnzbd" {
   api_key  = data.external.bws_lookup.result["infra-media-secrets_sabnzbd_api_key"]
 }
 
+resource "sonarr_download_client_qbittorrent" "qbittorrent" {
+  enable         = true
+  priority       = 1
+  name           = "qbittorrent"
+  host           = "qbittorrent.${var.cluster_media_domain}"
+  url_base       = "/"
+  tv_category    = "tv-sonarr"
+  port           = var.ports["qbittorrent"]
+  first_and_last = false
+}
+
 resource "sonarr_naming" "media_naming_configs" {
   rename_episodes            = true
   replace_illegal_characters = true

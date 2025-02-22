@@ -270,3 +270,22 @@ module "authentik-app-immich" {
 
 #   access_group = [authentik_group.main.id, authentik_group.secondary.id]
 # }
+
+module "authentik-app-qbittorrent" {
+  source = "../_modules/authentik/proxy_app"
+  name   = "qBittorrent"
+  group  = "main"
+
+  proxy_values = {
+    internal        = ""
+    external        = "https://qbittorrent.local.chkpwd.com"
+    mode            = "forward_single"
+  }
+
+  app_values = {
+    meta_description = "Torrent Downloader"
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/qbittorrent.png"
+  }
+
+  access_group = [authentik_group.main.id]
+}
