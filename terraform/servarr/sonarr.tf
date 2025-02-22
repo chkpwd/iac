@@ -1,3 +1,13 @@
+resource "sonarr_delay_profile" "default" {
+  enable_usenet             = true
+  enable_torrent            = true
+  bypass_if_highest_quality = true
+  usenet_delay              = 0
+  torrent_delay             = 5
+  tags                      = [1]
+  preferred_protocol        = "usenet"
+}
+
 resource "sonarr_download_client_sabnzbd" "sabnzbd" {
   enable   = true
   priority = 1
