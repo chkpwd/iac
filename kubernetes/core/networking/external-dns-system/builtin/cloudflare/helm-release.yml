@@ -52,8 +52,11 @@ spec:
         drop: ["ALL"]
 
     env:
-      - name: CF_API_TOKEN
-        value: ${CLOUDFLARE_API_TOKEN}
+      - name: &name CF_API_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: cloudflare-external-dns
+            key: *name
 
     extraArgs:
       - --events
