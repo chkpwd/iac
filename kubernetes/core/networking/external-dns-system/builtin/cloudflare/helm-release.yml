@@ -15,7 +15,6 @@ spec:
         kind: HelmRepository
         name: external-dns
         namespace: flux-system
-
   install:
     crds: CreateReplace
     remediation:
@@ -24,40 +23,32 @@ spec:
     crds: CreateReplace
     remediation:
       retries: 3
-
   values:
     fullnameOverride: *app
     crd:
       create: true
-
     image:
       repository: registry.k8s.io/external-dns/external-dns
       tag: v0.15.1
       pullPolicy: IfNotPresent
-
     provider:
       name: cloudflare
-
     cloudflare:
       email: ${CLOUDFLARE_EMAIL}
-
     podSecurityContext:
       fsGroup: 65534
-
     securityContext:
       runAsNonRoot: true
       runAsUser: 65534
       readOnlyRootFilesystem: true
       capabilities:
         drop: ["ALL"]
-
     env:
       - name: &name CF_API_TOKEN
         valueFrom:
           secretKeyRef:
             name: cloudflare-external-dns
             key: *name
-
     extraArgs:
       - --events
       - --ingress-class=ext-ingress
@@ -67,22 +58,15 @@ spec:
       - --cloudflare-dns-records-per-page=1000
       - --ignore-ingress-tls-spec
       - --annotation-filter=external-dns.alpha.kubernetes.io/exclude notin (true)
-
     policy: sync
-
     sources: ["crd", "ingress"]
-
     txtPrefix: k3s.
     txtOwnerId: "ingress-onprem"
-
     logLevel: info
     logFormat: text
-
     domainFilters: ["${EXTERNAL_DOMAIN}"]
-
     serviceMonitor:
       enabled: true
-
     resources:
       requests:
         cpu: 10m
