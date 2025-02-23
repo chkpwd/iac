@@ -33,6 +33,8 @@ spec:
       pullPolicy: IfNotPresent
     provider:
       name: cloudflare
+    podAnnotations:
+      secret.reloader.stakater.com/reload: &secret cloudflare-external-dns
     podSecurityContext:
       fsGroup: 65534
     securityContext:
@@ -45,7 +47,7 @@ spec:
       - name: &name CF_API_TOKEN
         valueFrom:
           secretKeyRef:
-            name: cloudflare-external-dns
+            name: *secret
             key: *name
     extraArgs:
       - --events
