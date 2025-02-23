@@ -18,8 +18,8 @@ spec:
     namespace: flux-system
   path: ./unifi
   varsFrom:
-  - kind: Secret
-    name: bws-token
+    - kind: Secret
+      name: bws-token
   sourceRef:
     kind: OCIRepository
     name: tf-files

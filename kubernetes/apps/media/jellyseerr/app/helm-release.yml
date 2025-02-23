@@ -15,27 +15,22 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     global:
       fullnameOverride: *app
-
     controllers:
       jellyseerr:
         enabled: true
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
-
         replicas: 1
-
         statefulset:
           volumeClaimTemplates:
             - name: config
@@ -44,7 +39,6 @@ spec:
               storageClass: longhorn-media
               globalMounts:
                 - path: /app/config
-
         pod:
           securityContext:
             runAsNonRoot: true
@@ -52,19 +46,16 @@ spec:
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
-
         containers:
           app:
             image:
               repository: ghcr.io/fallenbagel/jellyseerr
               tag: 2.3.0
               pullPolicy: IfNotPresent
-
             env:
               TZ: "${TZ}"
               LOG_LEVEL: "info"
               PORT: &port 5055
-
             probes:
               liveness: &probes
                 enabled: true
@@ -80,28 +71,24 @@ spec:
               readiness: *probes
               startup:
                 enabled: false
-
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities:
                 drop:
                   - ALL
-
             resources:
               requests:
                 cpu: 10m
                 memory: 250Mi
               limits:
                 memory: 275Mi
-
     service:
       app:
         controller: jellyseerr
         ports:
           http:
             port: *port
-
     ingress:
       external:
         enabled: true
@@ -116,7 +103,6 @@ spec:
                 service:
                   identifier: app
                   port: http
-
     persistence:
       tmp:
         enabled: true

@@ -9,16 +9,16 @@ metadata:
     name: samplepod
 spec:
   containers:
-  - name: samplepod
-    command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
-    image: alpine
-    ports:
-    - containerPort: 80
-    resources:
-      requests:
-        cpu: 10m
-        memory: 50Mi
-      limits:
-        cpu: 10m
-        memory: 50Mi
+    - name: samplepod
+      command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
+      image: alpine
+      ports:
+        - containerPort: 80
+      resources:
+        requests:
+          cpu: 10m
+          memory: 50Mi
+        limits:
+          cpu: 10m
+          memory: 50Mi
   automountServiceAccountToken: false

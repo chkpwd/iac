@@ -15,14 +15,12 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     controllers:
       server:
@@ -33,7 +31,6 @@ spec:
           unavailable: 0
         annotations:
           reloader.stakater.com/auto: "true"
-
         # pod: &podSpecs
         #   securityContext:
         #     runAsNonRoot: true
@@ -41,24 +38,20 @@ spec:
         #     runAsGroup: *context
         #     fsGroup: *context
         #     fsGroupChangePolicy: OnRootMismatch
-
         containers:
           main:
             image:
               repository: yooooomi/your_spotify_server
               tag: 1.12.0
               pullPolicy: IfNotPresent
-
             env:
               TIMEZONE: ${TZ}
               API_ENDPOINT: &api_endpoint https://spotty.${EXTERNAL_DOMAIN}/api
               CLIENT_ENDPOINT: https://spotty.${EXTERNAL_DOMAIN}
               MONGO_ENDPOINT: mongodb://your-spotify-mongodb:27017/your_spotify
-
             envFrom:
               - secretRef:
                   name: your-spotify
-
             probes: &probes
               liveness:
                 enabled: true
@@ -66,12 +59,10 @@ spec:
                 enabled: true
               startup:
                 enabled: true
-
             securityContext: &securityContext
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
               capabilities: {drop: ['ALL']}
-
             resources:
               requests:
                 cpu: 10m
@@ -88,25 +79,21 @@ spec:
             image:
               repository: yooooomi/your_spotify_client
               tag: 1.12.0
-
             env:
               API_ENDPOINT: *api_endpoint
             probes: *probes
             securityContext: *securityContext
-
       mongodb:
         type: statefulset
         rollingUpdate: *rollingUpdate
         statefulset:
           podManagementPolicy: OrderedReady
-
         containers:
           app:
             image:
               repository: docker.io/library/mongo
               tag: 6.0.4-focal
             probes: *probes
-
     service:
       server:
         controller: server
@@ -127,7 +114,6 @@ spec:
         ports:
           http:
             port: 27017
-
     ingress:
       external:
         enabled: true
@@ -152,7 +138,6 @@ spec:
                 service:
                   identifier: server
                   port: http
-
     persistence:
       configs:
         enabled: true

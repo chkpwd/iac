@@ -34,7 +34,7 @@ spec:
           value: Terraform
       target:
         kind: CustomResourceDefinition
-        name:  alerts.notification.toolkit.fluxcd.io
+        name: alerts.notification.toolkit.fluxcd.io
     - patch: |
         - op: add
           path: /spec/versions/0/schema/openAPIV3Schema/properties/spec/properties/resources/items/properties/kind/enum/-
@@ -44,7 +44,7 @@ spec:
           value: Terraform
       target:
         kind: CustomResourceDefinition
-        name:  receivers.notification.toolkit.fluxcd.io
+        name: receivers.notification.toolkit.fluxcd.io
     - patch: |
         - op: add
           path: /rules/-
@@ -54,7 +54,7 @@ spec:
             verbs: [ '*' ]
       target:
         kind: ClusterRole
-        name:  crd-controller-flux-system
+        name: crd-controller-flux-system
     # This patch adds helm caching options to the source-controller Deployment.
     - patch: |
         - op: add

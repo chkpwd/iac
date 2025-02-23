@@ -13,6 +13,6 @@ spec:
     disableEviction: true
   nodeSelector:
     matchExpressions:
-      - { key: node-role.kubernetes.io/control-plane, operator: Exists }
+      - {key: node-role.kubernetes.io/control-plane, operator: Exists}
   upgrade:
     image: quay.io/kairos/debian

@@ -15,19 +15,15 @@ spec:
         kind: HelmRepository
         name: nfd
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     fullnameOverride: *app
-
     enableNodeFeatureApi: true
-
     master:
       securityContext:
         allowPrivilegeEscalation: false
@@ -35,14 +31,12 @@ spec:
           drop: ["ALL"]
         readOnlyRootFilesystem: true
         runAsNonRoot: true
-
       resources:
         requests:
           cpu: 21m
           memory: 51Mi
         limits:
           memory: 51Mi
-
     worker:
       securityContext:
         allowPrivilegeEscalation: false
@@ -50,13 +44,11 @@ spec:
           drop: ["ALL"]
         readOnlyRootFilesystem: true
         runAsNonRoot: true
-
       resources:
         requests:
           cpu: 5m
           memory: 48Mi
         limits:
           memory: 48Mi
-
     prometheus:
       enable: false

@@ -24,7 +24,7 @@ metadata:
 spec:
   targetNamespace: security
   dependsOn:
-  - name: core-security-external-secrets
+    - name: core-security-external-secrets
   path: ./kubernetes/core/security/external-secrets/stores
   prune: true
   sourceRef:

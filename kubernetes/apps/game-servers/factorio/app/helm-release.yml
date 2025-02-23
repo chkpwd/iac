@@ -15,50 +15,40 @@ spec:
         kind: HelmRepository
         name: factorio-server-charts
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     fullnameOverride: *app
-
     replicaCount: 1
-
     image:
       repository: "factoriotools/factorio"
       pullPolicy: Always
       tag: "2.0.35"
-
     service:
       type: LoadBalancer
       port: 31497
       externalTrafficPolicy: Cluster
       annotations:
         lbipam.cilium.io/ips: ${FACTORIO_LB_ADDRESS}
-
     resources:
       requests:
         cpu: 500m
         memory: 512Mi
       limits:
         memory: 1Gi
-
     strategy:
       type: Recreate
-
     persistence:
       enabled: true
       dataDir:
         Size: "1Gi"
       storageClassName: "longhorn-game-servers"
-
     import_save:
       enabled: false
-
     mods:
       enabled: true
       portal:
@@ -71,22 +61,17 @@ spec:
         - HelfimaLib
         - ResourcesScanner
         - squeak-through-2
-
     map_gen_settings:
       seed: "377121039"
-
     factorioServer:
       save_name: "default"
       generate_new_save: false
       update_mods_on_start: false
       load_latest_save: true
-
     serverPassword:
       passwordSecret: "factorio"
-
     account:
       accountSecret: "factorio"
-
     server_settings:
       name: chkpwd_factorio.txt
       description: "Factorio running on kube4wetties"
@@ -110,11 +95,8 @@ spec:
       only_admins_can_pause_the_game: true
       autosave_only_on_server: true
       non_blocking_saving: true
-
     rcon:
       external: false
-
     admin_list:
       - "chkpwd"
       - "ripplefcl"
-

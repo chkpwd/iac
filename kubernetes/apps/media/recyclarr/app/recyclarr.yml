@@ -4,18 +4,15 @@ sonarr:
   series:
     base_url: http://sonarr.media.svc.cluster.local:8989
     api_key: !env_var API_KEY_SONARR
-
     # Custom Format Configuration
     delete_old_custom_formats: true
     replace_existing_custom_formats: true
-
     include:
       - template: sonarr-quality-definition-series
       - template: sonarr-v4-custom-formats-web-1080p
       - template: sonarr-quality-definition-anime
       - template: sonarr-v4-quality-profile-anime
       - template: sonarr-v4-custom-formats-anime
-
     quality_profiles:
       - name: WEB-1080p
         reset_unmatched_scores:
@@ -42,16 +39,13 @@ sonarr:
       - name: Remux-1080p - Anime
         reset_unmatched_scores:
           enabled: true
-
 radarr:
   radarr_main:
     base_url: http://radarr.media.svc.cluster.local:7878
     api_key: !env_var API_KEY_RADARR
-
     # Custom Format Configuration
     delete_old_custom_formats: true
     replace_existing_custom_formats: true
-
     include:
       - template: radarr-quality-definition-movie
       - template: radarr-quality-profile-hd-bluray-web
@@ -59,7 +53,6 @@ radarr:
       - template: radarr-quality-definition-movie
       - template: radarr-quality-profile-uhd-bluray-web
       - template: radarr-custom-formats-uhd-bluray-web
-
     quality_profiles:
       - name: HD Bluray + WEB
         reset_unmatched_scores:

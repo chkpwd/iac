@@ -15,36 +15,29 @@ spec:
         kind: HelmRepository
         name: immich
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     controller:
       annotations:
         reloader.stakater.com/auto: "true"
-
     image:
       tag: "v1.124.2"
-
     postgres:
       enabled: false
-
     redis:
       enabled: true
       master:
         persistence:
           enabled: false
-
     immich:
       persistence:
         library:
           existingClaim: immich-pvc
-
     server:
       enabled: true
       ingress:
@@ -71,7 +64,6 @@ spec:
         limits:
           cpu: "3000m"
           memory: "2Gi"
-
     machine-learning:
       resources:
         requests:
@@ -88,10 +80,9 @@ spec:
         readiness:
           spec:
             initialDelaySeconds: 120
-
     env:
       DB_DATABASE_NAME:
-        valueFrom: 
+        valueFrom:
           secretKeyRef:
             name: immich-pguser-immich
             key: dbname

@@ -15,61 +15,51 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     global:
       fullnameOverride: *app
-
     controllers:
       it-tools:
         enabled: true
         annotations:
           reloader.stakater.com/auto: "true"
-
         replicas: 1
-
         pod:
           securityContext:
             runAsUser: &context 1999
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
-
         containers:
           app:
             image:
               repository: ghcr.io/corentinth/it-tools
               tag: "2024.5.13-a0bc346"
               pullPolicy: IfNotPresent
-
             securityContext:
               readOnlyRootFilesystem: true
               allowPrivilegeEscalation: false
               capabilities:
                 drop: ["ALL"]
                 add: ["NET_BIND_SERVICE"]
-
             resources:
               requests:
                 cpu: 10m
                 memory: 50M
               limits:
                 memory: 50M
-
     service:
       app:
         controller: it-tools
         ports:
           http:
             port: 80
-
     ingress:
       external:
         annotations:
@@ -84,7 +74,6 @@ spec:
                 service:
                   identifier: app
                   port: http
-
     persistence:
       cache:
         type: emptyDir

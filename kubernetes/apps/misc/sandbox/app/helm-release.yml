@@ -15,41 +15,34 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     global:
       fullnameOverride: *app
-
     controllers:
       sandbox:
         enabled: true
         type: deployment
         annotations:
           reloader.stakater.com/auto: "true"
-
         replicas: 1
-
         containers:
           app:
             image:
               repository: nginx
               tag: stable-alpine3.17-slim
               pullPolicy: IfNotPresent
-
             resources:
               requests:
                 cpu: 10m
                 memory: 64Mi
               limits:
                 memory: 64Mi
-
     service:
       app:
         enabled: true
@@ -57,7 +50,6 @@ spec:
         ports:
           http:
             port: 80
-
     ingress:
       internal:
         enabled: true

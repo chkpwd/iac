@@ -15,29 +15,23 @@ spec:
         kind: HelmRepository
         name: prometheus-community
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   # valuesFrom:
   #   - kind: ConfigMap
   #     name: flux-metrics
   #     valuesKey: flux-metrics.yml
-
   values:
     crds:
       enabled: true
-
     alertmanager:
       enabled: false
-
     grafana:
       enabled: false
-
     kubeApiServer:
       enabled: true
       serviceMonitor:
@@ -53,7 +47,6 @@ spec:
           - action: drop
             sourceLabels: ["__name__"]
             regex: (apiserver_response_sizes_bucket|apiserver_watch_events_sizes_bucket)
-
     kubelet:
       enabled: true
       serviceMonitor:
@@ -73,28 +66,20 @@ spec:
           - action: drop
             sourceLabels: ["__name__"]
             regex: (rest_client_request_duration_seconds_bucket|rest_client_request_duration_seconds_sum|rest_client_request_duration_seconds_count)
-
     kubeControllerManager:
       enabled: false
-
     coreDns:
       enabled: false
-
     kubeDns:
       enabled: false
-
     kubeEtcd:
       enabled: false
-
     kubeScheduler:
       enabled: false
-
     kubeProxy:
       enabled: false
-
     kubeStateMetrics:
       enabled: true
-
     kube-state-metrics:
       fullnameOverride: kube-state-metrics
       selfMonitor:
@@ -109,10 +94,8 @@ spec:
               sourceLabels:
                 - __meta_kubernetes_pod_node_name
               targetLabel: kubernetes_node
-
     nodeExporter:
       enabled: true
-
     prometheus-node-exporter:
       fullnameOverride: node-exporter
       podLabels:
@@ -138,7 +121,6 @@ spec:
           memory: 512Mi
         limits:
           memory: 2048Mi
-
     prometheusOperator:
       enabled: true
       prometheusConfigReloader:
@@ -148,7 +130,6 @@ spec:
             memory: 50Mi
           limits:
             memory: 100Mi
-
     prometheus:
       enabled: true
       ingress:
@@ -179,10 +160,8 @@ spec:
               resources:
                 requests:
                   storage: 10Gi
-
     thanosRuler:
       enabled: false
-
   postRenderers:
     - kustomize:
         patches:

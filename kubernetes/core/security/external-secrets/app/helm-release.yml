@@ -15,7 +15,6 @@ spec:
         kind: HelmRepository
         name: *app
         namespace: flux-system
-
   install:
     crds: CreateReplace
     remediation:
@@ -24,21 +23,15 @@ spec:
     crds: CreateReplace
     remediation:
       retries: 3
-
   values:
     fullnameOverride: *app
-
     installCRDs: true
-
     image:
       repository: ghcr.io/external-secrets/external-secrets
       tag: v0.14.2
       pullPolicy: IfNotPresent
-
     replicaCount: 1
-
     createOperator: true
-
     securityContext:
       allowPrivilegeEscalation: false
       capabilities:
@@ -49,14 +42,11 @@ spec:
       runAsUser: 1000
       seccompProfile:
         type: RuntimeDefault
-
     serviceMonitor:
       enabled: false
-
     webhook:
       serviceMonitor:
         enabled: false
-
     certController:
       serviceMonitor:
         enabled: false

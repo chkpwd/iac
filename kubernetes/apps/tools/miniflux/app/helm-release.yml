@@ -15,33 +15,27 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     global:
       fullnameOverride: *app
-
     controllers:
       miniflux:
         enabled: true
         annotations:
           reloader.stakater.com/auto: "true"
-
         replicas: 1
-
         containers:
           app:
             image:
               repository: ghcr.io/miniflux/miniflux
               tag: 2.2.6
               pullPolicy: IfNotPresent
-
             env:
               BASE_URL: https://miniflux.${EXTERNAL_DOMAIN}
               CREATE_ADMIN: "1"
@@ -62,11 +56,9 @@ spec:
               OAUTH2_REDIRECT_URL: https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}/oauth2/oidc/callback
               OAUTH2_OIDC_DISCOVERY_ENDPOINT: https://authentik.${EXTERNAL_DOMAIN}/application/o/miniflux/
               OAUTH2_USER_CREATION: "1"
-
             envFrom:
               - secretRef:
                   name: miniflux
-
             probes:
               liveness: &probes
                 enabled: true
@@ -82,21 +74,18 @@ spec:
               readiness: *probes
               startup:
                 enabled: false
-
             resources:
               requests:
                 cpu: 10m
                 memory: 100Mi
               limits:
                 memory: 350Mi
-
     service:
       app:
         controller: miniflux
         ports:
           http:
             port: 8080
-
     ingress:
       external:
         annotations:

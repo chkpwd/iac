@@ -15,14 +15,12 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     controllers:
       paperless-ngx:
@@ -33,18 +31,18 @@ spec:
         statefulset:
           podManagementPolicy: Parallel
           volumeClaimTemplates:
-          - accessMode: ReadWriteOnce
-            globalMounts:
-            - path: /data/local
-            name: data
-            size: 5Gi
+            - accessMode: ReadWriteOnce
+              globalMounts:
+                - path: /data/local
+              name: data
+              size: 5Gi
         pod:
           securityContext:
             runAsUser: &id 1000 # `paperless` user
             runAsGroup: *id
             fsGroup: *id
             fsGroupChangePolicy: "Always"
-            seccompProfile: { type: "RuntimeDefault" }
+            seccompProfile: {type: "RuntimeDefault"}
             supplementalGroups: [1026, 100]
         containers:
           app:
@@ -175,12 +173,12 @@ spec:
     ingress:
       app:
         hosts:
-        - host: paperless-ngx.${LOCAL_DOMAIN}
-          paths:
-          - path: /
-            service:
-              identifier: app
-              port: http
+          - host: paperless-ngx.${LOCAL_DOMAIN}
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
     persistence:
       nas:
         enabled: true

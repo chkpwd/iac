@@ -17,13 +17,11 @@ spec:
         resources:
           requests:
             storage: 2Gi
-
   users:
     - name: miniflux
       databases:
         - miniflux
       options: "SUPERUSER"
-
   backups:
     pgbackrest:
       manual:

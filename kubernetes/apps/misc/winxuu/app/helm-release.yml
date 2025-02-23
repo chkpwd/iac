@@ -15,40 +15,33 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     global:
       fullnameOverride: *app
-
     controllers:
       winxuu:
         enabled: true
         annotations:
           reloader.stakater.com/auto: "true"
-
         replicas: 1
-
         pod:
           securityContext:
             runAsUser: &context 1999
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
-
         containers:
           app:
             image:
               repository: ghcr.io/chkpwd/winxuu
               tag: 2.2.0
               pullPolicy: IfNotPresent
-
             probes:
               liveness: &probes
                 enabled: true
@@ -64,25 +57,21 @@ spec:
               readiness: *probes
               startup:
                 enabled: false
-
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
-
             resources:
               requests:
                 cpu: 10m
                 memory: 100Mi
               limits:
                 memory: 100Mi
-
     service:
       app:
         controller: winxuu
         ports:
           http:
             port: *port
-
     ingress:
       external:
         annotations:

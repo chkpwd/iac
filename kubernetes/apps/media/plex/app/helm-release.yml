@@ -15,18 +15,15 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     global:
       fullNameOverride: *app
-
     defaultPodOptions:
       affinity:
         podAntiAffinity:
@@ -41,16 +38,13 @@ spec:
                         - jellyfin
                         - sabnzbd
                 topologyKey: "kubernetes.io/hostname"
-
     controllers:
       plex:
         enabled: true
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
-
         replicas: 1
-
         statefulset:
           volumeClaimTemplates:
             - name: config
@@ -59,7 +53,6 @@ spec:
               storageClass: longhorn-media
               globalMounts:
                 - path: /config
-
         pod:
           nodeSelector:
             intel.feature.node.kubernetes.io/gpu: "true"
@@ -68,14 +61,12 @@ spec:
             runAsGroup: &group 100
             fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
-
         containers:
           app:
             image:
               repository: ghcr.io/onedr0p/plex
               tag: 1.41.4.9463-630c9f557
               pullPolicy: IfNotPresent
-
             env:
               TZ: "${TZ}"
               PLEX_ADVERTISE_URL: &plex_lb "${PLEX_LB_ADDRESS}"
@@ -85,7 +76,6 @@ spec:
                   secretKeyRef:
                     name: plex
                     key: PLEX_CLAIM
-
             probes:
               liveness: &probes
                 enabled: true
@@ -101,14 +91,12 @@ spec:
               readiness: *probes
               startup:
                 enabled: false
-
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities:
                 drop:
                   - ALL
-
             resources:
               requests:
                 gpu.intel.com/i915: 1
@@ -117,7 +105,6 @@ spec:
               limits:
                 gpu.intel.com/i915: 1
                 memory: 2Gi
-
     service:
       app:
         controller: plex
@@ -128,7 +115,6 @@ spec:
         ports:
           http:
             port: *port
-
     ingress:
       internal:
         className: int-ingress
@@ -142,7 +128,6 @@ spec:
                 service:
                   identifier: app
                   port: http
-
     persistence:
       data:
         enabled: true

@@ -15,18 +15,15 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     global:
       fullnameOverride: *app
-
     controllers:
       linkding:
         enabled: true
@@ -34,9 +31,7 @@ spec:
         strategy: RollingUpdate
         annotations:
           reloader.stakater.com/auto: "true"
-
         replicas: 1
-
         pod:
           securityContext:
             runAsNonRoot: true
@@ -44,14 +39,12 @@ spec:
             runAsGroup: *uid
             fsGroup: *uid
             fsGroupChangePolicy: "Always"
-            seccompProfile: { type: "RuntimeDefault" }
-
+            seccompProfile: {type: "RuntimeDefault"}
         containers:
           app:
             image:
               repository: sissbruecker/linkding
               tag: 1.38.1-plus
-
             env:
               LD_SUPERUSER_NAME: chkpwd
               LD_SUPERUSER_PASSWORD:
@@ -87,24 +80,20 @@ spec:
                   secretKeyRef:
                     name: linkding-pguser-linkding
                     key: password
-
             securityContext:
               allowPrivilegeEscalation: false
-
             resources:
               requests:
                 cpu: 12m
                 memory: 64M
               limits:
                 memory: 256M
-
     service:
       app:
         controller: linkding
         ports:
           http:
             port: 9090
-
     ingress:
       external:
         enabled: true
@@ -119,7 +108,6 @@ spec:
                 service:
                   identifier: app
                   port: http
-
     persistence:
       data:
         type: emptyDir

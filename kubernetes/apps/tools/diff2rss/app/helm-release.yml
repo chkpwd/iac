@@ -15,14 +15,12 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     controllers:
       diff2rss:
@@ -33,7 +31,6 @@ spec:
           unavailable: 0
         annotations:
           reloader.stakater.com/auto: "true"
-
         pod:
           securityContext:
             runAsNonRoot: true
@@ -41,14 +38,12 @@ spec:
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: OnRootMismatch
-
         containers:
           app:
             image:
               repository: ghcr.io/chkpwd/diff2rss
               tag: v1.2.1
               pullPolicy: IfNotPresent
-
             probes: &probes
               liveness:
                 enabled: true
@@ -56,19 +51,16 @@ spec:
                 enabled: true
               startup:
                 enabled: true
-
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
               capabilities: {drop: ['ALL']}
-
             resources:
               requests:
                 cpu: 10m
                 memory: 100Mi
               limits:
                 memory: 200Mi
-
     service:
       app:
         controller: diff2rss
@@ -76,7 +68,6 @@ spec:
         ports:
           http:
             port: 8000
-
     ingress:
       external:
         enabled: true

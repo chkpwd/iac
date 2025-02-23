@@ -15,36 +15,28 @@ spec:
         kind: HelmRepository
         name: ingress-nginx
         namespace: flux-system
-
   values:
     controller:
       replicaCount: 3
-
       updateStrategy:
         type: RollingUpdate
         rollingUpdate:
           maxSurge: 1
-
       extraArgs:
         default-ssl-certificate: "security/chkpwd-cert-production"
-
       allowSnippetAnnotations: true
-
       service:
         enabled: true
         annotations:
           lbipam.cilium.io/ips: ${NGINX_LB_EXT_ADDRESS}
         type: LoadBalancer
         externalTrafficPolicy: Cluster
-
       publishService:
         enabled: true
-
       ingressClassResource:
         name: ext-ingress
         default: false
         controllerValue: k8s.io/ingress-nginx-external
-
       admissionWebhooks:
         objectSelector:
           matchExpressions:
@@ -52,7 +44,6 @@ spec:
               operator: In
               values:
                 - ext-ingress
-
       config:
         annotations-risk-level: "Critical"
         client-header-timeout: 120
@@ -79,7 +70,6 @@ spec:
           "path": "$uri", "request_query": "$args", "request_length": $request_length,
           "duration": $request_time,"method": "$request_method", "http_referrer": "$http_referer",
           "http_user_agent": "$http_user_agent"}
-
       metrics:
         enabled: true
         serviceMonitor:
@@ -87,7 +77,6 @@ spec:
           namespace: networking
           namespaceSelector:
             any: true
-
       resources:
         requests:
           cpu: 10m

@@ -15,17 +15,14 @@ spec:
         kind: HelmRepository
         name: stakater
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     fullnameOverride: *app
-
     resources:
       requests:
         cpu: 15m

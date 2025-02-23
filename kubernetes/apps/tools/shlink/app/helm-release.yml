@@ -15,33 +15,27 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     global:
       fullnameOverride: *app
-
     controllers:
       shlink:
         enabled: true
         annotations:
           reloader.stakater.com/auto: "true"
-
         replicas: 1
-
         containers:
           app:
             image:
               repository: shlinkio/shlink
               tag: 3.7.4-non-root
               pullPolicy: IfNotPresent
-
             env:
               DEFAULT_DOMAIN: &host "i.${EXTERNAL_DOMAIN}"
               IS_HTTPS_ENABLED: true
@@ -85,7 +79,6 @@ spec:
                   secretKeyRef:
                     name: shlink-pguser-shlink
                     key: port
-
             probes:
               liveness: &probes
                 enabled: true
@@ -101,21 +94,18 @@ spec:
               readiness: *probes
               startup:
                 enabled: false
-
             resources:
               requests:
                 cpu: 10m
                 memory: 100Mi
               limits:
                 memory: 500Mi
-
     service:
       app:
         controller: shlink
         ports:
           http:
             port: *port
-
     ingress:
       external:
         enabled: true

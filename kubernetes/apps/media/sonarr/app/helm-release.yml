@@ -15,27 +15,22 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     global:
       fullnameOverride: *app
-
     controllers:
       sonarr:
         enabled: true
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
-
         replicas: 1
-
         statefulset:
           volumeClaimTemplates:
             - name: config
@@ -44,14 +39,12 @@ spec:
               storageClass: longhorn-media
               globalMounts:
                 - path: /config
-
         pod:
           securityContext:
             runAsUser: 1026
             runAsGroup: &group 100
             fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
-
         containers:
           app:
             image:
@@ -72,7 +65,6 @@ spec:
               SONARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
               SONARR__THEME: dark
               SONARR__LOG_LEVEL: info
-
             probes:
               liveness: &probes
                 enabled: true
@@ -88,20 +80,17 @@ spec:
               readiness: *probes
               startup:
                 enabled: false
-
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
                 drop:
                   - ALL
-
             resources:
               requests:
                 cpu: 28m
                 memory: 262Mi
               limits:
                 memory: 700Mi
-
           metrics:
             dependsOn: app
             image:
@@ -116,14 +105,12 @@ spec:
                     name: sonarr
                     key: SONARR_API_KEY
             args: ["sonarr"]
-
             resources:
               requests:
                 cpu: 10m
                 memory: 100Mi
               limits:
                 memory: 125Mi
-
     service:
       app:
         primary: true
@@ -137,7 +124,6 @@ spec:
         ports:
           metrics:
             port: *metricsPort
-
     ingress:
       internal:
         enabled: true
@@ -161,7 +147,6 @@ spec:
                 service:
                   identifier: metrics
                   port: metrics
-
     persistence:
       data:
         enabled: true

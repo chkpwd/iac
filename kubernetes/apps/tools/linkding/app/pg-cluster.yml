@@ -17,13 +17,11 @@ spec:
         resources:
           requests:
             storage: 1Gi
-
   users:
     - name: linkding
       databases:
         - linkding
       options: "SUPERUSER"
-
   backups:
     pgbackrest:
       manual:
@@ -36,7 +34,7 @@ spec:
             volumeClaimSpec:
               storageClassName: longhorn-database
               accessModes:
-              - "ReadWriteOnce"
+                - "ReadWriteOnce"
               resources:
                 requests:
                   storage: 1Gi

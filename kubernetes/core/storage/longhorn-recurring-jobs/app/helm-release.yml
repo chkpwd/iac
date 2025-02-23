@@ -15,10 +15,8 @@ spec:
         kind: HelmRepository
         name: tyzbit
         namespace: flux-system
-
   upgrade:
     force: true # force resource updates through a replacement strategy
-
   values:
     minuteStep: 5
     hourStep: 2
@@ -26,13 +24,11 @@ spec:
     storageclass:
       allowVolumeExpansion: true
       reclaimPolicy: Retain
-
     parameters:
       replicaAutoBalance: best-effort
       dataLocality: best-effort
       numberOfReplicas: 3
       staleReplicaTimeout: 30
-
     groups:
       "Database":
         backup:

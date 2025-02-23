@@ -19,11 +19,9 @@ spec:
         parameters:
           shared_preload_libraries: "vectors.so"
           search_path: '"$user", public, vectors'
-
   databaseInitSQL:
     name: immich-database-init-sql
     key: init.sql
-
   instances:
     - dataVolumeClaimSpec:
         storageClassName: longhorn-database
@@ -32,12 +30,10 @@ spec:
         resources:
           requests:
             storage: 15Gi
-
   users:
     - name: immich
       databases:
         - immich
-
   backups:
     pgbackrest:
       global:
@@ -54,7 +50,7 @@ spec:
             volumeClaimSpec:
               storageClassName: longhorn-database
               accessModes:
-              - "ReadWriteOnce"
+                - "ReadWriteOnce"
               resources:
                 requests:
                   storage: 1Gi

@@ -15,14 +15,12 @@ spec:
         kind: HelmRepository
         name: cilium
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     cni:
       exclusive: false

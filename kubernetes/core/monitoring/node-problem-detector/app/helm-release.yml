@@ -15,50 +15,38 @@ spec:
         kind: HelmRepository
         name: deliveryhero
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     image:
       repository: registry.k8s.io/node-problem-detector/node-problem-detector
       tag: v0.8.20
       pullPolicy: IfNotPresent
-
     fullnameOverride: *app
-
     rbac:
       create: true
       pspEnabled: false
-
     volume:
       localtime:
         type: "FileOrCreate"
-
     priorityClassName: system-node-critical
-
     securityContext:
       privileged: true
-
     tolerations:
       - effect: NoSchedule
         operator: Exists
-
     metrics:
       enabled: true
       serviceMonitor:
         enabled: true
       prometheusRule:
         enabled: true
-
     updateStrategy: RollingUpdate
-
     maxUnavailable: 1
-
     resources:
       requests:
         cpu: 50m

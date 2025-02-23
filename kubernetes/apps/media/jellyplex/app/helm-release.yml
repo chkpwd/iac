@@ -15,28 +15,23 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     global:
       fullnameOverride: *app
-
     defaultPodOptions:
       hostname: *app
-
     controllers:
       jellyplex:
         enabled: true
         type: cronjob
         annotations:
           reloader.stakater.com/auto: "true"
-
         cronjob:
           concurrencyPolicy: Forbid
           schedule: "0 2 * * *"
@@ -44,14 +39,12 @@ spec:
           successfulJobsHistory: 1
           failedJobsHistory: 1
           backoffLimit: 1
-
         pod:
           securityContext:
             runAsUser: 1026
             runAsGroup: &group 100
             fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
-
         containers:
           app:
             image:
@@ -79,29 +72,24 @@ spec:
               SYNC_FROM_JELLYFIN_TO_PLEX: "True"
               SYNC_FROM_PLEX_TO_PLEX: "False"
               SYNC_FROM_JELLYFIN_TO_JELLYFIN: "False"
-
             envFrom:
               - secretRef:
                   name: jellyfin
-
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
                 drop:
                   - ALL
-
             resources:
               requests:
                 cpu: 136m
                 memory: 309Mi
               limits:
                 memory: 336Mi
-
     service:
       app:
         enabled: false
         controller: jellyplex
-
     persistence:
       logs:
         type: emptyDir

@@ -15,7 +15,6 @@ spec:
         kind: HelmRepository
         name: external-dns
         namespace: flux-system
-
   install:
     crds: CreateReplace
     remediation:
@@ -24,28 +23,21 @@ spec:
     crds: CreateReplace
     remediation:
       retries: 3
-
   values:
     fullnameOverride: external-dns-opnsense
-
     logLevel: debug
-
     podSecurityContext:
       fsGroup: 65534
-
     securityContext:
       runAsNonRoot: true
       runAsUser: 65534
       readOnlyRootFilesystem: true
       capabilities:
         drop: ["ALL"]
-
     provider:
       name: webhook
-
     managedRecordTypesFilters:
       - A
-
     sidecars:
       - name: opnsense-webhook
         image: ghcr.io/jobs62/opnsense_unbound_external-dns_webhook:v0.4.5
@@ -69,16 +61,12 @@ spec:
             value: "true"
           - name: OPNSENSE_DOMAIN_FILTERS
             value: "[\".local\"]"
-
     extraArgs:
       - --ingress-class=int-ingress
       - --ignore-ingress-tls-spec
       - --annotation-filter=external-dns.alpha.kubernetes.io/exclude notin (true)
-
     sources: ["ingress", "service"]
-
     registry: noop
-
     resources:
       requests:
         cpu: 10m

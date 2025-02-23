@@ -6,10 +6,10 @@ metadata:
   namespace: $NAMESPACE
 spec:
   containers:
-  - name: net-utils
-    image: registry.k8s.io/e2e-test-images/jessie-dnsutils:1.7
-    command:
-      - sleep
-      - "3600"
-    imagePullPolicy: IfNotPresent
+    - name: net-utils
+      image: registry.k8s.io/e2e-test-images/jessie-dnsutils:1.7
+      command:
+        - sleep
+        - "3600"
+      imagePullPolicy: IfNotPresent
   restartPolicy: Never

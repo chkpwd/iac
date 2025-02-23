@@ -15,57 +15,47 @@ spec:
         kind: HelmRepository
         name: bjw-s
         namespace: flux-system
-
   install:
     remediation:
       retries: 3
   upgrade:
     remediation:
       retries: 3
-
   values:
     global:
       fullnameOverride: *app
-
     controllers:
       maintainerr:
         enabled: true
         type: deployment
         annotations:
           reloader.stakater.com/auto: "true"
-
         replicas: 1
-
         pod:
           securityContext:
             runAsUser: &context 1000
             runAsGroup: *context
             fsGroup: *context
             fsGroupChangePolicy: "OnRootMismatch"
-
         containers:
           app:
             image:
               repository: ghcr.io/jorenn92/maintainerr
               tag: 2.10.0
               pullPolicy: IfNotPresent
-
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
                 drop:
                   - ALL
-
             env:
               TZ: "${TZ}"
-
             resources:
               requests:
                 cpu: 5m
                 memory: 128Mi
               limits:
                 memory: 512Mi
-
     service:
       app:
         primary: true
@@ -73,7 +63,6 @@ spec:
         ports:
           http:
             port: 6246
-
     ingress:
       internal:
         enabled: true
@@ -91,7 +80,6 @@ spec:
                 service:
                   identifier: app
                   port: http
-
     persistence:
       config:
         enabled: true

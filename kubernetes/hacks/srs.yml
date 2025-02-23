@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,9 +20,9 @@ spec:
         - name: srs
           image: ossrs/srs:v6
           ports:
-            - containerPort: 1935  # RTMP
-            - containerPort: 1985  # Stats
-            - containerPort: 8080  # HTTP API
+            - containerPort: 1935 # RTMP
+            - containerPort: 1985 # Stats
+            - containerPort: 8080 # HTTP API
           resources:
             requests:
               cpu: 50m
@@ -39,15 +40,15 @@ spec:
   selector:
     app: srs
   ports:
-  - name: srs-service-1935-1935
-    port: 1935
-    protocol: TCP
-    targetPort: 1935
-  - name: srs-service-1985-1985
-    port: 1985
-    protocol: TCP
-    targetPort: 1985
-  - name: srs-service-8080-8080
-    port: 8080
-    protocol: TCP
-    targetPort: 8080
+    - name: srs-service-1935-1935
+      port: 1935
+      protocol: TCP
+      targetPort: 1935
+    - name: srs-service-1985-1985
+      port: 1985
+      protocol: TCP
+      targetPort: 1985
+    - name: srs-service-8080-8080
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
