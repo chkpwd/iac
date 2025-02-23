@@ -1,0 +1,41 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: dragonfly-operator
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: dragonfly
+      version: v1.27.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: dragonfly
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    storage:
+      enabled: true
+      requests: 128Mi
+
+    extraArgs:
+      - --dbfilename=operator-dump-{timestamp}
+      - --snapshot_cron=* * * * *
+
+    podSecurityContext:
+      fsGroup: 2000
+
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 1000
