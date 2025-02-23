@@ -114,19 +114,6 @@ stages:
             metadata:
               name: flux-system
 
-    - name: "Add SOPS secret"
-      files:
-        - path: /var/lib/rancher/k3s/server/manifests/sops-secret.yaml
-          content: |
-            apiVersion: v1
-            kind: Secret
-            metadata:
-              name: sops-age
-              namespace: flux-system
-            type: Opaque
-            data:
-              age.agekey: {[ lookup('bws_cache', 'infra-kairos-secrets').value.age_key_secret_b64 ]}
-
     - name: "Set modprobe modules"
       modules:
         - iscsi_tcp
