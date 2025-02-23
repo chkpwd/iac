@@ -132,6 +132,8 @@ spec:
         host: smtp.gmail.com
         port: 465
         use_ssl: false
+      redis:
+        host: "{{ .Release.Name }}-redis-master"
     prometheus:
       rules:
         enabled: false
@@ -141,4 +143,4 @@ spec:
       enabled: true
       master:
         persistence:
-          size: 1Gi
+          enabled: false
