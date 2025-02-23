@@ -85,7 +85,7 @@ spec:
                 {{ .Release.Name }}.${LOCAL_DOMAIN}
             envFrom:
               - secretRef:
-                  name: sabnzbd-secrets
+                  name: sabnzbd
             probes:
               liveness: &probes
                 enabled: true
@@ -126,7 +126,7 @@ spec:
               APIKEY:
                 valueFrom:
                   secretKeyRef:
-                    name: sabnzbd-secrets
+                    name: sabnzbd
                     key: SABNZBD__API_KEY
             args: ["sabnzbd"]
 

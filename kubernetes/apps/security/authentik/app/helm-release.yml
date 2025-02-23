@@ -57,32 +57,32 @@ spec:
         - name: AUTHENTIK_EMAIL__USERNAME
           valueFrom:
             secretKeyRef:
-              name: authentik-secrets
+              name: authentik
               key: email_address
         - name: AUTHENTIK_EMAIL__PASSWORD
           valueFrom:
             secretKeyRef:
-              name: authentik-secrets
+              name: authentik
               key: app_password
         - name: AUTHENTIK_SECRET_KEY
           valueFrom:
             secretKeyRef:
-              name: authentik-secrets
+              name: authentik
               key: secret_key
         - name: AUTHENTIK_BOOTSTRAP_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: authentik-secrets
+              name: authentik
               key: bootstrap_password
         - name: AUTHENTIK_BOOTSTRAP_TOKEN
           valueFrom:
             secretKeyRef:
-              name: authentik-secrets
+              name: authentik
               key: bootstrap_token
         - name: AUTHENTIK_BOOTSTRAP_EMAIL
           valueFrom:
             secretKeyRef:
-              name: authentik-secrets
+              name: authentik
               key: bootstrap_email
     server:
       name: server

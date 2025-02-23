@@ -48,12 +48,12 @@ spec:
               GEOLITE_LICENSE_KEY:
                 valueFrom:
                   secretKeyRef:
-                    name: shlink-secrets
+                    name: shlink
                     key: GEOLITE_LICENSE_KEY
               INITIAL_API_KEY:
                 valueFrom:
                   secretKeyRef:
-                    name: shlink-secrets
+                    name: shlink
                     key: INITIAL_API_KEY
               DEFAULT_SHORT_CODES_LENGTH: 4
               ENABLE_PERIODIC_VISIT_LOCATE: true

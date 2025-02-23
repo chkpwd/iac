@@ -14,7 +14,7 @@ spec:
           cloudflare:
             email: unix.chkpwd@gmail.com
             apiTokenSecretRef:
-              name: cloudflare-external-secret
+              name: cloudflare
               key: api-token
         selector: {}
 ---
@@ -33,6 +33,6 @@ spec:
           cloudflare:
             email: unix.chkpwd@gmail.com
             apiTokenSecretRef:
-              name: cloudflare-external-secret
+              name: cloudflare
               key: api-token
         selector: {}

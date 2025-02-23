@@ -67,7 +67,7 @@ spec:
               BAZARR__API_KEY:
                 valueFrom:
                   secretKeyRef:
-                    name: bazarr-secrets
+                    name: bazarr
                     key: BAZARR_API_KEY
               BAZARR__AUTHENTICATION_METHOD: External
               BAZARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
@@ -114,7 +114,7 @@ spec:
               APIKEY:
                 valueFrom:
                   secretKeyRef:
-                    name: bazarr-secrets
+                    name: bazarr
                     key: BAZARR_API_KEY
             args: ["bazarr"]
 

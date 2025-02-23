@@ -55,12 +55,12 @@ spec:
               API_KEY_SONARR:
                 valueFrom:
                   secretKeyRef:
-                    name: recyclarr-secrets
+                    name: recyclarr
                     key: API_KEY_SONARR
               API_KEY_RADARR:
                 valueFrom:
                   secretKeyRef:
-                    name: recyclarr-secrets
+                    name: recyclarr
                     key: API_KEY_RADARR
             securityContext:
               allowPrivilegeEscalation: false

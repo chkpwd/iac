@@ -30,7 +30,7 @@ spec:
         DJANGO_SECRET_KEY:
           valueFrom:
             secretKeyRef:
-              name: obico-secret
+              name: obico
               key: DJANGO_SECRET_KEY
       securityContext:
         runAsUser: 1026
