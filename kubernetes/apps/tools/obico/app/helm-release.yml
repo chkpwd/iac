@@ -49,7 +49,7 @@ spec:
           server: "nas-srv-01.${LOCAL_DOMAIN}"
           path: /volume1/vault-01/static_media/obico
       ingress:
-        internal:
+        external:
           enabled: true
           ingressClassName: ext-ingress
           annotations:
@@ -64,14 +64,15 @@ spec:
             - host: "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
               paths:
                 - path: /
-        admin:
+        internal:
           enabled: true
           ingressClassName: int-ingress
           annotations:
             nginx.ingress.kubernetes.io/app-root: /admin
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
+            external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
           hosts:
-            - host: admin.obico.${LOCAL_DOMAIN}
+            - host: obico.${LOCAL_DOMAIN}
               paths:
                 - path: /
     ml-api:
