@@ -1,0 +1,19 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: core-monitoring-metrics-server
+  namespace: flux-system
+spec:
+  targetNamespace: monitoring
+  dependsOn:
+    - name: core-monitoring-prometheus
+  path: ./kubernetes/core/monitoring/metrics-server/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: false
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m

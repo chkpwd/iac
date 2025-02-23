@@ -1,0 +1,38 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: core-networking-internal-nginx
+  namespace: flux-system
+spec:
+  targetNamespace: networking
+  dependsOn:
+    - name: core-security-cert-manager
+  path: ./kubernetes/core/networking/nginx-int-ingress/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 15m
+  retryInterval: 1m
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: core-networking-internal-nginx-external-names
+  namespace: flux-system
+spec:
+  targetNamespace: networking
+  dependsOn:
+    - name: core-networking-internal-nginx
+  path: ./kubernetes/core/networking/nginx-int-ingress/external-names
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 15m
+  retryInterval: 1m
+  timeout: 5m

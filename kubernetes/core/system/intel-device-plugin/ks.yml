@@ -1,0 +1,34 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: core-system-intel-device-plugin
+  namespace: flux-system
+spec:
+  targetNamespace: system
+  path: ./kubernetes/core/system/intel-device-plugin/app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: false
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: core-system-intel-device-plugin-devices
+  namespace: flux-system
+spec:
+  targetNamespace: system
+  path: ./kubernetes/core/system/intel-device-plugin/devices
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: false
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m

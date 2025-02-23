@@ -2,9 +2,9 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - nginx-ext-ingress-system/ks.yml
-  - nginx-int-ingress-system/ks.yml
-  - external-dns-system/ks.yml
-  - gateway-api-system/ks.yml
-  - cilium-system/ks.yml
+  - nginx-ext-ingress/ks.yml
+  - nginx-int-ingress/ks.yml
+  - external-dns/ks.yml
+  - gateway-api/ks.yml
+  - cilium/ks.yml
   # - multus-system/ks.yml
