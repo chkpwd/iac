@@ -7,8 +7,8 @@ spec:
   interval: 15m
   chart:
     spec:
-      chart: dragonfly
-      version: v1.27.1
+      chart: dragonfly-operator
+      version: v1.1.9
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -21,13 +21,8 @@ spec:
     remediation:
       retries: 3
   values:
-    storage:
-      enabled: true
-      requests: 128Mi
-
-    extraArgs:
-      - --dbfilename=operator-dump-{timestamp}
-      - --snapshot_cron=* * * * *
+    serviceMonitor:
+      enabled: false
 
     podSecurityContext:
       fsGroup: 2000
