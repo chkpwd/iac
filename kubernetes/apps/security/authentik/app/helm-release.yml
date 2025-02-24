@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: authentik
-      version: 2024.10.5
+      version: 2024.12.3
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -129,7 +129,7 @@ spec:
         port: 465
         use_ssl: false
       redis:
-        host: 'authentik-redis.security.${CLUSTER_DOMAIN}'
+        host: "authentik-redis.security.${CLUSTER_DOMAIN}"
     prometheus:
       rules:
         enabled: false
