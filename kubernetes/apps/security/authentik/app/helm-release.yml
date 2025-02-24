@@ -128,13 +128,12 @@ spec:
         host: smtp.gmail.com
         port: 465
         use_ssl: false
+      redis:
+        host: 'authentik-redis.security.${CLUSTER_DOMAIN}'
     prometheus:
       rules:
         enabled: false
     postgresql:
       enabled: false
     redis:
-      enabled: true
-      master:
-        persistence:
-          enabled: false
+      enabled: false
