@@ -15,8 +15,8 @@ metrics:
     query: count(count by (node) (kube_node_status_condition{ condition="Ready"}))
     colors:
       - {color: "green", min: 3, max: 3}
-      - {color: "orange", min: 2, max: 3}
-      - {color: "red", min: 1, max: 3}
+      - {color: "orange", min: 1, max: 2}
+      - {color: "red", min: 0, max: 1}
   - name: cluster_memory_usage
     query: round(sum(node_memory_MemTotal_bytes{kubernetes_node!=""} - node_memory_MemAvailable_bytes{kubernetes_node!=""}) / sum(node_memory_MemTotal_bytes{kubernetes_node!=""}) * 100, 0.1)
     title: Memory
