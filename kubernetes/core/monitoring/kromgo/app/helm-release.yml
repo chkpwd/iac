@@ -74,11 +74,11 @@ spec:
             port: *port
     ingress:
       app:
-        className: external
+        className: ext-ingress
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
-          - host: &host "kromgo.${EXTERNAL_DOMAIN}"
+          - host: "kromgo.${EXTERNAL_DOMAIN}"
             paths:
               - path: /
                 service:
