@@ -1,0 +1,87 @@
+name: Gather Metrics from Kromgo
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  gather-metrics:
+    name: Gather Metrics
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Gather and Display Metrics
+        run: |
+          # Flux Version
+          FLUX_VERSION=$(curl -s "https://kromgo.chkpwd.com/flux_version" | jq -r '.message')
+
+          # Kubernetes Version
+          K8S_VERSION=$(curl -s "https://kromgo.chkpwd.com/kubernetes_version" | jq -r '.message')
+
+          # Cluster Age (in days)
+          CLUSTER_AGE=$(curl -s "https://kromgo.chkpwd.com/cluster_age_days" | jq -r '.message')
+
+          # Cluster Uptime (in days)
+          CLUSTER_UPTIME=$(curl -s "https://kromgo.chkpwd.com/cluster_uptime_days" | jq -r '.message')
+
+          # Memory Usage
+          MEMORY_USAGE=$(curl -s "https://kromgo.chkpwd.com/cluster_memory_usage" | jq -r '.message')
+
+          # CPU Usage
+          CPU_USAGE=$(curl -s "https://kromgo.chkpwd.com/cluster_cpu_usage" | jq -r '.message')
+
+          # Network Transmit Usage
+          NETWORK_USAGE=$(curl -s "https://kromgo.chkpwd.com/cluster_network_transmit_usage" | jq -r '.message')
+
+          # Number of Pods
+          NUMBER_OF_PODS=$(curl -s "https://kromgo.chkpwd.com/cluster_pods_running" | jq -r '.message')
+
+          # Node Count
+          NODE_COUNT=$(curl -s "https://kromgo.chkpwd.com/cluster_node_count" | jq -r '.message')
+
+          # Displaying metrics in a table format
+          cat << EOF > metrics_table.md
+          ```
+          ~/code/iac main*
+          ❯ curl -s "https://cluster-stats:8080" | jq -r '.[] | "\(.metric): \(.value)"'
+
+            | **Metric**         | **Value**      |
+            |--------------------|----------------|
+            | **Nodes Count**     | `$NODE_COUNT`   |
+            | **Cluster Age**     | `$CLUSTER_AGE`  |
+            | **Cluster Uptime**  | `$CLUSTER_UPTIME`|
+            | **Number of Pods**  | `$NUMBER_OF_PODS`|
+            | **Memory Usage**    | `$MEMORY_USAGE` |
+            | **CPU Usage**       | `$CPU_USAGE`    |
+            | **Network Usage**   | `$NETWORK_USAGE`|
+          ```
+          EOF
+
+      - name: Update README.md
+        run: |
+          cat metrics_table.md >> README.md
+
+      - name: Commit files
+        id: commit
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "github-actions[bot]"
+          git add assets/gource.gif
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "push=false" >> $GITHUB_OUTPUT
+          else
+            git commit -m "Add new gource" -a
+            echo "push=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push changes
+        if: steps.commit.outputs.push == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}
