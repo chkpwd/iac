@@ -61,3 +61,7 @@ metrics:
       - {color: "green", min: 0, max: 1}
       - {color: "orange", min: 2, max: 4}
       - {color: "red", min: 5, max: 9999}
+  - name: flux_version
+    query: label_replace(flux_instance_info, "revision", "$1", "revision", "v(.+)@sha256:.+")
+    label: revision
+    title: Flux

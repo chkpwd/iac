@@ -1,43 +1,21 @@
-# Infrastructure as Code (IaC) by Bryan J.
+<div align="center">
+## Infrastructure as Code (IaC) by Bryan J.
+
+Kubernetes stats:
+
+[![Kubernetes](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fkubernetes_version&style=for-the-badge&logo=kubernetes&logoColor=white&color=blue&label=k8s)](https://kubernetes.io)&nbsp;&nbsp;
+[![Flux](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fflux_version&style=for-the-badge&logo=flux&logoColor=white&color=blue&label=flux)](https://fluxcd.io)
+
+[![Age-Days](https://kromgo.chkpwd.com/cluster_age_days?format=badge)](https://github.com/kashalls/kromgo/)&nbsp;
+[![Node-Count](https://kromgo.chkpwd.com/cluster_node_count?format=badge)](https://github.com/kashalls/kromgo/)&nbsp;
+[![Alerts](https://kromgo.chkpwd.com/cluster_alert_count?format=badge)](https://github.com/kashalls/kromgo/)&nbsp;
+[![Pod-Count](https://kromgo.chkpwd.com/cluster_pod_count?format=badge)](https://github.com/kashalls/kromgo/)&nbsp;
+[![CPU-Usage](https://kromgo.chkpwd.com/cluster_cpu_usage?format=badge)](https://github.com/kashalls/kromgo/)&nbsp;
+[![Memory-Usage](https://kromgo.chkpwd.com/cluster_memory_usage?format=badge)](https://github.com/kashalls/kromgo/)&nbsp;
+
+</div>
+<br>
 
 ## General Overview
 
-This repository is a collection of tools, scripts, and configurations that demonstrate the power of automation in managing and provisioning infrastructure. I tried not to be opinionated in the way I tackle issues. In general it includes various components such as:
-
-### 🧰 Ansible
-
-#### Playbooks and Roles
-A comprehensive set of playbooks and roles for automating tasks across different environments. Powered by a dynamic inventory whenever possible.
-###### Note: Secrets are managed through SOPs ansible integration. 
-
-### 🐳 Docker
-
-#### Configurations
-Containerized applications and services, including custom Nginx configurations.
-
-### ☸️ Kubernetes
-
-#### Manifests
-A wide range of Kubernetes applications, tools, and core components. **Flux** is installed via **Ansible**.
-###### Note: Secrets are managed through SOPs ansible integration.
-
-### 🏗️ Terraform
-
-#### Modules
-Infrastructure provisioning using Terraform for different cloud providers and platforms. The state file is managed and stored in [Terraform Cloud](https://app.terraform.io/app).
-
-###### Note: Secrets are managed through SOPs ansible integration. 
-
-### 📦 Packer
-
-#### Scripts
-Automated machine image creation for different operating systems.
-###### Example:  
-```bash
-packer build -force --only vsphere-iso.windows --var-file=windows/22H2-W11.pkrvars.hcl -var "vcenter_password=$VCENTER_PASS" .
-```
-###### Note: The VCENTER_PASS var is exported to the shell during runtime.
-
-## 🚀 Getting Started
-
-To get started with this repository, you may explore the different directories to find the specific tools or configurations you need. Each directory typically contains detailed instructions or scripts to help you set up and run the components.
+This repository provides a set of tools and configurations for automating tasks across environments, including Ansible playbooks and roles, Docker configurations, Kubernetes manifests, Terraform modules, and Packer scripts, with secrets managed through SOPs integration. I tried not to be opinionated in the way I tackle issues.
