@@ -38,11 +38,6 @@ spec:
           storageClass: longhorn-config
           accessMode: ReadWriteOnce
           size: 512M
-        media:
-          enabled: true
-          type: emptyDir
-          globalMounts:
-            - path: /tmp/obico/media
       ingress:
         external:
           enabled: true
