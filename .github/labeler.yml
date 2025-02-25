@@ -1,0 +1,23 @@
+---
+relative/docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "README.md"
+relative/github:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**/*"
+relative/kubernetes:
+  - changed-files:
+      - any-glob-to-any-file: "kubernetes/**/*"
+relative/renovate:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".renovate/**/*"
+          - ".renovaterc.json5"
+relative/scripts:
+  - changed-files:
+      - any-glob-to-any-file: "kubernetes/hacks/scripts/**/*"
+relative/justfile:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".justfile"
