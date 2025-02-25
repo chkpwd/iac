@@ -31,13 +31,6 @@ spec:
           unavailable: 0
         annotations:
           reloader.stakater.com/auto: "true"
-        # pod: &podSpecs
-        #   securityContext:
-        #     runAsNonRoot: true
-        #     runAsUser: &context 1000
-        #     runAsGroup: *context
-        #     fsGroup: *context
-        #     fsGroupChangePolicy: OnRootMismatch
         containers:
           main:
             image:
@@ -72,8 +65,6 @@ spec:
       web:
         strategy: *strategy
         rollingUpdate: *rollingUpdate
-        # pod: *podSpecs
-
         containers:
           app:
             image:
