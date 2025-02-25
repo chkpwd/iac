@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '0 * * * *'
 
 jobs:
   gather-metrics:
@@ -15,7 +15,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
-      - name: Gather and Display Metrics
+      - name: Gather Metrics
         run: |
           FLUX_VERSION=$(curl -s "https://kromgo.chkpwd.com/flux_version" | jq -r '.message')
           K8S_VERSION=$(curl -s "https://kromgo.chkpwd.com/kubernetes_version" | jq -r '.message')
@@ -26,7 +26,6 @@ jobs:
           NETWORK_USAGE=$(curl -s "https://kromgo.chkpwd.com/cluster_network_transmit_usage" | jq -r '.message')
           NUMBER_OF_PODS=$(curl -s "https://kromgo.chkpwd.com/cluster_pods_running" | jq -r '.message')
           NODE_COUNT=$(curl -s "https://kromgo.chkpwd.com/cluster_node_count" | jq -r '.message')
-          DATESEC=$(date +"%Y-%m-%d-%H:%M:%S")
 
           # Displaying metrics in a table format
           cat << EOF > metrics_table.md
@@ -34,6 +33,9 @@ jobs:
           \`\`\`
           ~/code/iac main*
           ❯ curl -s "https://cluster-stats:8080" | jq -r '.[] | "\(.metric): \(.value)"'
+
+            Kubernetes: $K8S_VERSION
+            Flux Version: $FLUX_VERSION
 
             Metric          | Value
             ----------------|--------
@@ -45,7 +47,7 @@ jobs:
             CPU Usage       | $CPU_USAGE
             Network Usage   | $NETWORK_USAGE
 
-            Time Checked: $DATESEC
+            Last updated: $(date +"%Y-%m-%d-%H:%M:%S")
           \`\`\`
           EOF
 
