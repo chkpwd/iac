@@ -85,7 +85,7 @@ jobs:
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: bjw-s/action-markdownlint-cli2@v0.1
         with:
-          markdownlint_config: .markdownlint.yaml
+          markdownlint_config: .markdownlint.yml
           file_pattern: ${{ steps.changed-files.outputs.all_changed_files }}
 
   prettier:
@@ -106,7 +106,7 @@ jobs:
         uses: bjw-s/action-prettier-lint@v0.1
         with:
           prettier_ignore: .prettierignore
-          prettier_config: .prettierrc.yaml
+          prettier_config: .prettierrc.yml
           file_pattern: ${{ steps.changed-files.outputs.all_changed_files }}
 
   lint_success:
