@@ -2,17 +2,14 @@
 - name: Setup EC2 instance
   ansible.builtin.import_playbook: ../../setup_instances.yml
   tags: setup
-
 - name: Configure RTMP
   hosts: ct-02-ec2
   become: true
-
   tasks:
     - name: Install dependencies
       ansible.builtin.apt:
         name: python3-pip
         state: present
-
     - name: Install python packages
       ansible.builtin.pip:
         name: "{{ item }}"
@@ -23,7 +20,6 @@
       loop_control:
         label: "Installing {{ item }}"
       tags: packages
-
     - name: Copy nginx configuration
       ansible.builtin.copy:
         src: nginx.conf

@@ -9,7 +9,6 @@
     comment: Default Admin User
     state: present
   become: true
-
 - name: Chmod the user home directory
   ansible.builtin.file:
     path: /home/{{ common_user }}

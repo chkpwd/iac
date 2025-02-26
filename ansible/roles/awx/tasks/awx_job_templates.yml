@@ -13,7 +13,6 @@
       - infra_credential
     state: present
     controller_config_file: "{{ awx_conf }}"
-
 - name: Job Templates | Check Disk Usage
   awx.awx.job_template:
     name: Linux | Check Disk Usage

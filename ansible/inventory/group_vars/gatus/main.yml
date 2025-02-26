@@ -3,88 +3,71 @@ sites:
   - url: gatus.{{ remote_domain }}
     name: wireguard
     port: 8080
-
-
 gatus_alert_default: &gatus_alert_default
   alerts:
-  - type: discord
-    description: "endpoint is down" # todo: add ref name
-    send-on-resolved: true
-
+    - type: discord
+      description: "endpoint is down" # todo: add ref name
+      send-on-resolved: true
 gatus_endpoint_config_http_default: &gatus_http_default
   interval: 1m
   conditions:
     - "[STATUS] == 200"
     - "[CERTIFICATE_EXPIRATION] > 240h" # 10 days
     # - "[DOMAIN_EXPIRATION] > 720h" # 30 days - Can only be used with monitors with an interval of >=300s
-  <<: *gatus_alert_default
-
+  !!merge <<: *gatus_alert_default
 gatus_endpoint_config_icmp_tcp_default: &gatus_icmp_tcp_default
   interval: 1m
   conditions: ["[CONNECTED] == true"]
-  <<: [*gatus_alert_default]
-
+  !!merge <<: [*gatus_alert_default]
 gatus_config:
   ui:
     title: Chkpwd's Gatus
   metrics: false
-
   alerting:
     discord:
       webhook-url: "{{ lookup('bws_cache', 'infra-monitoring-secrets').value.discord_alert_webhook }}"
-
   endpoints:
     - name: OPNsense
       url: icmp://172.16.16.1
       group: network
-      <<: *gatus_icmp_tcp_default
-
+      !!merge <<: *gatus_icmp_tcp_default
     - name: Switch
       group: network
       url: icmp://172.16.16.2
-      <<: *gatus_icmp_tcp_default
-
+      !!merge <<: *gatus_icmp_tcp_default
     - name: Unifi AP
       group: network
       url: icmp://172.16.16.9
-      <<: *gatus_icmp_tcp_default
-
+      !!merge <<: *gatus_icmp_tcp_default
     - name: PVE-SRV-01
       group: hypervisors
       url: icmp://172.16.16.3
-      <<: *gatus_icmp_tcp_default
-
+      !!merge <<: *gatus_icmp_tcp_default
     - name: MGMT-SRV-01
       group: docker_hosts
       url: icmp://172.16.16.4
-      <<: *gatus_icmp_tcp_default
-
+      !!merge <<: *gatus_icmp_tcp_default
     - name: NAS
       group: infra
       url: icmp://172.16.16.5
-      <<: *gatus_icmp_tcp_default
-
+      !!merge <<: *gatus_icmp_tcp_default
     - name: Home Assistant
       group: infra
       url: icmp://172.16.16.8
-      <<: *gatus_icmp_tcp_default
-
+      !!merge <<: *gatus_icmp_tcp_default
     - name: Kubernetes Node 1
       group: kubernetes
       url: icmp://172.16.16.10
-      <<: *gatus_icmp_tcp_default
-
+      !!merge <<: *gatus_icmp_tcp_default
     - name: Kubernetes Node 2
       group: kubernetes
       url: icmp://172.16.16.11
-      <<: *gatus_icmp_tcp_default
-
+      !!merge <<: *gatus_icmp_tcp_default
     - name: Kubernetes Node 3
       group: kubernetes
       url: icmp://172.16.16.12
-      <<: *gatus_icmp_tcp_default
-
+      !!merge <<: *gatus_icmp_tcp_default
     - name: Kube-VIP LoadBalancer
       group: kubernetes
       url: icmp://172.16.16.13
-      <<: *gatus_icmp_tcp_default
+      !!merge <<: *gatus_icmp_tcp_default

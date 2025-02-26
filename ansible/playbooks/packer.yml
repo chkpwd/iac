@@ -2,7 +2,6 @@
 - name: Install the essentials on the target
   hosts: default
   become: true
-
   vars:
     ansible_user: administrator
     packages: [vim, htop]
@@ -11,7 +10,6 @@
       ansible.builtin.apt:
         name: "{{ packages }}"
         state: latest
-
     - name: Allow sudo group to have passwordless sudo
       ansible.builtin.lineinfile:
         path: /etc/sudoers
@@ -19,14 +17,12 @@
         regexp: ^%sudo
         line: "%sudo ALL=(ALL) NOPASSWD: ALL"
         validate: /usr/sbin/visudo -cf %s
-
     - name: Copy the public SSH key
       ansible.posix.authorized_key:
         user: "{{ ansible_user }}"
         state: present
         key: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa main
       become: true
-
     - name: Include | logrotate
       ansible.builtin.include_role:
         name: arillso.logrotate

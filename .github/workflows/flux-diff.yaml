@@ -1,14 +1,11 @@
 ---
 name: "k8s - Flux Diff"
-
 on:
   pull_request:
     branches: ["main"]
     paths: ["kubernetes/**.yml"]
-
 permissions:
   pull-requests: write
-
 jobs:
   flux-diff:
     name: Compute diffs
@@ -22,14 +19,12 @@ jobs:
     steps:
       - name: Setup Flux CLI
         uses: fluxcd/flux2/action@v2.5.1
-
       - name: Diff Resources
         uses: allenporter/flux-local/action/diff@7.0.0
         id: diff
         with:
           path: "${{ matrix.cluster_path }}/infra/flux"
           resource: "${{ matrix.resources }}"
-
       - if: ${{ steps.diff.outputs.diff != '' }}
         name: Create PR Comments
         uses: mshick/add-pr-comment@v2

@@ -2,7 +2,6 @@
 - name: Install the essentials on the target
   hosts: "{{ onhosts | default('localhost') }}"
   become: true
-
   vars:
     ansible_ssh_user: administrator
     packages: [vim, htop]

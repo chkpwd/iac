@@ -6,7 +6,6 @@
     organization: "{{ awx_org }}"
     state: present
     controller_config_file: "{{ awx_conf }}"
-
 - name: Add Dynamic Inventory
   awx.awx.inventory:
     name: dynamic_inventory

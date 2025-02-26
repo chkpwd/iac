@@ -3,7 +3,6 @@
   hosts: rpi-zero-monitoring
   gather_facts: true
   become: true
-
   tasks:
     - name: Install Packages
       ansible.builtin.apt:
@@ -16,7 +15,6 @@
           - xinit
           - openbox
           - epiphany-browser
-
     - name: Change hostname
       ansible.builtin.command: raspi-config nonint do_hostname {{ ansible_host }}
     - name: Change locale
@@ -25,7 +23,6 @@
       ansible.builtin.shell: |
         set -o pipefail
         echo '*' | passwd {{ ansible_user }}
-
     - name: Set Boot behaviour
       ansible.builtin.command: raspi-config nonint do_boot_behaviour B2
     - name: Enable SSH

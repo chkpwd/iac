@@ -2,14 +2,12 @@
 - name: Dynamic Role Playbook
   hosts: "{{ onhosts | default('localhost') }}"
   gather_facts: true
-
   pre_tasks:
     - name: Warn if localhost
       ansible.builtin.pause:
         prompt: "\nWARNING: The role will run against localhost. You have 2 seconds to cancel"
         seconds: 2
       when: onhosts | default('localhost') == 'localhost'
-
   tasks:
     - name: Module Defaults - Docker Containers
       module_defaults:
@@ -20,7 +18,6 @@
         - name: Run the 'compose' role
           include_role:
             name: "{{ role }}"
-
     - name: Non-module defaults
       when: role != 'compose'
       block:

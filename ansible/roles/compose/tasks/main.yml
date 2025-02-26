@@ -3,12 +3,10 @@
   ansible.builtin.stat:
     path: /mnt/data
   register: multiple_disks
-
 - name: Check Docker Present
   ansible.builtin.stat:
     path: /usr/bin/docker
   register: docker_installed
-
 - name: Create dir
   ansible.builtin.file:
     path: "{{ compose_configuration_path }}"
@@ -17,7 +15,6 @@
     group: "{{ common_user }}"
     mode: "0755"
   register: docker_dir
-
 - name: Create app directories
   ansible.builtin.file: # noqa risky-file-permissions
     path: "{{ item }}"
@@ -27,14 +24,12 @@
     state: directory
   loop: "{{ service_definitions | selectattr('volumes', 'defined') | map(attribute='volumes') | flatten | map('split', ':') | map('first') }}"
   when: not item is match('.*\.\w{2,4}$')
-
 - name: Install Docker only if not installed
   when: "'docker_hosts' in group_names and not docker_installed.stat.exists"
   block:
     - name: Docker Install
       ansible.builtin.include_role:
         name: geerlingguy.docker
-
 - name: Configure Docker Daemon Path
   when: "'docker_hosts' in group_names and docker_installed.stat.exists and multiple_disks.stat.exists"
   block:
@@ -45,7 +40,6 @@
         group: root
         mode: "0755"
         state: directory
-
     - name: Set Docker Daemon Config
       ansible.builtin.template:
         src: templates/daemon.json.j2
@@ -55,13 +49,11 @@
         mode: "0644"
       notify: Restart Docker Service
       when: ansible_facts['devices'] | length > 1
-
 - name: Create network(s)
   when: docker_network is defined
   community.docker.docker_network:
     name: "{{ item }}"
   loop: "{{ docker_network }}"
-
 - name: Deploy Docker containers # noqa args[module]
   when: docker_dir
   community.docker.docker_container: "{{ item }}"

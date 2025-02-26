@@ -4,7 +4,6 @@
     name: docker
     state: restarted
   listen: Restart Docker Service
-
 - name: Delete Docker Data
   ansible.builtin.file:
     path: /var/lib/docker

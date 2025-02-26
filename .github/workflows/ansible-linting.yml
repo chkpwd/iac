@@ -1,3 +1,4 @@
+---
 name: Ansible Lint
 on:
   push:
@@ -10,7 +11,7 @@ on:
       - master
     paths:
       - 'ansible/**'
-  workflow_dispatch:  # needs to be in default branch before you get the UI option to manually run though
+  workflow_dispatch: # needs to be in default branch before you get the UI option to manually run though
     inputs:
       debug:
         description: 'Debug mode'
@@ -19,28 +20,22 @@ on:
         default: false
   schedule:
     - cron: '0 0 * * 1'
-
 permissions:
   contents: read
-
 jobs:
   lint:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install ansible-lint --break-system-packages
         working-directory: ${{ github.workspace }}/ansible
-
       - name: Run Ansible Lint
         run: ansible-lint --exclude .dependencies

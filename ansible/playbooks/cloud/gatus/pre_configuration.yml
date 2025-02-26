@@ -2,7 +2,6 @@
 - name: Configure SWAG instance
   hosts: ct-01-ec2
   become: true
-
   tasks:
     - name: Create necessary directories
       ansible.builtin.file: # noqa risky-file-permissions
@@ -13,7 +12,6 @@
         - "{{ configuration_path }}/swag/nginx/site-confs"
         - "{{ configuration_path }}/wireguard/wg_confs/"
         - "{{ configuration_path }}/gatus"
-
     - name: Create wireguard config
       ansible.builtin.copy:
         content: |
@@ -30,7 +28,6 @@
         owner: root
         group: root
         mode: "600"
-
     - name: Create Gatus config
       ansible.builtin.copy:
         content: |
@@ -39,20 +36,17 @@
         owner: "{{ common_user }}"
         group: "{{ common_user }}"
         mode: "664"
-
     - name: Template NGINX config # noqa no-relative-paths
       ansible.builtin.template:
         src: ../../../templates/nginx.conf.j2
         dest: "{{ configuration_path }}/swag/nginx/site-confs/default.conf"
         mode: "664"
-
     - name: Copy Cloudflare config
       ansible.builtin.copy:
         content: |
           dns_cloudflare_api_token = "{{ lookup('bws_cache', 'cloudflare-dns-secrets').value.swag_api_token }}"
         dest: "{{ configuration_path }}/swag/dns-conf/cloudflare.ini"
         mode: "400"
-
     - name: Create network(s)
       community.docker.docker_network:
         name: "{{ item.name }}"

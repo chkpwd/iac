@@ -13,8 +13,7 @@ monitoring_service_definitions:
       - "{{ configuration_path }}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
       - "{{ configuration_path }}/prometheus/web.yml:/etc/prometheus/web.yml:ro"
       - "{{ configuration_path }}/prometheus/data:/prometheus/data"
-    ports: [9090:9090]
-
+    ports: ['9090:9090']
   - name: grafana
     image: grafana/grafana:11.5.2
     user: 1000:1000
@@ -25,4 +24,4 @@ monitoring_service_definitions:
       GF_SECURITY_ADMIN_PASSWORD: "{{ lookup('bws_cache', 'common-secrets').value.common_password }}"
     volumes:
       - "{{ configuration_path }}/grafana:/var/lib/grafana"
-    ports: [3000:3000]
+    ports: ['3000:3000']

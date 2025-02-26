@@ -1,7 +1,6 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: "Label Sync"
-
 on:
   workflow_dispatch:
   push:
@@ -11,10 +10,8 @@ on:
     - cron: "0 0 * * *"
   pull_request_target:
     branches: ["main"]
-
 permissions:
   issues: write
-
 jobs:
   label-sync:
     name: Label Sync
@@ -24,7 +21,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           sparse-checkout: .github/labels.yml
-
       - name: Sync Labels
         uses: EndBug/label-sync@v2
         with:

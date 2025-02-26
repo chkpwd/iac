@@ -11,7 +11,6 @@
   notify:
     - Update grub
     - Reboot pve
-
 - name: Add vfio modules
   ansible.builtin.blockinfile:
     path: /etc/modules
@@ -26,7 +25,6 @@
   notify:
     - Update initramfs
     - Reboot pve
-
 - name: Allow iommu unsafe interrupts
   ansible.builtin.blockinfile:
     path: /etc/modprobe.d/iommu_unsafe_interrupts.conf
@@ -38,7 +36,6 @@
   notify:
     - Update initramfs
     - Reboot pve
-
 - name: Kvm interrupt remapping
   ansible.builtin.blockinfile:
     path: /etc/modprobe.d/kvm.conf

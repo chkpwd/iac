@@ -1,6 +1,5 @@
 ---
 common_user_uid: 1000
-
 docker_edition: ce
 docker_package_state: latest
 docker_users: "{{ common_user }}"
@@ -9,7 +8,6 @@ docker_services:
     value: docker.service
   - name: Docker Socket
     value: docker.socket
-
 service_definitions:
   - name: nginx_rtmp
     image: ghcr.io/chkpwd/nginx-live-stream:auto-1737694866

@@ -1,7 +1,6 @@
 ---
 # Set the user
 common_user_uid: 1000
-
 # Docker Configurations
 docker_edition: ce
 docker_package_state: latest
@@ -11,12 +10,10 @@ docker_services:
     value: docker.service
   - name: Docker Socket
     value: docker.socket
-
 common_env: &common_env
   TZ: America/New_York
   PUID: "1000"
   PGID: "1000"
-
 service_definitions:
   - name: wireguard
     image: lscr.io/linuxserver/wireguard:1.0.20210914
@@ -24,7 +21,7 @@ service_definitions:
       - net_admin # Allows modifications of net utils
       # - sys_module # No longer needed if host loads the modules already
     env: "{{ common_env }}"
-    ports: [8080:8080]
+    ports: ['8080:8080']
     volumes:
       - "{{ configuration_path }}/wireguard:/config"
       - /lib/modules:/lib/modules
@@ -32,20 +29,18 @@ service_definitions:
       net.ipv4.conf.all.src_valid_mark: 1
     networks:
       - name: net_swag
-
   - name: gatus
     image: twinproduction/gatus:v5.16.0
     volumes:
       - "{{ configuration_path }}/gatus:/config"
     network_mode: container:wireguard
-
   - name: swag
     image: lscr.io/linuxserver/swag:3.2.0
     ports:
       - 443:443
       - 80:80
     env:
-      <<: *common_env
+      !!merge <<: *common_env
       URL: chkpwd.com
       SUBDOMAINS: wildcard
       VALIDATION: dns

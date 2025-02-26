@@ -13,11 +13,9 @@
             line: deb http://deb.debian.org/debian/ bookworm main non-free-firmware contrib non-free
           register: repo_updated
           notify: Update APT Cache
-
         - name: Gather facts (get current kernel versions)
           setup:
             filter: ansible_kernel
-
         - name: Install required packages
           ansible.builtin.apt:
             name:
@@ -30,7 +28,6 @@
           notify:
             - Update Initramfs
             - Reboot the system
-
     - name: Post Installation
       tags: post_install
       block:
@@ -40,7 +37,6 @@
             line: blacklist nouveau
             create: true
             mode: "0644"
-
     - name: Install nvidia-container-toolkit
       tags: optional_container_toolkit
       when: "'docker_hosts' in group_names"
@@ -50,30 +46,25 @@
             url: https://nvidia.github.io/nvidia-docker/gpgkey
             dest: /etc/apt/keyrings/nvidia-docker.key
             mode: "0644"
-
         - name: Add the NVIDIA Docker repository
           ansible.builtin.get_url:
             url: https://nvidia.github.io/nvidia-docker/debian11/nvidia-docker.list
             dest: /etc/apt/sources.list.d/nvidia-docker.list
             mode: "0644"
-
         - name: Ensure ARCH is set to the machine's architecture
           set_fact:
             ARCH: "{{ ansible_architecture }}" # noqa var-naming
-
         - name: Add NVIDIA Docker repo signing key
           ansible.builtin.lineinfile:
             path: /etc/apt/sources.list.d/nvidia-docker.list
             regexp: ^deb https://nvidia.github.io/(.*)
             line: deb [signed-by=/etc/apt/keyrings/nvidia-docker.key] https://nvidia.github.io/\1
             backrefs: true
-
         - name: Import Nvidia GPG key
           ansible.builtin.apt_key:
             url: https://nvidia.github.io/nvidia-docker/gpgkey
             state: present
           notify: Update APT Cache
-
         - name: Install the containerized packages
           ansible.builtin.apt:
             name:
@@ -82,20 +73,16 @@
               - nvidia-docker2
             state: present
           notify: Restart Docker Service
-
   handlers:
     - name: Reboot the system
       ansible.builtin.reboot:
-
     - name: Update APT Cache
       ansible.builtin.apt:
         update_cache: true
-
     - name: Restart Docker service
       ansible.builtin.service:
         name: docker
         state: restarted
-
     - name: Update Initramfs
       ansible.builtin.command: update-initramfs -u
       changed_when: false

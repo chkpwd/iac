@@ -7,7 +7,6 @@
     pull: missing
     state: present
     controller_config_file: "{{ awx_conf }}"
-
 - name: Add 'Terraform' EE
   awx.awx.execution_environment:
     name: terraform_ee

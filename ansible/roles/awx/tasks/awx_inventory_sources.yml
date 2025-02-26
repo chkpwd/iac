@@ -14,7 +14,6 @@
     source_vars:
       private: false
     controller_config_file: "{{ awx_conf }}"
-
 - name: Add VMware Dynamic Inventory Source
   awx.awx.inventory_source:
     name: VMware Dynamic Inventory

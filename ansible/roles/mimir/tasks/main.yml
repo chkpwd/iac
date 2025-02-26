@@ -4,7 +4,6 @@
   ansible.builtin.apt:
     name: python3-passlib
     state: present
-
 - name: Create app directories
   ansible.builtin.file:
     path: "{{ item }}"
@@ -14,7 +13,6 @@
     state: directory
   loop: "{{ mimir_containers | selectattr('volumes', 'defined') | map(attribute='name') | product([configuration_path]) | map('reverse') | map('join', '/') }}"
   when: not item is match('.*\.\w{2,4}$')
-
 - name: Template NGINX config
   ansible.builtin.template:
     src: nginx.conf.j2
@@ -23,7 +21,6 @@
     group: "{{ common_user }}"
     mode: '0664'
   notify: Restart NGINX
-
 - name: Install htpasswd file for NGINX
   community.general.htpasswd:
     path: "{{ mimir_lb_base_path }}/.htpasswd"
@@ -34,7 +31,6 @@
     mode: '0644'
     state: present
   notify: Restart NGINX
-
 - name: Template Mimir config
   ansible.builtin.template:
     src: mimir.yml.j2
@@ -43,7 +39,6 @@
     group: "{{ common_user }}"
     mode: '0664'
   notify: Restart Mimir
-
 - name: Deploy Docker containers
   community.docker.docker_container: "{{ item }}" # noqa args[module]
   loop: "{{ mimir_containers }}"

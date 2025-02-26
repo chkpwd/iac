@@ -1,7 +1,6 @@
 ---
 mimir_base_path: "{{ configuration_path }}/mimir"
 mimir_lb_base_path: "{{ configuration_path }}/mimir-lb"
-
 mimir_containers:
   - name: mimir
     image: grafana/mimir:2.15.0
@@ -9,7 +8,6 @@ mimir_containers:
     volumes:
       - "{{ mimir_base_path }}/mimir.yml:/etc/mimir/mimir.yml:ro"
     state: started
-
   - name: mimir-lb
     image: nginx:alpine
     volumes:
@@ -17,10 +15,8 @@ mimir_containers:
       - "{{ mimir_lb_base_path }}/.htpasswd:/etc/nginx/.htpasswd"
     ports: ["{{ mimir_lb_port ~ ':' ~ mimir_lb_port }}"]
     state: started
-
 mimir_lb_user: mimir
 mimir_lb_port: 9009
-
 mimir_s3_endpoint: s3.{{ local_domain }}
 mimir_s3_access_key: ''
 mimir_s3_secret_key: ''

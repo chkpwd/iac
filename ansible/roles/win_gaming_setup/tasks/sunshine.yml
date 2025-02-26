@@ -6,7 +6,6 @@
   loop: "{{ win_gaming_setup_sunshine_scripts }}"
   loop_control:
     label: "Executing Script: {{ item }}"
-
 - name: Configure Sunshine Apps
   ansible.windows.win_copy:
     src: files/apps.json

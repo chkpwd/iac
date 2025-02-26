@@ -1,17 +1,14 @@
 ---
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Lint
-
 on:
   workflow_dispatch:
   pull_request:
     branches:
       - main
-
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
-
 jobs:
   actionlint:
     name: actionlint
@@ -21,7 +18,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v45
@@ -29,13 +25,11 @@ jobs:
           files: |
             .github/workflows/**/*.yml
             .github/workflows/**/*.yaml
-
       - name: Run actionlint
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: bjw-s/action-actionlint@v0.1
         with:
           file_pattern: ${{ steps.changed-files.outputs.all_changed_files }}
-
   yamllint:
     name: yamllint
     runs-on: ubuntu-latest
@@ -44,7 +38,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v45
@@ -52,19 +45,16 @@ jobs:
           files: |
             **.yml
             **.yaml
-
       - name: Install yamllint
         if: steps.changed-files.outputs.any_changed == 'true'
         shell: bash
         run: |
           pip install --user yamllint
-
       - name: Run yamllint
         if: steps.changed-files.outputs.any_changed == 'true'
         shell: bash
         run: |
           yamllint --config-file .yamllint.yml --format github ${{ steps.changed-files.outputs.all_changed_files }}
-
   markdownlint:
     name: markdownlint
     runs-on: ubuntu-latest
@@ -73,21 +63,18 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v45
         with:
           files: |
             **.md
-
       - name: Run markdownlint-cli2
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: bjw-s/action-markdownlint-cli2@v0.1
         with:
           markdownlint_config: .markdownlint.yml
           file_pattern: ${{ steps.changed-files.outputs.all_changed_files }}
-
   prettier:
     name: prettier
     runs-on: ubuntu-latest
@@ -96,11 +83,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Get changed files
         id: changed-files
         uses: tj-actions/changed-files@v45
-
       - name: Run prettier
         if: steps.changed-files.outputs.any_changed == 'true'
         uses: bjw-s/action-prettier-lint@v0.1
@@ -108,7 +93,6 @@ jobs:
           prettier_ignore: .prettierignore
           prettier_config: .prettierrc.yml
           file_pattern: ${{ steps.changed-files.outputs.all_changed_files }}
-
   lint_success:
     needs:
       - actionlint

@@ -2,7 +2,6 @@
 - name: Deploy Minio
   hosts: mgmt-srv-01
   become: true
-
   vars:
     pull_images: false
   module_defaults:
@@ -13,23 +12,20 @@
       comparisons:
         '*': strict
         env: allow_more_present
-
   handlers:
-  #   - name: Restart Minio
-  #     community.docker.docker_container:
-  #       name: minio
-  #       restart: true
-  #       state: started
-  #       comparisons:
-  #         '*': ignore
-  #     when: not deploy_container is changed
-
+    #   - name: Restart Minio
+    #     community.docker.docker_container:
+    #       name: minio
+    #       restart: true
+    #       state: started
+    #       comparisons:
+    #         '*': ignore
+    #     when: not deploy_container is changed
     - name: Prune Docker images
       community.docker.docker_prune:
         images: true
         images_filters:
           dangling: false
-
   pre_tasks:
     - name: Check if Docker is installed
       ansible.builtin.command: which docker
@@ -37,7 +33,6 @@
       failed_when: false
       changed_when: false
       check_mode: false
-
   tasks:
     - name: Copy container files # noqa risky-file-permissions
       ansible.builtin.copy: "{{ item }}"
@@ -53,7 +48,6 @@
         label: "{{ item.dest }}"
       notify: Restart Minio
       tags: [files]
-
     - name: Deploy Minio container
       community.docker.docker_container:
         name: minio
@@ -77,9 +71,7 @@
           MINIO_IDENTITY_OPENID_CLIENT_SECRET: >-
             {{ lookup('bws_cache', 'infra-minio-secrets').value.oauth_secrets }}
           MINIO_IDENTITY_OPENID_SCOPES: openid,profile,email,minio
-          MINIO_PROMETHEUS_URL: "http://{{ hostvars.Monitor01.prometheus_users[0].username }}:\
-            {{ hostvars.Monitor01.prometheus_users[0].password }}\
-            @Monitor01.{{ local_domain }}:9090"
+          MINIO_PROMETHEUS_URL: "http://{{ hostvars.Monitor01.prometheus_users[0].username }}:{{ hostvars.Monitor01.prometheus_users[0].password }}@Monitor01.{{ local_domain }}:9090"
           MINIO_PROMETHEUS_JOB_ID: minio
         ports:
           - '9001:9001'

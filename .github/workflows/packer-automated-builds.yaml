@@ -1,6 +1,5 @@
 ---
 name: Packer-Driven Automated Deployments
-
 on:
   schedule:
     - cron: '0 0 * * 1'
@@ -16,17 +15,13 @@ on:
         type: string
         required: false
         default: '1.9.4'
-
 permissions:
   contents: read
-
 defaults:
   run:
     shell: bash -euxo pipefail {0}
-
 env:
   PACKER_LOG: 1
-
 jobs:
   packer:
     strategy:
@@ -43,7 +38,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Set up WireGuard
         uses: egor-tensin/setup-wireguard@v1.2.0
         with:
@@ -52,45 +46,38 @@ jobs:
           ips: '10.6.6.6/24'
           allowed_ips: '172.16.16.0/24'
           private_key: '${{ secrets.WG_PRIVATE }}'
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: 3.9
-
       - name: Cache Python dependencies
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
           restore-keys: ${{ runner.os }}-pip-
-
       - name: Setup Ansible
         run: |
-            pip install ansible
-            ansible-galaxy install arillso.logrotate
+          pip install ansible
+          ansible-galaxy install arillso.logrotate
         working-directory: ./ansible
-
       - name: Setup Packer
         uses: hashicorp/setup-packer@main
         with:
           version: ${{ github.event.inputs.packer_version || env.PRODUCT_VERSION }}
-
       - name: Generate SSH Key
         if: ${{ matrix.os == 'windows' }}
         run: |
           mkdir -p ~/.ssh
           ssh-keygen -t rsa -b 4096 -f ~/.ssh/main -q -N ""
-
       - name: Initialize Packer configuration
         run: packer init ./config.pkr.hcl
         working-directory: ./packer
-
       - name: Build image
         run: |
-            packer build -force --only vsphere-iso.${{ matrix.os }} --var-file=./${{ matrix.os }}/${{ matrix.version }}.pkrvars.hcl \
-            -var "vcenter_server=172.16.16.6" \
-            -var "vcenter_host=172.16.16.3" \
-            -var "vcenter_password=${{ secrets.VCENTER_PASSWORD }}" \
-            -var "listen_address=10.6.6.6" .
+          packer build -force --only vsphere-iso.${{ matrix.os }} --var-file=./${{ matrix.os }}/${{ matrix.version }}.pkrvars.hcl \
+          -var "vcenter_server=172.16.16.6" \
+          -var "vcenter_host=172.16.16.3" \
+          -var "vcenter_password=${{ secrets.VCENTER_PASSWORD }}" \
+          -var "listen_address=10.6.6.6" .
         working-directory: ./packer

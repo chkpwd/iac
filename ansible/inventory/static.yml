@@ -3,55 +3,46 @@ all:
   hosts:
     localhost:
       ansible_connection: local
-
   children:
     hypervisors:
       children:
         proxmox:
           hosts:
             pve-srv-01:
-
     linux:
       hosts:
         haos-srv-01:
         mgmt-srv-01:
         ct-01-ec2:
-
     windows:
       hosts:
         chk-gaming-01:
       vars:
         ansible_become_method: runas
-
     docker_hosts:
       hosts:
         haos-srv-01:
         ct-01-ec2:
         mgmt-srv-01:
         gs-srv-01:
-
     game_servers:
       hosts:
         gs-srv-01:
       vars:
         ansible_ssh_user: root
-
     printers:
       hosts:
         print-srv-01:
       vars:
         ansible_user: pi
         ansible_become_user: pi
-
     aws:
       hosts:
         ct-01-ec2:
           ansible_host: 3.92.213.221
-
     gatus:
       hosts:
         ct-01-ec2:
-
     cloud:
       children:
         aws:

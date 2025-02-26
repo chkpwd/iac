@@ -5,11 +5,9 @@
     description: Default Organization
     state: present
     controller_config_file: "{{ awx_conf }}"
-
 - name: AWX | Credentials
   ansible.builtin.include_tasks:
     file: awx_credentials.yml
-
 - name: Add Git repository as Project
   awx.awx.project:
     name: Git
@@ -20,23 +18,18 @@
     scm_update_on_launch: true
     state: present
     controller_config_file: "{{ awx_conf }}"
-
 - name: AWX | Inventory
   ansible.builtin.include_tasks:
     file: awx_inventory.yml
-
 - name: AWX | Inventory Sources
   ansible.builtin.include_tasks:
     file: awx_inventory_sources.yml
-
 - name: AWX | EE
   ansible.builtin.include_tasks:
     file: awx_ee.yml
-
 - name: AWX | Job Templates
   ansible.builtin.include_tasks:
     file: awx_job_templates.yml
-
 - name: Add Discord Notification
   awx.awx.notification_template:
     name: Discord Notification

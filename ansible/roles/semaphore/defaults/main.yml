@@ -16,9 +16,7 @@ semaphore_container:
       - "{{ configuration_path }}/semaphore/db:/var/lib/semaphore"
       - "{{ configuration_path }}/semaphore/config:/etc/semaphore"
       - "{{ configuration_path }}/semaphore/tmp:/tmp/semaphore"
-    ports: [3005:3000]
-
-
+    ports: ['3005:3000']
 semaphore_oidc_config:
   oidc_providers:
     authentik:
