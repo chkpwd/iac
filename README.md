@@ -96,7 +96,7 @@ Securely retrieves secrets into the Terraform state by making API requests to a 
         ) from exc
   [...]
   ```
-  ```json
+  ```
   resource "radarr_download_client_sabnzbd" "sabnzbd" {
     enable         = true
     priority       = 1
