@@ -1,26 +1,154 @@
-# Infrastructure as Code (IaC) by Bryan J.
 <div align="center">
+  <img src=".metadata/logo.png" alt="crane-iac" style="width:100px;height:auto;">
 
-Kubernetes stats:
+  <h3>Infrastructure as Code (IaC) by Bryan J.</h3>
 
-<div align="center">
-
-[![Kubernetes](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fkubernetes_version&style=for-the-badge&logo=kubernetes&logoColor=white&color=blue)](https://kubernetes.io/)&nbsp;&nbsp;
-
+  <p>A comprehensive set of tools and configurations for automating tasks across various environments.</p>
+  <p>
+    <a href="https://chkpwd.com"><strong>Blog »</strong></a>
+  </p>
+  <p>
+    <a href="https://github.com/chkpwd/iac/tree/main/kubernetes/apps">Kubernetes Deployments</a>
+    &middot;
+    <a href="https://github.com/chkpwd/iac/tree/main/ansible/roles">Ansible Roles</a>
+    &middot;
+    <a href="https://github.com/chkpwd/iac/tree/main/terraform/_modules">Terraform Modules</a>
+  </p>
 </div>
 
-<div align="center">
+<details>
+  <summary>Table of Contents</summary>
+  <ol>
+    <li>
+      <a href="#about-the-lab">About The Lab</a>
+      <ul>
+        <li><a href="#kubernetes">Kubernetes</a></li>
+        <li><a href="#terraform">Terraform</a></li>
+        <li><a href="#ansible">Ansible</a></li>
+      </ul>
+    </li>
+    <li><a href="#equipment">Equipment</a></li>
+    <li><a href="#technologies">Technologies</a></li>
+  </ol>
+</details>
 
-[![Age-Days](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fcluster_age_days&style=flat-square&label=Age)](https://github.com/kashalls/kromgo)&nbsp;&nbsp;
-[![Uptime-Days](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fcluster_uptime_days&style=flat-square&label=Uptime)](https://github.com/kashalls/kromgo)&nbsp;&nbsp;
-[![Node-Count](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fcluster_node_count&style=flat-square&label=Nodes)](https://github.com/kashalls/kromgo)&nbsp;&nbsp;
-[![Pod-Count](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fcluster_pods_running&style=flat-square&label=Pods)](https://github.com/kashalls/kromgo)&nbsp;&nbsp;
-[![CPU-Usage](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fcluster_cpu_usage&style=flat-square&label=CPU)](https://github.com/kashalls/kromgo)&nbsp;&nbsp;
-[![Memory-Usage](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fcluster_memory_usage&style=flat-square&label=Memory)](https://github.com/kashalls/kromgo)&nbsp;&nbsp;
+## Overview
 
-</div>
+This repository provides a set of tools and configurations for automating tasks across environments. It includes Ansible playbooks and roles, Docker configurations, Kubernetes manifests, Terraform modules, and Packer scripts. Secrets are managed through various methods, most notably **Bitwarden Secrets Manager**. The project is designed with flexibility in mind, allowing users to choose their tools based on specific requirements.
+
+## About The Lab
+
+### Kubernetes
+
+[![Kubernetes](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fkubernetes_version&style=flat-square&logo=kubernetes&logoColor=white&color=blue)](https://kubernetes.io/)&nbsp;
+[![Age-Days](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fcluster_age_days&style=flat-square&label=Age)](https://github.com/kashalls/kromgo)&nbsp;
+[![Uptime-Days](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fcluster_uptime_days&style=flat-square&label=Uptime)](https://github.com/kashalls/kromgo)&nbsp;
+[![Node-Count](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fcluster_node_count&style=flat-square&label=Nodes)](https://github.com/kashalls/kromgo)&nbsp;
+[![Pod-Count](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fcluster_pods_running&style=flat-square&label=Pods)](https://github.com/kashalls/kromgo)&nbsp;
+[![CPU-Usage](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fcluster_cpu_usage&style=flat-square&label=CPU)](https://github.com/kashalls/kromgo)&nbsp;
+[![Memory-Usage](https://img.shields.io/endpoint?url=https%3A%2F%2Fkromgo.chkpwd.com%2Fcluster_memory_usage&style=flat-square&label=Memory)](https://github.com/kashalls/kromgo)&nbsp;
+
+#### Core Components
+
+- [![Cilium](https://img.shields.io/badge/Cilium-%23F9C31F.svg?style=plastic&logo=cilium&logoColor=black)](https://cilium.io/) - Internal Kubernetes networking plugin.
+- [![Cert Manager](https://img.shields.io/badge/CertManager-%23326CE5.svg?style=plastic)](https://cert-manager.io/) - Creates SSL certificates for services in the cluster.
+- [![External DNS](https://img.shields.io/badge/External%20DNS-%23EA7271.svg?style=plastic)](https://github.com/kubernetes-sigs/external-dns) - Syncs DNS records from Kubernetes ingresses to a DNS provider.
+- [![External Secrets](https://img.shields.io/badge/External%20Secrets-%23032E49.svg?style=plastic)](https://github.com/external-secrets/external-secrets/) - Manages Kubernetes secrets using [Bitwarden](https://bitwarden.com/).
+- [![Ingress NGINX](https://img.shields.io/badge/Ingress%20NGINX-%23009639.svg?style=plastic&logo=nginx&logoColor=white)](https://github.com/kubernetes/ingress-nginx/) - NGINX-based ingress controller for Kubernetes.
+- [![Longhorn](https://img.shields.io/badge/Longhorn-%234A183D.svg?style=plastic)](https://longhorn.io/) - Cloud-native distributed block storage for Kubernetes.
+- [![Tofu Controller](https://img.shields.io/badge/Tofu%20Controller-%23E6C427.svg?style=plastic&logo=opentofu&logoColor=white)](https://github.com/flux-iac/tofu-controller) - Runs Terraform from within a Kubernetes cluster.
 
 
-## General Overview
 
-This repository provides a set of tools and configurations for automating tasks across environments, including Ansible playbooks and roles, Docker configurations, Kubernetes manifests, Terraform modules, and Packer scripts, with secrets managed through various methods, but most notable Bitwarden Secrets Manager. I tried not to be opinionated in the way I tackle issues.
+### Terraform
+
+```bash
+❯ tree -L1 terraform
+terraform
+├── _modules
+├── _templates
+├── authentik
+├── aws
+[...]
+```
+
+#### Core Components
+##### bws-cache
+Securely retrieves secrets into the Terraform state by making API requests to a secrets management service (like Bitwarden) using an access token. By leveraging the [bws-cache](https://github.com/RippleFCL/bws-cache), it ensures sensitive information is dynamically fetched and securely passed into the Terraform state without hardcoding secrets, minimizing exposure risks.
+
+<details>
+  <summary>Example</summary>
+
+  ```python
+  [...]
+  for key in key_name:
+    bws_response = requests.get(
+        f"http://mgmt-srv-01:5000/key/{key}",
+        headers={"Authorization": f"Bearer {access_token}"},
+        timeout=10,
+    ).json()
+
+    logging.debug(bws_response)
+
+    try:
+        results.append(bws_response['value'])
+    except KeyError as exc:
+        raise InvalidToken(
+            "Token is invalid or does not have permissions to read value"
+        ) from exc
+  [...]
+  ```
+  ```json
+  resource "radarr_download_client_sabnzbd" "sabnzbd" {
+    enable         = true
+    priority       = 1
+    name           = "sabnzbd"
+    host           = "sabnzbd.${var.cluster_media_domain}"
+    url_base       = "/"
+    port           = var.ports["sabnzbd"]
+    movie_category = "movies"
+    api_key        = data.external.bws_lookup.result["infra-media-secrets_sabnzbd_api_key"]
+  }
+  ```
+</details>
+
+### Ansible
+#### Core Components
+N/A
+
+## Equipment
+
+<details open>
+<summary>Kubernetes</summary>
+
+| Name      | Device       | CPU      | OS Disk  | Data Disk | RAM  | OS     | Purpose              |
+|-----------|--------------|----------|----------|-----------|------|--------|----------------------|
+| ct-k3s-01 | Lenovo M710q | i5-6500T | 64GB SSD | 1TB NVME  | 32GB | Kairos | control-plane/worker |
+| ct-k3s-02 | Lenovo M710q | i5-6500T | 64GB SSD | 1TB NVME  | 32GB | Kairos | control-plane/worker |
+| ct-k3s-03 | Lenovo M710q | i5-6500T | 64GB SSD | 1TB NVME  | 32GB | Kairos | control-plane/worker |
+</details>
+
+<details>
+<summary>Servers</summary>
+
+| Name     | Device        | CPU        | OS Disk    | Data Disk     | RAM   | OS           | Purpose        |
+|----------|---------------|------------|------------|---------------|-------|--------------|----------------|
+| WhiteBox | Custom        | TR 2970W   | 128GB      | 6TB           | 128GB | Proxmox      | VM/Containers  |
+| Synology | RS819         | -          | -          | 4x4TB SHR     | -     | DSM 7        | Storage        |
+| mgmt-pi  | Raspberry Pi4 | Cortex A72 | 64GB SSD   | -             | 8GB   | Debian 12    | Misc Software  |
+</details>
+
+<details>
+<summary>Network</summary>
+
+| Device             | Purpose          |
+|--------------------|------------------|
+| Dell 7040          | Network - Router |
+| TL-SG1016PE        | Network - Switch |
+</details>
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Roadmap
+
+- Finish README
