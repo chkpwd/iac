@@ -50,15 +50,13 @@ This repository provides a set of tools and configurations for automating tasks 
 
 #### Core Components
 
-- [![Cilium](https://img.shields.io/badge/Cilium-%23F9C31F.svg?style=plastic&logo=cilium&logoColor=black)](https://cilium.io/) - Internal Kubernetes networking plugin.
-- [![Cert Manager](https://img.shields.io/badge/CertManager-%23326CE5.svg?style=plastic)](https://cert-manager.io/) - Creates SSL certificates for services in the cluster.
-- [![External DNS](https://img.shields.io/badge/External%20DNS-%23EA7271.svg?style=plastic)](https://github.com/kubernetes-sigs/external-dns) - Syncs DNS records from Kubernetes ingresses to a DNS provider.
-- [![External Secrets](https://img.shields.io/badge/External%20Secrets-%23032E49.svg?style=plastic)](https://github.com/external-secrets/external-secrets/) - Manages Kubernetes secrets using [Bitwarden](https://bitwarden.com/).
-- [![Ingress NGINX](https://img.shields.io/badge/Ingress%20NGINX-%23009639.svg?style=plastic&logo=nginx&logoColor=white)](https://github.com/kubernetes/ingress-nginx/) - NGINX-based ingress controller for Kubernetes.
-- [![Longhorn](https://img.shields.io/badge/Longhorn-%234A183D.svg?style=plastic)](https://longhorn.io/) - Cloud-native distributed block storage for Kubernetes.
-- [![Tofu Controller](https://img.shields.io/badge/Tofu%20Controller-%23E6C427.svg?style=plastic&logo=opentofu&logoColor=white)](https://github.com/flux-iac/tofu-controller) - Runs Terraform from within a Kubernetes cluster.
-
-
+- [Cilium](https://github.com/cilium/cilium): Internal Kubernetes networking plugin.
+- [Cert-manager](https://cert-manager.io/docs/): Creates SSL certificates for services in the cluster.
+- [External DNS](https://github.com/kubernetes-sigs/external-dns): Syncs DNS records from Kubernetes ingresses to a DNS provider.
+- [External Secrets](https://github.com/external-secrets/external-secrets/): Manages Kubernetes secrets using [Bitwarden](https://bitwarden.com/).
+- [Ingress NGINX](https://github.com/kubernetes/ingress-nginx/): NGINX-based ingress controller for Kubernetes.
+- [Longhorn](https://longhorn.io/): Cloud-native distributed block storage for Kubernetes.
+- [Tofu Controller](https://github.com/flux-iac/tofu-controller): Runs Terraform from within a Kubernetes cluster.
 
 ### Terraform
 
