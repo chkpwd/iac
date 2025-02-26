@@ -39,8 +39,8 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/corentinth/it-tools
-              tag: 2024.10.22-7ca5933
+              repository: ghcr.io/bjw-s-labs/it-tools
+              tag: 2024.10.22
               pullPolicy: IfNotPresent
             securityContext:
               readOnlyRootFilesystem: true
@@ -75,16 +75,6 @@ spec:
                   identifier: app
                   port: http
     persistence:
-      cache:
+      tmp:
         type: emptyDir
-        globalMounts:
-          - path: /var/cache/nginx
-      nginx:
-        type: emptyDir
-        globalMounts:
-          - path: /var/run
-            subPath: nginx.pid
-      logs:
-        type: emptyDir
-        globalMounts:
-          - path: /var/log/nginx
+      
