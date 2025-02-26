@@ -18,7 +18,7 @@ terraform {
 data "external" "bws_lookup" {
   program = ["python3", "../bws_lookup.py"]
   query = {
-    key = "common-secrets,infra-network-secrets,cloud-aws-proxy-secrets,cloudflare-dns-secrets,cloud-github-secrets"
+    key = "common-secrets,infra-network-secrets,cloud-aws-proxy-secrets,cloudflare-dns-secrets,cloud-github-secrets,tig-info"
   }
 }
 
