@@ -35,7 +35,6 @@ jobs:
           tags: |
             ghcr.io/chkpwd/${{ matrix.context }}:latest
             ghcr.io/chkpwd/${{ matrix.context }}:auto-${{ steps.time.outputs.time }}
-          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: false
