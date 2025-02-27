@@ -26,9 +26,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ansible/.dependencies
-          key: ${{ runner.OS }}-ansible-lint-cache-${{ hashFiles('**/dependencies') }}
+          key: ${{ runner.OS }}-ansible-lint-cache-${{ hashFiles('**/.dependencies/**') }}
           restore-keys: |
             ${{ runner.OS }}-ansible-lint-cache-
+      # need to find a way to cache the requirements
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main
         with:
