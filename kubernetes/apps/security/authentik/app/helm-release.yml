@@ -26,6 +26,8 @@ spec:
       podAnnotations:
         secret.reloader.stakater.com/reload: *app
       env:
+        - name: AUTHENTIK_OUTPOSTS__DISABLE_EMBEDDED_OUTPOST
+          value: "true"
         - name: AUTHENTIK_POSTGRESQL__HOST
           valueFrom:
             secretKeyRef:
