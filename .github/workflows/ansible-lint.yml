@@ -19,9 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main
         with:
-          setup_python: "true"
+          setup_python: "false"
           working_directory: "ansible/"
           requirements_file: "requirements.yml"
