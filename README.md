@@ -1,5 +1,5 @@
 <div align="center">
-  <img src=".metadata/logo.png" alt="crane-iac" style="width:100px;height:auto;">
+  <img src=".github/.metadata/logo.png" alt="crane-iac" style="width:100px;height:auto;">
 
   <h3>Infrastructure as Code (IaC) by Bryan J.</h3>
 
@@ -15,22 +15,6 @@
     <a href="https://github.com/chkpwd/iac/tree/main/terraform/_modules">Terraform Modules</a>
   </p>
 </div>
-
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-lab">About The Lab</a>
-      <ul>
-        <li><a href="#kubernetes">Kubernetes</a></li>
-        <li><a href="#terraform">Terraform</a></li>
-        <li><a href="#ansible">Ansible</a></li>
-      </ul>
-    </li>
-    <li><a href="#equipment">Equipment</a></li>
-    <li><a href="#technologies">Technologies</a></li>
-  </ol>
-</details>
 
 ## Overview
 
