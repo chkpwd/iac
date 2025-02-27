@@ -5,21 +5,21 @@ on:
     branches:
       - main
     paths:
-      - 'ansible/**'
+      - "ansible/**"
   pull_request:
     branches:
       - master
     paths:
-      - 'ansible/**'
+      - "ansible/**"
   workflow_dispatch: # needs to be in default branch before you get the UI option to manually run though
     inputs:
       debug:
-        description: 'Debug mode'
+        description: "Debug mode"
         type: boolean
         required: false
         default: false
   schedule:
-    - cron: '0 0 * * 1'
+    - cron: "0 0 * * 1"
 permissions:
   contents: read
 jobs:
@@ -31,7 +31,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: "3.x"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
