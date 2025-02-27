@@ -1,5 +1,5 @@
 resource "authentik_provider_oauth2" "oauth2" {
-  name                  = "${lower(var.name)}"
+  name                  = lower(var.name)
   client_id             = var.oauth2_values.client_id
   client_secret         = var.oauth2_values.client_secret
   authentication_flow   = data.authentik_flow.default-source-authentication.id

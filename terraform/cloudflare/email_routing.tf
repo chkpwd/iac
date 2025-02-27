@@ -14,6 +14,6 @@ resource "cloudflare_email_routing_catch_all" "catch_all" {
 
   actions = [{
     type  = "forward"
-    value = ["${data.external.bws_lookup.result["common-secrets_primary_email_address"]}"]
+    value = [data.external.bws_lookup.result["common-secrets_primary_email_address"]]
   }]
 }

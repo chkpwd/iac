@@ -1,4 +1,5 @@
 terraform {
+  required_version = "1.9.8"
   required_providers {
     authentik = {
       source  = "goauthentik/authentik"
@@ -7,6 +8,10 @@ terraform {
     random = {
       source  = "hashicorp/random"
       version = "3.7.1"
+    }
+    external = {
+      source = "hashicorp/external"
+      version = "~> 2"
     }
   }
 }

@@ -8,9 +8,11 @@ variable "vlans" {
 }
 
 variable "site" {
+  type = string
   default = "default"
 }
 
 variable "private_key_path" {
+  type = string
   default = "~/.ssh/unifi"
 }

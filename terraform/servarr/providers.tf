@@ -1,4 +1,5 @@
 terraform {
+  required_version = "1.9.8"
   required_providers {
     sonarr = {
       source  = "devopsarr/sonarr"
@@ -11,6 +12,10 @@ terraform {
     radarr = {
       source  = "devopsarr/radarr"
       version = "2.3.2"
+    }
+    external = {
+      source = "hashicorp/external"
+      version = "~> 2"
     }
   }
 }

@@ -1,10 +1,12 @@
 variable node {
+  type = string
   default = "pve-srv-01"
 }
 
-variable datastore {
-  default = "nvme-pool"
-}
+# variable datastore {
+#   type = string
+#   default = "nvme-pool"
+# }
 
 variable "machine" {
   type = object({
@@ -22,18 +24,18 @@ variable "machine" {
   })
 }
 
-variable "startup" {
-  type = object({
-    order      = optional(string)
-    up_delay   = optional(string)
-    down_delay = optional(string)
-  })
-  default = {
-    order = null
-    up_delay = null
-    down_delay = null
-  }
-}
+# variable "startup" {
+#   type = object({
+#     order      = optional(string)
+#     up_delay   = optional(string)
+#     down_delay = optional(string)
+#   })
+#   default = {
+#     order = null
+#     up_delay = null
+#     down_delay = null
+#   }
+# }
 
 variable "spec" {
   type = object({

@@ -1,8 +1,13 @@
 terraform {
+  required_version = "1.9.8"
   required_providers {
     grafana = {
       source  = "grafana/grafana"
       version = ">= 1.28.2"
+    }
+    external = {
+      source = "hashicorp/external"
+      version = "~> 2"
     }
   }
 }

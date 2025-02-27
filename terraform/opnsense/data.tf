@@ -14,7 +14,7 @@ locals {
     external_a = local.external.EXTERNAL_A_RECORDS
 
     # infra CNAME Records
-    infra_cname = local.main.INFRA_CNAME_RECORDS
+    # infra_cname = local.main.INFRA_CNAME_RECORDS
 
     # kubernetes CNAME Records
     kubernetes_cname = local.kubernetes.KUBERNETES_CNAME_RECORDS

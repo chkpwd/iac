@@ -35,7 +35,7 @@ variable "access_group" {
   type = list(string)
 }
 
-variable "jwks_sources" {
-  type    = list(string)
-  default = []
-}
+# variable "jwks_sources" {
+#   type    = list(string)
+#   default = []
+# }

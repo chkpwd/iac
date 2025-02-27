@@ -3,10 +3,15 @@
 #===============================================================================
 
 terraform {
+  required_version = "1.9.8"
   required_providers {
     unifi = {
       source  = "paultyng/unifi"
       version = "0.41.0"
+    }
+    external = {
+      source = "hashicorp/external"
+      version = "~> 2"
     }
   }
 }

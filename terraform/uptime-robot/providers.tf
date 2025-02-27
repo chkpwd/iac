@@ -1,8 +1,13 @@
 terraform {
+  required_version = "1.9.8"
   required_providers {
     uptimerobot = {
       source = "bartekbp/uptimerobot"
       version = "0.10.0"
+    }
+    external = {
+      source = "hashicorp/external"
+      version = "~> 2"
     }
   }
 }

@@ -1,3 +1,4 @@
-variable "zone" {
-  default = "chkpwd.com"
-}
+# variable "zone" {
+#   type = string
+#   default = "chkpwd.com"
+# }

@@ -5,11 +5,11 @@
 #   }))
 # }
 
-variable "aws_region" {
-  description = "AWS Region"
-  type        = string
-  default     = "us-east-1"
-}
+# variable "aws_region" {
+#   description = "AWS Region"
+#   type        = string
+#   default     = "us-east-1"
+# }
 
 variable "availability_zone" {
   description = "Availability Zone"
@@ -29,11 +29,11 @@ variable "network_configuration" {
   }
 }
 
-variable "security_group" {
-  description = "Security group for VPC and public subnet"
-  type = list(string) 
-  default = []
-}
+# variable "security_group" {
+#   description = "Security group for VPC and public subnet"
+#   type = list(string)
+#   default = []
+# }
 
 variable "ssh_configuration" {
   type = object({
