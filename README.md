@@ -18,7 +18,7 @@
 
 ## Overview
 
-This repository provides a set of tools and configurations for automating tasks across environments. It includes Ansible playbooks and roles, Docker configurations, Kubernetes manifests, Terraform modules, and Packer scripts. Secrets are managed through various methods, most notably **Bitwarden Secrets Manager**. The project is designed with flexibility in mind, allowing users to choose their tools based on specific requirements.
+This repository provides a set of tools and configurations for automating tasks across environments. It includes Ansible playbooks and roles, Docker configurations, Kubernetes manifests, Terraform modules, and Packer scripts. Secrets are managed through various methods, most notably **Bitwarden Secrets Manager**. The project is designed with flexibility in mind, allowing me to configure every inch of my infrastructure programmatically while being modular.
 
 ## About The Lab
 
