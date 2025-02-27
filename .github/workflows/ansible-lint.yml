@@ -22,9 +22,17 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           cache: "pip"
+      - name: Cache Ansible Galaxy Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ansible/.dependencies
+          key: ${{ runner.OS }}-ansible-lint-cache-${{ hashFiles('**/dependencies') }}
+          restore-keys: |
+            ${{ runner.OS }}-ansible-lint-cache-
       - name: Run ansible-lint
         uses: ansible/ansible-lint@main
         with:
           setup_python: "false"
           working_directory: "ansible/"
           requirements_file: "requirements.yml"
+
