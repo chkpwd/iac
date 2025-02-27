@@ -12,6 +12,12 @@ repos:
         entry: python3 .pre-commit/move_kairos_config.py
         language: python
         files: ansible/roles/kairos/templates/cloud-config.yaml.j2
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.97.4
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_tflint
+      - id: terraform_trivy
   - repo: https://github.com/adrienverge/yamllint
     rev: v1.35.1
     hooks:
