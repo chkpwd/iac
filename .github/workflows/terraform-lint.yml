@@ -5,21 +5,21 @@ on:
     branches:
       - main
     paths:
-      - 'terraform/**'
+      - "terraform/**"
   pull_request:
     branches:
       - main
     paths:
-      - 'terraform/**'
+      - "terraform/**"
   workflow_dispatch: # needs to be in default branch before you get the UI option to manually run though
     inputs:
       debug:
-        description: 'Debug mode'
+        description: "Debug mode"
         type: boolean
         required: false
         default: false
   schedule:
-    - cron: '0 0 * * 1'
+    - cron: "0 0 * * 1"
 permissions:
   contents: read
 jobs:
@@ -35,10 +35,6 @@ jobs:
           key: ubuntu-tflint-${{ hashFiles('.tflint.hcl') }}
       - uses: terraform-linters/setup-tflint@v4
         name: Setup TFLint
-        with:
-          tflint_version: v3.1.1
-      - name: Show version
-        run: tflint --version
       - name: Init TFLint
         run: tflint --init
         env:
