@@ -11,7 +11,7 @@ on:
       - main
     paths:
       - "terraform/**"
-  workflow_dispatch: # needs to be in default branch before you get the UI option to manually run though
+  workflow_dispatch:
     inputs:
       debug:
         description: "Debug mode"
