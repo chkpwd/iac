@@ -5,7 +5,7 @@ resource "random_password" "temp_password" {
 }
 
 resource "authentik_user" "main" {
-  email = "authentik@chkpwd.com"
+  email    = "authentik@chkpwd.com"
   username = "chkpwd"
   name     = "Bryan Jones"
   password = data.external.bws_lookup.result["ns-security-authentik_main_user_password"]

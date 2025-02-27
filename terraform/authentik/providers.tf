@@ -10,7 +10,7 @@ terraform {
       version = "3.7.1"
     }
     external = {
-      source = "hashicorp/external"
+      source  = "hashicorp/external"
       version = "~> 2"
     }
   }
@@ -19,7 +19,7 @@ terraform {
 data "external" "bws_lookup" {
   program = ["python3", "../bws_lookup.py"]
   query = {
-    key = "ns-security-authentik,ns-tools-miniflux,infra-media-secrets,ns-tools-miniflux,ns-tools-immich,infra-semaphore-secrets"
+    key       = "ns-security-authentik,ns-tools-miniflux,infra-media-secrets,ns-tools-miniflux,ns-tools-immich,infra-semaphore-secrets"
     authentik = "ns-security-authentik_bootstrap_token"
   }
 }
