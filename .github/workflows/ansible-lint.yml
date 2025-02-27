@@ -1,0 +1,27 @@
+---
+name: Ansible Lint
+on:
+  push:
+    branches: [main]
+    paths: ["ansible/**"]
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: "Debug mode"
+        type: boolean
+        required: false
+        default: false
+permissions:
+  contents: read
+jobs:
+  lint:
+    name: Ansible Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run ansible-lint
+        uses: ansible/ansible-lint@main
+        with:
+          setup_python: "true"
+          working_directory: "ansible/"
+          requirements_file: "ansible/requirements.txt"
