@@ -55,47 +55,53 @@ terraform
 ```
 
 #### Core Components
+
 ##### bws-cache
+
 Securely retrieves secrets into the Terraform state by making API requests to a secrets management service (like Bitwarden) using an access token. By leveraging the [bws-cache](https://github.com/RippleFCL/bws-cache), it ensures sensitive information is dynamically fetched and securely passed into the Terraform state without hardcoding secrets, minimizing exposure risks.
 
 <details>
   <summary>Example</summary>
 
-  ```python
-  [...]
-  for key in key_name:
-    bws_response = requests.get(
-        f"http://mgmt-srv-01:5000/key/{key}",
-        headers={"Authorization": f"Bearer {access_token}"},
-        timeout=10,
-    ).json()
+```python
+[...]
+for key in key_name:
+  bws_response = requests.get(
+      f"http://mgmt-srv-01:5000/key/{key}",
+      headers={"Authorization": f"Bearer {access_token}"},
+      timeout=10,
+  ).json()
 
-    logging.debug(bws_response)
+  logging.debug(bws_response)
 
-    try:
-        results.append(bws_response['value'])
-    except KeyError as exc:
-        raise InvalidToken(
-            "Token is invalid or does not have permissions to read value"
-        ) from exc
-  [...]
-  ```
-  ```
-  resource "radarr_download_client_sabnzbd" "sabnzbd" {
-    enable         = true
-    priority       = 1
-    name           = "sabnzbd"
-    host           = "sabnzbd.${var.cluster_media_domain}"
-    url_base       = "/"
-    port           = var.ports["sabnzbd"]
-    movie_category = "movies"
-    api_key        = data.external.bws_lookup.result["infra-media-secrets_sabnzbd_api_key"]
-  }
-  ```
+  try:
+      results.append(bws_response['value'])
+  except KeyError as exc:
+      raise InvalidToken(
+          "Token is invalid or does not have permissions to read value"
+      ) from exc
+[...]
+```
+
+```
+resource "radarr_download_client_sabnzbd" "sabnzbd" {
+  enable         = true
+  priority       = 1
+  name           = "sabnzbd"
+  host           = "sabnzbd.${var.cluster_media_domain}"
+  url_base       = "/"
+  port           = var.ports["sabnzbd"]
+  movie_category = "movies"
+  api_key        = data.external.bws_lookup.result["infra-media-secrets_sabnzbd_api_key"]
+}
+```
+
 </details>
 
 ### Ansible
+
 #### Core Components
+
 N/A
 
 ## Equipment
@@ -104,29 +110,32 @@ N/A
 <summary>Kubernetes</summary>
 
 | Name      | Device       | CPU      | OS Disk  | Data Disk | RAM  | OS     | Purpose              |
-|-----------|--------------|----------|----------|-----------|------|--------|----------------------|
+| --------- | ------------ | -------- | -------- | --------- | ---- | ------ | -------------------- |
 | ct-k3s-01 | Lenovo M710q | i5-6500T | 64GB SSD | 1TB NVME  | 32GB | Kairos | control-plane/worker |
 | ct-k3s-02 | Lenovo M710q | i5-6500T | 64GB SSD | 1TB NVME  | 32GB | Kairos | control-plane/worker |
 | ct-k3s-03 | Lenovo M710q | i5-6500T | 64GB SSD | 1TB NVME  | 32GB | Kairos | control-plane/worker |
+
 </details>
 
 <details>
 <summary>Servers</summary>
 
-| Name     | Device        | CPU        | OS Disk    | Data Disk     | RAM   | OS           | Purpose        |
-|----------|---------------|------------|------------|---------------|-------|--------------|----------------|
-| WhiteBox | Custom        | TR 2970W   | 128GB      | 6TB           | 128GB | Proxmox      | VM/Containers  |
-| Synology | RS819         | -          | -          | 4x4TB SHR     | -     | DSM 7        | Storage        |
-| mgmt-pi  | Raspberry Pi4 | Cortex A72 | 64GB SSD   | -             | 8GB   | Debian 12    | Misc Software  |
+| Name     | Device        | CPU        | OS Disk  | Data Disk | RAM   | OS        | Purpose       |
+| -------- | ------------- | ---------- | -------- | --------- | ----- | --------- | ------------- |
+| WhiteBox | Custom        | TR 2970W   | 128GB    | 6TB       | 128GB | Proxmox   | VM/Containers |
+| Synology | RS819         | -          | -        | 4x4TB SHR | -     | DSM 7     | Storage       |
+| mgmt-pi  | Raspberry Pi4 | Cortex A72 | 64GB SSD | -         | 8GB   | Debian 12 | Misc Software |
+
 </details>
 
 <details>
 <summary>Network</summary>
 
-| Device             | Purpose          |
-|--------------------|------------------|
-| Dell 7040          | Network - Router |
-| TL-SG1016PE        | Network - Switch |
+| Device      | Purpose          |
+| ----------- | ---------------- |
+| Dell 7040   | Network - Router |
+| TL-SG1016PE | Network - Switch |
+
 </details>
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
