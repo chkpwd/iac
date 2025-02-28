@@ -1,0 +1,21 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+tasks:
+  add-helm-repos:
+    desc: Add all helm repos to helm
+    vars:
+      KS_DIR: "{{.K8S_DIR}}/infra"
+    preconditions:
+      - which helm yq
+      - test -d {{.KS_DIR}}
+    cmds:
+      - for file in {{.KS_DIR}}/sources/helm-repos/*.yml; do
+            name=$(yq -r '.metadata.name' $file);
+            url=$(yq -r '.spec.url' $file);
+            if [ "$name" != "null" ]; then
+                helm repo add "$name" "$url";
+            fi;
+        done;
+      - helm repo update
