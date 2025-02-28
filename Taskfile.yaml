@@ -1,0 +1,28 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+set:
+  - pipefail
+shopt:
+  - globstar
+
+includes:
+  flux: kubernetes/.taskfiles/flux/Taskfile.yaml
+  k8s: kubernetes/.taskfiles/k8s/Taskfile.yaml
+
+vars:
+  K8S_DIR: "{{.ROOT_DIR}}/kubernetes"
+
+env:
+  KUBECONFIG: "{{.KUBECONFIG}}"
+
+tasks:
+  default:
+    silent: true
+    cmd: task --list
+
+  noop:
+    internal: true
+    silent: true
+    cmd: noop() { :; }
