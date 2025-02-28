@@ -12,6 +12,11 @@ spec:
     kind: GitRepository
     name: chkpwd-ops
   wait: true
+  healthCheckExprs:
+    - apiVersion: cert-manager.io/v1
+      kind: ClusterIssuer
+      failed: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'False')
+      current: status.conditions.filter(e, e.type == 'Ready').all(e, e.status == 'True')
   interval: 30m
   retryInterval: 1m
   timeout: 5m
