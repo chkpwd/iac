@@ -27,7 +27,7 @@ tasks:
   "*-ks-all":
     desc: Suspend or resume all Flux Kustomizations
     vars:
-      STATE: '{{index .MATCH 0}}'
+      STATE: "{{index .MATCH 0}}"
     preconditions:
       - '[[ "{{.STATE}}" == "suspend" || "{{.STATE}}" == "resume" ]]'
       - which flux kubectl
