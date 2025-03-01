@@ -2,20 +2,26 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: "3"
 
+output:
+  group:
+    error_only: true
+
+vars:
+  HELM_SOURCES_DIR: "{{.K8S_DIR}}/infra/sources/helm-repos"
+
 tasks:
   add-helm-repos:
     desc: Add all helm repos to helm
-    vars:
-      KS_DIR: "{{.K8S_DIR}}/infra"
     preconditions:
       - which helm yq
-      - test -d {{.KS_DIR}}
+      - test -d {{.HELM_SOURCES_DIR}}
+    sources:
+      - '{{.HELM_SOURCES_DIR}}/*.yml'
+      - exclude: '{{.HELM_SOURCES_DIR}}/kustomization.yml'
     cmds:
-      - for file in {{.KS_DIR}}/sources/helm-repos/*.yml; do
-            name=$(yq -r '.metadata.name' $file);
-            url=$(yq -r '.spec.url' $file);
-            if [ "$name" != "null" ]; then
-                helm repo add "$name" "$url";
-            fi;
-        done;
+      - for: sources
+        cmd: |
+          name=$(yq -r '.metadata.name' {{.ITEM}})
+          url=$(yq -r '.spec.url' {{.ITEM}})
+          helm repo add "$name" "$url"
       - helm repo update
