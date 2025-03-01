@@ -136,7 +136,7 @@ spec:
         enabled: true
         ingressClassName: int-ingress
         annotations:
-          cert-manager.io/cluster-issuer: letsencrypt-production
+          cert-manager.io/cluster-issuer: main-issuer
           external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
         hosts: [&prometheus-host "k8s-{{ .Release.Name }}.${LOCAL_DOMAIN}"]
         path: /

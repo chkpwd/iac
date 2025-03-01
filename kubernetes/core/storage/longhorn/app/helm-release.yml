@@ -25,7 +25,7 @@ spec:
       enabled: true
       ingressClassName: int-ingress
       annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-production
+        cert-manager.io/cluster-issuer: main-issuer
         external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
       host: longhorn.${LOCAL_DOMAIN}
       tls: true
