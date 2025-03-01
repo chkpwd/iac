@@ -38,7 +38,7 @@ resource "sonarr_naming" "media_naming_configs" {
   colon_replacement_format   = 4
   standard_episode_format    = "S{season:00}E{episode:00} - {Episode Title} [{Quality Title} {MediaInfo VideoBitDepth}bit {MediaInfo VideoCodec} {MediaInfo VideoDynamicRangeType} {MediaInfo AudioLanguages} {MediaInfo AudioCodec} {MediaInfo AudioChannels} {Preferred Words} -{Release Group}]{{imdb-{ImdbId}}}"
   daily_episode_format       = "{Air-Date} - {Episode Title} [{Quality Title} {MediaInfo VideoBitDepth}bit {MediaInfo VideoCodec} {MediaInfo VideoDynamicRangeType} {MediaInfo AudioLanguages} {MediaInfo AudioCodec} {MediaInfo AudioChannels} {MediaInfo SubtitleLanguages} {Preferred Words} -{Release Group}]{{imdb-{ImdbId}}}"
-  anime_episode_format       = "S{season:00}E{episode:00} - {Episode Title} [{Quality Title} {MediaInfo VideoBitDepth}bit {MediaInfo VideoCodec} {MediaInfo VideoDynamicRangeType} {MediaInfo AudioLanguages} {MediaInfo AudioCodec} {MediaInfo AudioChannels} {Preferred Words} -{Release Group}]{{imdb-{ImdbId}}}"
+  anime_episode_format       = "S{season:00}E{episode:00} - {absolute:000} - {Episode CleanTitle} [{Custom Formats }{Quality Title} {MediaInfo VideoBitDepth}bit {MediaInfo VideoCodec} {MediaInfo VideoDynamicRangeType} {MediaInfo AudioLanguages} {MediaInfo AudioCodec} {MediaInfo AudioChannels} {Preferred Words} -{Release Group}]{{imdb-{ImdbId}}}"
   series_folder_format       = "{Series TitleYear} {imdb-{ImdbId}}"
   season_folder_format       = "Season {season:00}"
   specials_folder_format     = "Season 00"
