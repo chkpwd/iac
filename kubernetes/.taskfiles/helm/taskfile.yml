@@ -15,9 +15,10 @@ tasks:
     preconditions:
       - which helm yq
       - test -d {{.HELM_SOURCES_DIR}}
+    dir: "{{.HELM_SOURCES_DIR}}"
     sources:
-      - '{{.HELM_SOURCES_DIR}}/*.yml'
-      - exclude: '{{.HELM_SOURCES_DIR}}/kustomization.yml'
+      - "{{.HELM_SOURCES_DIR}}/*.yml"
+      - exclude: "{{.HELM_SOURCES_DIR}}/kustomization.yml"
     cmds:
       - for: sources
         cmd: |
