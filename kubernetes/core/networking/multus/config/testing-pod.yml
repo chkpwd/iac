@@ -4,7 +4,13 @@ kind: Pod
 metadata:
   name: samplepod
   annotations:
-    k8s.v1.cni.cncf.io/networks: iot-vlan
+    k8s.v1.cni.cncf.io/networks: |
+      [{
+        "name":"multus-iot",
+        "namespace": "networking",
+        "ips": ["172.16.20.133/24"],
+        "mac": "3e:59:e4:f7:43:08"
+      }]
   labels:
     name: samplepod
 spec:
@@ -21,4 +27,3 @@ spec:
         limits:
           cpu: 10m
           memory: 50Mi
-  automountServiceAccountToken: false
