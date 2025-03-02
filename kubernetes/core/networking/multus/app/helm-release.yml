@@ -8,11 +8,11 @@ spec:
   interval: 15m
   chart:
     spec:
-      chart: multus
-      version: 5.0.7
+      chart: app-template
+      version: 3.7.1
       sourceRef:
         kind: HelmRepository
-        name: angelnu
+        name: bjw-s
         namespace: flux-system
   install:
     remediation:
@@ -21,23 +21,43 @@ spec:
     remediation:
       retries: 3
   values:
-    image:
-      repository: ghcr.io/k8snetworkplumbingwg/multus-cni
-      tag: v4.1.4-thick
-      pullPolicy: &pullPolicy IfNotPresent
-    cni:
-      image:
-        repository: ghcr.io/angelnu/cni-plugins
-        tag: 1.6.2
-        pullPolicy: *pullPolicy
-      paths:
-        config: /etc/cni/net.d
-        bin: /opt/cni/bin
-    resources:
-      requests:
-        cpu: 5m
-        memory: 96Mi
-      limits:
-        memory: 96Mi
-    hostPaths:
-      netns: /var/run/netns
+    controllers:
+      multus:
+        type: daemonset
+        pod:
+          hostNetwork: true
+        initContainers:
+          cni-plugins:
+            image:
+              repository: ghcr.io/buroa/cni-plugins
+              tag: 1.6.2
+        containers:
+          multus:
+            image:
+              repository: ghcr.io/k8snetworkplumbingwg/multus-cni
+              tag: v4.1.4
+            command:
+              - /thin_entrypoint
+            args:
+              - --cleanup-config-on-exit=true
+            resources:
+              requests:
+                cpu: "10m"
+              limits:
+                memory: "512Mi"
+            securityContext:
+              privileged: true
+    persistence:
+      etc-cni-net-d:
+        type: hostPath
+        hostPath: /etc/cni/net.d
+        globalMounts:
+          - path: /host/etc/cni/net.d
+      opt-cni-bin:
+        type: hostPath
+        hostPath: /opt/cni/bin
+        globalMounts:
+          - path: /host/opt/cni/bin
+    serviceAccount:
+      create: true
+      name: multus
