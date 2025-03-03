@@ -1,0 +1,26 @@
+fullnameOverride: external-secrets
+installCRDs: true
+image:
+  repository: ghcr.io/external-secrets/external-secrets
+  tag: v0.14.3
+  pullPolicy: IfNotPresent
+replicaCount: 1
+createOperator: true
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 1000
+  seccompProfile:
+    type: RuntimeDefault
+serviceMonitor:
+  enabled: false
+webhook:
+  serviceMonitor:
+    enabled: false
+certController:
+  serviceMonitor:
+    enabled: false

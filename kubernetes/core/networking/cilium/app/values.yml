@@ -1,0 +1,67 @@
+---
+cni:
+  exclusive: false
+operator:
+  rollOutPods: true
+autoDirectNodeRoutes: true
+bpf:
+  masquerade: true
+bgp:
+  enabled: false
+endpointRoutes:
+  enabled: true
+envoy:
+  enabled: false
+gatewayAPI:
+  enabled: true
+  secretsNamespace:
+    create: false
+    name: kube-system
+hubble:
+  enabled: true
+  relay:
+    enabled: true
+    rollOutPods: true
+  ui:
+    enabled: true
+    rollOutPods: true
+    ingress:
+      enabled: true
+      className: int-ingress
+      annotations:
+        external-dns.alpha.kubernetes.io/target: local.chkpwd.com
+      hosts:
+        - "hubble.local.chkpwd.com"
+ipam:
+  mode: kubernetes
+ipv4NativeRoutingCIDR: 10.244.0.0/16
+k8sServiceHost: 127.0.0.1
+k8sServicePort: 7445
+kubeProxyReplacement: true
+kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
+l2announcements:
+  enabled: true
+loadBalancer:
+  algorithm: maglev
+  mode: dsr
+localRedirectPolicy: true
+rollOutCiliumPods: true
+routingMode: native
+securityContext:
+  capabilities:
+    ciliumAgent:
+      - CHOWN
+      - KILL
+      - NET_ADMIN
+      - NET_RAW
+      - IPC_LOCK
+      - SYS_ADMIN
+      - SYS_RESOURCE
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    cleanCiliumState:
+      - NET_ADMIN
+      - SYS_ADMIN
+      - SYS_RESOURCE

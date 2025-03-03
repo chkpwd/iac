@@ -3,16 +3,17 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-networking-cilium
-  namespace: &ns kube-system
+  name: flux-operator
+  namespace: &ns flux-system
 spec:
   targetNamespace: *ns
-  path: ./kubernetes/core/networking/cilium/app
-  prune: true
+  interval: 1h
+  path: ./kubernetes/core/system/flux-operator/app
+  prune: false
+  retryInterval: 2m
   sourceRef:
     kind: GitRepository
-    name: chkpwd-ops
-  wait: false
-  interval: 15m
-  retryInterval: 1m
+    name: flux-system
+    namespace: flux-system
   timeout: 5m
+  wait: false

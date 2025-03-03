@@ -6,3 +6,9 @@ resources:
   - helm-release.yml
   - policy.yml
   - pools.yml
+configMapGenerator:
+  - name: cilium-values
+    files:
+      - values.yml=./values.yml
+configurations:
+  - ./kustomizeconfig.yml

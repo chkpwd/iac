@@ -5,6 +5,8 @@ kind: Kustomization
 resources:
   - intel-device-plugin/ks.yml
   - node-feature-discovery/ks.yml
-  # - system-upgrade/ks.yml
+  - flux-system/ks.yml
   - tofu-controller/ks.yml
   - reloader/ks.yml
+  - flux-instance/ks.yml
+  - flux-operator/ks.yml
