@@ -33,11 +33,13 @@ spec:
       enabled: false
     endpointRoutes:
       enabled: true
+    envoy:
+      enabled: false
     gatewayAPI:
       enabled: true
       secretsNamespace:
         create: false
-        name: networking
+        name: kube-system
     hubble:
       enabled: true
       relay:
@@ -55,9 +57,9 @@ spec:
             - "hubble.${LOCAL_DOMAIN}"
     ipam:
       mode: kubernetes
-    ipv4NativeRoutingCIDR: 172.23.0.0/16
+    ipv4NativeRoutingCIDR: 10.244.0.0/16
     k8sServiceHost: 127.0.0.1
-    k8sServicePort: 6444
+    k8sServicePort: 7445
     kubeProxyReplacement: true
     kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
     l2announcements:
