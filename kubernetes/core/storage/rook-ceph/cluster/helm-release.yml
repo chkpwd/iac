@@ -27,6 +27,7 @@ spec:
     - name: rook-ceph-operator
       namespace: storage
   values:
+    operatorNamespace: storage
     monitoring:
       enabled: true
       createPrometheusRules: true
