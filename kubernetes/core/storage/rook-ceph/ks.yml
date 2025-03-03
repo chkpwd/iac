@@ -9,7 +9,7 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  targetNamespace: storage
+  targetNamespace: rook-ceph
   interval: 1h
   path: ./kubernetes/core/storage/rook-ceph/app
   prune: false
@@ -31,7 +31,7 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  targetNamespace: &ns storage
+  targetNamespace: &ns rook-ceph
   healthChecks:
     - apiVersion: helm.toolkit.fluxcd.io/v2
       kind: HelmRelease
@@ -41,11 +41,11 @@ spec:
       kind: CephCluster
       name: rook-ceph
       namespace: *ns
-  # healthCheckExprs:
-  #   - apiVersion: ceph.rook.io/v1
-  #     kind: CephCluster
-  #     failed: status.ceph.health == 'HEALTH_ERR'
-  #     current: status.ceph.health in ['HEALTH_OK', 'HEALTH_WARN']
+  healthCheckExprs:
+    - apiVersion: ceph.rook.io/v1
+      kind: CephCluster
+      failed: status.ceph.health == 'HEALTH_ERR'
+      current: status.ceph.health in ['HEALTH_OK', 'HEALTH_WARN']
   interval: 1h
   path: ./kubernetes/core/storage/rook-ceph/cluster
   prune: false
