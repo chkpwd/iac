@@ -4,19 +4,19 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app core-storage-rook-ceph
-  namespace: &ns storage
+  namespace: flux-system
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  targetNamespace: *ns
+  targetNamespace: storage
   interval: 1h
   path: ./kubernetes/core/storage/rook-ceph/app
   prune: false
   retryInterval: 2m
   sourceRef:
     kind: GitRepository
-    name: flux-system
+    name: chkpwd-ops
     namespace: flux-system
   timeout: 5m
   wait: false
@@ -26,12 +26,12 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app core-storage-rook-ceph-cluster
-  namespace: &ns storage
+  namespace: flux-system
 spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  targetNamespace: *ns
+  targetNamespace: &ns storage
   healthChecks:
     - apiVersion: helm.toolkit.fluxcd.io/v2
       kind: HelmRelease
@@ -52,6 +52,6 @@ spec:
   retryInterval: 2m
   sourceRef:
     kind: GitRepository
-    name: flux-system
+    name: chkpwd-ops
     namespace: flux-system
   timeout: 15m
