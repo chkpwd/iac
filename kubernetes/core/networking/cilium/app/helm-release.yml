@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -15,76 +15,9 @@ spec:
         kind: HelmRepository
         name: cilium
         namespace: flux-system
-  install:
-    remediation:
-      retries: 3
-  upgrade:
-    remediation:
-      retries: 3
+  valuesFrom:
+    - kind: ConfigMap
+      name: cilium-values
   values:
-    cni:
-      exclusive: false
     operator:
-      rollOutPods: true
-    autoDirectNodeRoutes: true
-    bpf:
-      masquerade: true
-    bgp:
-      enabled: false
-    endpointRoutes:
-      enabled: true
-    envoy:
-      enabled: false
-    gatewayAPI:
-      enabled: true
-      secretsNamespace:
-        create: false
-        name: kube-system
-    hubble:
-      enabled: true
-      relay:
-        enabled: true
-        rollOutPods: true
-      ui:
-        enabled: true
-        rollOutPods: true
-        ingress:
-          enabled: true
-          className: int-ingress
-          annotations:
-            external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
-          hosts:
-            - "hubble.${LOCAL_DOMAIN}"
-    ipam:
-      mode: kubernetes
-    ipv4NativeRoutingCIDR: 10.244.0.0/16
-    k8sServiceHost: 127.0.0.1
-    k8sServicePort: 7445
-    kubeProxyReplacement: true
-    kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
-    l2announcements:
-      enabled: true
-    loadBalancer:
-      algorithm: maglev
-      mode: dsr
-    localRedirectPolicy: true
-    rollOutCiliumPods: true
-    routingMode: native
-    securityContext:
-      capabilities:
-        ciliumAgent:
-          - CHOWN
-          - KILL
-          - NET_ADMIN
-          - NET_RAW
-          - IPC_LOCK
-          - SYS_ADMIN
-          - SYS_RESOURCE
-          - DAC_OVERRIDE
-          - FOWNER
-          - SETGID
-          - SETUID
-        cleanCiliumState:
-          - NET_ADMIN
-          - SYS_ADMIN
-          - SYS_RESOURCE
+      tolerations: []
