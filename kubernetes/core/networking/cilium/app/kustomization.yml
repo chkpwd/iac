@@ -9,6 +9,6 @@ resources:
 configMapGenerator:
   - name: cilium-values
     files:
-      - values.yml=./values.yml
+      - values.yaml=./values.yml
 configurations:
   - ./kustomizeconfig.yml
