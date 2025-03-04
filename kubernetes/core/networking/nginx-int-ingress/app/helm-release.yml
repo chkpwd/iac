@@ -32,7 +32,7 @@ spec:
           lbipam.cilium.io/ips: ${NGINX_LB_INT_ADDRESS}
         type: LoadBalancer
       publishService:
-        enabled: false
+        enabled: true
       ingressClassResource:
         name: int-ingress
         default: true
