@@ -11,6 +11,6 @@ resources:
 configMapGenerator:
   - name: flux-instance-values
     files:
-      - values.yml=./values.yml
+      - values.yaml=./values.yml
 configurations:
   - ./kustomizeconfig.yml
