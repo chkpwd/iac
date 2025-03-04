@@ -4,9 +4,9 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: core-networking-coredns
-  namespace: &ns kube-system
+  namespace: flux-system
 spec:
-  targetNamespace: *ns
+  targetNamespace: kube-system
   path: ./kubernetes/core/networking/coredns/app
   prune: false
   sourceRef:
