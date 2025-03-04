@@ -25,14 +25,14 @@ spec:
       extraArgs:
         default-ssl-certificate: "security/chkpwd-cert-production"
       allowSnippetAnnotations: true
+      enableAnnotationValidations: true
       service:
         enabled: true
         annotations:
           lbipam.cilium.io/ips: ${NGINX_LB_EXT_ADDRESS}
         type: LoadBalancer
-        externalTrafficPolicy: Cluster
       publishService:
-        enabled: true
+        enabled: false
       ingressClassResource:
         name: ext-ingress
         default: false
@@ -45,7 +45,7 @@ spec:
               values:
                 - ext-ingress
       config:
-        annotations-risk-level: "Critical"
+        annotations-risk-level: Critical
         client-header-timeout: 120
         client-body-buffer-size: "100M"
         client-body-timeout: 120
@@ -79,7 +79,7 @@ spec:
             any: true
       resources:
         requests:
-          cpu: 10m
-          memory: 206Mi
+          cpu: 100m
+          memory: 700Mi
         limits:
-          memory: 500Mi
+          memory: 800Mi
