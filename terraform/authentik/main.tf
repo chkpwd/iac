@@ -17,7 +17,7 @@ resource "authentik_outpost" "main" {
     "kubernetes_namespace"           = "security"
     "kubernetes_ingress_annotations" = { "external-dns.alpha.kubernetes.io/exclude" = "true" }
     "kubernetes_service_type"        = "ClusterIP"
-    "kubernetes_disabled_components" = ["traefix middleware"]
+    "kubernetes_disabled_components" = ["traefik middleware"]
     "kubernetes_ingress_class_name"  = "int-ingress"
   })
   service_connection = authentik_service_connection_kubernetes.main.id
