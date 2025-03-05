@@ -38,11 +38,8 @@ spec:
           external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
         ingressClassName: int-ingress
         host:
-          name: &host rook.${LOCAL_DOMAIN}
+          name: rook.${LOCAL_DOMAIN}
           path: /
-        tls:
-          - hosts:
-              - *host
     toolbox:
       enabled: true
     cephClusterSpec:
