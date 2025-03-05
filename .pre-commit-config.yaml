@@ -5,13 +5,6 @@ exclude: |
     | .*\.sops\.toml
   )$
 repos:
-  - repo: local
-    hooks:
-      - id: kairos-config
-        name: Copy Kairos config
-        entry: python3 .pre-commit/move_kairos_config.py
-        language: python
-        files: ansible/roles/kairos/templates/cloud-config.yaml.j2
   - repo: https://github.com/antonbabenko/pre-commit-terraform
     rev: v1.97.4
     hooks:

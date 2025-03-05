@@ -41,3 +41,23 @@ tasks:
       - kubectl --namespace {{.NS}} get persistentvolumeclaims {{.CLAIM}}
       - kubectl browse-pvc --version
       - which kubectl
+
+  get-terminating-namespace-resources:
+    desc: Get resources in a terminating namespace
+    interactive: true
+    vars:
+      NS: '{{.NS | default "default"}}'
+    preconditions:
+      - which kubectl
+    cmds:
+      - kubectl api-resources --verbs=list --namespaced -o name | xargs -n 1 kubectl get --show-kind --ignore-not-found -n {{.NS}}
+
+  scale-resources:
+    desc: Scale all deployments in a namespace
+    interactive: true
+    vars:
+      NS: '{{.NS | default "default"}}'
+    preconditions:
+      - which kubectl
+    cmds:
+      - kubectl scale --all --replicas=1 -n {{.NS}}
