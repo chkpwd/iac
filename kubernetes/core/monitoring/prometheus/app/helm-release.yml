@@ -15,6 +15,8 @@ spec:
         kind: HelmRepository
         name: prometheus-community
         namespace: flux-system
+  driftDetection:
+    mode: disabled
   install:
     remediation:
       retries: 3
