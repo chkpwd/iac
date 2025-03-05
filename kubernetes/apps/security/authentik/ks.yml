@@ -10,7 +10,7 @@ spec:
     labels:
       app.kubernetes.io/name: authentik
   components:
-    - ../../../components/postgres
+    - ../../../_components/postgres
   targetNamespace: security
   path: ./kubernetes/apps/security/authentik/app
   prune: true
@@ -24,4 +24,4 @@ spec:
   postBuild:
     substitute:
       APP: authentik
-      POSTGRES_DATA_SIZE: 1Gi
+      POSTGRES_DATA_SIZE: "1"

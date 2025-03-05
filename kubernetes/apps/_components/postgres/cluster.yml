@@ -3,7 +3,7 @@
 apiVersion: postgres-operator.crunchydata.com/v1beta1
 kind: PostgresCluster
 metadata:
-  name: ${APP}-postgres
+  name: ${APP}
 spec:
   postgresVersion: 15
   patroni: # Synchronous mode
