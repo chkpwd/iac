@@ -15,6 +15,8 @@ spec:
         kind: HelmRepository
         name: rook-ceph
         namespace: flux-system
+  driftDetection:
+    mode: disabled
   install:
     remediation:
       retries: 3
@@ -54,7 +56,7 @@ spec:
         enabled: true
         urlPrefix: /
         ssl: false
-        prometheusEndpoint: http://prometheus-operated.observability.svc.cluster.local:9090
+        prometheusEndpoint: http://prometheus-operated.monitoring.${CLUSTER_DOMAIN}:9090
       mgr:
         modules:
           - name: insights

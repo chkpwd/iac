@@ -15,6 +15,8 @@ spec:
         kind: HelmRepository
         name: rook-ceph
         namespace: flux-system
+  driftDetection:
+    mode: enabled
   install:
     remediation:
       retries: 3
@@ -26,6 +28,7 @@ spec:
   values:
     csi:
       cephFSKernelMountOptions: ms_mode=prefer-crc
+      provisionerReplicas: 1
       enableLiveness: true
       serviceMonitor:
         enabled: true
