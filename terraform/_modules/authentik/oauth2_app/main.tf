@@ -10,7 +10,7 @@ resource "authentik_provider_oauth2" "oauth2" {
   allowed_redirect_uris = var.oauth2_values.allowed_redirect_uris
   signing_key           = data.authentik_certificate_key_pair.generated.id
   lifecycle {
-    ignore_changes      = [client_secret]
+    ignore_changes = [client_secret]
   }
 }
 

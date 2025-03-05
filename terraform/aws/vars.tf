@@ -20,12 +20,12 @@ variable "availability_zone" {
 variable "network_configuration" {
   description = "Network configuration for VPC and public subnet"
   type = object({
-    vpc_cidr            = string
-    public_subnet_cidr  = string
+    vpc_cidr           = string
+    public_subnet_cidr = string
   })
   default = {
-    vpc_cidr            = "10.50.0.0/18"
-    public_subnet_cidr  = "10.50.25.0/24"
+    vpc_cidr           = "10.50.0.0/18"
+    public_subnet_cidr = "10.50.25.0/24"
   }
 }
 

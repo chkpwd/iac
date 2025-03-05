@@ -7,5 +7,5 @@
 # }
 
 # output "mac_address" {
-#     value = vsphere_virtual_machine.main.network_interface[0].mac_address 
+#     value = vsphere_virtual_machine.main.network_interface[0].mac_address
 # }

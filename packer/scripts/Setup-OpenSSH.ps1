@@ -6,11 +6,11 @@
 
 # Enable TLS1.2 permanently
 Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -Force
-Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -Force 
+Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -Force
 
 # Install Nuget
 Install-PackageProvider -Name NuGet -Force
-Set-PSRepository -InstallationPolicy Trusted -Name PSGallery 
+Set-PSRepository -InstallationPolicy Trusted -Name PSGallery
 
 # Enable OpenSSH for Windows
 [bool]$isSSHClientInstalled = Get-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0 | Where-Object { $_.State -eq 'Installed' } | Measure-Object | Select-Object -ExpandProperty Count

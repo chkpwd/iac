@@ -5,8 +5,8 @@ resource "random_password" "main" {
 }
 
 resource "proxmox_virtual_environment_vm" "main" {
-  tags        = var.machine.tags
-  name        = var.machine.name
+  tags = var.machine.tags
+  name = var.machine.name
 
   started = var.machine.started
   on_boot = var.machine.on_boot
@@ -16,14 +16,14 @@ resource "proxmox_virtual_environment_vm" "main" {
   }
 
   node_name = var.node
-  bios = var.machine.bios
+  bios      = var.machine.bios
 
   cpu {
-    cores = var.spec.cpu.cores
+    cores        = var.spec.cpu.cores
     architecture = var.spec.cpu.architecture
-    flags = var.spec.cpu.flags
-    hotplugged = var.spec.cpu.hotplugged
-    type = var.spec.cpu.type
+    flags        = var.spec.cpu.flags
+    hotplugged   = var.spec.cpu.hotplugged
+    type         = var.spec.cpu.type
   }
 
   scsi_hardware = var.spec.scsi_hardware

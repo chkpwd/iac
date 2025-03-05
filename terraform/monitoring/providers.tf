@@ -6,7 +6,7 @@ terraform {
       version = ">= 1.28.2"
     }
     external = {
-      source = "hashicorp/external"
+      source  = "hashicorp/external"
       version = "~> 2"
     }
   }

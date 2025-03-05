@@ -1,5 +1,5 @@
-variable node {
-  type = string
+variable "node" {
+  type    = string
   default = "pve-srv-01"
 }
 

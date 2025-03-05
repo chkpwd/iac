@@ -1,5 +1,5 @@
 # Create new user
-$username = "chkpwd"   
+$username = "chkpwd"
 $password = ConvertTo-SecureString "DefaultPass@" -AsPlainText -Force
 $logFile = "C:\Automation\Packer\new_user.log"
 
@@ -29,7 +29,7 @@ Function New-LocalAdmin {
 	}catch{
 		Write-log -message "Creating local account failed" -level "ERROR"
 	}
-	}    
+	}
 }
 
 Write-Log -message "#########"

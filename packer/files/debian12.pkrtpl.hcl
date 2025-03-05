@@ -15,8 +15,8 @@ d-i netcfg/hostname string deb-12-template
 d-i netcfg/wireless_wep string
 
 ### Account setup - Root
-d-i passwd/root-password password 
-d-i passwd/root-password-again password 
+d-i passwd/root-password password
+d-i passwd/root-password-again password
 
 ### Account setup - Normal
 d-i passwd/user-fullname string ${user_fullname}

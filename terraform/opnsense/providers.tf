@@ -6,7 +6,7 @@ terraform {
       version = "0.11.0"
     }
     external = {
-      source = "hashicorp/external"
+      source  = "hashicorp/external"
       version = "~> 2"
     }
   }
@@ -24,4 +24,3 @@ provider "opnsense" {
   api_key    = data.external.bws_lookup.result["infra-network-secrets_opnsense_api_key"]
   api_secret = data.external.bws_lookup.result["infra-network-secrets_opnsense_api_secret"]
 }
-

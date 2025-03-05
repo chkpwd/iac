@@ -25,9 +25,9 @@ variable "oauth2_values" {
 
 variable "app_values" {
   type = object({
-    meta_publisher = optional(string)
+    meta_publisher   = optional(string)
     meta_description = optional(string)
-    icon_url = optional(string)
+    icon_url         = optional(string)
   })
 }
 

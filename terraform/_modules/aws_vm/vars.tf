@@ -1,18 +1,18 @@
 variable "instance_spec" {
   type = object({
-    name      = string
-    ami       = string
-    type      = string
-    key_name  = string
+    name     = string
+    ami      = string
+    type     = string
+    key_name = string
   })
 }
 
 variable "vpc_security_groups" {
-  type = list(string)
+  type    = list(string)
   default = []
 }
 
 variable "subnet_id" {
-  type = string
+  type    = string
   default = null
 }

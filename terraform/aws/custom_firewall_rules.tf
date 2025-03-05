@@ -26,6 +26,6 @@ resource "aws_security_group" "secondary" {
 
   tags = {
     "Terraform" = "true",
-    "Name" = "custom_rules"
+    "Name"      = "custom_rules"
   }
 }

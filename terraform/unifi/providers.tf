@@ -10,7 +10,7 @@ terraform {
       version = "0.41.0"
     }
     external = {
-      source = "hashicorp/external"
+      source  = "hashicorp/external"
       version = "~> 2"
     }
   }
@@ -32,4 +32,3 @@ provider "unifi" {
 
   site = var.site
 }
-

@@ -47,7 +47,7 @@ resource "aws_security_group" "main" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [ "${data.external.bws_lookup.result["infra-network-secrets_public_ip"]}/32" ]
+    cidr_blocks = ["${data.external.bws_lookup.result["infra-network-secrets_public_ip"]}/32"]
   }
 
   egress {
@@ -59,7 +59,7 @@ resource "aws_security_group" "main" {
 
   tags = {
     "Terraform" = "true",
-    "Name" = "allow_ssh"
+    "Name"      = "allow_ssh"
   }
 }
 

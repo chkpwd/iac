@@ -1,5 +1,5 @@
-variable node {
-  type = string
+variable "node" {
+  type    = string
   default = "pve-srv-01"
 }
 
@@ -10,16 +10,16 @@ variable node {
 
 variable "machine" {
   type = object({
-    name = string
-    id   = number
-    tags = optional(list(string))
+    name         = string
+    id           = number
+    tags         = optional(list(string))
     enable_agent = optional(bool)
-    started = optional(bool)
-    on_boot = optional(bool)
-    bios = optional(string)
+    started      = optional(bool)
+    on_boot      = optional(bool)
+    bios         = optional(string)
     tpm = optional(object({
       datastore_id = optional(string)
-      version = optional(string)
+      version      = optional(string)
     }))
   })
 }
@@ -40,32 +40,32 @@ variable "machine" {
 variable "spec" {
   type = object({
     cpu = optional(object({
-      cores = optional(number)
+      cores        = optional(number)
       architecture = optional(string)
-      flags = optional(list(string))
-      hotplugged = optional(number)
-      type = optional(string)
+      flags        = optional(list(string))
+      hotplugged   = optional(number)
+      type         = optional(string)
     }))
     memory = optional(object({
       dedicated = optional(number)
-      floating = optional(number)
-      shared = optional(number)
+      floating  = optional(number)
+      shared    = optional(number)
     }))
     disk = optional(object({
-      cache = optional(string)
-      size = optional(number)
-      discard = optional(string)
-      iothread = optional(bool)
-      file_id = optional(string)
-      file_format = optional(string)
-      interface = optional(string)
+      cache        = optional(string)
+      size         = optional(number)
+      discard      = optional(string)
+      iothread     = optional(bool)
+      file_id      = optional(string)
+      file_format  = optional(string)
+      interface    = optional(string)
       datastore_id = optional(string)
     }))
     network = optional(object({
-      bridge = optional(string)
+      bridge      = optional(string)
       mac_address = optional(string)
-      model = optional(string)
-      vlan_id = optional(number)
+      model       = optional(string)
+      vlan_id     = optional(number)
     }))
     scsi_hardware = optional(string)
     initialization = optional(object({
@@ -80,7 +80,7 @@ variable "spec" {
         }))
       })
       user_account = optional(object({
-        keys = optional(string)
+        keys     = optional(string)
         password = optional(string)
         username = optional(string)
       }))
@@ -89,18 +89,18 @@ variable "spec" {
   })
   default = {
     cpu = {
-      cores = 1
+      cores      = 1
       hotplugged = 0
     }
     memory = {
       dedicated = 1024
     }
     disk = {
-      cache = "none"
-      size = 8
-      interface = "scsi0"
+      cache        = "none"
+      size         = 8
+      interface    = "scsi0"
       datastore_id = "nvme-pool"
-      iothread = true
+      iothread     = true
     }
     network = {
       bridge = "vmbr1"

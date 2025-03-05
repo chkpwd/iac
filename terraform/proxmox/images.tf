@@ -19,11 +19,11 @@ resource "proxmox_virtual_environment_download_file" "debian_bookworm_netinstall
 }
 
 resource "proxmox_virtual_environment_download_file" "ubuntu_noble_cloud_image" {
-  content_type      = "iso"
-  datastore_id      = "local"
-  file_name         = "ubuntu-24.04-cloudimg-amd64.qcow.iso"
-  node_name         = var.node
-  url               = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
-  checksum          = "c8297d73ab524f33ded309e1f4fb9febdb95ecd66d85a648987bb3432aef6ebe"
+  content_type       = "iso"
+  datastore_id       = "local"
+  file_name          = "ubuntu-24.04-cloudimg-amd64.qcow.iso"
+  node_name          = var.node
+  url                = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+  checksum           = "c8297d73ab524f33ded309e1f4fb9febdb95ecd66d85a648987bb3432aef6ebe"
   checksum_algorithm = "sha256"
 }

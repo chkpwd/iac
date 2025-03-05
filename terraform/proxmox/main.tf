@@ -8,11 +8,11 @@ resource "proxmox_virtual_environment_cluster_options" "options" {
 module "test-vm" {
   source = "../_modules/proxmox_vm"
   machine = {
-    name = "testing-vm"
-    id = 100
-    tags = [ "test1", "test2" ]
+    name         = "testing-vm"
+    id           = 100
+    tags         = ["test1", "test2"]
     enable_agent = true
-    bios = "seabios"
+    bios         = "seabios"
   }
 
   spec = {
@@ -23,10 +23,10 @@ module "test-vm" {
       dedicated = 2048
     }
     disk = {
-      size = 32
-      interface = "scsi0"
+      size         = 32
+      interface    = "scsi0"
       datastore_id = "nvme-pool"
-      file_id = proxmox_virtual_environment_download_file.ubuntu_noble_cloud_image.id
+      file_id      = proxmox_virtual_environment_download_file.ubuntu_noble_cloud_image.id
     }
     network = {
       bridge = "vmbr0"

@@ -9,7 +9,7 @@ resource "cloudflare_email_routing_catch_all" "catch_all" {
   enabled = true
 
   matchers = [{
-    type  = "all"
+    type = "all"
   }]
 
   actions = [{
