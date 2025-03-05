@@ -52,7 +52,7 @@ spec:
             - name: config
               accessMode: ReadWriteOnce
               size: 5Gi
-              storageClass: longhorn-media
+              storageClass: ceph-block
               globalMounts:
                 - path: /config
         pod:

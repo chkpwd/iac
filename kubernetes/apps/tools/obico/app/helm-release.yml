@@ -37,7 +37,7 @@ spec:
       persistence:
         data:
           enabled: true
-          storageClass: longhorn-config
+          storageClass: ceph-block
           accessMode: ReadWriteOnce
           size: 512M
       ingress:

@@ -38,7 +38,7 @@ spec:
             - name: config
               accessMode: ReadWriteOnce
               size: 2Gi
-              storageClass: longhorn-config
+              storageClass: ceph-block
               globalMounts:
                 - path: /usr/lib/unifi/data
         pod:

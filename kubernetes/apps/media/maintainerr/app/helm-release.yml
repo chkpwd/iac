@@ -86,7 +86,7 @@ spec:
       config:
         enabled: true
         accessMode: ReadWriteOnce
-        storageClass: longhorn-media
+        storageClass: ceph-block
         size: 300Mi
         globalMounts:
           - path: /opt/data
