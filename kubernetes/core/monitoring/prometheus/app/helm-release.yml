@@ -61,16 +61,12 @@ spec:
     kubeScheduler:
       enabled: false
     kubeStateMetrics:
-      enabled: false
+      enabled: true
     nodeExporter:
-      enabled: false
+      enabled: true
     grafana:
       enabled: false
-      forceDeployDashboards: true
-      sidecar:
-        dashboards:
-          annotations:
-            grafana_folder: Kubernetes
+      forceDeployDashboards: false # TODO: Create a sync to grab dashboards and deploy to RPI
     prometheusOperator:
       resources:
         requests:

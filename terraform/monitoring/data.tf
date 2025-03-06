@@ -23,8 +23,8 @@ resource "grafana_data_source" "rpi-prometheus" {
 
 resource "grafana_data_source" "local-prometheus" {
   type = "prometheus"
-  name = "kairos-k3s-prometheus"
-  uid  = "kairos-k3s-prometheus"
+  name = "talos-k8s-prometheus"
+  uid  = "talos-k8s-prometheus"
   url  = "https://k8s-prometheus.local.chkpwd.com"
 
   json_data_encoded = jsonencode({
