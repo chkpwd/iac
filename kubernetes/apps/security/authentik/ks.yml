@@ -6,13 +6,17 @@ metadata:
   name: security-authentik
   namespace: flux-system
 spec:
+  targetNamespace: security
+  path: ./kubernetes/apps/security/authentik/app
   commonMetadata:
     labels:
       app.kubernetes.io/name: authentik
   components:
-    - ../../../_components/postgres
-  targetNamespace: security
-  path: ./kubernetes/apps/security/authentik/app
+    - ../../_components/postgres
+  postBuild:
+    substitute:
+      APP: authentik
+      POSTGRES_DATA_SIZE: 1Gi
   prune: true
   sourceRef:
     kind: GitRepository
@@ -21,7 +25,3 @@ spec:
   interval: 30m
   retryInterval: 1m
   timeout: 5m
-  postBuild:
-    substitute:
-      APP: authentik
-      POSTGRES_DATA_SIZE: "1"

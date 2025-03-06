@@ -24,7 +24,7 @@ spec:
         accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: ${POSTGRES_DATA_SIZE}Gi
+            storage: ${POSTGRES_DATA_SIZE}
   users:
     - name: "${APP}"
       databases: ["${APP}"]
