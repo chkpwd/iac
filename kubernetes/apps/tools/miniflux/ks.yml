@@ -11,6 +11,12 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  components:
+    - ../../../_components/postgres
+  postBuild:
+    substitute:
+      APP: *app
+      POSTGRES_DATA_SIZE: 1Gi
   prune: true
   sourceRef:
     kind: GitRepository

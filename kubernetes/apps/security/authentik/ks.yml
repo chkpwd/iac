@@ -15,7 +15,7 @@ spec:
     - ../../../_components/postgres
   postBuild:
     substitute:
-      APP: authentik
+      APP: *app
       POSTGRES_DATA_SIZE: 1Gi
   prune: true
   sourceRef:

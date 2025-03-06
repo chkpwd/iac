@@ -3,8 +3,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  # - miniflux/ks.yml
-  # - linkding/ks.yml
+  - miniflux/ks.yml
+  - linkding/ks.yml
   - it-tools/ks.yml
   - shlink/ks.yml
   - your-spotify/ks.yml

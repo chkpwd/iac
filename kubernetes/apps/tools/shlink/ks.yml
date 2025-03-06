@@ -15,7 +15,7 @@ spec:
     - ../../../_components/postgres
   postBuild:
     substitute:
-      APP: shlink
+      APP: *app
       POSTGRES_DATA_SIZE: 512Mi
   prune: true
   sourceRef:
