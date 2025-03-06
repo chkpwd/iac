@@ -3,19 +3,9 @@ resource "grafana_dashboard" "opnsense-docker-exporter" {
   folder      = grafana_folder.main["infrastructure"].id
 }
 
-resource "grafana_dashboard" "opnsense-builtin-exporter" {
-  config_json = file("files/dashboards/opnsense-builtin-exporter.json")
-  folder      = grafana_folder.main["infrastructure"].id
-}
-
 resource "grafana_dashboard" "apex-legends-exporter" {
   config_json = file("files/dashboards/apex-legends-exporter.json")
   folder      = grafana_folder.main["games"].id
-}
-
-resource "grafana_dashboard" "kubernetes-longhorn" {
-  config_json = file("files/dashboards/kubernetes-longhorn.json")
-  folder      = grafana_folder.main["kubernetes"].id
 }
 
 resource "grafana_dashboard" "kubernetes-api-server" {
