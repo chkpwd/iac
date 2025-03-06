@@ -6,6 +6,12 @@ resource "authentik_service_connection_kubernetes" "main" {
 resource "authentik_outpost" "main" {
   name = "authentik Main Outpost"
   protocol_providers = [
+    module.authentik-app-sonarr.provider_id,
+    module.authentik-app-radarr.provider_id,
+    module.authentik-app-prowlarr.provider_id,
+    module.authentik-app-sabnzbd.provider_id,
+    module.authentik-app-bazarr.provider_id,
+    module.authentik-app-maintainerr.provider_id,
     module.authentik-app-qbittorrent.provider_id,
   ]
   config = jsonencode({

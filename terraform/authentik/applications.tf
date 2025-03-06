@@ -90,25 +90,6 @@ EOF
   access_group = [authentik_group.main.id]
 }
 
-module "authentik-app-mainsail" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "Mainsail"
-  group  = "main"
-
-  proxy_values = {
-    internal = ""
-    external = "https://mainsail.chkpwd.com"
-    mode     = "forward_single"
-  }
-
-  app_values = {
-    meta_description = "Klipper Management System"
-    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/mainsail.png"
-  }
-
-  access_group = [authentik_group.main.id]
-}
-
 module "authentik-app-miniflux" {
   source = "../_modules/authentik/oauth2_app"
   name   = "Miniflux"
@@ -133,25 +114,6 @@ module "authentik-app-miniflux" {
   ]
 }
 
-module "authentik-app-jellyfin" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "Jellyfin"
-  group  = "main"
-
-  proxy_values = {
-    internal = ""
-    external = "https://jellyfin.local.chkpwd.com"
-    mode     = "forward_single"
-  }
-
-  app_values = {
-    meta_description = "Usenet Downloader"
-    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/jellyfin.png"
-  }
-
-  access_group = [authentik_group.main.id]
-}
-
 module "authentik-app-bazarr" {
   source = "../_modules/authentik/proxy_app"
   name   = "Bazarr"
@@ -168,7 +130,7 @@ EOF
   }
 
   app_values = {
-    meta_description = "Series Management"
+    meta_description = "Subtitle Management"
     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/bazarr.png"
   }
 
@@ -194,29 +156,29 @@ module "authentik-app-maintainerr" {
   access_group = [authentik_group.main.id]
 }
 
-module "authentik-app-semaphore-ui" {
-  source = "../_modules/authentik/oauth2_app"
-  name   = "Semaphore UI"
-  group  = "main"
-  oauth2_values = {
-    client_id         = "semaphore"
-    client_secret     = data.external.bws_lookup.result["infra-semaphore-secrets_oauth_client_secret"]
-    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
-    allowed_redirect_uris = [
-      {
-        matching_mode = "strict",
-        url           = "https://semaphore.chkpwd.com/api/auth/oidc/authentik/redirect",
-      }
-    ]
-  }
-  app_values = {
-    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/semaphore.png"
-    meta_description = "Task Runner"
-  }
-  access_group = [
-    authentik_group.main.id
-  ]
-}
+# module "authentik-app-semaphore-ui" {
+#   source = "../_modules/authentik/oauth2_app"
+#   name   = "Semaphore UI"
+#   group  = "main"
+#   oauth2_values = {
+#     client_id         = "semaphore"
+#     client_secret     = data.external.bws_lookup.result["infra-semaphore-secrets_oauth_client_secret"]
+#     property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
+#     allowed_redirect_uris = [
+#       {
+#         matching_mode = "strict",
+#         url           = "https://semaphore.chkpwd.com/api/auth/oidc/authentik/redirect",
+#       }
+#     ]
+#   }
+#   app_values = {
+#     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/semaphore.png"
+#     meta_description = "Task Runner"
+#   }
+#   access_group = [
+#     authentik_group.main.id
+#   ]
+# }
 
 module "authentik-app-immich" {
   source = "../_modules/authentik/oauth2_app"
@@ -250,26 +212,6 @@ module "authentik-app-immich" {
     authentik_group.secondary.id
   ]
 }
-
-# module "authentik-app-stirling-pdf" {
-#   source = "../_modules/authentik/oauth2_app"
-#   name   = "Stirling PDF"
-#   group  = "secondary"
-
-#   oauth2_values = {
-#     client_id         = "stirling-pdf"
-#     client_secret     = data.external.bws_lookup.result["ns-tools-stirling-pdf_oauth2_client_secret"]
-#     property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
-#     redirect_uris     = ["https://stirling-pdf.chkpwd.com/oauth2/oidc/callback"]
-#   }
-
-#   app_values = {
-#     meta_description = "PDF Tool"
-#     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/stirling-pdf.png"
-#   }
-
-#   access_group = [authentik_group.main.id, authentik_group.secondary.id]
-# }
 
 module "authentik-app-qbittorrent" {
   source = "../_modules/authentik/proxy_app"
