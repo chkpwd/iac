@@ -46,6 +46,12 @@ releases:
     version: 0.14.3
     values: ['../../core/security/external-secrets/app/values.yml']
     needs: ['security/cert-manager']
+    # hooks:
+    #   - events: ["postsync"]
+    #     showlogs: true
+    #     command: "kubectl"
+    #     args: ["apply", "-f", "../../core/security/external-secrets/stores/bitwarden-secrets-manager.yml"]
+
 
   - name: flux-operator
     namespace: flux-system
