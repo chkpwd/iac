@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: misc
   path: ./kubernetes/apps/misc/sandbox/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: sandbox
   prune: true
   sourceRef:
     kind: GitRepository

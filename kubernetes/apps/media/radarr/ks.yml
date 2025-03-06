@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: media
   path: ./kubernetes/apps/media/radarr/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: radarr
   prune: true
   sourceRef:
     kind: GitRepository

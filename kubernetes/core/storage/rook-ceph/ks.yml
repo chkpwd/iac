@@ -3,15 +3,15 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app core-storage-rook-ceph
+  name: &app rook-ceph-operator
   namespace: flux-system
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   targetNamespace: rook-ceph
   interval: 1h
   path: ./kubernetes/core/storage/rook-ceph/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
   prune: false
   retryInterval: 2m
   sourceRef:
@@ -25,13 +25,14 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app core-storage-rook-ceph-cluster
+  name: &app rook-ceph-cluster
   namespace: flux-system
 spec:
+  targetNamespace: &ns rook-ceph
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  targetNamespace: &ns rook-ceph
+  path: ./kubernetes/core/storage/rook-ceph/cluster
   healthChecks:
     - apiVersion: helm.toolkit.fluxcd.io/v2
       kind: HelmRelease
@@ -47,7 +48,6 @@ spec:
       failed: status.ceph.health == 'HEALTH_ERR'
       current: status.ceph.health in ['HEALTH_OK', 'HEALTH_WARN']
   interval: 1h
-  path: ./kubernetes/core/storage/rook-ceph/cluster
   prune: false
   retryInterval: 2m
   sourceRef:

@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: media
   path: ./kubernetes/apps/media/maintainerr/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: maintainerr
   prune: true
   sourceRef:
     kind: GitRepository

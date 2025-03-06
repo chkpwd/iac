@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: tools
   path: ./kubernetes/apps/tools/your-spotify/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: your-spotify
   prune: true
   sourceRef:
     kind: GitRepository

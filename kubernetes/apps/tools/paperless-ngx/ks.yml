@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: tools
   path: ./kubernetes/apps/tools/paperless-ngx/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: paperless-ngx
   prune: true
   sourceRef:
     kind: GitRepository

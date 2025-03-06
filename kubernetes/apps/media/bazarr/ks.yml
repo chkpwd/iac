@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: media
   path: ./kubernetes/apps/media/bazarr/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: bazarr
   prune: true
   sourceRef:
     kind: GitRepository

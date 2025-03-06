@@ -3,11 +3,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-multus
+  name: &app multus
   namespace: flux-system
 spec:
   targetNamespace: networking
   path: ./kubernetes/core/networking/multus/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -21,13 +24,16 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-multus-config
+  name: multus-resources
   namespace: flux-system
 spec:
   targetNamespace: networking
   dependsOn:
-    - name: core-multus
-  path: ./kubernetes/core/networking/multus/config
+    - name: multus
+  path: ./kubernetes/core/networking/multus/resources
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: multus
   prune: true
   sourceRef:
     kind: GitRepository

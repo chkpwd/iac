@@ -8,24 +8,9 @@ metadata:
 spec:
   targetNamespace: game-servers
   path: ./kubernetes/apps/game-servers/factorio/app
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: chkpwd-ops
-  wait: false
-  interval: 30m
-  retryInterval: 1m
-  timeout: 5m
----
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: game-servers-factorio-config
-  namespace: flux-system
-spec:
-  targetNamespace: game-servers
-  path: ./kubernetes/apps/game-servers/factorio/config
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: factorio
   prune: true
   sourceRef:
     kind: GitRepository

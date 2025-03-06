@@ -3,13 +3,16 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-networking-external-nginx
+  name: &app external-nginx
   namespace: flux-system
 spec:
   targetNamespace: networking
   dependsOn:
-    - name: core-security-cert-manager
+    - name: cert-manager
   path: ./kubernetes/core/networking/nginx-ext-ingress/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -23,13 +26,16 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-networking-external-nginx-external-names
+  name: external-nginx-external-names
   namespace: flux-system
 spec:
   targetNamespace: networking
   dependsOn:
-    - name: core-networking-external-nginx
+    - name: external-nginx
   path: ./kubernetes/core/networking/nginx-ext-ingress/external-names
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: external-nginx
   prune: true
   sourceRef:
     kind: GitRepository

@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: media
   path: ./kubernetes/apps/media/recyclarr/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: recyclarr
   prune: true
   sourceRef:
     kind: GitRepository

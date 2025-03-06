@@ -9,7 +9,10 @@ metadata:
     substitution.flux.home.arpa/enabled: "true"
 spec:
   targetNamespace: misc
-  path: ./kubernetes/apps/misc/winxuu/app
+  path: ./kubernetes/apps/misc/winxuu/winxuu
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: winxuu
   prune: true
   sourceRef:
     kind: GitRepository

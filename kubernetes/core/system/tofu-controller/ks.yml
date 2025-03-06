@@ -3,11 +3,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-flux-system-tofu-controller
+  name: &app tofu-controller
   namespace: flux-system
 spec:
   targetNamespace: flux-system
   path: ./kubernetes/core/system/tofu-controller/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -21,13 +24,16 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-flux-system-tofu-controller-resources
+  name: tofu-controller-resources
   namespace: flux-system
 spec:
   targetNamespace: flux-system
   dependsOn:
-    - name: core-flux-system-tofu-controller
+    - name: tofu-controller
   path: ./kubernetes/core/system/tofu-controller/resources
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: tofu-controller
   prune: true
   sourceRef:
     kind: GitRepository

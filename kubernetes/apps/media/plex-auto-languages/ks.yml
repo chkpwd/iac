@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: media
   path: ./kubernetes/apps/media/plex-auto-languages/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: plex-auto-languages
   prune: true
   sourceRef:
     kind: GitRepository

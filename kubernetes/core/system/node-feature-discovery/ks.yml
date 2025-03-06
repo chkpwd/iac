@@ -3,11 +3,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-system-node-feature-discovery
+  name: &app node-feature-discovery
   namespace: flux-system
 spec:
   targetNamespace: system
   path: ./kubernetes/core/system/node-feature-discovery/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -16,19 +19,3 @@ spec:
   interval: 30m
   retryInterval: 1m
   timeout: 5m
-# ---
-# apiVersion: kustomize.toolkit.fluxcd.io/v1
-# kind: Kustomization
-# metadata:
-#   name: core-system-node-feature-discovery-features
-#   namespace: flux-system
-# spec:
-#   path: ./kubernetes/core/system/node-feature-discovery-system/features
-#   prune: true
-#   sourceRef:
-#     kind: GitRepository
-#     name: chkpwd-ops
-#   wait: true
-#   interval: 30m
-#   retryInterval: 1m
-#   timeout: 5m

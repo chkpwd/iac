@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: networking
   path: ./kubernetes/apps/networking/unifi-controller/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: unifi-controller
   prune: true
   sourceRef:
     kind: GitRepository

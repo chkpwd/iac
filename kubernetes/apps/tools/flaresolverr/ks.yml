@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: tools
   path: ./kubernetes/apps/tools/flaresolverr/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: flaresolverr
   prune: true
   sourceRef:
     kind: GitRepository

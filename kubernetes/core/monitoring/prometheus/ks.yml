@@ -3,11 +3,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-monitoring-prometheus
+  name: &app prometheus
   namespace: flux-system
 spec:
   targetNamespace: monitoring
   path: ./kubernetes/core/monitoring/prometheus/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
   prune: true
   sourceRef:
     kind: GitRepository

@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: tools
   path: ./kubernetes/apps/tools/linkding/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: linkding
   prune: true
   sourceRef:
     kind: GitRepository

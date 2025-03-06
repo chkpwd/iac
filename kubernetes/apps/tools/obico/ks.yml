@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: tools
   path: ./kubernetes/apps/tools/obico/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: obico
   prune: true
   sourceRef:
     kind: GitRepository

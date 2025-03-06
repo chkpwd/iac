@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: tools
   path: ./kubernetes/apps/tools/it-tools/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: it-tools
   prune: true
   sourceRef:
     kind: GitRepository

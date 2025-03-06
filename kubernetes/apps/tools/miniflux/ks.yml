@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: tools
   path: ./kubernetes/apps/tools/miniflux/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: miniflux
   prune: true
   sourceRef:
     kind: GitRepository

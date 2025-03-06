@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: networking
   path: ./kubernetes/apps/networking/twingate-connector/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: twingate-connector
   prune: true
   sourceRef:
     kind: GitRepository

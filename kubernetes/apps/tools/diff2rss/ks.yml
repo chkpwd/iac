@@ -8,6 +8,9 @@ metadata:
 spec:
   targetNamespace: tools
   path: ./kubernetes/apps/tools/diff2rss/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: diff2rss
   prune: true
   sourceRef:
     kind: GitRepository

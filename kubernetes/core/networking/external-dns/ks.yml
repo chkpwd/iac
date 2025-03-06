@@ -3,11 +3,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: core-networking-external-dns-builtin
+  name: &app external-dns-builtin
   namespace: flux-system
 spec:
   targetNamespace: networking
   path: ./kubernetes/core/networking/external-dns/builtin
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -26,6 +29,9 @@ metadata:
 spec:
   targetNamespace: networking
   path: ./kubernetes/core/networking/external-dns/webhooks
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: external-dns
   prune: true
   sourceRef:
     kind: GitRepository

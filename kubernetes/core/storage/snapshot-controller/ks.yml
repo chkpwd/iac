@@ -3,15 +3,15 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app core-storage-snapshot-controller
+  name: &app snapshot-controller
   namespace: flux-system
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   targetNamespace: storage
   interval: 1h
   path: ./kubernetes/core/storage/snapshot-controller/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
   prune: false
   retryInterval: 2m
   sourceRef:

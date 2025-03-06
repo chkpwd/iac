@@ -6,12 +6,12 @@ metadata:
   name: &app flux-instance
   namespace: &ns flux-system
 spec:
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: *app
   targetNamespace: *ns
   interval: 1h
   path: ./kubernetes/core/system/flux-instance/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
   prune: false
   retryInterval: 2m
   sourceRef:
