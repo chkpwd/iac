@@ -3,14 +3,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: media-jellyseerr
+  name: &app jellyseerr
   namespace: flux-system
 spec:
   targetNamespace: media
   path: ./kubernetes/apps/media/jellyseerr/app
   commonMetadata:
     labels:
-      app.kubernetes.io/name: jellyseerr
+      app.kubernetes.io/name: *app
   prune: true
   sourceRef:
     kind: GitRepository

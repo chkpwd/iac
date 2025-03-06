@@ -3,14 +3,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: media-prowlarr
+  name: &app prowlarr
   namespace: flux-system
 spec:
   targetNamespace: media
   path: ./kubernetes/apps/media/prowlarr/app
   commonMetadata:
     labels:
-      app.kubernetes.io/name: prowlarr
+      app.kubernetes.io/name: *app
   prune: true
   sourceRef:
     kind: GitRepository

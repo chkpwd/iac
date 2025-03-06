@@ -3,14 +3,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: media-maintainerr
+  name: &app maintainerr
   namespace: flux-system
 spec:
   targetNamespace: media
   path: ./kubernetes/apps/media/maintainerr/app
   commonMetadata:
     labels:
-      app.kubernetes.io/name: maintainerr
+      app.kubernetes.io/name: *app
   prune: true
   sourceRef:
     kind: GitRepository

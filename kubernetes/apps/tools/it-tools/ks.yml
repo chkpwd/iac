@@ -3,14 +3,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: tools-it-tools
+  name: &app it-tools
   namespace: flux-system
 spec:
   targetNamespace: tools
   path: ./kubernetes/apps/tools/it-tools/app
   commonMetadata:
     labels:
-      app.kubernetes.io/name: it-tools
+      app.kubernetes.io/name: *app
   prune: true
   sourceRef:
     kind: GitRepository

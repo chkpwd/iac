@@ -3,14 +3,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: tools-paperless-ngx
+  name: &app paperless-ngx
   namespace: flux-system
 spec:
   targetNamespace: tools
   path: ./kubernetes/apps/tools/paperless-ngx/app
   commonMetadata:
     labels:
-      app.kubernetes.io/name: paperless-ngx
+      app.kubernetes.io/name: *app
   prune: true
   sourceRef:
     kind: GitRepository

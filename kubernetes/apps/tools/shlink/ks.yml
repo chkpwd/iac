@@ -3,14 +3,14 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: tools-shlink
+  name: &app shlink
   namespace: flux-system
 spec:
   targetNamespace: tools
   path: ./kubernetes/apps/tools/shlink/app
   commonMetadata:
     labels:
-      app.kubernetes.io/name: shlink
+      app.kubernetes.io/name: *app
   components:
     - ../../../_components/postgres
   postBuild:
