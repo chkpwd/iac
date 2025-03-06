@@ -29,6 +29,8 @@ spec:
             substituteFrom:
               - kind: ConfigMap
                 name: global-vars
+              - kind: Secret
+                name: cluster-secrets
       target:
         group: kustomize.toolkit.fluxcd.io
         kind: Kustomization

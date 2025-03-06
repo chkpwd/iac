@@ -52,8 +52,8 @@ spec:
       repos:
         - name: repo1
           s3:
-            bucket: pg-cluster
-            endpoint: "https://r2.chkpwd.com"
+            bucket: pg-cluster-backups
+            endpoint: "https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
             region: us-east-1
           schedules:
             full: "30 2 * * "
