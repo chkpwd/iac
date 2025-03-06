@@ -8,6 +8,15 @@ metadata:
 spec:
   targetNamespace: tools
   path: ./kubernetes/apps/tools/shlink/app
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: shlink
+  components:
+    - ../../../_components/postgres
+  postBuild:
+    substitute:
+      APP: shlink
+      POSTGRES_DATA_SIZE: 512Mi
   prune: true
   sourceRef:
     kind: GitRepository

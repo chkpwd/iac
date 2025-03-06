@@ -12,7 +12,7 @@ spec:
     labels:
       app.kubernetes.io/name: authentik
   components:
-    - ../../_components/postgres
+    - ../../../_components/postgres
   postBuild:
     substitute:
       APP: authentik
