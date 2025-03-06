@@ -28,6 +28,7 @@ spec:
   users:
     - name: "${APP}"
       databases: ["${APP}"]
+      options: "SUPERUSER"
       password:
         type: AlphaNumeric
   backups:
