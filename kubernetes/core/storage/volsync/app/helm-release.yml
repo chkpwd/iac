@@ -23,7 +23,15 @@ spec:
   upgrade:
     remediation:
       retries: 3
+  dependsOn:
+    - name: snapshot-controller
   values:
     manageCRDs: true
+    replicasCount: 2
     metrics:
       disableAuth: true
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 1026
+      runAsGroup: 100
+      seccompProfile: { type: RuntimeDefault }
