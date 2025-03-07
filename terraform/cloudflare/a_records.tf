@@ -30,6 +30,6 @@ resource "cloudflare_dns_record" "tig" {
   proxied = false
   ttl     = 1
   type    = "A"
-  content = data.tfe_outputs.aws.values.ct-01-ec2_public_ip
+  content = data.external.bws_lookup.result["infra-network-secrets_public_ip"]
   zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
 }
