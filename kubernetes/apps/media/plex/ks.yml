@@ -11,6 +11,12 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  components:
+    - ../../../_components/volsync
+  postBuild:
+    substitute:
+      APP: *app
+      CLAIM: config-plex-0
   prune: true
   sourceRef:
     kind: GitRepository
