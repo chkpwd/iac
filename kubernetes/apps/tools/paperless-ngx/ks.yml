@@ -11,6 +11,13 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  components:
+    - ../../../_components/volsync
+  postBuild:
+    substitute:
+      APP: *app
+
+      CLAIM: config-paperless-ngx
   prune: true
   sourceRef:
     kind: GitRepository
