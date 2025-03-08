@@ -1,7 +1,6 @@
 ---
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: "3"
-
 tasks:
   cleanup-pods:
     desc: Clean up pods with a Failed/Pending/Succeeded phase
@@ -15,7 +14,6 @@ tasks:
               - Pending
               - Succeeded
         cmd: kubectl delete pods --field-selector status.phase={{.ITEM.PHASE}} -A --ignore-not-found=true
-
   sync-externalsecrets:
     desc: Force sync all ExternalSecret resources
     preconditions:
@@ -28,7 +26,6 @@ tasks:
           var: SECRETS
           split: "\n"
         cmd: kubectl --namespace {{splitList "," .ITEM | first}} annotate externalsecret {{splitList "," .ITEM | last}} force-sync="{{now | unixEpoch}}" --overwrite
-
   browse-pvc:
     desc: Mount a PVC to an temp container [NS=default] [CLAIM=required]
     interactive: true
@@ -41,7 +38,6 @@ tasks:
       - kubectl --namespace {{.NS}} get persistentvolumeclaims {{.CLAIM}}
       - kubectl browse-pvc --version
       - which kubectl
-
   get-terminating-namespace-resources:
     desc: Get resources in a terminating namespace
     interactive: true
@@ -51,7 +47,6 @@ tasks:
       - which kubectl
     cmds:
       - kubectl api-resources --verbs=list --namespaced -o name | xargs -n 1 kubectl get --show-kind --ignore-not-found -n {{.NS}}
-
   scale-resources:
     desc: Scale all deployments in a namespace
     interactive: true
