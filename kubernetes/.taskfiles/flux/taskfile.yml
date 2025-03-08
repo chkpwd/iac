@@ -1,7 +1,6 @@
 ---
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: "3"
-
 tasks:
   "*-ks":
     desc: Render a Flux Kustomizations [DIR=required] [NAME] [SRC]
@@ -18,12 +17,7 @@ tasks:
       - which kubectl flux-local
       - test -d {{.KS_DIR}}
     cmds:
-      - flux-local build ks --all-namespaces {{.NS}} --path {{.KS_DIR}} {{.NAME}}
-        | yq -
-        {{ if or (eq .OPERATION "apply") (eq .OPERATION "delete") -}}
-        | kubectl {{.OPERATION}} {{- .OPERATION_ARGS}} --filename -
-        {{ end }}
-
+      - flux-local build ks --all-namespaces {{.NS}} --path {{.KS_DIR}} {{.NAME}} | yq - {{ if or (eq .OPERATION "apply") (eq .OPERATION "delete") -}} | kubectl {{.OPERATION}} {{- .OPERATION_ARGS}} --filename - {{ end }}
   "*-ks-all":
     desc: Suspend or resume all Flux Kustomizations
     vars:
