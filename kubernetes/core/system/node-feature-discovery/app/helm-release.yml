@@ -40,6 +40,12 @@ spec:
         limits:
           memory: 51Mi
     worker:
+      config:
+        core:
+          sources:
+            - pci
+            - system
+            - usb
       securityContext:
         allowPrivilegeEscalation: false
         capabilities:

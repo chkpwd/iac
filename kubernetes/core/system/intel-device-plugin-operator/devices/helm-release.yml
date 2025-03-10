@@ -27,6 +27,7 @@ spec:
     - name: intel-device-plugins-operator
       namespace: system
   values:
-    name: intel-gpu-plugin
+    name: i915
     sharedDevNum: 99
     nodeFeatureRule: false
+    tolerations: []
