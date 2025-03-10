@@ -51,8 +51,15 @@ tasks:
     desc: Scale all deployments in a namespace
     interactive: true
     vars:
-      NS: '{{.NS | default "default"}}'
+      PV: '{{.PV | default ""}}'
     preconditions:
       - which kubectl
     cmds:
       - kubectl scale --all --replicas=1 -n {{.NS}}
+  get-rook-volume-images:
+    desc: Get rook ceph image names for all PVs
+    interactive: true
+    preconditions:
+      - which kubectl
+    cmds:
+      - kubectl get pv {{.PV}} -o 'custom-columns=NAME:.spec.claimRef.name,STORAGECLASS:.spec.storageClassName,IMAGENAME:.spec.csi.volumeAttributes.imageName'
