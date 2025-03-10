@@ -19,7 +19,8 @@ provider "proxmox" {
   tmp_dir   = "/var/tmp"
 
   ssh {
-    agent    = true
-    username = "terraform"
+    agent       = false
+    username    = "root"
+    private_key = file("~/.ssh/main")
   }
 }

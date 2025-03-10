@@ -11,6 +11,8 @@ resource "proxmox_virtual_environment_vm" "main" {
   started = var.machine.started
   on_boot = var.machine.on_boot
 
+  stop_on_destroy = var.stop_on_destroy
+
   agent {
     enabled = var.machine.enable_agent
   }
@@ -56,8 +58,8 @@ resource "proxmox_virtual_environment_vm" "main" {
     content {
       ip_config {
         ipv4 {
-          address = initialization.value.ip_config.ipv4.address
-          gateway = initialization.value.ip_config.ipv4.gateway
+          address = lookup(initialization.value.ip_config.ipv4, "address", null)
+          gateway = lookup(initialization.value.ip_config.ipv4, "gateway", null)
         }
       }
       user_account {

@@ -3,10 +3,10 @@ variable "node" {
   default = "pve-srv-01"
 }
 
-# variable datastore {
-#   type = string
-#   default = "nvme-pool"
-# }
+variable "stop_on_destroy" {
+  type    = string
+  default = true
+}
 
 variable "machine" {
   type = object({
@@ -69,18 +69,14 @@ variable "spec" {
     }))
     scsi_hardware = optional(string)
     initialization = optional(object({
-      ip_config = object({
+      ip_config = optional(object({
         ipv4 = optional(object({
           address = optional(string)
           gateway = optional(string)
         }))
-        ipv6 = optional(object({
-          address = optional(string)
-          gateway = optional(string)
-        }))
-      })
+      }))
       user_account = optional(object({
-        keys     = optional(string)
+        keys     = optional(list(string))
         password = optional(string)
         username = optional(string)
       }))
@@ -106,5 +102,10 @@ variable "spec" {
       bridge = "vmbr1"
     }
     scsi_hardware = "virtio-scsi-pci"
+    initialization = {
+      ip_config = {
+        ipv4 = {}
+      }
+    }
   }
 }
