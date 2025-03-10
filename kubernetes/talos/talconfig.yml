@@ -104,6 +104,13 @@ controlPlane:
             resolveMemberNames: true
             forwardKubeDNSToHost: false
 
+    # Configure udev
+    - |-
+      machine:
+        udev:
+          rules:
+            - SUBSYSTEM=="drm", KERNEL=="renderD*", GROUP="44", MODE="0660" # Intel GPU
+
     # Configure kubelet
     - |-
       machine:
