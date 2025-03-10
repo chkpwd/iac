@@ -1,0 +1,49 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: ubuntu-debug
+  namespace: rook-ceph
+  labels:
+    k8s-app: ubuntu-debug
+spec:
+  selector:
+    matchLabels:
+      name: ubuntu-debug
+  template:
+    metadata:
+      labels:
+        name: ubuntu-debug
+    spec:
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+        - key: storage-node
+          operator: Exists
+          effect: "NoSchedule"
+      containers:
+        - name: ubuntu
+          image: ubuntu
+          command: ["/bin/sh", "-c"]
+          args:
+            - >
+              apt-get update && apt-get install -y gdisk smartmontools hdparm sysstat iperf3 lvm2 && sleep infinity
+          volumeMounts:
+            - mountPath: /hostRoot
+              name: root
+              readOnly: true
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "1024Mi"
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: root
+          hostPath:
+            path: /
+            type: Directory
