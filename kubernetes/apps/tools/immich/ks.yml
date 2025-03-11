@@ -13,6 +13,7 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../_components/postgres
+    - ../../../_components/dragonfly
   postBuild:
     substitute:
       APP: *app
@@ -22,16 +23,14 @@ spec:
         apiVersion: postgres-operator.crunchydata.com/v1beta1
         kind: PostgresCluster
         metadata:
-          name: ${APP}
+          name: immich
         spec:
           databaseInitSQL:
             name: immich-database-init-sql
             key: init.sql
       target:
-        group: postgres-operator.crunchydata.com
-        version: v1beta1
         kind: PostgresCluster
-        name: ${APP}
+        name: *app
   prune: true
   sourceRef:
     kind: GitRepository
