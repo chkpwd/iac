@@ -2,12 +2,12 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: immich-nfs-volume
+  name: immich-nfs
 spec:
-  storageClassName: longhorn-media
+  storageClassName: ceph-block
   capacity:
     storage: 1Mi
-  accessModes: ["ReadWriteMany"]
+  accessModes: ["ReadWriteOnce"]
   nfs:
     server: "nas-srv-01.${LOCAL_DOMAIN}"
     path: /volume1/vault-01/static_media/images
@@ -22,7 +22,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: immich-pvc
+  name: immich-nfs
 spec:
   accessModes: ["ReadWriteOnce"]
   storageClassName: ceph-block
