@@ -56,8 +56,8 @@ spec:
               globalMounts:
                 - path: /config
         pod:
-          # nodeSelector:
-          #   intel.feature.node.kubernetes.io/gpu: "true"
+          nodeSelector:
+            intel.feature.node.kubernetes.io/gpu: "true"
           securityContext:
             runAsUser: 1026
             runAsGroup: &group 100
@@ -101,11 +101,11 @@ spec:
                   - ALL
             resources:
               requests:
-                # gpu.intel.com/i915: 1
+                gpu.intel.com/i915: 1
                 cpu: 200m
                 memory: 1Gi
               limits:
-                # gpu.intel.com/i915: 1
+                gpu.intel.com/i915: 1
                 memory: 2Gi
     service:
       app:
