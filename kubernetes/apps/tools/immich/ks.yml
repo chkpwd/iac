@@ -19,13 +19,10 @@ spec:
       APP: *app
       POSTGRES_DATA_SIZE: 1Gi
   patches:
-    - patch: |-
-        apiVersion: postgres-operator.crunchydata.com/v1beta1
-        kind: PostgresCluster
-        metadata:
-          name: immich
-        spec:
-          databaseInitSQL:
+    - patch: |
+        - op: add
+          path: /spec/databaseInitSQL
+          value:
             name: immich-database-init-sql
             key: init.sql
       target:
