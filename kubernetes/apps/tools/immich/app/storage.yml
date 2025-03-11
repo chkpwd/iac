@@ -24,8 +24,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: immich-pvc
 spec:
-  accessModes: ["ReadWriteMany"]
-  storageClassName: longhorn-media
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: ceph-block
   resources:
     requests:
       storage: 1Mi
@@ -36,7 +36,7 @@ metadata:
   name: immich-machine-learning-cache
 spec:
   accessModes: ["ReadWriteOnce"]
-  storageClassName: longhorn-media
+  storageClassName: ceph-block
   resources:
     requests:
       storage: 3Gi
