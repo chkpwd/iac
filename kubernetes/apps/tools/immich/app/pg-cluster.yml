@@ -7,15 +7,14 @@ metadata:
 spec:
   image: ghcr.io/chkpwd/cdpgvecto.rs:ubi8-16.4-0-v0.3.0
   postgresVersion: 16
-  patroni:
+  patroni: # Synchronous mode
     dynamicConfiguration:
       synchronous_mode: true
-      max_wal_size: 5GB
       postgresql:
+        max_wal_size: 5GB
         synchronous_commit: "on"
         pg_hba:
-          - hostnossl immich immich 172.23.0.0/16 md5
-          - hostnossl all all 10.42.0.0/16 md5
+          - hostnossl immich immich 10.244.0.0/16 md5
           - hostssl all all 0.0.0.0/0 md5
         parameters:
           shared_preload_libraries: "vectors.so"
@@ -24,37 +23,49 @@ spec:
     name: immich-database-init-sql
     key: init.sql
   instances:
-    - dataVolumeClaimSpec:
-        storageClassName: longhorn-database
-        accessModes:
-          - ReadWriteOnce
+    - name: pg-instance
+      metadata:
+        labels:
+          app.kubernetes.io/name: immich-crunchy-postgres
+      dataVolumeClaimSpec:
+        storageClassName: ceph-block
+        accessModes: ["ReadWriteOnce"]
         resources:
           requests:
-            storage: 15Gi
+            storage: 5Gi
   users:
     - name: immich
-      databases:
-        - immich
+      databases: ["immich"]
+      password:
+        type: AlphaNumeric
   backups:
     pgbackrest:
+      configuration:
+        - secret:
+            name: immich-crunchy-postgres
       global:
-        archive-push-queue-max: 4GiB
-        repo1-retention-full: "14"
+        repo1-block: "y"
+        repo1-bundle: "y"
+        repo1-path: /immich
+        repo1-retention-full: "7"
         repo1-retention-full-type: time
+        repo1-s3-uri-style: path
       manual:
         repoName: repo1
         options:
           - --type=full
+      metadata:
+        labels:
+          app.kubernetes.io/name: immich-crunchy-postgres-backup
       repos:
         - name: repo1
-          volume:
-            volumeClaimSpec:
-              storageClassName: longhorn-database
-              accessModes:
-                - "ReadWriteOnce"
-              resources:
-                requests:
-                  storage: 1Gi
+          s3:
+            bucket: pg-cluster-backups
+            endpoint: "https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
+            region: us-east-1
+          schedules:
+            full: "30 2 * * "
+            incremental: "30 2 * * 1-6/2"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -66,8 +77,9 @@ data:
     \c immich
     BEGIN;
     ALTER DATABASE immich OWNER TO immich;
-    CREATE EXTENSION vectors;
-    CREATE EXTENSION earthdistance CASCADE;
+    CREATE EXTENSION IF NOT EXISTS vectors;
+    CREATE EXTENSION IF NOT EXISTS earthdistance CASCADE;
     ALTER DATABASE immich SET search_path TO "$user", public, vectors;
-    ALTER SCHEMA vectors OWNER TO immich;
+    GRANT USAGE ON SCHEMA vectors TO immich;
+    GRANT SELECT ON TABLE pg_vector_index_stat to immich;
     COMMIT;
