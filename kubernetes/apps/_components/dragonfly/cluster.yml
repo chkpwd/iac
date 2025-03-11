@@ -3,9 +3,9 @@
 apiVersion: dragonflydb.io/v1alpha1
 kind: Dragonfly
 metadata:
-  name: authentik-redis
+  name: ${APP}-redis
 spec:
-  image: ghcr.io/dragonflydb/dragonfly:v1.27.1
+  image: ghcr.io/dragonflydb/dragonfly:v1.27.2
   replicas: 1
   env:
     - name: MAX_MEMORY
@@ -17,8 +17,6 @@ spec:
     - --maxmemory=$(MAX_MEMORY)Mi
     - --proactor_threads=2
     - --cluster_mode=emulated
-    - --lock_on_hashtags
-    - --default_lua_flags=allow-undeclared-keys
   resources:
     requests:
       cpu: 10m

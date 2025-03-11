@@ -13,6 +13,7 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../../_components/postgres
+    - ../../../_components/dragonfly
   postBuild:
     substitute:
       APP: *app
