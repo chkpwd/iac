@@ -111,6 +111,11 @@ controlPlane:
           rules:
             - SUBSYSTEM=="drm", KERNEL=="renderD*", GROUP="44", MODE="0660" # Intel GPU
 
+    - |-
+      machine:
+        nodeLabels:
+          intel.feature.node.kubernetes.io/gpu: "true"
+
     # Configure kubelet
     - |-
       machine:
