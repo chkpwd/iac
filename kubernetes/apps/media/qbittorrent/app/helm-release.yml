@@ -37,7 +37,7 @@ spec:
           volumeClaimTemplates:
             - name: config
               accessMode: ReadWriteOnce
-              size: 200Mi
+              size: 1Gi
               storageClass: ceph-block
               globalMounts:
                 - path: /config
