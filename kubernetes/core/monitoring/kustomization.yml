@@ -1,9 +1,0 @@
----
-# yaml-language-server: $schema=https://json.schemastore.org/kustomization
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - metrics-server/ks.yml
-  - prometheus/ks.yml
-  - node-problem-detector/ks.yml
-  - kromgo/ks.yml
