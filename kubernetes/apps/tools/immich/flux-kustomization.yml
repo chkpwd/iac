@@ -21,6 +21,12 @@ spec:
   patches:
     - patch: |
         - op: replace
+          path: /spec/image
+          value: ghcr.io/chkpwd/cdpgvecto.rs:15
+      target:
+        kind: PostgresCluster
+    - patch: |
+        - op: replace
           path: /spec/patroni/dynamicConfiguration/postgresql/pg_hba
           value:
             - hostnossl immich immich 10.244.0.0/16 md5
