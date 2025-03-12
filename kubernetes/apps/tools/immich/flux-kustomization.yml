@@ -20,14 +20,23 @@ spec:
       POSTGRES_DATA_SIZE: 1Gi
   patches:
     - patch: |
-        - op: add
+        - op: replace
           path: /spec/databaseInitSQL
           value:
-            name: immich-database-init-sql
+            name: ${APP}-database-init-sql
             key: init.sql
       target:
         kind: PostgresCluster
-        name: *app
+    - patch: |
+        - op: replace
+          path: /spec/users/0
+          value:
+            name: ${APP}
+            databases: ["${APP}"]
+            password:
+              type: AlphaNumeric
+      target:
+        kind: PostgresCluster
   prune: true
   sourceRef:
     kind: GitRepository
