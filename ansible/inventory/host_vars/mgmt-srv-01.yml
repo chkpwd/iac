@@ -50,3 +50,13 @@ service_definitions:
       PARSE_SECRET_VALUES: "true"
       LOG_LEVEL: "warning"
     ports: ['5000:5000']
+  - name: scanservjs
+    image: sbs20/scanservjs:v3.0.3
+    ports: [8087:8080]
+    env:
+      DEVICES: "airscan:e0:Epson ET-2850;escl:https://epson-printer.{{ local_domain }}:443"
+      PAPERLESS_API_URL: "https://paperless-ngx.{{ local_domain }}"
+      PAPERLESS_API_TOKEN: "e34b6e822935ba85d463433708d823fa11773252"
+    volumes:
+      - "{{ compose_configuration_path }}/scanservjs/output:/var/lib/scanservjs/output"
+      - "{{ compose_configuration_path }}/scanservjs:/etc/scanservjs"
