@@ -23,7 +23,7 @@ spec:
         - op: replace
           path: /spec/databaseInitSQL
           value:
-            name: ${APP}-database-init-sql
+            name: immich-database-init-sql
             key: init.sql
       target:
         kind: PostgresCluster
@@ -31,8 +31,8 @@ spec:
         - op: replace
           path: /spec/users/0
           value:
-            name: ${APP}
-            databases: ["${APP}"]
+            name: immich
+            databases: ["immich"]
             password:
               type: AlphaNumeric
       target:
