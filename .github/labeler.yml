@@ -9,15 +9,28 @@ relative/github:
 relative/kubernetes:
   - changed-files:
       - any-glob-to-any-file: "kubernetes/**/*"
+relative/terraform:
+  - changed-files:
+      - any-glob-to-any-file: "terraform/**/*"
+relative/ansible:
+  - changed-files:
+      - any-glob-to-any-file: "ansible/**/*"
+relative/packer:
+  - changed-files:
+      - any-glob-to-any-file: "packer/**/*"
+relative/containers:
+  - changed-files:
+      - any-glob-to-any-file: "containers/**/*"
 relative/renovate:
   - changed-files:
       - any-glob-to-any-file:
           - ".renovate/**/*"
           - ".renovaterc.json5"
-relative/scripts:
+area/talos:
   - changed-files:
-      - any-glob-to-any-file: "kubernetes/hacks/scripts/**/*"
-relative/justfile:
+      - any-glob-to-any-file: "kubernetes/talos/**/*"
+area/taskfile:
   - changed-files:
       - any-glob-to-any-file:
-          - ".justfile"
+          - ".taskfiles/**/*"
+          - "Taskfile.yaml"
