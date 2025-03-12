@@ -7,13 +7,13 @@ metadata:
   namespace: flux-system
 spec:
   targetNamespace: tools
-  path: ./kubernetes/apps/tools/immich/app
+  path: ./kubernetes/apps/tools/immich
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../../_components/postgres
-    - ../../../_components/dragonfly
+    - ../../_components/postgres
+    - ../../_components/dragonfly
   postBuild:
     substitute:
       APP: *app
