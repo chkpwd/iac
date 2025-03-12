@@ -1,0 +1,17 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": ["Process custom dependencies"],
+      "fileMatch": [
+        "^kubernetes/talos/talconfig\\.ya?ml$"
+      ],
+      "matchStrings": [
+        "# renovate: depName=(?<depName>\\S+) datasource=(?<datasource>\\S+)\n(?<key>\\S+): (?<currentValue>v?\\d[\\d\\.]+)"
+      ],
+      datasourceTemplate: "custom.talos-versions",
+      versioningTemplate: "regex:^(?<major>\\d+)$",
+    },
+  ]
+}
