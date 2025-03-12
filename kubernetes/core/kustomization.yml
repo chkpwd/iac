@@ -3,9 +3,28 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - networking
-  - monitoring
-  - databases
-  - storage
-  - security
-  - system
+  - cert-manager/flux-kustomization.yml
+  - cilium/flux-kustomization.yml
+  - coredns/flux-kustomization.yml
+  - crunchydata-pgo/flux-kustomization.yml
+  - dragonfly-operator/flux-kustomization.yml
+  - external-dns/flux-kustomization.yml
+  - external-secrets/flux-kustomization.yml
+  - flux-instance/flux-kustomization.yml
+  - flux-operator/flux-kustomization.yml
+  - fstrim/flux-kustomization.yml
+  - gateway-api/flux-kustomization.yml
+  - intel-device-plugin-operator/flux-kustomization.yml
+  - kromgo/flux-kustomization.yml
+  - metrics-server/flux-kustomization.yml
+  # - multus/flux-kustomization.yml
+  - nginx-ext-ingress/flux-kustomization.yml
+  - nginx-int-ingress/flux-kustomization.yml
+  - node-problem-detector/flux-kustomization.yml
+  - prometheus/flux-kustomization.yml
+  - reloader/flux-kustomization.yml
+  - rook-ceph/flux-kustomization.yml
+  - snapshot-controller/flux-kustomization.yml
+  # - system-upgrade/flux-kustomization.yml
+  - tofu-controller/flux-kustomization.yml
+  - volsync/flux-kustomization.yml

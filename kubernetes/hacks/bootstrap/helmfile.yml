@@ -15,12 +15,12 @@ releases:
     namespace: kube-system
     chart: cilium/cilium
     version: 1.17.1
-    values: ['../../core/networking/cilium/app/values.yml']
+    values: ['../../core/cilium/values.yml']
   - name: coredns
     namespace: kube-system
     chart: oci://ghcr.io/coredns/charts/coredns
     version: 1.39.1
-    values: ['../../core/networking/coredns/app/values.yml']
+    values: ['../../core/coredns/values.yml']
     needs: ['kube-system/cilium']
   - name: prometheus-operator-crds
     namespace: monitoring
@@ -30,29 +30,29 @@ releases:
     namespace: security
     chart: jetstack/cert-manager
     version: v1.17.1
-    values: ['../../core/security/cert-manager/app/values.yml']
+    values: ['../../core/cert-manager/values.yml']
     needs: ['kube-system/coredns']
   - name: external-secrets
     namespace: security
     chart: oci://ghcr.io/external-secrets/charts/external-secrets
     version: 0.14.3
-    values: ['../../core/security/external-secrets/app/values.yml']
+    values: ['../../core/external-secrets/values.yml']
     needs: ['security/cert-manager']
     # hooks:
     #   - events: ["postsync"]
     #     showlogs: true
     #     command: "kubectl"
-    #     args: ["apply", "-f", "../../core/security/external-secrets/stores/bitwarden-secrets-manager.yml"]
+    #     args: ["apply", "-f", "../../core/external-secrets/stores/bitwarden-secrets-manager.yml"]
   - name: flux-operator
     namespace: flux-system
     chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator
     version: 0.17.0
-    values: ['../../core/system/flux-operator/app/values.yml']
+    values: ['../../core/flux-operator/values.yml']
     needs: ['security/cert-manager']
   - name: flux-instance
     namespace: flux-system
     chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-instance
     version: 0.17.0
     wait: false
-    values: ['../../core/system/flux-instance/app/values.yml']
+    values: ['../../core/flux-instance/values.yml']
     needs: ['flux-system/flux-operator']

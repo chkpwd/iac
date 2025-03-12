@@ -1,0 +1,46 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app internal-nginx
+  namespace: flux-system
+spec:
+  targetNamespace: networking
+  dependsOn:
+    - name: cert-manager
+  path: ./kubernetes/core/networking/nginx-int-ingress/
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 15m
+  retryInterval: 1m
+  timeout: 5m
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: internal-nginx-external-names
+  namespace: flux-system
+spec:
+  targetNamespace: networking
+  dependsOn:
+    - name: internal-nginx
+  path: ./kubernetes/core/networking/nginx-int-ingress/external-names
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: internal-nginx
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  wait: true
+  interval: 15m
+  retryInterval: 1m
+  timeout: 5m
