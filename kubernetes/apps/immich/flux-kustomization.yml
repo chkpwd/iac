@@ -25,8 +25,6 @@ spec:
           value: ghcr.io/chkpwd/cdpgvecto.rs:15
       target:
         kind: PostgresCluster
-        name: immich
-        namespace: tools
     - patch: |
         - op: replace
           path: /spec/patroni/dynamicConfiguration/postgresql/pg_hba
@@ -38,7 +36,7 @@ spec:
         - op: replace
           path: /spec/databaseInitSQL
           value:
-            name: ${APP}-database-init-sql
+            name: immich-database-init-sql
             key: init.sql
       target:
         kind: PostgresCluster
@@ -46,7 +44,7 @@ spec:
         - op: replace
           path: /spec/users/0
           value:
-            name: ${APP}
+            name: immich
             databases: ["immich"]
             password:
               type: AlphaNumeric
