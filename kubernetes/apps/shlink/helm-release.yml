@@ -39,7 +39,7 @@ spec:
               tag: 4.4.6-roadrunner
               pullPolicy: IfNotPresent
             env:
-              DEFAULT_DOMAIN: &host "i.${EXTERNAL_DOMAIN}"
+              DEFAULT_DOMAIN: &host "i.${DOMAIN}"
               IS_HTTPS_ENABLED: true
               GEOLITE_LICENSE_KEY:
                 valueFrom:
@@ -113,7 +113,7 @@ spec:
         enabled: true
         className: ext-ingress
         annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          external-dns.alpha.kubernetes.io/target: ${DOMAIN}
         hosts:
           - host: *host
             paths:

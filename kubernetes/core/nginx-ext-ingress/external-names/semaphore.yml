@@ -18,11 +18,11 @@ metadata:
   name: &app semaphore-ui-external
   annotations:
     external-dns.alpha.kubernetes.io/enabled: "true"
-    external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+    external-dns.alpha.kubernetes.io/target: ${DOMAIN}
 spec:
   ingressClassName: ext-ingress
   rules:
-    - host: semaphore.${EXTERNAL_DOMAIN}
+    - host: semaphore.${DOMAIN}
       http:
         paths:
           - path: /

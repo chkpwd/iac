@@ -17,11 +17,11 @@ kind: Ingress
 metadata:
   name: &app home-assistant-external
   annotations:
-    external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+    external-dns.alpha.kubernetes.io/target: ${DOMAIN}
 spec:
   ingressClassName: ext-ingress
   rules:
-    - host: home-assistant.${EXTERNAL_DOMAIN}
+    - host: home-assistant.${DOMAIN}
       http:
         paths:
           - path: /

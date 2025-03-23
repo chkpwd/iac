@@ -44,7 +44,7 @@ spec:
           enabled: true
           ingressClassName: ext-ingress
           annotations:
-            external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+            external-dns.alpha.kubernetes.io/target: ${DOMAIN}
             nginx.ingress.kubernetes.io/proxy-body-size: "0"
           hosts:
             - host: "{{ .Release.Name }}.${DOMAIN}"

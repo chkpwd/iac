@@ -59,7 +59,7 @@ spec:
     txtOwnerId: "ingress-onprem"
     logLevel: info
     logFormat: text
-    domainFilters: ["${EXTERNAL_DOMAIN}"]
+    domainFilters: ["${DOMAIN}"]
     serviceMonitor:
       enabled: true
     resources:

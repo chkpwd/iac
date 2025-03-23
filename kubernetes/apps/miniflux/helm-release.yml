@@ -39,7 +39,7 @@ spec:
               tag: 2.2.6
               pullPolicy: IfNotPresent
             env:
-              BASE_URL: https://miniflux.${EXTERNAL_DOMAIN}
+              BASE_URL: https://miniflux.${DOMAIN}
               CREATE_ADMIN: "1"
               DATABASE_URL:
                 valueFrom:
@@ -56,7 +56,7 @@ spec:
               FETCH_YOUTUBE_WATCH_TIME: 1
               OAUTH2_PROVIDER: oidc
               OAUTH2_REDIRECT_URL: https://{{ .Release.Name }}.${DOMAIN}/oauth2/oidc/callback
-              OAUTH2_OIDC_DISCOVERY_ENDPOINT: https://authentik.${EXTERNAL_DOMAIN}/application/o/miniflux/
+              OAUTH2_OIDC_DISCOVERY_ENDPOINT: https://authentik.${DOMAIN}/application/o/miniflux/
               OAUTH2_USER_CREATION: "1"
             envFrom:
               - secretRef:
@@ -91,7 +91,7 @@ spec:
     ingress:
       external:
         annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          external-dns.alpha.kubernetes.io/target: ${DOMAIN}
         enabled: true
         className: ext-ingress
         hosts:

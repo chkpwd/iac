@@ -78,9 +78,9 @@ spec:
       app:
         className: ext-ingress
         annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          external-dns.alpha.kubernetes.io/target: ${DOMAIN}
         hosts:
-          - host: "kromgo.${EXTERNAL_DOMAIN}"
+          - host: "kromgo.${DOMAIN}"
             paths:
               - path: /
                 service:

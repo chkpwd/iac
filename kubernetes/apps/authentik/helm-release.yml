@@ -95,10 +95,10 @@ spec:
         enabled: true
         ingressClassName: ext-ingress
         annotations:
-          external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
+          external-dns.alpha.kubernetes.io/target: ${DOMAIN}
           cert-manager.io/cluster-issuer: main-issuer
         hosts:
-          - "authentik.${EXTERNAL_DOMAIN}"
+          - "authentik.${DOMAIN}"
         paths: ["/"]
         pathType: Prefix
       metrics:
