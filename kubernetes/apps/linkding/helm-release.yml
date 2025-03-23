@@ -54,7 +54,7 @@ spec:
                   secretKeyRef:
                     name: linkding
                     key: LD_SUPERUSER_PASSWORD
-              LD_CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+              LD_CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${DOMAIN}"
               LD_DISABLE_URL_VALIDATION: true
               LD_DB_ENGINE: "postgres"
               LD_DB_HOST:
@@ -103,7 +103,7 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
         hosts:
-          - host: "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+          - host: "{{ .Release.Name }}.${DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

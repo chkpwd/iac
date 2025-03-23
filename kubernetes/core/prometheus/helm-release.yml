@@ -88,8 +88,7 @@ spec:
         ingressClassName: int-ingress
         annotations:
           cert-manager.io/cluster-issuer: main-issuer
-          external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
-        hosts: ["k8s-{{ .Release.Name }}.${LOCAL_DOMAIN}"]
+        hosts: ["k8s-{{ .Release.Name }}.${DOMAIN}"]
         pathType: Prefix
       prometheusSpec:
         enableAdminAPI: true

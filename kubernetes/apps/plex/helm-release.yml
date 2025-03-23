@@ -71,7 +71,7 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: "${TZ}"
-              PLEX_ADVERTISE_URL: &plex_lb "${PLEX_LB_ADDRESS}"
+              PLEX_ADVERTISE_URL: &plex_lb "172.16.16.35"
               PLEX_NO_AUTH_NETWORKS: "172.16.16.0/24"
               PLEX_CLAIM:
                 valueFrom:
@@ -120,10 +120,8 @@ spec:
     ingress:
       internal:
         className: int-ingress
-        annotations:
-          external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
         hosts:
-          - host: "{{ .Release.Name }}.${LOCAL_DOMAIN}"
+          - host: "{{ .Release.Name }}.${DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

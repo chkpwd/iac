@@ -28,11 +28,10 @@ metadata:
   name: example-ingress
   annotations:
     ingress.kubernetes.io/rewrite-target: /
-    external-dns.alpha.kubernetes.io/target: local.chkpwd.com
 spec:
   ingressClassName: int-ingress
   rules:
-    - host: nginx.local.chkpwd.com
+    - host: nginx.chkpwd.com
       http:
         paths:
           - path: /apple

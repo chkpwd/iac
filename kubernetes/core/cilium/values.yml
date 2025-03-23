@@ -28,10 +28,8 @@ hubble:
     ingress:
       enabled: true
       className: int-ingress
-      annotations:
-        external-dns.alpha.kubernetes.io/target: local.chkpwd.com
       hosts:
-        - "hubble.local.chkpwd.com"
+        - "hubble.chkpwd.com"
 ipam:
   mode: kubernetes
 ipv4NativeRoutingCIDR: 10.244.0.0/16

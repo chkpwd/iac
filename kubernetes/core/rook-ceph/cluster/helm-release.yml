@@ -34,11 +34,9 @@ spec:
       createPrometheusRules: true
     ingress:
       dashboard:
-        annotations:
-          external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
         ingressClassName: int-ingress
         host:
-          name: rook.${LOCAL_DOMAIN}
+          name: rook.${DOMAIN}
           path: /
     toolbox:
       enabled: true

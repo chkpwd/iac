@@ -35,7 +35,7 @@ spec:
       port: 31497
       externalTrafficPolicy: Cluster
       annotations:
-        lbipam.cilium.io/ips: ${FACTORIO_LB_ADDRESS}
+        lbipam.cilium.io/ips: 172.16.16.36
     resources:
       requests:
         cpu: 500m

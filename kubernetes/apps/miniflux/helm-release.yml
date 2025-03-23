@@ -55,7 +55,7 @@ spec:
               POLLING_FREQUENCY: "15"
               FETCH_YOUTUBE_WATCH_TIME: 1
               OAUTH2_PROVIDER: oidc
-              OAUTH2_REDIRECT_URL: https://{{ .Release.Name }}.${EXTERNAL_DOMAIN}/oauth2/oidc/callback
+              OAUTH2_REDIRECT_URL: https://{{ .Release.Name }}.${DOMAIN}/oauth2/oidc/callback
               OAUTH2_OIDC_DISCOVERY_ENDPOINT: https://authentik.${EXTERNAL_DOMAIN}/application/o/miniflux/
               OAUTH2_USER_CREATION: "1"
             envFrom:
@@ -95,7 +95,7 @@ spec:
         enabled: true
         className: ext-ingress
         hosts:
-          - host: "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+          - host: "{{ .Release.Name }}.${DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

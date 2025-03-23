@@ -53,7 +53,7 @@ spec:
                   deny all;
               }
           hosts:
-            - host: "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+            - host: "{{ .Release.Name }}.${DOMAIN}"
               paths:
                 - path: /
         internal:
@@ -62,7 +62,6 @@ spec:
           annotations:
             nginx.ingress.kubernetes.io/app-root: /admin
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
-            external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
           hosts:
             - host: obico.${LOCAL_DOMAIN}
               paths:

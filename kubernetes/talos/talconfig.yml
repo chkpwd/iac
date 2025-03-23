@@ -18,7 +18,7 @@ cniConfig:
   name: none
 
 nodes:
-  - hostname: ct-k8s-01.local.chkpwd.com
+  - hostname: ct-k8s-01.chkpwd.com
     ipAddress: 172.16.16.10
     controlPlane: true
     installDiskSelector:
@@ -29,7 +29,7 @@ nodes:
         vip:
           ip: *talosControlplaneVip
 
-  - hostname: ct-k8s-02.local.chkpwd.com
+  - hostname: ct-k8s-02.chkpwd.com
     ipAddress: 172.16.16.11
     controlPlane: true
     installDiskSelector:
@@ -40,7 +40,7 @@ nodes:
         vip:
           ip: *talosControlplaneVip
 
-  - hostname: ct-k8s-03.local.chkpwd.com
+  - hostname: ct-k8s-03.chkpwd.com
     ipAddress: 172.16.16.12
     controlPlane: true
     installDiskSelector:

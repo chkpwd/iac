@@ -69,7 +69,7 @@ spec:
         enabled: true
         className: ext-ingress
         hosts:
-          - host: "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+          - host: "{{ .Release.Name }}.${DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix

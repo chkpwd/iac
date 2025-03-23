@@ -47,7 +47,7 @@ spec:
             external-dns.alpha.kubernetes.io/target: ${EXTERNAL_DOMAIN}
             nginx.ingress.kubernetes.io/proxy-body-size: "0"
           hosts:
-            - host: "{{ .Release.Name }}.${EXTERNAL_DOMAIN}"
+            - host: "{{ .Release.Name }}.${DOMAIN}"
               paths:
                 - path: /
                   pathType: Prefix
