@@ -63,7 +63,7 @@ spec:
             nginx.ingress.kubernetes.io/app-root: /admin
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
           hosts:
-            - host: obico.${LOCAL_DOMAIN}
+            - host: obico.${DOMAIN}
               paths:
                 - path: /
     ml-api:

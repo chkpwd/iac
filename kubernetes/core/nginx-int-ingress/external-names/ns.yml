@@ -5,7 +5,7 @@ metadata:
   name: opnsense
 spec:
   type: ExternalName
-  externalName: opnsense.${LOCAL_DOMAIN}
+  externalName: opnsense.${DOMAIN}
   ports:
     - name: http
       port: &port 80
@@ -17,11 +17,11 @@ kind: Ingress
 metadata:
   name: &app opnsense
   annotations:
-    external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
+    external-dns.alpha.kubernetes.io/target: ${DOMAIN}
 spec:
   ingressClassName: int-ingress
   rules:
-    - host: router.${LOCAL_DOMAIN}
+    - host: router.${DOMAIN}
       http:
         paths:
           - path: /

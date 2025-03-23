@@ -5,7 +5,7 @@ metadata:
   name: proxmox
 spec:
   type: ExternalName
-  externalName: pve-srv-01.${LOCAL_DOMAIN}
+  externalName: pve-srv-01.${DOMAIN}
   ports:
     - name: http
       port: &port 8006
@@ -17,11 +17,11 @@ kind: Ingress
 metadata:
   name: &app proxmox
   annotations:
-    external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
+    external-dns.alpha.kubernetes.io/target: ${DOMAIN}
 spec:
   ingressClassName: int-ingress
   rules:
-    - host: proxmox.${LOCAL_DOMAIN}
+    - host: proxmox.${DOMAIN}
       http:
         paths:
           - path: /

@@ -5,7 +5,7 @@ metadata:
   name: scan
 spec:
   type: ExternalName
-  externalName: mgmt-srv-01.${LOCAL_DOMAIN}
+  externalName: mgmt-srv-01.${DOMAIN}
   ports:
     - name: http
       port: &port 8087
@@ -17,11 +17,11 @@ kind: Ingress
 metadata:
   name: &app scan
   annotations:
-    external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
+    external-dns.alpha.kubernetes.io/target: ${DOMAIN}
 spec:
   ingressClassName: int-ingress
   rules:
-    - host: scan.${LOCAL_DOMAIN}
+    - host: scan.${DOMAIN}
       http:
         paths:
           - path: /

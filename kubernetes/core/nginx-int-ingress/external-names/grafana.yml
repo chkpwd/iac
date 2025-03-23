@@ -5,7 +5,7 @@ metadata:
   name: grafana
 spec:
   type: ExternalName
-  externalName: mgmt-srv-01.${LOCAL_DOMAIN}
+  externalName: mgmt-srv-01.${DOMAIN}
   ports:
     - name: http
       port: &port 3000
@@ -17,11 +17,11 @@ kind: Ingress
 metadata:
   name: &app grafana
   annotations:
-    external-dns.alpha.kubernetes.io/target: ${LOCAL_DOMAIN}
+    external-dns.alpha.kubernetes.io/target: ${DOMAIN}
 spec:
   ingressClassName: int-ingress
   rules:
-    - host: grafana.${LOCAL_DOMAIN}
+    - host: grafana.${DOMAIN}
       http:
         paths:
           - path: /
