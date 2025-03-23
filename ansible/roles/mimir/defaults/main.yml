@@ -17,7 +17,7 @@ mimir_containers:
     state: started
 mimir_lb_user: mimir
 mimir_lb_port: 9009
-mimir_s3_endpoint: s3.{{ local_domain }}
+mimir_s3_endpoint: s3.{{ domain }}
 mimir_s3_access_key: ''
 mimir_s3_secret_key: ''
 mimir_s3_blocks_bucket: mimir-blocks
