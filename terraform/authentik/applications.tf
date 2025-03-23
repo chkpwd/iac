@@ -5,7 +5,7 @@ module "authentik-app-sonarr" {
 
   proxy_values = {
     internal        = ""
-    external        = "https://sonarr.local.chkpwd.com"
+    external        = "https://sonarr.chkpwd.com"
     mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
@@ -28,7 +28,7 @@ module "authentik-app-radarr" {
 
   proxy_values = {
     internal        = ""
-    external        = "https://radarr.local.chkpwd.com"
+    external        = "https://radarr.chkpwd.com"
     mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
@@ -51,7 +51,7 @@ module "authentik-app-prowlarr" {
 
   proxy_values = {
     internal        = ""
-    external        = "https://prowlarr.local.chkpwd.com"
+    external        = "https://prowlarr.chkpwd.com"
     mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
@@ -74,7 +74,7 @@ module "authentik-app-sabnzbd" {
 
   proxy_values = {
     internal        = ""
-    external        = "https://sabnzbd.local.chkpwd.com"
+    external        = "https://sabnzbd.chkpwd.com"
     mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
@@ -121,7 +121,7 @@ module "authentik-app-bazarr" {
 
   proxy_values = {
     internal        = ""
-    external        = "https://bazarr.local.chkpwd.com"
+    external        = "https://bazarr.chkpwd.com"
     mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api
@@ -144,7 +144,7 @@ module "authentik-app-maintainerr" {
 
   proxy_values = {
     internal = ""
-    external = "https://maintainerr.local.chkpwd.com"
+    external = "https://maintainerr.chkpwd.com"
     mode     = "forward_single"
   }
 
@@ -220,7 +220,7 @@ module "authentik-app-qbittorrent" {
 
   proxy_values = {
     internal        = ""
-    external        = "https://qbittorrent.local.chkpwd.com"
+    external        = "https://qbittorrent.chkpwd.com"
     mode            = "forward_single"
     skip_path_regex = <<EOF
 ^/api

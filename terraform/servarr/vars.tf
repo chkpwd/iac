@@ -1,6 +1,6 @@
 variable "local_domain" {
   type        = string
-  default     = "local.chkpwd.com"
+  default     = "chkpwd.com"
   description = "Proxy Address"
 }
 

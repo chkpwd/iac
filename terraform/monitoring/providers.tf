@@ -20,6 +20,6 @@ data "external" "bws_lookup" {
 }
 
 provider "grafana" {
-  url  = "https://grafana.local.chkpwd.com"
+  url  = "https://grafana.chkpwd.com"
   auth = data.external.bws_lookup.result["infra-monitoring-secrets_grafana_api_key"]
 }

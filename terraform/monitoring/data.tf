@@ -2,7 +2,7 @@ resource "grafana_data_source" "rpi-prometheus" {
   type                = "prometheus"
   name                = "mgmt-srv-01-prometheus"
   uid                 = "mgmt-srv-01-prometheus"
-  url                 = "https://rpi-prometheus.local.chkpwd.com"
+  url                 = "https://rpi-prometheus.chkpwd.com"
   is_default          = true
   basic_auth_enabled  = true
   basic_auth_username = "chkpwd"
@@ -25,7 +25,7 @@ resource "grafana_data_source" "local-prometheus" {
   type = "prometheus"
   name = "talos-k8s-prometheus"
   uid  = "talos-k8s-prometheus"
-  url  = "https://k8s-prometheus.local.chkpwd.com"
+  url  = "https://k8s-prometheus.chkpwd.com"
 
   json_data_encoded = jsonencode({
     prometheusType    = "Prometheus"
