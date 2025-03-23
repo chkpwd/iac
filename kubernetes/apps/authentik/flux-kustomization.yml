@@ -18,6 +18,12 @@ spec:
     substitute:
       APP: *app
       POSTGRES_DATA_SIZE: 1Gi
+  patches:
+    - patch: |
+        - op: remove
+          path: /spec/backups
+      target:
+        kind: PostgresCluster
   prune: true
   sourceRef:
     kind: GitRepository
