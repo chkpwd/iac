@@ -41,7 +41,7 @@ spec:
           accessMode: ReadWriteOnce
           size: 512M
       ingress:
-        external:
+        main:
           enabled: true
           ingressClassName: ext-ingress
           annotations:
@@ -54,16 +54,6 @@ spec:
               }
           hosts:
             - host: "{{ .Release.Name }}.${DOMAIN}"
-              paths:
-                - path: /
-        internal:
-          enabled: true
-          ingressClassName: int-ingress
-          annotations:
-            nginx.ingress.kubernetes.io/app-root: /admin
-            nginx.ingress.kubernetes.io/ssl-redirect: "true"
-          hosts:
-            - host: obico.${DOMAIN}
               paths:
                 - path: /
     ml-api:
