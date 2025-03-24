@@ -2,6 +2,18 @@
 # yaml-language-server: $schema=https://taskfile.dev/schema.json
 version: "3"
 tasks:
+  erroneous-pods:
+    desc: Get pods with a Failed/Pending/Succeeded phase
+    preconditions:
+      - which kubectl
+    cmds:
+      - for:
+          matrix:
+            PHASE:
+              - Failed
+              - Pending
+              - Succeeded
+        cmd: kubectl get pods --field-selector status.phase={{.ITEM.PHASE}} -A --ignore-not-found=true
   cleanup-pods:
     desc: Clean up pods with a Failed/Pending/Succeeded phase
     preconditions:
