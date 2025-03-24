@@ -15,13 +15,16 @@ resource "authentik_outpost" "main" {
     module.authentik-app-qbittorrent.provider_id,
   ]
   config = jsonencode({
-    "log_level"                      = "info"
-    "authentik_host"                 = "https://authentik.chkpwd.com"
-    "authentik_host_insecure"        = false
-    "object_naming_template"         = "ak-outpost-%(name)s"
-    "kubernetes_replicas"            = 1
-    "kubernetes_namespace"           = "security"
-    "kubernetes_ingress_annotations" = { "external-dns.alpha.kubernetes.io/exclude" = "true" }
+    "log_level"               = "info"
+    "authentik_host"          = "https://authentik.chkpwd.com"
+    "authentik_host_insecure" = false
+    "object_naming_template"  = "ak-outpost-%(name)s"
+    "kubernetes_replicas"     = 1
+    "kubernetes_namespace"    = "security"
+    "kubernetes_ingress_annotations" = {
+      "external-dns.alpha.kubernetes.io/exclude" = "true"
+      "cert-manager.io/cluster-issuer"           = "main-issuer"
+    }
     "kubernetes_service_type"        = "ClusterIP"
     "kubernetes_disabled_components" = ["traefik middleware"]
     "kubernetes_ingress_class_name"  = "int-ingress"
