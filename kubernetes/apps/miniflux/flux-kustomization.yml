@@ -16,7 +16,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      POSTGRES_DATA_SIZE: 2Gi
+      POSTGRES_DATA_SIZE: 5Gi
   prune: true
   sourceRef:
     kind: GitRepository
