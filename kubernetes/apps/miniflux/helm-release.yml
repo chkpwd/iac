@@ -46,7 +46,7 @@ spec:
                   secretKeyRef:
                     name: miniflux-pguser-miniflux
                     key: uri
-              DEBUG: "1"
+              LOG_LEVEL: info
               LOG_DATE_TIME: "1"
               RUN_MIGRATIONS: "1"
               METRICS_COLLECTOR: "1"
