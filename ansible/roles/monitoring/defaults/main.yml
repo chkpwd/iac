@@ -15,7 +15,7 @@ monitoring_service_definitions:
       - "{{ configuration_path }}/prometheus/data:/prometheus/data"
     ports: ['9090:9090']
   - name: grafana
-    image: grafana/grafana:11.5.2
+    image: grafana/grafana:11.6.0
     user: 1000:1000
     env:
       GF_DAGF_FEATURE_TOGGLES_ENABLE: publicDashboards
