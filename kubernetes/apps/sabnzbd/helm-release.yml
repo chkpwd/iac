@@ -110,7 +110,7 @@ spec:
             dependsOn: app
             image:
               repository: ghcr.io/onedr0p/exportarr
-              tag: v2.0.1
+              tag: v2.1.0
             env:
               PORT: &metricsPort 9707
               URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:8080"
