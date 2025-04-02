@@ -24,6 +24,19 @@ spec:
     remediation:
       retries: 3
   values:
+    fullnameOverride: headlamp
+    config:
+      pluginsDir: /build/plugins
+    initContainers:
+      - image: ghcr.io/headlamp-k8s/headlamp-plugin-flux:v0.1.0-beta-2
+        command:
+          - /bin/sh
+          - -c
+          - mkdir -p /build/plugins && cp -r /plugins/* /build/plugins/
+        name: headlamp-plugins
+        volumeMounts:
+          - mountPath: /build/plugins
+            name: headlamp-plugins
     ingress:
       enabled: true
       ingressClassName: int-ingress
@@ -32,19 +45,6 @@ spec:
           paths:
             - path: /
               type: ImplementationSpecific
-    config:
-      pluginsDir: /build/plugins
-    initContainers:
-      - command:
-          - /bin/sh
-          - -c
-          - mkdir -p /build/plugins && cp -r /plugins/* /build/plugins/
-        image: ghcr.io/headlamp-k8s/headlamp-plugin-flux:v0.2.0
-        imagePullPolicy: IfNotPresent
-        name: plugins
-        volumeMounts:
-          - mountPath: /build/plugins
-            name: plugins
     persistentVolumeClaim:
       enabled: true
       storageClassName: ceph-block
@@ -59,3 +59,18 @@ spec:
         persistentVolumeClaim:
           claimName: headlamp
     extraManifests: []
+  # postRenderers:
+  #   - kustomize:
+  #       patches:
+  #         - target:
+  #             group: rbac.authorization.k8s.io
+  #             version: v1
+  #             kind: ClusterRoleBinding
+  #             name: headlamp-admin
+  #           patch: |
+  #             - op: add
+  #               path: /subjects/-
+  #               value:
+  #                 kind: Group
+  #                 name: Admins
+  #                 apiGroup: rbac.authorization.k8s.io
