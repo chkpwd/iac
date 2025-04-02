@@ -33,10 +33,10 @@ spec:
           - /bin/sh
           - -c
           - mkdir -p /build/plugins && cp -r /plugins/* /build/plugins/
-        name: headlamp-plugins
+        name: plugins
         volumeMounts:
           - mountPath: /build/plugins
-            name: headlamp-plugins
+            name: plugins
     ingress:
       enabled: true
       ingressClassName: int-ingress
@@ -58,7 +58,16 @@ spec:
       - name: plugins
         persistentVolumeClaim:
           claimName: headlamp
-    extraManifests: []
+    extraManifests:
+      - |
+        apiVersion: v1
+        kind: Secret
+        type: kubernetes.io/service-account-token
+        metadata:
+          name: {{ include "headlamp.fullname" . }}-admin-token
+          namespace: {{ .Release.Namespace }}
+          annotations:
+            kubernetes.io/service-account.name: {{ include "headlamp.serviceAccountName" . }}
   # postRenderers:
   #   - kustomize:
   #       patches:
