@@ -1,0 +1,61 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.1.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: headlamp
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: headlamp
+      version: 0.30.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: headlamp
+        namespace: flux-system
+  driftDetection:
+    mode: enabled
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    ingress:
+      enabled: true
+      ingressClassName: int-ingress
+      hosts:
+        - host: headlamp.chkpwd.com
+          paths:
+            - path: /
+              type: ImplementationSpecific
+    config:
+      pluginsDir: /build/plugins
+    initContainers:
+      - command:
+          - /bin/sh
+          - -c
+          - mkdir -p /build/plugins && cp -r /plugins/* /build/plugins/
+        image: ghcr.io/headlamp-k8s/headlamp-plugin-flux:v0.2.0
+        imagePullPolicy: IfNotPresent
+        name: plugins
+        volumeMounts:
+          - mountPath: /build/plugins
+            name: plugins
+    persistentVolumeClaim:
+      enabled: true
+      storageClassName: ceph-block
+      accessModes:
+        - ReadWriteOnce
+      size: 1Gi
+    volumeMounts:
+      - mountPath: /build/plugins
+        name: plugins
+    volumes:
+      - name: plugins
+        persistentVolumeClaim:
+          claimName: headlamp
+    extraManifests: []
