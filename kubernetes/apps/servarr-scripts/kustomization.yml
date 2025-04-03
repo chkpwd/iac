@@ -1,0 +1,16 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - cron-job.yml
+  - external-secret.yml
+configMapGenerator:
+  - name: scripts
+    files:
+      - radarr-hunter.sh=./scripts/radarr-hunter.sh
+      # - sonarr-hunter.sh=./scripts/sonarr-hunter.sh
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
