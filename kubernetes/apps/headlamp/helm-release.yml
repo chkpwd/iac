@@ -43,16 +43,35 @@ spec:
           - /bin/sh
           - -c
           - |
-            apk add git && \
-            git clone https://github.com/headlamp-k8s/plugins.git /tmp/plugins && \
+            apk add --no-cache git && \
+            git clone https://github.com/headlamp-k8s/plugins.git /tmp/plugins/ && \
             cd /tmp/plugins/cert-manager && \
             npm install && \
             npm run build && \
-            mkdir -p /plugins/cert-manager && \
+            mkdir -p /build/plugins/cert-manager && \
             cp dist/main.js /build/plugins/cert-manager
         volumeMounts:
+          # - mountPath: /tmp/plugin
+          #   name: cert-manager-plugin
           - mountPath: /plugins
             name: plugins
+    volumeMounts:
+      - mountPath: /build/plugins
+        name: plugins
+    volumes:
+      - name: plugins
+        persistentVolumeClaim:
+          claimName: headlamp
+      # - name: cert-manager-plugin
+      #   image:
+      #     reference: https://github.com/headlamp-k8s/plugins:cert-manager-0.1.0 # needs containerd 2.1.0
+      #     pullPolicy: IfNotPresent
+    persistentVolumeClaim:
+      enabled: true
+      storageClassName: ceph-block
+      accessModes:
+        - ReadWriteOnce
+      size: 1Gi
     ingress:
       enabled: true
       ingressClassName: int-ingress
@@ -61,19 +80,6 @@ spec:
           paths:
             - path: /
               type: ImplementationSpecific
-    persistentVolumeClaim:
-      enabled: true
-      storageClassName: ceph-block
-      accessModes:
-        - ReadWriteOnce
-      size: 1Gi
-    volumeMounts:
-      - mountPath: /build/plugins
-        name: plugins
-    volumes:
-      - name: plugins
-        persistentVolumeClaim:
-          claimName: headlamp
     extraManifests:
       - |
         apiVersion: v1
