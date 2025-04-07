@@ -80,7 +80,7 @@ spec:
           spec:
             initialDelaySeconds: 120
     env:
-      REDIS_HOSTNAME: "immich-redis.security.${CLUSTER_DOMAIN}"
+      REDIS_HOSTNAME: "immich-redis.tools.${CLUSTER_DOMAIN}"
       REDIS_PORT: "6379"
       DB_DATABASE_NAME:
         valueFrom:
