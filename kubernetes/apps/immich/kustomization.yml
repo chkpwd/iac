@@ -5,3 +5,9 @@ kind: Kustomization
 resources:
   - helm-release.yml
   - storage.yml
+configMapGenerator:
+  - name: immich-database-init-sql
+    options:
+      disableNameSuffixHash: true
+    files:
+      - init.sql=./database-init-cm.sql
