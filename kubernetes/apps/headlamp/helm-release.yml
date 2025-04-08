@@ -49,7 +49,7 @@ spec:
             npm install && \
             npm run build && \
             mkdir -p /build/plugins/cert-manager && \
-            cp dist/main.js /build/plugins/cert-manager
+            cp dist/* /build/plugins/cert-manager
         volumeMounts:
           # - mountPath: /tmp/plugin
           #   name: cert-manager-plugin
