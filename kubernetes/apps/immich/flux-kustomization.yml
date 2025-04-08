@@ -28,6 +28,13 @@ spec:
       target:
         kind: PostgresCluster
     - patch: |
+        - op: add
+          path: /spec/args/-
+          value:
+            --default_lua_flags=allow-undeclared-keys
+      target:
+        kind: Dragonfly
+    - patch: |
         - op: replace
           path: /spec/image
           value: ghcr.io/budimanjojo/cdpgvecto.rs:ubi8-15.10-2-v0.3.0
