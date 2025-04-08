@@ -131,10 +131,15 @@ spec:
           cpu: "3000m"
           memory: "2Gi"
     machine-learning:
+      nodeSelector:
+        intel.feature.node.kubernetes.io/gpu: "true"
       resources:
         requests:
+          gpu.intel.com/i915: 1
           cpu: 500m
           memory: 4096M
+        limits:
+          gpu.intel.com/i915: 1
       persistence:
         cache:
           type: pvc
