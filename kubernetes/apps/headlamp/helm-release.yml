@@ -28,7 +28,7 @@ spec:
     config:
       pluginsDir: /build/plugins
     initContainers:
-      - name: cert-manager-plugin
+      - name: headlamp-plugins
         image: node:23-alpine3.21
         command:
           - /bin/sh
