@@ -37,6 +37,73 @@ spec:
       persistence:
         library:
           existingClaim: immich-nfs
+      configuration:
+        ffmpeg:
+          accel: qsv
+          accelDecode: false
+          cqMode: auto
+          preferredHwDevice: auto
+          temporalAQ: false
+        image:
+          colorspace: p3
+          extractEmbedded: false
+          preview:
+            format: jpeg
+          thumbnail:
+            format: webp
+        backup:
+          database:
+            enabled: true
+            cronExpression: 0 02 * * *
+            keepLastAmount: 5
+        # oauth:
+        #   autoLaunch: false
+        #   autoRegister: true
+        #   buttonText: Login with Authentik
+        #   enabled: true
+        #   issuerUrl: https://authentik.chkpwd.com/application/o/immich/
+        passwordLogin:
+          enabled: true
+        newVersionCheck:
+          enabled: false
+        trash:
+          enabled: true
+          days: 30
+        library:
+          scan:
+            enabled: true
+            cronExpression: 0 0 * * *
+          watch:
+            enabled: true
+        logging:
+          enabled: true
+          level: log
+        machineLearning:
+          enabled: true
+          duplicateDetection:
+            enabled: true
+        metadata:
+          faces:
+            import: true
+        notifications:
+          smtp:
+            enabled: false
+        server:
+          externalDomain: ''
+          loginPageMessage: ''
+        storageTemplate:
+          enabled: true
+          hashVerificationEnabled: true
+          template: "{{y}}/{{y}}-{{MM}}-{{dd}}/{{filename}}"
+        templates:
+          email:
+            albumInviteTemplate: ''
+            albumUpdateTemplate: ''
+            welcomeTemplate: ''
+        theme:
+          customCss: ''
+        user:
+          deleteDelay: 7
     server:
       enabled: true
       ingress:
