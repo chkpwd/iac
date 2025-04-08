@@ -125,11 +125,11 @@ spec:
           drop: ["ALL"]
       resources:
         requests:
-          cpu: "10m"
-          memory: "128Mi"
+          cpu: 10m
+          memory: 128Mi
         limits:
-          cpu: "3000m"
-          memory: "2Gi"
+          cpu: 3000m
+          memory: 2Gi
     machine-learning:
       nodeSelector:
         intel.feature.node.kubernetes.io/gpu: "true"
@@ -140,6 +140,8 @@ spec:
           memory: 4096M
         limits:
           gpu.intel.com/i915: 1
+          cpu: 1
+          memory: 6Gi
       persistence:
         cache:
           type: pvc

@@ -13,10 +13,10 @@ spec:
   hostnames:
     - "test.chkpwd.com"
   rules:
-  - matches:
-    - path:
-        type: PathPrefix
-        value: /
-    backendRefs:
-    - name: bazarr
-      port: 6767
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: bazarr
+          port: 6767

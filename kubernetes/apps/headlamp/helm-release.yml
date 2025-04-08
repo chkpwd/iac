@@ -62,10 +62,10 @@ spec:
       - name: plugins
         persistentVolumeClaim:
           claimName: headlamp
-      # - name: cert-manager-plugin
-      #   image:
-      #     reference: https://github.com/headlamp-k8s/plugins:cert-manager-0.1.0 # needs containerd 2.1.0
-      #     pullPolicy: IfNotPresent
+          # - name: cert-manager-plugin
+          #   image:
+          #     reference: https://github.com/headlamp-k8s/plugins:cert-manager-0.1.0 # needs containerd 2.1.0
+          #     pullPolicy: IfNotPresent
     persistentVolumeClaim:
       enabled: true
       storageClassName: ceph-block

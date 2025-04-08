@@ -1,22 +1,17 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/budimanjojo/talhelper/master/pkg/config/schemas/talconfig.json
 clusterName: cattle-k8s
-
 endpoint: https://172.16.16.13:6443
-
 # renovate: depName=ghcr.io/siderolabs/installer datasource=docker
 talosVersion: v1.9.4
 # renovate: depName=ghcr.io/siderolabs/kubelet datasource=docker
 kubernetesVersion: v1.32.2
-
 additionalApiServerCertSans: &sans
   - &talosControlplaneVip 172.16.16.13
   - 127.0.0.1
 additionalMachineCertSans: *sans
-
 cniConfig:
   name: none
-
 nodes:
   - hostname: ct-k8s-01.chkpwd.com
     ipAddress: 172.16.16.10
@@ -28,7 +23,6 @@ nodes:
         dhcp: true
         vip:
           ip: *talosControlplaneVip
-
   - hostname: ct-k8s-02.chkpwd.com
     ipAddress: 172.16.16.11
     controlPlane: true
@@ -39,7 +33,6 @@ nodes:
         dhcp: true
         vip:
           ip: *talosControlplaneVip
-
   - hostname: ct-k8s-03.chkpwd.com
     ipAddress: 172.16.16.12
     controlPlane: true
@@ -50,7 +43,6 @@ nodes:
         dhcp: true
         vip:
           ip: *talosControlplaneVip
-
 controlPlane:
   schematic:
     customization:
@@ -71,7 +63,6 @@ controlPlane:
           - siderolabs/i915
           - siderolabs/intel-ucode
           - siderolabs/mei
-
   patches:
     # Configure containerd
     - |-
@@ -88,13 +79,11 @@ controlPlane:
                 discard_unpacked_layers = false
               [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
                 discard_unpacked_layers = false
-
     # Disable search domain (DHCP is used)
     - |-
       machine:
         network:
           disableSearchDomain: true
-
     # Enable host dns
     - |-
       machine:
@@ -103,19 +92,16 @@ controlPlane:
             enabled: true
             resolveMemberNames: true
             forwardKubeDNSToHost: false
-
     # Configure udev
     - |-
       machine:
         udev:
           rules:
             - SUBSYSTEM=="drm", KERNEL=="renderD*", GROUP="44", MODE="0660" # Intel GPU
-
     - |-
       machine:
         nodeLabels:
           intel.feature.node.kubernetes.io/gpu: "true"
-
     # Configure kubelet
     - |-
       machine:
@@ -125,7 +111,6 @@ controlPlane:
           nodeIP:
             validSubnets:
                 - 172.16.16.0/24
-
     # Enable MutatingAdmissionPolicy
     - |-
       cluster:
@@ -133,7 +118,6 @@ controlPlane:
           extraArgs:
             runtime-config: admissionregistration.k8s.io/v1alpha1=true
             feature-gates: MutatingAdmissionPolicy=true
-
     # Configure cluster
     - |-
       cluster:
@@ -156,14 +140,12 @@ controlPlane:
                         - maxSkew: 1
                           topologyKey: kubernetes.io/hostname
                           whenUnsatisfiable: ScheduleAnyway
-
     # Configure etcd
     - |-
       cluster:
         etcd:
           advertisedSubnets:
             - 172.16.16.0/24
-
     # Configure NFS mount options
     - |
       machine:
@@ -177,7 +159,6 @@ controlPlane:
               hard=True
               noatime=True
               nconnect=16
-
     # Configure static host entries
     - |-
       machine:
@@ -186,7 +167,6 @@ controlPlane:
             - ip: 172.16.16.13
               aliases:
                 - 172.16.16.13
-
     # Configure custom sysctls
     - |-
       machine:
@@ -195,12 +175,10 @@ controlPlane:
           fs.inotify.max_user_watches: 1048576   # Watchdog
           net.core.rmem_max: 67108864            # Cloudflared / QUIC
           net.core.wmem_max: 67108864            # Cloudflared / QUIC
-
     # Disable default API server admission plugins.
     - |-
       - op: remove
         path: /cluster/apiServer/admissionControl
-
     # Enable K8s Talos API Access
     - |-
       machine:
