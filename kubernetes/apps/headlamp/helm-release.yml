@@ -40,20 +40,23 @@ spec:
             git checkout batch_plugin_support
             cd plugins/headlamp-plugin
             npm install
-            bin/headlamp-plugin.js install --source https://artifacthub.io/packages/headlamp/headlamp-plugins/headlamp_cert-manager --folderName cert-manager
-            bin/headlamp-plugin.js install --source https://artifacthub.io/packages/headlamp/headlamp-plugins/headlamp_flux --folderName flux
+            bin/headlamp-plugin.js install --config /build/config.yml --folderName /tmp/all_plugins
             mkdir -p /build/plugins/cert-manager /build/plugins/flux
-            cp -r /tmp/headlamp/plugins/headlamp-plugin/cert-manager/headlamp_cert-manager/* /build/plugins/cert-manager
-            cp -r /tmp/headlamp/plugins/headlamp-plugin/flux/headlamp_flux/* /build/plugins/flux
+            cp -r /tmp/all_plugins/* /build/plugins/
         volumeMounts:
           - mountPath: /build/plugins
             name: plugins
+          - mountPath: /build/config.yml
+            name: headlamp-config
     volumeMounts:
       - mountPath: /build/plugins
         name: plugins
     volumes:
       - name: plugins
         emptyDir: {}
+      - name: headlamp-config
+        configMap:
+          name: headlamp-config
     persistentVolumeClaim:
       enabled: false
     ingress:
