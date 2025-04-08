@@ -80,16 +80,15 @@ spec:
         - name: lib-systemd
           mountPath: /lib/systemd/
           readOnly: true
-        # - name: etc-systemd
-        #   mountPath: /etc/systemd
-        #   readOnly: true
-        # - name: etc-kubernetes
-        #   mountPath: /etc/kubernetes
-        #   readOnly: true
-        # - name: etc-cni-netd
-        #   mountPath: /etc/cni/net.d/
-        #   readOnly: true
-
+          # - name: etc-systemd
+          #   mountPath: /etc/systemd
+          #   readOnly: true
+          # - name: etc-kubernetes
+          #   mountPath: /etc/kubernetes
+          #   readOnly: true
+          # - name: etc-cni-netd
+          #   mountPath: /etc/cni/net.d/
+          #   readOnly: true
       volumes:
         - name: var-lib-etcd
           hostPath:
@@ -106,12 +105,12 @@ spec:
         - name: lib-systemd
           hostPath:
             path: /lib/systemd
-        # - name: etc-systemd
-        #   hostPath:
-        #     path: /etc/systemd
-        # - name: etc-kubernetes
-        #   hostPath:
-        #     path: /etc/kubernetes
-        # - name: etc-cni-netd
-        #   hostPath:
-        #     path: /etc/cni/net.d/
+      # - name: etc-systemd
+      #   hostPath:
+      #     path: /etc/systemd
+      # - name: etc-kubernetes
+      #   hostPath:
+      #     path: /etc/kubernetes
+      # - name: etc-cni-netd
+      #   hostPath:
+      #     path: /etc/cni/net.d/
