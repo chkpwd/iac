@@ -43,6 +43,8 @@ spec:
         repo1-retention-full: "7"
         repo1-retention-full-type: time
         repo1-s3-uri-style: path
+      jobs:
+        ttlSecondsAfterFinished: 60
       manual:
         repoName: repo1
         options:
@@ -57,5 +59,6 @@ spec:
             endpoint: "https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
             region: us-east-1
           schedules:
-            full: "30 2 * * *"
-            incremental: "30 2 * * 1-6/2"
+            full: "0 3 * * 0"
+            differential: "0 5 * * 1-6"
+            incremental: "0 6-23 * * *"
