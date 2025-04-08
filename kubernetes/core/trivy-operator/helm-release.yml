@@ -63,7 +63,7 @@ spec:
     nodeCollector:
       useNodeSelector: false
       # -- node-collector pod volume mounts definition for collecting config files information
-      # -- those commented out are due to Talos having a ReadOnly fs
+      # -- removed a few volumes due to Talos having a ReadOnly fs
       volumeMounts:
         - name: var-lib-etcd
           mountPath: /var/lib/etcd
@@ -77,18 +77,12 @@ spec:
         - name: var-lib-kube-controller-manager
           mountPath: /var/lib/kube-controller-manager
           readOnly: true
-        - name: lib-systemd
-          mountPath: /lib/systemd/
+        - name: etc-kubernetes
+          mountPath: /etc/kubernetes
           readOnly: true
-          # - name: etc-systemd
-          #   mountPath: /etc/systemd
-          #   readOnly: true
-          # - name: etc-kubernetes
-          #   mountPath: /etc/kubernetes
-          #   readOnly: true
-          # - name: etc-cni-netd
-          #   mountPath: /etc/cni/net.d/
-          #   readOnly: true
+        - name: etc-cni-netd
+          mountPath: /etc/cni/net.d/
+          readOnly: true
       volumes:
         - name: var-lib-etcd
           hostPath:
@@ -102,15 +96,9 @@ spec:
         - name: var-lib-kube-controller-manager
           hostPath:
             path: /var/lib/kube-controller-manager
-        - name: lib-systemd
+        - name: etc-kubernetes
           hostPath:
-            path: /lib/systemd
-      # - name: etc-systemd
-      #   hostPath:
-      #     path: /etc/systemd
-      # - name: etc-kubernetes
-      #   hostPath:
-      #     path: /etc/kubernetes
-      # - name: etc-cni-netd
-      #   hostPath:
-      #     path: /etc/cni/net.d/
+            path: /etc/kubernetes
+        - name: etc-cni-netd
+          hostPath:
+            path: /etc/cni/net.d/
