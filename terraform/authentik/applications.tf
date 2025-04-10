@@ -156,29 +156,29 @@ module "authentik-app-maintainerr" {
   access_group = [authentik_group.main.id]
 }
 
-# module "authentik-app-semaphore-ui" {
-#   source = "../_modules/authentik/oauth2_app"
-#   name   = "Semaphore UI"
-#   group  = "main"
-#   oauth2_values = {
-#     client_id         = "semaphore"
-#     client_secret     = data.external.bws_lookup.result["infra-semaphore-secrets_oauth_client_secret"]
-#     property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
-#     allowed_redirect_uris = [
-#       {
-#         matching_mode = "strict",
-#         url           = "https://semaphore.chkpwd.com/api/auth/oidc/authentik/redirect",
-#       }
-#     ]
-#   }
-#   app_values = {
-#     icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/semaphore.png"
-#     meta_description = "Task Runner"
-#   }
-#   access_group = [
-#     authentik_group.main.id
-#   ]
-# }
+module "authentik-app-semaphore-ui" {
+  source = "../_modules/authentik/oauth2_app"
+  name   = "Semaphore UI"
+  group  = "main"
+  oauth2_values = {
+    client_id         = "semaphore"
+    client_secret     = data.external.bws_lookup.result["infra-semaphore-secrets_oauth_client_secret"]
+    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
+    allowed_redirect_uris = [
+      {
+        matching_mode = "strict",
+        url           = "https://semaphore.chkpwd.com/api/auth/oidc/authentik/redirect",
+      }
+    ]
+  }
+  app_values = {
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/semaphore.png"
+    meta_description = "Task Runner"
+  }
+  access_group = [
+    authentik_group.main.id
+  ]
+}
 
 module "authentik-app-immich" {
   source = "../_modules/authentik/oauth2_app"
