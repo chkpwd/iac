@@ -47,6 +47,7 @@ spec:
           - mountPath: /build/plugins
             name: plugins
           - mountPath: /build/config.yml
+            subPath: config.yml
             name: headlamp-config
     volumeMounts:
       - mountPath: /build/plugins
