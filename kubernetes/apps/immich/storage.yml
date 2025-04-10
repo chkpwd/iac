@@ -42,7 +42,18 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: immich-nfs
+  name: immich-nfs-uploads
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: ceph-block
+  resources:
+    requests:
+      storage: 1Mi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-nfs-media
 spec:
   accessModes: ["ReadWriteOnce"]
   storageClassName: ceph-block
