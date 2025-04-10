@@ -106,6 +106,7 @@ spec:
           deleteDelay: 7
     env:
       TZ: "${TZ}"
+      IMMICH_MEDIA_LOCATION: /usr/src/app/upload
       REDIS_HOSTNAME: "immich-redis.tools.${CLUSTER_DOMAIN}"
       REDIS_PORT: "6379"
       DB_DATABASE_NAME:
@@ -156,7 +157,7 @@ spec:
       persistence:
         data:
           enabled: true
-          mountPath: /usr/src/app/data
+          mountPath: /mnt/data
           existingClaim: immich-nfs-media
       resources:
         requests:
@@ -166,8 +167,9 @@ spec:
           cpu: 3000m
           memory: 2Gi
     machine-learning:
-      nodeSelector:
-        intel.feature.node.kubernetes.io/gpu: "true"
+      pod:
+        nodeSelector:
+          intel.feature.node.kubernetes.io/gpu: "true"
       resources:
         requests:
           gpu.intel.com/i915: 1
