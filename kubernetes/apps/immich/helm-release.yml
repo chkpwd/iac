@@ -105,6 +105,7 @@ spec:
         user:
           deleteDelay: 7
     env:
+      TZ: "${TZ}"
       REDIS_HOSTNAME: "immich-redis.tools.${CLUSTER_DOMAIN}"
       REDIS_PORT: "6379"
       DB_DATABASE_NAME:
