@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: immich-nfs
+  name: immich-nfs-media
 spec:
   storageClassName: ceph-block
   capacity:
@@ -11,6 +11,26 @@ spec:
   nfs:
     server: "nas-srv-01.${DOMAIN}"
     path: /volume1/vault-01/static_media/images
+  mountOptions:
+    - nfsvers=4
+    - nconnect=8
+    - hard
+    - noatime
+    - rsize=131072
+    - wsize=131072
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: immich-nfs-uploads
+spec:
+  storageClassName: ceph-block
+  capacity:
+    storage: 1Mi
+  accessModes: ["ReadWriteOnce"]
+  nfs:
+    server: "nas-srv-01.${DOMAIN}"
+    path: /volume1/vault-01/static_media/immich
   mountOptions:
     - nfsvers=4
     - nconnect=8

@@ -36,7 +36,7 @@ spec:
     immich:
       persistence:
         library:
-          existingClaim: immich-nfs
+          existingClaim: immich-nfs-uploads
       configuration:
         ffmpeg:
           accel: qsv
@@ -152,6 +152,11 @@ spec:
         allowPrivilegeEscalation: false
         capabilities:
           drop: ["ALL"]
+      persistence:
+        data:
+          enabled: true
+          mountPath: /usr/src/app/data
+          existingClaim: immich-nfs-media
       resources:
         requests:
           cpu: 10m
