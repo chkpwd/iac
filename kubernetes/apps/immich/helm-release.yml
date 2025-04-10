@@ -167,9 +167,8 @@ spec:
           cpu: 3000m
           memory: 2Gi
     machine-learning:
-      pod:
-        nodeSelector:
-          intel.feature.node.kubernetes.io/gpu: "true"
+      nodeSelector:
+        intel.feature.node.kubernetes.io/gpu: "true"
       resources:
         requests:
           gpu.intel.com/i915: 1
