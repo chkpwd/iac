@@ -1,8 +1,8 @@
 locals {
   # Get JSON for internal, kubernetes, and external configurations
-  main       = jsondecode(file("${path.root}/../_templates/dns/infra_dns.json"))
-  kubernetes = jsondecode(file("${path.root}/../_templates/dns/kubernetes_dns.json"))
-  external   = jsondecode(file("${path.root}/../_templates/dns/external_svc.json"))
+  main       = jsondecode(file("${path.root}/dns/infra_dns.json"))
+  kubernetes = jsondecode(file("${path.root}/dns/kubernetes_dns.json"))
+  external   = jsondecode(file("${path.root}/dns/external_svc.json"))
 
   # infra A Records
   infra_a = local.main.INFRA_A_RECORDS
