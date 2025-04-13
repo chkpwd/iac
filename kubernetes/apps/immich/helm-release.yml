@@ -164,7 +164,6 @@ spec:
           cpu: 10m
           memory: 128Mi
         limits:
-          cpu: 4000m
           memory: 3Gi
     machine-learning:
       nodeSelector:
@@ -176,7 +175,6 @@ spec:
           memory: 4096M
         limits:
           gpu.intel.com/i915: 1
-          cpu: 1
           memory: 6Gi
       persistence:
         cache:
