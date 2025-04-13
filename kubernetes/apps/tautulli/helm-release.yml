@@ -51,7 +51,7 @@ spec:
           app:
             image:
               repository: ghcr.io/tautulli/tautulli
-              tag: v2.15.1
+              tag: v2.15.2
               pullPolicy: IfNotPresent
             command: ["/usr/local/bin/python", "Tautulli.py"]
             args: ["--config", "/config/config.ini", "--datadir", "/config", "--port", "80"]
