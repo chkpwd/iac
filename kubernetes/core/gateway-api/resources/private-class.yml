@@ -4,12 +4,15 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: private
-  namespace: networking
+  namespace: kube-system
 spec:
   gatewayClassName: cilium
   addresses:
     - type: IPAddress
       value: 172.16.16.55
+  infrastructure:
+    annotations:
+      external-dns.alpha.kubernetes.io/target: ${DOMAIN}
   listeners:
     - protocol: HTTP
       port: 80
