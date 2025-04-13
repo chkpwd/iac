@@ -155,10 +155,10 @@ spec:
         capabilities:
           drop: ["ALL"]
       persistence:
-        data:
+        images:
           enabled: true
-          mountPath: /mnt/data
-          existingClaim: immich-nfs-media
+          mountPath: /mnt/images
+          existingClaim: immich-nfs-images
       resources:
         requests:
           cpu: 10m
