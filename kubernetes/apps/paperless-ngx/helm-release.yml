@@ -173,7 +173,10 @@ spec:
           http:
             port: 3000
     ingress:
-      app:
+      internal:
+        className: int-ingress
+        annotations:
+          external-dns/private: "true"
         hosts:
           - host: paperless-ngx.${DOMAIN}
             paths:

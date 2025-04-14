@@ -34,6 +34,8 @@ spec:
       createPrometheusRules: true
     ingress:
       dashboard:
+        annotations:
+          external-dns/private: "true"
         ingressClassName: int-ingress
         host:
           name: rook.${DOMAIN}
