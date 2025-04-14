@@ -85,6 +85,7 @@ spec:
     ingress:
       internal:
         annotations:
+          external-dns/private: "true"
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
         enabled: true
         className: int-ingress

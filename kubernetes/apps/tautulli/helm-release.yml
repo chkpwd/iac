@@ -54,7 +54,15 @@ spec:
               tag: v2.15.1
               pullPolicy: IfNotPresent
             command: ["/usr/local/bin/python", "Tautulli.py"]
-            args: ["--config", "/config/config.ini", "--datadir", "/config", "--port", "80"]
+            args:
+              [
+                "--config",
+                "/config/config.ini",
+                "--datadir",
+                "/config",
+                "--port",
+                "80",
+              ]
             env:
               TZ: "${TZ}"
               LOG_LEVEL: "info"
@@ -95,6 +103,8 @@ spec:
       internal:
         enabled: true
         className: int-ingress
+        annotations:
+          external-dns/private: "true"
         hosts:
           - host: "{{ .Release.Name }}.${DOMAIN}"
             paths:

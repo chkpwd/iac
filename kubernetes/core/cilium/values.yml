@@ -28,6 +28,8 @@ hubble:
     ingress:
       enabled: true
       className: int-ingress
+      annotations:
+        external-dns/private: "true"
       hosts:
         - "hubble.chkpwd.com"
 ipam:

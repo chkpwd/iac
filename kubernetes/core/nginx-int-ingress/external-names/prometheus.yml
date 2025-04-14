@@ -17,7 +17,7 @@ kind: Ingress
 metadata:
   name: &app prometheus
   annotations:
-    external-dns.alpha.kubernetes.io/target: ${DOMAIN}
+    external-dns/private: "true"
 spec:
   ingressClassName: int-ingress
   rules:
