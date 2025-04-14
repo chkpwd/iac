@@ -174,12 +174,12 @@ spec:
         intel.feature.node.kubernetes.io/gpu: "true"
       resources:
         requests:
-          gpu.intel.com/i915: 1
           cpu: 500m
           memory: 4Gi
-        limits:
           gpu.intel.com/i915: 1
+        limits:
           memory: 6Gi
+          gpu.intel.com/i915: 1
       persistence:
         cache:
           type: pvc
