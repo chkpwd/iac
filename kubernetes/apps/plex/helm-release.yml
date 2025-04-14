@@ -120,7 +120,7 @@ spec:
     ingress:
       internal:
         className: int-ingress
-        annotations:
+        labels:
           external-dns/private: "true"
         hosts:
           - host: "{{ .Release.Name }}.${DOMAIN}"

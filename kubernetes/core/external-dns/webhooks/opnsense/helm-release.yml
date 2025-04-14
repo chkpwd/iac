@@ -77,10 +77,9 @@ spec:
           limits:
             memory: 100Mi
     extraArgs:
-      - --ingress-class=int-ingress
+      # - --ingress-class=int-ingress no longer needed as we are filtering by label
       - --ignore-ingress-tls-spec
-      - --annotation-filter=external-dns/private in (true)
-      # - --annotation-filter=external-dns.alpha.kubernetes.io/exclude notin (true)
+      - --label-filter=external-dns/private in (true)
     sources: ["ingress", "crd"]
     policy: sync
     registry: noop

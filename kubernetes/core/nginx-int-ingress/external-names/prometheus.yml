@@ -16,7 +16,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: &app prometheus
-  annotations:
+  labels:
     external-dns/private: "true"
 spec:
   ingressClassName: int-ingress

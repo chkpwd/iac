@@ -84,8 +84,9 @@ spec:
             protocol: UDP
     ingress:
       internal:
-        annotations:
+        labels:
           external-dns/private: "true"
+        annotations:
           nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
         enabled: true
         className: int-ingress

@@ -63,7 +63,7 @@ spec:
     ingress:
       enabled: true
       ingressClassName: int-ingress
-      annotations:
+      labels:
         external-dns/private: "true"
       hosts:
         - host: headlamp.chkpwd.com
