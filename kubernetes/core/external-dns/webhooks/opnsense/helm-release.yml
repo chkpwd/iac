@@ -15,16 +15,17 @@ spec:
         kind: HelmRepository
         name: external-dns
         namespace: flux-system
+  driftDetection:
+    mode: enabled
   install:
-    crds: CreateReplace
     remediation:
       retries: 3
   upgrade:
-    crds: CreateReplace
+    cleanupOnFail: true
     remediation:
       retries: 3
   values:
-    fullnameOverride: external-dns-opnsense
+    fullnameOverride: *app
     logLevel: debug
     podSecurityContext:
       fsGroup: 65534
@@ -36,37 +37,56 @@ spec:
         drop: ["ALL"]
     provider:
       name: webhook
-    managedRecordTypesFilters:
-      - A
-    sidecars:
-      - name: opnsense-webhook
-        image: ghcr.io/jobs62/opnsense_unbound_external-dns_webhook:v0.4.5
-        ports:
-          - containerPort: 8800
-            name: http
+      webhook:
+        image:
+          repository: ghcr.io/crutonjohn/external-dns-opnsense-webhook
+          tag: pr-29@sha256:be9dba76644664a939dc152c4fcd86a39d7933874104120eba31f846d518b96e
         env:
-          - name: OPNSENSE_SECRET
+          - name: OPNSENSE_API_SECRET
             valueFrom:
               secretKeyRef:
-                name: external-dns-opnsense-secret
+                name: external-dns-opnsense
                 key: api_secret
-          - name: OPNSENSE_KEY
+          - name: OPNSENSE_API_KEY
             valueFrom:
               secretKeyRef:
-                name: external-dns-opnsense-secret
+                name: external-dns-opnsense
                 key: api_key
-          - name: OPNSENSE_BASE
-            value: http://172.16.16.1
-          - name: OPNSENSE_ALLOW_INVALID_CERTS
+          - name: OPNSENSE_HOST
+            value: "http://172.16.16.1"
+          - name: OPNSENSE_SKIP_TLS_VERIFY
             value: "true"
-          - name: OPNSENSE_DOMAIN_FILTERS
-            value: "[\".local\"]"
+          - name: LOG_LEVEL
+            value: "info"
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        resources:
+          requests:
+            memory: 20Mi
+            cpu: 10m
+          limits:
+            memory: 100Mi
     extraArgs:
       - --ingress-class=int-ingress
       - --ignore-ingress-tls-spec
-      - --annotation-filter=external-dns.alpha.kubernetes.io/exclude notin (true)
-    sources: ["ingress", "service"]
+      - --annotation-filter=external-dns/private in (true)
+      # - --annotation-filter=external-dns.alpha.kubernetes.io/exclude notin (true)
+    sources: ["ingress", "crd"]
+    policy: sync
     registry: noop
+    domainFilter: ["chkpwd.com"]
+    serviceMonitor:
+      enabled: false
     resources:
       requests:
         cpu: 10m
