@@ -38,12 +38,12 @@ spec:
         library:
           existingClaim: immich-nfs-uploads
       configuration:
-        # ffmpeg:
-        #   accel: qsv
-        #   accelDecode: false
-        #   cqMode: icq
-        #   preferredHwDevice: auto
-        #   temporalAQ: false
+        ffmpeg:
+          accel: qsv
+          accelDecode: false
+          cqMode: icq
+          preferredHwDevice: auto
+          temporalAQ: false
         image:
           colorspace: p3
           extractEmbedded: false
