@@ -137,6 +137,8 @@ spec:
       LOG_LEVEL: verbose
     server:
       enabled: true
+      nodeSelector:
+        intel.feature.node.kubernetes.io/gpu: "true"
       ingress:
         main:
           enabled: true
@@ -163,8 +165,10 @@ spec:
         requests:
           cpu: 10m
           memory: 128Mi
+          gpu.intel.com/i915: 1
         limits:
           memory: 3Gi
+          gpu.intel.com/i915: 1
     machine-learning:
       nodeSelector:
         intel.feature.node.kubernetes.io/gpu: "true"
@@ -172,7 +176,7 @@ spec:
         requests:
           gpu.intel.com/i915: 1
           cpu: 500m
-          memory: 4096M
+          memory: 4Gi
         limits:
           gpu.intel.com/i915: 1
           memory: 6Gi
