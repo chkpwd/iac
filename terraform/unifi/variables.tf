@@ -12,7 +12,7 @@ variable "site" {
   default = "default"
 }
 
-variable "private_key_path" {
+variable "public_key_path" {
   type    = string
-  default = "~/.ssh/unifi"
+  default = "~/.ssh/unifi.pub"
 }
