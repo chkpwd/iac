@@ -16,8 +16,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: &app home-assistant-external
-  annotations:
-    external-dns.alpha.kubernetes.io/target: ${DOMAIN}
+  labels:
+    external-dns/public: "true"
 spec:
   ingressClassName: ext-ingress
   rules:

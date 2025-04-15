@@ -143,8 +143,9 @@ spec:
         main:
           enabled: true
           ingressClassName: ext-ingress
+          labels:
+            external-dns/public: "true"
           annotations:
-            external-dns.alpha.kubernetes.io/target: ${DOMAIN}
             nginx.ingress.kubernetes.io/proxy-body-size: "0"
           hosts:
             - host: "{{ .Release.Name }}.${DOMAIN}"

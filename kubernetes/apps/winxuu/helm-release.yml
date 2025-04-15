@@ -76,10 +76,10 @@ spec:
             port: *port
     ingress:
       external:
-        annotations:
-          external-dns.alpha.kubernetes.io/target: ${DOMAIN}
         enabled: true
         className: ext-ingress
+        labels:
+          external-dns/public: "true"
         hosts:
           - host: "{{ .Release.Name }}.${DOMAIN}"
             paths:

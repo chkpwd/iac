@@ -57,7 +57,7 @@ spec:
             securityContext: &securityContext
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
-              capabilities: {drop: ['ALL']}
+              capabilities: {drop: ["ALL"]}
             resources:
               requests:
                 cpu: 10m
@@ -111,9 +111,10 @@ spec:
       external:
         enabled: true
         className: ext-ingress
+        labels:
+          external-dns/public: "true"
         annotations:
           external-dns.alpha.kubernetes.io/enabled: "true"
-          external-dns.alpha.kubernetes.io/target: ${DOMAIN}
           nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
           nginx.ingress.kubernetes.io/proxy-body-size: 1000m
           nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"

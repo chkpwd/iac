@@ -16,9 +16,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: &app semaphore-ui-external
-  annotations:
-    external-dns.alpha.kubernetes.io/enabled: "true"
-    external-dns.alpha.kubernetes.io/target: ${DOMAIN}
+  labels:
+    external-dns/public: "true"
 spec:
   ingressClassName: ext-ingress
   rules:
