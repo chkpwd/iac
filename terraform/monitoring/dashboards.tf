@@ -37,3 +37,8 @@ resource "grafana_dashboard" "kubernetes-prometheus" {
   config_json = file("files/dashboards/kubernetes-prometheus.json")
   folder      = grafana_folder.main["kubernetes"].id
 }
+
+resource "grafana_dashboard" "kubernetes-ceph-cluster" {
+  config_json = file("files/dashboards/kubernetes-ceph-cluster.json")
+  folder      = grafana_folder.main["kubernetes"].id
+}
