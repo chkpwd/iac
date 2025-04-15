@@ -183,7 +183,7 @@ module "authentik-app-semaphore-ui" {
 module "authentik-app-immich" {
   source = "../_modules/authentik/oauth2_app"
   name   = "Immich"
-  group  = "group"
+  group  = "main"
   oauth2_values = {
     client_id         = "immich"
     client_secret     = data.external.bws_lookup.result["ns-tools-immich_client_secret"]
@@ -234,4 +234,29 @@ EOF
   }
 
   access_group = [authentik_group.main.id]
+}
+
+module "authentik-app-karakeep" {
+  source = "../_modules/authentik/oauth2_app"
+  name   = "karakeep"
+  group  = "main"
+  oauth2_values = {
+    client_id         = "karakeep"
+    client_secret     = data.external.bws_lookup.result["ns-tools-karakeep_oauth_client_secret"]
+    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
+    allowed_redirect_uris = [
+      {
+        matching_mode = "strict",
+        url           = "https://karakeep.chkpwd.com/api/auth/callback/custom",
+      },
+    ]
+  }
+  app_values = {
+    icon_url         = "https://cdn.jsdelivr.net/gh/chkpwd/icons@main/png/karakeep.png"
+    meta_description = "Bookmark Everything"
+  }
+  access_group = [
+    authentik_group.main.id,
+    authentik_group.secondary.id
+  ]
 }
