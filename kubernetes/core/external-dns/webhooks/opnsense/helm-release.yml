@@ -79,11 +79,11 @@ spec:
     extraArgs:
       # - --ingress-class=int-ingress no longer needed as we are filtering by label
       - --ignore-ingress-tls-spec
-      - --label-filter=external-dns/private in (true)
-    sources: ["ingress", "crd"]
+    sources: ["crd", "ingress"]
     policy: sync
     registry: noop
-    domainFilter: ["chkpwd.com"]
+    domainFilter: ["${DOMAIN}"]
+    labelFilter: "external-dns/private in (true)"
     serviceMonitor:
       enabled: false
     resources:
