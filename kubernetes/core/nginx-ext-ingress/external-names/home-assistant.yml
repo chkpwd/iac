@@ -17,7 +17,7 @@ kind: Ingress
 metadata:
   name: &app home-assistant-external
   labels:
-    external-dns/public: "true"
+    external-dns/public: "false"
 spec:
   ingressClassName: ext-ingress
   rules:

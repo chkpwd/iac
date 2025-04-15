@@ -95,8 +95,9 @@ spec:
         enabled: true
         ingressClassName: ext-ingress
         labels:
-          external-dns/public: "true"
+          external-dns/public: "false"
         annotations:
+          external-dns.alpha.kubernetes.io/target: ${DOMAIN}
           cert-manager.io/cluster-issuer: main-issuer
         hosts:
           - "authentik.${DOMAIN}"

@@ -144,7 +144,7 @@ spec:
           enabled: true
           ingressClassName: ext-ingress
           labels:
-            external-dns/public: "true"
+            external-dns/public: "false"
           annotations:
             nginx.ingress.kubernetes.io/proxy-body-size: "0"
           hosts:

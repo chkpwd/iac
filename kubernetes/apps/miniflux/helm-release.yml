@@ -93,7 +93,7 @@ spec:
         enabled: true
         className: ext-ingress
         labels:
-          external-dns/public: "true"
+          external-dns/public: "false"
         hosts:
           - host: "{{ .Release.Name }}.${DOMAIN}"
             paths:
