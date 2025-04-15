@@ -50,12 +50,12 @@ spec:
               CRAWLER_STORE_SCREENSHOT: true
               CRAWLER_FULL_PAGE_SCREENSHOT: true
               DATA_DIR: /data
-              DISABLE_SIGNUPS: true
               MAX_ASSET_SIZE_MB: 50
               MEILI_ADDR: http://karakeep-meilisearch.default.svc.cluster.local:7700
               NEXTAUTH_URL: https://karakeep.${DOMAIN}
               DISABLE_NEW_RELEASE_CHECK: true
-              DISABLE_PASSWORD_AUTH: "true"
+              DISABLE_SIGNUPS: false # enable on initial run
+              DISABLE_PASSWORD_AUTH: true
               OAUTH_PROVIDER_NAME: Authentik
               OAUTH_SCOPES: "openid profile email"
               OAUTH_CLIENT_ID: karakeep
