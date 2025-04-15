@@ -4,6 +4,8 @@ kind: Ingress
 metadata:
   name: flux-webhook
   namespace: flux-system
+  labels:
+    external-dns/public: "true"
   annotations:
     external-dns.alpha.kubernetes.io/target: "chkpwd.com"
 spec:
