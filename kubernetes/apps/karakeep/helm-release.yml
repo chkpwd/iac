@@ -44,14 +44,14 @@ spec:
               repository: ghcr.io/karakeep-app/karakeep
               tag: 0.23.2
             env:
-              BROWSER_WEB_URL: http://karakeep-chrome.default.svc.cluster.local:9222
+              BROWSER_WEB_URL: http://karakeep-chrome.tools.svc.cluster.local:9222
               CRAWLER_DOWNLOAD_BANNER_IMAGE: true
               CRAWLER_ENABLE_ADBLOCKER: true
               CRAWLER_STORE_SCREENSHOT: true
               CRAWLER_FULL_PAGE_SCREENSHOT: true
               DATA_DIR: /data
               MAX_ASSET_SIZE_MB: 50
-              MEILI_ADDR: http://karakeep-meilisearch.default.svc.cluster.local:7700
+              MEILI_ADDR: http://karakeep-meilisearch.tools.svc.cluster.local:7700
               NEXTAUTH_URL: https://karakeep.${DOMAIN}
               DISABLE_NEW_RELEASE_CHECK: true
               DISABLE_SIGNUPS: false # enable on initial run
