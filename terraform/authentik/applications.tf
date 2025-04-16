@@ -15,7 +15,7 @@ EOF
 
   app_values = {
     meta_description = "Series Management"
-    icon_url         = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/webp/sonarr.webp"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/sonarr.webp"
   }
 
   access_group = [authentik_group.main.id]
@@ -38,7 +38,7 @@ EOF
 
   app_values = {
     meta_description = "Movie Management"
-    icon_url         = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/webp/radarr.webp"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/radarr.webp"
   }
 
   access_group = [authentik_group.main.id]
@@ -61,7 +61,7 @@ EOF
 
   app_values = {
     meta_description = "Indexer Management"
-    icon_url         = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/webp/prowlarr.webp"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/prowlarr.webp"
   }
 
   access_group = [authentik_group.main.id]
@@ -84,7 +84,7 @@ EOF
 
   app_values = {
     meta_description = "Usenet Downloader"
-    icon_url         = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/webp/sabnzbd.webp"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/sabnzbd.webp"
   }
 
   access_group = [authentik_group.main.id]
@@ -106,7 +106,7 @@ module "authentik-app-miniflux" {
     ]
   }
   app_values = {
-    icon_url         = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/webp/miniflux.webp"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/miniflux.webp"
     meta_description = "RSS Feed Reader"
   }
   access_group = [
@@ -131,7 +131,7 @@ EOF
 
   app_values = {
     meta_description = "Subtitle Management"
-    icon_url         = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/webp/bazarr.webp"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/bazarr.webp"
   }
 
   access_group = [authentik_group.main.id]
@@ -150,7 +150,7 @@ module "authentik-app-maintainerr" {
 
   app_values = {
     meta_description = "Media Cleanup Tool"
-    icon_url         = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/webp/maintainerr.webp"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/maintainerr.webp"
   }
 
   access_group = [authentik_group.main.id]
@@ -172,7 +172,7 @@ module "authentik-app-semaphore-ui" {
     ]
   }
   app_values = {
-    icon_url         = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/webp/semaphore.webp"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/semaphore.webp"
     meta_description = "Task Runner"
   }
   access_group = [
@@ -204,7 +204,7 @@ module "authentik-app-immich" {
     ]
   }
   app_values = {
-    icon_url         = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/webp/immich.webp"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/immich.webp"
     meta_description = "Photo Management"
   }
   access_group = [
@@ -230,7 +230,7 @@ EOF
 
   app_values = {
     meta_description = "Torrent Downloader"
-    icon_url         = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/webp/qbittorrent.webp"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/qbittorrent.webp"
   }
 
   access_group = [authentik_group.main.id]
@@ -252,7 +252,7 @@ module "authentik-app-karakeep" {
     ]
   }
   app_values = {
-    icon_url         = "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons@main/webp/hoarder.webp"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/karakeep-light.webp"
     meta_description = "Bookmark Everything"
   }
   access_group = [
