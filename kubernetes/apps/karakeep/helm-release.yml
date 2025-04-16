@@ -39,7 +39,7 @@ spec:
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
-          app:
+          main:
             image:
               repository: ghcr.io/karakeep-app/karakeep
               tag: 0.23.2
@@ -80,7 +80,7 @@ spec:
         annotations:
           reloader.stakater.com/auto: "true"
         containers:
-          app:
+          main:
             image:
               repository: gcr.io/zenika-hub/alpine-chrome
               tag: 124
@@ -118,7 +118,7 @@ spec:
                           - karakeep
                   topologyKey: kubernetes.io/hostname
         containers:
-          app:
+          main:
             image:
               repository: docker.io/getmeili/meilisearch
               tag: v1.13.3
@@ -138,7 +138,7 @@ spec:
               limits:
                 memory: 3Gi
     service:
-      app:
+      karakeep:
         controller: *app
         ports:
           http:
@@ -154,7 +154,7 @@ spec:
           http:
             port: 7700
     ingress:
-      app:
+      main:
         enabled: true
         className: ext-ingress
         labels:
@@ -167,7 +167,7 @@ spec:
               - path: /
                 pathType: Prefix
                 service:
-                  identifier: app
+                  identifier: karakeep
                   port: http
     persistence:
       data:
@@ -178,25 +178,22 @@ spec:
         size: 10Gi
         advancedMounts:
           karakeep:
-            app:
+            main:
               - path: /data
                 subPath: karakeep
           meilisearch:
-            app:
+            main:
               - path: /meili_data
                 subPath: meilisearch
       cache:
         type: emptyDir
         advancedMounts:
           karakeep:
-            cache:
+            main:
               - path: /.cache
-      tmp:
-        enabled: true
-        type: emptyDir
       appcache:
         type: emptyDir
         advancedMounts:
           karakeep:
-            appcache:
+            main:
               - path: /app/apps/web/.next/cache
