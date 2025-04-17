@@ -1,0 +1,107 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/common-3.1.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ollama
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: ollama
+      version: 1.14.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: ollama-helm
+        namespace: flux-system
+  driftDetection:
+    mode: enabled
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    replicaCount: 1
+    image:
+      repository: ollama/ollama
+      tag: 0.6.5
+    ollama:
+      port: 11434
+      gpu:
+        enabled: false
+      models:
+        pull: [llama3.2:3b, deepseek-r1:7b]
+    extraEnv:
+      - name: TZ
+        value: "${TZ}"
+      - name: OLLAMA_DEBUG
+        value: "1"
+    ingress:
+      enabled: true
+      className: int-ingress
+      labels:
+        external-dns/private: "true"
+      hosts:
+        - host: "ollama.${DOMAIN}"
+          paths:
+            - path: /
+              pathType: Prefix
+    persistentVolume:
+      enabled: true
+      accessMode: ReadWriteOnce
+      storageClass: ceph-block
+      size: 30Gi
+    resources:
+      requests:
+        cpu: 200m
+        memory: 10Gi
+      limits:
+        memory: 20Gi
+    livenessProbe:
+      enabled: true
+      path: /
+      initialDelaySeconds: 60
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 6
+      successThreshold: 1
+    readinessProbe:
+      enabled: true
+      path: /
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 6
+      successThreshold: 1
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: intel.feature.node.kubernetes.io/gpu
+                  operator: In
+                  values:
+                    - "true"
+    # runtimeClassName: nvidia
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 100
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: 80
+    podSecurityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities: {drop: ["ALL"]}
+    securityContext:
+      runAsNonRoot: false
+      fsGroupChangePolicy: OnRootMismatch
+      seccompProfile: {type: RuntimeDefault}
+    volumes:
+      - emptyDir: {}
+        name: ollama-temp
+    volumeMounts:
+      - mountPath: /.ollama
+        name: ollama-temp
