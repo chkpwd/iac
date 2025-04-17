@@ -38,16 +38,14 @@ spec:
         value: "${TZ}"
       - name: OLLAMA_DEBUG
         value: "1"
-      - name: OLLAMA_INTEL_GPU
-        value: "1"
-      - name: OLLAMA_MAX_LOADED_MODELS
-        value: "1"
-      - name: OLLAMA_NUM_PARALLEL
-        value: "1"
-      - name: OLLAMA_NUM_GPU
-        value: "1"
-      - name: SYCL_CACHE_PERSITENT
-        value: "1"
+      # - name: OLLAMA_INTEL_GPU
+      #   value: "1"
+      # - name: OLLAMA_MAX_LOADED_MODELS
+      #   value: "1"
+      # - name: OLLAMA_NUM_PARALLEL
+      #   value: "1"
+      # - name: OLLAMA_NUM_GPU
+      #   value: "1"
     ingress:
       enabled: true
       className: int-ingress
