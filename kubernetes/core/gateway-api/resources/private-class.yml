@@ -11,6 +11,8 @@ spec:
     - type: IPAddress
       value: 172.16.16.55
   infrastructure:
+    labels:
+      external-dns/private: "true"
     annotations:
       external-dns.alpha.kubernetes.io/target: ${DOMAIN}
   listeners:
