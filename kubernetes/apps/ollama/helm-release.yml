@@ -38,6 +38,8 @@ spec:
         value: "${TZ}"
       - name: OLLAMA_DEBUG
         value: "1"
+      - name: OLLAMA_INTEL_GPU
+        value: "true"
     ingress:
       enabled: true
       className: int-ingress
