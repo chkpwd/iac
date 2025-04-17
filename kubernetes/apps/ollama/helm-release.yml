@@ -79,15 +79,15 @@ spec:
       timeoutSeconds: 3
       failureThreshold: 6
       successThreshold: 1
-    affinity:
-      nodeAffinity:
-        requiredDuringSchedulingIgnoredDuringExecution:
-          nodeSelectorTerms:
-            - matchExpressions:
-                - key: intel.feature.node.kubernetes.io/gpu
-                  operator: In
-                  values:
-                    - "true"
+    # affinity:
+    #   nodeAffinity:
+    #     requiredDuringSchedulingIgnoredDuringExecution:
+    #       nodeSelectorTerms:
+    #         - matchExpressions:
+    #             - key: intel.feature.node.kubernetes.io/gpu
+    #               operator: In
+    #               values:
+    #                 - "true"
     # runtimeClassName: nvidia
     autoscaling:
       enabled: false

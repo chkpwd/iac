@@ -56,8 +56,8 @@ spec:
               globalMounts:
                 - path: /config
         pod:
-          nodeSelector:
-            intel.feature.node.kubernetes.io/gpu: "true"
+          # nodeSelector:
+          #   intel.feature.node.kubernetes.io/gpu: "true"
           securityContext:
             runAsUser: 1026
             runAsGroup: &group 100

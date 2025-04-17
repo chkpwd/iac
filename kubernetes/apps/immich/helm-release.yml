@@ -140,8 +140,8 @@ spec:
       LOG_LEVEL: verbose
     server:
       enabled: true
-      nodeSelector:
-        intel.feature.node.kubernetes.io/gpu: "true"
+      # nodeSelector:
+      #   intel.feature.node.kubernetes.io/gpu: "true"
       ingress:
         main:
           enabled: true
