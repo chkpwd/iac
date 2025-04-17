@@ -57,8 +57,10 @@ spec:
       requests:
         cpu: 200m
         memory: 10Gi
+        gpu.intel.com/i915: 1
       limits:
         memory: 20Gi
+        gpu.intel.com/i915: 1
     livenessProbe:
       enabled: true
       path: /
