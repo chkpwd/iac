@@ -61,9 +61,9 @@ spec:
               OAUTH_CLIENT_ID: karakeep
               OAUTH_WELLKNOWN_URL: https://authentik.${DOMAIN}/application/o/karakeep/.well-known/openid-configuration
               OLLAMA_BASE_URL: http://ollama.ai.${CLUSTER_DOMAIN}:11434
-              # INFERENCE_TEXT_MODEL: gpt-4o-mini
-              # EMBEDDING_TEXT_MODEL: text-embedding-3-small
-              # INFERENCE_CONTEXT_LENGTH: "8192"
+              INFERENCE_TEXT_MODEL: llama3.2:3b
+              INFERENCE_IMAGE_MODEL: llava-llama3
+              INFERENCE_CONTEXT_LENGTH: "8192"
             envFrom:
               - secretRef:
                   name: *app
