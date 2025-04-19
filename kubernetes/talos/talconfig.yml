@@ -159,14 +159,6 @@ controlPlane:
               hard=True
               noatime=True
               nconnect=16
-    # Configure static host entries
-    - |-
-      machine:
-        network:
-          extraHostEntries:
-            - ip: 172.16.16.13
-              aliases:
-                - 172.16.16.13
     # Configure custom sysctls
     - |-
       machine:
