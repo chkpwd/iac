@@ -9,6 +9,7 @@ resources:
   - prometheus-rule.yml
   - receiver-github.yml
   - cluster-secrets.yml
+  - cluster-vars.yml
 configMapGenerator:
   - name: flux-instance-values
     files:
