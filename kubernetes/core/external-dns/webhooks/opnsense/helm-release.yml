@@ -82,7 +82,7 @@ spec:
     sources: ["crd", "ingress"]
     policy: sync
     registry: noop
-    domainFilter: ["${DOMAIN}"]
+    domainFilter: ["chkpwd.com"]
     labelFilter: "external-dns/private in (true)"
     serviceMonitor:
       enabled: false

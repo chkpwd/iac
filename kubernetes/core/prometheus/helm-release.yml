@@ -90,7 +90,7 @@ spec:
           external-dns/private: "true"
         annotations:
           cert-manager.io/cluster-issuer: main-issuer
-        hosts: ["k8s-{{ .Release.Name }}.${DOMAIN}"]
+        hosts: ["k8s-{{ .Release.Name }}.chkpwd.com"]
         pathType: Prefix
       prometheusSpec:
         enableAdminAPI: true

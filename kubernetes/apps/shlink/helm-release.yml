@@ -39,7 +39,7 @@ spec:
               tag: 4.4.6-roadrunner
               pullPolicy: IfNotPresent
             env:
-              DEFAULT_DOMAIN: &host "i.${DOMAIN}"
+              DEFAULT_DOMAIN: &host "i.chkpwd.com"
               IS_HTTPS_ENABLED: true
               GEOLITE_LICENSE_KEY:
                 valueFrom:
@@ -54,7 +54,7 @@ spec:
               DEFAULT_SHORT_CODES_LENGTH: 4
               ENABLE_PERIODIC_VISIT_LOCATE: true
               PORT: &port 80
-              TIMEZONE: ${TZ}
+              TIMEZONE: America/New_York
               DB_DRIVER: postgres
               DB_NAME:
                 valueFrom:
@@ -115,7 +115,7 @@ spec:
         labels:
           external-dns/public: "true"
         annotations:
-          external-dns.alpha.kubernetes.io/target: "${DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: "chkpwd.com"
         hosts:
           - host: *host
             paths:

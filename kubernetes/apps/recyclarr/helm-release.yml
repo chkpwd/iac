@@ -53,7 +53,7 @@ spec:
             command: ["/app/recyclarr/recyclarr"]
             args: ["sync"]
             env:
-              TZ: ${TZ}
+              TZ: America/New_York
               API_KEY_SONARR:
                 valueFrom:
                   secretKeyRef:

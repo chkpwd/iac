@@ -44,23 +44,23 @@ spec:
               repository: ghcr.io/karakeep-app/karakeep
               tag: 0.23.2
             env:
-              BROWSER_WEB_URL: http://karakeep-chrome.tools.${CLUSTER_DOMAIN}:9222
+              BROWSER_WEB_URL: http://karakeep-chrome.tools.svc.cluster.local:9222
               CRAWLER_DOWNLOAD_BANNER_IMAGE: true
               CRAWLER_ENABLE_ADBLOCKER: true
               CRAWLER_STORE_SCREENSHOT: true
               CRAWLER_FULL_PAGE_SCREENSHOT: false
               DATA_DIR: /data
               MAX_ASSET_SIZE_MB: 50
-              MEILI_ADDR: http://karakeep-meilisearch.tools.${CLUSTER_DOMAIN}:7700
-              NEXTAUTH_URL: https://karakeep.${DOMAIN}
+              MEILI_ADDR: http://karakeep-meilisearch.tools.svc.cluster.local:7700
+              NEXTAUTH_URL: https://karakeep.chkpwd.com
               DISABLE_NEW_RELEASE_CHECK: true
               DISABLE_SIGNUPS: false # enable on initial run
               DISABLE_PASSWORD_AUTH: true
               OAUTH_PROVIDER_NAME: Authentik
               OAUTH_SCOPES: "openid profile email"
               OAUTH_CLIENT_ID: karakeep
-              OAUTH_WELLKNOWN_URL: https://authentik.${DOMAIN}/application/o/karakeep/.well-known/openid-configuration
-              OLLAMA_BASE_URL: http://ollama.ai.${CLUSTER_DOMAIN}:11434
+              OAUTH_WELLKNOWN_URL: https://authentik.chkpwd.com/application/o/karakeep/.well-known/openid-configuration
+              OLLAMA_BASE_URL: http://ollama.ai.svc.cluster.local:11434
               INFERENCE_TEXT_MODEL: llama3.2:3b
               INFERENCE_IMAGE_MODEL: llava-llama3
               INFERENCE_CONTEXT_LENGTH: "8192"
@@ -161,9 +161,9 @@ spec:
         labels:
           external-dns/public: "true"
         annotations:
-          external-dns.alpha.kubernetes.io/target: "${DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: "chkpwd.com"
         hosts:
-          - host: "{{ .Release.Name }}.${DOMAIN}"
+          - host: "{{ .Release.Name }}.chkpwd.com"
             paths:
               - path: /
                 pathType: Prefix

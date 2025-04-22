@@ -91,7 +91,7 @@ spec:
         enabled: true
         className: int-ingress
         hosts:
-          - host: "{{ .Release.Name }}.${DOMAIN}"
+          - host: "{{ .Release.Name }}.chkpwd.com"
             paths:
               - path: /
                 pathType: Prefix

@@ -108,9 +108,9 @@ spec:
         user:
           deleteDelay: 7
     env:
-      TZ: "${TZ}"
+      TZ: "America/New_York"
       # IMMICH_MEDIA_LOCATION: /usr/src/app/upload
-      REDIS_HOSTNAME: "immich-redis.tools.${CLUSTER_DOMAIN}"
+      REDIS_HOSTNAME: "immich-redis.tools.svc.cluster.local"
       REDIS_PORT: "6379"
       DB_DATABASE_NAME:
         valueFrom:
@@ -149,10 +149,10 @@ spec:
           labels:
             external-dns/public: "true"
           annotations:
-            external-dns.alpha.kubernetes.io/target: ${DOMAIN}
+            external-dns.alpha.kubernetes.io/target: chkpwd.com
             nginx.ingress.kubernetes.io/proxy-body-size: "0"
           hosts:
-            - host: "{{ .Release.Name }}.${DOMAIN}"
+            - host: "{{ .Release.Name }}.chkpwd.com"
               paths:
                 - path: /
                   pathType: Prefix

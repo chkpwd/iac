@@ -36,7 +36,7 @@ spec:
               repository: ghcr.io/kashalls/kromgo
               tag: v0.5.1
             env:
-              PROMETHEUS_URL: http://prometheus-operated.monitoring.${CLUSTER_DOMAIN}:9090
+              PROMETHEUS_URL: http://prometheus-operated.monitoring.svc.cluster.local:9090
               SERVER_HOST: 0.0.0.0
               SERVER_PORT: &port 80
               HEALTH_HOST: 0.0.0.0
@@ -80,9 +80,9 @@ spec:
         labels:
           external-dns/public: "true"
         annotations:
-          external-dns.alpha.kubernetes.io/target: "${DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: "chkpwd.com"
         hosts:
-          - host: "kromgo.${DOMAIN}"
+          - host: "kromgo.chkpwd.com"
             paths:
               - path: /
                 service:

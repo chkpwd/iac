@@ -5,7 +5,7 @@ metadata:
   name: scan
 spec:
   type: ExternalName
-  externalName: mgmt-srv-01.${DOMAIN}
+  externalName: mgmt-srv-01.chkpwd.com
   ports:
     - name: http
       port: &port 8087
@@ -21,7 +21,7 @@ metadata:
 spec:
   ingressClassName: int-ingress
   rules:
-    - host: scan.${DOMAIN}
+    - host: scan.chkpwd.com
       http:
         paths:
           - path: /

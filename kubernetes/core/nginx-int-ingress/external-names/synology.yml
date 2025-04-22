@@ -5,7 +5,7 @@ metadata:
   name: synology
 spec:
   type: ExternalName
-  externalName: nas-srv-01.${DOMAIN}
+  externalName: nas-srv-01.chkpwd.com
   ports:
     - name: http
       port: &port 5000
@@ -21,7 +21,7 @@ metadata:
 spec:
   ingressClassName: int-ingress
   rules:
-    - host: synology.${DOMAIN}
+    - host: synology.chkpwd.com
       http:
         paths:
           - path: /

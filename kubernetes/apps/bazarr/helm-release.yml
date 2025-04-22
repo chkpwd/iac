@@ -54,10 +54,10 @@ spec:
               tag: 1.5.1
               pullPolicy: IfNotPresent
             env:
-              TZ: "${TZ}"
+              TZ: "America/New_York"
               BAZARR__INSTANCE_NAME: *app
               BAZARR__PORT: &port 6767
-              BAZARR__APPLICATION_URL: "https://{{ .Release.Name }}.${DOMAIN}"
+              BAZARR__APPLICATION_URL: "https://{{ .Release.Name }}.chkpwd.com"
               BAZARR__API_KEY:
                 valueFrom:
                   secretKeyRef:
@@ -99,7 +99,7 @@ spec:
               tag: vmaster
             env:
               PORT: &metricsPort 9707
-              URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.${CLUSTER_DOMAIN}:6767"
+              URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local:6767"
               APIKEY:
                 valueFrom:
                   secretKeyRef:
@@ -131,12 +131,12 @@ spec:
         labels:
           external-dns/private: "true"
         annotations:
-          nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-main-outpost.security.${CLUSTER_DOMAIN}:9000/outpost.goauthentik.io/auth/nginx
+          nginx.ingress.kubernetes.io/auth-url: http://ak-outpost-authentik-main-outpost.security.svc.cluster.local:9000/outpost.goauthentik.io/auth/nginx
           nginx.ingress.kubernetes.io/auth-signin: /outpost.goauthentik.io/start?rd=$escaped_request_uri
           nginx.ingress.kubernetes.io/auth-response-headers: Set-Cookie,X-authentik-username,X-authentik-groups,X-authentik-email,X-authentik-name,X-authentik-uid
           nginx.ingress.kubernetes.io/auth-snippet: proxy_set_header X-Forwarded-Host $http_host;
         hosts:
-          - host: "{{ .Release.Name }}.${DOMAIN}"
+          - host: "{{ .Release.Name }}.chkpwd.com"
             paths:
               - path: /
                 pathType: Prefix
@@ -152,5 +152,5 @@ spec:
       data:
         enabled: true
         type: nfs
-        server: "nas-srv-01.${DOMAIN}"
+        server: "nas-srv-01.chkpwd.com"
         path: /volume1/vault-01/media

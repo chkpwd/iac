@@ -5,7 +5,7 @@ metadata:
   name: proxmox
 spec:
   type: ExternalName
-  externalName: pve-srv-01.${DOMAIN}
+  externalName: pve-srv-01.chkpwd.com
   ports:
     - name: http
       port: &port 8006
@@ -21,7 +21,7 @@ metadata:
 spec:
   ingressClassName: int-ingress
   rules:
-    - host: proxmox.${DOMAIN}
+    - host: proxmox.chkpwd.com
       http:
         paths:
           - path: /

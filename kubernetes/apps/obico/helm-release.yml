@@ -47,7 +47,7 @@ spec:
           labels:
             external-dns/public: "true"
           annotations:
-            external-dns.alpha.kubernetes.io/target: "${DOMAIN}"
+            external-dns.alpha.kubernetes.io/target: "chkpwd.com"
             nginx.ingress.kubernetes.io/proxy-body-size: 64m
             nginx.ingress.kubernetes.io/ssl-redirect: "true"
             nginx.ingress.kubernetes.io/server-snippet: |-
@@ -55,7 +55,7 @@ spec:
                   deny all;
               }
           hosts:
-            - host: "{{ .Release.Name }}.${DOMAIN}"
+            - host: "{{ .Release.Name }}.chkpwd.com"
               paths:
                 - path: /
     ml-api:

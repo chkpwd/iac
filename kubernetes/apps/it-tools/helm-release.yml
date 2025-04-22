@@ -69,9 +69,9 @@ spec:
         labels:
           external-dns/public: "true"
         annotations:
-          external-dns.alpha.kubernetes.io/target: "${DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: "chkpwd.com"
         hosts:
-          - host: "{{ .Release.Name }}.${DOMAIN}"
+          - host: "{{ .Release.Name }}.chkpwd.com"
             paths:
               - path: /
                 pathType: Prefix

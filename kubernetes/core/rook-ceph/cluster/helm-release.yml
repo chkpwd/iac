@@ -38,7 +38,7 @@ spec:
         labels:
           external-dns/private: "true"
         host:
-          name: rook.${DOMAIN}
+          name: rook.chkpwd.com
           path: /
     toolbox:
       enabled: true
@@ -56,7 +56,7 @@ spec:
         enabled: true
         urlPrefix: /
         ssl: false
-        prometheusEndpoint: http://prometheus-operated.monitoring.${CLUSTER_DOMAIN}:9090
+        prometheusEndpoint: http://prometheus-operated.monitoring.svc.cluster.local:9090
       mgr:
         modules:
           - name: insights

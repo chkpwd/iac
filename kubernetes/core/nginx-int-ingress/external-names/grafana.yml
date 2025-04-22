@@ -5,7 +5,7 @@ metadata:
   name: grafana
 spec:
   type: ExternalName
-  externalName: mgmt-srv-01.${DOMAIN}
+  externalName: mgmt-srv-01.chkpwd.com
   ports:
     - name: http
       port: &port 3000
@@ -21,7 +21,7 @@ metadata:
 spec:
   ingressClassName: int-ingress
   rules:
-    - host: grafana.${DOMAIN}
+    - host: grafana.chkpwd.com
       http:
         paths:
           - path: /

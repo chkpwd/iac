@@ -64,7 +64,7 @@ spec:
                 "80",
               ]
             env:
-              TZ: "${TZ}"
+              TZ: "America/New_York"
               LOG_LEVEL: "info"
               PORT: &port 80
             probes:
@@ -106,7 +106,7 @@ spec:
         labels:
           external-dns/private: "true"
         hosts:
-          - host: "{{ .Release.Name }}.${DOMAIN}"
+          - host: "{{ .Release.Name }}.chkpwd.com"
             paths:
               - path: /
                 pathType: Prefix

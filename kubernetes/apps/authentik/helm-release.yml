@@ -97,10 +97,10 @@ spec:
         labels:
           external-dns/public: "true"
         annotations:
-          external-dns.alpha.kubernetes.io/target: ${DOMAIN}
+          external-dns.alpha.kubernetes.io/target: chkpwd.com
           cert-manager.io/cluster-issuer: main-issuer
         hosts:
-          - "authentik.${DOMAIN}"
+          - "authentik.chkpwd.com"
         paths: ["/"]
         pathType: Prefix
       metrics:
@@ -135,7 +135,7 @@ spec:
         port: 465
         use_ssl: false
       redis:
-        host: "authentik-redis.security.${CLUSTER_DOMAIN}"
+        host: "authentik-redis.security.svc.cluster.local"
     prometheus:
       rules:
         enabled: false

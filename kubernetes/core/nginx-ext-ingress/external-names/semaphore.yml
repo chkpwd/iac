@@ -5,7 +5,7 @@ metadata:
   name: semaphore-ui-external
 spec:
   type: ExternalName
-  externalName: mgmt-srv-01.${DOMAIN}
+  externalName: mgmt-srv-01.chkpwd.com
   ports:
     - name: http
       port: &port 3005
@@ -19,11 +19,11 @@ metadata:
   labels:
     external-dns/public: "true"
   annotations:
-    external-dns.alpha.kubernetes.io/target: "${DOMAIN}"
+    external-dns.alpha.kubernetes.io/target: "chkpwd.com"
 spec:
   ingressClassName: ext-ingress
   rules:
-    - host: semaphore.${DOMAIN}
+    - host: semaphore.chkpwd.com
       http:
         paths:
           - path: /

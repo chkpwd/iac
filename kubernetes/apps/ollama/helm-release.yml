@@ -35,7 +35,7 @@ spec:
         pull: [llama3.2:3b, deepseek-r1:7b, llava-llama3]
     extraEnv:
       - name: TZ
-        value: "${TZ}"
+        value: "America/New_York"
       - name: OLLAMA_DEBUG
         value: "1"
       # - name: OLLAMA_INTEL_GPU # waiting for igpu support
@@ -46,7 +46,7 @@ spec:
       labels:
         external-dns/private: "true"
       hosts:
-        - host: "ollama.${DOMAIN}"
+        - host: "ollama.chkpwd.com"
           paths:
             - path: /
               pathType: Prefix

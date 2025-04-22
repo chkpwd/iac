@@ -40,9 +40,9 @@ spec:
               tag: 1.13.0
               pullPolicy: IfNotPresent
             env:
-              TIMEZONE: ${TZ}
-              API_ENDPOINT: &api_endpoint https://spotty.${DOMAIN}/api
-              CLIENT_ENDPOINT: https://spotty.${DOMAIN}
+              TIMEZONE: America/New_York
+              API_ENDPOINT: &api_endpoint https://spotty.chkpwd.com/api
+              CLIENT_ENDPOINT: https://spotty.chkpwd.com
               MONGO_ENDPOINT: mongodb://your-spotify-mongodb:27017/your_spotify
             envFrom:
               - secretRef:
@@ -114,13 +114,13 @@ spec:
         labels:
           external-dns/public: "true"
         annotations:
-          external-dns.alpha.kubernetes.io/target: "${DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: "chkpwd.com"
           nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
           nginx.ingress.kubernetes.io/proxy-body-size: 1000m
           nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
           nginx.ingress.kubernetes.io/rewrite-target: /$1
         hosts:
-          - host: "spotty.${DOMAIN}"
+          - host: "spotty.chkpwd.com"
             paths:
               - path: /?(.*)
                 pathType: Prefix

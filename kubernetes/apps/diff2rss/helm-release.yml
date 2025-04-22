@@ -56,7 +56,7 @@ spec:
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
-              capabilities: {drop: ['ALL']}
+              capabilities: {drop: ["ALL"]}
             resources:
               requests:
                 cpu: 10m
@@ -75,9 +75,9 @@ spec:
         enabled: true
         className: ext-ingress
         annotations:
-          external-dns.alpha.kubernetes.io/target: "${DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: "chkpwd.com"
         hosts:
-          - host: "{{ .Release.Name }}.${DOMAIN}"
+          - host: "{{ .Release.Name }}.chkpwd.com"
             paths:
               - path: /
                 pathType: Prefix

@@ -54,7 +54,7 @@ spec:
                   secretKeyRef:
                     name: linkding
                     key: LD_SUPERUSER_PASSWORD
-              LD_CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.${DOMAIN}"
+              LD_CSRF_TRUSTED_ORIGINS: "https://{{ .Release.Name }}.chkpwd.com"
               LD_DISABLE_URL_VALIDATION: true
               LD_DB_ENGINE: "postgres"
               LD_DB_HOST:
@@ -103,9 +103,9 @@ spec:
         labels:
           external-dns/public: "true"
         annotations:
-          external-dns.alpha.kubernetes.io/target: "${DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: "chkpwd.com"
         hosts:
-          - host: "{{ .Release.Name }}.${DOMAIN}"
+          - host: "{{ .Release.Name }}.chkpwd.com"
             paths:
               - path: /
                 pathType: Prefix

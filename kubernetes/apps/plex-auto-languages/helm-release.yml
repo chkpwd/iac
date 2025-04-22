@@ -48,8 +48,8 @@ spec:
               tag: v1.2.3
               pullPolicy: IfNotPresent
             env:
-              TZ: "${TZ}"
-              PLEX_URL: http://media.${DOMAIN}:32400
+              TZ: "America/New_York"
+              PLEX_URL: http://media.chkpwd.com:32400
               REFRESH_LIBRARY_ON_SCAN: "false"
               PLEX_TOKEN:
                 valueFrom:

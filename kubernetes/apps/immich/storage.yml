@@ -9,7 +9,7 @@ spec:
     storage: 1Mi
   accessModes: ["ReadWriteOnce"]
   nfs:
-    server: "nas-srv-01.${DOMAIN}"
+    server: "nas-srv-01.chkpwd.com"
     path: /volume1/vault-01/static_media/images
   mountOptions:
     - nfsvers=4
@@ -29,7 +29,7 @@ spec:
     storage: 1Mi
   accessModes: ["ReadWriteOnce"]
   nfs:
-    server: "nas-srv-01.${DOMAIN}"
+    server: "nas-srv-01.chkpwd.com"
     path: /volume1/vault-01/static_media/immich
   mountOptions:
     - nfsvers=4
