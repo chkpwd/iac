@@ -26,7 +26,7 @@ jobs:
         uses: allenporter/flux-local/action/diff@7.3.0
         id: diff
         with:
-          path: "${{ matrix.cluster_path }}/infra/flux"
+          path: "${{ matrix.cluster_path }}/flux"
           resource: "${{ matrix.resources }}"
       - if: ${{ steps.diff.outputs.diff != '' }}
         name: Create PR Comments
