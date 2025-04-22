@@ -1,0 +1,22 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app spegel
+  namespace: flux-system
+spec:
+  targetNamespace: storage
+  interval: 1h
+  path: ./kubernetes/core/spegel/
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  prune: true
+  retryInterval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  timeout: 5m
+  wait: false
