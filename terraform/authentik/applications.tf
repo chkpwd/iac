@@ -1,95 +1,3 @@
-module "authentik-app-sonarr" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "Sonarr"
-  group  = "main"
-
-  proxy_values = {
-    internal        = ""
-    external        = "https://sonarr.chkpwd.com"
-    mode            = "forward_single"
-    skip_path_regex = <<EOF
-^/api
-^/metrics
-EOF
-  }
-
-  app_values = {
-    meta_description = "Series Management"
-    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/sonarr.webp"
-  }
-
-  access_group = [authentik_group.main.id]
-}
-
-module "authentik-app-radarr" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "Radarr"
-  group  = "main"
-
-  proxy_values = {
-    internal        = ""
-    external        = "https://radarr.chkpwd.com"
-    mode            = "forward_single"
-    skip_path_regex = <<EOF
-^/api
-^/metrics
-EOF
-  }
-
-  app_values = {
-    meta_description = "Movie Management"
-    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/radarr.webp"
-  }
-
-  access_group = [authentik_group.main.id]
-}
-
-module "authentik-app-prowlarr" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "Prowlarr"
-  group  = "main"
-
-  proxy_values = {
-    internal        = ""
-    external        = "https://prowlarr.chkpwd.com"
-    mode            = "forward_single"
-    skip_path_regex = <<EOF
-^/api
-^/metrics
-EOF
-  }
-
-  app_values = {
-    meta_description = "Indexer Management"
-    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/prowlarr.webp"
-  }
-
-  access_group = [authentik_group.main.id]
-}
-
-module "authentik-app-sabnzbd" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "Sabnzbd"
-  group  = "main"
-
-  proxy_values = {
-    internal        = ""
-    external        = "https://sabnzbd.chkpwd.com"
-    mode            = "forward_single"
-    skip_path_regex = <<EOF
-^/api
-^/metrics
-EOF
-  }
-
-  app_values = {
-    meta_description = "Usenet Downloader"
-    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/sabnzbd.webp"
-  }
-
-  access_group = [authentik_group.main.id]
-}
-
 module "authentik-app-miniflux" {
   source = "../_modules/authentik/oauth2_app"
   name   = "Miniflux"
@@ -112,48 +20,6 @@ module "authentik-app-miniflux" {
   access_group = [
     authentik_group.main.id
   ]
-}
-
-module "authentik-app-bazarr" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "Bazarr"
-  group  = "main"
-
-  proxy_values = {
-    internal        = ""
-    external        = "https://bazarr.chkpwd.com"
-    mode            = "forward_single"
-    skip_path_regex = <<EOF
-^/api
-^/metrics
-EOF
-  }
-
-  app_values = {
-    meta_description = "Subtitle Management"
-    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/bazarr.webp"
-  }
-
-  access_group = [authentik_group.main.id]
-}
-
-module "authentik-app-maintainerr" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "Maintainerr"
-  group  = "main"
-
-  proxy_values = {
-    internal = ""
-    external = "https://maintainerr.chkpwd.com"
-    mode     = "forward_single"
-  }
-
-  app_values = {
-    meta_description = "Media Cleanup Tool"
-    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/maintainerr.webp"
-  }
-
-  access_group = [authentik_group.main.id]
 }
 
 module "authentik-app-semaphore-ui" {
@@ -211,29 +77,6 @@ module "authentik-app-immich" {
     authentik_group.main.id,
     authentik_group.secondary.id
   ]
-}
-
-module "authentik-app-qbittorrent" {
-  source = "../_modules/authentik/proxy_app"
-  name   = "qBittorrent"
-  group  = "main"
-
-  proxy_values = {
-    internal        = ""
-    external        = "https://qbittorrent.chkpwd.com"
-    mode            = "forward_single"
-    skip_path_regex = <<EOF
-^/api
-^/metrics
-EOF
-  }
-
-  app_values = {
-    meta_description = "Torrent Downloader"
-    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/qbittorrent.webp"
-  }
-
-  access_group = [authentik_group.main.id]
 }
 
 module "authentik-app-karakeep" {

@@ -3,34 +3,26 @@ resource "authentik_service_connection_kubernetes" "main" {
   local = true
 }
 
-resource "authentik_outpost" "main" {
-  name = "authentik Main Outpost"
-  protocol_providers = [
-    module.authentik-app-sonarr.provider_id,
-    module.authentik-app-radarr.provider_id,
-    module.authentik-app-prowlarr.provider_id,
-    module.authentik-app-sabnzbd.provider_id,
-    module.authentik-app-bazarr.provider_id,
-    module.authentik-app-maintainerr.provider_id,
-    module.authentik-app-qbittorrent.provider_id,
-  ]
-  config = jsonencode({
-    "log_level"               = "info"
-    "authentik_host"          = "https://authentik.chkpwd.com"
-    "authentik_host_insecure" = false
-    "object_naming_template"  = "ak-outpost-%(name)s"
-    "kubernetes_replicas"     = 1
-    "kubernetes_namespace"    = "security"
-    "kubernetes_ingress_annotations" = {
-      "external-dns.alpha.kubernetes.io/exclude" = "true"
-      "cert-manager.io/cluster-issuer"           = "main-issuer"
-    }
-    "kubernetes_service_type"        = "ClusterIP"
-    "kubernetes_disabled_components" = ["traefik middleware"]
-    "kubernetes_ingress_class_name"  = "int-ingress"
-  })
-  service_connection = authentik_service_connection_kubernetes.main.id
-}
+# resource "authentik_outpost" "main" {
+#   name = "authentik Main Outpost"
+#   protocol_providers = []
+#   config = jsonencode({
+#     "log_level"               = "info"
+#     "authentik_host"          = "https://authentik.chkpwd.com"
+#     "authentik_host_insecure" = false
+#     "object_naming_template"  = "ak-outpost-%(name)s"
+#     "kubernetes_replicas"     = 1
+#     "kubernetes_namespace"    = "security"
+#     "kubernetes_ingress_annotations" = {
+#       "external-dns.alpha.kubernetes.io/exclude" = "true"
+#       "cert-manager.io/cluster-issuer"           = "main-issuer"
+#     }
+#     "kubernetes_service_type"        = "ClusterIP"
+#     "kubernetes_disabled_components" = ["traefik middleware"]
+#     "kubernetes_ingress_class_name"  = "int-ingress"
+#   })
+#   service_connection = authentik_service_connection_kubernetes.main.id
+# }
 
 resource "authentik_source_plex" "main" {
   enabled             = true
