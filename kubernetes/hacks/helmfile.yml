@@ -15,13 +15,13 @@ releases:
     namespace: kube-system
     chart: cilium/cilium
     version: 1.17.3
-    values: ['../../core/cilium/values.yml']
+    values: ["../../core/cilium/values.yml"]
   - name: coredns
     namespace: kube-system
     chart: oci://ghcr.io/coredns/charts/coredns
     version: 1.39.2
-    values: ['../../core/coredns/values.yml']
-    needs: ['kube-system/cilium']
+    values: ["../../core/coredns/values.yml"]
+    needs: ["kube-system/cilium"]
   - name: prometheus-operator-crds
     namespace: monitoring
     chart: oci://ghcr.io/prometheus-community/charts/prometheus-operator-crds
@@ -30,14 +30,14 @@ releases:
     namespace: security
     chart: jetstack/cert-manager
     version: v1.17.1
-    values: ['../../core/cert-manager/values.yml']
-    needs: ['kube-system/coredns']
+    values: ["../../core/cert-manager/values.yml"]
+    needs: ["kube-system/coredns"]
   - name: external-secrets
     namespace: security
     chart: oci://ghcr.io/external-secrets/charts/external-secrets
     version: 0.16.1
-    values: ['../../core/external-secrets/values.yml']
-    needs: ['security/cert-manager']
+    values: ["../../core/external-secrets/values.yml"]
+    needs: ["security/cert-manager"]
     # hooks:
     #   - events: ["postsync"]
     #     showlogs: true
@@ -47,12 +47,12 @@ releases:
     namespace: flux-system
     chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator
     version: 0.19.0
-    values: ['../../core/flux-operator/values.yml']
-    needs: ['security/cert-manager']
+    values: ["../../core/flux-operator/values.yml"]
+    needs: ["security/cert-manager"]
   - name: flux-instance
     namespace: flux-system
     chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-instance
     version: 0.19.0
     wait: false
-    values: ['../../core/flux-instance/values.yml']
-    needs: ['flux-system/flux-operator']
+    values: ["../../core/flux-instance/values.yml"]
+    needs: ["flux-system/flux-operator"]

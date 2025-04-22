@@ -3,16 +3,15 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  - ai.yml
+  - databases.yml
+  - game-servers.yml
   - media.yml
-  - personal.yml
-  - tools.yml
+  - misc.yml
   - monitoring.yml
   - networking.yml
-  - security.yml
-  - databases.yml
-  - system.yml
-  - storage.yml
-  - misc.yml
   - rook-ceph.yml
-  - game-servers.yml
-  - ai.yml
+  - security.yml
+  - storage.yml
+  - system.yml
+  - tools.yml
