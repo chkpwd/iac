@@ -30,27 +30,12 @@ spec:
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
-  # postBuild:
-  #   substituteFrom:
-  #     - kind: ConfigMap
-  #       name: global-vars
-  # patches:
-  #   - patch: |-
-  #       apiVersion: kustomize.toolkit.fluxcd.io/v1
-  #       kind: Kustomization
-  #       metadata:
-  #         name: not-used
-  #       spec:
-  #         postBuild:
-  #           substituteFrom:
-  #             - kind: ConfigMap
-  #               name: global-vars
-  #             - kind: Secret
-  #               name: cluster-secrets
-  #     target:
-  #       group: kustomize.toolkit.fluxcd.io
-  #       kind: Kustomization
-  #       labelSelector: substitution.flux.home.arpa/disabled notin (true)
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: global-vars
+      - kind: Secret
+        name: cluster-secrets
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
@@ -60,6 +45,8 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
+  dependsOn:
+    - name: sources
   path: ./kubernetes/core
   prune: true
   sourceRef:
@@ -69,18 +56,3 @@ spec:
   #   substituteFrom:
   #     - kind: ConfigMap
   #       name: global-vars
-  # patches:
-  #   - patch: |-
-  #       apiVersion: kustomize.toolkit.fluxcd.io/v1
-  #       kind: Kustomization
-  #       metadata:
-  #         name: not-used
-  #       spec:
-  #         postBuild:
-  #           substituteFrom:
-  #             - kind: ConfigMap
-  #               name: global-vars
-  #     target:
-  #       group: kustomize.toolkit.fluxcd.io
-  #       kind: Kustomization
-  #       labelSelector: substitution.flux.home.arpa/disabled notin (true)
