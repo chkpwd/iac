@@ -6,7 +6,7 @@ metadata:
   name: &app spegel
   namespace: flux-system
 spec:
-  targetNamespace: storage
+  targetNamespace: kube-system
   interval: 1h
   path: ./kubernetes/core/spegel/
   commonMetadata:
