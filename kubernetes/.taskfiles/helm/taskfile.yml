@@ -5,7 +5,7 @@ output:
   group:
     error_only: true
 vars:
-  HELM_SOURCES_DIR: "{{.K8S_DIR}}/infra/sources/helm-repos"
+  HELM_SOURCES_DIR: "{{.K8S_DIR}}/flux/sources/helm-repos"
 tasks:
   add-helm-repos:
     desc: Add all helm repos to helm
