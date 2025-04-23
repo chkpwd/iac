@@ -17,6 +17,8 @@ spec:
     substitute:
       APP: *app
       CLAIM: maintainerr-config
+      VOLSYNC_PUID: "1000"
+      VOLSYNC_PGID: "1000"
   prune: true
   sourceRef:
     kind: GitRepository

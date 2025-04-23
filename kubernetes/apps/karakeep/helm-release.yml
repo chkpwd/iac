@@ -28,10 +28,10 @@ spec:
       fullnameOverride: *app
     defaultPodOptions:
       securityContext:
-        runAsUser: 1999
-        runAsGroup: 1999
+        runAsUser: &context 1999
+        runAsGroup: *context
         runAsNonRoot: true
-        fsGroup: 1999
+        fsGroup: *context
         fsGroupChangePolicy: "OnRootMismatch"
         seccompProfile: {type: RuntimeDefault}
     controllers:

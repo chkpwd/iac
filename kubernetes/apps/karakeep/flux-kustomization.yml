@@ -17,6 +17,8 @@ spec:
     substitute:
       APP: *app
       CLAIM: karakeep-data
+      VOLSYNC_PUID: "1999"
+      VOLSYNC_PGID: "1999"
   prune: true
   sourceRef:
     kind: GitRepository

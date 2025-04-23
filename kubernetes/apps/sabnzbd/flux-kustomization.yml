@@ -17,6 +17,8 @@ spec:
     substitute:
       APP: *app
       CLAIM: config-sabnzbd-0
+      VOLSYNC_PUID: "1026"
+      VOLSYNC_PGID: "100"
   prune: true
   sourceRef:
     kind: GitRepository
