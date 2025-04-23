@@ -25,7 +25,7 @@ spec:
       retries: 3
   values:
     global:
-      fullnameOverride: *app
+      fullnameOverride: karakeep
     defaultPodOptions:
       securityContext:
         runAsUser: &context 1999
@@ -66,7 +66,7 @@ spec:
               INFERENCE_CONTEXT_LENGTH: "8192"
             envFrom:
               - secretRef:
-                  name: *app
+                  name: karakeep
             probes:
               liveness:
                 enabled: true
@@ -131,7 +131,7 @@ spec:
               MEILI_MASTER_KEY:
                 valueFrom:
                   secretKeyRef:
-                    name: *app
+                    name: karakeep
                     key: MEILI_MASTER_KEY
             resources:
               requests:
@@ -140,7 +140,7 @@ spec:
                 memory: 3Gi
     service:
       karakeep:
-        controller: *app
+        controller: karakeep
         ports:
           http:
             port: 3000
@@ -175,8 +175,12 @@ spec:
         enabled: true
         accessMode: ReadWriteOnce
         type: persistentVolumeClaim
-        storageClass: ceph-block
         size: 10Gi
+        storageClass: ceph-block
+        dataSourceRef:
+          kind: ReplicationDestination
+          apiGroup: volsync.backube
+          name: "${APP}"
         advancedMounts:
           karakeep:
             main:

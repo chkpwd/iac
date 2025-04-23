@@ -83,8 +83,12 @@ spec:
       config:
         enabled: true
         accessMode: ReadWriteOnce
-        storageClass: ceph-block
         size: 300Mi
+        storageClass: ceph-block
+        dataSourceRef:
+          kind: ReplicationDestination
+          apiGroup: volsync.backube
+          name: "${APP}"
         globalMounts:
           - path: /opt/data
       tmp:

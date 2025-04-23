@@ -34,10 +34,15 @@ spec:
           podManagementPolicy: Parallel
           volumeClaimTemplates:
             - accessMode: ReadWriteOnce
-              globalMounts:
-                - path: /data/local
               name: data
               size: 5Gi
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              globalMounts:
+                - path: /data/local
         pod:
           securityContext:
             runAsUser: &id 1000 # `paperless` user

@@ -39,6 +39,10 @@ spec:
           enabled: true
           storageClass: ceph-block
           accessMode: ReadWriteOnce
+          dataSourceRef:
+            kind: ReplicationDestination
+            apiGroup: volsync.backube
+            name: "${APP}"
           size: 512M
       ingress:
         main:

@@ -39,6 +39,10 @@ spec:
               accessMode: ReadWriteOnce
               size: 512Mi
               storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
               globalMounts:
                 - path: /config
         pod:
