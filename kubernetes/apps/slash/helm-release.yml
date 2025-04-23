@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app shlink
+  name: slash
 spec:
   interval: 15m
   chart:
@@ -25,9 +25,9 @@ spec:
       retries: 3
   values:
     global:
-      fullnameOverride: *app
+      fullnameOverride: slash
     controllers:
-      shlink:
+      slash:
         enabled: true
         type: statefulset
         annotations:
@@ -35,67 +35,52 @@ spec:
         replicas: 1
         statefulset:
           volumeClaimTemplates:
-            - name: config
+            - name: data
               accessMode: ReadWriteOnce
-              size: 2Gi
+              size: 1Gi
               storageClass: ceph-block
               dataSourceRef:
                 kind: ReplicationDestination
                 apiGroup: volsync.backube
                 name: "${APP}"
               globalMounts:
-                - path: /etc/shlink/data
+                - path: /var/opt/slash
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: &context 1999
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
         containers:
-          app:
+          main:
             image:
-              repository: shlinkio/shlink
-              tag: 4.4.6-roadrunner
-              pullPolicy: IfNotPresent
-            env:
-              DEFAULT_DOMAIN: &host "i.chkpwd.com"
-              IS_HTTPS_ENABLED: true
-              GEOLITE_LICENSE_KEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: shlink
-                    key: GEOLITE_LICENSE_KEY
-              INITIAL_API_KEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: shlink
-                    key: INITIAL_API_KEY
-              DEFAULT_SHORT_CODES_LENGTH: 4
-              ENABLE_PERIODIC_VISIT_LOCATE: true
-              PORT: &port 80
-              TIMEZONE: America/New_York
-              DB_DRIVER: sqlite
+              repository: yourselfhosted/slash
+              tag: 1.0.0-rc.0
             probes:
-              liveness: &probes
+              liveness:
                 enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /rest/health
-                    port: *port
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness: *probes
+              readiness:
+                enabled: true
               startup:
-                enabled: false
+                enabled: true
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
             resources:
               requests:
                 cpu: 10m
                 memory: 100Mi
               limits:
-                memory: 500Mi
+                memory: 350Mi
     service:
-      app:
-        controller: shlink
+      main:
+        controller: slash
         ports:
           http:
-            port: *port
+            port: 5231
     ingress:
       external:
         enabled: true
@@ -105,15 +90,10 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: "chkpwd.com"
         hosts:
-          - host: *host
+          - host: "{{ .Release.Name }}.chkpwd.com"
             paths:
               - path: /
                 pathType: Prefix
                 service:
-                  identifier: app
+                  identifier: main
                   port: http
-    persistence:
-      log:
-        type: emptyDir
-        globalMounts:
-          - path: /etc/shlink/data/log

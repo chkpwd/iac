@@ -3,11 +3,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app shlink
+  name: &app slash
   namespace: flux-system
 spec:
   targetNamespace: tools
-  path: ./kubernetes/apps/shlink/
+  path: ./kubernetes/apps/slash/
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -16,7 +16,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      CLAIM: config-shlink-0
+      CLAIM: config-slash-0
       VOLSYNC_PUID: "1999"
       VOLSYNC_PGID: "1999"
   prune: true
