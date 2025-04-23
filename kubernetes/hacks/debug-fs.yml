@@ -3,7 +3,6 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: ubuntu-debug
-  namespace: rook-ceph
   labels:
     k8s-app: ubuntu-debug
 spec:
