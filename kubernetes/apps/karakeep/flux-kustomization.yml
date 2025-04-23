@@ -11,9 +11,12 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  components:
+    - ../../core/volsync/components/
   postBuild:
     substitute:
       APP: *app
+      CLAIM: karakeep-data
   prune: true
   sourceRef:
     kind: GitRepository
