@@ -12,11 +12,13 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../core/crunchydata-pgo/components/
+    - ../../core/volsync/components/
   postBuild:
     substitute:
       APP: *app
-      POSTGRES_DATA_SIZE: 512Mi
+      CLAIM: config-shlink-0
+      VOLSYNC_PUID: "1999"
+      VOLSYNC_PGID: "1999"
   prune: true
   sourceRef:
     kind: GitRepository

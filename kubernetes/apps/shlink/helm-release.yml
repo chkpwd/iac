@@ -29,9 +29,22 @@ spec:
     controllers:
       shlink:
         enabled: true
+        type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
         replicas: 1
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              accessMode: ReadWriteOnce
+              size: 2Gi
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              globalMounts:
+                - path: /etc/shlink/data
         containers:
           app:
             image:
@@ -55,32 +68,7 @@ spec:
               ENABLE_PERIODIC_VISIT_LOCATE: true
               PORT: &port 80
               TIMEZONE: America/New_York
-              DB_DRIVER: postgres
-              DB_NAME:
-                valueFrom:
-                  secretKeyRef:
-                    name: shlink-pguser-shlink
-                    key: dbname
-              DB_USER:
-                valueFrom:
-                  secretKeyRef:
-                    name: shlink-pguser-shlink
-                    key: user
-              DB_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: shlink-pguser-shlink
-                    key: password
-              DB_HOST:
-                valueFrom:
-                  secretKeyRef:
-                    name: shlink-pguser-shlink
-                    key: host
-              DB_PORT:
-                valueFrom:
-                  secretKeyRef:
-                    name: shlink-pguser-shlink
-                    key: port
+              DB_DRIVER: sqlite
             probes:
               liveness: &probes
                 enabled: true
