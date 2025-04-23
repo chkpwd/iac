@@ -13,12 +13,14 @@ includes:
   helm: kubernetes/.taskfiles/helm/taskfile.yml
   #postgres: kubernetes/.taskfiles/postgres/taskfile.yml
   rook-ceph: kubernetes/.taskfiles/rook-ceph/taskfile.yml
+  volsync: kubernetes/.taskfiles/volsync/taskfile.yml
 
 vars:
   K8S_DIR: "{{.ROOT_DIR}}/kubernetes"
 
 env:
   KUBECONFIG: "{{.KUBECONFIG}}"
+  MINIJINJA_CONFIG_FILE: "{{.ROOT_DIR}}/.minijinja.toml"
 
 tasks:
   default:
