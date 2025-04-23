@@ -112,3 +112,8 @@ spec:
                 service:
                   identifier: app
                   port: http
+    persistence:
+      log:
+        type: emptyDir
+        globalMounts:
+          - path: /etc/shlink/data/log
