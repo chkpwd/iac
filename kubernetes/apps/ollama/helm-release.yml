@@ -54,14 +54,14 @@ spec:
       enabled: true
       accessMode: ReadWriteOnce
       storageClass: ceph-block
-      size: 30Gi
+      size: 10Gi
     resources:
       requests:
-        cpu: 200m
-        memory: 10Gi
+        cpu: 10m
+        memory: 5Gi
         gpu.intel.com/i915: 1
       limits:
-        memory: 20Gi
+        memory: 10Gi
         gpu.intel.com/i915: 1
     livenessProbe:
       enabled: true
