@@ -17,6 +17,7 @@ spec:
     substitute:
       APP: *app
       CLAIM: obico-server-data
+      VOLSYNC_CAPACITY: "1Gi"
   prune: true
   sourceRef:
     kind: GitRepository

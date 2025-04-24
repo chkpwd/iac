@@ -43,7 +43,7 @@ spec:
             kind: ReplicationDestination
             apiGroup: volsync.backube
             name: "${APP}"
-          size: 512M
+          size: "${VOLSYNC_CAPACITY}"
       ingress:
         main:
           enabled: true
