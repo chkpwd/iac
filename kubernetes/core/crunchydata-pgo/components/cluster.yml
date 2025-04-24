@@ -35,10 +35,10 @@ spec:
         type: AlphaNumeric
   backups:
     pgbackrest:
-      configuration:
+      configuration: &backupConfig
         - secret:
             name: "${APP}-crunchy-postgres"
-      global:
+      global: &backupFlag
         repo1-block: "y"
         repo1-bundle: "y"
         repo1-path: /${APP}
@@ -56,7 +56,7 @@ spec:
           app.kubernetes.io/name: ${APP}-crunchy-postgres-backup
       repos:
         - name: repo1
-          s3:
+          s3: &s3
             bucket: pg-cluster-backups
             endpoint: "https://${CLOUDFLARE_ACCOUNT_ID}.r2.cloudflarestorage.com"
             region: us-east-1
@@ -64,3 +64,11 @@ spec:
             full: "0 3 * * 0"
             differential: "0 5 * * 1-6"
             incremental: "0 6-23 * * *"
+  dataSource:
+    pgbackrest:
+      stanza: db
+      configuration: *backupConfig
+      global: *backupFlag
+      repo:
+        name: repo1
+        s3: *s3
