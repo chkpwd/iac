@@ -90,7 +90,7 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: "chkpwd.com"
         hosts:
-          - host: "{{ .Release.Name }}.chkpwd.com"
+          - host: "s.chkpwd.com"
             paths:
               - path: /
                 pathType: Prefix
