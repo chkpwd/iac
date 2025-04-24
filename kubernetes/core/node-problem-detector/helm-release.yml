@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app node-problem-detector
+  name: node-problem-detector
 spec:
   interval: 15m
   chart:
@@ -28,7 +28,7 @@ spec:
       repository: registry.k8s.io/node-problem-detector/node-problem-detector
       tag: v0.8.20
       pullPolicy: IfNotPresent
-    fullnameOverride: *app
+    fullnameOverride: node-problem-detector
     rbac:
       create: true
       pspEnabled: false

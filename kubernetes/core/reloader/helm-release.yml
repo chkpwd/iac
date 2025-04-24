@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app reloader
+  name: reloader
 spec:
   interval: 15m
   chart:
@@ -24,7 +24,7 @@ spec:
     remediation:
       retries: 3
   values:
-    fullnameOverride: *app
+    fullnameOverride: reloader
     resources:
       requests:
         cpu: 15m

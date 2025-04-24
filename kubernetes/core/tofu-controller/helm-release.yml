@@ -3,13 +3,13 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: &app tofu-controller
+  name: tofu-controller
 spec:
   interval: 15m
   chart:
     spec:
       chart: tofu-controller
-      version: '0.16.0-rc.5'
+      version: "0.16.0-rc.5"
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -24,7 +24,7 @@ spec:
     remediation:
       retries: 3
   values:
-    fullnameOverride: *app
+    fullnameOverride: tofu-controller
     replicaCount: 1
     image:
       repository: ghcr.io/flux-iac/tofu-controller
