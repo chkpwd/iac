@@ -137,7 +137,7 @@ spec:
         enabled: true
         accessMode: ReadWriteOnce
         type: persistentVolumeClaim
-        size: ${VOLSYNC_CAPACITY}
+        size: "${VOLSYNC_CAPACITY}"
         advancedMounts:
           mongodb:
             app:

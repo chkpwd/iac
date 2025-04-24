@@ -25,7 +25,7 @@ spec:
       retries: 3
   values:
     global:
-      fullnameOverride: *app
+      fullnameOverride: sonarr
     controllers:
       sonarr:
         enabled: true
@@ -37,7 +37,7 @@ spec:
           volumeClaimTemplates:
             - name: config
               accessMode: ReadWriteOnce
-              size: ${VOLSYNC_CAPACITY}
+              size: "${VOLSYNC_CAPACITY}"
               storageClass: ceph-block
               dataSourceRef:
                 kind: ReplicationDestination
@@ -59,7 +59,7 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: "America/New_York"
-              SONARR__INSTANCE_NAME: *app
+              SONARR__INSTANCE_NAME: sonarr
               SONARR__PORT: &port 8989
               SONARR__APPLICATION_URL: "https://{{ .Release.Name }}.chkpwd.com"
               SONARR__API_KEY:

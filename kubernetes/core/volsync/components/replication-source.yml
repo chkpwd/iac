@@ -15,7 +15,7 @@ spec:
     volumeSnapshotClassName: csi-ceph-blockpool
     cacheStorageClassName: ceph-block
     storageClassName: ceph-block
-    cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=10Gi}"
+    cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=4Gi}"
     cacheAccessModes: ["${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}"]
     accessModes: ["${VOLSYNC_ACCESSMODES:=ReadWriteOnce}"]
     moverSecurityContext:
