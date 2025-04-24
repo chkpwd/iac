@@ -137,7 +137,7 @@ spec:
         enabled: true
         accessMode: ReadWriteOnce
         type: persistentVolumeClaim
-        size: 5Gi
+        size: ${VOLSYNC_CAPACITY}
         advancedMounts:
           mongodb:
             app:

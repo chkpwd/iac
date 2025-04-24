@@ -37,7 +37,7 @@ spec:
           volumeClaimTemplates:
             - name: data
               accessMode: ReadWriteOnce
-              size: 2Gi
+              size: ${VOLSYNC_CAPACITY}
               storageClass: ceph-block
               dataSourceRef:
                 kind: ReplicationDestination

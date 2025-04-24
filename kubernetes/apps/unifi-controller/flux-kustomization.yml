@@ -17,6 +17,7 @@ spec:
     substitute:
       APP: *app
       CLAIM: config-unifi-controller-0
+      VOLSYNC_CAPACITY: "2Gi"
   prune: true
   sourceRef:
     kind: GitRepository

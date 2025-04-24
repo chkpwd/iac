@@ -175,7 +175,7 @@ spec:
         enabled: true
         accessMode: ReadWriteOnce
         type: persistentVolumeClaim
-        size: 10Gi
+        size: ${VOLSYNC_CAPACITY}
         storageClass: ceph-block
         dataSourceRef:
           kind: ReplicationDestination
