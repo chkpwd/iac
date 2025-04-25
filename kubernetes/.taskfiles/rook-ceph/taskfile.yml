@@ -36,14 +36,12 @@ tasks:
   wipe-rook:
     desc: Wipe rook ceph cluster [DEVICE=required] [HOST_PATH=required] [NODE_NAME=required]
     cmds:
-      - for:
-          var: K8S_NODES
-        cmd: NODE_NAME={{.ITEM}} minijinja-cli {{.TEMPLATES_DIR}}/wipe-rook.yml.j2 | kubectl apply --server-side --filename -
-      - kubectl wait pod --timeout=900s --for=jsonpath='{.status.phase}=Succeeded' --selector=app.kubernetes.io/name=wipe-rook --timeout=5m
+      - minijinja-cli {{.TEMPLATES_DIR}}/wipe-rook.yml.j2 | kubectl apply --server-side --filename -
+      - kubectl wait job wipe-rook --for=condition=complete --timeout=5m
+      - kubectl delete job wipe-rook
     env:
       DEVICE: '{{.DEVICE | default "/dev/nvme0n1"}}'
       HOST_PATH: '{{.HOST_PATH | default "/var/lib/rook"}}'
-      NODE_NAME: "{{.NODE_NAME}}"
     prompt: "Are you sure you want to wipe the Rook Ceph cluster?"
     silent: true
     interactive: true
