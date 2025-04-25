@@ -4,6 +4,7 @@ version: "3"
 vars:
   ROOK_CEPH_NS: rook-ceph
   ROOK_CEPH_BLOCKPOOL: ceph-blockpool
+  TEMPLATES_DIR: "{{.ROOT_DIR}}/kubernetes/.taskfiles/rook-ceph/templates"
 tasks:
   get-rook-volume-images:
     desc: Get rook ceph image names for all PVs

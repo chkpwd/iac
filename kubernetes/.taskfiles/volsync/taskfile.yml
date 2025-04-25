@@ -8,7 +8,7 @@ version: "3"
 #   3. Each application only has one PVC that is being replicated
 
 vars:
-  VOLSYNC_RESOURCES_DIR: "{{.ROOT_DIR}}/kubernetes/.taskfiles/volsync/templates"
+  TEMPLATES_DIR: "{{.ROOT_DIR}}/kubernetes/.taskfiles/volsync/templates"
 
 tasks:
   state-*:
@@ -58,7 +58,7 @@ tasks:
       - kubectl --namespace {{.NS}} scale {{.CONTROLLER}}/{{.APP}} --replicas 0
       - kubectl --namespace {{.NS}} wait pod --for=delete --selector="app.kubernetes.io/name={{.APP}}" --timeout=5m
       # Restore
-      - minijinja-cli {{.VOLSYNC_RESOURCES_DIR}}/replicationdestination.yml.j2 | kubectl apply --server-side --filename -
+      - minijinja-cli {{.TEMPLATES_DIR}}/replicationdestination.yml.j2 | kubectl apply --server-side --filename -
       - until kubectl --namespace {{.NS}} get job/volsync-dst-{{.APP}}-manual &>/dev/null; do sleep 5; done
       - kubectl --namespace {{.NS}} wait job/volsync-dst-{{.APP}}-manual --for=condition=complete --timeout=120m
       - kubectl --namespace {{.NS}} delete replicationdestination {{.APP}}-manual
@@ -88,13 +88,13 @@ tasks:
     requires:
       vars: [APP, PREVIOUS]
     preconditions:
-      - test -f {{.VOLSYNC_RESOURCES_DIR}}/replicationdestination.yml.j2
+      - test -f {{.TEMPLATES_DIR}}/replicationdestination.yml.j2
       - which flux kubectl minijinja-cli
 
   unlock-local:
     desc: Unlock a restic source repo from local machine [NS=default] [APP=required]
     cmds:
-      - minijinja-cli {{.VOLSYNC_RESOURCES_DIR}}/unlock.yml.j2 | kubectl apply --server-side --filename -
+      - minijinja-cli {{.TEMPLATES_DIR}}/unlock.yml.j2 | kubectl apply --server-side --filename -
       - until kubectl --namespace {{.NS}} get job/volsync-unlock-{{.APP}} &>/dev/null; do sleep 5; done
       - kubectl --namespace {{.NS}} wait job/volsync-unlock-{{.APP}} --for condition=complete --timeout=5m
       - stern --namespace {{.NS}} job/volsync-unlock-{{.APP}} --no-follow
@@ -107,5 +107,5 @@ tasks:
     requires:
       vars: [APP]
     preconditions:
-      - test -f {{.VOLSYNC_RESOURCES_DIR}}/unlock.yml.j2
+      - test -f {{.TEMPLATES_DIR}}/unlock.yml.j2
       - which kubectl minijinja-cli stern
