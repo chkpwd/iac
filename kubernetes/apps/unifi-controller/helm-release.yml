@@ -62,12 +62,33 @@ spec:
               PUID: "999"
               PGID: "999"
               JVM_MAX_HEAP_SIZE: "1024M"
+              DB_MONGO_LOCAL: "false"
+              DB_MONGO_URI: mongodb://unifi-controller-mongodb:27017/unifi
+              STATDB_MONGO_URI: mongodb://unifi-controller-mongodb:27017/unifi_stat
+              TZ: "America/New_York"
+              UNIFI_DB_NAME: unifi
             resources:
               requests:
                 cpu: 12m
                 memory: 764Mi
               limits:
                 memory: 789Mi
+      mongodb:
+        type: statefulset
+        statefulset:
+          podManagementPolicy: OrderedReady
+        containers:
+          app:
+            image:
+              repository: docker.io/library/mongo
+              tag: 6.0.4-focal
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
     service:
       app:
         controller: unifi-controller
@@ -86,6 +107,12 @@ spec:
           stun:
             port: 3478
             protocol: UDP
+      database:
+        controller: mongodb
+        nameOverride: mongodb
+        ports:
+          http:
+            port: 27017
     ingress:
       internal:
         annotations:
