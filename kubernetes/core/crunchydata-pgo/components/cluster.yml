@@ -35,10 +35,10 @@ spec:
         type: AlphaNumeric
   backups:
     pgbackrest:
-      configuration: &backupConfig
+      configuration: &customBackrestConfig
         - secret:
             name: "${APP}-crunchy-postgres"
-      global: &backupFlag
+      global: &globalBackrestConfig
         repo1-block: "y"
         repo1-bundle: "y"
         repo1-path: /${APP}
@@ -66,9 +66,9 @@ spec:
             incremental: "0 6-23 * * *"
   dataSource:
     pgbackrest:
-      stanza: db
-      configuration: *backupConfig
-      global: *backupFlag
+      stanza: db # default stanza name
+      configuration: *customBackrestConfig
+      global: *globalBackrestConfig
       repo:
         name: repo1
         s3: *s3
