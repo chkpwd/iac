@@ -17,6 +17,7 @@ includes:
 
 vars:
   K8S_DIR: "{{.ROOT_DIR}}/kubernetes"
+  K8S_NODES: ["ct-k8s-01", "ct-k8s-02", "ct-k8s-03"]
 
 env:
   KUBECONFIG: "{{.KUBECONFIG}}"
