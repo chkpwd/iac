@@ -30,9 +30,9 @@ spec:
           path: /spec/backups
       target:
         kind: PostgresCluster
-    - patch: |-
+    - patch: |
         - op: remove
-        path: /spec/dataSource
+          path: /spec/dataSource
       target:
         kind: PostgresCluster
   prune: true
