@@ -68,3 +68,12 @@ tasks:
       - which kubectl
     cmds:
       - kubectl scale --all --replicas=1 -n {{.NS}}
+  debug:
+    desc: Run kubectl debug
+    cmd: kubectl debug node/{{.NODE}} -it --image='{{.IMAGE}}' -n kube-system --profile sysadmin
+    interactive: true
+    vars:
+      NODE: "{{.NODE}}"
+      IMAGE: '{{.IMAGE | default "ghcr.io/nicolaka/netshoot:latest"}}'
+    preconditions:
+      - which kubectl
