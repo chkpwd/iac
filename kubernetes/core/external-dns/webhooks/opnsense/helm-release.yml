@@ -76,14 +76,10 @@ spec:
             cpu: 10m
           limits:
             memory: 100Mi
-    extraArgs:
-      # - --ingress-class=int-ingress no longer needed as we are filtering by label
-      - --ignore-ingress-tls-spec
-    sources: ["crd", "ingress"]
+    sources: ["crd"]
     policy: sync
     registry: noop
     domainFilter: ["chkpwd.com"]
-    labelFilter: "external-dns/private in (true)"
     serviceMonitor:
       enabled: false
     resources:
