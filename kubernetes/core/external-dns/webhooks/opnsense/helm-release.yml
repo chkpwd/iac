@@ -78,7 +78,6 @@ spec:
             memory: 100Mi
     extraArgs:
       # - --ingress-class=int-ingress no longer needed as we are filtering by label
-      - --annotation-filter=external-dns/private in (true)
       - --ignore-ingress-tls-spec
     sources: ["crd", "ingress"]
     policy: sync
