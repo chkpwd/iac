@@ -33,3 +33,20 @@ tasks:
         IMAGE=$(kubectl get pv -o json | \
         jq -r --arg query "{{.QUERY}}" '.items[] | select(.spec.claimRef.name != null and (.spec.claimRef.name | test($query))) | .spec.csi.volumeAttributes.imageName' | head -n 1)
         kubectl exec -n {{.ROOK_CEPH_NS}} -it deployments/rook-ceph-tools -- rbd -p {{.ROOK_CEPH_BLOCKPOOL}} du "$IMAGE"
+  wipe-rook:
+    desc: Wipe rook ceph cluster [DEVICE=required] [HOST_PATH=required] [NODE_NAME=required]
+    cmds:
+      - for:
+          var: K8S_NODES
+        cmd: NODE_NAME={{.ITEM}} minijinja-cli {{.TEMPLATES_DIR}}/wipe-rook.yml.j2 | kubectl apply --server-side --filename -
+      - kubectl wait pod --timeout=900s --for=jsonpath='{.status.phase}=Succeeded' --selector=app.kubernetes.io/name=wipe-rook --timeout=5m
+    env:
+      DEVICE: '{{.DEVICE | default "/dev/nvme0n1"}}'
+      HOST_PATH: '{{.HOST_PATH | default "/var/lib/rook"}}'
+      NODE_NAME: "{{.NODE_NAME}}"
+    prompt: "Are you sure you want to wipe the Rook Ceph cluster?"
+    silent: true
+    interactive: true
+    preconditions:
+      - which minijinja-cli kubectl
+      - test -f {{.TEMPLATES_DIR}}/wipe-rook.yml.j2
