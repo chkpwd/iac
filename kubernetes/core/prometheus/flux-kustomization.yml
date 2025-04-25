@@ -11,6 +11,12 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  components:
+    - ../external-dns/_components/internal/
+  postBuild:
+    substitute:
+      APP: *app
+      RECORD_NAME: k8s-prometheus
   prune: true
   sourceRef:
     kind: GitRepository

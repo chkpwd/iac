@@ -35,8 +35,6 @@ spec:
     ingress:
       dashboard:
         ingressClassName: int-ingress
-        labels:
-          external-dns/private: "true"
         host:
           name: rook.chkpwd.com
           path: /

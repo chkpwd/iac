@@ -1,0 +1,11 @@
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: ${APP}-internal
+spec:
+  endpoints:
+    - dnsName: ${RECORD_NAME:-${APP}}.chkpwd.com
+      recordTTL: 180
+      recordType: A
+      targets:
+        - 172.16.16.30

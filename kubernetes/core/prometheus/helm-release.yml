@@ -86,8 +86,6 @@ spec:
       ingress:
         enabled: true
         ingressClassName: int-ingress
-        labels:
-          external-dns/private: "true"
         annotations:
           cert-manager.io/cluster-issuer: main-issuer
         hosts: ["k8s-{{ .Release.Name }}.chkpwd.com"]
