@@ -66,3 +66,11 @@ spec:
       image:
         repository: ghcr.io/gabe565/obico/ml-api
         tag: sha-ba70962
+      resources:
+        requests:
+          cpu: 10m
+          memory: 128Mi
+          gpu.intel.com/i915: 1
+        limits:
+          memory: 2Gi
+          gpu.intel.com/i915: 1
