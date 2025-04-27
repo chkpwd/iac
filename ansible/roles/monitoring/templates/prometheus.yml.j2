@@ -26,3 +26,23 @@ scrape_configs:
     scheme: http
     static_configs:
       - targets: ['172.16.16.4:5050']
+
+  - job_name: 'exportarr-sonarr'
+    scheme: https
+    static_configs:
+      - targets: ['sonarr.chkpwd.com']
+
+  - job_name: 'exportarr-radarr'
+    scheme: https
+    static_configs:
+      - targets: ['radarr.chkpwd.com']
+
+  - job_name: 'exportarr-bazarr'
+    scheme: https
+    static_configs:
+      - targets: ['bazarr.chkpwd.com']
+
+  - job_name: 'exportarr-prowlarr'
+    scheme: https
+    static_configs:
+      - targets: ['prowlarr.chkpwd.com']
