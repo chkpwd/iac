@@ -7,7 +7,6 @@ talosVersion: v1.9.4
 # renovate: depName=ghcr.io/siderolabs/kubelet datasource=docker
 kubernetesVersion: v1.32.2
 additionalApiServerCertSans: &sans
-  - &talosControlplaneVip 172.16.16.13
   - 127.0.0.1
 additionalMachineCertSans: *sans
 cniConfig:
@@ -22,7 +21,7 @@ nodes:
       - interface: enp0s31f6
         dhcp: true
         vip:
-          ip: *talosControlplaneVip
+          ip: &vip 172.16.16.13
   - hostname: ct-k8s-02.chkpwd.com
     ipAddress: 172.16.16.11
     controlPlane: true
@@ -32,7 +31,7 @@ nodes:
       - interface: enp0s31f6
         dhcp: true
         vip:
-          ip: *talosControlplaneVip
+          ip: *vip
   - hostname: ct-k8s-03.chkpwd.com
     ipAddress: 172.16.16.12
     controlPlane: true
@@ -42,7 +41,7 @@ nodes:
       - interface: enp0s31f6
         dhcp: true
         vip:
-          ip: *talosControlplaneVip
+          ip: *vip
 controlPlane:
   schematic:
     customization:
