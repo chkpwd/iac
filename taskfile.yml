@@ -14,10 +14,13 @@ includes:
   #postgres: kubernetes/.taskfiles/postgres/taskfile.yml
   rook-ceph: kubernetes/.taskfiles/rook-ceph/taskfile.yml
   volsync: kubernetes/.taskfiles/volsync/taskfile.yml
+  talos: kubernetes/.taskfiles/talos/taskfile.yml
 
 vars:
   K8S_DIR: "{{.ROOT_DIR}}/kubernetes"
   K8S_NODES: ["ct-k8s-01", "ct-k8s-02", "ct-k8s-03"]
+  TALOSCONFIG: "{{.K8S_DIR}}/talos/clusterconfig/talosconfig"
+  MINIJINJA_CONFIG_FILE: "{{.ROOT_DIR}}/.minijinja.toml"
 
 env:
   KUBECONFIG: "{{.KUBECONFIG}}"
