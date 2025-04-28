@@ -34,6 +34,8 @@ servers:
       - name: forward
         parameters: . /etc/resolv.conf
       - name: cache
+          prefetch 20
+          serve_stale
         parameters: 30
       - name: loop
       - name: reload
