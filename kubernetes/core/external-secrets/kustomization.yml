@@ -5,6 +5,7 @@ kind: Kustomization
 resources:
   - helm-release.yml
   - bitwarden-secrets-manager.yml
+  - source.yml
 configMapGenerator:
   - name: external-secrets-values
     files:

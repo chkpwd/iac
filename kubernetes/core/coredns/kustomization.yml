@@ -3,10 +3,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ./helm-release.yml
+  - helm-release.yml
+  - source.yml
 configMapGenerator:
   - name: coredns-values
     files:
       - values.yaml=./values.yml
 configurations:
-  - ./kustomizeconfig.yml
+  - kustomizeconfig.yml

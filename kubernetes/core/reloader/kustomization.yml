@@ -4,6 +4,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - helm-release.yml
+  - source.yml
 labels:
   - pairs:
       app.kubernetes.io/name: reloader

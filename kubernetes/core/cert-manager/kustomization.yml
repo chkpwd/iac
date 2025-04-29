@@ -7,6 +7,7 @@ resources:
   - external-secret.yml
   - main-cert.yml
   - issuers.yml
+  - source.yml
 configMapGenerator:
   - name: cert-manager-values
     files:
