@@ -9,6 +9,7 @@ spec:
   targetNamespace: *ns
   dependsOn:
     - name: cert-manager
+      namespace: security
   path: ./kubernetes/core/nginx-ext-ingress/
   commonMetadata:
     labels:
