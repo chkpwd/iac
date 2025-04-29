@@ -8,11 +8,7 @@ spec:
   externalSecretName: cloudflare
   namespaceSelectors:
     - matchExpressions:
-        - {
-            key: kubernetes.io/metadata.name,
-            operator: In,
-            values: [tools, security],
-          }
+      - { key:  kubernetes.io/metadata.name, operator: In, values: [tools, security] }
   refreshTime: 15m
   externalSecretSpec:
     secretStoreRef:
