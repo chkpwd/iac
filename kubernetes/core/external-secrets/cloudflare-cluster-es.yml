@@ -15,7 +15,7 @@ spec:
       kind: ClusterSecretStore
     refreshInterval: "1h"
     target:
-      name: cloudflare
+      name: cloudflare-id
       template:
         data:
           CLOUDFLARE_ACCOUNT_ID: "{{ .account_id }}"
