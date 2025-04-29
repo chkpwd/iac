@@ -17,7 +17,7 @@ spec:
     substitute:
       APP: *app
       RECORD_NAME: k8s-prometheus
-  prune: true
+  prune: false
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops

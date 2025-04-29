@@ -21,7 +21,7 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  prune: true
+  prune: false
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
@@ -42,7 +42,7 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: external-dns
-  prune: true
+  prune: false
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
