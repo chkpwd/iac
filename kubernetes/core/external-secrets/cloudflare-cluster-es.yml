@@ -3,13 +3,12 @@
 apiVersion: external-secrets.io/v1beta1
 kind: ClusterExternalSecret
 metadata:
-  name: cloudflare
+  name: cloudflare-id
 spec:
-  externalSecretName: cloudflare
+  refreshTime: 15m
   namespaceSelectors:
     - matchExpressions:
       - { key:  kubernetes.io/metadata.name, operator: In, values: [tools, security] }
-  refreshTime: 15m
   externalSecretSpec:
     secretStoreRef:
       name: bitwarden-secrets-manager
