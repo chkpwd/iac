@@ -4,9 +4,9 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app authentik
-  namespace: flux-system
+  namespace: &ns security
 spec:
-  targetNamespace: security
+  targetNamespace: *ns
   path: ./kubernetes/apps/authentik/
   commonMetadata:
     labels:
@@ -18,6 +18,10 @@ spec:
     substitute:
       APP: *app
       POSTGRES_DATA_SIZE: 1Gi
+    substituteFrom:
+      - kind: Secret
+        name: authentik-crunchy-postgres
+        optional: false
   patches:
     - patch: |
         - op: add

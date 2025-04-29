@@ -8,7 +8,6 @@ resources:
   - ingress-flux-webhook.yml
   - prometheus-rule.yml
   - receiver-github.yml
-  - cluster-secrets.yml
 configMapGenerator:
   - name: flux-instance-values
     files:
