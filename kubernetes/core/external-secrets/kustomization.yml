@@ -5,6 +5,7 @@ kind: Kustomization
 resources:
   - helm-release.yml
   - bitwarden-secrets-manager.yml
+  - cloudflare-cluster-es.yml
   - source.yml
 configMapGenerator:
   - name: external-secrets-values

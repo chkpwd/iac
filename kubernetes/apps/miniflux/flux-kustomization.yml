@@ -19,7 +19,7 @@ spec:
       POSTGRES_DATA_SIZE: 7Gi
     substituteFrom:
       - kind: Secret
-        name: miniflux-crunchy-postgres
+        name: cloudflare-id
         optional: false
   prune: false
   sourceRef:

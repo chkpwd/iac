@@ -25,9 +25,9 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: gateway-api
-  namespace: flux-system
+  namespace: &ns networking
 spec:
-  targetNamespace: networking
+  targetNamespace: *ns
   prune: false
   sourceRef:
     kind: GitRepository

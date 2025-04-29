@@ -4,9 +4,9 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app prometheus
-  namespace: flux-system
+  namespace: &ns monitoring
 spec:
-  targetNamespace: monitoring
+  targetNamespace: *ns
   path: ./kubernetes/core/prometheus/
   commonMetadata:
     labels:
@@ -21,6 +21,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
+    namespace: flux-system
   wait: true
   interval: 30m
   retryInterval: 1m

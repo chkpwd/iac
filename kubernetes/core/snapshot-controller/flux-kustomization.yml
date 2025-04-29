@@ -4,9 +4,9 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app snapshot-controller
-  namespace: flux-system
+  namespace: &ns storage
 spec:
-  targetNamespace: storage
+  targetNamespace: *ns
   interval: 1h
   path: ./kubernetes/core/snapshot-controller/
   commonMetadata:
