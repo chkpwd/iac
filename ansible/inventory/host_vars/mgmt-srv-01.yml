@@ -27,7 +27,7 @@ service_definitions:
       USER_ID: "2848619454"
       PLATFORM: PC
       API_KEY: "{{ lookup('bws_cache', 'public-api-apex-legends-key').value }}"
-    ports: ['5050:5000']
+    ports: ["5050:5000"]
   - name: opnsense-exporter
     image: ghcr.io/athennamind/opnsense-exporter:0.0.8
     command:
@@ -40,7 +40,7 @@ service_definitions:
     env:
       OPNSENSE_EXPORTER_OPS_API_KEY: "{{ lookup('bws_cache', 'infra-network-secrets').value.opnsense_exporter_api_key }}"
       OPNSENSE_EXPORTER_OPS_API_SECRET: "{{ lookup('bws_cache', 'infra-network-secrets').value.opnsense_exporter_api_secret }}"
-    ports: ['8080:8080']
+    ports: ["8080:8080"]
   - name: scanservjs
     image: sbs20/scanservjs:v3.0.3
     ports: [8087:8080]
@@ -52,6 +52,17 @@ service_definitions:
     volumes:
       - "{{ compose_configuration_path }}/scanservjs/output:/var/lib/scanservjs/output"
       - "{{ compose_configuration_path }}/scanservjs:/etc/scanservjs"
+  - name: twingate
+    image: twingate/connector:1.75.0
+    sysctls:
+      net.ipv4.ping_group_range: "0 2147483647"
+    env:
+      TWINGATE_NETWORK: "chkpwd"
+      TWINGATE_ACCESS_TOKEN: "{{ lookup('bws_cache', 'infra-network-secrets').value.twingate_access_token }}"
+      TWINGATE_REFRESH_TOKEN: "{{ lookup('bws_cache', 'infra-network-secrets').value.twingate_refresh_token }}"
+      TWINGATE_DNS: "172.16.16.1"
+      TWINGATE_LABEL_HOSTNAME: "`hostname`"
+      TWINGATE_LABEL_DEPLOYED_BY: "docker"
   - name: bws-cache
     image: ghcr.io/ripplefcl/bws-cache:v2.4.2
     env:
@@ -60,4 +71,4 @@ service_definitions:
       REFRESH_RATE: "5"
       PARSE_SECRET_VALUES: "true"
       LOG_LEVEL: "warning"
-    ports: ['5000:5000']
+    ports: ["5000:5000"]
