@@ -46,7 +46,14 @@ spec:
               repository: ghcr.io/chkpwd/diff2rss
               tag: v2.0.0
               pullPolicy: IfNotPresent
-            probes: &probes
+            env:
+              TZ: "America/New_York"
+              GITHUB_TOKEN:
+                valueFrom:
+                  secretKeyRef:
+                    name: diff2rss
+                    key: GITHUB_TOKEN
+            probes:
               liveness:
                 enabled: true
               readiness:
