@@ -3,8 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: metrics-server
-  namespace: flux-system
-spec:
+  spec:
   interval: 30m
   url: https://kubernetes-sigs.github.io/metrics-server
   timeout: 3m

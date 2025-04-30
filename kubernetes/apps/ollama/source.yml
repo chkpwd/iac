@@ -3,7 +3,6 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: ollama-helm
-  namespace: flux-system
 spec:
   interval: 30m
   url: https://otwld.github.io/ollama-helm/
