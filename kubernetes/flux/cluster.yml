@@ -9,7 +9,7 @@ spec:
   targetNamespace: flux-system
   interval: 30m
   path: ./kubernetes/flux/sources
-  prune: false
+  prune: true
   wait: false
   sourceRef:
     kind: GitRepository
@@ -26,7 +26,7 @@ spec:
   dependsOn:
     - name: core
   path: ./kubernetes/apps
-  prune: false
+  prune: true
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
@@ -42,7 +42,7 @@ spec:
   dependsOn:
     - name: sources
   path: ./kubernetes/core
-  prune: false
+  prune: true
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops

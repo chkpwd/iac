@@ -19,7 +19,7 @@ spec:
       APP: *app
       CLAIM: obico-server-data
       VOLSYNC_CAPACITY: "1Gi"
-  prune: false
+  prune: true
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops

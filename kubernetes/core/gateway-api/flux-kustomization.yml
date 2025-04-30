@@ -28,7 +28,7 @@ metadata:
   namespace: &ns networking
 spec:
   targetNamespace: *ns
-  prune: false
+  prune: true
   sourceRef:
     kind: GitRepository
     name: gateway-api-crd

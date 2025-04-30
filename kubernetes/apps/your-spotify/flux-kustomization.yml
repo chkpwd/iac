@@ -18,7 +18,7 @@ spec:
       APP: *app
       CLAIM: your-spotify-configs
       VOLSYNC_CAPACITY: "2Gi"
-  prune: false
+  prune: true
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
