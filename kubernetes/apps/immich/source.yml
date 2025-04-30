@@ -3,6 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: immich
+  namespace: flux-system
 spec:
   interval: 30m
   url: https://immich-app.github.io/immich-charts

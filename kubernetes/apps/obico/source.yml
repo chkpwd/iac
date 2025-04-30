@@ -3,6 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: gabe565
+  namespace: flux-system
 spec:
   type: oci
   interval: 30m
