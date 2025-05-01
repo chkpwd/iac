@@ -1,0 +1,108 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/common-3.1.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: recommendarr
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.3
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  driftDetection:
+    mode: enabled
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    global:
+      fullnameOverride: recommendarr
+    controllers:
+      recommendarr:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
+        statefulset:
+          volumeClaimTemplates:
+            - name: recommendarr
+              accessMode: ReadWriteOnce
+              size: "${VOLSYNC_CAPACITY}"
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              globalMounts:
+                - path: /app/server/data
+        pod:
+          securityContext:
+            runAsUser: &context 1999
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/chkpwd/recommendarr
+              tag: v2.0.0
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "America/New_York"
+              NODE_ENV: production
+              FORCE_SECURE_COOKIES: true
+              PORT: &port 3000
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/health
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                cpu: 10m
+                memory: 100Mi
+              limits:
+                memory: 300Mi
+    service:
+      app:
+        controller: recommendarr
+        ports:
+          http:
+            port: *port
+    ingress:
+      internal:
+        enabled: true
+        className: int-ingress
+        hosts:
+          - host: "{{ .Release.Name }}.chkpwd.com"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
