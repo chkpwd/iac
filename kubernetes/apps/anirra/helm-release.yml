@@ -54,25 +54,16 @@ spec:
         initContainers:
           fix-stuff:
             image:
-              repository: busybox
-              tag: 1.37.0
+              repository: alpine
+              tag: 3.21.0
             env:
-              - name: APP_LEVEL
-                value: "PROD"
-            command: ["/bin/bash", "-c"]
+              APP_LEVEL: PROD
+            workingDir: /project
+            command: ["/bin/sh", "-c"]
             args:
               - |
                 export PATH="/root/.nvm/versions/node/v22.14.0/bin:$PATH"
-                cd /project
                 pdm run alembic upgrade head
-
-                if [ "$APP_LEVEL" == "PROD" ]; then
-                    export FRONTEND_COMMAND="npm run start"
-                    export BACKEND_COMMAND="pdm run python -m uvicorn src.saas_backend.app:app --host 0.0.0.0 --port 8000"
-                else
-                    export FRONTEND_COMMAND="npm run dev"
-                    export BACKEND_COMMAND="pdm run python -m uvicorn src.saas_backend.app:app --reload --host 0.0.0.0 --port 8000"
-                fi
         containers:
           app:
             image:
@@ -93,7 +84,9 @@ spec:
             env:
               TZ: "America/New_York"
               APP_LEVEL: PROD
-              JSON_DATA_PATH: /data
+              JSON_DATA_PATH: /project/data
+              FRONTEND_COMMAND: "npm run start"
+              BACKEND_COMMAND: "pdm run python -m uvicorn src.saas_backend.app:app --host 0.0.0.0 --port 8000"
               NEXTAUTH_URL: https://{{ .Release.Name }}.chkpwd.com
             envFrom:
               - secretRef:
