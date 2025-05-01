@@ -35,7 +35,7 @@ spec:
         replicas: 1
         statefulset:
           volumeClaimTemplates:
-            - name: recommendarr
+            - name: config
               accessMode: ReadWriteOnce
               size: "${VOLSYNC_CAPACITY}"
               storageClass: ceph-block

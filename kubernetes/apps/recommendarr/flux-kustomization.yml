@@ -12,15 +12,15 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    # - ../../core/volsync/components/
+    - ../../core/volsync/components/
     - ../../core/external-dns/_components/internal/
   postBuild:
     substitute:
       APP: *app
-      # CLAIM: config-recommendarr-0
-      # VOLSYNC_PUID: "1999"
-      # VOLSYNC_PGID: "1999"
-      # VOLSYNC_CAPACITY: "512Mi"
+      CLAIM: config-recommendarr-0
+      VOLSYNC_PUID: "1999"
+      VOLSYNC_PGID: "1999"
+      VOLSYNC_CAPACITY: "1Gi"
   prune: true
   sourceRef:
     kind: GitRepository
