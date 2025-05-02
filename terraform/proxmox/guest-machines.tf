@@ -21,7 +21,7 @@ resource "proxmox_virtual_environment_vm" "ollama" {
   }
 
   cpu {
-    cores = 2
+    cores = 4
     type  = "x86-64-v2-AES"
   }
 
