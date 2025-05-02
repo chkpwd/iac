@@ -1,0 +1,43 @@
+---
+apiVersion: externaldns.k8s.io/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: ollama-internal
+spec:
+  endpoints:
+    - dnsName: ollama.chkpwd.com
+      recordTTL: 180
+      recordType: A
+      targets:
+        - 172.16.16.30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+spec:
+  type: ExternalName
+  externalName: ai-inference-01.chkpwd.com
+  ports:
+    - name: http
+      port: &port 11434
+      protocol: TCP
+      targetPort: *port
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: &app ollama
+spec:
+  ingressClassName: int-ingress
+  rules:
+    - host: ollama.chkpwd.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: *app
+                port:
+                  number: 11434
