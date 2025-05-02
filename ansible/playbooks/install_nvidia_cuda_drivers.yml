@@ -9,8 +9,8 @@
         - name: Ensure non-free and contrib repositories are in sources.list
           lineinfile:
             path: /etc/apt/sources.list
-            regexp: ^deb http://deb.debian.org/debian/ bookworm main
-            line: deb http://deb.debian.org/debian/ bookworm main non-free-firmware contrib non-free
+            regexp: ^deb http://deb.debian.org/debian/ trixie main
+            line: deb http://deb.debian.org/debian/ trixie main non-free-firmware contrib non-free
           register: repo_updated
           notify: Update APT Cache
         - name: Gather facts (get current kernel versions)
