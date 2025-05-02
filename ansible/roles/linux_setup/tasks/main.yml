@@ -38,14 +38,17 @@
   ansible.builtin.debug:
     msg: logrotate service has failed
   when: ansible_facts.services['logrotate.service'].state == 'failed'
-- name: Apply user configurations for {{ common_user }}
+- name: Apply user configurations for {{ linux_setup_common_user }}
   ansible.builtin.include_tasks: user.yml
 - name: Apply secondary disk partitioning
   ansible.builtin.include_tasks: disk.yml
   when: ansible_facts['devices'] | dict2items | selectattr('key', 'contains', 'sd') | length > 1
+- name: Set hostname
+  ansible.builtin.hostname:
+    name: "{{ ansible_ssh_host }}"
 - name: Copy the public SSH key
   ansible.posix.authorized_key:
-    user: "{{ common_user }}"
+    user: "{{ linux_setup_common_user }}"
     state: present
     key: "{{ linux_setup_ssh_public_key }}"
   become: true
@@ -58,7 +61,7 @@
   become: true
 - name: Remove administrator user
   vars:
-    ansible_ssh_user: "{{ common_user }}"
+    ansible_ssh_user: "{{ linux_setup_common_user }}"
   ansible.builtin.user:
     name: administrator
     state: absent

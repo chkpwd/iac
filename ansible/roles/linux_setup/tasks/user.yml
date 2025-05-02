@@ -1,24 +1,23 @@
 ---
 - name: Create a login user
   ansible.builtin.user:
-    name: "{{ common_user }}"
+    name: "{{ linux_setup_common_user }}"
     password: $y$j9T$Xf74ndlfs.EWF2kvNVPTF/$i121vNYyGsSX9jpKXjzHboCS7aw1cx0gADi3z/YDAXD
     shell: /bin/bash
     groups: sudo
-    uid: "{{ common_user_uid }}"
+    uid: 1000
     comment: Default Admin User
     state: present
   become: true
 - name: Chmod the user home directory
   ansible.builtin.file:
-    path: /home/{{ common_user }}
+    path: /home/{{ linux_setup_common_user }}
     state: directory
     mode: "0755"
-    owner: "{{ common_user }}"
-    group: "{{ common_user }}"
+    owner: "{{ linux_setup_common_user }}"
+    group: "{{ linux_setup_common_user }}"
     recurse: false
   become: true
-
 # - name: Allow sudo group to have passwordless sudo
 #   ansible.builtin.lineinfile:
 #     path: /etc/sudoers

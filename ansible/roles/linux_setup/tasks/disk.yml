@@ -10,8 +10,8 @@
       ansible.builtin.file:
         path: "{{ docker_confs_dir }}"
         state: directory
-        owner: "{{ common_user }}"
-        group: "{{ common_user }}"
+        owner: "{{ linux_setup_common_user }}"
+        group: "{{ linux_setup_common_user }}"
         mode: "0755"
     - name: Mount NFS share from TrueNAS
       ansible.posix.mount:
@@ -66,7 +66,7 @@
 - name: Set permissions on mount
   ansible.builtin.file:
     path: "{{ mount_dir }}"
-    owner: "{{ common_user }}"
-    group: "{{ common_user }}"
+    owner: "{{ linux_setup_common_user }}"
+    group: "{{ linux_setup_common_user }}"
     mode: "755"
     state: directory
