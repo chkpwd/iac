@@ -1,0 +1,12 @@
+---
+ollama_user: ollama
+ollama_host: 0.0.0.0
+ollama_port: 11434
+ollama_ver: 0.6.5
+ollama_url: "https://github.com/ollama/ollama/releases/download/v{{ ollama_ver }}/ollama-linux-amd64.tgz"
+ollama_tmp_dir: /tmp/ollama
+ollama_parent_install_dir: /usr/local
+ollama_binary_path: "{{ ollama_parent_install_dir }}//bin/ollama"
+ollama_checksums:
+  # https://github.com/ollama/ollama/releases/download/v0.6.5/ollama-linux-amd64.tgz
+  "0.6.5": sha256:1d1aea4dcae1d6b736141c2998416a742b89d7fda9321d60db7ea286db77268d
