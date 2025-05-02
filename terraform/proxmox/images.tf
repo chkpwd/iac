@@ -1,4 +1,4 @@
-resource "proxmox_virtual_environment_download_file" "debian_bookworm_qcow2_nocloud" {
+resource "proxmox_virtual_environment_download_file" "debian_bookworm_qcow2_generic" {
   content_type       = "iso"
   datastore_id       = "local"
   file_name          = "debian-12-nocloud-amd64.qcow2.img"
@@ -18,12 +18,12 @@ resource "proxmox_virtual_environment_download_file" "debian_trixie_qcow2_generi
   checksum_algorithm = "sha512"
 }
 
-resource "proxmox_virtual_environment_download_file" "ubuntu_noble_cloud_image" {
+resource "proxmox_virtual_environment_download_file" "ubuntu_noble_cloud_image" { # TODO: use renovate to update the checksum
   content_type       = "iso"
   datastore_id       = "local"
   file_name          = "ubuntu-24.04-cloudimg-amd64.qcow.iso"
   node_name          = var.node
-  url                = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
-  checksum           = "85af38f453feaa3d6fbc6aba3b2a843b5b10e8ce273a24047259bb7fa47ff4c5"
+  url                = "https://cloud-images.ubuntu.com/noble/20250430/noble-server-cloudimg-amd64.img"
+  checksum           = "bc471ca49de03b5129c65b70f9862b7f4b5e721622fd34ade78132f6f7999e2d"
   checksum_algorithm = "sha256"
 }
