@@ -28,6 +28,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: &app ollama
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "900"
 spec:
   ingressClassName: int-ingress
   rules:
