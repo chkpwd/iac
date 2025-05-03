@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: semaphore-ui-external
+  name: semaphore-ui-internal
 spec:
   type: ExternalName
   externalName: mgmt-srv-01.chkpwd.com
@@ -15,9 +15,9 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: &app semaphore-ui-external
+  name: &app semaphore-ui-internal
   labels:
-    external-dns/public: "true"
+    external-dns/private: "true"
   annotations:
     external-dns.alpha.kubernetes.io/target: "chkpwd.com"
 spec:
