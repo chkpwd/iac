@@ -7,8 +7,9 @@ semaphore_container:
       SEMAPHORE_DB_DIALECT: bolt
       SEMAPHORE_ADMIN: &name chkpwd
       SEMAPHORE_ADMIN_NAME: *name
+      SEMAPHORE_ADMIN_PASSWORD: "{{ lookup('bws_cache', 'infra-semaphore-secrets').value.admin_password }}"
       SEMAPHORE_ACCESS_KEY_ENCRYPTION: "{{ lookup('bws_cache', 'infra-semaphore-secrets').value.access_key_encryption }}"
-      SEMAPHORE_PASSWORD_LOGIN_DISABLED: "true"
+      SEMAPHORE_PASSWORD_LOGIN_DISABLED: "false"
       SEMAPHORE_WEB_ROOT: https://semaphore.chkpwd.com
       ANSIBLE_HOST_KEY_CHECKING: "False"
       TZ: "{{ timezone }}"
@@ -16,18 +17,19 @@ semaphore_container:
       - "{{ configuration_path }}/semaphore/db:/var/lib/semaphore"
       - "{{ configuration_path }}/semaphore/config:/etc/semaphore"
       - "{{ configuration_path }}/semaphore/tmp:/tmp/semaphore"
-    ports: ['3005:3000']
-semaphore_oidc_config:
-  oidc_providers:
-    authentik:
-      display_name: "Sign in with SSO"
-      provider_url: "https://authentik.chkpwd.com/application/o/semaphore-ui/"
-      client_id: "semaphore"
-      client_secret: "{{ lookup('bws_cache', 'infra-semaphore-secrets').value.oauth_client_secret }}"
-      redirect_url: "https://semaphore.chkpwd.com/api/auth/oidc/authentik/redirect"
-      scopes:
-        - "email"
-        - "openid"
-        - "profile"
-      username_claim: "preferred_username"
-      name_claim: "preferred_username"
+    ports: ["3005:3000"]
+# semaphore_oidc_config: # https://github.com/semaphoreui/semaphore/issues/2994
+#   oidc_providers:
+#     authentik:
+#       display_name: "Sign in with SSO"
+#       provider_url: "https://authentik.chkpwd.com/application/o/semaphore-ui/"
+#       client_id: "semaphore"
+#       client_secret: "{{ lookup('bws_cache', 'infra-semaphore-secrets').value.oauth_client_secret }}"
+#       redirect_url: "https://semaphore.chkpwd.com/api/auth/oidc/authentik/redirect"
+#       scopes:
+#         - "email"
+#         - "openid"
+#         - "profile"
+#       username_claim: "username"
+#       name_claim: "name"
+#       email_claim: "email"
