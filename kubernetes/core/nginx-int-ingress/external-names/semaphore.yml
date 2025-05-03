@@ -1,20 +1,8 @@
 ---
-apiVersion: externaldns.k8s.io/v1alpha1
-kind: DNSEndpoint
-metadata:
-  name: semaphore-internal
-spec:
-  endpoints:
-    - dnsName: semaphore.chkpwd.com
-      recordTTL: 180
-      recordType: A
-      targets:
-        - 172.16.16.30
----
 apiVersion: v1
 kind: Service
 metadata:
-  name: semaphore-ui-internal
+  name: semaphore-ui-integrations
 spec:
   type: ExternalName
   externalName: mgmt-srv-01.chkpwd.com
@@ -27,17 +15,25 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: &app semaphore-ui-internal
+  name: semaphore-ui-integrations
+  labels:
+    external-dns/public: "true"
+  annotations:
+    external-dns.alpha.kubernetes.io/target: "chkpwd.com"
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location / {
+        return 403;
+      }
 spec:
-  ingressClassName: int-ingress
+  ingressClassName: ext-ingress
   rules:
     - host: semaphore.chkpwd.com
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          - path: /api/integrations
+            pathType: Exact
             backend:
               service:
-                name: *app
+                name: semaphore-ui-integrations
                 port:
                   number: 3005
