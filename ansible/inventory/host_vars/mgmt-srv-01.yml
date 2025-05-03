@@ -58,8 +58,8 @@ service_definitions:
       net.ipv4.ping_group_range: "0 2147483647"
     env:
       TWINGATE_NETWORK: "chkpwd"
-      TWINGATE_ACCESS_TOKEN: "{{ lookup('bws_cache', 'infra-network-secrets').value.twingate_access_token }}"
-      TWINGATE_REFRESH_TOKEN: "{{ lookup('bws_cache', 'infra-network-secrets').value.twingate_refresh_token }}"
+      TWINGATE_ACCESS_TOKEN: "{{ lookup('bws_cache', 'infra-twingate-secrets').value.twingate_access_token }}"
+      TWINGATE_REFRESH_TOKEN: "{{ lookup('bws_cache', 'infra-twingate-secrets').value.twingate_refresh_token }}"
       TWINGATE_DNS: "172.16.16.1"
       TWINGATE_LABEL_HOSTNAME: "`hostname`"
       TWINGATE_LABEL_DEPLOYED_BY: "docker"
