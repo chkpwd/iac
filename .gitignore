@@ -8,19 +8,19 @@
 
 # Packer
 **/secrets.auto.pkrvars.hcl
+**/.pkrtpl.hcl
 
 # Terraform
 terraform/*.tfstate*
 terraform/**/.terraform/
 terraform/**/.terraform.lock.hcl
 terraform/bws-lookup.log
+**/tf.log
 
 # Ansible
 .fact_cache/
-.ansible/.lock
 ansible/.dependencies/
-**/.pkrtpl.hcl
-**/tf.log
+ansible/.ansible/.lock
 
 # MacOS
 .DS_STORE
