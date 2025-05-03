@@ -1,0 +1,14 @@
+---
+- name: Check disk space
+  hosts: all
+  vars:
+    mount_all: []
+  tasks:
+    - name: Get List of devices
+      ansible.builtin.set_fact:
+        mount_all: "{{ mount_all + [{'host': ansible_host, 'dev': item.device, 'mount': item.mount, 'free': (((item.size_available / 1024) / 1024) / 1024) | round(2, 'common'), 'total': (((item.size_total / 1024) / 1024) / 1024) | round(2, 'common')}] }}"
+      when: (item.size_total - item.size_available) > (item.size_total | float * 0.85)
+      with_items: "{{ ansible_mounts | list }}"
+    - name: Disk Status > 85%
+      debug:
+        msg: "{{ mount_all }}"
