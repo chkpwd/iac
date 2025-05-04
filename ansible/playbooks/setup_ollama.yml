@@ -1,0 +1,13 @@
+---
+- name: Install GPU Drivers
+  import_playbook: install_nvidia_cuda_drivers.yml
+  tags:
+    - gpu
+
+- name: Install and Configure Ollama
+  hosts: ai-inference-01
+  become: true
+  roles:
+    - role: ollama
+  tags:
+    - ollama
