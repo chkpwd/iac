@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.32.2-standalone-strict/service-v1.json
 apiVersion: v1
 kind: Service
 metadata:
@@ -12,6 +13,7 @@ spec:
       protocol: TCP
       targetPort: *port
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.32.2-standalone-strict/ingress-networking-v1.json
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

@@ -1,4 +1,5 @@
 ---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/externaldns.k8s.io/dnsendpoint_v1alpha1.json
 apiVersion: externaldns.k8s.io/v1alpha1
 kind: DNSEndpoint
 metadata:
@@ -11,6 +12,7 @@ spec:
       targets:
         - 172.16.16.30
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.32.2-standalone-strict/service-v1.json
 apiVersion: v1
 kind: Service
 metadata:
@@ -24,6 +26,7 @@ spec:
       protocol: TCP
       targetPort: *port
 ---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.32.2-standalone-strict/ingress-networking-v1.json
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
