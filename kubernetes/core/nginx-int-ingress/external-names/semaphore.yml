@@ -21,7 +21,7 @@ metadata:
   annotations:
     external-dns.alpha.kubernetes.io/target: "chkpwd.com"
     nginx.ingress.kubernetes.io/server-snippet: |
-      location / {
+      location ^~ / {
         return 403;
       }
 spec:
@@ -31,7 +31,7 @@ spec:
       http:
         paths:
           - path: /api/integrations
-            pathType: Exact
+            pathType: Prefix
             backend:
               service:
                 name: semaphore-ui-integrations
