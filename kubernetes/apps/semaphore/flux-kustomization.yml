@@ -1,0 +1,29 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app semaphore
+  namespace: &ns tools
+spec:
+  targetNamespace: *ns
+  path: ./kubernetes/apps/semaphore/
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  postBuild:
+    substitute:
+      APP: *app
+    substituteFrom:
+      - kind: Secret
+        name: cloudflare-id
+        optional: false
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  wait: false
+  interval: 30m
+  retryInterval: 1m
+  timeout: 5m
