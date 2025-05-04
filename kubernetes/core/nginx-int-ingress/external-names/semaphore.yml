@@ -20,6 +20,8 @@ metadata:
     external-dns/public: "true"
   annotations:
     external-dns.alpha.kubernetes.io/target: "chkpwd.com"
+    nginx.ingress.kubernetes.io/limit-rpm: "30"
+    nginx.ingress.kubernetes.io/limit-connections: "10"
     nginx.ingress.kubernetes.io/server-snippet: |
       location ^~ / {
         return 403;
