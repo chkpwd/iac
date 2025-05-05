@@ -53,7 +53,7 @@ service_definitions:
       - "{{ compose_configuration_path }}/scanservjs/output:/var/lib/scanservjs/output"
       - "{{ compose_configuration_path }}/scanservjs:/etc/scanservjs"
   - name: twingate
-    image: twingate/connector:1.75.0
+    image: twingate/connector:1.76.0
     sysctls:
       net.ipv4.ping_group_range: "0 2147483647"
     env:
