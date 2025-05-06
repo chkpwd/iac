@@ -21,8 +21,7 @@ resource "proxmox_virtual_environment_file" "common_cloud_init" {
     packages:
       - qemu-guest-agent
     runcmd:
-      - systemctl enable qemu-guest-agent
-      - systemctl start qemu-guest-agent
+      - systemctl enable --now qemu-guest-agent
     EOF
 
     file_name = "user-data-cloud-config.yaml"
