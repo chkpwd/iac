@@ -8,14 +8,13 @@ resource "proxmox_virtual_environment_file" "common_cloud_init" {
     #cloud-config
     timezone: America/New_York
     preserve_hostname: false
+    ssh_import_id: ["gh:chkpwd"]
     users:
       - default
       - name: chkpwd
         groups:
           - sudo
         shell: /bin/bash
-        ssh_authorized_keys:
-          - ${file("~/.ssh/main.pub")}
         sudo: ALL=(ALL) NOPASSWD:ALL
     package_update: true
     packages:
