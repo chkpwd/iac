@@ -1,0 +1,30 @@
+name: Ansible Requirements
+on:
+  push:
+    branches: [main]
+    paths: ["ansible/**"]
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: "Generate requirements.txt"
+        type: boolean
+        required: false
+        default: false
+permissions:
+  contents: read
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Python
+        uses: actions/setup-python@v4
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v4
+      - uses: actions/cache@v3
+        name: Define a cache for the virtual environment based on the dependencies lock file
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+      - name: Install the project dependencies
+        run: poetry export --without-hashes --format=requirements.txt > requirements.txt
