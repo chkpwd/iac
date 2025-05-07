@@ -13,18 +13,45 @@ on:
 permissions:
   contents: read
 jobs:
-  ci:
+  poetry:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Install Poetry
+        run: pipx install poetry
       - name: Install Python
-        uses: actions/setup-python@v4
-      - name: Install poetry
-        uses: abatilo/actions-poetry@v4
-      - uses: actions/cache@v3
-        name: Define a cache for the virtual environment based on the dependencies lock file
+        uses: actions/setup-python@v5
         with:
-          path: ./.venv
-          key: venv-${{ hashFiles('poetry.lock') }}
+          python-version: "3.13"
+          cache: "poetry"
+      - name: Poetry Install
+        run: poetry install
       - name: Install the project dependencies
-        run: poetry export --without-hashes --format=requirements.txt > requirements.txt
+        run: poetry export --format=requirements.txt > requirements.txt
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: requirements
+          path: requirements.txt
+  commit:
+    runs-on: ubuntu-latest
+    needs: poetry
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Download Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: requirements
+      - name: Commit changes
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+          git add requirements.txt
+          git commit -m "Update requirements.txt"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.head_ref }}

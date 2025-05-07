@@ -7,6 +7,9 @@ requests = "^2.32.3"
 yamllint = "^1.37.0"
 ansible-lint = "^25.2.1"
 
+[tool.poetry.requires-plugins]
+poetry-plugin-export = ">=1.8"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
