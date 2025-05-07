@@ -79,12 +79,22 @@ spec:
               repository: docker.io/library/mongo
               tag: 8.0.9
             probes:
-              liveness:
+              liveness: &probes
                 enabled: true
-              readiness:
-                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - mongosh
+                      - localhost:27017/test
+                      - --quiet
+                      - --eval
+                      - "db.runCommand({ ping: 1 }).ok"
+                initialDelaySeconds: 10
+                periodSeconds: 5
+              readiness: *probes
               startup:
-                enabled: true
+                enabled: false
     service:
       app:
         controller: unifi-controller
