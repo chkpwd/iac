@@ -38,7 +38,7 @@ module "authentik-app-semaphore-ui" {
     ]
   }
   app_values = {
-    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/semaphore.webp"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/semaphore-ui.webp"
     meta_description = "Task Runner"
   }
   access_group = [
