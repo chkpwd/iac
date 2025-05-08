@@ -43,7 +43,8 @@ service_definitions:
     ports: ["8080:8080"]
   - name: scanservjs
     image: sbs20/scanservjs:v3.0.3
-    ports: [8087:8080]
+    ports:
+      - 8087:8080
     env:
       DEVICES: "airscan:e0:Epson ET-2850;escl:https://epson-printer.{{ domain }}:443"
       PAPERLESS_URL: "https://paperless-ngx.{{ domain }}"
