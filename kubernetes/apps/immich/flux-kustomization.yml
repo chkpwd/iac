@@ -22,6 +22,9 @@ spec:
       - kind: Secret
         name: cloudflare-id
         optional: false
+      - kind: Secret
+        name: immich-oauth
+        optional: false
   patches:
     - patch: |-
         - op: remove

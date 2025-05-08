@@ -36,6 +36,9 @@ spec:
       persistence:
         library:
           existingClaim: immich-nfs-uploads
+      machineLearning:
+        clipModelName: ViT-L-16-SigLIP-256__webli
+        facialRecognitionModelName: antelopev2
       configuration:
         ffmpeg:
           accel: qsv
@@ -64,6 +67,8 @@ spec:
         #   buttonText: Login with Authentik
         #   enabled: true
         #   issuerUrl: https://authentik.chkpwd.com/application/o/immich/
+        #   clientId: immich
+        #   clientSecret: "${OAUTH2_CLIENT_SECRET}"
         passwordLogin:
           enabled: true
         newVersionCheck:
@@ -93,10 +98,10 @@ spec:
         server:
           externalDomain: ""
           loginPageMessage: ""
-        # storageTemplate:
-        #   enabled: true
-        #   hashVerificationEnabled: true
-        #   template: "{{y}}/{{y}}-{{MM}}-{{dd}}/{{filename}}"
+        storageTemplate:
+          enabled: true
+          hashVerificationEnabled: true
+          template: "{{y}}/{{y}}-{{MM}}-{{dd}}/{{filename}}"
         templates:
           email:
             albumInviteTemplate: ""
@@ -107,8 +112,8 @@ spec:
         user:
           deleteDelay: 7
     env:
+      # OAUTH_ENABLED: "true"
       TZ: "America/New_York"
-      # IMMICH_MEDIA_LOCATION: /usr/src/app/upload
       REDIS_HOSTNAME: "immich-redis.tools.svc.cluster.local"
       REDIS_PORT: "6379"
       DB_DATABASE_NAME:
@@ -139,8 +144,6 @@ spec:
       LOG_LEVEL: verbose
     server:
       enabled: true
-      # nodeSelector:
-      #   intel.feature.node.kubernetes.io/gpu: "true"
       ingress:
         main:
           enabled: true
@@ -169,13 +172,11 @@ spec:
         requests:
           cpu: 10m
           memory: 128Mi
-          gpu.intel.com/i915: 1
         limits:
           memory: 3Gi
-          gpu.intel.com/i915: 1
     machine-learning:
-      nodeSelector:
-        intel.feature.node.kubernetes.io/gpu: "true"
+      env:
+        MACHINE_LEARNING_PRELOAD__CLIP: "ViT-L-16-SigLIP-256__webli"
       resources:
         requests:
           cpu: 500m
