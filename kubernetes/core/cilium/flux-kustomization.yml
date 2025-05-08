@@ -13,6 +13,10 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../external-dns/_components/internal/
+  postBuild:
+    substitute:
+      APP: hubble
+      RECORD_NAME: hubble
   prune: false
   sourceRef:
     kind: GitRepository
