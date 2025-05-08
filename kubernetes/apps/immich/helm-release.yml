@@ -61,14 +61,14 @@ spec:
             enabled: true
             cronExpression: 0 02 * * *
             keepLastAmount: 5
-        # oauth:
-        #   autoLaunch: false
-        #   autoRegister: true
-        #   buttonText: Login with Authentik
-        #   enabled: true
-        #   issuerUrl: https://authentik.chkpwd.com/application/o/immich/
-        #   clientId: immich
-        #   clientSecret: "${OAUTH2_CLIENT_SECRET}"
+        oauth:
+          autoLaunch: false
+          autoRegister: true
+          buttonText: Login with Authentik
+          enabled: true
+          issuerUrl: https://authentik.chkpwd.com/application/o/immich/
+          clientId: immich
+          clientSecret: "${OAUTH2_CLIENT_SECRET}"
         passwordLogin:
           enabled: true
         newVersionCheck:
@@ -112,7 +112,7 @@ spec:
         user:
           deleteDelay: 7
     env:
-      # OAUTH_ENABLED: "true"
+      OAUTH_ENABLED: "true"
       TZ: "America/New_York"
       REDIS_HOSTNAME: "immich-redis.tools.svc.cluster.local"
       REDIS_PORT: "6379"
