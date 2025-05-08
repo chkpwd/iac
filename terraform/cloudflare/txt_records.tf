@@ -6,16 +6,6 @@ resource "cloudflare_dns_record" "github_txt" {
   zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
 }
 
-resource "cloudflare_dns_record" "cloudflare_email_txt" {
-  name    = "@"
-  ttl     = 1
-  type    = "TXT"
-  content = "\"v=spf1 include:_spf.mx.cloudflare.net ~all\""
-  proxied = false
-  comment = "Terraform - SPF - email"
-  zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
-}
-
 resource "cloudflare_dns_record" "aws_instance_proxy_txt" {
   name    = "@"
   ttl     = 1
