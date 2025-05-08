@@ -26,11 +26,6 @@ spec:
         name: immich-oauth
         optional: false
   patches:
-    - patch: |-
-        - op: remove
-          path: /spec/dataSource
-      target:
-        kind: PostgresCluster
     - patch: |
         - op: add
           path: /spec/patroni/dynamicConfiguration/postgresql/parameters
