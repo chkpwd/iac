@@ -124,8 +124,6 @@ spec:
     ingress:
       internal:
         className: int-ingress
-        labels:
-          external-dns/private: "true"
         hosts:
           - host: "{{ .Release.Name }}.chkpwd.com"
             paths:

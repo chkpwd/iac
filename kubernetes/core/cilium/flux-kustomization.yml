@@ -11,6 +11,8 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  components:
+    - ../external-dns/_components/internal/
   prune: false
   sourceRef:
     kind: GitRepository
