@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: slash
+  name: flink
 spec:
   interval: 15m
   chart:
@@ -25,26 +25,14 @@ spec:
       retries: 3
   values:
     global:
-      fullnameOverride: slash
+      fullnameOverride: flink
     controllers:
-      slash:
+      flink:
         enabled: true
-        type: statefulset
+        type: deployment
         annotations:
           reloader.stakater.com/auto: "true"
         replicas: 1
-        statefulset:
-          volumeClaimTemplates:
-            - name: data
-              accessMode: ReadWriteOnce
-              size: "${VOLSYNC_CAPACITY}"
-              storageClass: ceph-block
-              dataSourceRef:
-                kind: ReplicationDestination
-                apiGroup: volsync.backube
-                name: "${APP}"
-              globalMounts:
-                - path: /var/opt/slash
         pod:
           securityContext:
             runAsNonRoot: true
@@ -55,8 +43,8 @@ spec:
         containers:
           main:
             image:
-              repository: yourselfhosted/slash
-              tag: 1.0.0-rc.0
+              repository: quay.io/rtraceio/flink
+              tag: 2.0.0
             probes:
               liveness:
                 enabled: true
@@ -64,6 +52,10 @@ spec:
                 enabled: true
               startup:
                 enabled: true
+            env:
+              METRICSCONFIGURATION__ENABLEMETRICS: "false"
+              SPAMPROTECTIONCONFIGURATION__ENABLED: "true"
+              DBCONFIGURATION__DBTYPE: Sqlite
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
@@ -74,13 +66,13 @@ spec:
                 cpu: 10m
                 memory: 100Mi
               limits:
-                memory: 350Mi
+                memory: 150Mi
     service:
       main:
-        controller: slash
+        controller: flink
         ports:
           http:
-            port: 5231
+            port: 8080
     ingress:
       external:
         enabled: true
@@ -90,7 +82,7 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: "chkpwd.com"
         hosts:
-          - host: "s.chkpwd.com"
+          - host: "i.chkpwd.com"
             paths:
               - path: /
                 pathType: Prefix
