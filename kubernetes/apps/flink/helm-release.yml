@@ -46,10 +46,15 @@ spec:
               repository: quay.io/rtraceio/flink
               tag: 2.0.0
             probes:
-              liveness:
+              liveness: &probes
                 enabled: true
-              readiness:
-                enabled: true
+                spec:
+                  httpGet:
+                    path: /
+                    port: 8080
+                  initialDelaySeconds: 15
+                  periodSeconds: 10
+              readiness: *probes
               startup:
                 enabled: true
             env:
@@ -66,7 +71,7 @@ spec:
                 cpu: 10m
                 memory: 100Mi
               limits:
-                memory: 150Mi
+                memory: 256Mi
     service:
       main:
         controller: flink
@@ -81,11 +86,17 @@ spec:
           external-dns/public: "true"
         annotations:
           external-dns.alpha.kubernetes.io/target: "chkpwd.com"
+          nginx.ingress.kubernetes.io/limit-rpm: "30"
+          nginx.ingress.kubernetes.io/limit-connections: "10"
+          nginx.ingress.kubernetes.io/server-snippet: |
+            location = / {
+              return 403;
+            }
         hosts:
           - host: "i.chkpwd.com"
             paths:
-              - path: /
-                pathType: Prefix
+              - path: /(.+)
+                pathType: ImplementationSpecific
                 service:
                   identifier: main
                   port: http
