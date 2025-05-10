@@ -128,7 +128,7 @@ spec:
                   identifier: web
                   port: http
               - path: /api/?(.*)
-                pathType: Prefix
+                pathType: ImplementationSpecific
                 service:
                   identifier: server
                   port: http
