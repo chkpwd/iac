@@ -1,6 +1,7 @@
 ---
 - name: Run maintenance on linux nodes
   hosts: linux
+  become: true
   tasks:
     - name: APT Maintenance
       ansible.builtin.apt:
