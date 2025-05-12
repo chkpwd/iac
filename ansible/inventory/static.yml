@@ -9,12 +9,15 @@ all:
         proxmox:
           hosts:
             pve-srv-01:
+              ansible_user: root
     linux:
       hosts:
         haos-srv-01:
+          ansible_port: 23
         mgmt-srv-01:
         ai-inference-01:
         ct-01-ec2:
+        pve-srv-01:
     windows:
       hosts:
         chk-gaming-01:
@@ -22,7 +25,6 @@ all:
         ansible_become_method: runas
     docker_hosts:
       hosts:
-        haos-srv-01:
         ct-01-ec2:
         mgmt-srv-01:
         gs-srv-01:
@@ -30,7 +32,7 @@ all:
       hosts:
         gs-srv-01:
       vars:
-        ansible_ssh_user: root
+        ansible_user: root
     printers:
       hosts:
         print-srv-01:
