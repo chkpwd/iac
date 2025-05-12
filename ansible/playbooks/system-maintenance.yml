@@ -1,7 +1,36 @@
 ---
 - name: Run maintenance on linux nodes
   hosts: linux
-  roles:
-    - role: maintenance
-  vars:
-    mount_all: []
+  tasks:
+    - name: APT Maintenance
+      ansible.builtin.apt:
+        update_cache: true
+        upgrade: false
+        autoremove: true
+        autoclean: true
+        purge: true
+    - name: Check if system reboot is required
+      become: true
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: reboot_required
+    - name: Get List of devices
+      ansible.builtin.set_fact:
+        mount_all: "{{ mount_all + [{'host': ansible_host, 'dev': item.device, 'mount': item.mount, 'free': (((item.size_available / 1024) / 1024) / 1024) | round(2, 'common'), 'total': (((item.size_total / 1024) / 1024) / 1024) | round(2, 'common')}] }}"
+      when: (item.size_total - item.size_available) > (item.size_total | float * 0.85)
+      with_items: "{{ ansible_mounts | list }}"
+    - name: Disk Status > 85%
+      debug:
+        msg: "{{ mount_all }}"
+      vars:
+        mount_all: []
+    - name: Prune dangling images and containers
+      when: "'docker_hosts' in group_names"
+      community.docker.docker_prune:
+        containers: true
+        images: true
+        images_filters:
+          dangling: false
+        networks: false
+        volumes: false
+        builder_cache: false
