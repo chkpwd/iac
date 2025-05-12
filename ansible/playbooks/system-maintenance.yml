@@ -1,0 +1,7 @@
+---
+- name: Run maintenance on linux nodes
+  hosts: linux
+  roles:
+    - role: maintenance
+  vars:
+    mount_all: []
