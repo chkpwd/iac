@@ -2,7 +2,7 @@
 - name: Bootstrap Process
   ansible.builtin.include_tasks: bootstrap.yml
 - name: Set locale and timezone
-  community.windows.win_timezone:
+  ansible.windows.win_timezone:
     timezone: Eastern Standard Time
 - name: Change Hostname
   ansible.windows.win_hostname:
