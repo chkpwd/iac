@@ -9,18 +9,6 @@
         seconds: 2
       when: onhosts | default('localhost') == 'localhost'
   tasks:
-    - name: Module Defaults - Docker Containers
-      module_defaults:
-        community.docker.docker_container:
-          restart_policy: always
-      when: role == 'compose'
-      block:
-        - name: Run the 'compose' role
-          include_role:
-            name: "{{ role }}"
-    - name: Non-module defaults
-      when: role != 'compose'
-      block:
-        - name: Run other roles
-          include_role:
-            name: "{{ role }}"
+    - name: Run role
+      include_role:
+        name: "{{ role }}"

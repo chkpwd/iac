@@ -1,0 +1,13 @@
+---
+- name: Configure environment for Docker host
+  hosts: "{{ onhosts | default('localhost') }}"
+  gather_facts: true
+  tasks:
+    - name: Docker Containers defaults
+      module_defaults:
+        community.docker.docker_container:
+          restart_policy: always
+      block:
+        - name: Run the compose role
+          include_role:
+            name: compose
