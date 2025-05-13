@@ -1,6 +1,9 @@
 ---
 common_user: chkpwd
 common_user_uid: 1000
+docker_users: "{{ common_user }}"
+docker_daemon_options:
+  data-root: /mnt/data/docker
 service_definitions:
   - name: ark-server
     image: ghcr.io/gameservermanagers/gameserver:ark

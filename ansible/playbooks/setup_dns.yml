@@ -14,7 +14,7 @@
         state: present
   roles:
     - linux_setup
-    - docker
+    - role: geerlingguy.docker
   tasks:
     - name: Expand file system
       when: "'mgmt-srv-01' in ansible_nodename"

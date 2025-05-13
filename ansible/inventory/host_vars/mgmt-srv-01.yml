@@ -1,6 +1,9 @@
 ---
 common_user: chkpwd
 ansible_user: chkpwd
+docker_users: "{{ common_user }}"
+docker_daemon_options:
+  data-root: /mnt/data/docker
 service_definitions:
   - name: nginx_webserver
     image: nginx:1.25.4-alpine3.18-slim

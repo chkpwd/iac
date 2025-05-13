@@ -13,5 +13,6 @@
           - iputils-ping
         state: present
   roles:
-    - linux_setup
-    - docker
+    - role: linux_setup
+      linux_setup_common_user: admin
+    - role: geerlingguy.docker
