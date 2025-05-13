@@ -14,11 +14,11 @@ gatus_endpoint_config_http_default: &gatus_http_default
     - "[STATUS] == 200"
     - "[CERTIFICATE_EXPIRATION] > 240h" # 10 days
     # - "[DOMAIN_EXPIRATION] > 720h" # 30 days - Can only be used with monitors with an interval of >=300s
-  !!merge <<: *gatus_alert_default
+  <<: *gatus_alert_default
 gatus_endpoint_config_icmp_tcp_default: &gatus_icmp_tcp_default
   interval: 1m
   conditions: ["[CONNECTED] == true"]
-  !!merge <<: [*gatus_alert_default]
+  <<: [*gatus_alert_default]
 gatus_config:
   ui:
     title: Chkpwd's Gatus
@@ -30,44 +30,44 @@ gatus_config:
     - name: OPNsense
       url: icmp://172.16.16.1
       group: network
-      !!merge <<: *gatus_icmp_tcp_default
+      <<: *gatus_icmp_tcp_default
     - name: Switch
       group: network
       url: icmp://172.16.16.2
-      !!merge <<: *gatus_icmp_tcp_default
+      <<: *gatus_icmp_tcp_default
     - name: Unifi AP
       group: network
       url: icmp://172.16.16.9
-      !!merge <<: *gatus_icmp_tcp_default
+      <<: *gatus_icmp_tcp_default
     - name: PVE-SRV-01
       group: hypervisors
       url: icmp://172.16.16.3
-      !!merge <<: *gatus_icmp_tcp_default
+      <<: *gatus_icmp_tcp_default
     - name: MGMT-SRV-01
       group: docker_hosts
       url: icmp://172.16.16.4
-      !!merge <<: *gatus_icmp_tcp_default
+      <<: *gatus_icmp_tcp_default
     - name: NAS
       group: infra
       url: icmp://172.16.16.5
-      !!merge <<: *gatus_icmp_tcp_default
+      <<: *gatus_icmp_tcp_default
     - name: Home Assistant
       group: infra
       url: icmp://172.16.16.8
-      !!merge <<: *gatus_icmp_tcp_default
+      <<: *gatus_icmp_tcp_default
     - name: Kubernetes Node 1
       group: kubernetes
       url: icmp://172.16.16.10
-      !!merge <<: *gatus_icmp_tcp_default
+      <<: *gatus_icmp_tcp_default
     - name: Kubernetes Node 2
       group: kubernetes
       url: icmp://172.16.16.11
-      !!merge <<: *gatus_icmp_tcp_default
+      <<: *gatus_icmp_tcp_default
     - name: Kubernetes Node 3
       group: kubernetes
       url: icmp://172.16.16.12
-      !!merge <<: *gatus_icmp_tcp_default
+      <<: *gatus_icmp_tcp_default
     - name: Kube-VIP LoadBalancer
       group: kubernetes
       url: icmp://172.16.16.13
-      !!merge <<: *gatus_icmp_tcp_default
+      <<: *gatus_icmp_tcp_default
