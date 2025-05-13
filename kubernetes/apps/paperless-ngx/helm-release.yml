@@ -67,7 +67,6 @@ spec:
               PAPERLESS_PORT: "8000"
               PAPERLESS_TIME_ZONE: America/New_York
               PAPERLESS_TASK_WORKERS: "2"
-              PAPERLESS_CONSUMPTION_DIR: /data/shared/import
               PAPERLESS_DATA_DIR: /data/local/config
               PAPERLESS_MEDIA_ROOT: /data/local/media
               PAPERLESS_CONSUMER_POLLING: "60"
@@ -187,14 +186,3 @@ spec:
                 service:
                   identifier: app
                   port: http
-    persistence:
-      nas:
-        enabled: true
-        type: nfs
-        server: "nas-srv-01.chkpwd.com"
-        path: /volume1/vault-01/static_media/documents/paperless-ngx
-        advancedMounts:
-          paperless-ngx:
-            app:
-              - subPath: import
-                path: /data/shared/import
