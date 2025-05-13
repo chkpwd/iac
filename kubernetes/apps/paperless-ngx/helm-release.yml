@@ -50,12 +50,12 @@ spec:
             fsGroup: *id
             fsGroupChangePolicy: "Always"
             seccompProfile: {type: "RuntimeDefault"}
-            supplementalGroups: [1026, 100]
+            # supplementalGroups: [1026, 100]
         containers:
           app:
             image:
               repository: ghcr.io/paperless-ngx/paperless-ngx
-              tag: 2.14.7
+              tag: 2.15.3
             env:
               PAPERLESS_OCR_PAGES: 2
               PAPERLESS_THREADS_PER_WORKER: 1
