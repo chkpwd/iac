@@ -45,7 +45,7 @@
   when: ansible_facts['devices'] | dict2items | selectattr('key', 'contains', 'sd') | length > 1
 - name: Set hostname
   ansible.builtin.hostname:
-    name: "{{ ansible_ssh_host }}"
+    name: "{{ inventory_hostname }}"
 - name: Copy the public SSH key
   ansible.posix.authorized_key:
     user: "{{ linux_setup_common_user }}"
