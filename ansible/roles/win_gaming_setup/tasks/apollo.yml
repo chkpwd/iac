@@ -1,0 +1,12 @@
+---
+- name: Configure Apollo
+  ansible.windows.win_powershell:
+    script: |
+      & "{{ win_gaming_setup_apollo_path }}\\scripts\\{{ item }}"
+  loop: "{{ win_gaming_setup_apollo_scripts }}"
+  loop_control:
+    label: "Executing Script: {{ item }}"
+- name: Configure apollo Apps
+  ansible.windows.win_copy:
+    src: files/apps.json
+    dest: "{{ win_gaming_setup_apollo_path }}\\config\\apps.json"

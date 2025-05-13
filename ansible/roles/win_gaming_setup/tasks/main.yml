@@ -28,14 +28,18 @@
     label: "Scoop: {{ item }}"
 - name: Registry Edits
   ansible.builtin.include_tasks: registry.yml
-- name: Configure sunshine
-  ansible.builtin.include_tasks: sunshine.yml
+- name: Configure apollo
+  ansible.builtin.include_tasks: apollo.yml
 - name: Define Taskbar Layout
   ansible.windows.win_powershell:
     script: |
       Import-StartLayout -LayoutPath "TaskbarLayout.xml" -MountPath "{{ ansible_facts.env.TEMP }}\files\TaskbarLayout.xml"
-- name: Run Sunshine Scripts
-  ansible.builtin.include_tasks: sunshine.yml
+- name: Run Apollo Scripts
+  ansible.builtin.include_tasks: apollo.yml
+- name: Download Apollo from Github
+  ansible.windows.win_get_url:
+    url: "https://github.com/ClassicOldSong/Apollo/releases/download/v{{ win_gaming_setup_apollo_version }}/Apollo.exe"
+    dest: '%TEMP%\apollo.exe'
 - name: Change power plan to Balanced
   community.windows.win_power_plan:
     name: balanced

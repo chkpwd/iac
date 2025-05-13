@@ -1,27 +1,30 @@
 {
-    "env": {
-        "PATH": "$(PATH);$(ProgramFiles(x86))\\Steam"
+  "env": "",
+  "apps": [
+    {
+      "name": "Desktop",
+      "image-path": "desktop.png"
     },
-    "apps": [
-        {
-            "name": "Desktop",
-            "image-path": "desktop.png"
-        },
-        {
-            "name": "Steam Big Picture",
-            "detached": [
-                "steam steam:\/\/open\/bigpicture"
-            ],
-            "image-path": "steam.png"
-        },
-        {
-            "name": "Playnite",
-            "output": "",
-            "cmd": "\"C:\\Users\\chkpwd\\scoop\\apps\\playnite\\current\\Playnite.FullscreenApp.exe\" --hidesplashscreen",
-            "exclude-global-prep-cmd": "false",
-            "elevated": "false",
-            "auto-detach": "true",
-            "image-path": ""
-        }
-    ]
+    {
+      "name": "Steam Big Picture",
+      "cmd": "steam:\/\/open\/bigpicture",
+      "auto-detach": "true",
+      "wait-all": "true",
+      "image-path": "steam.png"
+    },
+    {
+      "name": "Playnite",
+      "output": "",
+      "cmd": "",
+      "exclude-global-prep-cmd": "false",
+      "elevated": "false",
+      "auto-detach": "true",
+      "wait-all": "true",
+      "exit-timeout": "5",
+      "detached": [
+        "C:\\Users\\chkpwd\\scoop\\apps\\playnite\\current\\Playnite.FullscreenApp.exe"
+      ],
+      "image-path": "C:\\Users\\chkpwd\\scoop\\apps\\playnite\\current\\Resources\\custom_icon.png"
+    }
+  ]
 }
