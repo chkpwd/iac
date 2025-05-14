@@ -4,9 +4,7 @@ name: Global Lint
 on:
   workflow_dispatch:
   push:
-  pull_request:
-    branches:
-      - main
+    branches: [main]
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
