@@ -58,8 +58,8 @@ spec:
               tag: 5.1.0
             env:
               TZ: "America/New_York"
-              QBT_TORRENTING_PORT: 50413
-              QBT_WEBUI_PORT: &port 8080
+              QBT_TORRENTING_PORT: &torrentPort 50413
+              QBT_WEBUI_PORT: &webPort 8080
             probes:
               liveness:
                 enabled: false
@@ -91,9 +91,16 @@ spec:
     service:
       app:
         controller: qbittorrent
+        type: loadBalancer
+        annotations:
+          lbipam.cilium.io/ips: 172.16.16.34
         ports:
           http:
-            port: *port
+            port: *webPort
+          bittorrent:
+            enabled: true
+            port: *torrentPort
+            protocol: TCP
     ingress:
       internal:
         enabled: true
