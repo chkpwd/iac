@@ -61,8 +61,23 @@ spec:
               QBT_TORRENTING_PORT: &torrentPort 50413
               QBT_WEBUI_PORT: &webPort 8080
             probes:
-              liveness:
-                enabled: false
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v2/app/version
+                    port: *webPort
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
@@ -124,3 +139,6 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /add-ons
+      tmp:
+        enabled: true
+        type: emptyDir
