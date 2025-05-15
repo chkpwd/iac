@@ -106,7 +106,7 @@ spec:
     service:
       app:
         controller: qbittorrent
-        type: loadBalancer
+        type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 172.16.16.34
         ports:
