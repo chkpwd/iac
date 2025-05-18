@@ -1,27 +1,15 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "customManagers": [
+  $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  customManagers: [
     {
-      "customType": "regex",
-      "description": ["Process custom dependencies"],
-      "fileMatch": [
-        "^kubernetes/talos/talconfig\\.ya?ml$"
-      ],
-      "matchStrings": [
-        "# renovate: depName=(?<depName>\\S+) datasource=(?<datasource>\\S+)\n(?<key>\\S+): (?<currentValue>v?\\d[\\d\\.]+)"
+      customType: "regex",
+      description: ["Process custom dependencies"],
+      fileMatch: ["^kubernetes/talos/talconfig\\.ya?ml$"],
+      matchStrings: [
+        "# renovate: depName=(?<depName>\\S+) datasource=(?<datasource>\\S+)\n(?<key>\\S+): (?<currentValue>v?\\d[\\d\\.]+)",
       ],
       datasourceTemplate: "custom.talos-versions",
       versioningTemplate: "regex:^(?<major>\\d+)$",
     },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["^terraform/aws/.+\\.tf$"],
-      "matchStrings":
-        [
-          ".*amiFilter=(?<packageName>.*?)\n(.*currentImageName=(?<currentDigest>.*?)\n)?(.*\n)?.*?(?<depName>[a-zA-Z0-9-_:]*)[ ]*?[:|=][ ]*?["|\']?(?<currentValue>ami-[a-z0-9]{17})["|\']?.*",
-        ],
-      "datasourceTemplate": "aws-machine-image",
-      "versioningTemplate": "aws-machine-image",
-    },
-  ]
+  ],
 }
