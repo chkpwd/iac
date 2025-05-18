@@ -13,5 +13,15 @@
       datasourceTemplate: "custom.talos-versions",
       versioningTemplate: "regex:^(?<major>\\d+)$",
     },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["^terraform/aws/.+\\.tf$"],
+      "matchStrings":
+        [
+          ".*amiFilter=(?<packageName>.*?)\n(.*currentImageName=(?<currentDigest>.*?)\n)?(.*\n)?.*?(?<depName>[a-zA-Z0-9-_:]*)[ ]*?[:|=][ ]*?["|\']?(?<currentValue>ami-[a-z0-9]{17})["|\']?.*",
+        ],
+      "datasourceTemplate": "aws-machine-image",
+      "versioningTemplate": "aws-machine-image",
+    },
   ]
 }
