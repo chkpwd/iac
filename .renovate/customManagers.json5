@@ -4,7 +4,7 @@
     {
       customType: "regex",
       description: ["Process custom dependencies"],
-      fileMatch: ["^kubernetes/talos/talconfig\\.ya?ml$"],
+      managerFilePatterns: ["^kubernetes/talos/talconfig\\.ya?ml$"],
       matchStrings: [
         "# renovate: depName=(?<depName>\\S+) datasource=(?<datasource>\\S+)\n(?<key>\\S+): (?<currentValue>v?\\d[\\d\\.]+)",
       ],
@@ -13,7 +13,7 @@
     },
     {
       customType: "regex",
-      managerFilePatterns: ["/^terraform/aws/.+\\.tf$/"],
+      managerFilePatterns: ["/^terraform/aws/.+\\.(tf|tofu)$/"],
       matchStrings: [
         '.*amiFilter=(?<packageName>.*?)\\n(?:.*currentImageName=(?<currentDigest>.*?)\\n)?(?:.*\\n)?.*?(?<depName>[a-zA-Z0-9_:.-]+)[ ]*[:=][ ]*"?(?<currentValue>ami-[a-z0-9]{17})"?.*',
       ],
