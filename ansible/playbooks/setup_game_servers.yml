@@ -1,0 +1,9 @@
+---
+- name: Set up cloud instances
+  ansible.builtin.import_playbook: ../../setup_instances.yml
+  tags: setup
+- name: Deploy Containers
+  hosts: gs-srv-01
+  roles:
+    - {role: compose}
+  tags: containers

@@ -1,9 +1,7 @@
 ---
 - name: Install dependencies
-  apt:
+  ansible.builtin.apt:
     name: sudo
     state: present
-- name: Install Docker
-  include_tasks: ../tasks/docker/install_docker.yml
 - name: Configure Ark Server
-  include_tasks: ark-server.yml
+  ansible.builtin.include_tasks: ark-server.yml
