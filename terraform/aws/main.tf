@@ -1,4 +1,4 @@
-locals {
+locals { # https://docs.renovatebot.com/modules/versioning/aws-machine-image/ -- At the moment every AMI that matches the regex ^ami-[a-z0-9]{17}$ is considered a valid "release".
   # amiFilter=[{"Name":"owner-id","Values":["136693071363"]},{"Name":"name","Values":["debian-12-amd64-*"]}]
   # currentImageName=debian-12-amd64-20230711
   ami = "ami-06db4d78cb1d3bbf9"
