@@ -90,7 +90,7 @@ spec:
                       - --quiet
                       - --eval
                       - "db.runCommand({ ping: 1 }).ok"
-                timeoutSeconds: 5
+                  timeoutSeconds: 5
               readiness: *probes
               startup:
                 enabled: false
