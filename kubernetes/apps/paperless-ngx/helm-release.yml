@@ -129,6 +129,14 @@ spec:
             image:
               repository: ghcr.io/paperless-ngx/tika
               tag: 2.9.1-minimal
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: ["ALL"]}
+              runAsUser: 1999
+              runAsGroup: 1999
+              fsGroup: 1999
+              runAsNonRoot: true
             resources:
               requests:
                 cpu: 10m
@@ -145,6 +153,14 @@ spec:
               - "gotenberg" # Convert .eml files. We do not want to allow external content like tracking pixels or even javascript.
               - "--chromium-disable-javascript=true"
               - "--chromium-allow-list=file:///tmp/.*"
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: ["ALL"]}
+              runAsUser: 1999
+              runAsGroup: 1999
+              fsGroup: 1999
+              runAsNonRoot: true
             resources:
               requests:
                 cpu: 10m
