@@ -42,7 +42,7 @@ spec:
                 apiGroup: volsync.backube
                 name: "${APP}"
               globalMounts:
-                - path: /data/local
+                - path: /usr/src/paperless/data
         pod:
           securityContext:
             runAsUser: &id 1000 # `paperless` user
@@ -50,7 +50,7 @@ spec:
             fsGroup: *id
             fsGroupChangePolicy: "Always"
             seccompProfile: {type: "RuntimeDefault"}
-            # supplementalGroups: [1026, 100]
+            supplementalGroups: [1026, 100]
         containers:
           app:
             image:
@@ -67,8 +67,10 @@ spec:
               PAPERLESS_PORT: "8000"
               PAPERLESS_TIME_ZONE: America/New_York
               PAPERLESS_TASK_WORKERS: "2"
-              PAPERLESS_DATA_DIR: /data/local/config
-              PAPERLESS_MEDIA_ROOT: /data/local/media
+              PAPERLESS_DATA_DIR: /usr/src/paperless/data
+              PAPERLESS_MEDIA_ROOT: /usr/src/paperless/data
+              PAPERLESS_EXPORT_DIR: /usr/src/paperless/export
+              PAPERLESS_CONSUMPTION_DIR: /usr/src/paperless/import
               PAPERLESS_CONSUMER_POLLING: "60"
               PAPERLESS_CONSUMER_RECURSIVE: "true"
               PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: "true"
@@ -113,7 +115,7 @@ spec:
                 memory: 6Gi
       redis:
         containers:
-          redis:
+          app:
             image:
               repository: docker.io/valkey/valkey
               tag: 8.1.1
@@ -125,10 +127,18 @@ spec:
                 memory: 128Mi
       tika:
         containers:
-          tika:
+          app:
             image:
               repository: ghcr.io/paperless-ngx/tika
               tag: 2.9.1-minimal
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: ["ALL"]}
+              runAsUser: 1999
+              runAsGroup: 1999
+              fsGroup: 1999
+              runAsNonRoot: true
             resources:
               requests:
                 cpu: 10m
@@ -145,6 +155,14 @@ spec:
               - "gotenberg" # Convert .eml files. We do not want to allow external content like tracking pixels or even javascript.
               - "--chromium-disable-javascript=true"
               - "--chromium-allow-list=file:///tmp/.*"
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: ["ALL"]}
+              runAsUser: 1999
+              runAsGroup: 1999
+              fsGroup: 1999
+              runAsNonRoot: true
             resources:
               requests:
                 cpu: 10m
@@ -186,3 +204,31 @@ spec:
                 service:
                   identifier: app
                   port: http
+    persistence:
+      data:
+        type: nfs
+        server: "nas-srv-01.chkpwd.com"
+        path: /volume1/vault-01/static_media/documents/paperless-ngx
+        advancedMounts:
+          paperless-ngx:
+            app:
+              - path: /usr/src/paperless/data
+                subPath: data
+              - path: /usr/src/paperless/import
+                subPath: import
+              - path: /usr/src/paperless/export
+                subPath: export
+      gotenberg-tmp:
+        enabled: true
+        type: emptyDir
+        advancedMounts:
+          gotenberg:
+            app:
+              - path: /tmp
+      tika-tmp:
+        enabled: true
+        type: emptyDir
+        advancedMounts:
+          tika:
+            app:
+              - path: /tmp
