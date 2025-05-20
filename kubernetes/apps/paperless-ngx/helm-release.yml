@@ -113,7 +113,7 @@ spec:
                 memory: 6Gi
       redis:
         containers:
-          redis:
+          app:
             image:
               repository: docker.io/valkey/valkey
               tag: 8.1.1
@@ -125,7 +125,7 @@ spec:
                 memory: 128Mi
       tika:
         containers:
-          tika:
+          app:
             image:
               repository: ghcr.io/paperless-ngx/tika
               tag: 2.9.1-minimal
