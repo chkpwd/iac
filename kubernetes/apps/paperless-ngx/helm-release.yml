@@ -50,7 +50,7 @@ spec:
             fsGroup: *id
             fsGroupChangePolicy: "Always"
             seccompProfile: {type: "RuntimeDefault"}
-            # supplementalGroups: [1026, 100]
+            supplementalGroups: [1026, 100]
         containers:
           app:
             image:
@@ -67,10 +67,10 @@ spec:
               PAPERLESS_PORT: "8000"
               PAPERLESS_TIME_ZONE: America/New_York
               PAPERLESS_TASK_WORKERS: "2"
-              PAPERLESS_DATA_DIR: /data/files
-              PAPERLESS_MEDIA_ROOT: /data/files
-              PAPERLESS_EXPORT_DIR: /data/export
-              PAPERLESS_CONSUMPTION_DIR: /data/import
+              PAPERLESS_DATA_DIR: /usr/src/paperless/data
+              PAPERLESS_MEDIA_ROOT: /usr/src/paperless/data
+              PAPERLESS_EXPORT_DIR: /usr/src/paperless/export
+              PAPERLESS_CONSUMPTION_DIR: /usr/src/paperless/import
               PAPERLESS_CONSUMER_POLLING: "60"
               PAPERLESS_CONSUMER_RECURSIVE: "true"
               PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: "true"
@@ -213,6 +213,11 @@ spec:
           paperless-ngx:
             app:
               - path: /usr/src/paperless/data
+                subPath: data
+              - path: /usr/src/paperless/import
+                subPath: import
+              - path: /usr/src/paperless/export
+                subPath: export
       gotenberg-tmp:
         enabled: true
         type: emptyDir
