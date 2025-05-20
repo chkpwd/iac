@@ -32,17 +32,6 @@ spec:
           reloader.stakater.com/auto: "true"
         statefulset:
           podManagementPolicy: Parallel
-          volumeClaimTemplates:
-            - accessMode: ReadWriteOnce
-              name: data
-              size: "${VOLSYNC_CAPACITY}"
-              storageClass: ceph-block
-              dataSourceRef:
-                kind: ReplicationDestination
-                apiGroup: volsync.backube
-                name: "${APP}"
-              globalMounts:
-                - path: /usr/src/paperless/data
         pod:
           securityContext:
             runAsUser: &id 1000 # `paperless` user
@@ -67,10 +56,8 @@ spec:
               PAPERLESS_PORT: "8000"
               PAPERLESS_TIME_ZONE: America/New_York
               PAPERLESS_TASK_WORKERS: "2"
-              PAPERLESS_DATA_DIR: /usr/src/paperless/data
-              PAPERLESS_MEDIA_ROOT: /usr/src/paperless/data
-              PAPERLESS_EXPORT_DIR: /usr/src/paperless/export
-              PAPERLESS_CONSUMPTION_DIR: /usr/src/paperless/import
+              PAPERLESS_DATA_DIR: /shared/data
+              PAPERLESS_CONSUMPTION_DIR: /shared/import
               PAPERLESS_CONSUMER_POLLING: "60"
               PAPERLESS_CONSUMER_RECURSIVE: "true"
               PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: "true"
@@ -205,19 +192,17 @@ spec:
                   identifier: app
                   port: http
     persistence:
-      data:
+      shared:
         type: nfs
         server: "nas-srv-01.chkpwd.com"
         path: /volume1/vault-01/static_media/documents/paperless-ngx
         advancedMounts:
           paperless-ngx:
             app:
-              - path: /usr/src/paperless/data
-                subPath: data
-              - path: /usr/src/paperless/import
+              - path: /shared/import
                 subPath: import
-              - path: /usr/src/paperless/export
-                subPath: export
+              - path: /shared/data
+                subPath: data
       gotenberg-tmp:
         enabled: true
         type: emptyDir
