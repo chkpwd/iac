@@ -32,14 +32,17 @@ spec:
           reloader.stakater.com/auto: "true"
         statefulset:
           podManagementPolicy: Parallel
-        pod:
-          securityContext:
-            runAsUser: &id 1000 # `paperless` user
-            runAsGroup: *id
-            fsGroup: *id
-            fsGroupChangePolicy: "Always"
-            seccompProfile: {type: "RuntimeDefault"}
-            supplementalGroups: [1026, 100]
+          volumeClaimTemplates:
+            - accessMode: ReadWriteOnce
+              name: data
+              size: "${VOLSYNC_CAPACITY}"
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              globalMounts:
+                - path: /usr/src/paperless/data
         containers:
           app:
             image:
@@ -56,7 +59,7 @@ spec:
               PAPERLESS_PORT: "8000"
               PAPERLESS_TIME_ZONE: America/New_York
               PAPERLESS_TASK_WORKERS: "2"
-              PAPERLESS_DATA_DIR: /shared/data
+              PAPERLESS_MEDIA_DIR: /shared/media
               PAPERLESS_CONSUMPTION_DIR: /shared/import
               PAPERLESS_CONSUMER_POLLING: "60"
               PAPERLESS_CONSUMER_RECURSIVE: "true"
@@ -79,8 +82,8 @@ spec:
                   secretKeyRef:
                     name: paperless-ngx
                     key: PAPERLESS_SECRET_KEY
-              USERMAP_UID: *id
-              USERMAP_GID: *id
+              USERMAP_UID: 1026
+              USERMAP_GID: 100
             probes:
               liveness:
                 enabled: true
@@ -124,7 +127,6 @@ spec:
               capabilities: {drop: ["ALL"]}
               runAsUser: 1999
               runAsGroup: 1999
-              fsGroup: 1999
               runAsNonRoot: true
             resources:
               requests:
@@ -148,7 +150,6 @@ spec:
               capabilities: {drop: ["ALL"]}
               runAsUser: 1999
               runAsGroup: 1999
-              fsGroup: 1999
               runAsNonRoot: true
             resources:
               requests:
@@ -201,19 +202,14 @@ spec:
             app:
               - path: /shared/import
                 subPath: import
-              - path: /shared/data
-                subPath: data
-      gotenberg-tmp:
+              - path: /shared/media
+                subPath: media
+      tmp:
         enabled: true
         type: emptyDir
-        advancedMounts:
-          gotenberg:
-            app:
-              - path: /tmp
-      tika-tmp:
-        enabled: true
-        type: emptyDir
-        advancedMounts:
-          tika:
-            app:
-              - path: /tmp
+        medium: Memory
+        globalMounts:
+          - path: /tmp
+            subPath: tmp
+          - path: /run
+            subPath: run
