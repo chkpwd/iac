@@ -1,0 +1,105 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kestra
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: kestra
+      version: 0.22.4
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: kestra
+  driftDetection:
+    mode: enabled
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    image:
+      image: kestra/kestra
+      pullPolicy: IfNotPresent
+    configuration:
+      kestra:
+        queue:
+          type: postgres
+        repository:
+          type: postgres
+        # plugins:
+        #   configurations:
+        #     - type:  io.kestra.plugin.scripts.runner.docker.Docker
+        #       values:
+        #         volume-enabled: true
+    externalSecret:
+      secretName: kestra
+      key: KESTRA_CONFIGURATION
+    executable: /app/kestra
+    deployments:
+      standalone:
+        enabled: true
+        kind: Deployment
+        command: "server standalone{{ if $.Values.deployments.standalone.workerThreads }} --worker-thread={{ .Values.deployments.standalone.workerThreads }}{{ end }}"
+        terminationGracePeriodSeconds: 60
+        # By default, we start a number of threads of two times the number of available processors, use 'workerThreads' to configure a different value.
+        #workerThreads: 128 # TODO: Look into this
+    dind: # for io.kestra.core.tasks.scripts.Bash task or io.kestra.plugin.scripts.*
+      enabled: false
+    minio:
+      enabled: false
+    postgresql:
+      enabled: false
+    service:
+      type: ClusterIP
+      port: 8080
+      management:
+        enabled: false
+        port: 8081
+    extraENV:
+      - name: JAVA_OPTS
+        value: "-user.timezone=America/New_York"
+      # - name: KESTRA_SUPERADMIN_PASSWORD # TODO: setup a password for superadmin
+      #   valueFrom:
+      #     secretKeyRef:
+      #       name: kestra
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+    ingress:
+      enabled: true
+      className: int-ingress
+      hosts:
+        - host: "{{ .Release.Name }}.chkpwd.com"
+          paths:
+            - path: /
+              pathType: Prefix
+    extraVolumeMounts:
+      - name: tmp
+        mountPath: /tmp/kestra-wd/tmp
+      - name: data
+        mountPath: /app/storage
+    extraVolumes:
+      - name: tmp
+        emptyDir: {}
+      - name: data
+        emptyDir: {}
+    resources:
+      requests:
+        cpu: 250m
+        memory: 1024Mi
+      limits:
+        memory: 4096Mi
+    # https://kestra.io/docs/administrator-guide/configuration/others#kestravariablesenv-vars-prefix
+    extraConfigMapEnvFrom: []
+    extraSecretEnvFrom: []
