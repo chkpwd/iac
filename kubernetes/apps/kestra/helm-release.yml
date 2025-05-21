@@ -26,16 +26,16 @@ spec:
     image:
       image: kestra/kestra
       pullPolicy: IfNotPresent
-    configuration:
-      kestra:
-        # plugins:
-        #   configurations:
-        #     - type:  io.kestra.plugin.scripts.runner.docker.Docker
-        #       values:
-        #         volume-enabled: true
+    # configuration:
+    #   kestra:
+    #     plugins:
+    #       configurations:
+    #         - type:  io.kestra.plugin.scripts.runner.docker.Docker
+    #           values:
+    #             volume-enabled: true
     externalSecret:
-      secretName: kestra-config
-      key: KESTRA_CONFIGURATION
+      secretName: kestra-secrets
+      key: kestra_configuration
     executable: /app/kestra
     deployments:
       standalone:
@@ -60,10 +60,25 @@ spec:
     extraENV:
       - name: JAVA_OPTS
         value: "-user.timezone=America/New_York"
-      # - name: KESTRA_SUPERADMIN_PASSWORD # TODO: setup a password for superadmin
-      #   valueFrom:
-      #     secretKeyRef:
-      #       name: kestra
+      - name: DATASOURCES_POSTGRES_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: kestra-pguser-kestra
+            key: user
+      - name: DATASOURCES_POSTGRES_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: kestra-pguser-kestra
+            key: password
+      - name: DATASOURCES_POSTGRES_URL
+        value: "jdbc:postgresql://ketra-primary.runners.svc.cluster.local:5432/kestra"
+      - name: DATASOURCES_POSTGRES_DRIVER-CLASS-NAME # camelCase transformation
+        value: org.postgresql.Driver
+      - name: KESTRA_SUPERADMIN_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: kestra-secrets
+            key: admin_password
     securityContext:
       capabilities:
         drop:
