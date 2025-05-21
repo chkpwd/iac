@@ -26,13 +26,29 @@ spec:
     image:
       image: kestra/kestra
       pullPolicy: IfNotPresent
-    # configuration:
-    #   kestra:
-    #     plugins:
-    #       configurations:
-    #         - type:  io.kestra.plugin.scripts.runner.docker.Docker
-    #           values:
-    #             volume-enabled: true
+    configuration:
+      kestra:
+        # plugins:
+        #   configurations:
+        #     - type:  io.kestra.plugin.scripts.runner.docker.Docker
+        #       values:
+        #         volume-enabled: true
+        environment:
+          name: chkpwd
+          color: "#157DFF"
+        storage:
+          type: local
+          local:
+            basePath: "/app/storage"
+        anonymousUsageReport:
+          enabled: true
+        repository:
+          type: postgres
+        queue:
+          type: postgres
+        tasks:
+          tmpDir:
+            path: /tmp/kestra-wd/tmp
     externalSecret:
       secretName: kestra-secrets
       key: kestra_configuration
@@ -60,19 +76,19 @@ spec:
     extraENV:
       - name: JAVA_OPTS
         value: "-user.timezone=America/New_York"
-      - name: DATASOURCES_POSTGRES_USERNAME
+      - name: DATASOURCES_DEFAULT_USERNAME
         valueFrom:
           secretKeyRef:
             name: kestra-pguser-kestra
             key: user
-      - name: DATASOURCES_POSTGRES_PASSWORD
+      - name: DATASOURCES_DEFAULT_PASSWORD
         valueFrom:
           secretKeyRef:
             name: kestra-pguser-kestra
             key: password
-      - name: DATASOURCES_POSTGRES_URL
+      - name: DATASOURCES_DEFAULT_URL
         value: "jdbc:postgresql://ketra-primary.runners.svc.cluster.local:5432/kestra"
-      - name: DATASOURCES_POSTGRES_DRIVER-CLASS-NAME # camelCase transformation
+      - name: DATASOURCES_DEFAULT_DRIVER-CLASS-NAME # camelCase transformation
         value: org.postgresql.Driver
       - name: KESTRA_SUPERADMIN_PASSWORD
         valueFrom:
