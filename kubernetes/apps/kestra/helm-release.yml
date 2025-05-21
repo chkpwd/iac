@@ -57,10 +57,28 @@ spec:
       standalone:
         enabled: true
         kind: Deployment
-        command: "server standalone{{ if $.Values.deployments.standalone.workerThreads }} --worker-thread={{ .Values.deployments.standalone.workerThreads }}{{ end }}"
-        terminationGracePeriodSeconds: 60
-        # By default, we start a number of threads of two times the number of available processors, use 'workerThreads' to configure a different value.
-        #workerThreads: 128 # TODO: Look into this
+    extraEnv:
+      # - name: JAVA_OPTS
+      #   value: "-user.timezone=America/New_York"
+      - name: DATASOURCES_POSTGRES_USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: kestra-pguser-kestra
+            key: user
+      - name: DATASOURCES_POSTGRES_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: kestra-pguser-kestra
+            key: password
+      - name: DATASOURCES_POSTGRES_URL
+        value: "jdbc:postgresql://kestra-primary.runners.svc:5432/kestra"
+      - name: DATASOURCES_POSTGRES_DRIVER-CLASS-NAME # camelCase transformation
+        value: org.postgresql.Driver
+      - name: KESTRA_SUPERADMIN_PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: kestra-secrets
+            key: admin_password
     dind: # for io.kestra.core.tasks.scripts.Bash task or io.kestra.plugin.scripts.*
       enabled: false
     minio:
@@ -73,28 +91,6 @@ spec:
       management:
         enabled: false
         port: 8081
-    extraENV:
-      - name: JAVA_OPTS
-        value: "-user.timezone=America/New_York"
-      - name: DATASOURCES_DEFAULT_USERNAME
-        valueFrom:
-          secretKeyRef:
-            name: kestra-pguser-kestra
-            key: user
-      - name: DATASOURCES_DEFAULT_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: kestra-pguser-kestra
-            key: password
-      - name: DATASOURCES_DEFAULT_URL
-        value: "jdbc:postgresql://ketra-primary.runners.svc.cluster.local:5432/kestra"
-      - name: DATASOURCES_DEFAULT_DRIVER-CLASS-NAME # camelCase transformation
-        value: org.postgresql.Driver
-      - name: KESTRA_SUPERADMIN_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: kestra-secrets
-            key: admin_password
     securityContext:
       #   capabilities:
       #     drop:
@@ -127,6 +123,3 @@ spec:
         memory: 1024Mi
       limits:
         memory: 4096Mi
-    # https://kestra.io/docs/administrator-guide/configuration/others#kestravariablesenv-vars-prefix
-    extraConfigMapEnvFrom: []
-    extraSecretEnvFrom: []
