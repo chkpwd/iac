@@ -80,11 +80,11 @@ spec:
             name: kestra-secrets
             key: admin_password
     securityContext:
-      capabilities:
-        drop:
-          - ALL
-      readOnlyRootFilesystem: true
-      runAsNonRoot: true
+      #   capabilities:
+      #     drop:
+      #       - ALL
+      #   readOnlyRootFilesystem: true
+      #   runAsNonRoot: true
       runAsUser: 1000
       runAsGroup: 1000
     ingress:
