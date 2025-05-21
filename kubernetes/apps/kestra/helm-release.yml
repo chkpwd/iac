@@ -79,8 +79,23 @@ spec:
           secretKeyRef:
             name: kestra-secrets
             key: admin_password
-    dind: # for io.kestra.core.tasks.scripts.Bash task or io.kestra.plugin.scripts.*
-      enabled: false
+    dind:
+      enabled: true
+      image:
+        image: docker
+        tag: dind-rootless
+        pullPolicy: IfNotPresent
+      socketPath: /dind/
+      tmpPath: /tmp/
+      resources: {}
+      args:
+        - --log-level=fatal
+        - --group=1000
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+      extraVolumeMounts: []
+      extraEnv: []
     minio:
       enabled: false
     postgresql:
