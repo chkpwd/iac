@@ -42,12 +42,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: requirements
-          path: ./ansible/requirements.txt
+          path: ./ansible/
       - name: Commit changes
         run: |
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git config --global user.name "github-actions[bot]"
-          git add requirements.txt
+          git add ansible/requirements.txt
           git commit -m "Update requirements.txt"
       - name: Push changes
         uses: ad-m/github-push-action@master

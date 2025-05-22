@@ -26,6 +26,14 @@ tasks:
               - Pending
               - Succeeded
         cmd: kubectl delete pods --field-selector status.phase={{.ITEM.PHASE}} -A --ignore-not-found=true
+  sync-externalsecret:
+    desc: Force sync a specific ExternalSecret resource
+    vars:
+      PV: '{{.NAMESPACE | default ""}}'
+    preconditions:
+      - which kubectl
+    cmds:
+      - kubectl --namespace {{.NAMESPACE}} annotate externalsecret {{.SECRET_NAME}} force-sync="{{now | unixEpoch}}" --overwrite
   sync-externalsecrets:
     desc: Force sync all ExternalSecret resources
     preconditions:
