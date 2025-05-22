@@ -26,6 +26,8 @@ spec:
     image:
       image: kestra/kestra
       pullPolicy: IfNotPresent
+    annotations:
+      reloader.stakater.com/auto: "true"
     configuration:
       kestra:
         # plugins:
