@@ -72,6 +72,22 @@ spec:
               type: AlphaNumeric
       target:
         kind: PostgresCluster
+    - patch: |
+        - op: add
+          path: "/metadata/annotations/postgres-operator.crunchydata.com~1authorizeBackupRemoval"
+          value: "true"
+      target:
+        kind: PostgresCluster
+    - patch: |
+        - op: remove
+          path: /spec/backups
+      target:
+        kind: PostgresCluster
+    - patch: |
+        - op: remove
+          path: /spec/dataSource
+      target:
+        kind: PostgresCluster
   prune: true
   sourceRef:
     kind: GitRepository
