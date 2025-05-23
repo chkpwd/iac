@@ -29,11 +29,11 @@ tasks:
   sync-externalsecret:
     desc: Force sync a specific ExternalSecret resource
     vars:
-      PV: '{{.NAMESPACE | default ""}}'
+      PV: '{{.NS | default "default"}}'
     preconditions:
       - which kubectl
     cmds:
-      - kubectl --namespace {{.NAMESPACE}} annotate externalsecret {{.SECRET_NAME}} force-sync="{{now | unixEpoch}}" --overwrite
+      - kubectl --namespace {{.NS}} annotate externalsecret {{.SECRET_NAME}} force-sync="{{now | unixEpoch}}" --overwrite
   sync-externalsecrets:
     desc: Force sync all ExternalSecret resources
     preconditions:
