@@ -1,4 +1,4 @@
----
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s/helm-charts/app-template-3.7.3/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -8,12 +8,13 @@ spec:
   interval: 15m
   chart:
     spec:
-      chart: immich
-      version: 0.9.2
+      chart: app-template
+      version: 3.7.3
       interval: 30m
       sourceRef:
         kind: HelmRepository
-        name: immich
+        name: bjw-s-labs
+        namespace: flux-system
   driftDetection:
     mode: enabled
   install:
@@ -23,176 +24,137 @@ spec:
     remediation:
       retries: 3
   values:
-    controller:
-      annotations:
-        reloader.stakater.com/auto: "true"
-    image:
-      tag: v1.124.2
-    postgres:
-      enabled: false
-    redis:
-      enabled: false
-    immich:
-      persistence:
-        library:
-          existingClaim: immich-nfs-uploads
-      machineLearning:
-        clipModelName: ViT-L-16-SigLIP-256__webli
-        facialRecognitionModelName: antelopev2
-      configuration:
-        ffmpeg:
-          accel: qsv
-          accelDecode: false
-          cqMode: icq
-          preferredHwDevice: auto
-          temporalAQ: false
-        job:
-          videoConversion:
-            concurrency: 2
-        image:
-          colorspace: p3
-          extractEmbedded: false
-          preview:
-            format: jpeg
-          thumbnail:
-            format: webp
-        backup:
-          database:
-            enabled: true
-            cronExpression: 0 02 * * *
-            keepLastAmount: 5
-        # oauth:
-        #   autoLaunch: false
-        #   autoRegister: true
-        #   buttonText: Login with Authentik
-        #   enabled: true
-        #   issuerUrl: https://authentik.chkpwd.com/application/o/immich/
-        #   clientId: immich
-        #   clientSecret: "${OAUTH2_CLIENT_SECRET}"
-        passwordLogin:
-          enabled: true
-        newVersionCheck:
-          enabled: false
-        trash:
-          enabled: true
-          days: 30
-        library:
-          scan:
-            enabled: true
-            cronExpression: 0 0 * * *
-          watch:
-            enabled: true
-        logging:
-          enabled: true
-          level: log
-        machineLearning:
-          enabled: true
-          duplicateDetection:
-            enabled: true
-        metadata:
-          faces:
-            import: true
-        notifications:
-          smtp:
-            enabled: false
-        server:
-          externalDomain: ""
-          loginPageMessage: ""
-        storageTemplate:
-          enabled: true
-          hashVerificationEnabled: true
-          template: "{{y}}/{{y}}-{{MM}}-{{dd}}/{{filename}}"
-        templates:
-          email:
-            albumInviteTemplate: ""
-            albumUpdateTemplate: ""
-            welcomeTemplate: ""
-        theme:
-          customCss: ""
-        user:
-          deleteDelay: 7
-    env:
-      OAUTH_ENABLED: "true"
-      TZ: "America/New_York"
-      REDIS_HOSTNAME: "immich-redis.tools.svc.cluster.local"
-      REDIS_PORT: "6379"
-      DB_DATABASE_NAME:
-        valueFrom:
-          secretKeyRef:
-            name: immich-pguser-immich
-            key: dbname
-      DB_HOSTNAME:
-        valueFrom:
-          secretKeyRef:
-            name: immich-pguser-immich
-            key: host
-      DB_USERNAME:
-        valueFrom:
-          secretKeyRef:
-            name: immich-pguser-immich
-            key: user
-      DB_PASSWORD:
-        valueFrom:
-          secretKeyRef:
-            name: immich-pguser-immich
-            key: password
-      DB_URL:
-        valueFrom:
-          secretKeyRef:
-            name: immich-pguser-immich
-            key: uri
-      LOG_LEVEL: verbose
-    server:
-      enabled: true
-      ingress:
-        main:
-          enabled: true
-          ingressClassName: ext-ingress
-          labels:
-            external-dns/public: "true"
-          annotations:
-            external-dns.alpha.kubernetes.io/target: chkpwd.com
-            nginx.ingress.kubernetes.io/proxy-body-size: "0"
-          hosts:
-            - host: "{{ .Release.Name }}.chkpwd.com"
-              paths:
-                - path: /
-                  pathType: Prefix
+    defaultPodOptions:
       securityContext:
-        readOnlyRootFilesystem: true
-        allowPrivilegeEscalation: false
-        capabilities:
-          drop: ["ALL"]
-      persistence:
-        images:
-          enabled: true
-          mountPath: /mnt/photography
-          existingClaim: immich-nfs-photography
-      resources:
-        requests:
-          cpu: 10m
-          memory: 128Mi
-        limits:
-          memory: 3Gi
-    machine-learning:
-      env:
-        MACHINE_LEARNING_PRELOAD__CLIP: "ViT-L-16-SigLIP-256__webli"
-      resources:
-        requests:
-          cpu: 500m
-          memory: 4Gi
-          gpu.intel.com/i915: 1
-        limits:
-          memory: 6Gi
-          gpu.intel.com/i915: 1
-      persistence:
-        cache:
-          type: pvc
-          existingClaim: immich-machine-learning-cache
-      probes:
-        liveness:
-          spec:
-            initialDelaySeconds: 120
-        readiness:
-          spec:
-            initialDelaySeconds: 120
+        runAsNonRoot: true
+        runAsUser: 1026
+        runAsGroup: &group 100
+        fsGroup: *group
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: {type: RuntimeDefault}
+    controllers:
+      server:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/immich-app/immich-server
+              tag: v1.132.3
+              pullPolicy: IfNotPresent
+            env: &env
+              TZ: America/New_York
+              IMMICH_WORKERS_INCLUDE: api
+              REDIS_HOSTNAME: "immich-redis.tools.svc.cluster.local"
+              REDIS_PORT: "6379"
+              DB_DATABASE_NAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: immich-pguser-immich
+                    key: dbname
+              DB_HOSTNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: immich-pguser-immich
+                    key: host
+              DB_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: immich-pguser-immich
+                    key: user
+              DB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: immich-pguser-immich
+                    key: password
+              DB_URL:
+                valueFrom:
+                  secretKeyRef:
+                    name: immich-pguser-immich
+                    key: uri
+              LOG_LEVEL: verbose
+              MPLCONFIGDIR: /tmp/matplotlib
+            securityContext: &securityContext
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: [ALL]}
+        pod:
+          terminationGracePeriodSeconds: 1
+      microservices:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/immich-app/immich-server
+              tag: v1.132.3
+              pullPolicy: IfNotPresent
+            env:
+              <<: *env
+              IMMICH_WORKERS_INCLUDE: null
+              IMMICH_WORKERS_EXCLUDE: api
+            resources:
+              requests:
+                gpu.intel.com/i915: 1
+              limits:
+                gpu.intel.com/i915: 1
+            securityContext: *securityContext
+        pod:
+          terminationGracePeriodSeconds: 1
+      machine-learning:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/immich-app/immich-machine-learning
+              tag: v1.131.2
+              pullPolicy: IfNotPresent
+            securityContext: *securityContext
+    service:
+      immich:
+        controller: immich
+        enabled: false
+      machine-learning:
+        controller: machine-learning
+        ports:
+          http:
+            port: 3003
+      server:
+        enabled: true
+        controller: server
+        ports:
+          http:
+            port: 2283
+    ingress:
+      immich:
+        enabled: true
+        annotations:
+          nginx.ingress.kubernetes.io/proxy-body-size: "0"
+        hosts:
+          - host: "{{ .Release.Name }}.chkpwd.com"
+            paths:
+              - path: /
+                service:
+                  identifier: server
+                  port: http
+    persistence:
+      upload:
+        enabled: true
+        type: nfs
+        server: "nas-srv-01.chkpwd.com"
+        path: /volume1/vault-01/static_media/immich
+        advancedMounts:
+          server:
+            app:
+              - path: /usr/src/app/upload
+          microservices:
+            app:
+              - path: /usr/src/app/upload
+      model-cache:
+        enabled: true
+        storageClass: ceph-block
+        accessMode: ReadWriteOnce
+        size: 8Gi
+        retain: true
+        advancedMounts:
+          machine-learning:
+            app:
+              - path: /cache
+      tmp:
+        enabled: true
+        type: emptyDir

@@ -5,8 +5,6 @@ kind: Kustomization
 resources:
   - external-secret.yml
   - helm-release.yml
-  - storage.yml
-  - source.yml
 configMapGenerator:
   - name: immich-database-init-sql
     options:
