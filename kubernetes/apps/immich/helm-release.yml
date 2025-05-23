@@ -123,7 +123,11 @@ spec:
     ingress:
       immich:
         enabled: true
+        className: ext-ingress
+        labels:
+          external-dns/public: "true"
         annotations:
+          external-dns.alpha.kubernetes.io/target: "chkpwd.com"
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
         hosts:
           - host: "{{ .Release.Name }}.chkpwd.com"
