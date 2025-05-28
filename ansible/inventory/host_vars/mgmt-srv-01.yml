@@ -32,7 +32,7 @@ service_definitions:
       API_KEY: "{{ lookup('bws_cache', 'public-api-apex-legends-key').value }}"
     ports: ["5050:5000"]
   - name: opnsense-exporter
-    image: ghcr.io/athennamind/opnsense-exporter:0.0.8
+    image: ghcr.io/athennamind/opnsense-exporter:0.0.10
     command:
       - --opnsense.protocol=http
       - --opnsense.address=172.16.16.1
