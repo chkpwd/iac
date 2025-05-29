@@ -10,7 +10,7 @@
     "github>chkpwd/iac//.renovate/semanticCommits.json5",
     "github>chkpwd/iac//.renovate/versioning.json5",
   ],
-  ignorePaths: [],
+  ignorePaths: ["/^ansible/requirements.txt$/"],
   flux: {
     managerFilePatterns: ["/^kubernetes/.+\\.ya?ml$/"],
   },
