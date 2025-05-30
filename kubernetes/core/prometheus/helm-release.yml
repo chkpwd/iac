@@ -65,7 +65,11 @@ spec:
       enabled: true
     grafana:
       enabled: false
-      forceDeployDashboards: false # TODO: Create a sync to grab dashboards and deploy to RPI
+      forceDeployDashboards: true
+      sidecar:
+        dashboards:
+          annotations:
+            grafana_folder: Kubernetes
     prometheusOperator:
       resources:
         requests:
