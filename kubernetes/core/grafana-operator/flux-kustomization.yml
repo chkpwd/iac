@@ -11,12 +11,9 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  # components:
-  #   - ../external-dns/_components/internal/
   postBuild:
     substitute:
       APP: *app
-      # RECORD_NAME: grafana
   prune: true
   sourceRef:
     kind: GitRepository
