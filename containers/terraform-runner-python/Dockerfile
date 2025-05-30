@@ -20,7 +20,7 @@ COPY poetry.lock pyproject.toml .
 RUN poetry config virtualenvs.in-project true && \
     poetry install --only=main
 
-FROM docker.io/library/alpine:3.21 AS opentofu
+FROM docker.io/library/alpine:3.22 AS opentofu
 
 ARG VERSION="v1.9.0"
 
