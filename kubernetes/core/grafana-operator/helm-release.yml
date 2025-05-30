@@ -37,20 +37,3 @@ spec:
       allowPrivilegeEscalation: false
       readOnlyRootFilesystem: true
       runAsNonRoot: true
-      extraObjects: |
-        ---
-        apiVersion: grafana.integreatly.org/v1beta1
-        kind: Grafana
-        metadata:
-          name: external-grafana
-          labels:
-            dashboards: "external-grafana"
-        spec:
-          external:
-            url: https://grafana.chkpwd.com
-            adminPassword:
-              name: grafana-operator
-              key: GF_SECURITY_ADMIN_PASSWORD
-            adminUser:
-              name: grafana-operator
-              key: GF_SECURITY_ADMIN_USER
