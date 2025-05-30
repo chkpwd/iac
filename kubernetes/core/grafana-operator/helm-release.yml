@@ -1,0 +1,56 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana-operator
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: grafana-operator
+  timeout: 20m
+  driftDetection:
+    mode: disabled
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    replicas: 1
+    serviceMonitor:
+      enabled: false
+    isOpenShift: false
+    logging:
+      encoder: console
+      level: info
+      time: rfc3339
+    image:
+      repository: ghcr.io/grafana/grafana-operator
+      pullPolicy: IfNotPresent
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      extraObjects: |
+        ---
+        apiVersion: grafana.integreatly.org/v1beta1
+        kind: Grafana
+        metadata:
+          name: external-grafana
+          labels:
+            dashboards: "external-grafana"
+        spec:
+          external:
+            url: https://grafana.chkpwd.com
+            adminPassword:
+              name: grafana-operator
+              key: GF_SECURITY_ADMIN_PASSWORD
+            adminUser:
+              name: grafana-operator
+              key: GF_SECURITY_ADMIN_USER
