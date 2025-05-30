@@ -24,39 +24,28 @@ spec:
       retries: 3
   values:
     fullnameOverride: headlamp
-    config:
-      pluginsDir: /build/plugins
-    initContainers:
-      - name: headlamp-plugins
-        image: node:24-alpine3.21
-        command:
-          - /bin/sh
-          - -c
-          - |
-            apk add --no-cache git
-            git clone https://github.com/Faakhir30/headlamp.git /tmp/headlamp/
-            cd /tmp/headlamp
-            git checkout batch_plugin_support
-            cd plugins/headlamp-plugin
-            npm install
-            bin/headlamp-plugin.js install --config /build/config.yml --folderName /tmp/all_plugins
-            mkdir -p /build/plugins/
-            cp -r /tmp/all_plugins/* /build/plugins/
-        volumeMounts:
-          - mountPath: /build/plugins
-            name: plugins
-          - mountPath: /build/config.yml
-            subPath: config.yml
-            name: headlamp-config
-    volumeMounts:
-      - mountPath: /build/plugins
-        name: plugins
-    volumes:
-      - name: plugins
-        emptyDir: {}
-      - name: headlamp-config
-        configMap:
-          name: headlamp-config
+    pluginsManager:
+      enabled: true
+      configContent: |
+        plugins:
+          - name: cert-manager
+            source: https://artifacthub.io/packages/headlamp/headlamp-plugins/headlamp_cert-manager
+            version: 1.0.0
+          - name: flux
+            source: https://artifacthub.io/packages/headlamp/headlamp-plugins/headlamp_flux
+            version: 0.2.0
+        installOptions:
+          parallel: true
+          maxConcurrent: 3
+      baseImage: node:lts-alpine
+      version: latest
+      resources:
+        requests:
+          cpu: 10m
+          memory: 100Mi
+        limits:
+          cpu: 100m
+          memory: 100Mi
     persistentVolumeClaim:
       enabled: false
     ingress:
@@ -77,21 +66,3 @@ spec:
           namespace: {{ .Release.Namespace }}
           annotations:
             kubernetes.io/service-account.name: {{ include "headlamp.serviceAccountName" . }}
-      - |
-        apiVersion: v1
-        kind: ConfigMap
-        metadata:
-          name: headlamp-config
-          namespace: {{ .Release.Namespace }}
-        data:
-          config.yml: |
-            plugins:
-              - name: cert-manager
-                source: https://artifacthub.io/packages/headlamp/headlamp-plugins/headlamp_cert-manager
-                version: 0.1.0
-              - name: flux
-                source: https://artifacthub.io/packages/headlamp/headlamp-plugins/headlamp_flux
-                version: 0.2.0
-            installOptions:
-              parallel: true
-              maxConcurrent: 2
