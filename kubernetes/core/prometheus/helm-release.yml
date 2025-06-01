@@ -68,7 +68,7 @@ spec:
       forceDeployDashboards: true
       operator:
         dashboardsConfigMapRefEnabled: true
-        matchedLabels:
+        matchLabels:
           dashboards: "external-grafana"
         resyncPeriod: 10m
         folder: Kubernetes
