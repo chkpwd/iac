@@ -1,0 +1,23 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/keda.sh/scaledobject_v1alpha1.json
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: ${APP}-ollama-probe
+spec:
+  cooldownPeriod: 0
+  minReplicaCount: 0
+  maxReplicaCount: 1
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: ${KEDA_KIND}
+    name: ${APP}
+  advanced:
+    restoreToOriginalReplicaCount: false
+  triggers:
+    - type: prometheus
+      metadata:
+        serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
+        query: probe_success{instance="ai-inference-01.chkpwd.com:11434"}
+        threshold: "1"
+        ignoreNullValues: "0"
