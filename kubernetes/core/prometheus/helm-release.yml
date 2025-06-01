@@ -66,6 +66,12 @@ spec:
     grafana:
       enabled: false
       forceDeployDashboards: true
+      operator:
+        dashboardsConfigMapRefEnabled: true
+        matchedLabels:
+          dashboards: "external-grafana"
+        resyncPeriod: 10m
+        folder: Kubernetes
       sidecar:
         dashboards:
           annotations:
