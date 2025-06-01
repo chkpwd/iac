@@ -13,7 +13,7 @@ spec:
     kind: ${KEDA_KIND}
     name: ${APP}
   advanced:
-    restoreToOriginalReplicaCount: false
+    restoreToOriginalReplicaCount: true
   triggers:
     - type: prometheus
       metadata:
