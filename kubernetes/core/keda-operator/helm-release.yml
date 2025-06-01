@@ -1,0 +1,99 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: keda-operator
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: keda
+  timeout: 20m
+  driftDetection:
+    mode: disabled
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  values:
+    clusterName: cattle-k8s
+    clusterDomain: cluster.local
+    operator:
+      name: keda-operator
+    webhooks:
+      enabled: true
+      port: "" # defaults to 9443
+      name: keda-admission-webhooks
+      failurePolicy: Ignore
+      healthProbePort: 8081
+    logging:
+      operator:
+        level: info
+      metricServer:
+        level: 0
+        stderrthreshold: ERROR
+      webhooks:
+        level: info
+    securityContext:
+      operator:
+        capabilities:
+          drop:
+            - ALL
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        seccompProfile:
+          type: RuntimeDefault
+      metricServer:
+        capabilities:
+          drop:
+            - ALL
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        seccompProfile:
+          type: RuntimeDefault
+      webhooks:
+        capabilities:
+          drop:
+            - ALL
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        seccompProfile:
+          type: RuntimeDefault
+    podSecurityContext:
+      operator:
+        runAsNonRoot: true
+      metricServer:
+        runAsNonRoot: true
+      webhooks:
+        runAsNonRoot: true
+    service:
+      type: ClusterIP
+      portHttps: 443
+      portHttpsTarget: 6443
+    resources:
+      operator:
+        limits:
+          cpu: 1
+          memory: 1000Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      metricServer:
+        limits:
+          cpu: 1
+          memory: 1000Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+      webhooks:
+        limits:
+          cpu: 1
+          memory: 1000Mi
+        requests:
+          cpu: 100m
+          memory: 100Mi
+    enableServiceLinks: false
