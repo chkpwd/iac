@@ -14,6 +14,7 @@ spec:
   components:
     - ../../core/volsync/components/
     - ../../core/external-dns/_components/internal/
+    - ../../core/keda-operator/_components/nfs/
   postBuild:
     substitute:
       APP: *app
@@ -21,6 +22,7 @@ spec:
       VOLSYNC_PUID: "1000"
       VOLSYNC_PGID: "1000"
       VOLSYNC_CAPACITY: "1Gi"
+      KEDA_KIND: "Deployment"
   prune: true
   sourceRef:
     kind: GitRepository

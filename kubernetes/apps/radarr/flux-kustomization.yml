@@ -14,6 +14,7 @@ spec:
   components:
     - ../../core/volsync/components/
     - ../../core/external-dns/_components/internal/
+    - ../../core/keda-operator/_components/nfs/
   postBuild:
     substitute:
       APP: *app
