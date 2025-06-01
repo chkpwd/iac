@@ -5,12 +5,12 @@ kind: ScaledObject
 metadata:
   name: ${APP}-ollama-probe
 spec:
-  cooldownPeriod: 0
+  cooldownPeriod: 15
   minReplicaCount: 0
   maxReplicaCount: 1
   scaleTargetRef:
     apiVersion: apps/v1
-    kind: ${KEDA_KIND}
+    kind: ${KEDA_KIND:=Deployment}
     name: ${APP}
   advanced:
     restoreToOriginalReplicaCount: true
@@ -18,6 +18,6 @@ spec:
     - type: prometheus
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
-        query: probe_success{instance="ai-inference-01.chkpwd.com:11434"}
+        query: max_over_time(probe_success{instance="ai-inference-01.chkpwd.com:11434",job="probe/monitoring/tcp-endpoints"}[2m])
         threshold: "1"
         ignoreNullValues: "0"
