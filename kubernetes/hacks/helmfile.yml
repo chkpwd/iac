@@ -51,13 +51,13 @@ releases:
   - name: flux-operator
     namespace: flux-system
     chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator
-    version: 0.21.0
+    version: 0.22.0
     values: ["../core/flux-operator/values.yml"]
     needs: ["security/cert-manager"]
   - name: flux-instance
     namespace: flux-system
     chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-instance
-    version: 0.21.0
+    version: 0.22.0
     wait: false
     values: ["../core/flux-instance/values.yml"]
     needs: ["flux-system/flux-operator"]
