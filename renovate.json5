@@ -11,6 +11,7 @@
     "github>chkpwd/iac//.renovate/versioning.json5",
   ],
   ignorePaths: ["/^ansible/requirements.txt$/"],
+  ignoreDeps: ["spegel"],
   flux: {
     managerFilePatterns: ["/^kubernetes/.+\\.ya?ml$/"],
   },
