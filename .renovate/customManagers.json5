@@ -11,14 +11,14 @@
       datasourceTemplate: "custom.talos-versions",
       versioningTemplate: "regex:^(?<major>\\d+)$",
     },
-    {
-      customType: "regex",
-      managerFilePatterns: ["/^terraform/aws/.+\\.(tf|tofu)$/"],
-      matchStrings: [
-        '.*amiFilter=(?<packageName>.*?)\n(?:.*currentImageName=(?<currentDigest>.*?)\n)?(?:.*\n)?.*?(?<depName>[a-zA-Z0-9_:.-]+)[ ]*[:=][ ]*"?(?<currentValue>ami-[a-z0-9]{17})"?.*',
-      ],
-      datasourceTemplate: "aws-machine-image",
-      versioningTemplate: "aws-machine-image",
-    },
+    // {
+    //   customType: "regex",
+    //   managerFilePatterns: ["/^terraform/aws/.+\\.(tf|tofu)$/"],
+    //   matchStrings: [
+    //     '.*amiFilter=(?<packageName>.*?)\n(?:.*currentImageName=(?<currentDigest>.*?)\n)?(?:.*\n)?.*?(?<depName>[a-zA-Z0-9_:.-]+)[ ]*[:=][ ]*"?(?<currentValue>ami-[a-z0-9]{17})"?.*',
+    //   ],
+    //   datasourceTemplate: "aws-machine-image",
+    //   versioningTemplate: "aws-machine-image",
+    // },
   ],
 }
