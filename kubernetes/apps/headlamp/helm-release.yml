@@ -24,6 +24,11 @@ spec:
       retries: 3
   values:
     fullnameOverride: headlamp
+    replicaCount: 1
+    image:
+      repository: headlamp-k8s/headlamp
+      pullPolicy: IfNotPresent
+      tag: "0.31.1"
     pluginsManager:
       enabled: true
       configContent: |
@@ -44,8 +49,8 @@ spec:
           cpu: 10m
           memory: 100Mi
         limits:
-          cpu: 100m
-          memory: 100Mi
+          cpu: 20m
+          memory: 300Mi
     persistentVolumeClaim:
       enabled: false
     ingress:
