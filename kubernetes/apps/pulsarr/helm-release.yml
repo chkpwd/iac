@@ -64,11 +64,11 @@ spec:
               logLevel: info
               NODE_ARGS: --log-terminal
               cookieSecured: "true"
-              plexToken:
+              plexTokens:
                 valueFrom:
                   secretKeyRef:
-                    name: plex
-                    key: PLEX_CLAIM
+                    name: pulsarr
+                    key: plex_token
               tautulliEnabled: "true"
               tautulliUrl: "http://tautulli.media.svc.cluster.local:80"
               tautulliApiKey:
