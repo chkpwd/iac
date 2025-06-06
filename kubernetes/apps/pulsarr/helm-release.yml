@@ -1,0 +1,110 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/common-3.1.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: pulsarr
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.3
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  driftDetection:
+    mode: enabled
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    global:
+      fullNameOverride: pulsarr
+    controllers:
+      pulsarr:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              accessMode: ReadWriteOnce
+              size: "${VOLSYNC_CAPACITY}"
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              globalMounts:
+                - path: /app/data
+        pod:
+          securityContext:
+            runAsUser: 1999
+            runAsGroup: &group 1999
+            fsGroup: *group
+            fsGroupChangePolicy: "OnRootMismatch"
+        containers:
+          app:
+            image:
+              repository: lakker/pulsarr
+              tag: 0.3.11
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "America/New_York"
+              baseUrl: "https://{{ .Release.Name }}.chkpwd.com"
+              port: &port 3003
+              logLevel: info
+              NODE_ARGS: --log-terminal
+              cookieSecured: "true"
+              plexToken:
+                valueFrom:
+                  secretKeyRef:
+                    name: plex
+                    key: PLEX_CLAIM
+                    # Tautulli Configuration
+              tautulliEnabled: "true"
+              tautulliUrl: "http://tautulli.media.svc.cluster.local:8181"
+              tautulliApiKey:
+                valueFrom:
+                  secretKeyRef:
+                    name: tautulli
+                    key: tautulli_api_key
+              plexServerUrl: "http://plex.media.svc.cluster.local:32400"
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                cpu: 20m
+                memory: 500Mi
+              limits:
+                memory: 700Mi
+    service:
+      app:
+        primary: true
+        controller: pulsarr
+        ports:
+          http:
+            port: *port
+    ingress:
+      internal:
+        className: int-ingress
+        hosts:
+          - host: "{{ .Release.Name }}.chkpwd.com"
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: app
+                  port: http
