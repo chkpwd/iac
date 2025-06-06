@@ -39,7 +39,7 @@ This repository provides a set of tools and configurations for automating tasks 
 - [External DNS](https://github.com/kubernetes-sigs/external-dns): Syncs DNS records from Kubernetes ingresses to a DNS provider.
 - [External Secrets](https://github.com/external-secrets/external-secrets/): Manages Kubernetes secrets using [Bitwarden](https://bitwarden.com/).
 - [Ingress NGINX](https://github.com/kubernetes/ingress-nginx/): NGINX-based ingress controller for Kubernetes.
-- [Longhorn](https://longhorn.io/): Cloud-native distributed block storage for Kubernetes.
+- [Rook Ceph](https://rook.io/): Open-Source, Cloud-Native Storage for Kubernetes.
 - [Tofu Controller](https://github.com/flux-iac/tofu-controller): Runs Terraform from within a Kubernetes cluster.
 
 ### Terraform
