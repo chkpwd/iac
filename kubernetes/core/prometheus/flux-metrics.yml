@@ -89,7 +89,7 @@ flux-metrics:
                   url: [spec, url]
           - groupVersionKind:
               group: source.toolkit.fluxcd.io
-              version: v1beta2
+              version: v1
               kind: Bucket
             metricNamePrefix: gotk
             metrics:
@@ -148,7 +148,7 @@ flux-metrics:
                   chart_version: [spec, version]
           - groupVersionKind:
               group: source.toolkit.fluxcd.io
-              version: v1beta2
+              version: v1
               kind: OCIRepository
             metricNamePrefix: gotk
             metrics:
@@ -217,7 +217,7 @@ flux-metrics:
                   webhook_path: [status, webhookPath]
           - groupVersionKind:
               group: image.toolkit.fluxcd.io
-              version: v1beta2
+              version: v1
               kind: ImageRepository
             metricNamePrefix: gotk
             metrics:
@@ -235,7 +235,7 @@ flux-metrics:
                   image: [spec, image]
           - groupVersionKind:
               group: image.toolkit.fluxcd.io
-              version: v1beta2
+              version: v1
               kind: ImagePolicy
             metricNamePrefix: gotk
             metrics:
@@ -253,7 +253,7 @@ flux-metrics:
                   source_name: [spec, imageRepositoryRef, name]
           - groupVersionKind:
               group: image.toolkit.fluxcd.io
-              version: v1beta2
+              version: v1
               kind: ImageUpdateAutomation
             metricNamePrefix: gotk
             metrics:
