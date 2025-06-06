@@ -75,7 +75,7 @@ spec:
               tautulliApiKey:
                 valueFrom:
                   secretKeyRef:
-                    name: tautulli
+                    name: pulsarr
                     key: tautulli_api_key
               plexServerUrl: "http://plex.media.svc.cluster.local:32400"
             securityContext:
