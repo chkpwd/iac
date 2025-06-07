@@ -106,3 +106,13 @@ spec:
         type: emptyDir
         globalMounts:
           - path: /tmp
+      pm2:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /.pm2
+      nltk_data:
+        enabled: true
+        type: emptyDir
+        globalMounts:
+          - path: /nltk_data
