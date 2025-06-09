@@ -62,7 +62,7 @@ spec:
           - host: << inputs.provider.name >>.chkpwd.com
             http:
               paths:
-                - path: /
+                - path: /sse
                   pathType: Prefix
                   backend:
                     service:
