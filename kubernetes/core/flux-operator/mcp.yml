@@ -6,7 +6,9 @@ metadata:
 spec:
   inputs:
     - readonly: true
-      accessFrom: flux-system
+      accessFrom:
+        - flux-system
+        - networking
       ingressClass: int-ingress
       ingressIPv4Address: 172.16.16.30
   resources:
@@ -38,7 +40,7 @@ spec:
           readonly: << inputs.readonly >>
           networkPolicy:
             ingress:
-              namespaces: [<< inputs.accessFrom >>]
+              namespaces: << inputs.accessFrom | toYaml | nindent 8 >>
     - apiVersion: externaldns.k8s.io/v1alpha1
       kind: DNSEndpoint
       metadata:
