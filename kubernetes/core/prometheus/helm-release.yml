@@ -74,8 +74,17 @@ spec:
         folder: Kubernetes
       sidecar:
         dashboards:
+          enabled: true
+          label: grafana_dashboard
+          labelValue: "1"
           annotations:
             grafana_folder: Kubernetes
+        datasources:
+          enabled: true
+          defaultDatasourceEnabled: false
+          isDefaultDatasource: true
+          name: Prometheus
+          uid: prometheus
     prometheusOperator:
       resources:
         requests:
