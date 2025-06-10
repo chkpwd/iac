@@ -1,11 +1,10 @@
 resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
-
+  cidr_block           = "10.0.0.0/16"
   enable_dns_support   = true
   enable_dns_hostnames = true
 
   tags = {
-    name = "${local.eks_name}-${local.env}"
+    name = "${var.eks_name}-${var.env}"
   }
 }
 
@@ -13,65 +12,64 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.main.id
 
   tags = {
-    Name = "${local.eks_name}-${local.env}-igw"
+    Name = "${var.eks_name}-${var.env}-igw"
   }
 }
 
 resource "aws_subnet" "private_zone1" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.0.0/19"
-  availability_zone = local.zone1
+  availability_zone = var.zone1
 
   tags = {
-    "Name"                                                 = "${local.eks_name}-${local.env}-private-${local.zone1}"
-    "kubernetes.io/role/internal-elb"                      = "1"
-    "kubernetes.io/cluster/${local.eks_name}-${local.env}" = "owned"
+    "Name"                                             = "${var.eks_name}-${var.env}-private-${var.zone1}"
+    "kubernetes.io/role/internal-elb"                  = "1"
+    "kubernetes.io/cluster/${var.eks_name}-${var.env}" = "owned"
   }
 }
 
 resource "aws_subnet" "private_zone2" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.32.0/19"
-  availability_zone = local.zone2
+  availability_zone = var.zone2
 
   tags = {
-    "Name"                                                 = "${local.eks_name}-${local.env}-private-${local.zone2}"
-    "kubernetes.io/role/internal-elb"                      = "1"
-    "kubernetes.io/cluster/${local.eks_name}-${local.env}" = "owned"
+    "Name"                                             = "${var.eks_name}-${var.env}-private-${var.zone2}"
+    "kubernetes.io/role/internal-elb"                  = "1"
+    "kubernetes.io/cluster/${var.eks_name}-${var.env}" = "owned"
   }
 }
 
 resource "aws_subnet" "public_zone1" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.64.0/19"
-  availability_zone       = local.zone1
+  availability_zone       = var.zone1
   map_public_ip_on_launch = true
 
   tags = {
-    "Name"                                                 = "${local.eks_name}-${local.env}-public-${local.zone1}"
-    "kubernetes.io/role/elb"                               = "1"
-    "kubernetes.io/cluster/${local.eks_name}-${local.env}" = "owned"
+    "Name"                                             = "${var.eks_name}-${var.env}-public-${var.zone1}"
+    "kubernetes.io/role/elb"                           = "1"
+    "kubernetes.io/cluster/${var.eks_name}-${var.env}" = "owned"
   }
 }
 
 resource "aws_subnet" "public_zone2" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.96.0/19"
-  availability_zone       = local.zone2
+  availability_zone       = var.zone2
   map_public_ip_on_launch = true
 
   tags = {
-    "Name"                                                 = "${local.eks_name}-${local.env}-public-${local.zone2}"
-    "kubernetes.io/role/elb"                               = "1"
-    "kubernetes.io/cluster/${local.eks_name}-${local.env}" = "owned"
+    "Name"                                             = "${var.eks_name}-${var.env}-public-${var.zone2}"
+    "kubernetes.io/role/elb"                           = "1"
+    "kubernetes.io/cluster/${var.eks_name}-${var.env}" = "owned"
   }
 }
 
 resource "aws_eip" "nat" {
   domain = "vpc"
-
   tags = {
-    Name = "${local.eks_name}-${local.env}-nat"
+    Name = "${var.eks_name}-${var.env}-nat"
   }
 }
 
@@ -80,7 +78,7 @@ resource "aws_nat_gateway" "nat" {
   subnet_id     = aws_subnet.public_zone1.id
 
   tags = {
-    Name = "${local.eks_name}-${local.env}-nat"
+    Name = "${var.eks_name}-${var.env}-nat"
   }
 
   depends_on = [aws_internet_gateway.igw]
@@ -95,7 +93,7 @@ resource "aws_route_table" "private" {
   }
 
   tags = {
-    Name = "${local.eks_name}-${local.env}-private"
+    Name = "${var.eks_name}-${var.env}-private"
   }
 }
 
@@ -108,7 +106,7 @@ resource "aws_route_table" "public" {
   }
 
   tags = {
-    Name = "${local.eks_name}-${local.env}-public"
+    Name = "${var.eks_name}-${var.env}-public"
   }
 }
 

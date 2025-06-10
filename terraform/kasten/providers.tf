@@ -36,7 +36,7 @@ data "external" "bws_lookup" {
 }
 
 provider "aws" {
-  region     = local.region
+  region     = var.region
   access_key = data.external.bws_lookup.result["cloud-aws-secrets_aws_access_key_id"]
   secret_key = data.external.bws_lookup.result["cloud-aws-secrets_aws_secret_access_key"]
 }
@@ -47,7 +47,7 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  kubernetes {
+  kubernetes = {
     host                   = data.aws_eks_cluster.eks.endpoint
     cluster_ca_certificate = base64decode(data.aws_eks_cluster.eks.certificate_authority[0].data)
     token                  = data.aws_eks_cluster_auth.eks.token
