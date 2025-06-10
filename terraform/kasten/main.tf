@@ -99,3 +99,72 @@ resource "kubernetes_storage_class" "ebs_gp3" {
 
   depends_on = [aws_eks_addon.ebs_csi_driver]
 }
+
+resource "kubernetes_namespace" "kasten" {
+  metadata {
+    name = "kasten"
+  }
+}
+
+resource "helm_release" "snapshot_controller" {
+  name       = "snapshot-controller"
+  repository = "piraeus"
+  chart      = "snapshot-controller"
+  version    = "4.0.2"
+  namespace  = "kube-system"
+
+  values = [
+    yamlencode({
+      controller = {
+        replicaCount = 1
+        # serviceMonitor = { # maybe add later if I want metrics
+        #   create = true
+        # }
+      }
+    })
+  ]
+}
+
+resource "kubernetes_manifest" "csi_aws_vsc" {
+  manifest = {
+    apiVersion = "snapshot.storage.k8s.io/v1"
+    kind       = "VolumeSnapshotClass"
+    metadata = {
+      name = "csi-aws-vsc"
+    }
+    driver         = "ebs.csi.aws.com"
+    deletionPolicy = "Delete"
+  }
+}
+
+
+resource "aws_eks_pod_identity_association" "aws_lbc" {
+  cluster_name    = aws_eks_cluster.eks.name
+  namespace       = "kube-system"
+  service_account = "aws-load-balancer-controller"
+  role_arn        = aws_iam_role.aws_lbc.arn
+}
+
+resource "helm_release" "aws_lbc" {
+  name = "aws-load-balancer-controller"
+
+  repository = "https://aws.github.io/eks-charts"
+  chart      = "aws-load-balancer-controller"
+  namespace  = "kube-system"
+  version    = "1.13.2"
+
+  set = [
+    {
+      name  = "clusterName"
+      value = aws_eks_cluster.eks.name
+    },
+    {
+      name  = "serviceAccount.name"
+      value = "aws-load-balancer-controller"
+    },
+    {
+      name  = "vpcId"
+      value = aws_vpc.main.id
+    }
+  ]
+}
