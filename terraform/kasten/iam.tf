@@ -108,3 +108,56 @@ resource "aws_iam_role_policy_attachment" "aws_lbc" {
   policy_arn = aws_iam_policy.aws_lbc.arn
   role       = aws_iam_role.aws_lbc.name
 }
+
+data "aws_iam_policy_document" "kasten_k10_assume_role_policy" {
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_iam_user.kasten.arn]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
+}
+
+resource "aws_iam_role" "kasten_k10" {
+  name               = "${aws_eks_cluster.eks.name}-kasten-k10"
+  assume_role_policy = data.aws_iam_policy_document.kasten_k10_assume_role_policy.json
+}
+
+resource "aws_iam_policy" "kasten_k10" {
+  policy = file("./iam/aws-kasten.json")
+  name   = "AWSKasten"
+}
+
+resource "aws_iam_role_policy_attachment" "kasten_k10_policy_attach" {
+  policy_arn = aws_iam_policy.kasten_k10.arn
+  role       = aws_iam_role.kasten_k10.name
+}
+
+resource "aws_iam_user" "kasten" {
+  name = "kasten"
+  path = "/system/"
+}
+
+resource "aws_iam_user_policy" "kasten_assume_k10_role_policy" {
+  name = "kasten-assume-k10-role-policy"
+  user = aws_iam_user.kasten.name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "sts:AssumeRole"
+        Resource = aws_iam_role.kasten_k10.arn
+      },
+    ]
+  })
+}
+
+resource "aws_iam_access_key" "kasten" {
+  user = aws_iam_user.kasten.name
+}
