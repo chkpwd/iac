@@ -131,10 +131,15 @@ resource "kubernetes_manifest" "csi_aws_vsc" {
     kind       = "VolumeSnapshotClass"
     metadata = {
       name = "csi-aws-vsc"
+      annotations = {
+        "k10.kasten.io/is-snapshot-class" = "true"
+      }
     }
     driver         = "ebs.csi.aws.com"
     deletionPolicy = "Delete"
   }
+
+  depends_on = [aws_eks_addon.ebs_csi_driver]
 }
 
 
