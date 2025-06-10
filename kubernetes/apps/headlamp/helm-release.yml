@@ -26,9 +26,9 @@ spec:
     fullnameOverride: headlamp
     replicaCount: 1
     image:
-      repository: headlamp-k8s/headlamp
+      repository: ghcr.io/headlamp-k8s/headlamp
       pullPolicy: IfNotPresent
-      tag: "0.31.1"
+      tag: v0.31.1
     pluginsManager:
       enabled: true
       configContent: |
