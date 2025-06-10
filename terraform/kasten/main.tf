@@ -100,12 +100,6 @@ resource "kubernetes_storage_class" "ebs_gp3" {
   depends_on = [aws_eks_addon.ebs_csi_driver]
 }
 
-resource "kubernetes_namespace" "kasten" {
-  metadata {
-    name = "kasten"
-  }
-}
-
 resource "helm_release" "snapshot_controller" {
   name       = "snapshot-controller"
   repository = "piraeus"
@@ -171,5 +165,38 @@ resource "helm_release" "aws_lbc" {
       name  = "vpcId"
       value = aws_vpc.main.id
     }
+  ]
+}
+
+resource "helm_release" "kasten-k10" {
+  name = "k10"
+
+  repository       = "https://charts.kasten.io/"
+  chart            = "k10"
+  namespace        = "kasten-io"
+  version          = "8.0.1"
+  create_namespace = true
+
+  values = [
+    yamlencode({
+      secrets = {
+        awsAccessKeyId     = aws_iam_access_key.kasten.id
+        awsSecretAccessKey = aws_iam_access_key.kasten.secret
+        awsIamRole         = aws_iam_role.kasten_k10.arn
+      }
+      auth = {
+        tokenAuth = {
+          enabled = true
+        }
+      }
+      externalGateway = {
+        create = true
+        annotations = {
+          "service.beta.kubernetes.io/aws-load-balancer-type"            = "external"
+          "service.beta.kubernetes.io/aws-load-balancer-scheme"          = "internet-facing"
+          "service.beta.kubernetes.io/aws-load-balancer-nlb-target-type" = "ip"
+        }
+      }
+    })
   ]
 }
