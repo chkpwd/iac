@@ -59,6 +59,12 @@ resource "aws_eks_node_group" "general" {
   }
 }
 
+resource "aws_eks_addon" "pod_identity" {
+  cluster_name  = aws_eks_cluster.eks.name
+  addon_name    = "eks-pod-identity-agent"
+  addon_version = "v1.3.7-eksbuild.2"
+}
+
 resource "aws_eks_pod_identity_association" "ebs_csi_driver" {
   cluster_name    = aws_eks_cluster.eks.name
   namespace       = "kube-system"
@@ -67,10 +73,29 @@ resource "aws_eks_pod_identity_association" "ebs_csi_driver" {
 }
 
 resource "aws_eks_addon" "ebs_csi_driver" {
-  cluster_name             = aws_eks_cluster.eks.name
-  addon_name               = "aws-ebs-csi-driver"
-  addon_version            = "v1.44.0-eksbuild.1"
-  service_account_role_arn = aws_iam_role.ebs_csi_driver.arn
+  cluster_name  = aws_eks_cluster.eks.name
+  addon_name    = "aws-ebs-csi-driver"
+  addon_version = "v1.44.0-eksbuild.1"
+  depends_on    = [aws_eks_node_group.general]
+}
 
-  depends_on = [aws_eks_node_group.general]
+resource "kubernetes_storage_class" "ebs_gp3" {
+  metadata {
+    name = "ebs-gp3"
+    annotations = {
+      "storageclass.kubernetes.io/is-default-class" = "true"
+    }
+  }
+
+  storage_provisioner    = "ebs.csi.aws.com"
+  volume_binding_mode    = "WaitForFirstConsumer"
+  allow_volume_expansion = true
+
+  parameters = {
+    type      = "gp3"
+    fsType    = "ext4"
+    encrypted = "true"
+  }
+
+  depends_on = [aws_eks_addon.ebs_csi_driver]
 }
