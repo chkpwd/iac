@@ -169,8 +169,7 @@ resource "helm_release" "aws_lbc" {
 }
 
 resource "helm_release" "kasten-k10" {
-  name = "k10"
-
+  name             = "k10"
   repository       = "https://charts.kasten.io/"
   chart            = "k10"
   namespace        = "kasten-io"
@@ -179,16 +178,42 @@ resource "helm_release" "kasten-k10" {
 
   values = [
     yamlencode({
+      auth = {
+        oidcAuth = {
+          enabled          = true
+          providerURL      = "https://authentik.chkpwd.com/application/o/kasten-k10/"
+          redirectURL      = "http://localhost:8080"
+          scopes           = "openid profile"
+          prompt           = "select_account"
+          clientSecretName = "kasten-k10-oidc"
+          usernamePrefix   = "authentik-"
+          usernameClaim    = "preferred_username"
+          groupClaim       = "groups"
+          logoutURL        = "https://authentik.chkpwd.com/application/o/kasten-k10/end-session/"
+        }
+        k10AdminUsers = ["authentik-chkpwd"]
+      }
+
+      rbac = {
+        create = true
+      }
+
+      serviceAccount = {
+        create = true
+      }
+
+      eula = {
+        accept  = true
+        company = "chkpwd"
+        email   = "bryan@chkpwd.com"
+      }
+
       secrets = {
         awsAccessKeyId     = aws_iam_access_key.kasten.id
         awsSecretAccessKey = aws_iam_access_key.kasten.secret
         awsIamRole         = aws_iam_role.kasten_k10.arn
       }
-      auth = {
-        tokenAuth = {
-          enabled = true
-        }
-      }
+
       externalGateway = {
         create = true
         annotations = {

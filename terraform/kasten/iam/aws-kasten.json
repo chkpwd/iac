@@ -4,6 +4,32 @@
     {
       "Effect": "Allow",
       "Action": [
+        "backup:CreateBackupVault",
+        "backup:DeleteBackupVault",
+        "backup:DescribeBackupVault",
+        "backup:ListBackupVaults",
+        "backup:StartBackupJob",
+        "backup:StopBackupJob",
+        "backup:GetBackupVaultAccessPolicy",
+        "backup:PutBackupVaultAccessPolicy",
+        "backup:ListBackupJobs",
+        "backup:ListRecoveryPointsByBackupVault",
+        "backup:DeleteBackupVaultAccessPolicy"
+      ],
+      "Resource": "arn:aws:backup:us-east-1:970547363121:backup-vault:k10vault"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ebs:ListSnapshotBlocks",
+        "ebs:ListChangedBlocks",
+        "ebs:GetSnapshotBlock"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
         "ec2:CopySnapshot",
         "ec2:CreateSnapshot",
         "ec2:CreateTags",

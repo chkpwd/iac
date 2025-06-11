@@ -1,0 +1,28 @@
+---
+auth:
+  oidcAuth:
+    enabled: true
+    providerURL: "https://authentik.chkpwd.com/application/o/kasten-k10/"
+    redirectURL: "https://kasten-k10.chkpwd.com"
+    scopes: "openid profile"
+    prompt: "select_account"
+    clientSecretName: "kasten-k10-oidc"
+    usernamePrefix: "authentik-"
+    usernameClaim: "preferred_username"
+    groupClaim: "groups"
+    logoutURL: "https://authentik.chkpwd.com/application/o/kasten-k10/end-session/"
+  k10AdminUsers: ["authentik-chkpwd"]
+rbac:
+  create: true
+serviceAccount:
+  create: true
+ingress:
+  create: true
+  name: k10-ingress
+  class: ext-ingress
+  host: kasten-k10.chkpwd.com
+  pathType: Prefix
+eula:
+  company: "chkpwd"
+  email: "bryan@chkpwd.com"
+  accept: true
