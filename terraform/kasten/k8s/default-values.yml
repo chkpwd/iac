@@ -1,0 +1,612 @@
+#file: noinspection ComposeUnknownKeys,ComposeUnknownValues
+# Default values for k10.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+rbac:
+  create: true
+serviceAccount:
+  # Specifies whether a ServiceAccount should be created
+  create: true
+  # The name of the ServiceAccount to use.
+  # If not set and create is true, a name is derived using the release and chart names.
+  name: ""
+
+scc:
+  create: false
+  priority: 0
+
+networkPolicy:
+  create: true
+
+global:
+  # These are the default values for picking k10 images. They can be overridden
+  # to specify a particular registy and tag.
+  image:
+    registry: gcr.io/kasten-images
+    tag: ""
+    pullPolicy: Always
+  airgapped:
+    repository: ""
+  persistence:
+    mountPath: "/mnt/k10state"
+    enabled: true
+    ## If defined, storageClassName: <storageClass>
+    ## If set to "-", storageClassName: "", which disables dynamic provisioning
+    ## If undefined (the default) or set to null, no storageClassName spec is
+    ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+    ##   GKE, AWS & OpenStack)
+    ##
+    storageClass: ""
+    accessMode: ReadWriteOnce
+    size: 20Gi
+    metering:
+      size: 2Gi
+    catalog:
+      size: ""
+    jobs:
+      size: ""
+    logging:
+      size: ""
+  podLabels: {}
+  podAnnotations: {}
+  ## Set it to true while generating helm operator
+  rhMarketPlace: false
+  ## these values should not be provided us, these are to be used by
+  ## red hat marketplace
+  images:
+    aggregatedapis: ""
+    auth: ""
+    bloblifecyclemanager: ""
+    catalog: ""
+    configmap-reload: ""
+    controllermanager: ""
+    crypto: ""
+    dashboardbff: ""
+    datamover: ""
+    dex: ""
+    events: ""
+    executor: ""
+    frontend: ""
+    gateway: ""
+    init: ""
+    jobs: ""
+    kanister-tools: ""
+    kanister: ""
+    k10tools: ""
+    logging: ""
+    metering: ""
+    ocpconsoleplugin: ""
+    paygo_daemonset: ""
+    prometheus: ""
+    repositories: ""
+    state: ""
+    upgrade: ""
+    vbrintegrationapi: ""
+    garbagecollector: ""
+    metric-sidecar: ""
+  imagePullSecret: ""
+  prometheus:
+    external:
+      host: "" #FQDN of prometheus-service
+      port: ""
+      baseURL: ""
+  network:
+    enable_ipv6: false
+
+## OpenShift route configuration.
+route:
+  enabled: false
+  # Host name for the route
+  host: ""
+  # Default path for the route
+  path: ""
+
+  annotations:
+    {}
+    # kubernetes.io/tls-acme: "true"
+    # haproxy.router.openshift.io/disable_cookies: "true"
+    # haproxy.router.openshift.io/balance: roundrobin
+
+  labels:
+    {}
+    # key: value
+
+  # TLS configuration
+  tls:
+    enabled: false
+    # What to do in case of an insecure traffic edge termination
+    insecureEdgeTerminationPolicy: "Redirect"
+    # Where this TLS configuration should terminate
+    termination: "edge"
+
+dexImage:
+  registry: ghcr.io
+  repository: dexidp
+  image: dex
+
+kanisterToolsImage:
+  registry: ghcr.io
+  repository: kanisterio
+  image: kanister-tools
+  pullPolicy: Always
+
+ingress:
+  create: false
+  annotations: {}
+  name: ""
+  tls:
+    enabled: false
+    secretName: "" #TLS secret name
+  class: "" #Ingress controller type
+  host: "" #ingress object host name
+  urlPath: "" #url path for k10 gateway
+  pathType: "ImplementationSpecific"
+  defaultBackend:
+    service:
+      enabled: false
+      name: ""
+      port:
+        name: ""
+        number: 0
+    resource:
+      enabled: false
+      apiGroup: ""
+      kind: ""
+      name: ""
+
+eula:
+  accept: false #true value if EULA accepted
+
+license: "" #base64 encoded string provided by Kasten
+
+cluster:
+  domainName: ""
+
+multicluster:
+  enabled: true
+  primary:
+    create: false
+    name: ""
+    ingressURL: ""
+
+prometheus:
+  rbac:
+    create: false
+  server:
+    # UID and groupid are from prometheus helm chart
+    enabled: true
+    securityContext:
+      runAsUser: 65534
+      runAsNonRoot: true
+      runAsGroup: 65534
+      fsGroup: 65534
+    retention: 30d
+    persistentVolume:
+      storageClass: ""
+      size: 8Gi
+    fullnameOverride: prometheus-server
+    baseURL: /k10/prometheus/
+    prefixURL: /k10/prometheus
+
+jaeger:
+  enabled: false
+  agentDNS: ""
+
+service:
+  externalPort: 8000
+  internalPort: 8000
+  aggregatedApiPort: 10250
+
+secrets:
+  awsAccessKeyId: ""
+  awsSecretAccessKey: ""
+  awsIamRole: ""
+  awsClientSecretName: ""
+  googleApiKey: ""
+  googleProjectId: ""
+  googleClientSecretName: ""
+  dockerConfig: ""
+  dockerConfigPath: ""
+  azureTenantId: ""
+  azureClientId: ""
+  azureClientSecret: ""
+  azureClientSecretName: ""
+  azureResourceGroup: ""
+  azureSubscriptionID: ""
+  azureResourceMgrEndpoint: ""
+  azureADEndpoint: ""
+  azureADResourceID: ""
+  microsoftEntraIDEndpoint: ""
+  microsoftEntraIDResourceID: ""
+  azureCloudEnvID: ""
+  tlsSecret: ""
+  vsphereEndpoint: ""
+  vsphereUsername: ""
+  vspherePassword: ""
+  vsphereClientSecretName: ""
+
+metering:
+  reportingKey: "" #[base64-encoded key]
+  consumerId: "" #project:<project_id>
+  awsRegion: ""
+  awsMarketplace: false # AWS cloud metering license mode
+  awsManagedLicense: false # AWS managed license mode
+  licenseConfigSecretName: "" # AWS managed license config secret for non-eks clusters
+  mode: "" # controls metric and license reporting (set to `airgap` for private-network installs)
+  redhatMarketplacePayg: false # Redhat cloud metering license mode
+  reportCollectionPeriod: 1800 # metric report collection period in seconds
+  reportPushPeriod: 3600 # metric report push period in seconds
+  promoID: "" # sets the K10 promotion ID
+
+clusterName: ""
+
+logLevel: info
+
+externalGateway:
+  create: false
+  # Any standard service annotations
+  annotations: {}
+  # Host and domain name for the K10 API server
+  fqdn:
+    name: ""
+    #Supported types route53-mapper, external-dns
+    type: ""
+  # ARN for the AWS ACM SSL certificate used in the K10 API server (load balancer)
+  awsSSLCertARN: ""
+
+auth:
+  groupAllowList: []
+  #  - "group1"
+  #  - "group2"
+  basicAuth:
+    enabled: false
+    secretName: "" #htpasswd based existing secret
+    htpasswd: "" #htpasswd string, which will be used for basic auth
+  tokenAuth:
+    enabled: false
+  oidcAuth:
+    enabled: false
+    providerURL: "" #URL to your OIDC provider
+    redirectURL: "" #URL to the K10 gateway service
+    scopes: "" #Space separated OIDC scopes required for userinfo. Example: "profile email"
+    prompt: "select_account" #The prompt type to be requested with the OIDC provider. Default is select_account.
+    clientID: "" #ClientID given by the OIDC provider for K10
+    clientSecret: "" #ClientSecret given by the OIDC provider for K10
+    clientSecretName: "" #The Kubernetes Secret that contains ClientID and ClientSecret given by the OIDC provider for K10
+    usernameClaim: "" #Claim to be used as the username
+    usernamePrefix: "" #Prefix that has to be used with the username obtained from the username claim
+    groupClaim: "" #Name of a custom OpenID Connect claim for specifying user groups
+    groupPrefix: "" #All groups will be prefixed with this value to prevent conflicts.
+    logoutURL: "" #URL to your OIDC provider's logout endpoint
+    #OIDC config based existing secret.
+    #Must include providerURL, redirectURL, scopes, clientID/secret and logoutURL.
+    secretName: ""
+    sessionDuration: "1h" #Maximum OIDC session duration. Default value is 1 hour
+    refreshTokenSupport: false #Enable Refresh Token support. Disabled by default
+  openshift:
+    enabled: false
+    serviceAccount: "" #service account used as the OAuth client
+    clientSecret: "" #The token from the service account
+    clientSecretName: "" #The secret with the token from the service account
+    dashboardURL: "" #The URL for accessing K10's dashboard
+    openshiftURL: "" #The URL of the Openshift API server
+    insecureCA: false
+    useServiceAccountCA: false
+    secretName: "" # The Kubernetes Secret that contains OIDC settings
+    usernameClaim: "email"
+    usernamePrefix: ""
+    groupnameClaim: "groups"
+    groupnamePrefix: ""
+    caCertsAutoExtraction: true # Configures if K10 should automatically extract CA certificates from the OCP cluster.
+  ldap:
+    enabled: false
+    restartPod: false # Enable this value to force a restart of the authentication service pod
+    dashboardURL: "" #The URL for accessing K10's dashboard
+    host: ""
+    insecureNoSSL: false
+    insecureSkipVerifySSL: false
+    startTLS: false
+    bindDN: ""
+    bindPW: ""
+    bindPWSecretName: ""
+    userSearch:
+      baseDN: ""
+      filter: ""
+      username: ""
+      idAttr: ""
+      emailAttr: ""
+      nameAttr: ""
+      preferredUsernameAttr: ""
+    groupSearch:
+      baseDN: ""
+      filter: ""
+      userMatchers: []
+      #      - userAttr:
+      #        groupAttr:
+      nameAttr: ""
+    secretName: "" # The Kubernetes Secret that contains OIDC settings
+    usernameClaim: "email"
+    usernamePrefix: ""
+    groupnameClaim: "groups"
+    groupnamePrefix: ""
+  k10AdminUsers: []
+  k10AdminGroups: []
+
+# Use of VAP is only supported for Kubernetes version 1.31 and later.
+# There are known issues with use of VAP in Kubernetes version 1.30.
+vap:
+  # This VAP evaluates non-admin user permissions for Kasten policies.
+  kastenPolicyPermissions:
+    enabled: false
+
+optionalColocatedServices:
+  vbrintegrationapi:
+    enabled: true
+
+cacertconfigmap:
+  name: "" #Name of the configmap
+
+apiservices:
+  deployed: true # If false APIService objects will not be deployed
+
+# Deprecated. Use 'injectGenericVolumeBackupSidecar' parameter instead.
+injectKanisterSidecar:
+  enabled: false
+  namespaceSelector:
+    matchLabels: {}
+  # Set objectSelector to filter workloads
+  objectSelector:
+    matchLabels: {}
+  webhookServer:
+    port: 8080 # should not conflict with config server port (8000)
+
+injectGenericVolumeBackupSidecar:
+  enabled: false
+  namespaceSelector:
+    matchLabels: {}
+  # Set objectSelector to filter workloads
+  objectSelector:
+    matchLabels: {}
+  webhookServer:
+    port: 8080 # should not conflict with config server port (8000)
+
+genericStorageBackup:
+  token: ""
+
+kanisterPodCustomLabels: ""
+
+kanisterPodCustomAnnotations: ""
+
+features:
+  backgroundMaintenanceRun: true # Key must be deleted to deactivate. Setting to false will not work.
+
+# Deprecated. Use 'workerPodMetricSidecar' parameter instead.
+kanisterPodMetricSidecar:
+  enabled: false
+  metricLifetime: "2m"
+  pushGatewayInterval: "30s"
+  resources:
+    requests:
+      memory: ""
+      cpu: ""
+    limits:
+      memory: ""
+      cpu: ""
+
+workerPodMetricSidecar:
+  enabled: true
+  metricLifetime: "2m"
+  pushGatewayInterval: "30s"
+  resources:
+    requests:
+      memory: ""
+      cpu: ""
+    limits:
+      memory: ""
+      cpu: ""
+
+genericVolumeSnapshot:
+  resources:
+    requests:
+      memory: ""
+      cpu: ""
+    limits:
+      memory: ""
+      cpu: ""
+
+garbagecollector:
+  daemonPeriod: 21600
+  keepMaxActions: 1000
+  actions:
+    enabled: false
+
+resources: {}
+
+defaultPriorityClassName: ""
+priorityClassName: {}
+
+services:
+  executor:
+    hostNetwork: false
+    # Deprecated. Use 'limiter.executorThreads' parameter instead.
+    workerCount: -1
+    # Deprecated. Use 'limiter.csiSnapshotRestoresPerAction' parameter instead.
+    maxConcurrentRestoreCsiSnapshots: -1
+    # Deprecated. Use 'limiter.volumeRestoresPerAction' parameter instead.
+    maxConcurrentRestoreGenericVolumeSnapshots: -1
+    # Deprecated. Use 'limiter.workloadRestoresPerAction' parameter instead.
+    maxConcurrentRestoreWorkloads: -1
+  dashboardbff:
+    hostNetwork: false
+  securityContext:
+    runAsUser: 1000 # Will override any USER instruction that a container image set for running the entrypoint and command.
+    fsGroup: 1000
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+  aggregatedapis:
+    hostNetwork: false
+
+siem:
+  logging:
+    cluster:
+      enabled: true
+    cloud:
+      path: k10audit/
+      awsS3:
+        enabled: true
+
+limiter:
+  # Deprecated. Use 'limiter.snapshotExportsPerAction' parameter instead.
+  concurrentSnapConversions: -1
+  snapshotExportsPerAction: 3
+  # Deprecated. Use 'limiter.genericVolumeBackupsPerCluster' parameter instead.
+  genericVolumeSnapshots: -1
+  genericVolumeBackupsPerCluster: 10
+  # Deprecated. Use 'limiter.snapshotExportsPerCluster' parameter instead.
+  genericVolumeCopies: -1
+  snapshotExportsPerCluster: 10
+  # Deprecated. Use 'limiter.volumeRestoresPerCluster' parameter instead.
+  genericVolumeRestores: -1
+  volumeRestoresPerCluster: 10
+  # Deprecated. Use 'limiter.csiSnapshotsPerCluster' parameter instead.
+  csiSnapshots: -1
+  csiSnapshotsPerCluster: 10
+  # Deprecated. Use 'limiter.directSnapshotsPerCluster' parameter instead.
+  providerSnapshots: -1
+  directSnapshotsPerCluster: 10
+  # Deprecated. Use 'limiter.imageCopiesPerCluster' parameter instead.
+  imageCopies: -1
+  imageCopiesPerCluster: 10
+  executorReplicas: 3
+  executorThreads: 8
+  workloadRestoresPerAction: 3
+  csiSnapshotRestoresPerAction: 3
+  volumeRestoresPerAction: 3
+  workloadSnapshotsPerAction: 5
+
+gateway:
+  service:
+    externalPort: 80
+  resources:
+    requests:
+      memory: 300Mi
+      cpu: 200m
+    limits:
+      memory: 1Gi
+      cpu: 1000m
+
+kanister:
+  # Deprecated. Use 'timeout.blueprintBackup' parameter instead.
+  backupTimeout: -1
+  # Deprecated. Use 'timeout.blueprintRestore' parameter instead.
+  restoreTimeout: -1
+  # Deprecated. Use 'timeout.blueprintDelete' parameter instead.
+  deleteTimeout: -1
+  # Deprecated. Use 'timeout.blueprintHooks' parameter instead.
+  hookTimeout: -1
+  # Deprecated. Use 'timeout.checkRepoPodReady' parameter instead.
+  checkRepoTimeout: -1
+  # Deprecated. Use 'timeout.statsPodReady' parameter instead.
+  statsTimeout: -1
+  # Deprecated. Use 'timeout.efsRestorePodReady' parameter instead.
+  efsPostRestoreTimeout: -1
+  # Deprecated. Use 'timeout.workerPodReady' parameter instead.
+  podReadyWaitTimeout: -1
+  managedDataServicesBlueprintsEnabled: true
+
+timeout:
+  blueprintBackup: 45
+  blueprintRestore: 600
+  blueprintDelete: 45
+  blueprintHooks: 20
+  checkRepoPodReady: 20
+  statsPodReady: 20
+  efsRestorePodReady: 45
+  workerPodReady: 15
+  jobWait: ""
+
+awsConfig:
+  assumeRoleDuration: ""
+  efsBackupVaultName: "k10vault"
+
+excludedApps:
+  [
+    "kube-system",
+    "kube-ingress",
+    "kube-node-lease",
+    "kube-public",
+    "kube-rook-ceph",
+  ]
+
+grafana:
+  external:
+    url: "" # can be used to configure the URL of externally installed Grafana instance. If it's provided, grafana.enabled must be false.
+
+encryption:
+  primaryKey: # primaryKey is used for enabling encryption of K10 primary key
+    awsCmkKeyId: "" # Ensures AWS CMK is used for encrypting K10 primary key
+    vaultTransitKeyName: ""
+    vaultTransitPath: ""
+
+vmWare:
+  taskTimeoutMin: 60
+
+azure:
+  useDefaultMSI: false
+  useFederatedIdentity: false
+
+google:
+  workloadIdentityFederation:
+    enabled: false
+    idp:
+      type: ""
+      aud: ""
+
+vault:
+  role: "" # Role that was bound to the service account name and namespace from cluster
+  serviceAccountTokenPath: "" # This will default to /var/run/secrets/kubernetes.io/serviceaccount/token within the code if left blank
+  address: "http://vault.vault.svc:8200" # Address for dev mode in cluster vault server in vault namespace
+  secretName: "" # Ensures backward compatibility for now. We can remove once we tell all customers this is deprecated.
+  # This is how the token can be passed into default if K8S auth mode fails for whatever reason.
+
+kubeVirtVMs:
+  snapshot:
+    unfreezeTimeout: "5m"
+
+logging:
+  internal: true
+  # Used to set an external fluentbit endpoint. 'logging.internal' must be set to false.
+  fluentbit_endpoint: ""
+
+# Deprecated. Use 'timeout.jobWait' parameter instead.
+maxJobWaitDuration: ""
+
+# Deprecated. Use 'forceRootInBlueprintActions' parameter instead.
+forceRootInKanisterHooks: false
+forceRootInBlueprintActions: true
+
+ephemeralPVCOverhead: "0.1"
+
+datastore:
+  parallelUploads: 8
+  parallelDownloads: 8
+  parallelBlockUploads: 8
+  parallelBlockDownloads: 8
+  estimationType: adaptive
+  adaptiveEstimationThreshold: 300000
+
+kastenDisasterRecovery:
+  quickMode:
+    enabled: true
+
+fips:
+  enabled: false
+
+workerPodCRDs:
+  enabled: false
+  resourcesRequests:
+    maxCPU: ""
+    maxMemory: ""
+  defaultActionPodSpec: ""

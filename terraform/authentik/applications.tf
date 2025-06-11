@@ -103,3 +103,22 @@ module "authentik-app-karakeep" {
     authentik_group.secondary.id
   ]
 }
+
+module "authentik-app-kasten-k10" {
+  source = "../_modules/authentik/oauth2_app"
+  name   = "kasten-k10"
+  group  = "main"
+  oauth2_values = {
+    client_id             = "kasten-k10"
+    client_secret         = data.external.bws_lookup.result["kasten-k10_oauth_client_secret"]
+    property_mappings     = data.authentik_property_mapping_provider_scope.sources.ids
+    allowed_redirect_uris = []
+  }
+  app_values = {
+    icon_url         = ""
+    meta_description = "Kasten K10"
+  }
+  access_group = [
+    authentik_group.main.id
+  ]
+}
