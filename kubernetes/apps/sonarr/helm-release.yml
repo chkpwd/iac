@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 3.7.3
+      version: 4.1.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -125,7 +125,6 @@ spec:
           http:
             port: *port
       metrics:
-        nameOverride: metrics
         controller: sonarr
         ports:
           metrics:
