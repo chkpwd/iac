@@ -69,7 +69,20 @@ spec:
               RADARR__AUTH__METHOD: External
               RADARR__APP__THEME: dark
               RADARR__LOG__LEVEL: info
-              liveness:
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
                 enabled: false
             securityContext:
               allowPrivilegeEscalation: false

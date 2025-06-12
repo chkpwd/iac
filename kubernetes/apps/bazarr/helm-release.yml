@@ -66,10 +66,10 @@ spec:
                   secretKeyRef:
                     name: bazarr
                     key: BAZARR_API_KEY
-              BAZARR__AUTHENTICATION_METHOD: External
               BAZARR__AUTH__METHOD: External
               BAZARR__AUTH__REQUIRED: DisabledForLocalAddresses
               BAZARR__LOG__LEVEL: info
+            probes:
               liveness: &probes
                 enabled: true
                 custom: true
