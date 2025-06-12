@@ -29,10 +29,22 @@ spec:
     controllers:
       maintainerr:
         enabled: true
-        type: deployment
+        type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
         replicas: 1
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              accessMode: ReadWriteOnce
+              size: "${VOLSYNC_CAPACITY}"
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              globalMounts:
+                - path: /opt/data
         pod:
           securityContext:
             runAsUser: &context 1000
@@ -78,17 +90,6 @@ spec:
                   identifier: app
                   port: http
     persistence:
-      config:
-        enabled: true
-        accessMode: ReadWriteOnce
-        size: "${VOLSYNC_CAPACITY}"
-        storageClass: ceph-block
-        dataSourceRef:
-          kind: ReplicationDestination
-          apiGroup: volsync.backube
-          name: "${APP}"
-        globalMounts:
-          - path: /opt/data
       tmp:
         type: emptyDir
         medium: Memory
