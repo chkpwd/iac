@@ -59,18 +59,18 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: "America/New_York"
-              SONARR__INSTANCE_NAME: sonarr
-              SONARR__PORT: &port 8989
-              SONARR__APPLICATION_URL: "https://{{ .Release.Name }}.chkpwd.com"
-              SONARR__API_KEY:
+              SONARR__APP__INSTANCENAME: Sonarr
+              SONARR__AUTH__APIKEY:
                 valueFrom:
                   secretKeyRef:
                     name: sonarr
                     key: SONARR_API_KEY
-              SONARR__AUTHENTICATION_METHOD: External
-              SONARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
-              SONARR__THEME: dark
-              SONARR__LOG_LEVEL: info
+              SONARR__AUTH__METHOD: External
+              SONARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              SONARR__APP__THEME: dark
+              SONARR__LOG__LEVEL: info
+              SONARR__SERVER__PORT: &port 8989
+              SONARR__UPDATE__BRANCH: develop
             probes:
               liveness: &probes
                 enabled: true

@@ -60,17 +60,15 @@ spec:
             env:
               TZ: "America/New_York"
               RADARR__INSTANCE_NAME: radarr
-              RADARR__PORT: &port 7878
-              RADARR__APPLICATION_URL: "https://{{ .Release.Name }}.chkpwd.com"
-              RADARR__API_KEY:
+              RADARR__SERVER__PORT: &port 7878
+              RADARR__AUTH__APIKEY:
                 valueFrom:
                   secretKeyRef:
                     name: radarr
                     key: RADARR_API_KEY
-              RADARR__AUTHENTICATION_METHOD: External
-              RADARR__THEME: dark
-              RADARR__LOG_LEVEL: info
-            probes:
+              RADARR__AUTH__METHOD: External
+              RADARR__APP__THEME: dark
+              RADARR__LOG__LEVEL: info
               liveness:
                 enabled: false
             securityContext:

@@ -60,17 +60,16 @@ spec:
             env:
               TZ: "America/New_York"
               BAZARR__INSTANCE_NAME: bazarr
-              BAZARR__PORT: &port 6767
-              BAZARR__APPLICATION_URL: "https://{{ .Release.Name }}.chkpwd.com"
-              BAZARR__API_KEY:
+              BAZARR__SERVER__PORT: &port 6767
+              BAZARR__AUTH__APIKEY:
                 valueFrom:
                   secretKeyRef:
                     name: bazarr
                     key: BAZARR_API_KEY
               BAZARR__AUTHENTICATION_METHOD: External
-              BAZARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
-              BAZARR__LOG_LEVEL: info
-            probes:
+              BAZARR__AUTH__METHOD: External
+              BAZARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              BAZARR__LOG__LEVEL: info
               liveness: &probes
                 enabled: true
                 custom: true

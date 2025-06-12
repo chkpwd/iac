@@ -60,17 +60,16 @@ spec:
             env:
               TZ: "America/New_York"
               PROWLARR__INSTANCE_NAME: Prowlarr
-              PROWLARR__PORT: &port 9696
-              PROWLARR__APPLICATION_URL: "https://{{ .Release.Name }}.chkpwd.com"
-              PROWLARR__API_KEY:
+              PROWLARR__SERVER__PORT: &port 9696
+              PROWLARR__AUTH__APIKEY:
                 valueFrom:
                   secretKeyRef:
                     name: prowlarr
                     key: PROWLARR_API_KEY
-              PROWLARR__AUTHENTICATION_METHOD: External
-              PROWLARR__AUTHENTICATION_REQUIRED: DisabledForLocalAddresses
-              PROWLARR__THEME: dark
-              PROWLARR__LOG_LEVEL: info
+              PROWLARR__AUTH__METHOD: External
+              PROWLARR__AUTH__REQUIRED: DisabledForLocalAddresses
+              PROWLARR__APP__THEME: dark
+              PROWLARR__LOG__LEVEL: info
             probes:
               liveness: &probes
                 enabled: true
