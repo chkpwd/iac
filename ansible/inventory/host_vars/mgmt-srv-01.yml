@@ -29,7 +29,7 @@ service_definitions:
       - "{{ compose_configuration_path }}/apprise/plugin:/plugin"
       - "{{ compose_configuration_path }}/apprise/attach:/attach"
   - name: netbootxyz
-    image: ghcr.io/netbootxyz/netbootxyz:0.7.5-nbxyz2
+    image: ghcr.io/netbootxyz/netbootxyz:0.7.6-nbxyz2
     env:
       MENU_VERSION: 2.0.73
     ports:
