@@ -90,20 +90,17 @@ spec:
     service:
       server:
         controller: server
-        nameOverride: server
         primary: true
         ports:
           http:
             port: 8080
       web:
         controller: web
-        nameOverride: web
         ports:
           http:
             port: 3000
       mongodb:
         controller: mongodb
-        nameOverride: mongodb
         ports:
           http:
             port: 27017
