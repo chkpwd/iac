@@ -44,12 +44,12 @@ spec:
           maxConcurrent: 3
       baseImage: node:lts-alpine
       version: latest
-      resources:
-        requests:
-          cpu: 10m
-          memory: 100Mi
-        limits:
-          memory: 300Mi
+      # resources:
+      #   requests:
+      #     cpu: 10m
+      #     memory: 100Mi
+      #   limits:
+      #     memory: 300Mi
     persistentVolumeClaim:
       enabled: false
     ingress:
