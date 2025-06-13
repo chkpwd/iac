@@ -22,7 +22,7 @@ spec:
         rollingUpdate:
           maxSurge: 1
       extraArgs:
-        default-ssl-certificate: "security/main-cert"
+        default-ssl-certificate: "kube-system/chkpwd-com-tls"
       allowSnippetAnnotations: true
       enableAnnotationValidations: true
       service:
