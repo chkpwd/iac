@@ -3,7 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
   name: gateway-api-crd
-  namespace: networking
+  namespace: kube-system
 spec:
   interval: 30m
   url: https://github.com/kubernetes-sigs/gateway-api
@@ -13,26 +13,21 @@ spec:
     # exclude
     /*
     # include
-    !config/crd/standard/gateway.networking.k8s.io_gatewayclasses.yaml
-    !config/crd/standard/gateway.networking.k8s.io_httproutes.yaml
-    !config/crd/standard/gateway.networking.k8s.io_referencegrants.yaml
-    !config/crd/standard/gateway.networking.k8s.io_gateways.yaml
-    !config/crd/standard/gateway.networking.k8s.io_grpcroutes.yaml
-    !config/crd/experimental/gateway.networking.k8s.io_tlsroutes.yaml
+    !config/crd/experimental
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: gateway-api
-  namespace: &ns networking
+  namespace: &ns kube-system
 spec:
   targetNamespace: *ns
   prune: true
   sourceRef:
     kind: GitRepository
     name: gateway-api-crd
-    namespace: networking
+    namespace: kube-system
   wait: true
   interval: 15m
   retryInterval: 1m

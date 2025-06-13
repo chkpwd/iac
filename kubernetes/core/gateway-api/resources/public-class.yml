@@ -5,11 +5,16 @@ kind: Gateway
 metadata:
   name: public
   namespace: kube-system
+  annotations:
+    external-dns.alpha.kubernetes.io/target: &hostname chkpwd.com
 spec:
   gatewayClassName: cilium
   addresses:
     - type: IPAddress
       value: 172.16.16.56
+  infrastructure:
+    annotations:
+      external-dns.alpha.kubernetes.io/target: *hostname
   listeners:
     - protocol: HTTP
       port: 80
@@ -17,7 +22,7 @@ spec:
       hostname: "*.chkpwd.com"
       allowedRoutes:
         namespaces:
-          from: Same
+          from: All
     - protocol: HTTPS
       port: 443
       hostname: "*.chkpwd.com"
@@ -26,8 +31,7 @@ spec:
         certificateRefs:
           - group: ""
             kind: Secret
-            name: main-cert
-            namespace: security
+            name: chkpwd-com-tls
       name: https
       allowedRoutes:
         namespaces:
