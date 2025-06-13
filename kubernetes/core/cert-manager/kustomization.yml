@@ -5,7 +5,6 @@ kind: Kustomization
 resources:
   - helm-release.yml
   - external-secret.yml
-  - main-cert.yml
   - issuers.yml
   - source.yml
 configMapGenerator:
