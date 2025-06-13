@@ -72,6 +72,8 @@ spec:
               SONARR_URL: http://sonarr.media.svc.cluster.local:8989
               SONARR_DEFAULT_QUALITY_PROFILE_ID: 7
               SONARR_ROOT_DIR_PATH: /data/series/standard_series
+              OLLAMA_BASE_URL: https://ollama.chkpwd.com
+              OLLAMA_MODEL: llama3.2:3b
             envFrom:
               - secretRef:
                   name: discovarr
