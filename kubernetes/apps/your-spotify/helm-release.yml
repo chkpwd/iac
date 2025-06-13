@@ -81,6 +81,17 @@ spec:
         rollingUpdate: *rollingUpdate
         statefulset:
           podManagementPolicy: OrderedReady
+          volumeClaimTemplates:
+            - name: config
+              accessMode: ReadWriteOnce
+              size: "${VOLSYNC_CAPACITY}"
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              globalMounts:
+                - path: /data/db
         containers:
           app:
             image:
@@ -129,13 +140,3 @@ spec:
                 service:
                   identifier: server
                   port: http
-    persistence:
-      configs:
-        enabled: true
-        accessMode: ReadWriteOnce
-        type: persistentVolumeClaim
-        size: "${VOLSYNC_CAPACITY}"
-        advancedMounts:
-          mongodb:
-            app:
-              - path: /data/db
