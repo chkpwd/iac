@@ -39,17 +39,14 @@ spec:
           - name: flux
             source: https://artifacthub.io/packages/headlamp/headlamp-plugins/headlamp_flux
             version: 0.2.0
+          - name: kubevirt
+            source: https://artifacthub.io/packages/headlamp/headlamp-buttahtoast-plugins/buttah_kubevirt
+            version: 0.0.1-beta3
         installOptions:
           parallel: true
           maxConcurrent: 3
       baseImage: node:lts-alpine
       version: latest
-      # resources:
-      #   requests:
-      #     cpu: 10m
-      #     memory: 100Mi
-      #   limits:
-      #     memory: 300Mi
     persistentVolumeClaim:
       enabled: false
     ingress:
