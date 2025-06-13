@@ -22,7 +22,7 @@ spec:
       VOLSYNC_PUID: "1000"
       VOLSYNC_PGID: "1000"
       VOLSYNC_CAPACITY: "1Gi"
-      KEDA_KIND: "Deployment"
+      KEDA_KIND: "StatefulSet"
   prune: true
   sourceRef:
     kind: GitRepository
