@@ -1,0 +1,16 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: gateway-api-crd
+  namespace: kube-system
+spec:
+  interval: 30m
+  url: https://github.com/kubernetes-sigs/gateway-api
+  ref:
+    tag: v1.3.0
+  ignore: |
+    # exclude
+    /*
+    # include
+    !config/crd/experimental
