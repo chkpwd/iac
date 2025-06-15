@@ -38,25 +38,17 @@ spec:
       name: webhook
       webhook:
         image:
-          repository: ghcr.io/crutonjohn/external-dns-opnsense-webhook
-          tag: pr-29@sha256:be9dba76644664a939dc152c4fcd86a39d7933874104120eba31f846d518b96e
+          repository: ghcr.io/guillomep/external-dns-unbound-webhook
+          tag: v0.1.1
         env:
-          - name: OPNSENSE_API_SECRET
-            valueFrom:
-              secretKeyRef:
-                name: external-dns-opnsense
-                key: api_secret
-          - name: OPNSENSE_API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: external-dns-opnsense
-                key: api_key
-          - name: OPNSENSE_HOST
+          - name: UNBOUND_HOST
             value: "http://172.16.16.1"
-          - name: OPNSENSE_SKIP_TLS_VERIFY
-            value: "true"
-          - name: LOG_LEVEL
-            value: "info"
+          - name: UNBOUND_CA_PEM_PATH
+            value: /usr/local/etc/unbound/ca.pem
+          - name: UNBOUND_CERT_PEM_PATH
+            value: /usr/local/etc/unbound/client.pem
+          - name: UNBOUND_KEY_PEM_PATH
+            value: /usr/local/etc/unbound/client.key
         livenessProbe:
           httpGet:
             path: /healthz
@@ -65,7 +57,7 @@ spec:
           timeoutSeconds: 5
         readinessProbe:
           httpGet:
-            path: /readyz
+            path: /ready
             port: http-webhook
           initialDelaySeconds: 10
           timeoutSeconds: 5
@@ -75,6 +67,15 @@ spec:
             cpu: 10m
           limits:
             memory: 100Mi
+        extraVolumeMounts:
+          - name: unbound-certificates
+            mountPath: /usr/local/etc/unbound/
+    extraVolumes:
+      - name: unbound-certificates
+        secret:
+          secretName: external-dns-opnsense
+    extraArgs:
+      - "--txt-prefix=reg-%{record_type}-"
     sources: ["crd", "gateway-httproute"]
     policy: sync
     registry: noop
