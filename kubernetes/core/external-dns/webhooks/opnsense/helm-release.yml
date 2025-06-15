@@ -75,7 +75,7 @@ spec:
             cpu: 10m
           limits:
             memory: 100Mi
-    sources: ["crd"]
+    sources: ["crd", "gateway-httproute"]
     policy: sync
     registry: noop
     domainFilter: ["chkpwd.com"]
