@@ -8,6 +8,9 @@ spec:
     - namespace: kube-system
       name: private
       sectionName: http
+    - namespace: kube-system
+      name: public
+      sectionName: http
   rules:
     - filters:
         - type: RequestRedirect
