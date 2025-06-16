@@ -46,7 +46,7 @@ spec:
           - name: GRAVITY_TOKEN
             valueFrom:
               secretKeyRef:
-                name: external-dns-gravity
+                name: gravity-external-dns
                 key: gravity-token
         livenessProbe:
           httpGet:
