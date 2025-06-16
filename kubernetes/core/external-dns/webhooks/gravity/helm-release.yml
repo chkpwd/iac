@@ -26,11 +26,14 @@ spec:
   values:
     fullnameOverride: gravity-external-dns
     logLevel: debug
+    podSecurityContext:
+      fsGroup: 65534
     securityContext:
       runAsNonRoot: true
-      runAsUser: 1000
-      runAsGroup: 1000
-      allowPrivilegeEscalation: false
+      runAsUser: 65534
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop: ["ALL"]
     provider:
       name: webhook
       webhook:
