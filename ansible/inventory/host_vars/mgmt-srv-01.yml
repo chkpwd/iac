@@ -91,3 +91,20 @@ service_definitions:
       PARSE_SECRET_VALUES: "true"
       LOG_LEVEL: "warning"
     ports: ["5000:5000"]
+  - name: gravity
+    image: "ghcr.io/beryju/gravity:325595bf7a82412fa878a32dc96853d6e3686771"
+    hostname: rpi-gravity
+    network_mode: host
+    env:
+      BOOTSTRAP_ROLES: dns;dhcp;api;etcd;discovery;backup;monitoring;tsdb;tftp
+      DATA_PATH: /data
+      LOG_LEVEL: info
+      ADMIN_PASSWORD: "{{ lookup('bws_cache', 'infra-gravity-secrets').value.admin_password }}"
+      ADMIN_TOKEN: "{{ lookup('bws_cache', 'infra-gravity-secrets').value.admin_token }}"
+      LISTEN_ONLY: "true"
+    volumes:
+      - data:/data
+    log_driver: json-file
+    log_options:
+      max-size: "10m"
+      max-file: "3"
