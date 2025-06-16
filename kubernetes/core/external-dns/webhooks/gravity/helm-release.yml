@@ -48,18 +48,18 @@ spec:
               secretKeyRef:
                 name: gravity-external-dns
                 key: gravity-token
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: http-webhook
-          initialDelaySeconds: 10
-          timeoutSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /ready
-            port: http-webhook
-          initialDelaySeconds: 10
-          timeoutSeconds: 5
+        # livenessProbe:
+        #   httpGet:
+        #     path: /healthz
+        #     port: http-webhook
+        #   initialDelaySeconds: 10
+        #   timeoutSeconds: 5
+        # readinessProbe:
+        #   httpGet:
+        #     path: /ready
+        #     port: http-webhook
+        #   initialDelaySeconds: 10
+        #   timeoutSeconds: 5
         resources:
           requests:
             memory: 20Mi
