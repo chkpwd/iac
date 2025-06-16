@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.32.2-standalone-strict/service-v1.json
+apiVersion: v1
+kind: Service
+metadata:
+  name: ollama
+spec:
+  type: ExternalName
+  externalName: ai-inference-01.chkpwd.com
+  ports:
+    - name: http
+      port: &port 11434
+      protocol: TCP
+      targetPort: *port
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.networking.k8s.io/httproute_v1.json
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: &name ollama
+spec:
+  hostnames:
+    - "ollama.chkpwd.com"
+  rules:
+    - backendRefs:
+        - name: *name
+          kind: Service
+          port: 11434
+  parentRefs:
+    - name: private
+      namespace: kube-system
+      sectionName: https
