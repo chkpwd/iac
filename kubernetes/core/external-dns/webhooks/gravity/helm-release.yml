@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: external-dns-opnsense
+  name: external-dns-gravity
 spec:
   interval: 15m
   chart:
@@ -24,7 +24,7 @@ spec:
     remediation:
       retries: 3
   values:
-    fullnameOverride: external-dns-opnsense
+    fullnameOverride: external-dns-gravity
     logLevel: debug
     podSecurityContext:
       fsGroup: 65534
@@ -38,17 +38,16 @@ spec:
       name: webhook
       webhook:
         image:
-          repository: ghcr.io/guillomep/external-dns-unbound-webhook
-          tag: v0.1.1
+          repository: ghcr.io/beryju/gravity-external-dns
+          tag: stable
         env:
-          - name: UNBOUND_HOST
-            value: "http://172.16.16.1:953"
-          - name: UNBOUND_CA_PEM_PATH
-            value: /usr/local/etc/unbound/ca.pem
-          - name: UNBOUND_CERT_PEM_PATH
-            value: /usr/local/etc/unbound/client.pem
-          - name: UNBOUND_KEY_PEM_PATH
-            value: /usr/local/etc/unbound/client.key
+          - name: GRAVITY_URL
+            value: http://172.16.16.4:8008/
+          - name: GRAVITY_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: external-dns-gravity
+                key: gravity-token
         livenessProbe:
           httpGet:
             path: /healthz
@@ -67,15 +66,8 @@ spec:
             cpu: 10m
           limits:
             memory: 100Mi
-        extraVolumeMounts:
-          - name: unbound-certificates
-            mountPath: /usr/local/etc/unbound/
-    extraVolumes:
-      - name: unbound-certificates
-        secret:
-          secretName: external-dns-opnsense
-    extraArgs:
-      - "--txt-prefix=reg-%{record_type}-"
+    # extraArgs:
+    #   - "--txt-prefix=reg-%{record_type}-"
     sources: ["crd", "gateway-httproute"]
     policy: sync
     registry: noop
