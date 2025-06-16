@@ -26,20 +26,17 @@ spec:
   values:
     fullnameOverride: gravity-external-dns
     logLevel: debug
-    podSecurityContext:
-      fsGroup: 65534
     securityContext:
       runAsNonRoot: true
-      runAsUser: 65534
-      readOnlyRootFilesystem: true
-      capabilities:
-        drop: ["ALL"]
+      runAsUser: 1000
+      runAsGroup: 1000
+      allowPrivilegeEscalation: false
     provider:
       name: webhook
       webhook:
         image:
           repository: ghcr.io/beryju/gravity-external-dns
-          tag: stable
+          tag: 325595bf7a82412fa878a32dc96853d6e3686771
         env:
           - name: GRAVITY_URL
             value: http://172.16.16.4:8008/
