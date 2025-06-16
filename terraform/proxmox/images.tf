@@ -23,7 +23,7 @@ resource "proxmox_virtual_environment_download_file" "ubuntu_noble_cloud_image" 
   datastore_id       = "local"
   file_name          = "ubuntu-24.04-cloudimg-amd64.qcow.iso"
   node_name          = var.node
-  url                = "https://cloud-images.ubuntu.com/noble/20250430/noble-server-cloudimg-amd64.img"
-  checksum           = "bc471ca49de03b5129c65b70f9862b7f4b5e721622fd34ade78132f6f7999e2d"
+  url                = "https://cloud-images.ubuntu.com/noble/20250610/noble-server-cloudimg-amd64.img"
+  checksum           = "92d2c4591af9a82785464bede56022c49d4be27bde1bdcf4a9fccc62425cda43"
   checksum_algorithm = "sha256"
 }
