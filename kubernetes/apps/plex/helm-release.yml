@@ -121,17 +121,6 @@ spec:
         ports:
           http:
             port: *port
-    ingress:
-      internal:
-        className: int-ingress
-        hosts:
-          - host: "{{ .Release.Name }}.chkpwd.com"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: http
     persistence:
       data:
         enabled: true

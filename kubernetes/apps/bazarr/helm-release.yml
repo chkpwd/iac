@@ -139,14 +139,14 @@ spec:
                   value: /
             backendRefs:
               - name: bazarr-app
-                port: 6767
+                port: *port
           - matches:
               - path:
                   type: PathPrefix
                   value: /metrics
             backendRefs:
               - name: bazarr-metrics
-                port: 9707
+                port: *metricsPort
         parentRefs:
           - name: private
             namespace: kube-system

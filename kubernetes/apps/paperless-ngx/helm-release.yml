@@ -178,16 +178,23 @@ spec:
         ports:
           http:
             port: 3000
-    ingress:
+    route:
       internal:
-        className: int-ingress
-        hosts:
-          - host: paperless-ngx.chkpwd.com
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
+        enabled: true
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: paperless-ngx-app
+                port: 8000
+        parentRefs:
+          - name: private
+            namespace: kube-system
+            sectionName: https
     persistence:
       shared:
         type: nfs

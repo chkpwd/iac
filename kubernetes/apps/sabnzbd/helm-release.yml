@@ -142,23 +142,30 @@ spec:
         ports:
           metrics:
             port: *metricsPort
-    ingress:
+    route:
       internal:
         enabled: true
-        className: int-ingress
-        hosts:
-          - host: "{{ .Release.Name }}.chkpwd.com"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: http
-              - path: /metrics
-                pathType: Prefix
-                service:
-                  identifier: metrics
-                  port: metrics
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: sabnzbd-app
+                port: *port
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /metrics
+            backendRefs:
+              - name: sabnzbd-metrics
+                port: *metricsPort
+        parentRefs:
+          - name: private
+            namespace: kube-system
+            sectionName: https
     persistence:
       data:
         enabled: true

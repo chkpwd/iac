@@ -49,7 +49,7 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: "America/New_York"
-              PLEX_URL: http://media.chkpwd.com:32400
+              PLEX_URL: http://plex.media.svc.cluster.local:32400
               REFRESH_LIBRARY_ON_SCAN: "false"
               PLEX_TOKEN:
                 valueFrom:
