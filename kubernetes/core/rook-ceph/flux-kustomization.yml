@@ -47,12 +47,9 @@ spec:
       kind: CephCluster
       failed: status.ceph.health == 'HEALTH_ERR'
       current: status.ceph.health in ['HEALTH_OK', 'HEALTH_WARN']
-  components:
-    - ../../external-dns/_components/internal/
   postBuild:
     substitute:
       APP: *app
-      RECORD_NAME: rook
   interval: 1h
   prune: false
   retryInterval: 2m

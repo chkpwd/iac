@@ -143,7 +143,7 @@ spec:
           metrics:
             port: *metricsPort
     route:
-      internal:
+      private:
         enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]

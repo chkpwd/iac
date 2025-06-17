@@ -74,20 +74,23 @@ spec:
         ports:
           http:
             port: *port
-    ingress:
-      app:
-        className: ext-ingress
-        labels:
-          external-dns/public: "true"
-        annotations:
-          external-dns.alpha.kubernetes.io/target: "chkpwd.com"
-        hosts:
-          - host: "kromgo.chkpwd.com"
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
+    route:
+      private:
+        enabled: true
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: kromgo-app
+                port: *port
+        parentRefs:
+          - name: public
+            namespace: kube-system
+            sectionName: https
     persistence:
       config-file:
         type: configMap

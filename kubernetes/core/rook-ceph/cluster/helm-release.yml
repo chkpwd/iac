@@ -31,12 +31,6 @@ spec:
     monitoring:
       enabled: true
       createPrometheusRules: true
-    ingress:
-      dashboard:
-        ingressClassName: int-ingress
-        host:
-          name: rook.chkpwd.com
-          path: /
     toolbox:
       enabled: true
     cephClusterSpec:

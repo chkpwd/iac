@@ -119,23 +119,24 @@ spec:
         controller: server
         ports:
           http:
-            port: 2283
-    ingress:
-      immich:
+            port: &serverPort 2283
+    route:
+      public:
         enabled: true
-        className: ext-ingress
-        labels:
-          external-dns/public: "true"
-        annotations:
-          external-dns.alpha.kubernetes.io/target: "chkpwd.com"
-          nginx.ingress.kubernetes.io/proxy-body-size: "0"
-        hosts:
-          - host: "{{ .Release.Name }}.chkpwd.com"
-            paths:
-              - path: /
-                service:
-                  identifier: server
-                  port: http
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: immich-server
+                port: *serverPort
+        parentRefs:
+          - name: public
+            namespace: kube-system
+            sectionName: https
     persistence:
       upload:
         enabled: true

@@ -179,7 +179,7 @@ spec:
           http:
             port: 3000
     route:
-      internal:
+      private:
         enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]

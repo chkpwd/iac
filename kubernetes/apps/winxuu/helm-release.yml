@@ -74,19 +74,20 @@ spec:
         ports:
           http:
             port: *port
-    ingress:
-      external:
+    route:
+      public:
         enabled: true
-        className: ext-ingress
-        labels:
-          external-dns/public: "true"
-        annotations:
-          external-dns.alpha.kubernetes.io/target: "chkpwd.com"
-        hosts:
-          - host: "{{ .Release.Name }}.chkpwd.com"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: http
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: winxuu
+                port: *port
+        parentRefs:
+          - name: public
+            namespace: kube-system
+            sectionName: https

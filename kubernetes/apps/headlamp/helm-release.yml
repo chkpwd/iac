@@ -49,14 +49,6 @@ spec:
       version: latest
     persistentVolumeClaim:
       enabled: false
-    ingress:
-      enabled: true
-      ingressClassName: int-ingress
-      hosts:
-        - host: headlamp.chkpwd.com
-          paths:
-            - path: /
-              type: ImplementationSpecific
     extraManifests:
       - |
         apiVersion: v1

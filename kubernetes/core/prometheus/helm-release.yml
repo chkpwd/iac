@@ -92,13 +92,14 @@ spec:
           limits:
             memory: 32M
     prometheus:
-      ingress:
-        enabled: true
-        ingressClassName: int-ingress
-        annotations:
-          cert-manager.io/cluster-issuer: main-issuer
-        hosts: ["k8s-{{ .Release.Name }}.chkpwd.com"]
-        pathType: Prefix
+      route:
+        main:
+          enabled: true
+          hostnames: ["k8s-{{ .Release.Name }}.chkpwd.com"]
+          parentRefs:
+            - name: private
+              namespace: kube-system
+              sectionName: https
       prometheusSpec:
         image:
           registry: docker.io

@@ -46,16 +46,14 @@ spec:
     extraArgs:
       - --cloudflare-dns-records-per-page=1000
       - --cloudflare-proxied
-      - --ignore-ingress-tls-spec
-      # - --ingress-class=ext-ingress no longer needed as we are filtering by label
+      - --gateway-name=public
     policy: sync
-    sources: ["crd", "ingress"]
+    sources: ["crd", "gateway-httproute"]
     txtPrefix: k8s.
-    txtOwnerId: "ingress-onprem"
+    txtOwnerId: default
     logLevel: debug
     logFormat: text
     domainFilters: ["chkpwd.com"]
-    labelFilter: "external-dns/public in (true)"
     serviceMonitor:
       enabled: false
     resources:

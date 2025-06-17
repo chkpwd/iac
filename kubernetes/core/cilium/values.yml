@@ -27,11 +27,6 @@ hubble:
   ui:
     enabled: true
     rollOutPods: true
-    ingress:
-      enabled: true
-      className: int-ingress
-      hosts:
-        - "hubble.chkpwd.com"
 ipam:
   mode: kubernetes
 ipv4NativeRoutingCIDR: 10.244.0.0/16

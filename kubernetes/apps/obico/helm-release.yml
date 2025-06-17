@@ -43,24 +43,6 @@ spec:
             apiGroup: volsync.backube
             name: "${APP}"
           size: "${VOLSYNC_CAPACITY}"
-      ingress:
-        main:
-          enabled: true
-          ingressClassName: ext-ingress
-          labels:
-            external-dns/public: "true"
-          annotations:
-            external-dns.alpha.kubernetes.io/target: "chkpwd.com"
-            nginx.ingress.kubernetes.io/proxy-body-size: 64m
-            nginx.ingress.kubernetes.io/ssl-redirect: "true"
-            nginx.ingress.kubernetes.io/server-snippet: |-
-              location /admin {
-                  deny all;
-              }
-          hosts:
-            - host: "{{ .Release.Name }}.chkpwd.com"
-              paths:
-                - path: /
     ml-api:
       image:
         repository: ghcr.io/gabe565/obico/ml-api

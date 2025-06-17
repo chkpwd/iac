@@ -87,20 +87,21 @@ spec:
         controller: miniflux
         ports:
           http:
-            port: 8080
-    ingress:
-      external:
+            port: &port 8080
+    route:
+      public:
         enabled: true
-        className: ext-ingress
-        labels:
-          external-dns/public: "true"
-        annotations:
-          external-dns.alpha.kubernetes.io/target: "chkpwd.com"
-        hosts:
-          - host: "{{ .Release.Name }}.chkpwd.com"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: http
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: miniflux
+                port: *port
+        parentRefs:
+          - name: public
+            namespace: kube-system
+            sectionName: https

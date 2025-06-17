@@ -122,17 +122,20 @@ spec:
         ports:
           http:
             port: 27017
-    ingress:
-      internal:
-        annotations:
-          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    route:
+      private:
         enabled: true
-        className: int-ingress
-        hosts:
-          - host: "{{ .Release.Name }}.chkpwd.com"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: app
-                  port: http
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: unifi-controller-app
+                port: 8443
+        parentRefs:
+          - name: private
+            namespace: kube-system
+            sectionName: https

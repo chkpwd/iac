@@ -90,18 +90,19 @@ spec:
       pdb:
         # -- Deploy a [PodDistrubtionBudget] for the authentik server
         enabled: false
-      ingress:
+    route:
+      main:
         enabled: true
-        ingressClassName: ext-ingress
-        labels:
-          external-dns/public: "true"
-        annotations:
-          external-dns.alpha.kubernetes.io/target: chkpwd.com
-          cert-manager.io/cluster-issuer: main-issuer
-        hosts:
-          - "authentik.chkpwd.com"
-        paths: ["/"]
-        pathType: Prefix
+        kind: HTTPRoute
+        hostnames: ["authentik.chkpwd.com"]
+        parentRefs:
+          - name: public
+            namespace: kube-system
+            sectionName: https
+        matches:
+          - path:
+              type: PathPrefix
+              value: "{{ .Values.authentik.web.path }}"
       metrics:
         serviceMonitor:
           enabled: true

@@ -143,7 +143,7 @@ spec:
         controller: karakeep
         ports:
           http:
-            port: 3000
+            port: &port 3000
       chrome:
         controller: chrome
         ports:
@@ -154,22 +154,23 @@ spec:
         ports:
           http:
             port: 7700
-    ingress:
-      main:
+    route:
+      public:
         enabled: true
-        className: ext-ingress
-        labels:
-          external-dns/public: "true"
-        annotations:
-          external-dns.alpha.kubernetes.io/target: "chkpwd.com"
-        hosts:
-          - host: "{{ .Release.Name }}.chkpwd.com"
-            paths:
-              - path: /
-                pathType: Prefix
-                service:
-                  identifier: karakeep
-                  port: http
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: karakeep
+                port: *port
+        parentRefs:
+          - name: public
+            namespace: kube-system
+            sectionName: https
     persistence:
       data:
         enabled: true

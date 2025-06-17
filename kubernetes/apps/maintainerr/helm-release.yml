@@ -78,7 +78,7 @@ spec:
           http:
             port: 6246
     route:
-      internal:
+      private:
         enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
@@ -88,7 +88,7 @@ spec:
                   type: PathPrefix
                   value: /
             backendRefs:
-              - name: maintainerr-app
+              - name: maintainerr
                 port: 6246
         parentRefs:
           - name: private
