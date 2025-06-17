@@ -13,7 +13,6 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../core/volsync/components/
-    - ../../core/external-dns/_components/internal/
   postBuild:
     substitute:
       APP: *app
