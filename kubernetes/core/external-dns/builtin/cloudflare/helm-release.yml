@@ -47,6 +47,7 @@ spec:
       - --cloudflare-dns-records-per-page=1000
       - --cloudflare-proxied
       - --gateway-name=public
+      - --zone-id-filter=${CF_ZONE_ID}
     policy: sync
     sources: ["crd", "gateway-httproute"]
     txtPrefix: k8s.

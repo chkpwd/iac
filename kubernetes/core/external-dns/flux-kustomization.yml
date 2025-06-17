@@ -21,6 +21,11 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  postBuild:
+    substituteFrom:
+      - kind: Secret
+        name: cloudflare-external-dns
+        optional: false
   prune: true
   sourceRef:
     kind: GitRepository
