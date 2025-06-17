@@ -38,7 +38,7 @@ resource "gravity_dns_record" "private_gateway" {
   zone     = gravity_dns_zone.main.name
   hostname = "@"
   uid      = "0"
-  data     = "172.16.16.55"
+  data     = "172.16.16.30"
   type     = "A"
 }
 
@@ -46,6 +46,6 @@ resource "gravity_dns_record" "public_gateway" {
   zone     = gravity_dns_zone.main.name
   hostname = "@"
   uid      = "0"
-  data     = "172.16.16.56"
+  data     = "172.16.16.31"
   type     = "A"
 }
