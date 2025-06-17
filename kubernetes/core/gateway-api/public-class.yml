@@ -14,7 +14,7 @@ spec:
       value: 172.16.16.31
   infrastructure:
     annotations:
-      external-dns.alpha.kubernetes.io/target: *hostname
+      external-dns.alpha.kubernetes.io/hostname: *hostname
   listeners:
     - protocol: HTTP
       port: 80
