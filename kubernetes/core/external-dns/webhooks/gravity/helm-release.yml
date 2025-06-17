@@ -66,8 +66,9 @@ spec:
             cpu: 10m
           limits:
             memory: 100Mi
-    # extraArgs:
-    #   - "--txt-prefix=reg-%{record_type}-"
+    extraArgs:
+      - --gateway-name=private
+      # - "--txt-prefix=reg-%{record_type}-"
     sources: ["crd", "gateway-httproute"]
     policy: upsert-only
     registry: noop
