@@ -6,6 +6,7 @@ metadata:
 spec:
   inputs:
     - readonly: true
+      namespace: flux-system
       accessFrom:
         - networking
       gateway: private
@@ -43,6 +44,7 @@ spec:
       kind: HTTPRoute
       metadata:
         name: << inputs.provider.name >>
+        namespace: << inputs.provider.namespace >>
       spec:
         hostnames: ["<< inputs.provider.name >>.chkpwd.com"]
         rules:
