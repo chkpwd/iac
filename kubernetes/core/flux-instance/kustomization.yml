@@ -5,7 +5,6 @@ kind: Kustomization
 resources:
   - external-secret.yml
   - helm-release.yml
-  - ingress-flux-webhook.yml
   - prometheus-rule.yml
   - receiver-github.yml
 configMapGenerator:
