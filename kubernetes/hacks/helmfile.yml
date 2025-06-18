@@ -19,7 +19,7 @@ releases:
   - name: coredns
     namespace: kube-system
     chart: oci://ghcr.io/coredns/charts/coredns
-    version: 1.42.3
+    version: 1.43.0
     values: ["../core/coredns/values.yml"]
     needs: ["kube-system/cilium"]
   - name: prometheus-operator-crds
