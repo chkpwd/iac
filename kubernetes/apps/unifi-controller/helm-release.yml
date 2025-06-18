@@ -29,18 +29,10 @@ spec:
     controllers:
       unifi-controller:
         enabled: true
-        type: statefulset
+        type: deployment
         annotations:
           reloader.stakater.com/auto: "true"
         replicas: 1
-        statefulset:
-          volumeClaimTemplates:
-            - name: config
-              accessMode: ReadWriteOnce
-              size: 2Gi
-              storageClass: ceph-block
-              globalMounts:
-                - path: /usr/lib/unifi/data
         pod:
           securityContext:
             runAsUser: &context 999
@@ -73,6 +65,13 @@ spec:
         type: statefulset
         statefulset:
           podManagementPolicy: OrderedReady
+          volumeClaimTemplates:
+            - name: config
+              accessMode: ReadWriteOnce
+              size: 2Gi
+              storageClass: ceph-block
+              globalMounts:
+                - path: /data/db
         containers:
           app:
             image:
