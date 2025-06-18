@@ -59,8 +59,8 @@ spec:
               PGID: "999"
               JVM_MAX_HEAP_SIZE: "1024M"
               DB_MONGO_LOCAL: "false"
-              DB_MONGO_URI: mongodb://unifi-controller-mongodb.tools.svc.cluster.local:27017/unifi
-              STATDB_MONGO_URI: mongodb://unifi-controller-mongodb.tools.svc.cluster.local:27017/unifi_stat
+              DB_MONGO_URI: mongodb://unifi-controller-database.tools.svc.cluster.local:27017/unifi
+              STATDB_MONGO_URI: mongodb://unifi-controller-database.tools.svc.cluster.local:27017/unifi_stat
               TZ: "America/New_York"
               UNIFI_DB_NAME: unifi
             resources:
