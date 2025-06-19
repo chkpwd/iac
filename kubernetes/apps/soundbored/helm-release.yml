@@ -99,7 +99,7 @@ spec:
           http:
             port: &port 4000
     route:
-      private:
+      public:
         enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
@@ -109,9 +109,9 @@ spec:
                   type: PathPrefix
                   value: /
             backendRefs:
-              - name: soundbored-app
+              - name: soundbored
                 port: *port
         parentRefs:
-          - name: private
+          - name: public
             namespace: kube-system
             sectionName: https
