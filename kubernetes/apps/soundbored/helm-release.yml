@@ -44,7 +44,7 @@ spec:
                 apiGroup: volsync.backube
                 name: "${APP}"
               globalMounts:
-                - path: /config
+                - path: /app/priv/static/uploads
         # pod:
         #   securityContext:
         #     runAsUser: 1026
@@ -59,8 +59,9 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: "America/New_York"
-              PHX_HOST: "localhost"
-              SCHEME: "http"
+              PHX_HOST: soundbored.chkpwd.com
+              SCHEME: http
+              MIX_ENV: prod
               DISABLE_AUTO_JOIN: "false"
             envFrom:
               - secretRef:
