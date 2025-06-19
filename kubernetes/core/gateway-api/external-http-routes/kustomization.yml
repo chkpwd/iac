@@ -2,10 +2,4 @@
 # yaml-language-server: $schema=https://json.schemastore.org/kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-resources:
-  - synology.yml
-  - grafana.yml
-  - prometheus.yml
-  - scanservjs.yml
-  - ollama.yml
-  - home-assistant.yml
+resources: [] # not supported in cilium envoy https://github.com/cilium/cilium/issues/24495
