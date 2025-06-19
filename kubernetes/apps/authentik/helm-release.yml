@@ -90,19 +90,21 @@ spec:
       pdb:
         # -- Deploy a [PodDistrubtionBudget] for the authentik server
         enabled: false
-    route:
-      main:
-        enabled: true
-        kind: HTTPRoute
-        hostnames: ["authentik.chkpwd.com"]
-        parentRefs:
-          - name: public
-            namespace: kube-system
-            sectionName: https
-        matches:
-          - path:
-              type: PathPrefix
-              value: "{{ .Values.authentik.web.path }}"
+      route:
+        main:
+          enabled: true
+          kind: HTTPRoute
+          hostnames: ["authentik.chkpwd.com"]
+          parentRefs:
+            - name: public
+              namespace: kube-system
+              sectionName: https
+          matches:
+            - path:
+                type: PathPrefix
+                value: "{{ .Values.authentik.web.path }}"
+          httpsRedirect: false
+          https: false
       metrics:
         serviceMonitor:
           enabled: true
