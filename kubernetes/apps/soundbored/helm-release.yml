@@ -58,11 +58,10 @@ spec:
               tag: a164e75ddc4e8b2c183a5e9d12854c5d54f009f1
               pullPolicy: IfNotPresent
             env:
-              TZ: "America/New_York"
-              PHX_HOST: soundbored.chkpwd.com
+              PHX_HOST: localhost
               SCHEME: http
               MIX_ENV: prod
-              DISABLE_AUTO_JOIN: "false"
+              DISABLE_AUTO_JOIN: "true"
             envFrom:
               - secretRef:
                   name: soundbored
