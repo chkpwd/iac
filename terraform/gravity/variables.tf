@@ -3,15 +3,7 @@ variable "zone" {
   default = "chkpwd.com."
 }
 
-variable "vlan_ids" {
-  type = object({
-    lan   = number
-    iot   = number
-    guest = number
-  })
-  default = {
-    lan   = 16
-    iot   = 10
-    guest = 20
-  }
+variable "default_uid" {
+  type    = string
+  default = "tf-managed"
 }
