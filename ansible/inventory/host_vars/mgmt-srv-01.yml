@@ -28,6 +28,7 @@ service_definitions:
       - "{{ compose_configuration_path }}/apprise:/config"
       - "{{ compose_configuration_path }}/apprise/plugin:/plugin"
       - "{{ compose_configuration_path }}/apprise/attach:/attach"
+    state: stopped
   - name: netbootxyz
     image: ghcr.io/netbootxyz/netbootxyz:0.7.6-nbxyz2
     env:
@@ -46,6 +47,7 @@ service_definitions:
       PLATFORM: PC
       API_KEY: "{{ lookup('bws_cache', 'public-api-apex-legends-key').value }}"
     ports: ["5050:5000"]
+    state: stopped
   - name: opnsense-exporter
     image: ghcr.io/athennamind/opnsense-exporter:0.0.10
     command:
@@ -82,6 +84,7 @@ service_definitions:
       TWINGATE_DNS: "172.16.16.1"
       TWINGATE_LABEL_HOSTNAME: "`hostname`"
       TWINGATE_LABEL_DEPLOYED_BY: "docker"
+    state: stopped
   - name: bws-cache
     image: ghcr.io/ripplefcl/bws-cache:v2.6.1
     env:
@@ -96,12 +99,11 @@ service_definitions:
     hostname: rpi-gravity
     network_mode: host
     env:
-      BOOTSTRAP_ROLES: dns;dhcp;api;etcd;discovery;backup;monitoring;tsdb;tftp
+      BOOTSTRAP_ROLES: dns;api;etcd;backup;monitoring;tsdb
       DATA_PATH: /data
       LOG_LEVEL: info
       ADMIN_PASSWORD: "{{ lookup('bws_cache', 'infra-gravity-secrets').value.admin_password }}"
       ADMIN_TOKEN: "{{ lookup('bws_cache', 'infra-gravity-secrets').value.admin_token }}"
-      LISTEN_ONLY: "true"
     volumes:
       - data:/data
     log_driver: json-file
