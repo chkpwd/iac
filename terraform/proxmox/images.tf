@@ -13,8 +13,8 @@ resource "proxmox_virtual_environment_download_file" "debian_trixie_qcow2_generi
   datastore_id       = "local"
   file_name          = "debian-13-genericcloud-amd64.qcow2.img"
   node_name          = var.node
-  url                = "https://cloud.debian.org/images/cloud/trixie/daily/20250502-2100/debian-13-generic-amd64-daily-20250502-2100.qcow2"
-  checksum           = "74576576973997dbbb2f7e0aaf06c2769e59958871ef8b7aa3ebc621c0722838886775a3e8c9c50fb82cc002d0ebef1a970a078c132e07e6dacc0523061cd5aa"
+  url                = "https://cloud.debian.org/images/cloud/trixie/daily/20250619-2148/debian-13-generic-amd64-daily-20250619-2148.qcow2"
+  checksum           = "046d9691b1a6026fd457b85c85476fa721249dd9379e23ab877bb34b2d6fa662994b03a23ffe7b527c5421cb1a69e81b6873c82f0e1ac9403bbaad263fffd3d8"
   checksum_algorithm = "sha512"
 }
 

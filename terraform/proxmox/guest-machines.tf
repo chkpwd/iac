@@ -1,4 +1,3 @@
-
 resource "proxmox_virtual_environment_vm" "ollama" {
   name      = "ai-inference-01"
   node_name = "pve-srv-01"
@@ -6,6 +5,8 @@ resource "proxmox_virtual_environment_vm" "ollama" {
   on_boot   = true
 
   tags = ["ai", "server", "terraform"]
+
+  serial_device {}
 
   machine = "q35"
 
