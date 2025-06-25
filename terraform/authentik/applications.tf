@@ -122,3 +122,22 @@ module "authentik-app-kasten-k10" {
     authentik_group.main.id
   ]
 }
+
+module "authentik-app-soundbored" {
+  source = "../_modules/authentik/oauth2_app"
+  name   = "soundbored"
+  group  = "main"
+  oauth2_values = {
+    client_id             = "soundbored"
+    client_secret         = data.external.bws_lookup.result["soundbored_oauth_client_secret"]
+    property_mappings     = data.authentik_property_mapping_provider_scope.sources.ids
+    allowed_redirect_uris = []
+  }
+  app_values = {
+    icon_url         = ""
+    meta_description = "Soundbored"
+  }
+  access_group = [
+    authentik_group.main.id
+  ]
+}
