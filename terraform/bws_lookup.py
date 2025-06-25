@@ -1,9 +1,12 @@
+#!/usr/bin/env python3
+
 import json
 import sys
 import logging
 import os
 import requests
 
+from requests.adapters import HTTPAdapter, Retry
 
 class InvalidToken(Exception):
     pass
@@ -26,11 +29,15 @@ key_name = json.load(sys.stdin)["key"].split(",")
 logging.info(key_name)
 results = []
 
+s = requests.Session()
+retries = Retry(total=5, backoff_factor=1, status_forcelist=[ 502, 503, 504 ])
+s.mount('http://', HTTPAdapter(max_retries=retries))
+
 for key in key_name:
-    bws_response = requests.get(
-        f"http://mgmt-srv-01:5000/key/{key}",
+    bws_response = s.get(
+        f"http://172.16.16.4:5000/key/{key}",
         headers={"Authorization": f"Bearer {access_token}"},
-        timeout=10,
+        timeout=30,
     ).json()
 
     logging.debug(bws_response)
