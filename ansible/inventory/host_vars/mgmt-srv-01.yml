@@ -73,6 +73,14 @@ service_definitions:
     volumes:
       - "{{ compose_configuration_path }}/scanservjs/output:/var/lib/scanservjs/output"
       - "{{ compose_configuration_path }}/scanservjs:/etc/scanservjs"
+    networks:
+      - name: "proxy"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.scanservjs.rule: "Host(`scan.chkpwd.com`)"
+      traefik.http.routers.scanservjs.entrypoints: "https"
+      traefik.http.routers.scanservjs.tls: "true"
+      traefik.http.services.scanservjs.loadbalancer.server.port: "8080"
   - name: twingate
     image: twingate/connector:1.76.0
     sysctls:
@@ -85,21 +93,12 @@ service_definitions:
       TWINGATE_LABEL_HOSTNAME: "`hostname`"
       TWINGATE_LABEL_DEPLOYED_BY: "docker"
     state: stopped
-  - name: bws-cache
-    image: ghcr.io/ripplefcl/bws-cache:v2.6.1
-    env:
-      ORG_ID: 0228643f-4148-4629-b9b4-b06e001d9cce
-      REQUEST_RATE: "1"
-      REFRESH_RATE: "5"
-      PARSE_SECRET_VALUES: "true"
-      LOG_LEVEL: "warning"
-    ports: ["5000:5000"]
   - name: gravity
     image: "ghcr.io/beryju/gravity:325595bf7a82412fa878a32dc96853d6e3686771"
     hostname: rpi-gravity
     network_mode: host
     env:
-      BOOTSTRAP_ROLES: dns;api;etcd;backup;monitoring;tsdb
+      BOOTSTRAP_ROLES: dns;dhcp;api;etcd;backup;monitoring;tsdb
       DATA_PATH: /data
       LOG_LEVEL: info
       ADMIN_PASSWORD: "{{ lookup('bws_cache', 'infra-gravity-secrets').value.admin_password }}"
@@ -110,3 +109,12 @@ service_definitions:
     log_options:
       max-size: "10m"
       max-file: "3"
+  - name: bws-cache
+    image: ghcr.io/ripplefcl/bws-cache:v2.6.1
+    env:
+      ORG_ID: 0228643f-4148-4629-b9b4-b06e001d9cce
+      REQUEST_RATE: "1"
+      REFRESH_RATE: "10"
+      PARSE_SECRET_VALUES: "true"
+      LOG_LEVEL: "warning"
+    ports: ["5000:5000"]
