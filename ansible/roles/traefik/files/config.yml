@@ -1,0 +1,36 @@
+---
+http:
+  routers:
+    opnsense:
+      entryPoints:
+        - "https"
+      rule: "Host(`opnsense.chkpwd.com`)"
+      middlewares:
+        - https-redirectscheme
+      service: opnsense
+      tls:
+        certResolver: cloudflare
+        domains:
+          - main: "chkpwd.com"
+          - sans: "*.chkpwd.com"
+  services:
+    opnsense:
+      loadBalancer:
+        servers:
+          - url: "http://172.16.16.1"
+  middlewares:
+    https-redirectscheme:
+      redirectScheme:
+        scheme: https
+    default-headers:
+      headers:
+        frameDeny: true
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 15552000
+        customFrameOptionsValue: SAMEORIGIN
+        customRequestHeaders:
+          X-Forwarded-Proto: https

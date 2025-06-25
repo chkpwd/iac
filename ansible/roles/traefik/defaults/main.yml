@@ -1,0 +1,17 @@
+---
+traefik_docker_network: proxy
+traefik_container:
+  - name: traefik
+    image: traefik:v3.4.1
+    env:
+      CF_DNS_API_TOKEN: "{{ lookup('bws_cache', 'cloudflare-dns-secrets').value.traefik_api_token }}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - "{{ configuration_path }}/traefik/acme.json:/acme.json:rw"
+      - "{{ configuration_path }}/traefik/traefik.yml:/traefik.yml:ro"
+      - "{{ configuration_path }}/traefik/config.yml:/config.yml:ro"
+    networks:
+      - name: "{{ traefik_docker_network }}"
+    ports:
+      - 80:80
+      - 443:443

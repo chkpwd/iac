@@ -1,0 +1,34 @@
+---
+- name: Create Volumes
+  ansible.builtin.file: # noqa risky-file-permissions
+    path: "{{ item }}"
+    owner: 1001
+    group: 1001
+    mode: "0755"
+    state: directory
+  loop: "{{ traefik_container
+    | selectattr('volumes', 'defined')
+    | map(attribute='volumes')
+    | flatten
+    | map('split', ':')
+    | map('first') }}"
+  when: not item is match('.*\.\w{2,4}$')
+
+- name: Copy config files for traefik
+  ansible.builtin.copy:
+    src: "files/"
+    dest: "{{ configuration_path }}/traefik/"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: "600"
+  notify: "Restart Traefik"
+
+- name: Create Docker Network
+  community.docker.docker_network:
+    name: "{{ traefik_docker_network }}"
+
+- name: Deploy Docker containers # noqa args[module]
+  community.docker.docker_container: "{{ item }}"
+  loop: "{{ traefik_container }}"
+  loop_control:
+    label: "{{ item.name }}"
