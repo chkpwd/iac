@@ -1,5 +1,5 @@
 {
-  "guest_vlan": [
+  "guest": [
     {
       "name": "onn-tv-01",
       "address": "10.0.10.2",
@@ -36,11 +36,12 @@
       "mac": "d8:bb:c1:69:ff:90"
     }
   ],
-  "iot_vlan": [
+  "iot": [
     {
       "name": "print-srv-01",
       "address": "10.0.20.3",
-      "mac": "e4:5f:01:62:47:f2"
+      "mac": "e4:5f:01:62:47:f2",
+      "reserve": true
     },
     {
       "name": "3d-printer-esp",
@@ -52,47 +53,50 @@
     {
       "name": "pve-srv-01",
       "address": "172.16.16.3",
-      "mac": "a8:a1:59:3d:28:3b"
+      "mac": "a8:a1:59:3d:28:3b",
+      "reserve": true
     },
     {
       "name": "mgmt-srv-01",
       "address": "172.16.16.4",
-      "mac": "dc:a6:32:bc:9a:2f"
+      "mac": "dc:a6:32:bc:9a:2f",
+      "reserve": true
     },
     {
       "name": "nas-srv-01",
       "address": "172.16.16.5",
-      "mac": "00:11:32:cd:47:2d"
-    },
-    {
-      "name": "nix-host-01",
-      "address": "172.16.16.6",
-      "mac": "48:4d:7e:ef:2c:c7"
+      "mac": "00:11:32:cd:47:2d",
+      "reserve": true
     },
     {
       "name": "haos-srv-01",
       "address": "172.16.16.8",
-      "mac": "00:50:56:a7:ca:ff"
+      "mac": "00:50:56:a7:ca:ff",
+      "reserve": true
     },
     {
       "name": "uap-ac-lite",
       "address": "172.16.16.9",
-      "mac": "74:83:c2:b9:8a:4d"
+      "mac": "74:83:c2:b9:8a:4d",
+      "reserve": true
     },
     {
       "name": "ct-k8s-01",
       "address": "172.16.16.10",
-      "mac": "6c:4b:90:46:b6:c1"
+      "mac": "6c:4b:90:46:b6:c1",
+      "reserve": true
     },
     {
       "name": "ct-k8s-02",
       "address": "172.16.16.11",
-      "mac": "6c:4b:90:05:76:db"
+      "mac": "6c:4b:90:05:76:db",
+      "reserve": true
     },
     {
       "name": "ct-k8s-03",
       "address": "172.16.16.12",
-      "mac": "6c:4b:90:58:6d:96"
+      "mac": "6c:4b:90:58:6d:96",
+      "reserve": true
     },
     {
       "name": "nix-vm-01",
@@ -102,12 +106,57 @@
     {
       "name": "ai-inference-01",
       "address": "172.16.16.15",
-      "mac": "bc:24:11:ea:6b:79"
+      "mac": "bc:24:11:ea:6b:79",
+      "reserve": true
     },
     {
       "name": "nix-mb-01",
       "address": "172.16.16.100",
       "mac": "0e:e5:65:85:44:ec"
+    }
+  ],
+  "mgmt": [
+    {
+      "name": "pve-srv-01",
+      "address": "172.16.16.3",
+      "mac": "a8:a1:59:3d:28:3b",
+      "reserve": true
+    },
+    {
+      "name": "mgmt-srv-01",
+      "address": "172.16.16.4",
+      "mac": "dc:a6:32:bc:9a:2f",
+      "reserve": true
+    },
+    {
+      "name": "nas-srv-01",
+      "address": "172.16.16.5",
+      "mac": "00:11:32:cd:47:2d",
+      "reserve": true
+    },
+    {
+      "name": "uap-ac-lite",
+      "address": "172.16.16.9",
+      "mac": "74:83:c2:b9:8a:4d",
+      "reserve": true
+    },
+    {
+      "name": "ct-k8s-01",
+      "address": "172.16.16.10",
+      "mac": "6c:4b:90:46:b6:c1",
+      "reserve": true
+    },
+    {
+      "name": "ct-k8s-02",
+      "address": "172.16.16.11",
+      "mac": "6c:4b:90:05:76:db",
+      "reserve": true
+    },
+    {
+      "name": "ct-k8s-03",
+      "address": "172.16.16.12",
+      "mac": "6c:4b:90:58:6d:96",
+      "reserve": true
     }
   ]
 }

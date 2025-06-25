@@ -1,0 +1,138 @@
+resource "gravity_dhcp_scope" "temp" {
+  name        = "lan"
+  default     = true
+  subnet_cidr = "172.16.16.0/24"
+
+  ipam = {
+    type        = "internal"
+    range_start = "172.16.16.100"
+    range_end   = "172.16.16.150"
+  }
+
+  option {
+    tag_name = "router"
+    value    = "172.16.16.1"
+  }
+
+  dns {
+    zone   = gravity_dns_zone.main.name
+    search = [gravity_dns_zone.main.name]
+  }
+}
+
+resource "gravity_dhcp_scope" "scopes" {
+  for_each = {
+    iot = {
+      vlan_id = var.vlan_ids.iot
+      default = false
+    }
+    guest = {
+      vlan_id = var.vlan_ids.guest
+      default = false
+    }
+    mgmt = {
+      vlan_id = var.vlan_ids.mgmt
+      default = true
+    }
+  }
+
+  name        = each.key
+  default     = each.value.default
+  subnet_cidr = "10.0.${each.value.vlan_id}.0/24"
+
+  ipam = {
+    type        = "internal"
+    range_start = "10.0.${each.value.vlan_id}.100"
+    range_end   = "10.0.${each.value.vlan_id}.150"
+  }
+
+  option {
+    tag_name = "router"
+    value    = "10.0.${each.value.vlan_id}.1"
+  }
+
+  dns {
+    zone   = gravity_dns_zone.main.name
+    search = [gravity_dns_zone.main.name]
+  }
+}
+
+locals {
+  leases_json  = jsondecode(file("${path.root}/leases.json"))
+  lan_leases   = local.leases_json.lan
+  iot_leases   = local.leases_json.iot
+  guest_leases = local.leases_json.guest
+  # mgmt_leases  = local.leases_json.mgmt
+}
+
+resource "gravity_dhcp_lease" "lan" {
+  for_each = {
+    for lease in local.lan_leases : lease.name => {
+      name    = lease.name
+      address = lease.address
+      mac     = lease.mac
+      reserve = try(lease.reserve, false)
+    }
+  }
+
+  scope       = gravity_dhcp_scope.temp.name
+  hostname    = each.value.name
+  identifier = each.value.mac
+  address     = each.value.address
+
+  reservation = each.value.reserve
+}
+
+# resource "gravity_dhcp_lease" "mgmt" {
+#   for_each = {
+#     for lease in local.mgmt_leases : lease.name => {
+#       name    = lease.name
+#       address = lease.address
+#       mac     = lease.mac
+#       reserve = try(lease.reserve, false)
+#     }
+#   }
+
+#   scope       = gravity_dhcp_scope.scopes["mgmt"].name
+#   hostname    = each.value.name
+#   identifier = each.value.mac
+#   address     = each.value.address
+
+#   reservation = each.value.reserve
+# }
+
+resource "gravity_dhcp_lease" "iot" {
+  for_each = {
+    for lease in local.iot_leases : lease.name => {
+      name    = lease.name
+      address = lease.address
+      mac     = lease.mac
+      reserve = try(lease.reserve, false)
+    }
+  }
+
+  scope       = gravity_dhcp_scope.scopes["iot"].name
+  hostname    = each.value.name
+  identifier = each.value.mac
+  address     = each.value.address
+
+  reservation = each.value.reserve
+}
+
+resource "gravity_dhcp_lease" "guest" {
+  for_each = {
+    for lease in local.guest_leases : lease.name => {
+      name    = lease.name
+      address = lease.address
+      mac     = lease.mac
+      reserve = try(lease.reserve, false)
+    }
+  }
+
+  scope       = gravity_dhcp_scope.scopes["guest"].name
+  hostname    = each.value.name
+  identifier = each.value.mac
+  address     = each.value.address
+
+  reservation = each.value.reserve
+}

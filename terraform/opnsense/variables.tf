@@ -1,12 +1,12 @@
 variable "vlan_ids" {
   type = object({
-    lan   = number
     iot   = number
     guest = number
+    mgmt  = number
   })
   default = {
-    lan   = 16
-    iot   = 20
     guest = 10
+    iot   = 20
+    mgmt  = 30
   }
 }

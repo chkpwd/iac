@@ -4,12 +4,9 @@ resource "opnsense_kea_subnet" "lan" {
   auto_collect = false
   pools        = ["172.16.16.100-172.16.16.150"]
 
-  routers = ["172.16.16.1"]
-
-  dns_servers = ["172.16.16.4"]
-
-  domain_name = "chkpwd.com"
-
+  routers       = ["172.16.16.1"]
+  dns_servers   = ["172.16.16.4"]
+  domain_name   = "chkpwd.com"
   domain_search = ["chkpwd.com"]
 }
 
@@ -28,26 +25,23 @@ resource "opnsense_kea_subnet" "subnets" {
   auto_collect = false
   pools        = ["10.0.${each.value.vlan_id}.100-10.0.${each.value.vlan_id}.150"]
 
-  routers = ["10.0.${each.value.vlan_id}.1"]
-
-  dns_servers = ["172.16.16.4"]
-
-  domain_name = "chkpwd.com"
-
+  routers       = ["10.0.${each.value.vlan_id}.1"]
+  dns_servers   = ["172.16.16.4"]
+  domain_name   = "chkpwd.com"
   domain_search = ["chkpwd.com"]
 }
 
 locals {
-  # Get JSON for internal, kubernetes, and external configurations
-  main               = jsondecode(file("${path.root}/reservations.json"))
-  lan_reservations   = local.main.lan
-  iot_reservations   = local.main.iot_vlan
-  guest_reservations = local.main.guest_vlan
+  leases_json  = jsondecode(file("${path.root}/leases.json"))
+  lan_leases   = local.leases_json.lan
+  iot_leases   = local.leases_json.iot
+  guest_leases = local.leases_json.guest
+  # mgmt_leases  = local.leases_json.mgmt
 }
 
 resource "opnsense_kea_reservation" "guest" {
   for_each = {
-    for record in local.guest_reservations : record.name => {
+    for record in local.guest_leases : record.name => {
       name    = record.name
       address = record.address
       mac     = record.mac
@@ -66,7 +60,7 @@ resource "opnsense_kea_reservation" "guest" {
 
 resource "opnsense_kea_reservation" "iot" {
   for_each = {
-    for record in local.iot_reservations : record.name => {
+    for record in local.iot_leases : record.name => {
       name    = record.name
       address = record.address
       mac     = record.mac
@@ -77,27 +71,22 @@ resource "opnsense_kea_reservation" "iot" {
 
   ip_address  = each.value.address
   mac_address = each.value.mac
-
-  hostname = each.value.name
-
+  hostname    = each.value.name
   description = each.value.name
 }
 
 resource "opnsense_kea_reservation" "lan" {
   for_each = {
-    for record in local.lan_reservations : record.name => {
+    for record in local.lan_leases : record.name => {
       name    = record.name
       address = record.address
       mac     = record.mac
     }
   }
 
-  subnet_id = opnsense_kea_subnet.lan.id
-
+  subnet_id   = opnsense_kea_subnet.lan.id
   ip_address  = each.value.address
   mac_address = each.value.mac
-
-  hostname = each.value.name
-
+  hostname    = each.value.name
   description = each.value.name
 }
