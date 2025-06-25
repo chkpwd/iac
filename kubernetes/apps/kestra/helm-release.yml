@@ -85,7 +85,7 @@ spec:
             name: kestra-secrets
             key: main_private_key
       - name: BWS_CACHE_URL
-        value: "http://172.16.16.4:5000"
+        value: "http://mgmt-srv-01.chkpwd.com:5000"
       - name: BWS_ACCESS_TOKEN
         valueFrom:
           secretKeyRef:
