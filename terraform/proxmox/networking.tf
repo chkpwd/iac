@@ -1,16 +1,12 @@
 resource "proxmox_virtual_environment_time" "main" {
   node_name = var.node
-  time_zone = "America/New_York"
+  time_zone = var.timezone
 }
 
 resource "proxmox_virtual_environment_dns" "main" {
-  domain    = data.proxmox_virtual_environment_dns.main.domain
-  node_name = data.proxmox_virtual_environment_dns.main.node_name
-
-  servers = [
-    "1.1.1.1",
-    "1.0.0.1",
-  ]
+  domain    = var.domain
+  node_name = var.node
+  servers   = var.dns_servers
 }
 
 resource "proxmox_virtual_environment_network_linux_bridge" "vmbr1" {
