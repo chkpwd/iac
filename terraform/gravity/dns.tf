@@ -74,6 +74,14 @@ resource "gravity_dns_record" "private_gateway" {
   type     = "A"
 }
 
+resource "gravity_dns_record" "public_gateway" {
+  zone     = gravity_dns_zone.main.name
+  hostname = "*"
+  uid      = var.default_uid
+  data     = "172.16.16.31"
+  type     = "A"
+}
+
 resource "gravity_dns_record" "traefik" {
   zone     = gravity_dns_zone.main.name
   hostname = "traefik"
