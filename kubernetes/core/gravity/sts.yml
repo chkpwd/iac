@@ -26,6 +26,8 @@ spec:
               value: 0.0.0.0
             - name: INSTANCE_IP
               value: 172.16.16.17
+            - name: BOOTSTRAP_ROLES
+              value: "dns;api;etcd;monitoring;tsdb"
           livenessProbe:
             httpGet:
               path: /healthz/live
