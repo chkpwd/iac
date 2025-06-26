@@ -4,6 +4,8 @@ kind: StatefulSet
 metadata:
   labels:
     app.kubernetes.io/name: gravity
+  annotations:
+    reloader.stakater.com/auto: "true"
   name: gravity
 spec:
   selector:
@@ -28,6 +30,9 @@ spec:
               value: 172.16.16.17
             - name: BOOTSTRAP_ROLES
               value: "dns;api;etcd;monitoring;tsdb"
+          envFrom:
+            - secretRef:
+                name: gravity
           livenessProbe:
             httpGet:
               path: /healthz/live
@@ -42,12 +47,6 @@ spec:
             - containerPort: 53
               protocol: UDP
               name: dns-udp
-            - containerPort: 67
-              protocol: UDP
-              name: dhcp
-            - containerPort: 68
-              protocol: UDP
-              name: dhcp-alt
             - containerPort: 8008
               name: http
             - containerPort: 8009
