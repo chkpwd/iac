@@ -1,0 +1,129 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/common-3.1.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: actual
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.1.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  driftDetection:
+    mode: enabled
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    global:
+      fullnameOverride: actual
+    controllers:
+      actual:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              accessMode: ReadWriteOnce
+              size: "${VOLSYNC_CAPACITY}"
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              globalMounts:
+                - path: /data
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: &context 1999
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: "OnRootMismatch"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/actualbudget/actual-server
+              tag: 25.6.1
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "America/New_York"
+              ACTUAL_LOGIN_METHOD: "openid"
+              ACTUAL_ALLOWED_LOGIN_METHODS: '["openid"]'
+              ACTUAL_OPENID_DISCOVERY_URL: https://authentik.chkpwd.com/application/o/actual/
+              ACTUAL_OPENID_CLIENT_ID:
+                valueFrom:
+                  secretKeyRef:
+                    name: actual
+                    key: client_id
+              ACTUAL_OPENID_CLIENT_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: actual
+                    key: client_secret
+              ACTUAL_OPENID_SERVER_HOSTNAME: "{{ .Release.Name }}.chkpwd.com"
+              ACTUAL_PORT: &port 5006
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - node
+                      - src/scripts/health-check.js
+                  timeoutSeconds: 5
+              readiness: *probes
+              startup:
+                enabled: false
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                cpu: 10m
+                memory: 150Mi
+              limits:
+                memory: 350Mi
+    service:
+      app:
+        controller: actual
+        ports:
+          http:
+            port: *port
+    route:
+      public:
+        enabled: true
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: actual
+                port: *port
+        parentRefs:
+          - name: public
+            namespace: kube-system
+            sectionName: https
+    persistence:
+      tmp:
+        enabled: true
+        type: emptyDir

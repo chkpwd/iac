@@ -93,22 +93,6 @@ service_definitions:
       TWINGATE_LABEL_HOSTNAME: "`hostname`"
       TWINGATE_LABEL_DEPLOYED_BY: "docker"
     state: stopped
-  - name: gravity
-    image: "ghcr.io/beryju/gravity:325595bf7a82412fa878a32dc96853d6e3686771"
-    hostname: rpi-gravity
-    network_mode: host
-    env:
-      BOOTSTRAP_ROLES: dns;dhcp;api;etcd;backup;monitoring;tsdb
-      DATA_PATH: /data
-      LOG_LEVEL: info
-      ADMIN_PASSWORD: "{{ lookup('bws_cache', 'infra-gravity-secrets').value.admin_password }}"
-      ADMIN_TOKEN: "{{ lookup('bws_cache', 'infra-gravity-secrets').value.admin_token }}"
-    volumes:
-      - data:/data
-    log_driver: json-file
-    log_options:
-      max-size: "10m"
-      max-file: "3"
   - name: bws-cache
     image: ghcr.io/ripplefcl/bws-cache:v2.6.1
     env:

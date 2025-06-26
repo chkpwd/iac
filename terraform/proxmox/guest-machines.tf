@@ -61,8 +61,8 @@ resource "proxmox_virtual_environment_vm" "ollama" {
   }
 }
 
-resource "proxmox_virtual_environment_vm" "gravity-dns" {
-  name      = "gravity-dns"
+resource "proxmox_virtual_environment_vm" "gravity-dns-02" {
+  name      = "gravity-dns-02"
   node_name = "pve-srv-01"
   vm_id     = 300
   on_boot   = true

@@ -11,10 +11,9 @@
           - curl
           - wget
           - iputils-ping
+          - gpg
         state: present
-  roles:
-    - linux_setup
-    - role: geerlingguy.docker
+  roles: [{"linux_setup", "role": "geerlingguy.docker"}]
   tasks:
     - name: Expand file system
       when: "'mgmt-srv-01' in ansible_nodename"
@@ -22,6 +21,7 @@
       changed_when: false
     - name: Deploy Docker containers # noqa args[module]
       community.docker.docker_container: "{{ item }}"
-      loop: "{{ service_definitions }}"
+      loop: "{{ dns_service_definitions }}"
       loop_control:
         label: "{{ item.name }}"
+      tags: deploy_containers
