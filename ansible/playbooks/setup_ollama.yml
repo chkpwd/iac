@@ -1,12 +1,14 @@
 ---
-- name: Install GPU Drivers
-  import_playbook: install_nvidia_cuda_drivers.yml
-  tags:
-    - gpu
 - name: Install and Configure Ollama
   hosts: ai-inference-01
   become: true
-  roles:
-    - role: ollama
-  tags:
-    - ollama
+  roles: ["linux_setup", "ollama"]
+  pre_tasks:
+    - name: Prep apt cache
+      ansible.builtin.apt:
+        update_cache: true
+    - name: Install needed drivers
+      ansible.builtin.apt:
+        name:
+          - linux-headers-{{ ansible_kernel }}
+          - nvidia-driver
