@@ -8,16 +8,49 @@ http:
       middlewares:
         - https-redirectscheme
       service: opnsense
-      tls:
-        certResolver: cloudflare
-        domains:
-          - main: "chkpwd.com"
-          - sans: "*.chkpwd.com"
+      tls: {}
+    proxmox:
+      entryPoints:
+        - "https"
+      rule: "Host(`proxmox.chkpwd.com`) && PathPrefix(`/`)"
+      middlewares:
+        - proxmox-headers
+      service: proxmox
+      tls: {}
+    ollama:
+      entryPoints:
+        - "https"
+      rule: "Host(`ollama.chkpwd.com`)"
+      middlewares:
+        - https-redirectscheme
+      service: ollama
+      tls: {}
+    gravity-dns-02:
+      entryPoints:
+        - "https"
+      rule: "Host(`gravity-dns-02.chkpwd.com`)"
+      middlewares:
+        - https-redirectscheme
+      service: gravity-dns-02
+      tls: {}
   services:
     opnsense:
       loadBalancer:
         servers:
           - url: "http://172.16.16.1"
+    proxmox:
+      loadBalancer:
+        servers:
+          - url: "https://172.16.16.3:8006"
+        passHostHeader: true
+    ollama:
+      loadBalancer:
+        servers:
+          - url: "http://172.16.16.15:11434"
+    gravity-dns-02:
+      loadBalancer:
+        servers:
+          - url: "http://172.16.16.7:8008"
   middlewares:
     https-redirectscheme:
       redirectScheme:
@@ -34,3 +67,19 @@ http:
         customFrameOptionsValue: SAMEORIGIN
         customRequestHeaders:
           X-Forwarded-Proto: https
+    proxmox-headers:
+      headers:
+        customRequestHeaders:
+          X-Requested-With: "XMLHttpRequest"
+        accessControlAllowMethods:
+          - "GET"
+          - "POST"
+          - "PUT"
+          - "DELETE"
+          - "OPTIONS"
+        accessControlAllowHeaders:
+          - "*"
+        accessControlAllowOriginList:
+          - "*"
+        accessControlMaxAge: 100
+        accessControlAllowCredentials: true
