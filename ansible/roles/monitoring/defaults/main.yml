@@ -13,7 +13,13 @@ monitoring_service_definitions:
       - "{{ configuration_path }}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
       - "{{ configuration_path }}/prometheus/web.yml:/etc/prometheus/web.yml:ro"
       - "{{ configuration_path }}/prometheus/data:/prometheus/data"
-    ports: ['9090:9090']
+    ports: ["9090:9090"]
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.promtheus.rule: "Host(`rpi-prometheus.chkpwd.com`)"
+      traefik.http.routers.promtheus.entrypoints: "https"
+      traefik.http.routers.promtheus.tls: "true"
+      traefik.http.services.promtheus.loadbalancer.server.port: "9090"
   - name: grafana
     image: grafana/grafana:12.0.1
     user: 1000:1000
@@ -24,4 +30,10 @@ monitoring_service_definitions:
       GF_SECURITY_ADMIN_PASSWORD: "{{ lookup('bws_cache', 'common-secrets').value.common_password }}"
     volumes:
       - "{{ configuration_path }}/grafana:/var/lib/grafana"
-    ports: ['3000:3000']
+    ports: ["3000:3000"]
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.grafana.rule: "Host(`grafana.chkpwd.com`)"
+      traefik.http.routers.grafana.entrypoints: "https"
+      traefik.http.routers.grafana.tls: "true"
+      traefik.http.services.grafana.loadbalancer.server.port: "3000"
