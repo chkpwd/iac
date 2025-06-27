@@ -60,7 +60,7 @@ spec:
               pullPolicy: IfNotPresent
             env:
               ACTUAL_LOGIN_METHOD: openid
-              ACTUAL_ALLOWED_LOGIN_METHODS: ["openid"]
+              ACTUAL_ALLOWED_LOGIN_METHODS: '["openid"]'
               ACTUAL_OPENID_PROVIDER_NAME: Authentik
               ACTUAL_USER_CREATION_MODE: login
               ACTUAL_OPENID_DISCOVERY_URL: https://authentik.chkpwd.com/application/o/actual/
