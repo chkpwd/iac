@@ -13,7 +13,6 @@
     | map('split', ':')
     | map('first') }}"
   when: not item is match('.*\.\w{2,4}$')
-
 - name: Copy config files for traefik
   ansible.builtin.copy:
     src: "files/"
@@ -22,11 +21,9 @@
     group: "{{ common_user }}"
     mode: "600"
   notify: "Restart Traefik"
-
 - name: Create Docker Network
   community.docker.docker_network:
     name: "{{ traefik_docker_network }}"
-
 - name: Deploy Docker containers # noqa args[module]
   community.docker.docker_container: "{{ item }}"
   loop: "{{ traefik_container }}"
