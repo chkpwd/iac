@@ -123,21 +123,46 @@ module "authentik-app-kasten-k10" {
   ]
 }
 
-module "authentik-app-soundbored" {
+# module "authentik-app-soundbored" {
+#   source = "../_modules/authentik/oauth2_app"
+#   name   = "soundbored"
+#   group  = "main"
+#   oauth2_values = {
+#     client_id             = "soundbored"
+#     client_secret         = data.external.bws_lookup.result["soundbored_oauth_client_secret"]
+#     property_mappings     = data.authentik_property_mapping_provider_scope.sources.ids
+#     allowed_redirect_uris = []
+#   }
+#   app_values = {
+#     icon_url         = ""
+#     meta_description = "Soundbored"
+#   }
+#   access_group = [
+#     authentik_group.main.id
+#   ]
+# }
+
+module "authentik-app-actual" {
   source = "../_modules/authentik/oauth2_app"
-  name   = "soundbored"
+  name   = "actual"
   group  = "main"
   oauth2_values = {
-    client_id             = "soundbored"
-    client_secret         = data.external.bws_lookup.result["soundbored_oauth_client_secret"]
-    property_mappings     = data.authentik_property_mapping_provider_scope.sources.ids
-    allowed_redirect_uris = []
+    client_id         = data.external.bws_lookup.result["actual-budget_openid_client_id"]
+    client_secret     = data.external.bws_lookup.result["actual-budget_openid_client_secret"]
+    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
+    allowed_redirect_uris = [
+      {
+        matching_mode = "strict",
+        url           = "https://actual.chkpwd.com/openid/callback",
+      },
+    ]
   }
   app_values = {
-    icon_url         = ""
-    meta_description = "Soundbored"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/actual-budget-light.webp"
+    meta_description = "Budget Management"
   }
   access_group = [
-    authentik_group.main.id
+    authentik_group.main.id,
+    authentik_group.secondary.id
   ]
 }
