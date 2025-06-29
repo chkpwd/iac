@@ -1,10 +1,11 @@
-variable "vlans" {
+variable "interfaces" {
   type = map(string)
   default = {
-    "guest" = "10"
+    "guest" = "30"
     "iot"   = "20"
+    # "lan"   = "10"
   }
-  description = "Mapping of vlan IDs"
+  description = "Mapping of interface IDs"
 }
 
 variable "site" {

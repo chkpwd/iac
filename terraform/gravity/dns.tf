@@ -70,7 +70,7 @@ resource "gravity_dns_record" "private_gateway" {
   zone     = gravity_dns_zone.main.name
   hostname = "gateway"
   uid      = var.default_uid
-  data     = "172.16.16.30"
+  data     = "10.0.10.30"
   type     = "A"
 }
 
@@ -78,7 +78,7 @@ resource "gravity_dns_record" "public_gateway" {
   zone     = gravity_dns_zone.main.name
   hostname = "*"
   uid      = var.default_uid
-  data     = "172.16.16.31"
+  data     = "10.0.10.31"
   type     = "A"
 }
 
@@ -86,7 +86,7 @@ resource "gravity_dns_record" "traefik" {
   zone     = gravity_dns_zone.main.name
   hostname = "traefik"
   uid      = var.default_uid
-  data     = "172.16.16.4"
+  data     = "10.0.10.4"
   type     = "A"
 }
 
@@ -94,7 +94,7 @@ resource "gravity_dns_record" "unifi" {
   zone     = gravity_dns_zone.main.name
   hostname = "unifi"
   uid      = var.default_uid
-  data     = "172.16.16.33"
+  data     = "10.0.10.33"
   type     = "A"
 }
 

@@ -88,8 +88,8 @@ resource "proxmox_virtual_environment_vm" "gravity-dns-02" {
   initialization {
     ip_config {
       ipv4 {
-        address = "172.16.16.7/24"
-        gateway = "172.16.16.1"
+        address = "10.0.10.7/24"
+        gateway = "10.0.10.1"
       }
     }
 

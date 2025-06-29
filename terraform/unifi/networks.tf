@@ -11,7 +11,7 @@ resource "unifi_network" "guest" {
   name    = "Guest"
   purpose = "vlan-only"
 
-  vlan_id      = var.vlans["guest"]
+  vlan_id      = var.interfaces["guest"]
   dhcp_enabled = false
   site         = var.site
 }

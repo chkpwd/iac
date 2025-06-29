@@ -22,7 +22,7 @@ data "external" "bws_lookup" {
 provider "unifi" {
   username = "terraform"
   password = data.external.bws_lookup.result["infra-network-secrets_tf_svc_unifi_pwd"]
-  api_url  = "https://172.16.16.33:8443"
+  api_url  = "https://10.0.10.33:8443"
 
   allow_insecure = true
 

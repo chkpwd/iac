@@ -1,17 +1,17 @@
 resource "gravity_dhcp_scope" "temp" {
   name        = "lan"
   default     = true
-  subnet_cidr = "172.16.16.0/24"
+  subnet_cidr = "10.0.10.0/24"
 
   ipam = {
     type        = "internal"
-    range_start = "172.16.16.100"
-    range_end   = "172.16.16.150"
+    range_start = "10.0.10.100"
+    range_end   = "10.0.10.150"
   }
 
   option {
     tag_name = "router"
-    value    = "172.16.16.1"
+    value    = "10.0.10.1"
   }
 
   dns {

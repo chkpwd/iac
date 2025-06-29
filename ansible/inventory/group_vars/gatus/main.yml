@@ -28,46 +28,46 @@ gatus_config:
       webhook-url: "{{ lookup('bws_cache', 'infra-monitoring-secrets').value.discord_alert_webhook }}"
   endpoints:
     - name: OPNsense
-      url: icmp://172.16.16.1
+      url: icmp://10.0.10.1
       group: network
       <<: *gatus_icmp_tcp_default
     - name: Switch
       group: network
-      url: icmp://172.16.16.2
+      url: icmp://10.0.10.2
       <<: *gatus_icmp_tcp_default
     - name: Unifi AP
       group: network
-      url: icmp://172.16.16.9
+      url: icmp://10.0.10.9
       <<: *gatus_icmp_tcp_default
     - name: PVE-SRV-01
       group: hypervisors
-      url: icmp://172.16.16.3
+      url: icmp://10.0.10.3
       <<: *gatus_icmp_tcp_default
     - name: MGMT-SRV-01
       group: docker_hosts
-      url: icmp://172.16.16.4
+      url: icmp://10.0.10.4
       <<: *gatus_icmp_tcp_default
     - name: NAS
       group: infra
-      url: icmp://172.16.16.5
+      url: icmp://10.0.10.5
       <<: *gatus_icmp_tcp_default
     - name: Home Assistant
       group: infra
-      url: icmp://172.16.16.8
+      url: icmp://10.0.10.8
       <<: *gatus_icmp_tcp_default
     - name: Kubernetes Node 1
       group: kubernetes
-      url: icmp://172.16.16.10
+      url: icmp://10.0.10.10
       <<: *gatus_icmp_tcp_default
     - name: Kubernetes Node 2
       group: kubernetes
-      url: icmp://172.16.16.11
+      url: icmp://10.0.10.11
       <<: *gatus_icmp_tcp_default
     - name: Kubernetes Node 3
       group: kubernetes
-      url: icmp://172.16.16.12
+      url: icmp://10.0.10.12
       <<: *gatus_icmp_tcp_default
     - name: Kube-VIP LoadBalancer
       group: kubernetes
-      url: icmp://172.16.16.13
+      url: icmp://10.0.10.13
       <<: *gatus_icmp_tcp_default

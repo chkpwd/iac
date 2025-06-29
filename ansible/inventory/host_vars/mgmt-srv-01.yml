@@ -52,7 +52,7 @@ service_definitions:
     image: ghcr.io/athennamind/opnsense-exporter:0.0.10
     command:
       - --opnsense.protocol=http
-      - --opnsense.address=172.16.16.1
+      - --opnsense.address=10.0.10.1
       - --exporter.instance-label=mgmt_srv_01
       - --web.listen-address=:8080
       - --web.disable-exporter-metrics
@@ -89,7 +89,7 @@ service_definitions:
       TWINGATE_NETWORK: "chkpwd"
       TWINGATE_ACCESS_TOKEN: "{{ lookup('bws_cache', 'infra-twingate-secrets').value.twingate_access_token }}"
       TWINGATE_REFRESH_TOKEN: "{{ lookup('bws_cache', 'infra-twingate-secrets').value.twingate_refresh_token }}"
-      TWINGATE_DNS: "172.16.16.1"
+      TWINGATE_DNS: "10.0.10.4"
       TWINGATE_LABEL_HOSTNAME: "`hostname`"
       TWINGATE_LABEL_DEPLOYED_BY: "docker"
     state: stopped

@@ -37,20 +37,20 @@ http:
     opnsense:
       loadBalancer:
         servers:
-          - url: "http://172.16.16.1"
+          - url: "http://10.0.10.1"
     proxmox:
       loadBalancer:
         servers:
-          - url: "https://172.16.16.3:8006"
+          - url: "https://10.0.10.3:8006"
         passHostHeader: true
     ollama:
       loadBalancer:
         servers:
-          - url: "http://172.16.16.15:11434"
+          - url: "http://10.0.10.15:11434"
     gravity-dns-02:
       loadBalancer:
         servers:
-          - url: "http://172.16.16.7:8008"
+          - url: "http://10.0.10.7:8008"
   middlewares:
     https-redirectscheme:
       redirectScheme:

@@ -20,7 +20,7 @@ data "external" "bws_lookup" {
 }
 
 provider "gravity" {
-  url      = "http://172.16.16.4:8008"
+  url      = "http://mgmt-srv-01.chkpwd.com:8008"
   token    = data.external.bws_lookup.result["infra-gravity-secrets_admin_token"]
   insecure = false
 }
