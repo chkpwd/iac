@@ -19,15 +19,15 @@ spec:
               "type": "static",
               "addresses": [
                 {
-                  "address": "172.16.10.7/24",
-                  "gateway": "172.16.10.1"
+                  "address": "10.0.20.7/24",
+                  "gateway": "10.0.20.1"
                 }
               ],
               "routes": [
-                { "dst": "172.16.10.0/24" }
+                { "dst": "10.0.20.0/24" }
               ],
               "dns": {
-                "nameservers" : ["172.16.10.1"],
+                "nameservers" : ["10.0.10.4", "8.8.8.8"],
                 "domain": "chkpwd.com",
                 "search": [ "chkpwd.com" ]
               }

@@ -1,7 +1,7 @@
 ---
 # yaml-language-server: $schema=https://raw.githubusercontent.com/budimanjojo/talhelper/master/pkg/config/schemas/talconfig.json
 clusterName: cattle-k8s
-endpoint: https://172.16.16.13:6443
+endpoint: https://10.0.10.13:6443
 # renovate: depName=ghcr.io/siderolabs/installer datasource=docker
 talosVersion: v1.9.4
 # renovate: depName=ghcr.io/siderolabs/kubelet datasource=docker
@@ -13,7 +13,7 @@ cniConfig:
   name: none
 nodes:
   - hostname: ct-k8s-01.chkpwd.com
-    ipAddress: 172.16.16.10
+    ipAddress: 10.0.10.10
     controlPlane: true
     installDiskSelector:
       wwid: t10.ATA*
@@ -21,9 +21,9 @@ nodes:
       - interface: enp0s31f6
         dhcp: true
         vip:
-          ip: &vip 172.16.16.13
+          ip: &vip 10.0.10.13
   - hostname: ct-k8s-02.chkpwd.com
-    ipAddress: 172.16.16.11
+    ipAddress: 10.0.10.11
     controlPlane: true
     installDiskSelector:
       wwid: naa.500a07511f0c132d
@@ -33,7 +33,7 @@ nodes:
         vip:
           ip: *vip
   - hostname: ct-k8s-03.chkpwd.com
-    ipAddress: 172.16.16.12
+    ipAddress: 10.0.10.12
     controlPlane: true
     installDiskSelector:
       wwid: t10.ATA*
@@ -104,7 +104,7 @@ controlPlane:
             maxPods: 150
           nodeIP:
             validSubnets:
-                - 172.16.16.0/24
+                - 10.0.10.0/24
     # Enable MutatingAdmissionPolicy
     - |-
       cluster:
@@ -139,7 +139,7 @@ controlPlane:
       cluster:
         etcd:
           advertisedSubnets:
-            - 172.16.16.0/24
+            - 10.0.10.0/24
     # Configure NFS mount options
     - |
       machine:

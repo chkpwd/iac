@@ -75,8 +75,8 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: "America/New_York"
-              PLEX_ADVERTISE_URL: &plex_lb "172.16.16.35"
-              PLEX_NO_AUTH_NETWORKS: "172.16.16.0/24"
+              PLEX_ADVERTISE_URL: &plex_lb "10.0.10.35"
+              PLEX_NO_AUTH_NETWORKS: "10.0.10.0/24"
               PLEX_CLAIM:
                 valueFrom:
                   secretKeyRef:
