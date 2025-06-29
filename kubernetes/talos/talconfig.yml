@@ -5,7 +5,7 @@ endpoint: https://10.0.10.13:6443
 # renovate: depName=ghcr.io/siderolabs/installer datasource=docker
 talosVersion: v1.10.4
 # renovate: depName=ghcr.io/siderolabs/kubelet datasource=docker
-kubernetesVersion: v1.32.2
+kubernetesVersion: v1.33.2
 additionalApiServerCertSans: &sans
   - 127.0.0.1
 additionalMachineCertSans: *sans
@@ -46,16 +46,13 @@ controlPlane:
   schematic:
     customization:
       extraKernelArgs:
-        # PCI Passthrough
         - intel_iommu=on
         - iommu=pt
-        # Less security, more oomph
         - apparmor=0
         - init_on_free=0
         - init_on_alloc=0
         - mitigations=off
         - security=none
-        # Enable predictable NIC naming
         - net.ifnames=1
       systemExtensions:
         officialExtensions:
