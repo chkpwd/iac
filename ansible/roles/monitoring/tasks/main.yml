@@ -14,5 +14,8 @@
 - name: Deploy Docker containers # noqa args[module]
   community.docker.docker_container: "{{ item }}"
   loop: "{{ monitoring_service_definitions }}"
+  module_defaults:
+    community.docker.docker_container:
+      restart_policy: always
   loop_control:
     label: "{{ item.name }}"
