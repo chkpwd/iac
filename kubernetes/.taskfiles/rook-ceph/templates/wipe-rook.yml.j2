@@ -1,4 +1,3 @@
----
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -27,14 +26,27 @@ spec:
             path: {{ ENV.HOST_PATH }}
       containers:
         - name: disk-wipe
-          image: busybox
+          image: ubuntu:24.04
           securityContext:
             privileged: true
           volumeMounts:
             - name: rook-data-dir
               mountPath: /node/rook-data
-          command: ["/bin/sh", "-c"]
+          env:
+            - name: DISK
+              value: "{{ ENV.DEVICE }}"
+          command: ["/bin/bash", "-c"]
           args:
             - |
-              rm -rf /node/rook-data/* &&
-              dd if=/dev/zero bs=1M count=100 oflag=direct of={{ ENV.DEVICE }}
+              apt update && apt install -y gdisk util-linux
+              echo "Wiping {{ ENV.DEVICE }}"
+
+              sgdisk --zap-all "{{ ENV.DEVICE }}"
+
+              dd if=/dev/zero of="{{ ENV.DEVICE }}" bs=1K count=200 oflag=direct,dsync seek=0
+              dd if=/dev/zero of="{{ ENV.DEVICE }}" bs=1K count=200 oflag=direct,dsync seek=$((1 * 1024 * 1024))
+              dd if=/dev/zero of="{{ ENV.DEVICE }}" bs=1K count=200 oflag=direct,dsync seek=$((10 * 1024 * 1024))
+              dd if=/dev/zero of="{{ ENV.DEVICE }}" bs=1K count=200 oflag=direct,dsync seek=$((100 * 1024 * 1024))
+              dd if=/dev/zero of="{{ ENV.DEVICE }}" bs=1K count=200 oflag=direct,dsync seek=$((1000 * 1024 * 1024))
+
+              blkdiscard "{{ ENV.DEVICE }}" || echo "blkdiscard failed or not supported"
