@@ -32,7 +32,7 @@ spec:
               value: "dns;api;etcd;monitoring;tsdb"
           envFrom:
             - secretRef:
-                name: gravity
+                name: gravity-dns
           livenessProbe:
             httpGet:
               path: /healthz/live
