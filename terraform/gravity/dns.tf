@@ -38,20 +38,6 @@ resource "gravity_dns_zone" "main" {
   ])
 }
 
-resource "gravity_dns_zone" "temp" {
-  name          = "16.172.in-addr.arpa."
-  default_ttl   = 3600
-  authoritative = true
-  handler_configs = jsonencode([
-    {
-      type = "memory",
-    },
-    {
-      type = "etcd",
-    },
-  ])
-}
-
 resource "gravity_dns_zone" "main-rev" {
   name          = "0.10.in-addr.arpa."
   default_ttl   = 3600
