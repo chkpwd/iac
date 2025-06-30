@@ -20,7 +20,7 @@ data "external" "bws_lookup" {
 }
 
 provider "opnsense" {
-  uri        = data.external.bws_lookup.result["infra-network-secrets_opnsense_uri"]
+  uri        = "http://10.0.10.1"
   api_key    = data.external.bws_lookup.result["infra-network-secrets_opnsense_api_key"]
   api_secret = data.external.bws_lookup.result["infra-network-secrets_opnsense_api_secret"]
 }
