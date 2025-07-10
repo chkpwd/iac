@@ -82,7 +82,7 @@ service_definitions:
       traefik.http.routers.scanservjs.tls: "true"
       traefik.http.services.scanservjs.loadbalancer.server.port: "8080"
   - name: twingate
-    image: twingate/connector:1.76.0
+    image: twingate/connector:1.77.0
     sysctls:
       net.ipv4.ping_group_range: "0 2147483647"
     env:
