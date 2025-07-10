@@ -173,7 +173,7 @@ resource "helm_release" "kasten-k10" {
   repository       = "https://charts.kasten.io/"
   chart            = "k10"
   namespace        = "kasten-io"
-  version          = "8.0.3"
+  version          = "8.0.4"
   create_namespace = true
 
   values = [
