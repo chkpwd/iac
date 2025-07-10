@@ -53,7 +53,9 @@ spec:
               METRICS_ALLOWED_NETWORKS: "10.42.0.0/16"
               POLLING_SCHEDULER: entry_frequency
               POLLING_FREQUENCY: "15"
-              FETCH_YOUTUBE_WATCH_TIME: 1
+              FETCH_YOUTUBE_WATCH_TIME: "1"
+              OAUTH2_OIDC_PROVIDER_NAME: Authentik
+              DISABLE_LOCAL_AUTH: "true"
               OAUTH2_PROVIDER: oidc
               OAUTH2_REDIRECT_URL: https://{{ .Release.Name }}.chkpwd.com/oauth2/oidc/callback
               OAUTH2_OIDC_DISCOVERY_ENDPOINT: https://authentik.chkpwd.com/application/o/miniflux/
