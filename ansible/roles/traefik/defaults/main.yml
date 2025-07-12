@@ -2,7 +2,7 @@
 traefik_docker_network: proxy
 traefik_container:
   - name: traefik
-    image: traefik:v3.4.3
+    image: traefik:v3.4.4
     restart_policy: always
     env:
       CF_DNS_API_TOKEN: "{{ lookup('bws_cache', 'cloudflare-dns-secrets').value.traefik_api_token }}"
