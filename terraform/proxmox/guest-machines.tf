@@ -1,7 +1,12 @@
+resource "macaddress" "main" {
+  for_each = var.nodes_cfg
+  prefix   = [188, 36, 17]
+}
+
 resource "proxmox_virtual_environment_vm" "ollama" {
-  name      = "ai-inference-01"
+  name      = var.nodes_cfg["ai-inference-01"].name
   node_name = "pve-srv-01"
-  vm_id     = 505
+  vm_id     = var.nodes_cfg["ai-inference-01"].vm_id
   on_boot   = true
 
   tags            = ["ai", "server", "terraform"]
@@ -14,13 +19,13 @@ resource "proxmox_virtual_environment_vm" "ollama" {
   operating_system { type = "l26" } # Linux 2.6
 
   cpu {
-    cores = 4
+    cores = var.nodes_cfg["ai-inference-01"].cpus
     type  = "x86-64-v2-AES"
   }
 
   memory {
-    dedicated = 4096
-    floating  = 4096 # ballooning
+    dedicated = var.nodes_cfg["ai-inference-01"].memory
+    floating  = var.nodes_cfg["ai-inference-01"].memory # ballooning
   }
 
   initialization {
@@ -62,9 +67,9 @@ resource "proxmox_virtual_environment_vm" "ollama" {
 }
 
 resource "proxmox_virtual_environment_vm" "gravity-dns-02" {
-  name      = "gravity-dns-02"
+  name      = var.nodes_cfg["gravity-dns-02"].name
   node_name = "pve-srv-01"
-  vm_id     = 300
+  vm_id     = var.nodes_cfg["gravity-dns-02"].vm_id
   on_boot   = true
 
   tags            = ["dns", "server", "terraform"]
@@ -76,13 +81,13 @@ resource "proxmox_virtual_environment_vm" "gravity-dns-02" {
 
   operating_system { type = "l26" } # Linux 2.6
   cpu {
-    cores = 1
+    cores = var.nodes_cfg["gravity-dns-02"].cpus
     type  = "x86-64-v2-AES"
   }
 
   memory {
-    dedicated = 1024
-    floating  = 1024 # ballooning
+    dedicated = var.nodes_cfg["gravity-dns-02"].memory
+    floating  = var.nodes_cfg["gravity-dns-02"].memory
   }
 
   initialization {
@@ -98,6 +103,64 @@ resource "proxmox_virtual_environment_vm" "gravity-dns-02" {
   }
 
   network_device { bridge = "vmbr0" }
+
+  disk {
+    datastore_id = "prod-nvme"
+    file_id      = proxmox_virtual_environment_download_file.debian_trixie_qcow2_generic.id
+    interface    = "virtio0"
+    iothread     = true
+    discard      = "on"
+    size         = 10
+  }
+
+  lifecycle {
+    ignore_changes = [
+      initialization[0].user_data_file_id,
+      initialization[0].meta_data_file_id
+    ]
+  }
+}
+
+resource "proxmox_virtual_environment_vm" "veeam-backup-01" {
+  name      = var.nodes_cfg["veeam-backup-01"].name
+  node_name = "pve-srv-01"
+  vm_id     = var.nodes_cfg["veeam-backup-01"].vm_id
+  on_boot   = true
+
+  tags            = ["veeam", "server", "terraform", "backup"]
+  machine         = "q35"
+  stop_on_destroy = false # use ACPI
+
+  serial_device {}
+  agent { enabled = true }
+
+  operating_system { type = "l26" } # Linux 2.6
+  cpu {
+    cores = var.nodes_cfg["veeam-backup-01"].cpus
+    type  = "x86-64-v2-AES"
+  }
+
+  memory {
+    dedicated = var.nodes_cfg["veeam-backup-01"].memory
+    floating  = var.nodes_cfg["veeam-backup-01"].memory # ballooning
+  }
+
+  initialization {
+    ip_config {
+      ipv4 {
+        address = "10.0.10.20/24"
+        gateway = "10.0.10.1"
+      }
+    }
+
+    user_data_file_id = proxmox_virtual_environment_file.common_cloud_init.id
+    meta_data_file_id = proxmox_virtual_environment_file.veeam_backup_meta_data.id
+  }
+
+  network_device {
+    bridge      = "vmbr0"
+    mac_address = macaddress.main["veeam-backup-01"].id
+  }
 
   disk {
     datastore_id = "prod-nvme"

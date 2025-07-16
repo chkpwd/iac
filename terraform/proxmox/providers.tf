@@ -9,6 +9,10 @@ terraform {
       source  = "hashicorp/external"
       version = "~> 2"
     }
+    macaddress = {
+      source  = "ivoronin/macaddress"
+      version = "~> 0.3"
+    }
   }
 }
 
