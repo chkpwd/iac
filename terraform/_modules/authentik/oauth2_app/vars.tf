@@ -32,7 +32,7 @@ variable "app_values" {
 }
 
 variable "access_group" {
-  type = list(string)
+  type = map(string)
 }
 
 # variable "jwks_sources" {

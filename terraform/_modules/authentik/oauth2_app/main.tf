@@ -25,8 +25,9 @@ resource "authentik_application" "app" {
 }
 
 resource "authentik_policy_binding" "app-access" {
-  for_each = toset(var.access_group)
+  for_each = var.access_group # requires known keys during plan
   target   = authentik_application.app.uuid
-  group    = each.key
-  order    = index(var.access_group, each.key) + 100
+  group    = each.value
+  order    = index(keys(var.access_group), each.key) + 100
+
 }

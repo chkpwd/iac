@@ -17,34 +17,36 @@ module "authentik-app-miniflux" {
     icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/miniflux.webp"
     meta_description = "RSS Feed Reader"
   }
-  access_group = [
-    authentik_group.main.id
-  ]
+
+  access_group = {
+    main = authentik_group.main.id
+  }
 }
 
-module "authentik-app-semaphore-ui" {
-  source = "../_modules/authentik/oauth2_app"
-  name   = "Semaphore UI"
-  group  = "main"
-  oauth2_values = {
-    client_id         = "semaphore"
-    client_secret     = data.external.bws_lookup.result["infra-semaphore-secrets_oauth_client_secret"]
-    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
-    allowed_redirect_uris = [
-      {
-        matching_mode = "strict",
-        url           = "https://semaphore.chkpwd.com/api/auth/oidc/authentik/redirect",
-      }
-    ]
-  }
-  app_values = {
-    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/semaphore-ui.webp"
-    meta_description = "Task Runner"
-  }
-  access_group = [
-    authentik_group.main.id
-  ]
-}
+# module "authentik-app-semaphore-ui" {
+#   source = "../_modules/authentik/oauth2_app"
+#   name   = "Semaphore UI"
+#   group  = "main"
+#   oauth2_values = {
+#     client_id         = "semaphore"
+#     client_secret     = data.external.bws_lookup.result["infra-semaphore-secrets_oauth_client_secret"]
+#     property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
+#     allowed_redirect_uris = [
+#       {
+#         matching_mode = "strict",
+#         url           = "https://semaphore.chkpwd.com/api/auth/oidc/authentik/redirect",
+#       }
+#     ]
+#   }
+#   app_values = {
+#     icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/semaphore-ui.webp"
+#     meta_description = "Task Runner"
+#   }
+
+#   access_group = {
+#     main     = authentik_group.main.id
+#   }
+# }
 
 module "authentik-app-immich" {
   source = "../_modules/authentik/oauth2_app"
@@ -73,10 +75,11 @@ module "authentik-app-immich" {
     icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/immich.webp"
     meta_description = "Photo Management"
   }
-  access_group = [
-    authentik_group.main.id,
-    authentik_group.secondary.id
-  ]
+
+  access_group = {
+    main      = authentik_group.main.id,
+    secondary = authentik_group.secondary.id
+  }
 }
 
 module "authentik-app-karakeep" {
@@ -98,30 +101,32 @@ module "authentik-app-karakeep" {
     icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/karakeep-light.webp"
     meta_description = "Bookmark Everything"
   }
-  access_group = [
-    authentik_group.main.id,
-    authentik_group.secondary.id
-  ]
+
+  access_group = {
+    main      = authentik_group.main.id,
+    secondary = authentik_group.secondary.id
+  }
 }
 
-module "authentik-app-kasten-k10" {
-  source = "../_modules/authentik/oauth2_app"
-  name   = "kasten-k10"
-  group  = "main"
-  oauth2_values = {
-    client_id             = "kasten-k10"
-    client_secret         = data.external.bws_lookup.result["kasten-k10_oauth_client_secret"]
-    property_mappings     = data.authentik_property_mapping_provider_scope.sources.ids
-    allowed_redirect_uris = []
-  }
-  app_values = {
-    icon_url         = ""
-    meta_description = "Kasten K10"
-  }
-  access_group = [
-    authentik_group.main.id
-  ]
-}
+# module "authentik-app-kasten-k10" {
+#   source = "../_modules/authentik/oauth2_app"
+#   name   = "kasten-k10"
+#   group  = "main"
+#   oauth2_values = {
+#     client_id             = "kasten-k10"
+#     client_secret         = data.external.bws_lookup.result["kasten-k10_oauth_client_secret"]
+#     property_mappings     = data.authentik_property_mapping_provider_scope.sources.ids
+#     allowed_redirect_uris = []
+#   }
+#   app_values = {
+#     icon_url         = ""
+#     meta_description = "Kasten K10"
+#   }
+
+#   access_group = {
+#     main     = authentik_group.main.id
+#   }
+# }
 
 # module "authentik-app-soundbored" {
 #   source = "../_modules/authentik/oauth2_app"
@@ -161,8 +166,9 @@ module "authentik-app-actual" {
     icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/actual-budget-light.webp"
     meta_description = "Budget Management"
   }
-  access_group = [
-    authentik_group.main.id,
-    authentik_group.secondary.id
-  ]
+  access_group = {
+    main      = authentik_group.main.id,
+    secondary = authentik_group.secondary.id
+  }
+
 }

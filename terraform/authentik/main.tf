@@ -1,7 +1,7 @@
-resource "authentik_service_connection_kubernetes" "main" {
-  name  = "Local Kubernetes Cluster"
-  local = true
-}
+# resource "authentik_service_connection_kubernetes" "main" {
+#   name  = "Local Kubernetes Cluster"
+#   local = true
+# }
 
 # resource "authentik_outpost" "main" {
 #   name = "authentik Main Outpost"
