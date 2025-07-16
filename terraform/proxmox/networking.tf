@@ -9,12 +9,12 @@ resource "proxmox_virtual_environment_dns" "main" {
   servers   = var.dns_servers
 }
 
-resource "proxmox_virtual_environment_network_linux_bridge" "vmbr1" {
-  node_name  = var.node
-  name       = "vmbr1"
-  vlan_aware = true
+# resource "proxmox_virtual_environment_network_linux_bridge" "vmbr1" {
+#   node_name  = var.node
+#   name       = "vmbr1"
+#   vlan_aware = true
 
-  ports = [
-    "enp6s0"
-  ]
-}
+#   ports = [
+#     "enp6s0"
+#   ]
+# }
