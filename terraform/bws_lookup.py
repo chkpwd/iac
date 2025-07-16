@@ -35,7 +35,7 @@ s.mount('http://', HTTPAdapter(max_retries=retries))
 
 for key in key_name:
     bws_response = s.get(
-        f"http://mgmt-srv-01.chkpwd.com:5000/key/{key}",
+        f"http://10.0.10.4:5000/key/{key}",
         headers={"Authorization": f"Bearer {access_token}"},
         timeout=30,
     ).json()
