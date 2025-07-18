@@ -7,7 +7,7 @@ terraform {
     }
     tfe = {
       source  = "hashicorp/tfe"
-      version = "~> 0.67.0"
+      version = "~> 0.68.0"
     }
     external = {
       source  = "hashicorp/external"
