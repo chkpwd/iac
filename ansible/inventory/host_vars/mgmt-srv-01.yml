@@ -66,7 +66,7 @@ service_definitions:
     ports:
       - 8087:8080
     env:
-      DEVICES: "airscan:e0:Epson ET-2850;escl:https://epson-printer.{{ domain }}:443"
+      DEVICES: "airscan:e0:Epson ET-2850;escl:https://10.0.30.8:443"
       PAPERLESS_URL: "https://paperless-ngx.{{ domain }}"
       PAPERLESS_API_TOKEN: "{{ lookup('bws_cache', 'ns-tools-paperless-ngx').value.token }}"
       PAPERLESS_DELETE_AFTER_UPLOAD: "true"
@@ -94,8 +94,8 @@ service_definitions:
       TWINGATE_LABEL_DEPLOYED_BY: "docker"
     state: stopped
   - name: bws-cache
-    image: ghcr.io/ripplefcl/bws-cache:v3.0.1
+    image: ghcr.io/ripplefcl/bws-cache:pr-116
     env:
       PARSE_SECRET_VALUES: "true"
-      LOG_LEVEL: "warning"
+      LOG_LEVEL: "debug"
     ports: ["5000:5000"]
