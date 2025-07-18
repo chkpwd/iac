@@ -17,17 +17,13 @@ resource "gravity_dns_zone" "root" {
         "s.youtube.com",
       ]
     },
-    {
-      to   = ["8.8.8.8:53"]
-      type = "forward_ip"
-    },
   ])
 }
 
-resource "gravity_dns_zone" "main" {
+resource "gravity_dns_zone" "chkpwd" { # chkpwd.com
   name          = var.zone
   default_ttl   = 3600
-  authoritative = true
+  authoritative = false
   handler_configs = jsonencode([
     {
       type = "memory",
@@ -35,10 +31,14 @@ resource "gravity_dns_zone" "main" {
     {
       type = "etcd",
     },
+    {
+      to   = ["8.8.8.8:53"]
+      type = "forward_ip"
+    },
   ])
 }
 
-resource "gravity_dns_zone" "main-rev" {
+resource "gravity_dns_zone" "chkpwd-rev" {
   name          = "0.10.in-addr.arpa."
   default_ttl   = 3600
   authoritative = true
@@ -53,23 +53,15 @@ resource "gravity_dns_zone" "main-rev" {
 }
 
 resource "gravity_dns_record" "private_gateway" {
-  zone     = gravity_dns_zone.main.name
+  zone     = gravity_dns_zone.chkpwd.name
   hostname = "gateway"
   uid      = var.default_uid
   data     = "10.0.10.30"
   type     = "A"
 }
 
-resource "gravity_dns_record" "public_gateway" {
-  zone     = gravity_dns_zone.main.name
-  hostname = "*"
-  uid      = var.default_uid
-  data     = "10.0.10.31"
-  type     = "A"
-}
-
 resource "gravity_dns_record" "traefik" {
-  zone     = gravity_dns_zone.main.name
+  zone     = gravity_dns_zone.chkpwd.name
   hostname = "traefik"
   uid      = var.default_uid
   data     = "10.0.10.4"
@@ -77,7 +69,7 @@ resource "gravity_dns_record" "traefik" {
 }
 
 resource "gravity_dns_record" "unifi" {
-  zone     = gravity_dns_zone.main.name
+  zone     = gravity_dns_zone.chkpwd.name
   hostname = "unifi"
   uid      = var.default_uid
   data     = "10.0.10.33"
@@ -85,8 +77,9 @@ resource "gravity_dns_record" "unifi" {
 }
 
 locals {
-  records_json = jsondecode(file("${path.root}/records.json"))
-  lan_records  = local.records_json.lan
+  records_json  = jsondecode(file("${path.root}/records.json"))
+  lan_records   = local.records_json.lan
+  guest_records = local.records_json.guest
 }
 
 resource "gravity_dns_record" "lan" {
@@ -98,7 +91,23 @@ resource "gravity_dns_record" "lan" {
     }
   }
 
-  zone     = gravity_dns_zone.main.name
+  zone     = gravity_dns_zone.chkpwd.name
+  hostname = each.value.hostname
+  uid      = var.default_uid
+  data     = each.value.data
+  type     = each.value.type
+}
+
+resource "gravity_dns_record" "guest" {
+  for_each = {
+    for record in local.guest_records : record.hostname => {
+      hostname = record.hostname
+      data     = record.data
+      type     = record.type
+    }
+  }
+
+  zone     = gravity_dns_zone.chkpwd.name
   hostname = each.value.hostname
   uid      = var.default_uid
   data     = each.value.data
