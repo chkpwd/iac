@@ -94,8 +94,10 @@ service_definitions:
       TWINGATE_LABEL_DEPLOYED_BY: "docker"
     state: stopped
   - name: bws-cache
-    image: ghcr.io/ripplefcl/bws-cache:pr-116
+    image: ghcr.io/ripplefcl/bws-cache:v3.1.0
     env:
       PARSE_SECRET_VALUES: "true"
-      LOG_LEVEL: "debug"
+      LOG_LEVEL: "warning"
+      ENABLE_TELEMETRY: "true"
+      SENTRY_ENVIRONMENT: "chkpwd"
     ports: ["5000:5000"]
