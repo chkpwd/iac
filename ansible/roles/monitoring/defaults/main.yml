@@ -21,7 +21,7 @@ monitoring_service_definitions:
       traefik.http.routers.promtheus.tls: "true"
       traefik.http.services.promtheus.loadbalancer.server.port: "9090"
   - name: grafana
-    image: grafana/grafana:12.0.2
+    image: grafana/grafana:12.1.0
     user: 1000:1000
     env:
       GF_DAGF_FEATURE_TOGGLES_ENABLE: publicDashboards
