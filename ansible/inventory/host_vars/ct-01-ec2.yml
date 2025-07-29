@@ -11,7 +11,7 @@ common_env: &common_env
   PGID: "1000"
 service_definitions:
   - name: wireguard
-    image: lscr.io/linuxserver/wireguard:1.0.20210914
+    image: lscr.io/linuxserver/wireguard:1.0.20250521
     capabilities:
       - net_admin # Allows modifications of net utils
       # - sys_module # No longer needed if host loads the modules already
