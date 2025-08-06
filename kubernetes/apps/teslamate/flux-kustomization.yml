@@ -13,6 +13,12 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../core/crunchydata-pgo/components/
+  patches:
+    - patch: |-
+        - op: remove
+          path: /spec/dataSource
+      target:
+        kind: PostgresCluster
   postBuild:
     substitute:
       APP: *app
