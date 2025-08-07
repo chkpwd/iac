@@ -28,8 +28,14 @@ spec:
         kind: PostgresCluster
     - patch: |
         - op: replace
+          path: /spec/image
+          value: registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi9-17.5-2520
+      target:
+        kind: PostgresCluster
+    - patch: |
+        - op: replace
           path: /spec/postgresVersion
-          value: "17"
+          value: 17
       target:
         kind: PostgresCluster
   postBuild:
