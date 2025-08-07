@@ -51,6 +51,16 @@ spec:
               PORT: &port 80
               TZ: America/New_York
               VIRTUAL_HOST: "{{ .Release.Name }}.chkpwd.com"
+              MQTT_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: teslamate
+                    key: mqtt_password
+              MQTT_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: teslamate
+                    key: mqtt_username
               ENCRYPTION_KEY:
                 valueFrom:
                   secretKeyRef:
