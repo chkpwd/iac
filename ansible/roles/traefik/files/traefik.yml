@@ -3,15 +3,25 @@ api:
   dashboard: false
   debug: true
 entryPoints:
-  http:
+  # internal
+  http-int:
     address: ":80"
     http:
       redirections:
         entryPoint:
           to: https
           scheme: https
-  https:
+  https-int:
     address: ":443"
+  # external
+  http-ext:
+    address: ":8080"
+    http:
+      redirections:
+        entryPoint:
+          to: https
+  https-ext:
+    address: ":8443"
 serversTransport:
   insecureSkipVerify: true
 providers:

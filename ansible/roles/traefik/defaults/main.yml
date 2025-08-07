@@ -5,6 +5,7 @@ traefik_container:
     image: traefik:v3.5.0
     restart_policy: always
     env:
+      CF_API_EMAIL: "unix.chkpwd@gmail.com"
       CF_DNS_API_TOKEN: "{{ lookup('bws_cache', 'cloudflare-dns-secrets').value.traefik_api_token }}"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
