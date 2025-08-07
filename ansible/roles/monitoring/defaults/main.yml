@@ -17,9 +17,12 @@ monitoring_service_definitions:
     labels:
       traefik.enable: "true"
       traefik.http.routers.promtheus.rule: "Host(`rpi-prometheus.chkpwd.com`)"
-      traefik.http.routers.promtheus.entrypoints: "https"
-      traefik.http.routers.promtheus.tls: "true"
+      traefik.http.routers.promtheus.entrypoints: "https-int"
       traefik.http.services.promtheus.loadbalancer.server.port: "9090"
+      traefik.http.routers.promtheus.tls: "true"
+      traefik.http.routers.prometheus.tls.certresolver: cloudflare
+      traefik.http.routers.prometheus.tls.domains[0].main: chkpwd.com
+      traefik.http.routers.prometheus.tls.domains[0].sans: "*.chkpwd.com"
   - name: grafana
     image: grafana/grafana:12.1.0
     user: 1000:1000
@@ -34,6 +37,9 @@ monitoring_service_definitions:
     labels:
       traefik.enable: "true"
       traefik.http.routers.grafana.rule: "Host(`grafana.chkpwd.com`)"
-      traefik.http.routers.grafana.entrypoints: "https"
-      traefik.http.routers.grafana.tls: "true"
+      traefik.http.routers.grafana.entrypoints: "https-int"
       traefik.http.services.grafana.loadbalancer.server.port: "3000"
+      traefik.http.routers.grafana.tls: "true"
+      traefik.http.routers.grafana.tls.certresolver: cloudflare
+      traefik.http.routers.grafana.tls.domains[0].main: chkpwd.com
+      traefik.http.routers.grafana.tls.domains[0].sans: "*.chkpwd.com"

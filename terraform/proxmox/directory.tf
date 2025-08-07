@@ -29,22 +29,22 @@
 #   ]
 # }
 
-resource "proxmox_virtual_environment_user" "packer" {
-  comment         = "Managed by Terraform"
-  email           = "packer@pve"
-  enabled         = true
-  expiration_date = "2034-01-01T22:00:00Z"
-  user_id         = "packer@pve"
-  # acl {
-  #   role_id = proxmox_virtual_environment_role.packer.id
-  #   path    = "/"
-  # }
-}
+# resource "proxmox_virtual_environment_user" "packer" {
+#   comment         = "Managed by Terraform"
+#   email           = "packer@pve"
+#   enabled         = true
+#   expiration_date = "2034-01-01T22:00:00Z"
+#   user_id         = "packer@pve"
+# acl {
+#   role_id = proxmox_virtual_environment_role.packer.id
+#   path    = "/"
+# }
+# }
 
-resource "proxmox_virtual_environment_user_token" "packer" {
-  comment               = "Managed by Terraform"
-  expiration_date       = "2033-01-01T22:00:00Z"
-  token_name            = "tk1"
-  privileges_separation = false
-  user_id               = proxmox_virtual_environment_user.packer.user_id
-}
+# resource "proxmox_virtual_environment_user_token" "packer" {
+#   comment               = "Managed by Terraform"
+#   expiration_date       = "2033-01-01T22:00:00Z"
+#   token_name            = "tk1"
+#   privileges_separation = false
+#   user_id               = proxmox_virtual_environment_user.packer.user_id
+# }

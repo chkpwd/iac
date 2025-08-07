@@ -12,6 +12,8 @@ traefik_container:
       - "{{ configuration_path }}/traefik/acme.json:/acme.json:rw"
       - "{{ configuration_path }}/traefik/traefik.yml:/traefik.yml:ro"
       - "{{ configuration_path }}/traefik/config.yml:/config.yml:ro"
+    etc_hosts:
+      host.docker.internal: 172.17.0.1
     networks:
       - name: "{{ traefik_docker_network }}"
     ports:

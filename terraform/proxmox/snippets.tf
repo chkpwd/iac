@@ -22,35 +22,35 @@ resource "proxmox_virtual_environment_file" "common_cloud_init" {
   }
 }
 
-resource "proxmox_virtual_environment_file" "common_network" {
-  content_type = "snippets"
-  datastore_id = "nas"
-  node_name    = var.node
+# resource "proxmox_virtual_environment_file" "common_network" {
+#   content_type = "snippets"
+#   datastore_id = "local"
+#   node_name    = var.node
 
-  source_raw {
-    data = <<-EOF
-    #cloud-config
-    network:
-      version: 2
-      renderer: networkd
-      ethernets:
-        enp1s0:
-          mtu: 1500
-          addresses:
-            - 10.0.10.2/24
-          dhcp4: true
-          dhcp4-overrides:
-            use-dns: true
-            use-ntp: true
-            send-hostname: true
-            use-routes: false
-            use-domains: true
-          accept-ra: false
-    EOF
+#   source_raw {
+#     data = <<-EOF
+#     #cloud-config
+#     network:
+#       version: 2
+#       renderer: networkd
+#       ethernets:
+#         enp1s0:
+#           mtu: 1500
+#           addresses:
+#             - 10.0.10.2/24
+#           dhcp4: true
+#           dhcp4-overrides:
+#             use-dns: true
+#             use-ntp: true
+#             send-hostname: true
+#             use-routes: false
+#             use-domains: true
+#           accept-ra: false
+#     EOF
 
-    file_name = "network.yaml"
-  }
-}
+#     file_name = "network.yaml"
+#   }
+# }
 
 resource "proxmox_virtual_environment_file" "ollama_meta_data" {
   content_type = "snippets"

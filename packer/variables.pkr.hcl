@@ -1,125 +1,153 @@
-variable "vcenter_datacenter" {
-  description = "vCenter datacenter to build the VM in"
-  type        = string
-  default     = "The Outlands"
-}
-variable "vcenter_server" {
-  description = "vCenter server to build the VM on"
-  default     = "vcenter.local.chkpwd.com"
-}
-variable "vcenter_username" {
-  description = "Username to authenticate to vCenter"
-  default     = "administrator@vsphere.local.chkpwd.com"
-}
-variable "vcenter_password" {
-  description = "Password to authenticate to vCenter"
-  type        = string
-}
-variable "vcenter_cluster" {
-  default = "Eduardo"
+variable "machine_name" {
   type    = string
+  default = ""
 }
-variable "vcenter_host" {
-  default = "octane.local.chkpwd.com"
+
+variable "os_version" {
   type    = string
+  default = ""
 }
-variable "vcenter_datastore" {
-  default = "main-nvme"
+
+variable "os_family" {
   type    = string
+  default = ""
 }
-variable "vcenter_folder" {
-  description = "The vcenter folder to store the template"
-  default     = "cattle/templates"
-}
-variable "connection_username" {
-  default = "administrator"
+
+variable "os_iso_path" {
   type    = string
+  default = ""
 }
-variable "connection_password" {
-  default = "Unattendvm1"
-  type    = string
-}
-variable "vm_hardware_version" {
-  default = "15"
-  type    = string
-}
+
 variable "iso_checksum" {
   type    = string
-}
-variable "os_version" {
   default = ""
-  type    = string
 }
-variable "os_iso_path" {
-  default = ""
-  type    = string
-}
-variable "guest_os_type" {
-  type    = string
-}
-variable "vhd_controller_type" {
-  type    = list(string)
-}
-variable "root_disk_size" {
-  default = 48000
-  type    = number
-}
-variable "nic_type" {
-  default = "vmxnet3"
-}
-variable "network_name" {
-  default = "LAN"
-}
-variable "num_cores" {
-  default = 8
-}
-variable "mem_size" {
-  default = 1024 * 8
-  type    = number
-}
-variable "os_family" {
-  description = "OS Family builds the paths needed for packer"
-  default     = ""
-  type        = string
-}
-variable "os_iso_url" {
-  description = "The download url for the ISO"
-  default = ""
-  type    = string
-}
+
 variable "boot_command" {
-  description = "Series of commands to execute during boot"
-  default = []
   type    = list(string)
-}
-variable "iso_checksum_type" {
-  default = ""
-  type = string
-}
-variable "hostname" {
-  default = ""
-  type = string
-}
-variable "domain" {
-  default = ""
-  type    = string
-}
-variable "machine_name" {
-  default = ""
-  type    = string
-}
-variable "preseed" {
-  description = "The preseed file to use"
-  default     = ""
-  type        = string
+  default = []
 }
 
-variable "listen_address" {
-  default = ""
+variable "ballooning_minimum" {
   type    = string
+  default = "0"
 }
 
-variable "cdrom_controller_type" {
-  default = "ide"
+variable "bios" {
   type    = string
+  default = "ovmf"
+}
+
+variable "cd_files" {
+  type = list(string)
+  default = []
+}
+
+variable "cores" {
+  type    = string
+  default = "2"
+}
+
+variable "disable_kvm" {
+  type    = bool
+  default = false
+}
+
+variable "insecure_skip_tls_verify" {
+  type    = bool
+  default = true
+}
+
+variable "machine" {
+  type    = string
+  default = "q35"
+}
+
+variable "memory" {
+  type    = string
+  default = "4096"
+}
+
+variable "network_adapters" {
+  type = object({
+    bridge      = string
+    model       = string
+    firewall    = bool
+    mac_address = string
+    vlan_tag    = string
+  })
+  default = {
+    bridge      = "vmbr0"
+    model       = "virtio"
+    firewall    = false
+    mac_address = ""
+    vlan_tag    = ""
+  }
+}
+
+variable "proxmox_node" {
+  type    = string
+  default = "pve-srv-01"
+}
+
+variable "qemu_agent" {
+  type    = bool
+  default = true
+}
+
+variable "sockets" {
+  type    = string
+  default = "1"
+}
+
+variable "sysprep_unattended" {
+  type    = string
+  default = ""
+}
+
+variable "task_timeout" {
+  type    = string
+  default = "15m"
+}
+
+variable "winrm_username" {
+  type = string
+  default = "root"
+}
+
+variable "winrm_password" {
+  type = string
+  sensitive = true
+  default = "password"
+}
+
+variable "winrm_port" {
+  type = number
+  default = 22
+}
+
+variable "vga" {
+    type = object({
+      type = string
+      memory = string
+    })
+    default = {
+      type = "std"
+      memory = "256"
+    }
+  }
+
+variable "virtio_iso_file" {
+  type    = string
+  default = "proxmox-iso:iso/virtio-win-0.1.248.iso"
+}
+
+variable "use_efi" {
+  type    = bool
+  default = false
+}
+
+variable "tags" {
+  type = string
+  default = "packer;uefi;template"
 }
