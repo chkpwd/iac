@@ -1,0 +1,224 @@
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: external-grafana
+  labels:
+    dashboards: "external-grafana"
+spec:
+  external:
+    url: https://grafana.chkpwd.com
+    adminPassword:
+      name: grafana-operator
+      key: GF_SECURITY_ADMIN_PASSWORD
+    adminUser:
+      name: grafana-operator
+      key: GF_SECURITY_ADMIN_USER
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: prometheus
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  datasource:
+    name: talos-k8s-prometheus
+    type: prometheus
+    access: proxy
+    database: prometheus
+    url: "https://k8s-prometheus.chkpwd.com"
+    jsonData:
+      timeInterval: 5s
+      prometheusType: Prometheus
+      cacheLevel: Low
+      manageAlerts: true
+      httpMethod: POST
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaFolder
+metadata:
+  name: kubernetes
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  title: "Kubernetes"
+---
+# renovate: dashboardName="Spegel"
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: spegel
+spec:
+  folder: "Kubernetes"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  grafanaCom:
+    id: 18089
+    revision: 1
+  datasources:
+    - inputName: DS_PROMETHEUS
+      datasourceName: talos-k8s-prometheus
+---
+# renovate: dashboardName="VolSync Dashboard"
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: volsync
+spec:
+  folder: "Kubernetes"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  grafanaCom:
+    id: 21356
+    revision: 2
+  datasources:
+    - inputName: DS_PROMETHEUS
+      datasourceName: talos-k8s-prometheus
+    - inputName: VAR_REPLICATIONDESTNAME
+      datasourceName: ".*"
+---
+# renovate: dashboardName="Ceph Cluster"
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: ceph-cluster
+spec:
+  folder: "Kubernetes"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  grafanaCom:
+    id: 2842
+    revision: 18
+  datasources:
+    - inputName: DS_PROMETHEUS
+      datasourceName: talos-k8s-prometheus
+---
+# renovate: dashboardName="Ceph - OSD (Single)"
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: ceph-osd
+spec:
+  folder: "Kubernetes"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  grafanaCom:
+    id: 5336
+    revision: 9
+  datasources:
+    - inputName: DS_PROMETHEUS
+      datasourceName: talos-k8s-prometheus
+---
+# renovate: dashboardName="Ceph - Pools"
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: ceph-pools
+spec:
+  folder: "Kubernetes"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  grafanaCom:
+    id: 5342
+    revision: 9
+  datasources:
+    - inputName: DS_PROMETHEUS
+      datasourceName: talos-k8s-prometheus
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: flux-cluster
+spec:
+  folder: "Kubernetes"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: https://raw.githubusercontent.com/fluxcd/flux2-monitoring-example/main/monitoring/configs/dashboards/cluster.json
+  datasources:
+    - inputName: DS_PROMETHEUS
+      datasourceName: talos-k8s-prometheus
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: flux-control-plane
+spec:
+  folder: "Kubernetes"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: https://raw.githubusercontent.com/fluxcd/flux2-monitoring-example/main/monitoring/configs/dashboards/control-plane.json
+  datasources:
+    - inputName: DS_PROMETHEUS
+      datasourceName: talos-k8s-prometheus
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: flux-logs
+spec:
+  folder: "Kubernetes"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: https://raw.githubusercontent.com/fluxcd/flux2-monitoring-example/main/monitoring/configs/dashboards/logs.json
+  datasources:
+    - inputName: DS_PROMETHEUS
+      datasourceName: talos-k8s-prometheus
+---
+# renovate: depName="Cert-manager-Kubernetes"
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: cert-manager
+spec:
+  folder: "Kubernetes"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  grafanaCom:
+    id: 20842
+    revision: 3
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: talos-k8s-prometheus
+---
+# renovate: depName="External-dns"
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: external-dns
+spec:
+  folder: "Kubernetes"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  grafanaCom:
+    id: 15038
+    revision: 3
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: talos-k8s-prometheus
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: external-secrets
+spec:
+  folder: "Kubernetes"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: https://raw.githubusercontent.com/external-secrets/external-secrets/main/docs/snippets/dashboard.json
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: talos-k8s-prometheus
