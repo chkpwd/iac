@@ -86,7 +86,7 @@ spec:
                   secretKeyRef:
                     name: teslamate-pguser-teslamate
                     key: dbname
-              DATABASE_SSL: "true"
+              DATABASE_SSL: "noverify"
             image:
               repository: docker.io/teslamate/teslamate
               tag: 2.1.0
