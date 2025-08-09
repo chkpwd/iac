@@ -1,0 +1,97 @@
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: external-grafana
+  labels:
+    dashboards: "external-grafana"
+spec:
+  external:
+    url: https://grafana.chkpwd.com
+    adminPassword:
+      name: grafana-operator
+      key: GF_SECURITY_ADMIN_PASSWORD
+    adminUser:
+      name: grafana-operator
+      key: GF_SECURITY_ADMIN_USER
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: prometheus
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  datasource:
+    name: talos-k8s-prometheus
+    type: prometheus
+    access: proxy
+    database: prometheus
+    url: "https://k8s-prometheus.chkpwd.com"
+    jsonData:
+      timeInterval: 5s
+      prometheusType: Prometheus
+      cacheLevel: Low
+      manageAlerts: true
+      httpMethod: POST
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: teslamate-postgres
+spec:
+  valuesFrom:
+    - targetPath: "secureJsonData.password"
+      valueFrom:
+        secretKeyRef:
+          name: "teslamate-db-credentials"
+          key: "password"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  datasource:
+    name: TeslaMate
+    type: postgres
+    uid: TeslaMate
+    access: proxy
+    url: "10.0.10.36"
+    database: teslamate
+    user: teslamate
+    jsonData:
+      sslmode: require
+      maxOpenConns: 100
+      maxIdleConns: 100
+      maxIdleConnsAuto: true
+      connMaxLifetime: 14400
+      postgresVersion: 1600
+      timescaledb: false
+    secureJsonData:
+      password: ${password}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaFolder
+metadata:
+  name: kubernetes
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  title: "Kubernetes"
+---
+# renovate: dashboardName="Spegel"
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: spegel
+spec:
+  folder: "Kubernetes"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  grafanaCom:
+    id: 18089
+    revision: 1
+  datasources:
+    - inputName: DS_PROMETHEUS
+      datasourceName: talos-k8s-prometheus
