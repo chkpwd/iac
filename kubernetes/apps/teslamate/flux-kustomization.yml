@@ -14,11 +14,6 @@ spec:
   components:
     - ../../core/crunchydata-pgo/components/
   patches:
-    - patch: |-
-        - op: remove
-          path: /spec/dataSource
-      target:
-        kind: PostgresCluster
     - patch: |
         - op: replace
           path: /spec/image
@@ -44,7 +39,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      POSTGRES_DATA_SIZE: 10Gi
+      POSTGRES_DATA_SIZE: 75Gi
   prune: true
   sourceRef:
     kind: GitRepository
