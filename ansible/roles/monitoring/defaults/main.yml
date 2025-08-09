@@ -23,6 +23,8 @@ monitoring_service_definitions:
       traefik.http.routers.prometheus.tls.certresolver: cloudflare
       traefik.http.routers.prometheus.tls.domains[0].main: chkpwd.com
       traefik.http.routers.prometheus.tls.domains[0].sans: "*.chkpwd.com"
+    networks:
+      - name: "proxy"
   - name: grafana
     image: grafana/grafana:12.1.0
     user: 1000:1000
@@ -43,3 +45,5 @@ monitoring_service_definitions:
       traefik.http.routers.grafana.tls.certresolver: cloudflare
       traefik.http.routers.grafana.tls.domains[0].main: chkpwd.com
       traefik.http.routers.grafana.tls.domains[0].sans: "*.chkpwd.com"
+    networks:
+      - name: "proxy"
