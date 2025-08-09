@@ -4,6 +4,7 @@ apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
   name: cloudflare
+  namespace: networking
 spec:
   refreshInterval: 3h
   secretStoreRef:
