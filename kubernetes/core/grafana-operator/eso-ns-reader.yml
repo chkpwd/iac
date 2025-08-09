@@ -1,0 +1,70 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: eso-k8s-reader
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: eso-read-teslamate-pguser-secret
+  namespace: tools
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["teslamate-pguser-teslamate"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: eso-read-teslamate-pguser-secret
+  namespace: tools
+subjects:
+  - kind: ServiceAccount
+    name: eso-k8s-reader
+    namespace: monitoring
+roleRef:
+  kind: Role
+  name: eso-read-teslamate-secrets
+  apiGroup: rbac.authorization.k8s.io
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/external-secrets.io/secretstore_v1beta1.json
+apiVersion: external-secrets.io/v1
+kind: SecretStore
+metadata:
+  name: eso-read-teslamate-pguser-secret
+  namespace: monitoring
+spec:
+  provider:
+    kubernetes:
+      remoteNamespace: tools
+      server:
+        url: https://kubernetes.default.svc
+        caProvider:
+          type: ConfigMap
+          name: kube-root-ca.crt
+          key: ca.crt
+      auth:
+        serviceAccount:
+          name: eso-k8s-reader
+---
+# yaml-language-server: $schema=https://lds-schemas.pages.dev/external-secrets.io/externalsecret_v1beta1.json
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: teslamate-db-credentials
+  namespace: monitoring
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: eso-read-teslamate-pguser-secret
+    kind: SecretStore
+  target:
+    name: teslamate-db-credentials
+  data:
+    - secretKey: password
+      remoteRef:
+        key: teslamate-pguser-teslamate
+        property: password
