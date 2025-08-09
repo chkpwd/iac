@@ -9,7 +9,7 @@ entryPoints:
     http:
       redirections:
         entryPoint:
-          to: https
+          to: https-int
           scheme: https
   https-int:
     address: ":443"
@@ -19,7 +19,7 @@ entryPoints:
     http:
       redirections:
         entryPoint:
-          to: https
+          to: https-ext
   https-ext:
     address: ":8443"
 serversTransport:
