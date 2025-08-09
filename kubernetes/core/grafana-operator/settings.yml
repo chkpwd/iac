@@ -79,19 +79,12 @@ spec:
       dashboards: "external-grafana"
   title: "Kubernetes"
 ---
-# renovate: dashboardName="Spegel"
 apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDashboard
+kind: GrafanaFolder
 metadata:
-  name: spegel
+  name: tesla
 spec:
-  folder: "Kubernetes"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
-  grafanaCom:
-    id: 18089
-    revision: 1
-  datasources:
-    - inputName: DS_PROMETHEUS
-      datasourceName: talos-k8s-prometheus
+  title: "Tesla"

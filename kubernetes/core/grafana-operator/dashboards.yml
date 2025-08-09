@@ -1,4 +1,21 @@
 ---
+# renovate: dashboardName="Spegel"
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: spegel
+spec:
+  folder: "Kubernetes"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  grafanaCom:
+    id: 18089
+    revision: 1
+  datasources:
+    - inputName: DS_PROMETHEUS
+      datasourceName: talos-k8s-prometheus
+---
 # renovate: dashboardName="VolSync Dashboard"
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
@@ -164,6 +181,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-battery-health
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -174,6 +193,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-charge-level
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -184,6 +205,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-charges
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -194,6 +217,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-charging-stats
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -204,6 +229,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-database-info
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -214,6 +241,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-drive-stats
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -224,6 +253,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-drives
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -234,6 +265,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-efficiency
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -244,6 +277,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-locations
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -254,6 +289,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-mileage
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -264,6 +301,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-overview
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -274,6 +313,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-projected-range
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -284,6 +325,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-states
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -294,6 +337,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-statistics
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -304,6 +349,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-timeline
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -314,6 +361,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-trip
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -324,6 +373,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-updates
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -334,6 +385,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-vampire-drain
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -344,6 +397,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-visited
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -354,6 +409,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-amortizationtracker
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -364,6 +421,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-chargingcostsstats
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -374,6 +433,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-chargingcurvestats
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -384,6 +445,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-continuoustrips
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -394,6 +457,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-currentchargeview
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -404,6 +469,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-currentdriveview
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -414,6 +481,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-currentstate
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -424,6 +493,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-dcchargingcurvesbycarrier
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -434,6 +505,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-incompletedata
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -444,6 +517,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-mileagestats
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -454,6 +529,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-rangedegradation
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -464,6 +541,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-speedrates
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -474,6 +553,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-speedtemperature
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -484,6 +565,8 @@ kind: GrafanaDashboard
 metadata:
   name: teslamate-custom-trackingdrives
 spec:
+  spec:
+  folder: "Telsa"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
