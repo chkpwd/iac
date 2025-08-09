@@ -19,8 +19,15 @@
     dest: "{{ configuration_path }}/traefik/"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
-    mode: "600"
+    mode: "0600"
   notify: "Restart Traefik"
+- name: Create acme.json file
+  ansible.builtin.file:
+    path: "{{ configuration_path }}/traefik/acme.json"
+    state: touch
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: "0600"
 - name: Create Docker Network
   community.docker.docker_network:
     name: "{{ traefik_docker_network }}"
