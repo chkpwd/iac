@@ -127,8 +127,8 @@ spec:
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
-        runAsUser: 1999
-        runAsGroup: 1999
+        runAsUser: 100
+        runAsGroup: 100
     service:
       app:
         ports:
@@ -154,7 +154,3 @@ spec:
     persistence:
       tmp:
         type: emptyDir
-      app:
-        type: emptyDir
-        globalMounts:
-          - path: ./app
