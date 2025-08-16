@@ -1,0 +1,160 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: teslamateapi
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.1.2
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  driftDetection:
+    mode: enabled
+  install:
+    remediation:
+      retries: -1
+  upgrade:
+    remediation:
+      retries: 3
+  values:
+    global:
+      fullnameOverride: teslamateapi
+    controllers:
+      teslamateapi:
+        enabled: true
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+        defaultContainerOptionsStrategy: merge
+        defaultContainerOptions:
+          envFrom:
+            - secretRef:
+                name: teslamate
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - "ALL"
+            readOnlyRootFilesystem: true
+        containers:
+          app:
+            env:
+              MQTT_HOST: 10.0.10.8
+              TZ: America/New_York
+              MQTT_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: teslamate
+                    key: mqtt_password
+              MQTT_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: teslamate
+                    key: mqtt_username
+              ENCRYPTION_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: teslamate
+                    key: encryption_key
+              DATABASE_HOST:
+                valueFrom:
+                  secretKeyRef:
+                    name: teslamate-pguser-teslamate
+                    key: host
+              DATABASE_USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: teslamate-pguser-teslamate
+                    key: user
+              DATABASE_PASS:
+                valueFrom:
+                  secretKeyRef:
+                    name: teslamate-pguser-teslamate
+                    key: password
+              DATABASE_NAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: teslamate-pguser-teslamate
+                    key: dbname
+              DATABASE_SSL: "noverify"
+            image:
+              repository: ghcr.io/tobiasehlert/teslamateapi
+              tag: 1.21.0
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/healthz
+                    port: 8080
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/readyz
+                    port: 8080
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/ping
+                    port: 8080
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 30
+            resources:
+              limits:
+                memory: 512Mi
+              requests:
+                cpu: 10m
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1999
+        runAsGroup: 1999
+    service:
+      app:
+        ports:
+          http:
+            port: 8080
+    route:
+      private:
+        enabled: true
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: teslamateapi
+                port: 8080
+        parentRefs:
+          - name: private
+            namespace: kube-system
+            sectionName: https
+    persistence:
+      tmp:
+        type: emptyDir
+      app:
+        type: emptyDir
+        globalMounts:
+          - path: ./app
