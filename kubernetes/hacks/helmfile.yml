@@ -35,7 +35,7 @@ releases:
   - name: external-secrets
     namespace: security
     chart: oci://ghcr.io/external-secrets/charts/external-secrets
-    version: 0.18.2
+    version: 0.19.2
     values: ["../core/external-secrets/values.yml"]
     needs: ["security/cert-manager"]
     hooks:
