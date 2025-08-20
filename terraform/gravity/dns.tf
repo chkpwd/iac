@@ -74,6 +74,7 @@ locals {
   records_json  = jsondecode(file("${path.root}/records.json"))
   lan_records   = local.records_json.lan
   guest_records = local.records_json.guest
+  iot_records   = local.records_json.iot
 }
 
 resource "gravity_dns_record" "lan" {
@@ -95,6 +96,22 @@ resource "gravity_dns_record" "lan" {
 resource "gravity_dns_record" "guest" {
   for_each = {
     for record in local.guest_records : record.hostname => {
+      hostname = record.hostname
+      data     = record.data
+      type     = record.type
+    }
+  }
+
+  zone     = gravity_dns_zone.chkpwd.name
+  hostname = each.value.hostname
+  uid      = var.default_uid
+  data     = each.value.data
+  type     = each.value.type
+}
+
+resource "gravity_dns_record" "iot" {
+  for_each = {
+    for record in local.iot_records : record.hostname => {
       hostname = record.hostname
       data     = record.data
       type     = record.type
