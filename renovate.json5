@@ -10,7 +10,7 @@
     "github>chkpwd/iac//.renovate/semanticCommits.json5",
     "github>chkpwd/iac//.renovate/versioning.json5",
   ],
-  ignorePaths: ["ansible/requirements.txt"],
+  ignorePaths: ["ansible/requirements.txt", "terraform/kasten/main.tf"],
   ignoreDeps: ["spegel"],
   flux: {
     managerFilePatterns: ["/^kubernetes/.+\\.ya?ml$/"],
