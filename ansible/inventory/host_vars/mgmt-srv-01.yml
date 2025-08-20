@@ -97,7 +97,7 @@ service_definitions:
       TWINGATE_LABEL_DEPLOYED_BY: "docker"
     state: stopped
   - name: bws-cache
-    image: ghcr.io/ripplefcl/bws-cache:v3.1.0
+    image: ghcr.io/ripplefcl/bws-cache:v3.2.2
     env:
       PARSE_SECRET_VALUES: "true"
       LOG_LEVEL: "warning"
