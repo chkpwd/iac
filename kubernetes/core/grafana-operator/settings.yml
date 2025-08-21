@@ -39,6 +39,37 @@ spec:
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
 metadata:
+  name: rpi-prometheus
+spec:
+  valuesFrom:
+    - targetPath: "secureJsonData.password"
+      valueFrom:
+        secretKeyRef:
+          name: "grafana-operator"
+          key: "RPI_PROMETHEUS_PASSWORD"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  datasource:
+    name: mgmt-rpi-prometheus
+    type: prometheus
+    uid: mgmt-rpi-prometheus
+    access: proxy
+    url: "https://rpi-prometheus.chkpwd.com"
+    basicAuth: true
+    basicAuthUser: chkpwd
+    jsonData:
+      timeInterval: 5s
+      prometheusType: Prometheus
+      cacheLevel: Low
+      manageAlerts: true
+      httpMethod: POST
+    secureJsonData:
+      password: ${password}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
   name: teslamate-postgres
 spec:
   valuesFrom:
