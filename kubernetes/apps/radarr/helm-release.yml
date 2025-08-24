@@ -102,7 +102,7 @@ spec:
               tag: v2.3.0
             env:
               PORT: &metricsPort 9707
-              URL: "http://{{ .Release.Name }}.{{ .Release.Namespace }}.svc.cluster.local:7878"
+              URL: "http://{{ .Release.Name }}-app.{{ .Release.Namespace }}.svc.cluster.local:7878"
               APIKEY:
                 valueFrom:
                   secretKeyRef:
