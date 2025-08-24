@@ -1,4 +1,19 @@
 ---
+# renovate: dashboardName="Apex Legends Stats"
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: apex-legends-stats
+spec:
+  folder: "Games"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: "https://raw.githubusercontent.com/chkpwd/apex-legends-exporter/refs/heads/main/grafana-dashboard.json"
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: mgmt-rpi-prometheus
+---
 # renovate: dashboardName="Spegel"
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
