@@ -64,8 +64,6 @@ spec:
       cacheLevel: Low
       manageAlerts: true
       httpMethod: POST
-    secureJsonData:
-      password: ${password}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
@@ -97,8 +95,6 @@ spec:
       connMaxLifetime: 14400
       postgresVersion: 1600
       timescaledb: false
-    secureJsonData:
-      password: ${password}
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaFolder
