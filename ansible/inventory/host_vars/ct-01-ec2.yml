@@ -25,12 +25,12 @@ service_definitions:
     networks:
       - name: net_swag
   - name: gatus
-    image: twinproduction/gatus:v5.20.0
+    image: twinproduction/gatus:v5.23.2
     volumes:
       - "{{ configuration_path }}/gatus:/config"
     network_mode: container:wireguard
   - name: swag
-    image: lscr.io/linuxserver/swag:4.1.1
+    image: lscr.io/linuxserver/swag:4.2.0
     ports:
       - 443:443
       - 80:80
