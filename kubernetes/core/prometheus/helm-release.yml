@@ -27,7 +27,27 @@ spec:
       enabled: false
     cleanPrometheusOperatorObjectNames: true
     alertmanager:
-      enabled: false
+      route:
+        main:
+          enabled: true
+          hostnames: ["alertmanager.chkpwd.com"]
+          parentRefs:
+            - name: private
+              namespace: kube-system
+              sectionName: https
+      alertmanagerSpec:
+        alertmanagerConfiguration:
+          name: alertmanager
+          global:
+            resolveTimeout: 5m
+        externalUrl: https://alertmanager.chkpwd.com
+        storage:
+          volumeClaimTemplate:
+            spec:
+              storageClassName: ceph-block
+              resources:
+                requests:
+                  storage: 1Gi
     kubeApiServer:
       enabled: true
       serviceMonitor:
