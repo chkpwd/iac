@@ -78,7 +78,7 @@ service_definitions:
     labels:
       traefik.enable: "true"
       traefik.http.routers.scanservjs.rule: "Host(`scan.chkpwd.com`)"
-      traefik.http.routers.scanservjs.entrypoints: "https-int"
+      traefik.http.routers.scanservjs.entrypoints: "https"
       traefik.http.services.scanservjs.loadbalancer.server.port: "8080"
       traefik.http.routers.scanservjs.tls: "true"
       traefik.http.routers.scanservjs.tls.certresolver: cloudflare

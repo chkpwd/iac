@@ -1,4 +1,13 @@
 ---
+- name: Create Volumes
+  ansible.builtin.file: # noqa risky-file-permissions
+    path: "{{ item }}"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: "0755"
+    state: directory
+  loop: "{{ monitoring_service_definitions | selectattr('volumes', 'defined') | map(attribute='volumes') | flatten | map('split', ':') | map('first') }}"
+  when: not item is match('.*\.\w{2,4}$')
 - name: Create Prometheus Config
   ansible.builtin.template:
     src: "{{ item.src }}"

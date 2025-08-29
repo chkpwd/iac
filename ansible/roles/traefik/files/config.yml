@@ -3,7 +3,7 @@ http:
   routers:
     opnsense:
       entryPoints:
-        - "https-int"
+        - "https"
       rule: "Host(`opnsense.chkpwd.com`)"
       middlewares:
         - https-redirectscheme
@@ -12,7 +12,7 @@ http:
         certResolver: cloudflare
     proxmox:
       entryPoints:
-        - "https-int"
+        - "https"
       rule: "Host(`proxmox.chkpwd.com`) && PathPrefix(`/`)"
       middlewares:
         - proxmox-headers
@@ -21,7 +21,7 @@ http:
         certResolver: cloudflare
     ollama:
       entryPoints:
-        - "https-int"
+        - "https"
       rule: "Host(`ollama.chkpwd.com`)"
       middlewares:
         - https-redirectscheme
@@ -30,7 +30,7 @@ http:
         certResolver: cloudflare
     gravity-dns-02:
       entryPoints:
-        - "https-int"
+        - "https"
       rule: "Host(`gravity-dns-02.chkpwd.com`)"
       middlewares:
         - https-redirectscheme
@@ -39,7 +39,7 @@ http:
         certResolver: cloudflare
     home-assistant:
       entryPoints:
-        - "https-ext"
+        - "https"
       rule: "Host(`home-assistant.chkpwd.com`)"
       middlewares:
         - https-redirectscheme

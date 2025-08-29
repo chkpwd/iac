@@ -17,7 +17,7 @@ monitoring_service_definitions:
     labels:
       traefik.enable: "true"
       traefik.http.routers.promtheus.rule: "Host(`rpi-prometheus.chkpwd.com`)"
-      traefik.http.routers.promtheus.entrypoints: "https-int"
+      traefik.http.routers.promtheus.entrypoints: "https"
       traefik.http.services.promtheus.loadbalancer.server.port: "9090"
       traefik.http.routers.promtheus.tls: "true"
       traefik.http.routers.prometheus.tls.certresolver: cloudflare
@@ -32,14 +32,14 @@ monitoring_service_definitions:
       GF_DAGF_FEATURE_TOGGLES_ENABLE: publicDashboards
       GF_INSTALL_PLUGINS: grafana-clock-panel, grafana-simple-json-datasource
       GF_SECURITY_ADMIN_USER: grafana
-      GF_SECURITY_ADMIN_PASSWORD: "{{ lookup('bws_cache', 'common-secrets').value.common_password }}"
+      GF_SECURITY_ADMIN_PASSWORD: "{{ lookup('bws_cache', 'infra-monitoring-secrets').value.grafana_admin_password }}"
     volumes:
       - "{{ configuration_path }}/grafana:/var/lib/grafana"
     ports: ["3000:3000"]
     labels:
       traefik.enable: "true"
       traefik.http.routers.grafana.rule: "Host(`grafana.chkpwd.com`)"
-      traefik.http.routers.grafana.entrypoints: "https-int"
+      traefik.http.routers.grafana.entrypoints: "https"
       traefik.http.services.grafana.loadbalancer.server.port: "3000"
       traefik.http.routers.grafana.tls: "true"
       traefik.http.routers.grafana.tls.certresolver: cloudflare
