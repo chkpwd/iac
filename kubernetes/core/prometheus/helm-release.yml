@@ -86,18 +86,28 @@ spec:
     grafana:
       enabled: false
       forceDeployDashboards: true
-      defaultDashboardsEnabled: true
       operator:
         dashboardsConfigMapRefEnabled: true
         matchLabels:
           dashboards: "external-grafana"
-          app: kube-prometheus-stack-grafana
         resyncPeriod: 10m
         folder: Kubernetes
       sidecar:
         dashboards:
+          enabled: true
           annotations:
             grafana_folder: Kubernetes
+          label: dashboards
+          labelValue: "external-grafana"
+          searchNamespace: ALL
+          enableNewTablePanelSyntax: true
+        datasources:
+          enabled: true
+          defaultDatasourceEnabled: false
+          isDefaultDatasource: true
+          name: talos-k8s-prometheus-hr
+          uid: talos-k8s-prometheus-hr
+          url: https://k8s-prometheus.chkpwd.com
     prometheusOperator:
       resources:
         requests:
