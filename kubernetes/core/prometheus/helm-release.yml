@@ -91,6 +91,7 @@ spec:
         dashboardsConfigMapRefEnabled: true
         matchLabels:
           dashboards: "external-grafana"
+          app: kube-prometheus-stack-grafana
         resyncPeriod: 10m
         folder: Kubernetes
       sidecar:
