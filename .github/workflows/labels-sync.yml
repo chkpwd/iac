@@ -35,6 +35,6 @@ jobs:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     steps:
       - name: Labeler
-        uses: actions/labeler@v5
+        uses: actions/labeler@v6
         with:
           configuration-path: .github/labeler.yml
