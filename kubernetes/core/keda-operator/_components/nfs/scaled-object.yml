@@ -18,6 +18,7 @@ spec:
     - type: prometheus
       metadata:
         serverAddress: http://prometheus-operated.monitoring.svc.cluster.local:9090
-        query: max_over_time(probe_success{instance="nas-srv-01.chkpwd.com:2049",job="probe/monitoring/tcp-endpoints"}[2m])
-        threshold: "1"
+        query: avg_over_time(probe_success{instance="nas-srv-01.chkpwd.com:2049",job="probe/monitoring/tcp-endpoints"}[2m])
+        threshold: "0.5"
+        activationThreshold: "0.5"
         ignoreNullValues: "0"
