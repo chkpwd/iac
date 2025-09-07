@@ -40,10 +40,19 @@ http:
     home-assistant:
       entryPoints:
         - "https"
-      rule: "Host(`home-assistant.chkpwd.com`)"
+      rule: "Host(`ha.chkpwd.com`)"
       middlewares:
         - https-redirectscheme
       service: home-assistant
+      tls:
+        certResolver: cloudflare
+    synology:
+      entryPoints:
+        - "https"
+      rule: "Host(`synology.chkpwd.com`)"
+      middlewares:
+        - https-redirectscheme
+      service: synology
       tls:
         certResolver: cloudflare
   services:
@@ -68,6 +77,10 @@ http:
       loadBalancer:
         servers:
           - url: "http://10.0.10.8:8123"
+    synology:
+      loadBalancer:
+        servers:
+          - url: "http://10.0.10.5:5000"
   middlewares:
     https-redirectscheme:
       redirectScheme:
