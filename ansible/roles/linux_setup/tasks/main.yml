@@ -33,7 +33,9 @@
   ansible.builtin.service_facts:
 - name: Register logrotate service status
   set_fact:
-    logrotate_status: "{{ \n  ansible_facts['services']['logrotate.service']\n  if 'logrotate.service' in ansible_facts['services']\n  else 'unknown'\n}}\n        #magic___^_^___line"
+    linux_setup_logrotate_status:
+      "{{ \n  ansible_facts['services']['logrotate.service']\n  if 'logrotate.service' in ansible_facts['services']\n  else 'unknown'\n}}\n      \
+      \  #magic___^_^___line"
 - name: Check if logrotate service is failed
   ansible.builtin.debug:
     msg: logrotate service has failed

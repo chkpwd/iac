@@ -2,9 +2,9 @@
 - name: Check Docker Present
   ansible.builtin.stat:
     path: /usr/bin/docker
-  register: docker_installed
+  register: compose_docker_installed
 - name: Install Docker only if not installed
-  when: "'docker_hosts' in group_names and not docker_installed.stat.exists"
+  when: "'docker_hosts' in group_names and not compose_docker_installed.stat.exists"
   block:
     - name: Docker Install
       ansible.builtin.include_role:

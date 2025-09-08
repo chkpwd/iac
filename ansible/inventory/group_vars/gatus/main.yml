@@ -8,7 +8,7 @@ gatus_alert_default: &gatus_alert_default
     - type: discord
       description: "endpoint is down" # todo: add ref name
       send-on-resolved: true
-gatus_endpoint_config_http_default: &gatus_http_default
+gatus_endpoint_config_http_default:
   interval: 1m
   conditions:
     - "[STATUS] == 200"

@@ -43,8 +43,8 @@
   ansible.builtin.user:
     name: "{{ ollama_user }}"
     shell: /bin/false
-    system: yes
-    create_home: yes
+    system: true
+    create_home: true
     home: /usr/share/ollama
     state: present
     group: ollama

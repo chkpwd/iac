@@ -7,7 +7,7 @@
 - name: Change Hostname
   ansible.windows.win_hostname:
     name: "{{ windows_hostname }}"
-  register: hostname
+  register: windows_hostname
 - name: Install dependencies
   chocolatey.chocolatey.win_chocolatey:
     name: "{{ item }}"

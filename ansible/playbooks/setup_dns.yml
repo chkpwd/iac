@@ -13,7 +13,9 @@
           - iputils-ping
           - gpg
         state: present
-  roles: [{"linux_setup", "role": "geerlingguy.docker"}]
+  roles:
+    - linux_setup
+    - geerlingguy.docker
   tasks:
     - name: Expand file system
       when: "'mgmt-srv-01' in ansible_nodename"

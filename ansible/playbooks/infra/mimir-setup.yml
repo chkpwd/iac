@@ -10,7 +10,7 @@
       state: started
       pull: "{{ pull_images }}"
       comparisons:
-        '*': strict
+        "*": strict
         env: allow_more_present
   handlers:
     #   - name: Restart Minio
@@ -43,7 +43,7 @@
           dest: "{{ configuration_path }}/minio/config.json"
           owner: root
           group: root
-          mode: '0400'
+          mode: "0400"
       loop_control:
         label: "{{ item.dest }}"
       notify: Restart Minio
@@ -57,8 +57,8 @@
           MINIO_ROOT_USER: admin
           MINIO_ROOT_PASSWORD: "{{ lookup('bws_cache', 'common-secrets').value.common_password }}"
           MINIO_VOLUMES: /data
-          MINIO_ADDRESS: ':9001'
-          MINIO_CONSOLE_ADDRESS: ':9002'
+          MINIO_ADDRESS: ":9001"
+          MINIO_CONSOLE_ADDRESS: ":9002"
           MINIO_SERVER_URL: https://s3.{{ domain }}
           MINIO_DOMAIN: s3.{{ domain }}
           MINIO_BROWSER_REDIRECT_URL: https://s3.{{ domain }}/ui
@@ -71,12 +71,14 @@
           MINIO_IDENTITY_OPENID_CLIENT_SECRET: >-
             {{ lookup('bws_cache', 'infra-minio-secrets').value.oauth_secrets }}
           MINIO_IDENTITY_OPENID_SCOPES: openid,profile,email,minio
-          MINIO_PROMETHEUS_URL: "http://{{ hostvars.Monitor01.prometheus_users[0].username }}:{{ hostvars.Monitor01.prometheus_users[0].password }}@Monitor01.{{ domain }}:9090"
+          MINIO_PROMETHEUS_URL:
+            "http://{{ hostvars.Monitor01.prometheus_users[0].username }}:{{ hostvars.Monitor01.prometheus_users[0].password }}@Monitor01.{{ domain
+            }}:9090"
           MINIO_PROMETHEUS_JOB_ID: minio
         ports:
-          - '9001:9001'
-          - '9002:9002'
-        networks: [{name: minio}]
+          - "9001:9001"
+          - "9002:9002"
+        networks: [name: minio]
         volumes:
           - "{{ app_base_dir }}/minio/data:/data"
           - "{{ app_base_dir }}/minio/config.json:/tmp/.mc/config.json:ro"

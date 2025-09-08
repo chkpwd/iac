@@ -6,12 +6,7 @@
     group: 1001
     mode: "0755"
     state: directory
-  loop: "{{ traefik_container
-    | selectattr('volumes', 'defined')
-    | map(attribute='volumes')
-    | flatten
-    | map('split', ':')
-    | map('first') }}"
+  loop: "{{ traefik_container | selectattr('volumes', 'defined') | map(attribute='volumes') | flatten | map('split', ':') | map('first') }}"
   when: not item is match('.*\.\w{2,4}$')
 - name: Copy config files for traefik
   ansible.builtin.copy:

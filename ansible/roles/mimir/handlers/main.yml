@@ -15,11 +15,11 @@
     restart: true
     state: started
     comparisons:
-      '*': ignore
+      "*": ignore
 - name: Restart NGINX
   community.docker.docker_container:
     name: mimir-lb
     restart: true
     state: started
     comparisons:
-      '*': ignore
+      "*": ignore

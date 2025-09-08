@@ -9,7 +9,7 @@
     path: "{{ item }}"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
-    mode: '0755'
+    mode: "0755"
     state: directory
   loop: "{{ mimir_containers | selectattr('volumes', 'defined') | map(attribute='name') | product([configuration_path]) | map('reverse') | map('join', '/') }}"
   when: not item is match('.*\.\w{2,4}$')
@@ -19,7 +19,7 @@
     dest: "{{ mimir_lb_base_path }}/nginx.conf"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
-    mode: '0664'
+    mode: "0664"
   notify: Restart NGINX
 - name: Install htpasswd file for NGINX
   community.general.htpasswd:
@@ -28,7 +28,7 @@
     password: "{{ mimir_lb_pass }}"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
-    mode: '0644'
+    mode: "0644"
     state: present
   notify: Restart NGINX
 - name: Template Mimir config
@@ -37,7 +37,7 @@
     dest: "{{ mimir_base_path }}/mimir.yml"
     owner: "{{ common_user }}"
     group: "{{ common_user }}"
-    mode: '0664'
+    mode: "0664"
   notify: Restart Mimir
 - name: Deploy Docker containers
   community.docker.docker_container: "{{ item }}" # noqa args[module]

@@ -17,7 +17,7 @@
 - name: Change Hostname
   ansible.windows.win_hostname:
     name: "{{ inventory_hostname }}"
-  register: hostname
+  register: win_gaming_setup_hostname
 - name: Scoops - Install dependencies
   community.windows.win_scoop:
     name: "{{ item }}"
@@ -39,7 +39,7 @@
 - name: Download Apollo from Github
   ansible.windows.win_get_url:
     url: "https://github.com/ClassicOldSong/Apollo/releases/download/v{{ win_gaming_setup_apollo_version }}/Apollo.exe"
-    dest: '%TEMP%\apollo.exe'
+    dest: "%TEMP%\\apollo.exe"
 - name: Change power plan to Balanced
   community.windows.win_power_plan:
     name: balanced

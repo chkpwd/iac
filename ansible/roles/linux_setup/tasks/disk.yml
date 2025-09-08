@@ -2,9 +2,9 @@
 - name: Check Docker Present
   ansible.builtin.stat:
     path: /usr/bin/docker
-  register: docker_installed
+  register: linux_setup_docker_installed
 - name: Mount NFS options only if Docker is present
-  when: "'docker_hosts' in group_names and docker_installed.stat.exists"
+  when: "'docker_hosts' in group_names and linux_setup_docker_installed.stat.exists"
   block:
     - name: Create the dest directory for the mount
       ansible.builtin.file:
@@ -29,7 +29,7 @@
   community.general.parted:
     device: /dev/{{ item }}
     unit: MiB
-  register: drive_info
+  register: linux_setup_drive_info
   loop:
     - sda
     - sdb
@@ -37,7 +37,7 @@
     label: "Disk Name: {{ item }}"
 - name: Determine the largest drive and set the var
   ansible.builtin.set_fact:
-    largest_drive: "{{ 'sda' if drive_info.results[0].disk.size | int > drive_info.results[1].disk.size | int else 'sdb' }}"
+    linux_setup_largest_drive: "{{ 'sda' if drive_info.results[0].disk.size | int > drive_info.results[1].disk.size | int else 'sdb' }}"
 - name: Prepare secondary disk
   community.general.parted:
     device: /dev/{{ largest_drive }}
