@@ -83,10 +83,10 @@ spec:
                   secretKeyRef:
                     name: teslamate-pguser-teslamate
                     key: dbname
-              DATABASE_SSL: "noverify"
+              DATABASE_SSL: "true"
             image:
               repository: ghcr.io/tobiasehlert/teslamateapi
-              tag: 1.21.0
+              tag: edge
             probes:
               liveness:
                 enabled: true
