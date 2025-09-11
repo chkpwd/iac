@@ -1,0 +1,29 @@
+---
+name: Test Functionality
+on:
+  workflow_dispatch:
+    inputs:
+      debug:
+        description: "Debug mode"
+        type: boolean
+        required: false
+        default: false
+permissions:
+  contents: read
+jobs:
+  lint:
+    name: Test Functionality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v4
+      - name: Get authentik token
+        id: authentik-token
+        uses: goauthentik/configure-authentik-credentials@v1.0.1
+        with:
+          authentik_url: https://authentik.chkpwd.com
+          client_id: foo
+      - name: Use the token
+        run: |
+          ${{ steps.authentik-token.outputs.token }}
