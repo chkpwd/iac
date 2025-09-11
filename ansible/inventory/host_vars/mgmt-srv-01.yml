@@ -62,7 +62,7 @@ service_definitions:
       OPNSENSE_EXPORTER_OPS_API_SECRET: "{{ lookup('bws_cache', 'infra-network-secrets').value.opnsense_exporter_api_secret }}"
     ports: ["8080:8080"]
   - name: scanservjs
-    image: sbs20/scanservjs:v3.0.3
+    image: sbs20/scanservjs:v3.0.4
     ports:
       - 8087:8080
     env:
