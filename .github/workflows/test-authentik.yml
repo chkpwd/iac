@@ -3,13 +3,12 @@ name: Test Functionality
 on:
   workflow_dispatch:
     inputs:
-      debug:
-        description: "Debug mode"
-        type: boolean
-        required: false
-        default: false
+      client_id:
+        description: "Client ID"
+        required: true
 permissions:
   contents: read
+  id-token: write
 jobs:
   lint:
     name: Test Functionality
@@ -23,7 +22,7 @@ jobs:
         uses: goauthentik/configure-authentik-credentials@v1.0.1
         with:
           authentik_url: https://authentik.chkpwd.com
-          client_id: foo
+          client_id: ${{ github.event.inputs.client_id }}
       - name: Use the token
         run: |
           ${{ steps.authentik-token.outputs.token }}
