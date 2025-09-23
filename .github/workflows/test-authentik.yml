@@ -25,4 +25,4 @@ jobs:
           client_id: ${{ github.event.inputs.client_id }}
       - name: Use the token
         run: |
-          ${{ steps.authentik-token.outputs.token }}
+          echo ${{ steps.authentik-token.outputs.token }}
