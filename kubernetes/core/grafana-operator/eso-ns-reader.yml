@@ -15,6 +15,12 @@ rules:
     resources: ["secrets"]
     resourceNames: ["teslamate-pguser-teslamate"]
     verbs: ["get", "list"]
+  - apiGroups:
+      - authorization.k8s.io
+    resources:
+      - selfsubjectrulesreviews
+    verbs:
+      - create
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -27,7 +33,7 @@ subjects:
     namespace: monitoring
 roleRef:
   kind: Role
-  name: eso-read-teslamate-secrets
+  name: eso-read-teslamate-pguser-secret
   apiGroup: rbac.authorization.k8s.io
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/external-secrets.io/secretstore_v1beta1.json
@@ -49,6 +55,7 @@ spec:
       auth:
         serviceAccount:
           name: eso-k8s-reader
+          namespace: monitoring
 ---
 # yaml-language-server: $schema=https://lds-schemas.pages.dev/external-secrets.io/externalsecret_v1beta1.json
 apiVersion: external-secrets.io/v1
