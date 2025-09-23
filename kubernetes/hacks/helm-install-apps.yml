@@ -62,5 +62,4 @@ releases:
     chart: oci://ghcr.io/spegel-org/helm-charts/spegel
     version: 0.3.0
     values: ["../core/spegel/values.yml"]
-    needs:
-      - monitoring/prometheus-operator-crds
+    needs: ["monitoring/prometheus-operator-crds"]
