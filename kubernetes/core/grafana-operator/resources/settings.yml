@@ -74,8 +74,8 @@ spec:
     - targetPath: "secureJsonData.password"
       valueFrom:
         secretKeyRef:
-          name: "teslamate-db-credentials"
-          key: "password"
+          name: teslamate-db-credentials
+          key: password
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -88,12 +88,12 @@ spec:
     database: teslamate
     user: teslamate
     jsonData:
-      sslmode: require
-      maxOpenConns: 100
-      maxIdleConns: 100
-      maxIdleConnsAuto: true
-      connMaxLifetime: 14400
-      postgresVersion: 1600
-      timescaledb: false
+      "sslmode": require
+      "maxOpenConns": 100
+      "maxIdleConns": 100
+      "maxIdleConnsAuto": true
+      "connMaxLifetime": 14400
+      "postgresVersion": 1600
+      "timescaledb": false
     secureJsonData:
-      password: "password" # arbitrary key, this will be replaced from the secret
+      "password": "${password}"
