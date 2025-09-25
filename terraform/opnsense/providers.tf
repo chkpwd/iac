@@ -3,7 +3,7 @@ terraform {
   required_providers {
     opnsense = {
       source  = "browningluke/opnsense"
-      version = "0.12.0"
+      version = "0.13.0"
     }
     external = {
       source  = "hashicorp/external"
