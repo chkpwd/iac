@@ -1,0 +1,52 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meshmon
+  namespace: tools
+spec:
+  revisionHistoryLimit: 3
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: meshmon
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: meshmon
+    spec:
+      containers:
+        - name: meshmon
+          image: ghcr.io/ripplefcl/meshmon:v3.1.1
+          ports:
+            - containerPort: 8000
+              name: http
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+          volumeMounts:
+            - name: config
+              mountPath: /app/config/nodeconf.yml
+              subPath: nodeconf.yml
+            - name: config
+              mountPath: /app/config/.private_keys/homies/chkpwd.key
+              subPath: key
+            - name: data
+              mountPath: /app/config
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
+      volumes:
+        - name: config
+          secret:
+            secretName: meshmon-config
+        - name: data
+          emptyDir: {}
