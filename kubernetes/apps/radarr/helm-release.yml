@@ -111,10 +111,9 @@ spec:
             args: ["radarr"]
             resources:
               requests:
-                cpu: 10m
-                memory: 100Mi
+                cpu: 50m
               limits:
-                memory: 125Mi
+                memory: 2Gi
     service:
       app:
         primary: true
