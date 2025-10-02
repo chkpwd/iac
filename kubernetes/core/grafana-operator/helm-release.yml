@@ -12,12 +12,6 @@ spec:
   timeout: 20m
   driftDetection:
     mode: disabled
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    remediation:
-      retries: 3
   values:
     replicas: 1
     serviceMonitor:

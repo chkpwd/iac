@@ -14,14 +14,6 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: deliveryhero
-  driftDetection:
-    mode: enabled
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    remediation:
-      retries: 3
   values:
     image:
       repository: registry.k8s.io/node-problem-detector/node-problem-detector

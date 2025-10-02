@@ -14,16 +14,6 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: rook-ceph
-  driftDetection:
-    mode: enabled
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      strategy: rollback
-      retries: 3
   values:
     csi:
       cephFSKernelMountOptions: ms_mode=prefer-crc

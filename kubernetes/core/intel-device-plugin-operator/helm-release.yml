@@ -14,14 +14,6 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: intel
-  driftDetection:
-    mode: enabled
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    remediation:
-      retries: 3
   values:
     manager:
       devices:

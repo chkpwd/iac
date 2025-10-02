@@ -14,14 +14,6 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: backube
-  driftDetection:
-    mode: enabled
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    remediation:
-      retries: 3
   values:
     manageCRDs: true
     metrics:
