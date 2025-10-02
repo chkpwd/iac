@@ -12,13 +12,6 @@ spec:
   timeout: 20m
   driftDetection:
     mode: disabled
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      retries: 3
   values:
     clusterName: cattle-k8s
     clusterDomain: cluster.local

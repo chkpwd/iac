@@ -16,12 +16,6 @@ spec:
         name: prometheus-community
   driftDetection:
     mode: disabled
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    remediation:
-      retries: 3
   values:
     crds:
       enabled: false

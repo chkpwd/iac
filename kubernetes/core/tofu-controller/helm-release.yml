@@ -15,14 +15,6 @@ spec:
         kind: HelmRepository
         name: tofu-controller
         namespace: flux-system
-  driftDetection:
-    mode: enabled
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    remediation:
-      retries: 3
   values:
     fullnameOverride: tofu-controller
     replicaCount: 1

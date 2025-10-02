@@ -14,16 +14,6 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: rook-ceph
-  driftDetection:
-    mode: disabled
-  install:
-    remediation:
-      retries: -1
-  upgrade:
-    cleanupOnFail: true
-    remediation:
-      strategy: rollback
-      retries: 3
   dependsOn:
     - name: rook-ceph-operator
       namespace: rook-ceph
