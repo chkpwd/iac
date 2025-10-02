@@ -75,8 +75,8 @@ spec:
                     mode: enabled
                   install:
                     crds: CreateReplace
-                    # strategy:
-                    #   name: RetryOnFailure
+                    strategy:
+                      name: RetryOnFailure
                   rollback:
                     cleanupOnFail: true
                     recreate: true
@@ -84,8 +84,8 @@ spec:
                   upgrade:
                     cleanupOnFail: true
                     crds: CreateReplace
-                    # strategy:
-                    #   name: RemediateOnFailure
+                    strategy:
+                      name: RemediateOnFailure
                     remediation:
                       remediateLastFailure: true
                       retries: 2
@@ -132,8 +132,8 @@ spec:
                     mode: enabled
                   install:
                     crds: CreateReplace
-                    # strategy:
-                    #   name: RetryOnFailure
+                    strategy:
+                      name: RetryOnFailure
                   rollback:
                     cleanupOnFail: true
                     recreate: true
@@ -141,8 +141,8 @@ spec:
                   upgrade:
                     cleanupOnFail: true
                     crds: CreateReplace
-                    # strategy:
-                    #   name: RemediateOnFailure
+                    strategy:
+                      name: RemediateOnFailure
                     remediation:
                       remediateLastFailure: true
                       retries: 2
