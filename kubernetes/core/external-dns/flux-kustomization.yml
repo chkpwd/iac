@@ -48,8 +48,6 @@ spec:
     namespace: flux-system
   wait: false
   interval: 30m
-  retryInterval: 1m
-  timeout: 5m
   dependsOn:
     - name: external-dns-secret
 ---
@@ -72,5 +70,3 @@ spec:
     namespace: flux-system
   wait: false
   interval: 30m
-  retryInterval: 1m
-  timeout: 5m

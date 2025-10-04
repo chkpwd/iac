@@ -1,0 +1,30 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+patches:
+  - patch: |-
+      apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      metadata:
+        name: not-used
+      spec:
+        driftDetection:
+          mode: enabled
+        install:
+          crds: CreateReplace
+          strategy:
+            name: RetryOnFailure
+        rollback:
+          cleanupOnFail: true
+          recreate: true
+        timeout: 10m
+        upgrade:
+          cleanupOnFail: true
+          crds: CreateReplace
+          strategy:
+            name: RemediateOnFailure
+          remediation:
+            remediateLastFailure: true
+            retries: 2
+    target:
+      kind: HelmRelease
+      group: helm.toolkit.fluxcd.io
