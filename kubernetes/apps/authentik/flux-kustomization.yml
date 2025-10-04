@@ -5,6 +5,8 @@ kind: Kustomization
 metadata:
   name: &app authentik
   namespace: &ns security
+  annotations:
+    chkpwd.com/gitops-hr-defaults: "disable"
 spec:
   targetNamespace: *ns
   path: ./kubernetes/apps/authentik/
@@ -12,6 +14,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
+    - ../../core/flux-instance/components/
     - ../../core/crunchydata-pgo/components/
     - ../../core/dragonfly-operator/components/
   postBuild:
