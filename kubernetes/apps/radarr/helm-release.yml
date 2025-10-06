@@ -83,10 +83,9 @@ spec:
                   - ALL
             resources:
               requests:
-                cpu: 14m
-                memory: 186Mi
+                cpu: 100m
               limits:
-                memory: 211Mi
+                memory: 4Gi
           metrics:
             dependsOn: app
             image:
