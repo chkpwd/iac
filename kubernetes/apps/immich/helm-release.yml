@@ -138,10 +138,10 @@ spec:
         advancedMounts:
           server:
             app:
-              - path: /usr/src/app/upload
+              - path: /data
           microservices:
             app:
-              - path: /usr/src/app/upload
+              - path: /data
       photography:
         enabled: true
         type: nfs
@@ -150,10 +150,10 @@ spec:
         advancedMounts:
           server:
             app:
-              - path: /usr/src/app/photography
+              - path: /photography
           microservices:
             app:
-              - path: /usr/src/app/photography
+              - path: /photography
       model-cache:
         enabled: true
         storageClass: ceph-block

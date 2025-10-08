@@ -17,7 +17,7 @@ spec:
     - ../../core/flux-instance/components/
     - ../../core/crunchydata-pgo/components/
     - ../../core/dragonfly-operator/components/
-    # - ../../core/keda-operator/_components/nfs/
+    - ../../core/keda-operator/_components/nfs/
   postBuild:
     substitute:
       APP: *app
@@ -34,8 +34,7 @@ spec:
         - op: add
           path: /spec/patroni/dynamicConfiguration/postgresql/parameters
           value:
-            shared_preload_libraries: "vectors.so"
-            search_path: '"$user", public, vectors"'
+            shared_preload_libraries: "vchord.so"
       target:
         kind: PostgresCluster
     - patch: |
@@ -48,7 +47,7 @@ spec:
     - patch: |
         - op: replace
           path: /spec/image
-          value: ghcr.io/budimanjojo/cdpgvecto.rs:ubi8-15.10-2-v0.3.0
+          value: ghcr.io/budimanjojo/crunchy-postgres-vectorchord:ubi9-17.6-2534
       target:
         kind: PostgresCluster
     - patch: |
