@@ -97,11 +97,20 @@ spec:
           searchNamespace: ALL
           enableNewTablePanelSyntax: true
         datasources:
+          enable: true
           defaultDatasourceEnabled: true
           isDefaultDatasource: true
-          name: talos-k8s-prometheus-hr
-          uid: talos-k8s-prometheus-hr
+          name: talos-k8s-prometheus
+          uid: talos-k8s-prometheus
           url: https://k8s-prometheus.chkpwd.com
+          label: dashboards
+          labelValue: "external-grafana"
+          extraJsonData:
+            prometheusType: Prometheus
+            cacheLevel: Low
+            manageAlerts: true
+          alertmanager:
+            enabled: false
     prometheusOperator:
       resources:
         requests:
