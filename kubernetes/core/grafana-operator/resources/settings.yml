@@ -64,6 +64,8 @@ spec:
       cacheLevel: Low
       manageAlerts: true
       httpMethod: POST
+    secureJsonData:
+      "password": "$${RPI_PROMETHEUS_PASSWORD}"
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
@@ -96,4 +98,4 @@ spec:
       "postgresVersion": 1600
       "timescaledb": false
     secureJsonData:
-      "password": "${password}"
+      "password": "$${password}"
