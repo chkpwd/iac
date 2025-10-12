@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: jellyseerr
+  name: seerr
 spec:
   interval: 15m
   chart:
@@ -17,9 +17,9 @@ spec:
         namespace: flux-system
   values:
     global:
-      fullnameOverride: jellyseerr
+      fullnameOverride: seerr
     controllers:
-      jellyseerr:
+      seerr:
         enabled: true
         type: statefulset
         annotations:
@@ -48,7 +48,7 @@ spec:
           app:
             image:
               repository: ghcr.io/fallenbagel/jellyseerr
-              tag: 2.7.3
+              tag: preview-seerr
               pullPolicy: IfNotPresent
             env:
               TZ: "America/New_York"
@@ -83,7 +83,7 @@ spec:
                 memory: 600Mi
     service:
       app:
-        controller: jellyseerr
+        controller: seerr
         ports:
           http:
             port: *port
@@ -91,14 +91,14 @@ spec:
       public:
         enabled: true
         kind: HTTPRoute
-        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        hostnames: ["seerr.chkpwd.com"]
         rules:
           - matches:
               - path:
                   type: PathPrefix
                   value: /
             backendRefs:
-              - name: jellyseerr
+              - name: seerr
                 port: *port
         parentRefs:
           - name: public
