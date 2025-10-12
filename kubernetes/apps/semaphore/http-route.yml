@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.networking.k8s.io/httproute_v1.json
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: semaphore
+spec:
+  hostnames: ["semaphore.chkpwd.com"]
+  parentRefs:
+    - name: semaphore
+      namespace: runners
+      sectionName: https
+  rules:
+    - backendRefs:
+        - name: semaphore
+          port: 3000

@@ -1,0 +1,97 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/common-3.1.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: semaphore
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: semaphore
+      version: 15.1.6
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: semaphoreui
+  values:
+    image:
+      repository: semaphoreui/semaphore
+      tag: v2.16.34
+    securityContext:
+      fsGroup: 1001
+    ingress:
+      enabled: false
+    persistence:
+      enabled: true
+      size: 10G
+      storageClass: ceph-block
+      accessModes:
+        - ReadWriteOnce
+    secrets:
+      cookieHashKey: cookieHash
+      cookieEncryption: null
+      cookieEncryptionKey: cookieEncryption
+      accesskeyEncryption: null
+      accesskeyEncryptionKey: accesskeyEncryption
+      existingSecret: null
+    general:
+      host: semaphore.chkpwd.com
+      gitClient: cmd_git
+      tmpPath: /tmp/semaphore
+      maxParallelTasks: 0
+      passwordLoginDisable: false
+      nonAdminCanCreateProject: false
+      useRemoteRunner: false
+      sshConfigPath: null
+      additionalPythonPackages: []
+    database:
+      type: bolt
+      usernameFromSecret: true
+      username: semaphore
+      passwordKey: password
+      existingSecret: semaphore-database
+      name: semaphore
+      options: {}
+      path: /var/lib/semaphore/database.boltdb
+      persistence:
+        enabled: true
+        size: 5G
+        storageClass: null
+        accessModes:
+          - ReadWriteOnce
+        existingClaim: null
+    # oidc:
+    #   enable: true
+    #   providers:
+    #     authentik:
+    #       display_name: Authentik
+    #       provider_url: https://authentik.chkpwd.com/application/o/semaphore-ui/
+    #       redirect_url: https://semaphore.chkpwd.com/api/auth/oidc/authentik/redirect
+    #       client_id: semaphore
+    #       client_secret: ""
+    #       username_claim: username
+    #       name_claim: name
+    #       email_claim: email
+    # runner:
+    #   token: null
+    #   tokenKey: token
+    #   existingSecret: null
+    admin:
+      create: true
+      fullname: chkpwd
+      usernameKey: username
+      passwordKey: password
+      emailKey: email
+      existingSecret: semaphore-admin
+    resources:
+      limits: {}
+      requests:
+        cpu: 100m
+        memory: 64Mi
+    envFromSecrets: []
+    envFromConfigMaps: []
+    extraEnvVariables: {}
+    extraEnvSecrets: {}
+    postgresql:
+      enabled: false
