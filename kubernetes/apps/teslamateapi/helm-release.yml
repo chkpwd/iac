@@ -38,6 +38,7 @@ spec:
         containers:
           app:
             env:
+              API_TOKEN_DISABLE: "false"
               MQTT_HOST: 10.0.10.8
               TZ: America/New_York
               MQTT_PASSWORD:
