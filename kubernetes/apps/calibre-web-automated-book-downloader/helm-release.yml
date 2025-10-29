@@ -1,0 +1,108 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/common-3.1.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: calibre-web-automated-book-downloader
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.3.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  values:
+    global:
+      fullnameOverride: calibre-web-automated-book-downloader
+    controllers:
+      calibre-web-automated-book-downloader:
+        enabled: true
+        type: deployment
+        strategy: RollingUpdate
+        rollingUpdate:
+          unavailable: 0
+        annotations:
+          reloader.stakater.com/auto: "true"
+        pod:
+          securityContext:
+            runAsUser: 1026
+            runAsGroup: &group 100
+            fsGroup: *group
+            fsGroupChangePolicy: "OnRootMismatch"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/calibrain/calibre-web-automated-book-downloader-extbp
+              tag: v0.2.3
+            env:
+              FLASK_PORT: &port 8084
+              INGEST_DIR: /cwa-book-ingest
+              BOOK_LANGUAGE: en
+              DEFAULT_SLEEP: 15
+              USE_BOOK_TITLE: true
+              LOG_LEVEL: debug
+              EXT_BYPASSER_URL: http://flaresolverr.tools.svc.cluster.local:8191/
+            command:
+              - /bin/sh
+              - -c
+              - |
+                gunicorn -t 300 -b 0.0.0.0:8084 app:app
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /request/api/status
+                    port: *port
+              readiness: *probes
+            resources:
+              requests:
+                cpu: 10m
+                memory: 150Mi
+              limits:
+                memory: 500Mi
+    service:
+      app:
+        controller: calibre-web-automated-book-downloader
+        ports:
+          http:
+            port: *port
+    route:
+      private:
+        enabled: true
+        kind: HTTPRoute
+        hostnames: ["cwabd.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: calibre-web-automated-book-downloader
+                port: *port
+        parentRefs:
+          - name: private
+            namespace: kube-system
+            sectionName: https
+    persistence:
+      tmpfs:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
+            subPath: tmp
+          - path: /app/downloaded_files
+            subPath: downloads
+          - path: /var/log/cwa-book-downloader/
+            subPath: logs
+      ingest:
+        enabled: true
+        type: nfs
+        server: "nas-srv-01.chkpwd.com"
+        path: /volume1/vault-01/static_media/books/ingest
+        globalMounts:
+          - path: /cwa-book-ingest
