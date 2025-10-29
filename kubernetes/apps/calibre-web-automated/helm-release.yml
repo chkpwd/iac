@@ -51,6 +51,8 @@ spec:
               tag: V3.1.4@sha256:577e846f104fd21453ef306eefb4a95dd95b3b9ddd2463a150944494284da0fd
               pullPolicy: IfNotPresent
             env:
+              PUID: 1000
+              PGID: 1000
               TZ: "America/New_York"
               CACHE_DIR: /cache
               NETWORK_SHARE_MODE: true # Gracefully ignore or downgrade privileged operations that aren't needed in this environment
@@ -120,7 +122,6 @@ spec:
         path: /volume1/vault-01/static_media/books
         globalMounts:
           - path: /calibre-library
-            subPath: calibre-library
       ingest:
         enabled: true
         type: nfs
@@ -128,7 +129,6 @@ spec:
         path: /volume1/vault-01/static_media/books/ingest
         globalMounts:
           - path: /cwa-book-ingest
-            subPath: cwa-book-ingest
       tmpfs:
         type: emptyDir
         globalMounts:
