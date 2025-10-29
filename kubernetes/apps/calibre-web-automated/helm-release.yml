@@ -120,6 +120,7 @@ spec:
         path: /volume1/vault-01/static_media/books
         globalMounts:
           - path: /calibre-library
+            subPath: calibre-library
       ingest:
         enabled: true
         type: nfs
@@ -127,6 +128,7 @@ spec:
         path: /volume1/vault-01/static_media/books/ingest
         globalMounts:
           - path: /cwa-book-ingest
+            subPath: cwa-book-ingest
       tmpfs:
         type: emptyDir
         globalMounts:
