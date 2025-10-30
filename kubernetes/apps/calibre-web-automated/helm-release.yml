@@ -94,6 +94,10 @@ spec:
     service:
       app:
         controller: calibre-web-automated
+        annotations:
+          lbipam.cilium.io/ips: 10.0.10.16
+        type: LoadBalancer
+        externalTrafficPolicy: Cluster
         ports:
           http:
             port: *port
