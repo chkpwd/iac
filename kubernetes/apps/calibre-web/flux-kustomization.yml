@@ -3,11 +3,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app calibre-web-automated
-  namespace: &ns tools
+  name: &app calibre-web
+  namespace: &ns media
 spec:
   targetNamespace: *ns
-  path: ./kubernetes/apps/calibre-web-automated/
+  path: ./kubernetes/apps/calibre-web/
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -17,9 +17,9 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      CLAIM: config-calibre-web-automated-0
-      VOLSYNC_PUID: "0"
-      VOLSYNC_PGID: "0"
+      CLAIM: config-calibre-web-0
+      VOLSYNC_PUID: "1026"
+      VOLSYNC_PGID: "100"
       VOLSYNC_CAPACITY: "2Gi"
   prune: true
   sourceRef:
