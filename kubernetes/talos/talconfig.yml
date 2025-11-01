@@ -22,6 +22,10 @@ nodes:
         dhcp: true
         vip:
           ip: &vip 10.0.10.13
+        vlans:
+          - vlanId: 20
+            dhcp: false
+            addresses: []
   - hostname: ct-k8s-02.chkpwd.com
     ipAddress: 10.0.10.11
     controlPlane: true
@@ -32,6 +36,10 @@ nodes:
         dhcp: true
         vip:
           ip: *vip
+        vlans:
+          - vlanId: 20
+            dhcp: false
+            addresses: []
   - hostname: ct-k8s-03.chkpwd.com
     ipAddress: 10.0.10.12
     controlPlane: true
@@ -42,6 +50,10 @@ nodes:
         dhcp: true
         vip:
           ip: *vip
+        vlans:
+          - vlanId: 20
+            dhcp: false
+            addresses: []
 controlPlane:
   schematic:
     customization:

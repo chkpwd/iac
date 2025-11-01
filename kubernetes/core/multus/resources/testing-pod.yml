@@ -1,23 +1,27 @@
----
 apiVersion: v1
 kind: Pod
 metadata:
   name: samplepod
+  namespace: default
   annotations:
     k8s.v1.cni.cncf.io/networks: |
-      [{
-        "name":"multus-iot",
-        "namespace": "networking",
-        "ips": ["10.0.20.133/24"],
-        "mac": "3e:59:e4:f7:43:08"
-      }]
+      [
+        {
+          "name": "vlan20-iot-bridge",
+          "namespace": "networking",
+          "ips": ["10.0.20.133/24"],
+          "mac": "3e:59:e4:f7:43:08"
+        }
+      ]
   labels:
-    name: samplepod
+    app: samplepod
 spec:
   containers:
     - name: samplepod
-      command: ["/bin/ash", "-c", "trap : TERM INT; sleep infinity & wait"]
       image: alpine
+      command: ["/bin/sh", "-c", "trap : TERM INT; sleep infinity & wait"]
+      securityContext:
+        capabilities:
       ports:
         - containerPort: 80
       resources:
