@@ -4,7 +4,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app multus
-  namespace: &ns networking
+  namespace: &ns kube-system
 spec:
   targetNamespace: *ns
   path: ./kubernetes/core/multus/
@@ -18,25 +18,25 @@ spec:
     namespace: flux-system
   wait: true
   interval: 15m
----
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: multus-resources
-  namespace: &ns networking
-spec:
-  targetNamespace: *ns
-  dependsOn:
-    - name: multus
-  path: ./kubernetes/core/multus/resources
-  commonMetadata:
-    labels:
-      app.kubernetes.io/name: multus
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: chkpwd-ops
-    namespace: flux-system
-  wait: true
-  interval: 15m
+# ---
+# # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+# apiVersion: kustomize.toolkit.fluxcd.io/v1
+# kind: Kustomization
+# metadata:
+#   name: multus-resources
+#   namespace: &ns networking
+# spec:
+#   targetNamespace: *ns
+#   dependsOn:
+#     - name: multus
+#   path: ./kubernetes/core/multus/resources
+#   commonMetadata:
+#     labels:
+#       app.kubernetes.io/name: multus
+#   prune: true
+#   sourceRef:
+#     kind: GitRepository
+#     name: chkpwd-ops
+#     namespace: flux-system
+#   wait: true
+#   interval: 15m
