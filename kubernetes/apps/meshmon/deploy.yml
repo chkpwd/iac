@@ -4,6 +4,8 @@ kind: Deployment
 metadata:
   name: meshmon
   namespace: tools
+  annotations:
+    reloader.stakater.com/auto: "true"
 spec:
   revisionHistoryLimit: 3
   replicas: 1
