@@ -51,6 +51,8 @@ spec:
               pullPolicy: IfNotPresent
             env:
               WS_SECURE_API_ENDPOINTS: "true"
+              WS_CRON_IMPORT_AT: "0 */6 * * *"
+              WS_CRON_EXPORT_AT: "0 */6 * * *"
             probes:
               liveness: &probes
                 enabled: true
