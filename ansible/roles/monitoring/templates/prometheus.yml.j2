@@ -10,7 +10,7 @@ scrape_configs:
 
     basic_auth:
       username: chkpwd
-      password: "{{ lookup('bws_cache', 'common-secrets').value.common_password }}"
+      password: "{{ lookup('ripplefcl.bwscache.secret', 'common-secrets').value.common_password }}"
 
   - job_name: 'opnsense-builtin-exporter'
     scheme: http

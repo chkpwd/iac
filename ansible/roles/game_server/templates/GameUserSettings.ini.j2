@@ -1,6 +1,6 @@
 [ServerSettings]
-ServerAdminPassword={{ lookup('bws_cache', 'infra-game-servers-secrets').value.ark_server_admin_password }}
-ServerPassword={{ lookup('bws_cache', 'infra-game-servers-secrets').value.ark_server_password }}
+ServerAdminPassword={{ lookup('ripplefcl.bwscache.secret', 'infra-game-servers-secrets').value.ark_server_admin_password }}
+ServerPassword={{ lookup('ripplefcl.bwscache.secret', 'infra-game-servers-secrets').value.ark_server_password }}
 ActiveMods=1645346094,566885854,889745138,1373744537,1380777369,1522327484,1814953878,1967741708,731604991,889745138
 ShowMapPlayerLocation=True
 AllowThirdPersonPlayer=True

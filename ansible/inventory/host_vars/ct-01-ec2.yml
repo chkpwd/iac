@@ -40,7 +40,7 @@ service_definitions:
       SUBDOMAINS: wildcard
       VALIDATION: dns
       DNSPLUGIN: cloudflare
-      EMAIL: "{{ lookup('bws_cache', 'common-secrets').value.primary_email_address }}"
+      EMAIL: "{{ lookup('ripplefcl.bwscache.secret', 'common-secrets').value.primary_email_address }}"
       STAGING: "false"
       DOCKER_MODS: linuxserver/mods:swag-auto-reload
     volumes:
