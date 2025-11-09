@@ -3,6 +3,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  # - paperless-gpt/flux-kustomization.yml # mkdir for db requires root
+  # - semaphore/flux-kustomization.yml
   - authentik/flux-kustomization.yml
   - bazarr/flux-kustomization.yml
   - diff2rss/flux-kustomization.yml
@@ -31,6 +33,5 @@ resources:
   - calibre-web-automated-book-downloader/flux-kustomization.yml
   - jellyfin/flux-kustomization.yml
   - watchstate/flux-kustomization.yml
-  # - paperless-gpt/flux-kustomization.yml # mkdir for db requires root
   - meshmon/flux-kustomization.yml
-  # - semaphore/flux-kustomization.yml
+  - glance/flux-kustomization.yml
