@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: authentik
-      version: 2025.8.3
+      version: 2025.10.1
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -126,12 +126,8 @@ spec:
         host: smtp.gmail.com
         port: 465
         use_ssl: false
-      redis:
-        host: "authentik-redis.security.svc.cluster.local"
     prometheus:
       rules:
         enabled: false
     postgresql:
-      enabled: false
-    redis:
       enabled: false
