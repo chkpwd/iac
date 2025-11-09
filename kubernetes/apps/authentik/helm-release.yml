@@ -74,6 +74,8 @@ spec:
             secretKeyRef:
               name: authentik-config
               key: bootstrap_email
+        - name: AUTHENTIK_POSTGRESQL__SSLMODE
+          value: require
     server:
       name: server
       replicas: 1
