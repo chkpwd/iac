@@ -3,7 +3,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: calibre-web-automated-book-downloader
+  name: autocaliweb
 spec:
   interval: 15m
   chart:
@@ -17,40 +17,42 @@ spec:
         namespace: flux-system
   values:
     global:
-      fullnameOverride: calibre-web-automated-book-downloader
+      fullnameOverride: autocaliweb
     controllers:
-      calibre-web-automated-book-downloader:
+      autocaliweb:
         enabled: true
-        type: deployment
-        strategy: RollingUpdate
-        rollingUpdate:
-          unavailable: 0
+        type: statefulset
+        replicas: 1
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              accessMode: ReadWriteOnce
+              size: "${VOLSYNC_CAPACITY}"
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              globalMounts:
+                - path: /config
         annotations:
           reloader.stakater.com/auto: "true"
         pod:
           securityContext:
-            runAsUser: 1026
-            runAsGroup: &group 100
+            runAsUser: 1000
+            runAsGroup: &group 1000
             fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
         containers:
           app:
             image:
-              repository: ghcr.io/calibrain/calibre-web-automated-book-downloader-extbp
+              repository: gelbphoenix/autocaliweb:v0.10.4
               tag: v0.2.3
+              pullPolicy: IfNotPresent
             env:
-              FLASK_PORT: &port 8084
-              INGEST_DIR: /cwa-book-ingest
-              BOOK_LANGUAGE: en
-              DEFAULT_SLEEP: 15
-              USE_BOOK_TITLE: true
-              LOG_LEVEL: debug
-              EXT_BYPASSER_URL: http://flaresolverr.tools.svc.cluster.local:8191/
-            command:
-              - /bin/sh
-              - -c
-              - |
-                gunicorn -t 300 -b 0.0.0.0:8084 app:app
+              TZ: "America/New_York"
+              PGUID: "1000"
+              PUID: "1000"
             probes:
               liveness: &probes
                 enabled: true
@@ -58,7 +60,7 @@ spec:
                 spec:
                   httpGet:
                     path: /request/api/status
-                    port: *port
+                    port: &port 8083
               readiness: *probes
             resources:
               requests:
@@ -68,7 +70,7 @@ spec:
                 memory: 500Mi
     service:
       app:
-        controller: calibre-web-automated-book-downloader
+        controller: autocaliweb
         ports:
           http:
             port: *port
@@ -76,14 +78,14 @@ spec:
       private:
         enabled: true
         kind: HTTPRoute
-        hostnames: ["cwabd.chkpwd.com"]
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
         rules:
           - matches:
               - path:
                   type: PathPrefix
                   value: /
             backendRefs:
-              - name: calibre-web-automated-book-downloader
+              - name: autocaliweb
                 port: *port
         parentRefs:
           - name: private
@@ -95,14 +97,18 @@ spec:
         globalMounts:
           - path: /tmp
             subPath: tmp
-          - path: /app/downloaded_files
-            subPath: downloads
-          - path: /var/log/cwa-book-downloader/
-            subPath: logs
-      ingest:
+      books:
         enabled: true
-        type: nfs
-        server: "nas-srv-01.chkpwd.com"
-        path: /volume1/vault-01/static_media/books/ingest
+        accessMode: ReadWriteOnce
+        type: persistentVolumeClaim
+        size: 5Gi
+        storageClass: ceph-block
         globalMounts:
-          - path: /cwa-book-ingest
+          - path: /calibre-library
+      # ingest:
+      #   enabled: true
+      #   type: nfs
+      #   server: "nas-srv-01.chkpwd.com"
+      #   path: /volume1/vault-01/static_media/books/ingest
+      #   globalMounts:
+      #     - path: /acw-book-ingest
