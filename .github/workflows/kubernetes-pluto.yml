@@ -20,7 +20,7 @@ jobs:
     steps:
       - name: Environment
         run: env | sort
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Download Pluto
         uses: FairwindsOps/pluto/github-action@master
         with:
