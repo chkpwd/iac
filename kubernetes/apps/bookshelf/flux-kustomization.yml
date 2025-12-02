@@ -1,0 +1,30 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app bookshelf
+  namespace: &ns media
+spec:
+  targetNamespace: *ns
+  path: ./kubernetes/apps/bookshelf/
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../core/volsync/components/
+    - ../../core/keda-operator/_components/nfs/
+  postBuild:
+    substitute:
+      APP: *app
+      CLAIM: config-bookshelf-0
+      VOLSYNC_PUID: "1000"
+      VOLSYNC_PGID: "1000"
+      VOLSYNC_CAPACITY: "2Gi"
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  wait: false
+  interval: 30m
