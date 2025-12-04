@@ -3,7 +3,7 @@ terraform {
   required_providers {
     backblaze = {
       source  = "Backblaze/b2"
-      version = "0.10.0"
+      version = "0.12.0"
     }
     external = {
       source  = "hashicorp/external"
