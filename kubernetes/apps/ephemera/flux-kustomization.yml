@@ -3,11 +3,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app bookshelf
+  name: &app ephemera
   namespace: &ns media
 spec:
   targetNamespace: *ns
-  path: ./kubernetes/apps/bookshelf/
+  path: ./kubernetes/apps/ephemera/
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -17,10 +17,10 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      CLAIM: config-bookshelf-0
-      VOLSYNC_PUID: "1000"
-      VOLSYNC_PGID: "1000"
-      VOLSYNC_CAPACITY: "2Gi"
+      CLAIM: config-ephemera-0
+      VOLSYNC_PUID: "1026"
+      VOLSYNC_PGID: "100"
+      VOLSYNC_CAPACITY: "500Mi"
   prune: true
   sourceRef:
     kind: GitRepository
