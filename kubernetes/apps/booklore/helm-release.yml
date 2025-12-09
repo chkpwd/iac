@@ -138,3 +138,11 @@ spec:
           booklore:
             app:
               - path: /bookdrop
+      tmp:
+        enabled: true
+        type: emptyDir
+        advancedMounts:
+          booklore:
+            app:
+              - path: /tmp
+              - path: /etc/nginx
