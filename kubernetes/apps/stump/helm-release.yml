@@ -109,3 +109,13 @@ spec:
           stump:
             app:
               - path: /app/ingest
+      entrypoint:
+        type: configMap
+        name: entrypoint
+        defaultMode: 0755
+        advancedMounts:
+          ephemera:
+            app:
+              - path: /entrypoint.sh
+                subPath: entrypoint.sh
+                readOnly: true
