@@ -14,9 +14,6 @@ if ! grep -q "^${USER}:" /etc/passwd; then
     adduser -u "$PUID" -G "$GROUP" -D -H "$USER"
 fi
 
-[ -d /config ] && chown -R "$PUID":"$PGID" /config
-[ -d /data ] && chown "$PUID":"$PGID" /data
-
 cd /app
 
 if [ "$PUID" -eq 0 ]; then
