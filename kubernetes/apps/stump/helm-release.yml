@@ -35,7 +35,6 @@ spec:
               globalMounts:
                 - path: /config
         pod:
-          hostUsers: false
           securityContext:
             runAsUser: 0 # run pod as root initially to setup permissions (i.e create a user)
             runAsNonRoot: false
