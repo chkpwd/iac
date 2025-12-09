@@ -5,7 +5,7 @@ kind: Kustomization
 resources:
   - helm-release.yml
 configMapGenerator:
-  - name: entrypoint
+  - name: ephemera-entrypoint
     files:
       - ./entrypoint.sh
     options:

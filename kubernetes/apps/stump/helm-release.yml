@@ -111,10 +111,10 @@ spec:
               - path: /app/ingest
       entrypoint:
         type: configMap
-        name: entrypoint
+        name: "{{ .Release.Name }}-entrypoint"
         defaultMode: 0755
         advancedMounts:
-          ephemera:
+          stump:
             app:
               - path: /entrypoint.sh
                 subPath: entrypoint.sh
