@@ -34,12 +34,6 @@ spec:
                 name: "${APP}"
               globalMounts:
                 - path: /app/data
-        pod:
-          securityContext:
-            runAsUser: 1026
-            runAsGroup: &group 100
-            fsGroup: *group
-            fsGroupChangePolicy: "OnRootMismatch"
         containers:
           app:
             image:
@@ -57,33 +51,23 @@ spec:
                     name: booklore
                     key: DATABASE_PASSWORD
               BOOKLORE_PORT: &port 6060
-              SWAGGER_ENABLED: "false"
-              FORCE_DISABLE_OIDC: "false"
+              SWAGGER_ENABLED: "true"
+              FORCE_DISABLE_OIDC: "true"
             probes:
-              liveness:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/health
-                    port: *port
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-              readiness:
-                enabled: true
-                custom: true
-                spec:
-                  httpGet:
-                    path: /api/health
-                    port: *port
-                  initialDelaySeconds: 0
-                  periodSeconds: 10
-                  timeoutSeconds: 1
-                  failureThreshold: 3
-              startup:
-                enabled: false
+              # liveness: &probes
+              #   enabled: true
+              #   custom: true
+              #   spec:
+              #     httpGet:
+              #       path: /api/health
+              #       port: *port
+              #     initialDelaySeconds: 0
+              #     periodSeconds: 10
+              #     timeoutSeconds: 1
+              #     failureThreshold: 3
+              # readiness: *probes
+              # startup:
+              #   enabled: false
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
@@ -94,7 +78,22 @@ spec:
                 cpu: 100m
               limits:
                 memory: 400Mi
-          mariadb:
+      mariadb:
+        type: statefulset
+        statefulset:
+          volumeClaimTemplates:
+            - name: config-mariadb
+              accessMode: ReadWriteOnce
+              size: "1Gi"
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}-mariadb"
+              globalMounts:
+                - path: /config
+        containers:
+          app:
             image:
               repository: lscr.io/linuxserver/mariadb
               tag: 11.4.8
@@ -112,13 +111,34 @@ spec:
                   secretKeyRef:
                     name: booklore
                     key: DATABASE_ROOT_PASSWORD
+            probes:
+              liveness: &mariadb-probes
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - mariadb-admin
+                      - ping
+                      - -h
+                      - localhost
+                  initialDelaySeconds: 5
+                  periodSeconds: 5
+                  timeoutSeconds: 5
+                  failureThreshold: 10
+              readiness: *mariadb-probes
     service:
-      app:
+      booklore:
         primary: true
         controller: booklore
         ports:
           http:
             port: *port
+      mariadb:
+        controller: mariadb
+        ports:
+          mysql:
+            port: 3306
     persistence:
       books:
         enabled: true
