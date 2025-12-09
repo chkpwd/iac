@@ -13,18 +13,14 @@ helmDefaults:
     - -c
     - yq ea -e 'select(.kind == "CustomResourceDefinition")'
 releases:
-  - name: flux-operator
-    namespace: flux-system
-    chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator
-    version: 0.28.0
+  - name: gateway-api-crds
+    namespace: kube-system
+    chart: oci://ghcr.io/wiremind/wiremind-helm-charts/gateway-api-crds
+    version: 1.4.0
   - name: external-dns
     namespace: network
     chart: oci://ghcr.io/home-operations/charts-mirror/external-dns
     version: 1.19.0
-  - name: external-secrets
-    namespace: security
-    chart: oci://ghcr.io/external-secrets/charts/external-secrets
-    version: 0.20.1
   - name: keda-operator
     namespace: monitoring
     chart: oci://ghcr.io/home-operations/charts-mirror/keda

@@ -20,13 +20,7 @@ gatewayAPI:
     create: false
     name: kube-system
 hubble:
-  enabled: true
-  relay:
-    enabled: true
-    rollOutPods: true
-  ui:
-    enabled: true
-    rollOutPods: true
+  enabled: false
 ipam:
   mode: kubernetes
 ipv4NativeRoutingCIDR: 10.244.0.0/16
