@@ -145,6 +145,23 @@ spec:
         ports:
           mysql:
             port: 3306
+    route:
+      private:
+        enabled: true
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: booklore
+                port: *port
+        parentRefs:
+          - name: private
+            namespace: kube-system
+            sectionName: https
     persistence:
       books:
         enabled: true
