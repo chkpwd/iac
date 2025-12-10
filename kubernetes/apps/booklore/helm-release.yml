@@ -74,6 +74,9 @@ spec:
               runAsNonRoot: false
               allowPrivilegeEscalation: true
               capabilities:
+                add:
+                  - SETGID
+                  - SETUID
                 drop:
                   - ALL
             resources:
