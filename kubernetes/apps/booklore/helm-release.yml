@@ -28,10 +28,10 @@ spec:
               accessMode: ReadWriteOnce
               size: "${VOLSYNC_CAPACITY}"
               storageClass: ceph-block
-              dataSourceRef:
-                kind: ReplicationDestination
-                apiGroup: volsync.backube
-                name: "${APP}"
+              # dataSourceRef:
+              #   kind: ReplicationDestination
+              #   apiGroup: volsync.backube
+              #   name: "${APP}"
               globalMounts:
                 - path: /app/data
         containers:
@@ -82,14 +82,14 @@ spec:
         type: statefulset
         statefulset:
           volumeClaimTemplates:
-            - name: config-mariadb
+            - name: data
               accessMode: ReadWriteOnce
               size: "1Gi"
               storageClass: ceph-block
-              dataSourceRef:
-                kind: ReplicationDestination
-                apiGroup: volsync.backube
-                name: "${APP}-mariadb"
+              # dataSourceRef:
+              #   kind: ReplicationDestination
+              #   apiGroup: volsync.backube
+              #   name: "${APP}-mariadb"
               globalMounts:
                 - path: /config
         containers:
