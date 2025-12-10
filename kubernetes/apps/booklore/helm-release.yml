@@ -126,8 +126,7 @@ spec:
                     command:
                       - mariadb-admin
                       - ping
-                      - -h
-                      - localhost
+                      - --silent
                   initialDelaySeconds: 5
                   periodSeconds: 5
                   timeoutSeconds: 5
