@@ -43,7 +43,7 @@ spec:
               USER_ID: "1026"
               GROUP_ID: "100"
               TZ: "America/New_York"
-              DATABASE_URL: "jdbc:mariadb://mariadb:3306/booklore"
+              DATABASE_URL: "jdbc:mariadb://booklore-mariadb:3306/booklore"
               DATABASE_USERNAME: "booklore"
               DATABASE_PASSWORD:
                 valueFrom:
@@ -69,6 +69,10 @@ spec:
               # startup:
               #   enabled: false
             securityContext:
+              runAsUser: 0
+              runAsGroup: 0
+              runAsNonRoot: false
+              allowPrivilegeEscalation: true
               capabilities:
                 drop:
                   - ALL
