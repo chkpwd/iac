@@ -39,8 +39,8 @@ spec:
                 - path: /config
         pod:
           securityContext:
-            runAsUser: 1026
-            runAsGroup: &group 100
+            runAsUser: 1999
+            runAsGroup: &group 1999
             fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
         containers:
