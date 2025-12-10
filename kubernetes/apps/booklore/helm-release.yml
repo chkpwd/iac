@@ -40,8 +40,8 @@ spec:
               repository: booklore/booklore
               tag: v1.13.2
             env:
-              USER_ID: "1026"
-              GROUP_ID: "100"
+              USER_ID: "0"
+              GROUP_ID: "0"
               TZ: "America/New_York"
               DATABASE_URL: "jdbc:mariadb://booklore-mariadb:3306/booklore"
               DATABASE_USERNAME: "booklore"
@@ -68,17 +68,6 @@ spec:
               # readiness: *probes
               # startup:
               #   enabled: false
-            securityContext:
-              runAsUser: 0
-              runAsGroup: 0
-              runAsNonRoot: false
-              allowPrivilegeEscalation: true
-              capabilities:
-                add:
-                  - SETGID
-                  - SETUID
-                drop:
-                  - ALL
             resources:
               requests:
                 cpu: 100m
