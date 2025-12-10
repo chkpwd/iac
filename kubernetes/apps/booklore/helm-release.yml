@@ -69,7 +69,6 @@ spec:
               # startup:
               #   enabled: false
             securityContext:
-              allowPrivilegeEscalation: false
               capabilities:
                 drop:
                   - ALL
@@ -158,11 +157,3 @@ spec:
           booklore:
             app:
               - path: /bookdrop
-      tmp:
-        enabled: true
-        type: emptyDir
-        advancedMounts:
-          booklore:
-            app:
-              - path: /tmp
-              - path: /etc/nginx
