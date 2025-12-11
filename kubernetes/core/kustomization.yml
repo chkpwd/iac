@@ -3,7 +3,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - csi-driver-smb/flux-kustomization.yml
   - cert-manager/flux-kustomization.yml
   - cilium/flux-kustomization.yml
   - coredns/flux-kustomization.yml
