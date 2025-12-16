@@ -1,0 +1,6 @@
+---
+- name: Restart Dyrne
+  community.docker.docker_container:
+    name: dyrne
+    state: started
+    restart: true

@@ -1,0 +1,22 @@
+---
+- name: Create dir
+  ansible.builtin.file:
+    path: "{{ configuration_path }}/dyrne"
+    state: directory
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: "0755"
+- name: Create Dyrne Config
+  ansible.builtin.copy:
+    content: |
+      {{ dyrne_config_file | to_nice_yaml(indent=2) }}
+    dest: "{{ configuration_path }}/dyrne/dyrne.yml"
+    owner: "{{ common_user }}"
+    group: "{{ common_user }}"
+    mode: "0644"
+  notify: Restart Dyrne
+- name: Deploy Docker containers # noqa args[module]
+  community.docker.docker_container: "{{ item }}"
+  loop: "{{ dyrne_containers }}"
+  loop_control:
+    label: "{{ item.name }}"

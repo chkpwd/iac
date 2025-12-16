@@ -96,6 +96,9 @@ service_definitions:
       TWINGATE_LABEL_HOSTNAME: "`hostname`"
       TWINGATE_LABEL_DEPLOYED_BY: "docker"
     state: stopped
+  - name: dyrne
+    image: ghcr.io/overengineers-anonymous/dyrne
+    ports: ["5001:5000"]
   - name: bws-cache
     image: ghcr.io/ripplefcl/bws-cache:v3.2.2
     env:
