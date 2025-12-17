@@ -134,7 +134,7 @@ spec:
           mysql:
             port: 3306
     route:
-      private:
+      public:
         enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
@@ -147,7 +147,7 @@ spec:
               - name: booklore
                 port: *port
         parentRefs:
-          - name: private
+          - name: public
             namespace: kube-system
             sectionName: https
     persistence:
