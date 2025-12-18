@@ -1,0 +1,19 @@
+---
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: Password
+metadata:
+  name: password32
+spec:
+  length: 32
+  allowRepeat: true
+  noUpper: false
+  symbols: 0
+---
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: Password
+metadata:
+  name: password64
+spec:
+  length: 64
+  allowRepeat: true
+  noUpper: false
