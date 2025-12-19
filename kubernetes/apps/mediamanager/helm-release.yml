@@ -40,6 +40,7 @@ spec:
             env:
               TZ: "America/New_York"
               CONFIG_DIR: /app/config
+              LOG_FILE: /tmp/logs
               MEDIAMANAGER_DATABASE__HOST:
                 valueFrom:
                   secretKeyRef:
@@ -125,3 +126,8 @@ spec:
         name: mediamanager-config
         globalMounts:
           - path: /app/config
+      logs:
+        type: emptyDir
+        medium: Memory
+        globalMounts:
+          - path: /tmp/logs
