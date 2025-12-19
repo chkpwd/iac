@@ -5,6 +5,8 @@ kind: Kustomization
 metadata:
   name: &app mediamanager
   namespace: &ns media
+  labels:
+    components.postgres/cpgo: init
 spec:
   targetNamespace: *ns
   path: ./kubernetes/apps/mediamanager/
