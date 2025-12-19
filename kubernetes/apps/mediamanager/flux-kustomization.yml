@@ -18,6 +18,10 @@ spec:
     substitute:
       APP: *app
       POSTGRES_DATA_SIZE: 7Gi
+    substituteFrom:
+      - kind: Secret
+        name: cloudflare-id
+        optional: false
   prune: true
   sourceRef:
     kind: GitRepository
