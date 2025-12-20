@@ -121,6 +121,13 @@ spec:
         sizeLimit: 1Gi
         globalMounts:
           - path: /.cache
+      metadata:
+        accessMode: ReadWriteOnce
+        type: persistentvolumeclaim
+        size: 5Gi
+        storageClass: ceph-block
+        globalMounts:
+          - path: /metadata
       config:
         type: configMap
         name: mediamanager-config
