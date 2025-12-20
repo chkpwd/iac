@@ -32,7 +32,6 @@ spec:
               pullPolicy: IfNotPresent
             env:
               BASE_URL: https://miniflux.chkpwd.com
-              CREATE_ADMIN: "1"
               DATABASE_URL:
                 valueFrom:
                   secretKeyRef:
