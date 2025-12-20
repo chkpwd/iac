@@ -6,14 +6,14 @@ frontend_url = "https://mediamanager.chkpwd.com"
 cors_urls = ["https://mediamanager.chkpwd.com"]
 
 image_directory = "/metadata"
-tv_directory = "/nfs/series/standard"
-movie_directory = "/nfs/films/1080p"
-torrent_directory = "/nfs/downloads/torrent/complete/mediamanager"
+tv_directory = "/data/series/standard"
+movie_directory = "/data/films/1080p"
+torrent_directory = "/data/downloads/torrent/complete/mediamanager"
 
 # Custom Media Libraries
 [[misc.tv_libraries]]
 name = "Anime"
-path = "/nfs/series/anime"
+path = "/data/series/anime"
 
 [auth]
 email_password_resets = false
@@ -36,7 +36,7 @@ enabled = true
 host = "http://qbittorrent.media.svc.cluster.local"
 port = 8080
 category_name = "mediamanager"
-category_save_path = "/nfs/downloads/torrent/complete/mediamanager"
+category_save_path = "/data/downloads/torrent/complete/mediamanager"
 
 [torrents.sabnzbd]
 enabled = true
