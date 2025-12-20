@@ -5,9 +5,9 @@ kind: PostgresCluster
 metadata:
   name: ${APP}
 spec:
-  image: registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi8-15.12-0
+  image: registry.developers.crunchydata.com/crunchydata/crunchy-postgres:ubi9-18.1-2550
   imagePullPolicy: IfNotPresent
-  postgresVersion: 15
+  postgresVersion: 18
   patroni: # Synchronous mode
     dynamicConfiguration:
       synchronous_mode: true
