@@ -40,13 +40,13 @@ category_save_path = "/data/downloads/torrent/complete/mediamanager"
 
 [torrents.sabnzbd]
 enabled = true
-host = "http://sabnzbd.media.svc.cluster.local"
+host = "http://sabnzbd-app.media.svc.cluster.local"
 port = 8080
 
 [indexers]
 [indexers.prowlarr]
 enabled = true
-url = "http://prowlarr.media.svc.cluster.local:9696"
+url = "http://prowlarr-app.media.svc.cluster.local:9696"
 reject_torrents_on_url_error = true
 
 [[indexers.title_scoring_rules]]
