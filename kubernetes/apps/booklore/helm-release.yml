@@ -122,7 +122,7 @@ spec:
           mysql:
             port: 3306
     route:
-      public:
+      private:
         enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
@@ -131,6 +131,22 @@ spec:
               - path:
                   type: PathPrefix
                   value: /
+            backendRefs:
+              - name: booklore
+                port: *port
+        parentRefs:
+          - name: private
+            namespace: kube-system
+            sectionName: https
+      public:
+        enabled: true
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: RegularExpression
+                  value: /api/v1/opds/?(.*)
             backendRefs:
               - name: booklore
                 port: *port
