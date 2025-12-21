@@ -53,21 +53,6 @@ spec:
               BOOKLORE_PORT: &port 6060
               SWAGGER_ENABLED: "true"
               FORCE_DISABLE_OIDC: "true"
-            probes:
-              # liveness: &probes
-              #   enabled: true
-              #   custom: true
-              #   spec:
-              #     httpGet:
-              #       path: /api/health
-              #       port: *port
-              #     initialDelaySeconds: 0
-              #     periodSeconds: 10
-              #     timeoutSeconds: 1
-              #     failureThreshold: 3
-              # readiness: *probes
-              # startup:
-              #   enabled: false
             resources:
               requests:
                 cpu: 100m
@@ -125,6 +110,9 @@ spec:
       booklore:
         primary: true
         controller: booklore
+        type: LoadBalancer
+        annotations:
+          lbipam.cilium.io/ips: 10.0.10.16
         ports:
           http:
             port: *port
