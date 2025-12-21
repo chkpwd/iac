@@ -147,6 +147,12 @@ spec:
               - path:
                   type: RegularExpression
                   value: /api/v1/opds/?(.*)
+            filters:
+              - type: URLRewrite
+                urlRewrite:
+                  path:
+                    type: ReplacePrefixMatch
+                    replacePrefixMatch: "/"
             backendRefs:
               - name: booklore
                 port: *port
