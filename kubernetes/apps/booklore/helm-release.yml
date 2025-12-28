@@ -110,9 +110,6 @@ spec:
       booklore:
         primary: true
         controller: booklore
-        type: LoadBalancer
-        annotations:
-          lbipam.cilium.io/ips: 10.0.10.16
         ports:
           http:
             port: *port
