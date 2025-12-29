@@ -33,6 +33,9 @@ dyrne_config_file:
               length: 32
         - name: cache
         - name: parse_secret
+          config:
+            encode_on_write: yaml
+            pretty_print: true
         - name: rate_limiter
         - name: bws_read
         - name: bws_write
