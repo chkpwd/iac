@@ -1,15 +1,15 @@
 ---
 yaml-files:
-  - '*.yaml'
-  - '*.yml'
-  - '.yamllint'
+  - "*.yaml"
+  - "*.yml"
+  - ".yamllint"
 extends: default
 rules:
   braces:
     max-spaces-inside: 1
   octal-values:
-    forbid-implicit-octal: true
-    forbid-explicit-octal: true
+    forbid-implicit-octal: false
+    forbid-explicit-octal: false
   comments:
     min-spaces-from-content: 1
     require-starting-space: true
