@@ -24,15 +24,15 @@ spec:
         replicas: 1
         pod:
           securityContext:
-            runAsUser: 1999
-            runAsGroup: &group 1999
+            runAsUser: 1000
+            runAsGroup: &group 1000
             fsGroup: *group
             fsGroupChangePolicy: "OnRootMismatch"
         containers:
           app:
             image:
               repository: ghcr.io/maxdorninger/mediamanager/mediamanager
-              tag: dev-2025.12.29-384
+              tag: 1.11.0
               pullPolicy: IfNotPresent
             command: ["/entrypoint.sh"]
             envFrom:
