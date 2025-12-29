@@ -133,15 +133,17 @@ spec:
       config:
         type: configMap
         name: mediamanager-config
-        globalMounts:
-          - path: /app/config
+        advancedMounts:
+          mediamanager:
+            app:
+              - path: /app/config
       entrypoint:
         type: configMap
         name: mediamanager-entrypoint
         defaultMode: 0755
         advancedMounts:
           mediamanager:
-            mediamanager:
+            app:
               - path: /entrypoint.sh
                 subPath: entrypoint.sh
                 readOnly: true
