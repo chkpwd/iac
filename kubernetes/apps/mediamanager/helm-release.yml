@@ -34,6 +34,7 @@ spec:
               repository: ghcr.io/maxdorninger/mediamanager/mediamanager
               tag: dev-2025.12.29-384
               pullPolicy: IfNotPresent
+            command: ["/entrypoint.sh"]
             envFrom:
               - secretRef:
                   name: mediamanager
@@ -120,7 +121,7 @@ spec:
         type: emptyDir
         sizeLimit: 1Gi
         globalMounts:
-          - path: /home/mediamanager/.cache
+          - path: /.cache
       metadata:
         enabled: true
         accessMode: ReadWriteOnce
@@ -134,6 +135,16 @@ spec:
         name: mediamanager-config
         globalMounts:
           - path: /app/config
+      entrypoint:
+        type: configMap
+        name: mediamanager-entrypoint
+        defaultMode: 0755
+        advancedMounts:
+          mediamanager:
+            mediamanager:
+              - path: /entrypoint.sh
+                subPath: entrypoint.sh
+                readOnly: true
       logs:
         type: emptyDir
         medium: Memory
