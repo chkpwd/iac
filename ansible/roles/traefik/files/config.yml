@@ -28,13 +28,13 @@ http:
       service: ollama
       tls:
         certResolver: cloudflare
-    gravity-dns-02:
+    gravity-dns:
       entryPoints:
         - "https"
-      rule: "Host(`gravity-dns-02.chkpwd.com`)"
+      rule: "Host(`gravity.chkpwd.com`)"
       middlewares:
         - https-redirectscheme
-      service: gravity-dns-02
+      service: gravity-dns
       tls:
         certResolver: cloudflare
     home-assistant:
@@ -69,10 +69,10 @@ http:
       loadBalancer:
         servers:
           - url: "http://10.0.10.15:11434"
-    gravity-dns-02:
+    gravity-dns:
       loadBalancer:
         servers:
-          - url: "http://10.0.10.7:8008"
+          - url: "http://10.0.10.4:8008"
     home-assistant:
       loadBalancer:
         servers:
