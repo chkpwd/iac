@@ -16,8 +16,6 @@ spec:
         name: palworld-server-chart
   values:
     server:
-      annotations:
-        reloader.stakater.com/auto: "true"
       image:
         repository: thijsvanloef/palworld-server-docker
         tag: v2.1.0
@@ -75,7 +73,7 @@ spec:
       service:
         enabled: true
         annotations:
-          lbipam.cilium.io/ips: 10.0.10.37
+          lbipam.cilium.io/ips: "10.0.10.37"
         type: LoadBalancer
         ports:
           - name: game
@@ -130,6 +128,7 @@ spec:
           PLAYER_STAMINA_DECREASE_RATE: "0.7"
           PAL_EGG_DEFAULT_HATCHING_TIME: "36.0"
           BASE_CAMP_WORKER_MAX_NUM: "25"
+          BUILD_OBJECT_DETERIORATION_DAMAGE_RATE: "0"
           ENABLE_INVADER_ENEMY: "true"
           ENABLE_PLAYER_TO_PLAYER_DAMAGE: "true"
           IS_PVP: "true"
