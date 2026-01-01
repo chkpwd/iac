@@ -48,10 +48,10 @@ spec:
           initialDelaySeconds: 60
       resources:
         requests:
-          cpu: 3500m
+          cpu: 2
           memory: "8Gi"
         limits:
-          cpu: 4
+          cpu: 2
           memory: "12Gi"
       storage:
         main:
@@ -62,7 +62,10 @@ spec:
           nfs:
             server: "nas-srv-01.chkpwd.com"
             path: /volume1/vault-01/backups/games/palworld
-        extra: []
+        extra:
+          - name: tmp
+            mountPath: /tmp
+            emptyDir: {}
       terminationGracePeriodSeconds: 30
       lifecycle:
         preStop:
@@ -73,7 +76,7 @@ spec:
       service:
         enabled: true
         annotations:
-          lbipam.cilium.io/ips: "10.0.10.37"
+          lbipam.cilium.io/ips: 10.0.10.37
         type: LoadBalancer
         ports:
           - name: game
@@ -89,12 +92,12 @@ spec:
             protocol: TCP
             targetPort: 25575
       securityContext:
-        runAsUser: 1999
-        runAsGroup: 1999
-        fsGroup: 1999
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       config:
-        puid: 1999
-        pgid: 1999
+        puid: 1000
+        pgid: 1000
         port: 8211
         query_port: 27015
         max_players: 16
@@ -128,7 +131,6 @@ spec:
           PLAYER_STAMINA_DECREASE_RATE: "0.7"
           PAL_EGG_DEFAULT_HATCHING_TIME: "36.0"
           BASE_CAMP_WORKER_MAX_NUM: "25"
-          BUILD_OBJECT_DETERIORATION_DAMAGE_RATE: "0"
           ENABLE_INVADER_ENEMY: "true"
           ENABLE_PLAYER_TO_PLAYER_DAMAGE: "true"
           IS_PVP: "true"
