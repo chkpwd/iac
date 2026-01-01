@@ -109,7 +109,12 @@ spec:
             name: "palworld-creds"
             key: "rcon_password"
         community:
-          enable: false
+          enable: true
+          externalPassword:
+            name: "palworld-creds"
+            key: "community_password"
+        # name: ""
+        # key: ""
         server_name: "Arc Raiders Monster Rise"
         timezone: "America/New_York"
         server_description: "The Arc in this world look very Nintendo-isk"
