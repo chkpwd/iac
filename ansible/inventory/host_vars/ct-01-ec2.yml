@@ -25,7 +25,7 @@ service_definitions:
     networks:
       - name: net_swag
   - name: gatus
-    image: twinproduction/gatus:v5.33.1
+    image: twinproduction/gatus:v5.34.0
     volumes:
       - "{{ configuration_path }}/gatus:/config"
     network_mode: container:wireguard
