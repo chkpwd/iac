@@ -34,7 +34,6 @@ spec:
               repository: ghcr.io/maxdorninger/mediamanager/mediamanager
               tag: 1.12.1
               pullPolicy: IfNotPresent
-            command: ["/entrypoint.sh"]
             envFrom:
               - secretRef:
                   name: mediamanager
@@ -117,11 +116,6 @@ spec:
         type: nfs
         server: "nas-srv-01.chkpwd.com"
         path: /volume1/vault-01/media
-      cache:
-        type: emptyDir
-        sizeLimit: 1Gi
-        globalMounts:
-          - path: /.cache
       metadata:
         enabled: true
         accessMode: ReadWriteOnce
@@ -137,18 +131,3 @@ spec:
           mediamanager:
             app:
               - path: /app/config
-      entrypoint:
-        type: configMap
-        name: mediamanager-entrypoint
-        defaultMode: 0755
-        advancedMounts:
-          mediamanager:
-            app:
-              - path: /entrypoint.sh
-                subPath: entrypoint.sh
-                readOnly: true
-      logs:
-        type: emptyDir
-        medium: Memory
-        globalMounts:
-          - path: /tmp/logs
