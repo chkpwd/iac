@@ -9,15 +9,13 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 4.3.0
+      version: 4.6.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
         name: bjw-s-labs
         namespace: flux-system
   values:
-    global:
-      fullnameOverride: seerr
     controllers:
       seerr:
         enabled: true
@@ -47,9 +45,8 @@ spec:
         containers:
           app:
             image:
-              repository: ghcr.io/fallenbagel/jellyseerr
-              tag: preview-seerr
-              pullPolicy: IfNotPresent
+              repository: ghcr.io/seerr-team/seerr
+              tag: develop@sha256:5b04702c27a27e9f37f4275dbdcad4bebf7a108183b4b0eca8c9b9dff83c7005
             env:
               TZ: "America/New_York"
               LOG_LEVEL: "info"
