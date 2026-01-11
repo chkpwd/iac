@@ -1,0 +1,161 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/common-4.5.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: rmfakecloud
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  values:
+    controllers:
+      rmfakecloud:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              accessMode: ReadWriteOnce
+              size: "${VOLSYNC_CAPACITY}"
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              globalMounts:
+                - path: /data
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: &context 65534
+            runAsGroup: *context
+            fsGroup: *context
+            fsGroupChangePolicy: OnRootMismatch
+        containers:
+          app:
+            image:
+              repository: ddvk/rmfakecloud
+              tag: 0.0.27
+              pullPolicy: IfNotPresent
+            env:
+              TZ: America/New_York
+              STORAGE_URL: https://rmfakecloud.chkpwd.com
+              # MQTT_PORT: "8883"
+              # TLS_CERT: /certs/tls.crt
+              # TLS_KEY: /certs/tls.key
+              JWT_SECRET_KEY:
+                valueFrom:
+                  secretKeyRef:
+                    name: rmfakecloud
+                    key: jwt_token
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: &httpPort 3000
+                    scheme: HTTPS
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup: *probes
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: ["ALL"]}
+    service:
+      app:
+        controller: rmfakecloud
+        ports:
+          http:
+            port: *httpPort
+          # mqtt:
+          #   port: &mqttPort 8883
+    route:
+      public:
+        enabled: true
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: rmfakecloud
+                port: *httpPort
+            timeouts:
+              request: 3h
+              backendRequest: 2h
+        parentRefs:
+          - name: public
+            namespace: kube-system
+            sectionName: https
+      hijack-http:
+        enabled: true
+        kind: HTTPRoute
+        hostnames:
+          - hwr-production-dot-remarkable-production.appspot.com
+          - service-manager-production-dot-remarkable-production.appspot.com
+          - local.appspot.com
+          - my.remarkable.com
+          - internal.cloud.remarkable.com
+          - ping.remarkable.com
+          - backtrace-proxy.cloud.remarkable.engineering
+          - eu.tectonic.remarkable.com
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: rmfakecloud
+                port: *httpPort
+            timeouts:
+              request: 3h
+              backendRequest: 2h
+        parentRefs:
+          - name: public
+            namespace: kube-system
+            sectionName: https
+      # hijack-mqtt:
+      #   enabled: true
+      #   kind: HTTPRoute
+      #   hostnames:
+      #     - vernemq-prod.cloud.remarkable.engineering
+      #   rules:
+      #     - matches:
+      #         - path:
+      #             type: PathPrefix
+      #             value: /
+      #       backendRefs:
+      #         - name: rmfakecloud
+      #           port: *mqttPort
+      #       timeouts:
+      #         request: 3h
+      #         backendRequest: 2h
+      #   parentRefs:
+      #     - name: public
+      #       namespace: kube-system
+      #       sectionName: https
+    # persistence:
+    #   certs:
+    #     type: secret
+    #     name: rmfakecloud-tls
+    #     globalMounts:
+    #       - path: /certs
+    #         readOnly: true

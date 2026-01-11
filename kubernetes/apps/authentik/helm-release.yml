@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: authentik
-      version: 2025.8.3
+      version: 2025.10.3
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -74,6 +74,8 @@ spec:
             secretKeyRef:
               name: authentik-config
               key: bootstrap_email
+        - name: AUTHENTIK_POSTGRESQL__SSLMODE
+          value: require
     server:
       name: server
       replicas: 1
@@ -126,12 +128,8 @@ spec:
         host: smtp.gmail.com
         port: 465
         use_ssl: false
-      redis:
-        host: "authentik-redis.security.svc.cluster.local"
     prometheus:
       rules:
         enabled: false
     postgresql:
-      enabled: false
-    redis:
       enabled: false

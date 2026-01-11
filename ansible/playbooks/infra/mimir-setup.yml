@@ -55,7 +55,7 @@
         command: server
         env:
           MINIO_ROOT_USER: admin
-          MINIO_ROOT_PASSWORD: "{{ lookup('bws_cache', 'common-secrets').value.common_password }}"
+          MINIO_ROOT_PASSWORD: "{{ lookup('ripplefcl.bwscache.secret', 'common-secrets').value.common_password }}"
           MINIO_VOLUMES: /data
           MINIO_ADDRESS: ":9001"
           MINIO_CONSOLE_ADDRESS: ":9002"
@@ -69,7 +69,7 @@
           MINIO_IDENTITY_OPENID_CONFIG_URL: https://sso.{{ domain }}/application/o/minio/.well-known/openid-configuration
           MINIO_IDENTITY_OPENID_CLIENT_ID: minio
           MINIO_IDENTITY_OPENID_CLIENT_SECRET: >-
-            {{ lookup('bws_cache', 'infra-minio-secrets').value.oauth_secrets }}
+            {{ lookup('ripplefcl.bwscache.secret', 'infra-minio-secrets').value.oauth_secrets }}
           MINIO_IDENTITY_OPENID_SCOPES: openid,profile,email,minio
           MINIO_PROMETHEUS_URL:
             "http://{{ hostvars.Monitor01.prometheus_users[0].username }}:{{ hostvars.Monitor01.prometheus_users[0].password }}@Monitor01.{{ domain

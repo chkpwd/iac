@@ -1,0 +1,26 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app ephemera
+  namespace: &ns media
+spec:
+  targetNamespace: *ns
+  path: ./kubernetes/apps/ephemera/
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../core/keda-operator/_components/nfs/
+  postBuild:
+    substitute:
+      APP: *app
+      CLAIM: config-ephemera-0
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  wait: false
+  interval: 30m

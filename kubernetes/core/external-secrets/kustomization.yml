@@ -7,6 +7,7 @@ resources:
   - bitwarden-secrets-manager.yml
   - cloudflare-cluster-es.yml
   - source.yml
+  - generators.yml
 configMapGenerator:
   - name: external-secrets-values
     files:

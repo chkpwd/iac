@@ -1,0 +1,124 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/common-4.5.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: ephemera
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  values:
+    controllers:
+      ephemera:
+        enabled: true
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
+        pod:
+          securityContext:
+            runAsUser: 1026
+            runAsGroup: &group 100
+            fsGroup: *group
+            fsGroupChangePolicy: "OnRootMismatch"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/orwellianepilogue/ephemera
+              tag: 2.0.0
+              pullPolicy: IfNotPresent
+            command: ["/bin/sh", "/entrypoint.sh"]
+            env:
+              AA_BASE_URL: https://annas-archive.org
+              FLARESOLVERR_URL: http://flaresolverr.tools.svc.cluster.local:8191
+              PUID: 1026
+              PGID: 100
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /ping
+                    port: &port 8286
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: false
+            resources:
+              requests:
+                cpu: 10m
+              limits:
+                memory: 350Mi
+    service:
+      app:
+        primary: true
+        controller: ephemera
+        ports:
+          http:
+            port: *port
+    route:
+      private:
+        enabled: true
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: ephemera
+                port: *port
+        parentRefs:
+          - name: private
+            namespace: kube-system
+            sectionName: https
+    persistence:
+      tmpfs:
+        type: emptyDir
+        advancedMounts:
+          ephemera:
+            app:
+              - path: /app/data
+                subPath: data
+              - path: /app/downloads
+                subPath: downloads
+              - path: /app/.crawlee
+                subPath: crawlee
+      ingest:
+        enabled: true
+        type: nfs
+        server: "nas-srv-01.chkpwd.com"
+        path: /volume1/vault-01/media/books/ingest
+        advancedMounts:
+          ephemera:
+            app:
+              - path: /app/ingest
+      entrypoint:
+        type: configMap
+        name: "{{ .Release.Name }}-entrypoint"
+        defaultMode: 0755
+        advancedMounts:
+          ephemera:
+            app:
+              - path: /entrypoint.sh
+                subPath: entrypoint.sh
+                readOnly: true

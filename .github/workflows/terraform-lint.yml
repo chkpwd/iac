@@ -26,14 +26,14 @@ jobs:
   tflint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         name: Checkout source code
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         name: Cache plugin dir
         with:
           path: ~/.tflint.d/plugins
           key: ubuntu-tflint-${{ hashFiles('.tflint.hcl') }}
-      - uses: terraform-linters/setup-tflint@v5
+      - uses: terraform-linters/setup-tflint@v6
         name: Setup TFLint
       - name: Init TFLint
         run: tflint --init

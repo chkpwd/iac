@@ -14,11 +14,11 @@ service_definitions:
       - "{{ compose_configuration_path }}/nginx_webserver/files:/files"
     state: stopped
   - name: apprise
-    image: caronc/apprise:1.2.1
+    image: caronc/apprise:1.2.6
     env:
       APPRISE_STATEFUL_MODE: simple
       APPRISE_DEFAULT_THEME: dark
-      APPRISE_WEBHOOK_URL: "{{ lookup('bws_cache', 'infra-apprise-secrets').value.discord_webhook_url }}"
+      APPRISE_WEBHOOK_URL: "{{ lookup('ripplefcl.bwscache.secret', 'infra-apprise-secrets').value.discord_webhook_url }}"
       LOG_LEVEL: info
       PGID: "1000"
       PUID: "1000"
@@ -45,7 +45,7 @@ service_definitions:
     env:
       USER_ID: "2848619454"
       PLATFORM: PC
-      API_KEY: "{{ lookup('bws_cache', 'public-api-apex-legends-key').value }}"
+      API_KEY: "{{ lookup('ripplefcl.bwscache.secret', 'public-api-apex-legends-key').value }}"
     ports: ["5050:5000"]
     state: stopped
   - name: opnsense-exporter
@@ -58,8 +58,8 @@ service_definitions:
       - --web.disable-exporter-metrics
       - --exporter.disable-openvpn
     env:
-      OPNSENSE_EXPORTER_OPS_API_KEY: "{{ lookup('bws_cache', 'infra-network-secrets').value.opnsense_exporter_api_key }}"
-      OPNSENSE_EXPORTER_OPS_API_SECRET: "{{ lookup('bws_cache', 'infra-network-secrets').value.opnsense_exporter_api_secret }}"
+      OPNSENSE_EXPORTER_OPS_API_KEY: "{{ lookup('ripplefcl.bwscache.secret', 'infra-network-secrets').value.opnsense_exporter_api_key }}"
+      OPNSENSE_EXPORTER_OPS_API_SECRET: "{{ lookup('ripplefcl.bwscache.secret', 'infra-network-secrets').value.opnsense_exporter_api_secret }}"
     ports: ["8080:8080"]
   - name: scanservjs
     image: sbs20/scanservjs:v3.0.4
@@ -68,7 +68,7 @@ service_definitions:
     env:
       DEVICES: "airscan:e0:Epson ET-2850;escl:https://10.0.30.8:443"
       PAPERLESS_URL: "https://paperless-ngx.{{ domain }}"
-      PAPERLESS_API_TOKEN: "{{ lookup('bws_cache', 'ns-tools-paperless-ngx').value.token }}"
+      PAPERLESS_API_TOKEN: "{{ lookup('ripplefcl.bwscache.secret', 'ns-tools-paperless-ngx').value.token }}"
       PAPERLESS_DELETE_AFTER_UPLOAD: "true"
     volumes:
       - "{{ compose_configuration_path }}/scanservjs/output:/var/lib/scanservjs/output"
@@ -85,17 +85,20 @@ service_definitions:
       traefik.http.routers.scanservjs.tls.domains[0].main: chkpwd.com
       traefik.http.routers.scanservjs.tls.domains[0].sans: "*.chkpwd.com"
   - name: twingate
-    image: twingate/connector:1.78.0
+    image: twingate/connector:1.82.0
     sysctls:
       net.ipv4.ping_group_range: "0 2147483647"
     env:
       TWINGATE_NETWORK: "chkpwd"
-      TWINGATE_ACCESS_TOKEN: "{{ lookup('bws_cache', 'infra-twingate-secrets').value.twingate_access_token }}"
-      TWINGATE_REFRESH_TOKEN: "{{ lookup('bws_cache', 'infra-twingate-secrets').value.twingate_refresh_token }}"
+      TWINGATE_ACCESS_TOKEN: "{{ lookup('ripplefcl.bwscache.secret', 'infra-twingate-secrets').value.twingate_access_token }}"
+      TWINGATE_REFRESH_TOKEN: "{{ lookup('ripplefcl.bwscache.secret', 'infra-twingate-secrets').value.twingate_refresh_token }}"
       TWINGATE_DNS: "10.0.10.4"
       TWINGATE_LABEL_HOSTNAME: "`hostname`"
       TWINGATE_LABEL_DEPLOYED_BY: "docker"
     state: stopped
+  - name: dyrne
+    image: ghcr.io/overengineers-anonymous/dyrne
+    ports: ["5001:5000"]
   - name: bws-cache
     image: ghcr.io/ripplefcl/bws-cache:v3.2.2
     env:

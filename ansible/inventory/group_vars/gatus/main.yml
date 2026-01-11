@@ -25,7 +25,7 @@ gatus_config:
   metrics: false
   alerting:
     discord:
-      webhook-url: "{{ lookup('bws_cache', 'infra-monitoring-secrets').value.discord_alert_webhook }}"
+      webhook-url: "{{ lookup('ripplefcl.bwscache.secret', 'infra-monitoring-secrets').value.discord_alert_webhook }}"
   endpoints:
     - name: OPNsense
       url: icmp://10.0.10.1

@@ -20,9 +20,19 @@
       },
     },
     {
-      description: "Talos",
+      description: "Talos Group",
       groupName: "Talos",
       matchPackageNames: ["/installer/", "/talosctl/"],
+      matchDatasources: ["docker"],
+      group: {
+        commitMessageTopic: "{{{groupName}}} group",
+      },
+      minimumGroupSize: 2,
+    },
+    {
+      description: "Your Spotify Group",
+      groupName: "Your Spotify",
+      matchPackageNames: ["/your_spotify_server/", "/your_spotify_client/"],
       matchDatasources: ["docker"],
       group: {
         commitMessageTopic: "{{{groupName}}} group",

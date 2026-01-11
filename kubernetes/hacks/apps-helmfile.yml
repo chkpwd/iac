@@ -1,0 +1,73 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/helmfile
+helmDefaults:
+  timeout: 600
+  force: true
+  wait: true
+  waitForJobs: true
+repositories:
+  - name: cilium
+    url: https://helm.cilium.io
+  - name: jetstack
+    url: https://charts.jetstack.io
+releases:
+  - name: cilium
+    namespace: kube-system
+    chart: cilium/cilium
+    version: 1.18.1
+    values: ["../core/cilium/values.yml"]
+    hooks:
+      - # Wait for Cilium CRDs
+        command: bash
+        args:
+          - -c
+          - until kubectl get crd ciliumloadbalancerippools.cilium.io ciliumnetworkpolicies.cilium.io &>/dev/null; do sleep 5; done
+        events:
+          - postsync
+        showlogs: true
+  - name: coredns
+    namespace: kube-system
+    chart: oci://ghcr.io/coredns/charts/coredns
+    version: 1.43.3
+    values: ["../core/coredns/values.yml"]
+    needs: ["kube-system/cilium"]
+  - name: cert-manager
+    namespace: security
+    chart: jetstack/cert-manager
+    version: v1.18.2
+    values: ["../core/cert-manager/values.yml"]
+    needs: ["kube-system/coredns"]
+  - name: external-secrets
+    namespace: security
+    chart: oci://ghcr.io/external-secrets/charts/external-secrets
+    version: 0.19.2
+    values: ["../core/external-secrets/values.yml"]
+    needs: ["security/cert-manager"]
+    hooks:
+      - events: ["postsync"]
+        showlogs: true
+        command: "kubectl"
+        args:
+          [
+            "apply",
+            "-f",
+            "../core/external-secrets/bitwarden-secrets-manager.yml",
+          ]
+  - name: flux-operator
+    namespace: flux-system
+    chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-operator
+    version: 0.32.0
+    values: ["../core/flux-operator/values.yml"]
+    needs: ["security/cert-manager"]
+  - name: flux-instance
+    namespace: flux-system
+    chart: oci://ghcr.io/controlplaneio-fluxcd/charts/flux-instance
+    version: 0.32.0
+    values: ["../core/flux-instance/values.yml"]
+    needs: ["flux-system/flux-operator"]
+  - name: spegel
+    namespace: kube-system
+    chart: oci://ghcr.io/spegel-org/helm-charts/spegel
+    version: 0.3.0
+    values: ["../core/spegel/values.yml"]
+    needs: ["kube-system/cilium"]

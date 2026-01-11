@@ -4,6 +4,8 @@ kind: Deployment
 metadata:
   name: meshmon
   namespace: tools
+  annotations:
+    reloader.stakater.com/auto: "true"
 spec:
   revisionHistoryLimit: 3
   replicas: 1
@@ -17,7 +19,7 @@ spec:
     spec:
       containers:
         - name: meshmon
-          image: ghcr.io/ripplefcl/meshmon:v3.1.1
+          image: ghcr.io/ripplefcl/meshmon:v4.0.0-beta.8
           ports:
             - containerPort: 8000
               name: http

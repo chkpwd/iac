@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 4.3.0
+      version: 4.6.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -81,7 +81,7 @@ spec:
               DATABASE_SSL: "noverify"
             image:
               repository: docker.io/teslamate/teslamate
-              tag: 2.1.1
+              tag: 2.2.0
             probes:
               liveness: &probes
                 enabled: true

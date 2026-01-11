@@ -1,0 +1,50 @@
+---
+dyrne_config_file:
+  chains:
+    - api: gsecret
+      name: bws_cache
+      steps:
+        - name: cache
+        - name: parse_secret
+        - name: rate_limiter
+        - name: bws_read
+    - api: gsecret
+      name: gen_64_simple
+      steps:
+        - name: generator
+          config:
+            generation:
+              length: 64
+              include_symbols: true
+        - name: cache
+        - name: parse_secret
+        - name: rate_limiter
+        - name: bws_read
+        - name: bws_write
+          config:
+            project_ids:
+              - "3f7dcf9d-88fc-4528-b4aa-b07c00deb1b4"
+    - api: gsecret
+      name: gen_rand_simple
+      steps:
+        - name: generator
+          config:
+            generation:
+              length: 32
+        - name: cache
+        - name: parse_secret
+          config:
+            encode_on_write: yaml
+            pretty_print: true
+        - name: rate_limiter
+        - name: bws_read
+        - name: bws_write
+          config:
+            project_ids:
+              - "3f7dcf9d-88fc-4528-b4aa-b07c00deb1b4"
+dyrne_containers:
+  - name: dyrne
+    image: ghcr.io/overengineers-anonymous/dyrne:0.3.1
+    ports: ["5001:5000"]
+    volumes:
+      - "{{ configuration_path }}/dyrne/dyrne.yml:/app/dyrne.yml:ro"

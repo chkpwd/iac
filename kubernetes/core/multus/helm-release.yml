@@ -8,84 +8,26 @@ spec:
   interval: 15m
   chart:
     spec:
-      chart: app-template
-      version: 4.3.0
+      chart: multus
+      version: 1.1.1
       sourceRef:
         kind: HelmRepository
         name: bjw-s-labs
         namespace: flux-system
   values:
-    controllers:
-      multus:
-        type: daemonset
-        pod:
-          hostNetwork: true
-        initContainers:
-          cni-plugins:
-            image:
-              repository: ghcr.io/home-operations/cni-plugins
-              tag: 1.8.0
-        containers:
-          multus:
-            image:
-              repository: ghcr.io/k8snetworkplumbingwg/multus-cni
-              tag: v4.2.2
-            command:
-              - /thin_entrypoint
-            args:
-              - --cleanup-config-on-exit=true
-            resources:
-              requests:
-                cpu: "10m"
-              limits:
-                memory: "512Mi"
-            securityContext:
-              privileged: true
-    persistence:
-      etc-cni-net-d:
-        type: hostPath
-        hostPath: /etc/cni/net.d
-        globalMounts:
-          - path: /host/etc/cni/net.d
-      opt-cni-bin:
-        type: hostPath
-        hostPath: /opt/cni/bin
-        globalMounts:
-          - path: /host/opt/cni/bin
-    rbac:
-      roles:
-        multus:
-          type: ClusterRole
-          rules:
-            - apiGroups:
-                - "k8s.cni.cncf.io"
-              resources:
-                - "*"
-              verbs:
-                - "*"
-            - apiGroups:
-                - ""
-              resources:
-                - "pods"
-                - "pods/status"
-              verbs:
-                - "get"
-                - "update"
-            - apiGroups:
-                - ""
-                - "events.k8s.io"
-              resources:
-                - "events"
-              verbs:
-                - "create"
-                - "patch"
-                - "update"
-      bindings:
-        multus:
-          type: ClusterRoleBinding
-          roleRef:
-            identifier: multus
-          subjects:
-            - identifier: multus
-    serviceAccount:
-      multus: {}
+    cni-plugins:
+      image:
+        repository: ghcr.io/home-operations/cni-plugins
+        tag: 1.9.0
+    multus:
+      image:
+        repository: ghcr.io/k8snetworkplumbingwg/multus-cni
+        tag: v4.2.3
+      resources:
+        requests:
+          cpu: 10m
+        limits:
+          memory: 32Mi
+    cni:
+      netPath: /etc/cni/net.d
+      binPath: /opt/cni/bin

@@ -1,0 +1,133 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/common-4.5.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: mediamanager
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  values:
+    controllers:
+      mediamanager:
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
+        pod:
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: &group 1000
+            fsGroup: *group
+            fsGroupChangePolicy: "OnRootMismatch"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/maxdorninger/mediamanager/mediamanager
+              tag: 1.12.1
+              pullPolicy: IfNotPresent
+            envFrom:
+              - secretRef:
+                  name: mediamanager
+            env:
+              TZ: "America/New_York"
+              CONFIG_DIR: /app/config
+              LOG_FILE: /tmp/logs/mediamanager.log
+              MEDIAMANAGER_DATABASE__HOST:
+                valueFrom:
+                  secretKeyRef:
+                    name: mediamanager-pguser-mediamanager
+                    key: host
+              MEDIAMANAGER_DATABASE__DBNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: mediamanager-pguser-mediamanager
+                    key: dbname
+              MEDIAMANAGER_DATABASE__USER:
+                valueFrom:
+                  secretKeyRef:
+                    name: mediamanager-pguser-mediamanager
+                    key: user
+              MEDIAMANAGER_DATABASE__PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: mediamanager-pguser-mediamanager
+                    key: password
+              MEDIAMANAGER_DATABASE__PORT:
+                valueFrom:
+                  secretKeyRef:
+                    name: mediamanager-pguser-mediamanager
+                    key: port
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/health
+                    port: &port 8000
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities: {drop: ["ALL"]}
+            resources:
+              limits:
+                memory: 2Gi
+    service:
+      app:
+        controller: mediamanager
+        ports:
+          http:
+            port: *port
+    route:
+      private:
+        enabled: true
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: mediamanager
+                port: *port
+        parentRefs:
+          - name: private
+            namespace: kube-system
+            sectionName: https
+    persistence:
+      data:
+        enabled: true
+        type: nfs
+        server: "nas-srv-01.chkpwd.com"
+        path: /volume1/vault-01/media
+      metadata:
+        enabled: true
+        accessMode: ReadWriteOnce
+        type: persistentVolumeClaim
+        size: 5Gi
+        storageClass: ceph-block
+        globalMounts:
+          - path: /metadata
+      config:
+        type: configMap
+        name: mediamanager-config
+        advancedMounts:
+          mediamanager:
+            app:
+              - path: /app/config

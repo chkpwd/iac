@@ -3,9 +3,9 @@
 clusterName: cattle-k8s
 endpoint: https://10.0.10.13:6443
 # renovate: depName=ghcr.io/siderolabs/installer datasource=docker
-talosVersion: v1.10.6
+talosVersion: v1.11.5
 # renovate: depName=ghcr.io/siderolabs/kubelet datasource=docker
-kubernetesVersion: v1.33.2
+kubernetesVersion: v1.34.2
 additionalApiServerCertSans: &sans
   - 127.0.0.1
 additionalMachineCertSans: *sans
@@ -22,6 +22,10 @@ nodes:
         dhcp: true
         vip:
           ip: &vip 10.0.10.13
+        vlans:
+          - vlanId: 20
+            dhcp: false
+            addresses: []
   - hostname: ct-k8s-02.chkpwd.com
     ipAddress: 10.0.10.11
     controlPlane: true
@@ -32,6 +36,10 @@ nodes:
         dhcp: true
         vip:
           ip: *vip
+        vlans:
+          - vlanId: 20
+            dhcp: false
+            addresses: []
   - hostname: ct-k8s-03.chkpwd.com
     ipAddress: 10.0.10.12
     controlPlane: true
@@ -42,6 +50,10 @@ nodes:
         dhcp: true
         vip:
           ip: *vip
+        vlans:
+          - vlanId: 20
+            dhcp: false
+            addresses: []
 controlPlane:
   schematic:
     customization:
@@ -102,13 +114,6 @@ controlPlane:
           nodeIP:
             validSubnets:
                 - 10.0.10.0/24
-    # Enable MutatingAdmissionPolicy
-    - |-
-      cluster:
-        apiServer:
-          extraArgs:
-            runtime-config: admissionregistration.k8s.io/v1alpha1=true
-            feature-gates: MutatingAdmissionPolicy=true
     # Configure cluster
     - |-
       cluster:
@@ -160,6 +165,7 @@ controlPlane:
           net.core.wmem_max: 67108864                 # max socket send buffer size (for high throughput apps) - QUIC
           net.core.default_qdisc: fq                  # Sets default queuing discipline to Fair Queueing (FQ)
           net.ipv4.tcp_congestion_control: bbr        # Enables BBR for TCP congestion control
+          # user.max_user_namespaces: "11255"           # needed for rootless containers (hostUsers)
     # Disable default API server admission plugins.
     - |-
       - op: remove

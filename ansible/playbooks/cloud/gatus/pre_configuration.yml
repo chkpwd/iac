@@ -16,14 +16,14 @@
       ansible.builtin.copy:
         content: |
           [Interface]
-          PrivateKey = {{ lookup('bws_cache', 'cloud-aws-secrets').value.wireguard_priv_key }}
+          PrivateKey = {{ lookup('ripplefcl.bwscache.secret', 'cloud-aws-secrets').value.wireguard_priv_key }}
           Address = 10.6.6.5/24
           DNS = 10.6.6.1, chkpwd.com
 
           [Peer]
           PublicKey = SOfTXw3sdQFitrXax0ZCR9vvxOFRGVr7V30BIs5Csws=
           AllowedIPs = 0.0.0.0/0
-          Endpoint = {{ lookup('bws_cache', 'infra-network-secrets').value.public_ip }}:{{ lookup('bws_cache', 'cloud-aws-secrets').value.wireguard_port }}
+          Endpoint = {{ lookup('ripplefcl.bwscache.secret', 'infra-network-secrets').value.public_ip }}:{{ lookup('ripplefcl.bwscache.secret', 'cloud-aws-secrets').value.wireguard_port }}
         dest: "{{ configuration_path }}/wireguard/wg_confs/wg0.conf"
         owner: root
         group: root
@@ -44,7 +44,7 @@
     - name: Copy Cloudflare config
       ansible.builtin.copy:
         content: |
-          dns_cloudflare_api_token = "{{ lookup('bws_cache', 'cloudflare-dns-secrets').value.swag_api_token }}"
+          dns_cloudflare_api_token = "{{ lookup('ripplefcl.bwscache.secret', 'cloudflare-dns-secrets').value.swag_api_token }}"
         dest: "{{ configuration_path }}/swag/dns-conf/cloudflare.ini"
         mode: "400"
     - name: Create network(s)

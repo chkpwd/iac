@@ -11,9 +11,9 @@ dns_service_definitions:
       BOOTSTRAP_ROLES: dns;dhcp;api;etcd;backup;monitoring;tsdb
       DATA_PATH: /data
       LOG_LEVEL: info
-      ADMIN_PASSWORD: "{{ lookup('bws_cache', 'infra-gravity-secrets').value.admin_password }}"
-      ADMIN_TOKEN: "{{ lookup('bws_cache', 'infra-gravity-secrets').value.admin_token }}"
-      # ETCD_JOIN_CLUSTER: "{{ lookup('bws_cache', 'infra-gravity-secrets').value.etcd_join_token }},http://mgmt-srv-01.chkpwd.com:8008"
+      ADMIN_PASSWORD: "{{ lookup('ripplefcl.bwscache.secret', 'infra-gravity-secrets').value.admin_password }}"
+      ADMIN_TOKEN: "{{ lookup('ripplefcl.bwscache.secret', 'infra-gravity-secrets').value.admin_token }}"
+      # ETCD_JOIN_CLUSTER: "{{ lookup('ripplefcl.bwscache.secret', 'infra-gravity-secrets').value.etcd_join_token }},http://mgmt-srv-01.chkpwd.com:8008"
     volumes:
       - data:/data
     log_driver: json-file

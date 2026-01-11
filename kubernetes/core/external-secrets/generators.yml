@@ -1,0 +1,25 @@
+---
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: ClusterGenerator
+metadata:
+  name: cluster-gen-password32
+spec:
+  kind: Password
+  generator:
+    passwordSpec:
+      length: 32
+      allowRepeat: true
+      noUpper: false
+      symbols: 0
+---
+apiVersion: generators.external-secrets.io/v1alpha1
+kind: ClusterGenerator
+metadata:
+  name: cluster-gen-password64
+spec:
+  kind: Password
+  generator:
+    passwordSpec:
+      length: 64
+      allowRepeat: true
+      noUpper: false

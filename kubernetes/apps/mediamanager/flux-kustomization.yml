@@ -1,0 +1,33 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app mediamanager
+  namespace: &ns media
+  labels:
+    components.postgres/cpgo: init
+spec:
+  targetNamespace: *ns
+  path: ./kubernetes/apps/mediamanager/
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../core/crunchydata-pgo/components/
+    - ../../core/keda-operator/_components/nfs/
+  postBuild:
+    substitute:
+      APP: *app
+      POSTGRES_DATA_SIZE: 7Gi
+    substituteFrom:
+      - kind: Secret
+        name: cloudflare-id
+        optional: false
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  wait: false
+  interval: 30m

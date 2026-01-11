@@ -39,7 +39,7 @@ statusalert="on"
 
 # Discord Alerts | https://docs.linuxgsm.com/alerts/discord
 discordalert="on"
-discordwebhook="{{ lookup('bws_cache', 'infra-game-servers-secrets').value.discord_webhook }}"
+discordwebhook="{{ lookup('ripplefcl.bwscache.secret', 'infra-game-servers-secrets').value.discord_webhook }}"
 
 ## Updating | https://docs.linuxgsm.com/commands/update
 updateonstart="on"

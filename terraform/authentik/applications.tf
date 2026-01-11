@@ -23,61 +23,54 @@ module "authentik-app-miniflux" {
   }
 }
 
-# module "authentik-app-semaphore-ui" {
-#   source = "../_modules/authentik/oauth2_app"
-#   name   = "Semaphore UI"
-#   group  = "main"
-#   oauth2_values = {
-#     client_id         = "semaphore"
-#     client_secret     = data.external.bws_lookup.result["infra-semaphore-secrets_oauth_client_secret"]
-#     property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
-#     allowed_redirect_uris = [
-#       {
-#         matching_mode = "strict",
-#         url           = "https://semaphore.chkpwd.com/api/auth/oidc/authentik/redirect",
-#       }
-#     ]
-#   }
-#   app_values = {
-#     icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/semaphore-ui.webp"
-#     meta_description = "Task Runner"
-#   }
-
-#   access_group = {
-#     main     = authentik_group.main.id
-#   }
-# }
-
-module "authentik-app-immich" {
+module "authentik-app-mediamanager" {
   source = "../_modules/authentik/oauth2_app"
-  name   = "Immich"
+  name   = "MediaManager"
   group  = "main"
   oauth2_values = {
-    client_id         = "immich"
-    client_secret     = data.external.bws_lookup.result["ns-tools-immich_client_secret"]
+    client_id         = "mediamanager"
+    client_secret     = data.external.bws_lookup.result["mediamanager_oidc_client_secret"]
     property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
     allowed_redirect_uris = [
       {
         matching_mode = "strict",
-        url           = "app.immich:///oauth-callback",
-      },
-      {
-        matching_mode = "strict",
-        url           = "https://immich.chkpwd.com/auth/login",
-      },
-      {
-        matching_mode = "strict",
-        url           = "https://immich.chkpwd.com/user-settings",
+        url           = "https://mediamanager.chkpwd.com/api/v1/auth/oauth/callback",
       }
     ]
   }
   app_values = {
-    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/immich.webp"
-    meta_description = "Photo Management"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/mediamanager.webp"
+    meta_description = "Media Management for Linux ISOs"
   }
 
   access_group = {
-    main      = authentik_group.main.id,
+    main      = authentik_group.main.id
+    secondary = authentik_group.secondary.id
+  }
+}
+
+module "authentik-app-booklore" {
+  source = "../_modules/authentik/oauth2_app"
+  name   = "Booklore"
+  group  = "main"
+  oauth2_values = {
+    client_id         = "booklore"
+    client_type       = "public"
+    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
+    allowed_redirect_uris = [
+      {
+        matching_mode = "strict",
+        url           = "https://booklore.chkpwd.com/oauth2-callback",
+      }
+    ]
+  }
+  app_values = {
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/booklore.webp"
+    meta_description = "Book management software"
+  }
+
+  access_group = {
+    main      = authentik_group.main.id
     secondary = authentik_group.secondary.id
   }
 }
@@ -106,69 +99,4 @@ module "authentik-app-karakeep" {
     main      = authentik_group.main.id,
     secondary = authentik_group.secondary.id
   }
-}
-
-# module "authentik-app-kasten-k10" {
-#   source = "../_modules/authentik/oauth2_app"
-#   name   = "kasten-k10"
-#   group  = "main"
-#   oauth2_values = {
-#     client_id             = "kasten-k10"
-#     client_secret         = data.external.bws_lookup.result["kasten-k10_oauth_client_secret"]
-#     property_mappings     = data.authentik_property_mapping_provider_scope.sources.ids
-#     allowed_redirect_uris = []
-#   }
-#   app_values = {
-#     icon_url         = ""
-#     meta_description = "Kasten K10"
-#   }
-
-#   access_group = {
-#     main     = authentik_group.main.id
-#   }
-# }
-
-# module "authentik-app-soundbored" {
-#   source = "../_modules/authentik/oauth2_app"
-#   name   = "soundbored"
-#   group  = "main"
-#   oauth2_values = {
-#     client_id             = "soundbored"
-#     client_secret         = data.external.bws_lookup.result["soundbored_oauth_client_secret"]
-#     property_mappings     = data.authentik_property_mapping_provider_scope.sources.ids
-#     allowed_redirect_uris = []
-#   }
-#   app_values = {
-#     icon_url         = ""
-#     meta_description = "Soundbored"
-#   }
-#   access_group = [
-#     authentik_group.main.id
-#   ]
-# }
-
-module "authentik-app-actual" {
-  source = "../_modules/authentik/oauth2_app"
-  name   = "actual"
-  group  = "main"
-  oauth2_values = {
-    client_id         = data.external.bws_lookup.result["actual-budget_openid_client_id"]
-    client_secret     = data.external.bws_lookup.result["actual-budget_openid_client_secret"]
-    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
-    allowed_redirect_uris = [
-      {
-        matching_mode = "strict",
-        url           = "https://actual.chkpwd.com/openid/callback",
-      },
-    ]
-  }
-  app_values = {
-    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/actual-budget-light.webp"
-    meta_description = "Budget Management"
-  }
-  access_group = {
-    main      = authentik_group.main.id,
-    secondary = authentik_group.secondary.id
-  }
-
 }

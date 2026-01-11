@@ -25,12 +25,12 @@ service_definitions:
     networks:
       - name: net_swag
   - name: gatus
-    image: twinproduction/gatus:v5.24.3
+    image: twinproduction/gatus:v5.34.0
     volumes:
       - "{{ configuration_path }}/gatus:/config"
     network_mode: container:wireguard
   - name: swag
-    image: lscr.io/linuxserver/swag:5.0.0
+    image: lscr.io/linuxserver/swag:5.2.2
     ports:
       - 443:443
       - 80:80
@@ -40,7 +40,7 @@ service_definitions:
       SUBDOMAINS: wildcard
       VALIDATION: dns
       DNSPLUGIN: cloudflare
-      EMAIL: "{{ lookup('bws_cache', 'common-secrets').value.primary_email_address }}"
+      EMAIL: "{{ lookup('ripplefcl.bwscache.secret', 'common-secrets').value.primary_email_address }}"
       STAGING: "false"
       DOCKER_MODS: linuxserver/mods:swag-auto-reload
     volumes:

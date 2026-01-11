@@ -1,4 +1,4 @@
-FROM python:3.13-slim-bookworm AS base
+FROM python:3.14-slim-bookworm AS base
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONFAULTHANDLER=1
@@ -20,7 +20,7 @@ COPY poetry.lock pyproject.toml .
 RUN poetry config virtualenvs.in-project true && \
     poetry install --only=main
 
-FROM docker.io/library/alpine:3.22 AS opentofu
+FROM docker.io/library/alpine:3.23 AS opentofu
 
 ARG VERSION="v1.9.0"
 

@@ -1,7 +1,7 @@
 ---
 monitoring_service_definitions:
   - name: prometheus
-    image: prom/prometheus:v3.6.0
+    image: prom/prometheus:v3.9.0
     user: 1000:1000
     command:
       - --config.file=/etc/prometheus/prometheus.yml
@@ -26,13 +26,13 @@ monitoring_service_definitions:
     networks:
       - name: "proxy"
   - name: grafana
-    image: grafana/grafana:12.2.0
+    image: grafana/grafana:12.3.1
     user: 1000:1000
     env:
       GF_DAGF_FEATURE_TOGGLES_ENABLE: publicDashboards
       GF_INSTALL_PLUGINS: grafana-clock-panel, grafana-simple-json-datasource
       GF_SECURITY_ADMIN_USER: grafana
-      GF_SECURITY_ADMIN_PASSWORD: "{{ lookup('bws_cache', 'infra-monitoring-secrets').value.grafana_admin_password }}"
+      GF_SECURITY_ADMIN_PASSWORD: "{{ lookup('ripplefcl.bwscache.secret', 'infra-monitoring-secrets').value.grafana_admin_password }}"
     volumes:
       - "{{ configuration_path }}/grafana:/var/lib/grafana"
     ports: ["3000:3000"]

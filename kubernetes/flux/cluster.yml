@@ -96,6 +96,27 @@ spec:
         group: kustomize.toolkit.fluxcd.io
         kind: Kustomization
         annotationSelector: chkpwd.com/gitops-hr-defaults != disable
+    - # Bootstrap PSQL cluster
+      patch: |-
+        apiVersion: kustomize.toolkit.fluxcd.io/v1
+        kind: Kustomization
+        metadata:
+          name: not-used
+        spec:
+          patches:
+            - patch: |-
+                apiVersion: postgres-operator.crunchydata.com/v1beta1
+                kind: PostgresCluster
+                metadata:
+                  name: not-used
+                spec:
+                  dataSource:
+                    $patch: delete
+              target:
+                kind: PostgresCluster
+      target:
+        kind: Kustomization
+        labelSelector: "components.postgres/cpgo=init"
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1

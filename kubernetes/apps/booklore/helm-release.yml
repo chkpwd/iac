@@ -1,0 +1,156 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/common-4.5.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: booklore
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  values:
+    controllers:
+      booklore:
+        enabled: true
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              accessMode: ReadWriteOnce
+              size: "${VOLSYNC_CAPACITY}"
+              storageClass: ceph-block
+              # dataSourceRef:
+              #   kind: ReplicationDestination
+              #   apiGroup: volsync.backube
+              #   name: "${APP}"
+              globalMounts:
+                - path: /app/data
+        containers:
+          app:
+            image:
+              repository: booklore/booklore
+              tag: v1.17.0
+            env:
+              USER_ID: "0"
+              GROUP_ID: "0"
+              TZ: "America/New_York"
+              DATABASE_URL: "jdbc:mariadb://booklore-mariadb:3306/booklore"
+              DATABASE_USERNAME: "booklore"
+              DATABASE_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: booklore
+                    key: DATABASE_PASSWORD
+              BOOKLORE_PORT: &port 6060
+              SWAGGER_ENABLED: "true"
+              FORCE_DISABLE_OIDC: "true"
+            resources:
+              requests:
+                cpu: 100m
+              limits:
+                memory: 700Mi
+      mariadb:
+        type: statefulset
+        statefulset:
+          volumeClaimTemplates:
+            - name: data
+              accessMode: ReadWriteOnce
+              size: "1Gi"
+              storageClass: ceph-block
+              # dataSourceRef:
+              #   kind: ReplicationDestination
+              #   apiGroup: volsync.backube
+              #   name: "${APP}-mariadb"
+              globalMounts:
+                - path: /config
+        containers:
+          app:
+            image:
+              repository: lscr.io/linuxserver/mariadb
+              tag: 11.4.8
+            env:
+              TZ: "America/New_York"
+              MYSQL_USER: booklore
+              MYSQL_DATABASE: booklore
+              MYSQL_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: booklore
+                    key: DATABASE_PASSWORD
+              MYSQL_ROOT_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: booklore
+                    key: DATABASE_ROOT_PASSWORD
+            probes:
+              liveness: &mariadb-probes
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - mariadb-admin
+                      - ping
+                      - --silent
+                  initialDelaySeconds: 5
+                  periodSeconds: 5
+                  timeoutSeconds: 5
+                  failureThreshold: 10
+              readiness: *mariadb-probes
+    service:
+      booklore:
+        primary: true
+        controller: booklore
+        ports:
+          http:
+            port: *port
+      mariadb:
+        controller: mariadb
+        ports:
+          mysql:
+            port: 3306
+    route:
+      public:
+        enabled: true
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: booklore
+                port: *port
+        parentRefs:
+          - name: public
+            namespace: kube-system
+            sectionName: https
+    persistence:
+      books:
+        enabled: true
+        type: nfs
+        server: "nas-srv-01.chkpwd.com"
+        path: /volume1/vault-01/media/books
+        advancedMounts:
+          booklore:
+            app:
+              - path: /books
+      ingest:
+        enabled: true
+        type: nfs
+        server: "nas-srv-01.chkpwd.com"
+        path: /volume1/vault-01/media/books/ingest
+        advancedMounts:
+          booklore:
+            app:
+              - path: /bookdrop

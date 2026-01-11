@@ -1,14 +1,14 @@
 ---
 semaphore_container:
   - name: semaphore
-    image: semaphoreui/semaphore:v2.16.29
+    image: semaphoreui/semaphore:v2.16.50
     user: 1001:1001
     env:
       SEMAPHORE_DB_DIALECT: bolt
       SEMAPHORE_ADMIN: &name chkpwd
       SEMAPHORE_ADMIN_NAME: *name
-      SEMAPHORE_ADMIN_PASSWORD: "{{ lookup('bws_cache', 'infra-semaphore-secrets').value.admin_password }}"
-      SEMAPHORE_ACCESS_KEY_ENCRYPTION: "{{ lookup('bws_cache', 'infra-semaphore-secrets').value.access_key_encryption }}"
+      SEMAPHORE_ADMIN_PASSWORD: "{{ lookup('ripplefcl.bwscache.secret', 'infra-semaphore-secrets').value.admin_password }}"
+      SEMAPHORE_ACCESS_KEY_ENCRYPTION: "{{ lookup('ripplefcl.bwscache.secret', 'infra-semaphore-secrets').value.access_key_encryption }}"
       SEMAPHORE_PASSWORD_LOGIN_DISABLED: "false"
       SEMAPHORE_WEB_ROOT: "/"
       ANSIBLE_HOST_KEY_CHECKING: "False"
@@ -24,7 +24,7 @@ semaphore_container:
 #       display_name: "Sign in with SSO"
 #       provider_url: "https://authentik.chkpwd.com/application/o/semaphore-ui/"
 #       client_id: "semaphore"
-#       client_secret: "{{ lookup('bws_cache', 'infra-semaphore-secrets').value.oauth_client_secret }}"
+#       client_secret: "{{ lookup('ripplefcl.bwscache.secret', 'infra-semaphore-secrets').value.oauth_client_secret }}"
 #       redirect_url: "https://semaphore.chkpwd.com/api/auth/oidc/authentik/redirect"
 #       scopes:
 #         - "email"

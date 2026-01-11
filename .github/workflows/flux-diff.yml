@@ -21,9 +21,9 @@ jobs:
           - kustomization
     steps:
       - name: Setup Flux CLI
-        uses: fluxcd/flux2/action@v2.7.2
+        uses: fluxcd/flux2/action@v2.7.5
       - name: Diff Resources
-        uses: allenporter/flux-local/action/diff@7.10.1
+        uses: allenporter/flux-local/action/diff@8.1.0
         id: diff
         with:
           path: "${{ matrix.cluster_path }}/flux"

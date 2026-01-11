@@ -3,7 +3,7 @@ terraform {
   required_providers {
     authentik = {
       source  = "goauthentik/authentik"
-      version = "2025.8.1"
+      version = "2025.10.1"
     }
     random = {
       source  = "hashicorp/random"
@@ -19,7 +19,7 @@ terraform {
 data "external" "bws_lookup" {
   program = ["python3", "../bws_lookup.py"]
   query = { # TODO: need to revisit this and find a cleaner approach
-    key = "ns-security-authentik,ns-tools-miniflux,infra-media-secrets,ns-tools-miniflux,ns-tools-immich,infra-semaphore-secrets,ns-tools-karakeep,kasten-k10,actual-budget"
+    key = "ns-security-authentik,infra-media-secrets,ns-tools-miniflux,ns-tools-karakeep,booklore,mediamanager"
     # authentik = "ns-security-authentik_bootstrap_token"
   }
 }

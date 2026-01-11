@@ -1,3 +1,3 @@
 ---
 data:
-  accessToken: "{{ lookup('bws_cache', 'common-secrets').value.chezmoi_token }}"
+  accessToken: "{{ lookup('ripplefcl.bwscache.secret', 'common-secrets').value.chezmoi_token }}"

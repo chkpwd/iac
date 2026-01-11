@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 4.3.0
+      version: 4.6.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -34,7 +34,7 @@ spec:
           main:
             image:
               repository: ghcr.io/karakeep-app/karakeep
-              tag: 0.27.1
+              tag: 0.30.0
             env:
               BROWSER_WEB_URL: http://karakeep-chrome.tools.svc.cluster.local:9222
               CRAWLER_DOWNLOAD_BANNER_IMAGE: true
@@ -115,7 +115,7 @@ spec:
           main:
             image:
               repository: docker.io/getmeili/meilisearch
-              tag: v1.22.0
+              tag: v1.31.0
             args:
               - /bin/meilisearch
               - --experimental-dumpless-upgrade

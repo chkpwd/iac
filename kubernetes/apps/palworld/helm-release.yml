@@ -1,0 +1,141 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: palworld
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: palworld
+      version: 2.1.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: palworld-server-chart
+  values:
+    server:
+      image:
+        repository: thijsvanloef/palworld-server-docker
+        tag: v2.3.0
+        imagePullPolicy: IfNotPresent
+      ports:
+        - name: game
+          containerPort: 8211
+          protocol: UDP
+        - name: query
+          containerPort: 27015
+          protocol: UDP
+        - name: rcon
+          containerPort: 25575
+          protocol: TCP
+      strategy: Recreate
+      probes:
+        liveness:
+          exec:
+            command:
+              - sh
+              - -c
+              - pgrep PalServer-Linux > /dev/null || exit 1
+          initialDelaySeconds: 30
+        readiness:
+          exec:
+            command:
+              - sh
+              - -c
+              - rcon-cli Info | grep -q "Welcome to Pal Server"
+          initialDelaySeconds: 60
+      resources:
+        requests:
+          cpu: 2
+          memory: "8Gi"
+        limits:
+          cpu: 2
+          memory: "12Gi"
+      storage:
+        main:
+          size: 12Gi
+          storageClassName: "ceph-block"
+          preventDelete: false
+        backups:
+          nfs:
+            server: "nas-srv-01.chkpwd.com"
+            path: /volume1/vault-01/backups/games/palworld
+        extra:
+          - name: tmp
+            mountPath: /tmp
+            emptyDir: {}
+      terminationGracePeriodSeconds: 30
+      lifecycle:
+        preStop:
+          exec:
+            command:
+              - bash
+              - /usr/local/bin/backup
+      service:
+        enabled: true
+        annotations:
+          lbipam.cilium.io/ips: 10.0.10.37
+        type: LoadBalancer
+        ports:
+          - name: game
+            port: 8211
+            protocol: UDP
+            targetPort: 8211
+          - name: query
+            port: 27015
+            protocol: UDP
+            targetPort: 27015
+          - name: rcon
+            port: 25575
+            protocol: TCP
+            targetPort: 25575
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      config:
+        puid: 1000
+        pgid: 1000
+        port: 8211
+        query_port: 27015
+        max_players: 8
+        multithreading: true
+        rcon:
+          enable: true
+          port: 25575
+          externalPassword:
+            name: "palworld-creds"
+            key: "rcon_password"
+        community:
+          enable: true
+          externalPassword:
+            name: "palworld-creds"
+            key: "community_password"
+        server_name: "Arc Raiders Monster Rise"
+        timezone: "America/New_York"
+        server_description: "The Arc in this world look very Nintendo-isk"
+        update_on_boot: true
+        daily_reboot:
+          enable: true
+          countdown_seconds: 180
+          time: "30 13 * * *"
+          role: "daily-reboot"
+          serviceAccount: "palworld-daily-reboot"
+        env:
+          DISABLE_GENERATE_SETTINGS: "false" # PalWorldServer.ini will be generated based on environment variables found here https://github.com/thijsvanloef/palworld-server-docker/blob/main/README.md
+          EXP_RATE: "1.5"
+          BACKUP_ENABLED: "true"
+          BACKUP_CRON_EXPRESSION: "0 0 * * *"
+          DEATH_PENALTY: "Item"
+          PAL_STAMINA_DECREASE_RATE: "0.7"
+          PAL_STOMACH_DECREASE_RATE: "0.7"
+          PLAYER_STAMINA_DECREASE_RATE: "0.7"
+          PAL_EGG_DEFAULT_HATCHING_TIME: "36.0"
+          BASE_CAMP_WORKER_MAX_NUM: "25"
+          ENABLE_INVADER_ENEMY: "true"
+          ENABLE_PLAYER_TO_PLAYER_DAMAGE: "true"
+          IS_MULTIPLAY: "true"
+          IS_PVP: "true"
+          BASE_CAMP_MAX_NUM_IN_GUILD: "10"

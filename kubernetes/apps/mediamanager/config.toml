@@ -1,0 +1,77 @@
+# MediaManager Configuration File
+# https://maxdorninger.github.io/MediaManager/introduction.html
+
+[misc]
+frontend_url = "https://mediamanager.chkpwd.com"
+cors_urls = ["https://mediamanager.chkpwd.com"]
+
+image_directory = "/metadata"
+tv_directory = "/data/series/standard"
+movie_directory = "/data/films/1080p"
+torrent_directory = "/data/downloads/torrent/complete/mediamanager"
+
+# Custom Media Libraries
+[[misc.tv_libraries]]
+name = "Anime"
+path = "/data/series/anime"
+
+[auth]
+email_password_resets = false
+session_lifetime = 86400
+admin_emails = ["authentik@chkpwd.com"]
+
+[auth.openid_connect]
+enabled = true
+client_id = "mediamanager"
+configuration_endpoint = "https://authentik.chkpwd.com/application/o/mediamanager/.well-known/openid-configuration"
+name = "Authentik"
+
+[notifications.pushover]
+enabled = true
+user = "MediaManager"
+
+[torrents]
+[torrents.qbittorrent]
+enabled = true
+host = "http://qbittorrent.media.svc.cluster.local"
+port = 8080
+category_name = "mediamanager"
+category_save_path = "/data/downloads/torrent/complete/mediamanager"
+
+[torrents.sabnzbd]
+enabled = true
+host = "http://sabnzbd-app.media.svc.cluster.local"
+port = 8080
+
+[indexers]
+[indexers.prowlarr]
+enabled = true
+url = "http://prowlarr-app.media.svc.cluster.local:9696"
+
+[[indexers.title_scoring_rules]]
+name = "prefer_h265"
+keywords = ["h265", "hevc", "x265", "h.265", "x.265"]
+score_modifier = 100
+negate = false
+
+[[indexers.title_scoring_rules]]
+name = "avoid_cam"
+keywords = ["cam", "ts"]
+score_modifier = -10000
+negate = false
+
+[[indexers.indexer_flag_scoring_rules]]
+name = "reject_nuked"
+flags = ["nuked"]
+score_modifier = -10000
+negate = false
+
+[[indexers.scoring_rule_sets]]
+name = "default"
+libraries = ["ALL_TV", "ALL_MOVIES"]
+rule_names = ["prefer_h265", "avoid_cam", "reject_nuked"]
+
+[[indexers.scoring_rule_sets]]
+name = "strict_quality"
+libraries = ["ALL_MOVIES"]
+rule_names = ["prefer_h265", "avoid_cam"]
