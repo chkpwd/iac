@@ -71,8 +71,8 @@ resource "gravity_dns_record" "unifi" {
 }
 
 # Create a new zone for OpenShift
-resource "gravity_dns_zone" "ocp_mno" {
-  name          = "mno.chkpwd.com."
+resource "gravity_dns_zone" "ocp_sno" {
+  name          = "sno.chkpwd.com."
   authoritative = true
   handler_configs = jsonencode([
     {
@@ -84,19 +84,27 @@ resource "gravity_dns_zone" "ocp_mno" {
   ])
 }
 
-resource "gravity_dns_record" "mno-ocp-api" {
-  zone     = gravity_dns_zone.ocp_mno.name
+resource "gravity_dns_record" "sno-ocp-api" {
+  zone     = gravity_dns_zone.ocp_sno.name
   hostname = "api"
   uid      = var.default_uid
-  data     = "10.0.30.55"
+  data     = "10.0.10.55"
   type     = "A"
 }
 
-resource "gravity_dns_record" "mno-ocp-wildcard" {
-  zone     = gravity_dns_zone.ocp_mno.name
+resource "gravity_dns_record" "sno-ocp-api-int" {
+  zone     = gravity_dns_zone.ocp_sno.name
+  hostname = "api-int"
+  uid      = var.default_uid
+  data     = "10.0.10.55"
+  type     = "A"
+}
+
+resource "gravity_dns_record" "sno-ocp-wildcard" {
+  zone     = gravity_dns_zone.ocp_sno.name
   hostname = "*.apps"
   uid      = var.default_uid
-  data     = "10.0.30.56"
+  data     = "10.0.10.55"
   type     = "A"
 }
 
