@@ -1,3 +1,18 @@
 ---
 serviceMonitor:
   create: true
+web:
+  enabled: tru
+  networkPolicy:
+    create: true
+  rbac:
+    createRoles: true
+  # -- Run the Flux Status web server as a standalone deployment (requires a dedicated Helm release).
+  serverOnly: false
+  httpRoute:
+    enabled: true
+    parentRefs:
+      - name: private
+        namespace: kube-system
+        sectionName: https
+    hostnames: ["flux-web.chkpwd.com"]
