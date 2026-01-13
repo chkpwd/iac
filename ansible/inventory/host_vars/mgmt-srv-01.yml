@@ -85,7 +85,7 @@ service_definitions:
       traefik.http.routers.scanservjs.tls.domains[0].main: chkpwd.com
       traefik.http.routers.scanservjs.tls.domains[0].sans: "*.chkpwd.com"
   - name: twingate
-    image: twingate/connector:1.82.0
+    image: twingate/connector:1.83.0
     sysctls:
       net.ipv4.ping_group_range: "0 2147483647"
     env:
