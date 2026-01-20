@@ -14,7 +14,7 @@ service_definitions:
       - "{{ compose_configuration_path }}/nginx_webserver/files:/files"
     state: stopped
   - name: apprise
-    image: caronc/apprise:1.2.6
+    image: caronc/apprise:v1.3.1
     env:
       APPRISE_STATEFUL_MODE: simple
       APPRISE_DEFAULT_THEME: dark
