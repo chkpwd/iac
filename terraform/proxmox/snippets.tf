@@ -65,28 +65,15 @@ resource "proxmox_virtual_environment_file" "ollama_meta_data" {
   }
 }
 
-resource "proxmox_virtual_environment_file" "gravity_dns_meta_data" {
+resource "proxmox_virtual_environment_file" "openshift-tools_meta_data" {
   content_type = "snippets"
   datastore_id = "local"
   node_name    = var.node
 
   source_raw {
     data = templatefile("${path.root}/meta-data.tftpl", {
-      hostname = "gravity-dns-02"
+      hostname = "openshift-tools"
     })
-    file_name = "gravity-dns-meta-data.yaml"
-  }
-}
-
-resource "proxmox_virtual_environment_file" "veeam_backup_meta_data" {
-  content_type = "snippets"
-  datastore_id = "local"
-  node_name    = var.node
-
-  source_raw {
-    data = templatefile("${path.root}/meta-data.tftpl", {
-      hostname = "veeam-backup-01"
-    })
-    file_name = "veeam-backup-meta-data.yaml"
+    file_name = "openshift-tools-meta-data.yaml"
   }
 }

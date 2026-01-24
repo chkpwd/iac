@@ -66,13 +66,13 @@ resource "proxmox_virtual_environment_vm" "ollama" {
   }
 }
 
-resource "proxmox_virtual_environment_vm" "gravity-dns-02" {
-  name      = var.nodes_cfg["gravity-dns-02"].name
+resource "proxmox_virtual_environment_vm" "openshift-tools" {
+  name      = var.nodes_cfg["openshift-tools"].name
   node_name = "pve-srv-01"
-  vm_id     = var.nodes_cfg["gravity-dns-02"].vm_id
+  vm_id     = var.nodes_cfg["openshift-tools"].vm_id
   on_boot   = true
 
-  tags            = ["dns", "server", "terraform"]
+  tags            = ["openshift", "server", "terraform"]
   machine         = "q35"
   stop_on_destroy = false # use ACPI
 
@@ -81,85 +81,23 @@ resource "proxmox_virtual_environment_vm" "gravity-dns-02" {
 
   operating_system { type = "l26" } # Linux 2.6
   cpu {
-    cores = var.nodes_cfg["gravity-dns-02"].cpus
+    cores = var.nodes_cfg["openshift-tools"].cpus
     type  = "x86-64-v2-AES"
   }
 
   memory {
-    dedicated = var.nodes_cfg["gravity-dns-02"].memory
-    floating  = var.nodes_cfg["gravity-dns-02"].memory
+    dedicated = var.nodes_cfg["openshift-tools"].memory
+    floating  = var.nodes_cfg["openshift-tools"].memory # ballooning
   }
 
   initialization {
-    ip_config {
-      ipv4 {
-        address = "10.0.10.7/24"
-        gateway = "10.0.10.1"
-      }
-    }
-
     user_data_file_id = proxmox_virtual_environment_file.common_cloud_init.id
-    meta_data_file_id = proxmox_virtual_environment_file.gravity_dns_meta_data.id
-  }
-
-  network_device { bridge = "vmbr0" }
-
-  disk {
-    datastore_id = "prod-nvme"
-    file_id      = proxmox_virtual_environment_download_file.debian_trixie_qcow2_generic.id
-    interface    = "virtio0"
-    iothread     = true
-    discard      = "on"
-    size         = 10
-  }
-
-  lifecycle {
-    ignore_changes = [
-      initialization[0].user_data_file_id,
-      initialization[0].meta_data_file_id
-    ]
-  }
-}
-
-resource "proxmox_virtual_environment_vm" "veeam-backup-01" {
-  name      = var.nodes_cfg["veeam-backup-01"].name
-  node_name = "pve-srv-01"
-  vm_id     = var.nodes_cfg["veeam-backup-01"].vm_id
-  on_boot   = true
-
-  tags            = ["veeam", "server", "terraform", "backup"]
-  machine         = "q35"
-  stop_on_destroy = false # use ACPI
-
-  serial_device {}
-  agent { enabled = true }
-
-  operating_system { type = "l26" } # Linux 2.6
-  cpu {
-    cores = var.nodes_cfg["veeam-backup-01"].cpus
-    type  = "x86-64-v2-AES"
-  }
-
-  memory {
-    dedicated = var.nodes_cfg["veeam-backup-01"].memory
-    floating  = var.nodes_cfg["veeam-backup-01"].memory # ballooning
-  }
-
-  initialization {
-    ip_config {
-      ipv4 {
-        address = "10.0.10.20/24"
-        gateway = "10.0.10.1"
-      }
-    }
-
-    user_data_file_id = proxmox_virtual_environment_file.common_cloud_init.id
-    meta_data_file_id = proxmox_virtual_environment_file.veeam_backup_meta_data.id
+    meta_data_file_id = proxmox_virtual_environment_file.openshift-tools_meta_data.id
   }
 
   network_device {
     bridge      = "vmbr0"
-    mac_address = macaddress.main["veeam-backup-01"].id
+    mac_address = macaddress.main["openshift-tools"].id
   }
 
   disk {
@@ -168,7 +106,7 @@ resource "proxmox_virtual_environment_vm" "veeam-backup-01" {
     interface    = "virtio0"
     iothread     = true
     discard      = "on"
-    size         = 10
+    size         = 100
   }
 
   lifecycle {

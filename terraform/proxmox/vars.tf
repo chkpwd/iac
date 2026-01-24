@@ -27,7 +27,6 @@ variable "nodes_cfg" {
   }))
   default = {
     "ai-inference-01" = { vm_id = 505, name = "ai-inference-01", cpus = 4, memory = 1024 * 4 }
-    "gravity-dns-02"  = { vm_id = 300, name = "gravity-dns-02", cpus = 1, memory = 1024 * 1 }
-    "veeam-backup-01" = { vm_id = 510, name = "veeam-backup-01", cpus = 8, memory = 1024 * 2 }
+    "openshift-tools" = { vm_id = 511, name = "openshift-tools", cpus = 2, memory = 1024 * 4 }
   }
 }
