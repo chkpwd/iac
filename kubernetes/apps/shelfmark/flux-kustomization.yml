@@ -12,6 +12,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
+    - ../../core/volsync/components/
     - ../../core/keda-operator/_components/nfs/
   postBuild:
     substitute:
