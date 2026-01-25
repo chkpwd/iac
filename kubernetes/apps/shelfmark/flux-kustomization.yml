@@ -18,6 +18,9 @@ spec:
     substitute:
       APP: *app
       CLAIM: config-shelfmark-0
+      VOLSYNC_PUID: "1999"
+      VOLSYNC_PGID: "1999"
+      VOLSYNC_CAPACITY: "1Gi"
   prune: true
   sourceRef:
     kind: GitRepository
