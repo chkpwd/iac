@@ -1,0 +1,104 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: shelfmark
+spec:
+  interval: 15m
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  values:
+    controllers:
+      shelfmark:
+        enabled: true
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
+        pod:
+          securityContext:
+            fsGroup: 1999
+            fsGroupChangePolicy: OnRootMismatch
+            runAsGroup: 1999
+            runAsNonRoot: true
+            runAsUser: 1999
+        containers:
+          shelfmark:
+            image:
+              repository: ghcr.io/calibrain/shelfmark
+              tag: v1.0.2
+            command:
+              - gunicorn
+            args:
+              - --access-logfile=-
+              - --error-logfile=-
+              - --worker-class=geventwebsocket.gunicorn.workers.GeventWebSocketWorker
+              - --workers=1
+              - -t
+              - "300"
+              - -b
+              - 0.0.0.0:8084
+              - shelfmark.main:app
+            env:
+              INGEST_DIR: /bookdrop
+            probes:
+              liveness: &probe
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/health
+                    port: &port 8084
+              readiness: *probe
+            resources:
+              requests:
+                cpu: 10m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+    route:
+      private:
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        parentRefs:
+          - name: private
+            namespace: kube-system
+            sectionName: https
+    service:
+      app:
+        ports:
+          http:
+            port: *port
+    persistence:
+      config:
+        existingClaim: shelfmark
+      nfs-nas-media:
+        type: nfs
+        server: "nas-srv-01.chkpwd.com"
+        path: /volume1/vault-01/media/books/ingest
+        advancedMounts:
+          shelfmark:
+            shelfmark:
+              - path: /bookdrop
+                subPath: Library/Main/Books/Booklore/bookdrop
+      tmpfs:
+        type: emptyDir
+        sizeLimit: 1Gi
+        globalMounts:
+          - path: /tmp
+            subPath: tmp
+          - path: /var/log
+            subPath: var-log

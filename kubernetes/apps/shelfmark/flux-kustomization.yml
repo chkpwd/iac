@@ -3,11 +3,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app ephemera
+  name: &app shelfmark
   namespace: &ns media
 spec:
   targetNamespace: *ns
-  path: ./kubernetes/apps/ephemera/
+  path: ./kubernetes/apps/shelfmark/
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -16,7 +16,7 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      CLAIM: config-ephemera-0
+      CLAIM: config-shelfmark-0
   prune: true
   sourceRef:
     kind: GitRepository
