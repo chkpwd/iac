@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: cilium
-      version: 1.18.5
+      version: 1.18.6
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -17,6 +17,3 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: cilium-values
-  values:
-    operator:
-      tolerations: []
