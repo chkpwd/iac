@@ -16,11 +16,8 @@ spec:
         name: bjw-s-labs
         namespace: flux-system
   values:
-    global:
-      fullnameOverride: recyclarr
     controllers:
       recyclarr:
-        enabled: true
         type: cronjob
         annotations:
           reloader.stakater.com/auto: "true"

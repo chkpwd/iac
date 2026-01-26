@@ -86,64 +86,21 @@ spec:
                 cpu: 100m
               limits:
                 memory: 4Gi
-          metrics:
-            dependsOn: app
-            image:
-              repository: ghcr.io/onedr0p/exportarr
-              tag: v2.3.0
-            env:
-              PORT: &metricsPort 9707
-              URL: "http://{{ .Release.Name }}-app.{{ .Release.Namespace }}.svc.cluster.local:7878"
-              APIKEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: radarr
-                    key: RADARR_API_KEY
-            args: ["radarr"]
-            resources:
-              requests:
-                cpu: 50m
-              limits:
-                memory: 2Gi
     service:
       app:
-        primary: true
         controller: radarr
         ports:
           http:
             port: *port
-      metrics:
-        controller: radarr
-        ports:
-          metrics:
-            port: *metricsPort
     route:
       private:
-        enabled: true
-        kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
-        rules:
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /
-            backendRefs:
-              - name: radarr-app
-                port: *port
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /metrics
-            backendRefs:
-              - name: radarr-metrics
-                port: *metricsPort
         parentRefs:
           - name: private
             namespace: kube-system
             sectionName: https
     persistence:
       data:
-        enabled: true
         type: nfs
         server: "nas-srv-01.chkpwd.com"
         path: /volume1/vault-01/media

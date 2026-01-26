@@ -18,7 +18,6 @@ spec:
   values:
     controllers:
       rmfakecloud:
-        enabled: true
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
@@ -87,7 +86,6 @@ spec:
           #   port: &mqttPort 8883
     route:
       public:
-        enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
         rules:
@@ -106,7 +104,6 @@ spec:
             namespace: kube-system
             sectionName: https
       hijack-http:
-        enabled: true
         kind: HTTPRoute
         hostnames:
           - hwr-production-dot-remarkable-production.appspot.com
@@ -133,7 +130,6 @@ spec:
             namespace: kube-system
             sectionName: https
       # hijack-mqtt:
-      #   enabled: true
       #   kind: HTTPRoute
       #   hostnames:
       #     - vernemq-prod.cloud.remarkable.engineering

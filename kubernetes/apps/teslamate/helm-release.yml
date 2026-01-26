@@ -16,11 +16,8 @@ spec:
         name: bjw-s-labs
         namespace: flux-system
   values:
-    global:
-      fullnameOverride: teslamate
     controllers:
       teslamate:
-        enabled: true
         type: deployment
         annotations:
           reloader.stakater.com/auto: "true"
@@ -114,17 +111,8 @@ spec:
             port: *port
     route:
       private:
-        enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
-        rules:
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /
-            backendRefs:
-              - name: teslamate
-                port: *port
         parentRefs:
           - name: private
             namespace: kube-system

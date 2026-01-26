@@ -16,11 +16,14 @@ spec:
         name: bjw-s-labs
         namespace: flux-system
   values:
-    global:
-      fullnameOverride: teslamateapi
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 100
+        runAsGroup: 100
     controllers:
       teslamateapi:
-        enabled: true
         type: deployment
         annotations:
           reloader.stakater.com/auto: "true"
@@ -116,12 +119,6 @@ spec:
                 memory: 512Mi
               requests:
                 cpu: 10m
-    defaultPodOptions:
-      automountServiceAccountToken: false
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 100
-        runAsGroup: 100
     service:
       app:
         ports:
@@ -129,17 +126,8 @@ spec:
             port: 8080
     route:
       private:
-        enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
-        rules:
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /
-            backendRefs:
-              - name: teslamateapi
-                port: 8080
         parentRefs:
           - name: private
             namespace: kube-system

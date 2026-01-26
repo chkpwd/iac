@@ -120,7 +120,6 @@ spec:
             port: 3306
     route:
       public:
-        enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
         rules:
@@ -137,7 +136,6 @@ spec:
             sectionName: https
     persistence:
       books:
-        enabled: true
         type: nfs
         server: "nas-srv-01.chkpwd.com"
         path: /volume1/vault-01/media/books
@@ -146,7 +144,6 @@ spec:
             app:
               - path: /books
       ingest:
-        enabled: true
         type: nfs
         server: "nas-srv-01.chkpwd.com"
         path: /volume1/vault-01/media/books/ingest

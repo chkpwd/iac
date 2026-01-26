@@ -95,29 +95,18 @@ spec:
             port: *port
     route:
       private:
-        enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
-        rules:
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /
-            backendRefs:
-              - name: mediamanager
-                port: *port
         parentRefs:
           - name: private
             namespace: kube-system
             sectionName: https
     persistence:
       data:
-        enabled: true
         type: nfs
         server: "nas-srv-01.chkpwd.com"
         path: /volume1/vault-01/media
       metadata:
-        enabled: true
         accessMode: ReadWriteOnce
         type: persistentVolumeClaim
         size: 5Gi

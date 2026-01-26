@@ -16,11 +16,8 @@ spec:
         name: bjw-s-labs
         namespace: flux-system
   values:
-    global:
-      fullnameOverride: miniflux
     controllers:
       miniflux:
-        enabled: true
         annotations:
           reloader.stakater.com/auto: "true"
         replicas: 1
@@ -80,20 +77,11 @@ spec:
         controller: miniflux
         ports:
           http:
-            port: &port 8080
+            port: 8080
     route:
       public:
-        enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
-        rules:
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /
-            backendRefs:
-              - name: miniflux
-                port: *port
         parentRefs:
           - name: public
             namespace: kube-system

@@ -18,7 +18,6 @@ spec:
   values:
     controllers:
       paperless-ngx:
-        enabled: true
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
@@ -172,7 +171,6 @@ spec:
             port: 3000
     route:
       private:
-        enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
         rules:
@@ -200,7 +198,6 @@ spec:
               - path: /shared/media
                 subPath: media
       tmp:
-        enabled: true
         type: emptyDir
         medium: Memory
         globalMounts:

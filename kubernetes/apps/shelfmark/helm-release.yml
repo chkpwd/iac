@@ -18,7 +18,6 @@ spec:
   values:
     controllers:
       shelfmark:
-        enabled: true
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
@@ -96,7 +95,6 @@ spec:
             port: *port
     persistence:
       ingest:
-        enabled: true
         type: nfs
         server: "nas-srv-01.chkpwd.com"
         path: /volume1/vault-01/media/books/ingest

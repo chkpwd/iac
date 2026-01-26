@@ -16,11 +16,8 @@ spec:
         name: bjw-s-labs
         namespace: flux-system
   values:
-    global:
-      fullnameOverride: sonarr
     controllers:
       sonarr:
-        enabled: true
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
@@ -88,65 +85,22 @@ spec:
                 cpu: 50m
               limits:
                 memory: 3Gi
-          metrics:
-            dependsOn: app
-            image:
-              repository: ghcr.io/onedr0p/exportarr
-              tag: v2.3.0
-            env:
-              PORT: &metricsPort 9707
-              URL: "http://{{ .Release.Name }}-app.{{ .Release.Namespace }}.svc.cluster.local:8989"
-              APIKEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: sonarr
-                    key: SONARR_API_KEY
-            args: ["sonarr"]
-            resources:
-              requests:
-                cpu: 10m
-                memory: 100Mi
-              limits:
-                memory: 125Mi
     service:
       app:
-        primary: true
         controller: sonarr
         ports:
           http:
             port: *port
-      metrics:
-        controller: sonarr
-        ports:
-          metrics:
-            port: *metricsPort
     route:
       private:
-        enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
-        rules:
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /
-            backendRefs:
-              - name: sonarr-app
-                port: *port
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /metrics
-            backendRefs:
-              - name: sonarr-metrics
-                port: *metricsPort
         parentRefs:
           - name: private
             namespace: kube-system
             sectionName: https
     persistence:
       data:
-        enabled: true
         type: nfs
         server: "nas-srv-01.chkpwd.com"
         path: /volume1/vault-01/media

@@ -18,7 +18,6 @@ spec:
   values:
     controllers:
       server:
-        enabled: true
         type: deployment
         strategy: &strategy RollingUpdate
         rollingUpdate: &rollingUpdate

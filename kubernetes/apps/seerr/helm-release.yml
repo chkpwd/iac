@@ -18,7 +18,6 @@ spec:
   values:
     controllers:
       seerr:
-        enabled: true
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
@@ -86,22 +85,12 @@ spec:
             port: *port
     route:
       public:
-        enabled: true
         kind: HTTPRoute
         hostnames: ["seerr.chkpwd.com"]
-        rules:
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /
-            backendRefs:
-              - name: seerr
-                port: *port
         parentRefs:
           - name: public
             namespace: kube-system
             sectionName: https
     persistence:
       tmp:
-        enabled: true
         type: emptyDir

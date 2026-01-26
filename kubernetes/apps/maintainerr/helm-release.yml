@@ -16,11 +16,8 @@ spec:
         name: bjw-s-labs
         namespace: flux-system
   values:
-    global:
-      fullnameOverride: maintainerr
     controllers:
       maintainerr:
-        enabled: true
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
@@ -71,17 +68,8 @@ spec:
             port: 6246
     route:
       private:
-        enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
-        rules:
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /
-            backendRefs:
-              - name: maintainerr
-                port: 6246
         parentRefs:
           - name: private
             namespace: kube-system

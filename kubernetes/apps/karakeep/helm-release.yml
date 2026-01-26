@@ -16,8 +16,6 @@ spec:
         name: bjw-s-labs
         namespace: flux-system
   values:
-    global:
-      fullnameOverride: karakeep
     defaultPodOptions:
       securityContext:
         runAsUser: &context 1999
@@ -149,7 +147,6 @@ spec:
             port: 7700
     route:
       public:
-        enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
         rules:
@@ -166,7 +163,6 @@ spec:
             sectionName: https
     persistence:
       data:
-        enabled: true
         accessMode: ReadWriteOnce
         type: persistentVolumeClaim
         size: "${VOLSYNC_CAPACITY}"

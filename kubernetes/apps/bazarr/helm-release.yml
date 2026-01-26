@@ -16,11 +16,8 @@ spec:
         name: bjw-s-labs
         namespace: flux-system
   values:
-    global:
-      fullnameOverride: bazarr
     controllers:
       bazarr:
-        enabled: true
         type: statefulset
         annotations:
           reloader.stakater.com/auto: "true"
@@ -87,58 +84,16 @@ spec:
                 memory: 309Mi
               limits:
                 memory: 336Mi
-          metrics:
-            dependsOn: app
-            image:
-              repository: ghcr.io/onedr0p/exportarr
-              tag: v2.3.0
-            env:
-              PORT: &metricsPort 9707
-              URL: "http://{{ .Release.Name }}-app.{{ .Release.Namespace }}.svc.cluster.local:6767"
-              APIKEY:
-                valueFrom:
-                  secretKeyRef:
-                    name: bazarr
-                    key: BAZARR_API_KEY
-            args: ["bazarr"]
-            resources:
-              requests:
-                cpu: 10m
-                memory: 294Mi
-              limits:
-                memory: 319Mi
     service:
       app:
-        primary: true
         controller: bazarr
         ports:
           http:
             port: *port
-      metrics:
-        controller: bazarr
-        ports:
-          metrics:
-            port: *metricsPort
     route:
       private:
-        enabled: true
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
-        rules:
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /
-            backendRefs:
-              - name: bazarr-app
-                port: *port
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /metrics
-            backendRefs:
-              - name: bazarr-metrics
-                port: *metricsPort
         parentRefs:
           - name: private
             namespace: kube-system

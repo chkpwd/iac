@@ -16,13 +16,10 @@ spec:
         name: bjw-s-labs
         namespace: flux-system
   values:
-    global:
-      fullnameOverride: plex-auto-languages
     defaultPodOptions:
       hostname: plex-auto-languages
     controllers:
       plex-auto-languages:
-        enabled: true
         type: deployment
         annotations:
           reloader.stakater.com/auto: "true"
