@@ -26,7 +26,7 @@ monitoring_service_definitions:
     networks:
       - name: "proxy"
   - name: grafana
-    image: grafana/grafana:12.3.1
+    image: grafana/grafana:12.3.2
     user: 1000:1000
     env:
       GF_DAGF_FEATURE_TOGGLES_ENABLE: publicDashboards
