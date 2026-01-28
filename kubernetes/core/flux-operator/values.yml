@@ -4,7 +4,7 @@ serviceMonitor:
 web:
   enabled: true
   networkPolicy:
-    create: true
+    create: false
   rbac:
     createRoles: true
   # -- Run the Flux Status web server as a standalone deployment (requires a dedicated Helm release).
