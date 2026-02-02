@@ -11,7 +11,7 @@ terraform {
     }
     radarr = {
       source  = "devopsarr/radarr"
-      version = "2.3.4"
+      version = "2.3.5"
     }
     external = {
       source  = "hashicorp/external"
