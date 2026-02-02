@@ -25,8 +25,8 @@ resource "cloudflare_dns_record" "gatus" {
   zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
 }
 
-resource "cloudflare_dns_record" "tig" {
-  name    = data.external.bws_lookup.result["tig-info_a_record_name"]
+resource "cloudflare_dns_record" "monitoring" {
+  name    = data.external.bws_lookup.result["monitoring_a_record_name"]
   proxied = false
   ttl     = 1
   type    = "A"
