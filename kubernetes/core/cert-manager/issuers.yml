@@ -8,6 +8,7 @@ spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
     email: unix.chkpwd@gmail.com
+    profile: shortlived
     privateKeySecretRef:
       name: main-issuer
     solvers:
