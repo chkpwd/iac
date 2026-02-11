@@ -28,7 +28,7 @@ jobs:
         id: time
         run: echo "time=$(date +'%s')" >> "$GITHUB_OUTPUT"
       - name: Build and push images
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@v6.19.0
         with:
           context: containers/${{ matrix.context }}
           push: ${{ github.ref == 'refs/heads/main' }}
