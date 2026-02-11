@@ -30,7 +30,7 @@ service_definitions:
       - "{{ configuration_path }}/gatus:/config"
     network_mode: container:wireguard
   - name: swag
-    image: lscr.io/linuxserver/swag:5.2.2
+    image: lscr.io/linuxserver/swag:5.3.1
     ports:
       - 443:443
       - 80:80
