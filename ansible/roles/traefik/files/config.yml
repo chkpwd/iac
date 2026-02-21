@@ -1,13 +1,13 @@
 ---
 http:
   routers:
-    opnsense:
+    mikrotik:
       entryPoints:
         - "https"
-      rule: "Host(`opnsense.chkpwd.com`)"
+      rule: "Host(`mikrotik.chkpwd.com`)"
       middlewares:
         - https-redirectscheme
-      service: opnsense
+      service: mikrotik
       tls:
         certResolver: cloudflare
     proxmox:
@@ -56,7 +56,7 @@ http:
       tls:
         certResolver: cloudflare
   services:
-    opnsense:
+    mikrotik:
       loadBalancer:
         servers:
           - url: "http://10.0.10.1"
