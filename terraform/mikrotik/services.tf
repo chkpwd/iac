@@ -86,3 +86,16 @@ resource "routeros_system_clock" "timezone" {
   time_zone_name       = "America/New_York"
   time_zone_autodetect = false
 }
+
+resource "routeros_system_script" "script" {
+  name = "ddns-cf-update"
+  source = <<EOF
+    ${templatefile("${path.module}/scripts/ddns-cf-update.rsc", {
+  CloudflareZoneID   = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
+  CloudflareRecordID = data.external.bws_lookup.result["mikrotik-ddns_record_id"]
+  CloudflareAPIKey   = data.external.bws_lookup.result["mikrotik-ddns_zone_token"]
+})}
+
+    EOF
+policy = ["read", "write", "test", "policy"]
+}
