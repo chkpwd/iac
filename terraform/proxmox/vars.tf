@@ -28,5 +28,7 @@ variable "nodes_cfg" {
   default = {
     "ai-inference-01" = { vm_id = 505, name = "ai-inference-01", cpus = 4, memory = 1024 * 4 }
     "openshift-tools" = { vm_id = 511, name = "openshift-tools", cpus = 2, memory = 1024 * 4 }
+    "mc-kasten-01"    = { vm_id = 514, name = "mc-kasten-01", cpus = 2, memory = 1024 * 8 }
+    "mc-kasten-02"    = { vm_id = 515, name = "mc-kasten-02", cpus = 2, memory = 1024 * 8 }
   }
 }

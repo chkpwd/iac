@@ -77,3 +77,27 @@ resource "proxmox_virtual_environment_file" "openshift-tools_meta_data" {
     file_name = "openshift-tools-meta-data.yaml"
   }
 }
+
+resource "proxmox_virtual_environment_file" "mc_kasten_meta_data" {
+  for_each = {
+    mc-kasten-01 = {
+      hostname  = "mc-kasten-01"
+      file_name = "mc-kasten-01-meta-data.yaml"
+    }
+    mc-kasten-02 = {
+      hostname  = "mc-kasten-02"
+      file_name = "mc-kasten-02-meta-data.yaml"
+    }
+  }
+
+  content_type = "snippets"
+  datastore_id = "local"
+  node_name    = var.node
+
+  source_raw {
+    data = templatefile("${path.root}/meta-data.tftpl", {
+      hostname = each.value.hostname
+    })
+    file_name = each.value.file_name
+  }
+}

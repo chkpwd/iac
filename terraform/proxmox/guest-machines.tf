@@ -66,38 +66,50 @@ resource "proxmox_virtual_environment_vm" "ollama" {
   }
 }
 
-resource "proxmox_virtual_environment_vm" "openshift-tools" {
-  name      = var.nodes_cfg["openshift-tools"].name
+resource "proxmox_virtual_environment_vm" "mc-kasten" {
+  for_each = {
+    for k, v in var.nodes_cfg :
+    k => v
+    if k == "mc-kasten-01" || k == "mc-kasten-02"
+  }
+
+  name      = each.value.name
   node_name = "pve-srv-01"
-  vm_id     = var.nodes_cfg["openshift-tools"].vm_id
+  vm_id     = each.value.vm_id
   on_boot   = true
 
-  tags            = ["openshift", "server", "terraform"]
+  tags            = ["k3s", "server", "terraform"]
   machine         = "q35"
-  stop_on_destroy = false # use ACPI
+  stop_on_destroy = false
 
   serial_device {}
   agent { enabled = true }
 
-  operating_system { type = "l26" } # Linux 2.6
+  operating_system { type = "l26" }
+
   cpu {
-    cores = var.nodes_cfg["openshift-tools"].cpus
+    cores = each.value.cpus
     type  = "x86-64-v2-AES"
   }
 
   memory {
-    dedicated = var.nodes_cfg["openshift-tools"].memory
-    floating  = var.nodes_cfg["openshift-tools"].memory # ballooning
+    dedicated = each.value.memory
+    floating  = each.value.memory
   }
 
   initialization {
+    ip_config {
+      ipv4 {
+        address = "dhcp"
+      }
+    }
     user_data_file_id = proxmox_virtual_environment_file.common_cloud_init.id
-    meta_data_file_id = proxmox_virtual_environment_file.openshift-tools_meta_data.id
+    meta_data_file_id = proxmox_virtual_environment_file.mc_kasten_meta_data[each.key].id
   }
 
   network_device {
     bridge      = "vmbr0"
-    mac_address = macaddress.main["openshift-tools"].id
+    mac_address = macaddress.main[each.key].id
   }
 
   disk {
@@ -106,7 +118,7 @@ resource "proxmox_virtual_environment_vm" "openshift-tools" {
     interface    = "virtio0"
     iothread     = true
     discard      = "on"
-    size         = 100
+    size         = 50
   }
 
   lifecycle {
