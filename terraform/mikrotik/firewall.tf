@@ -54,6 +54,39 @@ resource "routeros_ip_firewall_nat" "masquerade" {
   out_interface_list = routeros_interface_list.wan.name
 }
 
+resource "routeros_ip_firewall_nat" "cilium" {
+  in_interface_list = routeros_interface_list.wan.name
+  action            = "dst-nat"
+  chain             = "dstnat"
+  dst_port          = "443"
+  to_addresses      = "10.0.10.31"
+  to_ports          = "443"
+  protocol          = "tcp"
+  comment           = "cilium ingress"
+}
+
+resource "routeros_ip_firewall_nat" "plex" {
+  in_interface_list = routeros_interface_list.wan.name
+  action            = "dst-nat"
+  chain             = "dstnat"
+  dst_port          = "32400"
+  to_addresses      = "10.0.10.35"
+  to_ports          = "32400"
+  protocol          = "tcp"
+  comment           = "plex"
+}
+
+resource "routeros_ip_firewall_nat" "qbittorrent" {
+  in_interface_list = routeros_interface_list.wan.name
+  action            = "dst-nat"
+  chain             = "dstnat"
+  dst_port          = "50413"
+  to_addresses      = "10.0.10.34"
+  to_ports          = "50413"
+  protocol          = "tcp"
+  comment           = "qbittorrent"
+}
+
 resource "routeros_ip_firewall_filter" "filter_rules" {
   for_each = local.firewall_filter_rule_map
 
