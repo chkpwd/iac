@@ -42,20 +42,3 @@ variable "domain" {
   type    = string
   default = "chkpwd.com"
 }
-
-variable "address_list" {
-  type = list(object({
-    address  = string
-    comment  = optional(string)
-    disabled = optional(bool, false)
-    dynamic  = optional(bool, false)
-    list     = string
-  }))
-
-  default = [
-    { address = "10.0.10.0/24", comment = "LAN", list = "LAN" },
-    { address = "10.0.0.0/8", comment = "rfc1918", list = "private_addr" },
-    { address = "172.16.0.0/12", comment = "rfc1918", list = "private_addr" },
-    { address = "192.168.0.0/16", comment = "rfc1918", list = "private_addr" },
-  ]
-}
