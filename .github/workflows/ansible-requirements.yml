@@ -25,7 +25,7 @@ jobs:
         run: poetry export --without-hashes --format=requirements.txt > requirements.txt
         working-directory: ./ansible
       - name: Upload Artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: requirements
           path: ansible/requirements.txt
