@@ -49,7 +49,7 @@ service_definitions:
     ports: ["5050:5000"]
     state: stopped
   - name: opnsense-exporter
-    image: ghcr.io/athennamind/opnsense-exporter:0.0.11
+    image: ghcr.io/athennamind/opnsense-exporter:0.0.13
     command:
       - --opnsense.protocol=http
       - --opnsense.address=10.0.10.1
