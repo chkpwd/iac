@@ -28,7 +28,7 @@ spec:
           main:
             image:
               repository: yooooomi/your_spotify_server
-              tag: 1.17.0
+              tag: 1.18.0
               pullPolicy: IfNotPresent
             env:
               TIMEZONE: America/New_York
@@ -62,7 +62,7 @@ spec:
           app:
             image:
               repository: yooooomi/your_spotify_client
-              tag: 1.17.0
+              tag: 1.18.0
             env:
               API_ENDPOINT: *api_endpoint
             probes: *probes
