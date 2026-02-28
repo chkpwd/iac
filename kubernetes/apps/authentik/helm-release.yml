@@ -112,10 +112,10 @@ spec:
         enabled: false
       resources:
         requests:
-          cpu: 11m
-          memory: 604Mi
+          cpu: 10m
+          memory: 512Mi
         limits:
-          memory: 629Mi
+          memory: 1Gi
     serviceAccount:
       # -- Create service account. Needed for managed outposts
       create: true
