@@ -77,11 +77,9 @@ spec:
         - name: AUTHENTIK_POSTGRESQL__SSLMODE
           value: require
     server:
-      name: server
-      replicas: 1
-      pdb:
-        # -- Deploy a [PodDistrubtionBudget] for the authentik server
-        enabled: false
+      autoscaling:
+        enabled: true
+        minReplicas: 1
       route:
         main:
           enabled: true
@@ -97,30 +95,16 @@ spec:
                 value: "{{ .Values.authentik.web.path }}"
           httpsRedirect: false
           https: false
-      metrics:
-        serviceMonitor:
-          enabled: true
       resources:
         requests:
           cpu: 200m
         limits:
           cpu: "2"
-    worker:
-      replicas: 1
-      pdb:
-        # -- Deploy a [PodDistrubtionBudget] for the authentik server
-        enabled: false
-      resources:
-        requests:
-          cpu: 10m
-          memory: 512Mi
-        limits:
-          memory: 1Gi
     serviceAccount:
       # -- Create service account. Needed for managed outposts
       create: true
     authentik:
-      log_level: info
+      log_level: debug
       error_reporting:
         enabled: true
       email:
