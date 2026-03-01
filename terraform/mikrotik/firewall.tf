@@ -25,30 +25,32 @@ locals {
 
   # Order field controls rule sequence; spaced by 10 to allow inserting new rules.
   firewall_filter_rules = {
-    input_accept_established   = { order = 10, chain = "input", action = "accept", comment = "accept established,related,untracked", connection_state = "established,related,untracked" }
-    input_drop_invalid         = { order = 20, chain = "input", action = "drop", comment = "drop invalid", connection_state = "invalid" }
-    input_accept_icmp          = { order = 30, chain = "input", action = "accept", comment = "accept ICMP", protocol = "icmp" }
-    input_accept_loopback      = { order = 40, chain = "input", action = "accept", comment = "accept to local loopback (for CAPsMAN)", dst_address = "127.0.0.1" }
-    input_allow_dhcp_iot       = { order = 50, chain = "input", action = "accept", comment = "allow DHCP from IoT", protocol = "udp", dst_port = "67,68", in_interface = "iot" }
-    input_allow_dhcp_guest     = { order = 60, chain = "input", action = "accept", comment = "allow DHCP from Guest", protocol = "udp", dst_port = "67,68", in_interface = "guest" }
-    input_drop_not_lan         = { order = 70, chain = "input", action = "drop", comment = "drop all not coming from LAN", in_interface_list = "!LAN" }
-    forward_accept_ipsec_in    = { order = 100, chain = "forward", action = "accept", comment = "accept in ipsec policy", ipsec_policy = "in,ipsec" }
-    forward_accept_ipsec_out   = { order = 110, chain = "forward", action = "accept", comment = "accept out ipsec policy", ipsec_policy = "out,ipsec" }
-    forward_accept_established = { order = 120, chain = "forward", action = "accept", comment = "accept established,related, untracked", connection_state = "established,related,untracked" }
-    forward_fasttrack          = { order = 130, chain = "forward", action = "fasttrack-connection", comment = "fasttrack", connection_state = "established,related", hw_offload = true }
-    forward_iot_dns_udp        = { order = 200, chain = "forward", action = "accept", comment = "iot allow DNS (UDP)", protocol = "udp", dst_address = var.dns_ip, dst_port = "53", in_interface = "iot" }
-    # forward_iot_dns_tcp         = { order = 210, chain = "forward", action = "accept", comment = "iot allow DNS (TCP)", protocol = "tcp", dst_address = var.dns_ip, dst_port = "53", in_interface = "iot" }
+    input_drop_invalid          = { order = 10, chain = "input", action = "drop", comment = "drop invalid", connection_state = "invalid" }
+    input_accept_established    = { order = 20, chain = "input", action = "accept", comment = "accept established,related,untracked", connection_state = "established,related,untracked" }
+    input_allow_wireguard_udp   = { order = 30, chain = "input", action = "accept", comment = "allow WireGuard UDP", protocol = "udp", dst_port = "53834" }
+    input_allow_wireguard_peers = { order = 40, chain = "input", action = "accept", comment = "allow router access from WireGuard subnet", src_address = "10.6.6.0/24" }
+    input_accept_icmp           = { order = 50, chain = "input", action = "accept", comment = "accept ICMP", protocol = "icmp" }
+    input_accept_loopback       = { order = 60, chain = "input", action = "accept", comment = "accept to local loopback (for CAPsMAN)", dst_address = "127.0.0.1" }
+    input_allow_dhcp_iot        = { order = 70, chain = "input", action = "accept", comment = "allow DHCP from IoT", protocol = "udp", dst_port = "67,68", in_interface = "iot" }
+    input_allow_dhcp_guest      = { order = 80, chain = "input", action = "accept", comment = "allow DHCP from Guest", protocol = "udp", dst_port = "67,68", in_interface = "guest" }
+    input_drop_not_lan          = { order = 90, chain = "input", action = "drop", comment = "drop all not coming from LAN", in_interface_list = "!LAN" }
+    forward_drop_invalid        = { order = 100, chain = "forward", action = "drop", comment = "drop invalid", connection_state = "invalid" }
+    forward_accept_established  = { order = 110, chain = "forward", action = "accept", comment = "accept established,related, untracked", connection_state = "established,related,untracked" }
+    forward_fasttrack           = { order = 120, chain = "forward", action = "fasttrack-connection", comment = "fasttrack", connection_state = "established,related", hw_offload = true }
+    forward_accept_ipsec_in     = { order = 130, chain = "forward", action = "accept", comment = "accept in ipsec policy", ipsec_policy = "in,ipsec" }
+    forward_accept_ipsec_out    = { order = 140, chain = "forward", action = "accept", comment = "accept out ipsec policy", ipsec_policy = "out,ipsec" }
+    forward_iot_dns_udp         = { order = 200, chain = "forward", action = "accept", comment = "iot allow DNS (UDP)", protocol = "udp", dst_address = var.dns_ip, dst_port = "53", in_interface = "iot" }
+    forward_iot_dns_tcp         = { order = 210, chain = "forward", action = "accept", comment = "iot allow DNS (TCP)", protocol = "tcp", dst_address = var.dns_ip, dst_port = "53", in_interface = "iot" }
     forward_iot_wan             = { order = 220, chain = "forward", action = "accept", comment = "iot -> WAN allow", in_interface = "iot", out_interface_list = "WAN" }
     forward_iot_drop_local      = { order = 230, chain = "forward", action = "drop", comment = "drop local access on iot net", dst_address_list = "private_addr", in_interface = "iot" }
+    forward_iot_drop_all        = { order = 240, chain = "forward", action = "drop", comment = "iot drop all other forward", in_interface = "iot" }
     forward_plex_guest          = { order = 300, chain = "forward", action = "accept", comment = "allow plex from media_clients", protocol = "tcp", dst_address = "10.0.10.35", dst_port = "32400", src_address_list = "media_clients", in_interface = "guest" }
     forward_guest_dns_udp       = { order = 400, chain = "forward", action = "accept", comment = "guest allow DNS (UDP)", protocol = "udp", dst_address = var.dns_ip, dst_port = "53", in_interface = "guest" }
     forward_guest_dns_tcp       = { order = 410, chain = "forward", action = "accept", comment = "guest allow DNS (TCP)", protocol = "tcp", dst_address = var.dns_ip, dst_port = "53", in_interface = "guest" }
     forward_guest_wan           = { order = 420, chain = "forward", action = "accept", comment = "guest -> WAN allow", in_interface = "guest", out_interface_list = "WAN" }
     forward_guest_drop_local    = { order = 430, chain = "forward", action = "drop", comment = "drop local access on guest net", dst_address_list = "private_addr", in_interface = "guest" }
-    forward_guest_drop_all      = { order = 500, chain = "forward", action = "drop", comment = "guest drop all other forward", in_interface = "guest" }
-    forward_iot_drop_all        = { order = 510, chain = "forward", action = "drop", comment = "iot drop all other forward", in_interface = "iot" }
-    forward_drop_invalid        = { order = 520, chain = "forward", action = "drop", comment = "drop invalid", connection_state = "invalid" }
-    forward_drop_wan_not_dstnat = { order = 530, chain = "forward", action = "drop", comment = "drop all from WAN not DSTNATed", connection_nat_state = "!dstnat", connection_state = "new", in_interface_list = "WAN" }
+    forward_guest_drop_all      = { order = 440, chain = "forward", action = "drop", comment = "guest drop all other forward", in_interface = "guest" }
+    forward_drop_wan_not_dstnat = { order = 500, chain = "forward", action = "drop", comment = "drop all from WAN not DSTNATed", connection_nat_state = "!dstnat", connection_state = "new", in_interface_list = "WAN" }
   }
 
   # Transforms rules into lexicographically sortable keys for for_each.
