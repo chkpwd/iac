@@ -84,6 +84,13 @@ resource "routeros_ip_address" "guest" {
   comment   = "VLAN ${var.networks.guest.vlan_id}"
 }
 
+resource "routeros_ip_address" "wireguard" {
+  interface = "wireguard"
+  address   = "10.6.6.1/24"
+  network   = "10.6.6.0"
+  comment   = "Wireguard Int"
+}
+
 resource "routeros_ip_dhcp_client" "wan" {
   interface = "ether1"
 }
