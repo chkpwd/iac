@@ -76,9 +76,9 @@ spec:
             readOnly: true
       config:
         accessMode: ReadWriteOnce
-        type: persistenceVolumeClaim
-        storageClass: ceph-block
+        type: persistentVolumeClaim
         size: 100Mi
+        storageClass: ceph-block
         globalMounts:
           - path: /config
       tmp:
