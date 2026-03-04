@@ -23,7 +23,7 @@ spec:
           reloader.stakater.com/auto: "true"
         cronjob:
           concurrencyPolicy: Forbid
-          schedule: "0 2 * * 1"
+          schedule: "0 2 */2 * *"
           startingDeadlineSeconds: 30
           successfulJobsHistory: 1
           failedJobsHistory: 1
