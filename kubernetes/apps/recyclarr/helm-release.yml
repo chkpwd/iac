@@ -40,7 +40,8 @@ spec:
               repository: ghcr.io/recyclarr/recyclarr
               tag: 8.3.2
             command: ["/app/recyclarr/recyclarr"]
-            args: ["sync", "--adopt"]
+            args:
+              - sync
             env:
               RECYCLARR_DATA_DIR: /tmp
               TZ: America/New_York
