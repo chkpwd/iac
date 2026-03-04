@@ -74,7 +74,10 @@ spec:
             subPath: recyclarr.yml
             readOnly: true
       config:
-        type: emptyDir
+        accessMode: ReadWriteOnce
+        type: persistenceVolumeClaim
+        storageClass: ceph-block
+        size: 100Mi
         globalMounts:
           - path: /config
       tmp:
