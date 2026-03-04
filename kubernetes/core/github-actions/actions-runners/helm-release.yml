@@ -6,10 +6,9 @@ metadata:
   name: actions-runners
 spec:
   interval: 1h
-  timeout: 15m
   chartRef:
     kind: OCIRepository
-    name: gha-runner-scale-set-controller
+    name: gha-runner-scale-set
   values:
     githubConfigUrl: https://github.com/chkpwd
     githubConfigSecret: github-org-token

@@ -6,10 +6,9 @@ metadata:
   name: actions-runner-controller
 spec:
   interval: 1h
-  timeout: 15m
   chartRef:
     kind: OCIRepository
-    name: gha-runner-scale-set
+    name: gha-runner-scale-set-controller
   values:
     fullnameOverride: actions-runner-controller
     replicaCount: 1
