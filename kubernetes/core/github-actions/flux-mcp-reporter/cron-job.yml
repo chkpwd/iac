@@ -1,0 +1,143 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/batch/v1.json
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: flux-mcp-reporter
+  labels:
+    app.kubernetes.io/name: flux-mcp-reporter
+spec:
+  schedule: "0 7 * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 3
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: flux-mcp-reporter
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: reporter
+              image: node:22-alpine
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  apk add --no-cache curl
+                  npm install -g @modelcontextprotocol/server-stdio@0.5.1
+
+                  cat > /tmp/reporter.js << 'SCRIPT'
+                  const { Client } = require('@modelcontextprotocol/server-stdio');
+
+                  async function main() {
+                    const client = new Client({
+                      name: 'flux-mcp-reporter',
+                      version: '1.0.0'
+                    }, {
+                      capabilities: {}
+                    });
+
+                    await client.connect({
+                      transport: 'sse',
+                      url: 'https://flux-operator-mcp.chkpwd.com/sse'
+                    });
+
+                    let report = {
+                      timestamp: new Date().toISOString(),
+                      fluxInstance: null,
+                      helmReleases: [],
+                      kustomizations: [],
+                      resourcesets: [],
+                      errors: []
+                    };
+
+                    try {
+                      const fluxInstance = await client.callTool({
+                        name: 'get_flux_instance',
+                        arguments: {}
+                      });
+                      report.fluxInstance = fluxInstance;
+                    } catch (e) {
+                      report.errors.push('get_flux_instance: ' + e.message);
+                    }
+
+                    try {
+                      const helmReleases = await client.callTool({
+                        name: 'list_flux_helmreleases',
+                        arguments: {}
+                      });
+                      report.helmReleases = helmReleases;
+                    } catch (e) {
+                      report.errors.push('list_flux_helmreleases: ' + e.message);
+                    }
+
+                    try {
+                      const kustomizations = await client.callTool({
+                        name: 'list_flux_kustomizations',
+                        arguments: {}
+                      });
+                      report.kustomizations = kustomizations;
+                    } catch (e) {
+                      report.errors.push('list_flux_kustomizations: ' + e.message);
+                    }
+
+                    try {
+                      const resourcesets = await client.callTool({
+                        name: 'list_flux_resourcesets',
+                        arguments: {}
+                      });
+                      report.resourcesets = resourcesets;
+                    } catch (e) {
+                      report.errors.push('list_flux_resourcesets: ' + e.message);
+                    }
+
+                    const webhookUrl = process.env.WEBHOOK_URL || '';
+                    if (webhookUrl) {
+                      const response = await fetch(webhookUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(report)
+                      });
+                      if (!response.ok) {
+                        console.error('Webhook failed:', response.status, await response.text());
+                        process.exit(1);
+                      }
+                      console.log('Webhook sent successfully');
+                    } else {
+                      console.log(JSON.stringify(report, null, 2));
+                    }
+
+                    await client.close();
+                  }
+
+                  main().catch(e => {
+                    console.error(e);
+                    process.exit(1);
+                  });
+                  SCRIPT
+
+                  node /tmp/reporter.js
+              env:
+                - name: WEBHOOK_URL
+                  valueFrom:
+                    secretKeyRef:
+                      name: flux-mcp-reporter-webhook
+                      key: url
+                      optional: true
+              resources:
+                requests:
+                  cpu: 100m
+                  memory: 256Mi
+                limits:
+                  cpu: 500m
+                  memory: 512Mi
+              securityContext:
+                readOnlyRootFilesystem: true
+                runAsNonRoot: true
+                runAsUser: 65534
+                capabilities:
+                  drop:
+                    - ALL

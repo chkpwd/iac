@@ -1,0 +1,72 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app actions-runner-controller
+  namespace: &ns actions-runner-system
+spec:
+  targetNamespace: *ns
+  interval: 10m
+  path: ./kubernetes/core/github-actions/actions-controller
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  prune: true
+  retryInterval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  timeout: 5m
+  wait: true
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app actions-runners
+  namespace: &ns runners
+spec:
+  targetNamespace: *ns
+  interval: 10m
+  path: ./kubernetes/core/github-actions/actions-runners
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  prune: true
+  retryInterval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  timeout: 5m
+  wait: true
+  dependsOn:
+    - name: actions-runner-controller
+      namespace: actions-runner-system
+# ---
+# # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+# apiVersion: kustomize.toolkit.fluxcd.io/v1
+# kind: Kustomization
+# metadata:
+#   name: &app flux-mcp-reporter
+#   namespace: &ns runners
+# spec:
+#   targetNamespace: *ns
+#   interval: 10m
+#   path: ./kubernetes/core/github-actions/flux-mcp-reporter
+#   commonMetadata:
+#     labels:
+#       app.kubernetes.io/name: *app
+#   prune: true
+#   retryInterval: 2m
+#   sourceRef:
+#     kind: GitRepository
+#     name: chkpwd-ops
+#     namespace: flux-system
+#   timeout: 5m
+#   wait: false
+#   dependsOn:
+#     - name: actions-runners
+#       namespace: runners
