@@ -17,11 +17,11 @@
         content: |
           [Interface]
           PrivateKey = {{ lookup('ripplefcl.bwscache.secret', 'cloud-aws-secrets').value.wireguard_priv_key }}
-          Address = 10.6.6.5/24
+          Address = 10.6.6.4/24
           DNS = 10.6.6.1, chkpwd.com
 
           [Peer]
-          PublicKey = SOfTXw3sdQFitrXax0ZCR9vvxOFRGVr7V30BIs5Csws=
+          PublicKey = 4I36daUwGtIHki9xIGr36ZGFoXS6FMGuZsFwbmgIZQM=
           AllowedIPs = 0.0.0.0/0
           Endpoint = {{ lookup('ripplefcl.bwscache.secret', 'infra-network-secrets').value.public_ip }}:{{ lookup('ripplefcl.bwscache.secret', 'cloud-aws-secrets').value.wireguard_port }}
         dest: "{{ configuration_path }}/wireguard/wg_confs/wg0.conf"
