@@ -1,7 +1,7 @@
 locals { # https://docs.renovatebot.com/modules/versioning/aws-machine-image/ -- At the moment every AMI that matches the regex ^ami-[a-z0-9]{17}$ is considered a valid "release".
   # amiFilter=[{"Name":"owner-id","Values":["136693071363"]},{"Name":"name","Values":["debian-12-amd64-*"]}]
   # currentImageName=debian-12-amd64-20230711
-  ami = "ami-06db4d78cb1d3bbf9"
+  ami = "ami-023a5c1706f994759"
 }
 
 module "ct-01-ec2" {
@@ -9,7 +9,7 @@ module "ct-01-ec2" {
   instance_spec = {
     name     = "ct-01-ec2"
     ami      = local.ami
-    type     = "t2.micro"
+    type     = "t3.small"
     key_name = aws_key_pair.main.key_name
   }
   subnet_id           = aws_subnet.main.id
