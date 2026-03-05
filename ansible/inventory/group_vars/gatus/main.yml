@@ -27,7 +27,7 @@ gatus_config:
     discord:
       webhook-url: "{{ lookup('ripplefcl.bwscache.secret', 'infra-monitoring-secrets').value.discord_alert_webhook }}"
   endpoints:
-    - name: OPNsense
+    - name: Mikrotik Router
       url: icmp://10.0.10.1
       group: network
       <<: *gatus_icmp_tcp_default
@@ -39,11 +39,11 @@ gatus_config:
       group: network
       url: icmp://10.0.10.9
       <<: *gatus_icmp_tcp_default
-    - name: PVE-SRV-01
+    - name: Proxmox
       group: hypervisors
       url: icmp://10.0.10.3
       <<: *gatus_icmp_tcp_default
-    - name: MGMT-SRV-01
+    - name: Raspberry Pi
       group: docker_hosts
       url: icmp://10.0.10.4
       <<: *gatus_icmp_tcp_default
@@ -66,8 +66,4 @@ gatus_config:
     - name: Kubernetes Node 3
       group: kubernetes
       url: icmp://10.0.10.12
-      <<: *gatus_icmp_tcp_default
-    - name: Kube-VIP LoadBalancer
-      group: kubernetes
-      url: icmp://10.0.10.13
       <<: *gatus_icmp_tcp_default
