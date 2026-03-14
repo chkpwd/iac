@@ -1,20 +1,4 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/kustomization-kustomize-v1.json
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: flux-sources
-  namespace: flux-system
-spec:
-  targetNamespace: flux-system
-  interval: 30m
-  path: ./kubernetes/flux/sources
-  prune: true
-  wait: false
-  sourceRef:
-    kind: GitRepository
-    name: chkpwd-ops
----
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -126,8 +110,6 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
-  dependsOn:
-    - name: flux-sources
   path: ./kubernetes/core
   prune: true
   sourceRef:
