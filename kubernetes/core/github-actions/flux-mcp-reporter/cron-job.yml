@@ -1,4 +1,3 @@
----
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/batch/v1.json
 apiVersion: batch/v1
 kind: CronJob
@@ -21,105 +20,132 @@ spec:
           restartPolicy: Never
           containers:
             - name: reporter
-              image: node:25-alpine
+              image: python:3.12-alpine
               command:
                 - /bin/sh
                 - -c
                 - |
-                  apk add --no-cache curl
-                  npm install -g @modelcontextprotocol/server-stdio@0.5.1
+                  pip install --quiet httpx-sse httpx 2>/dev/null
 
-                  cat > /tmp/reporter.js << 'SCRIPT'
-                  const { Client } = require('@modelcontextprotocol/server-stdio');
+                  cat > /tmp/reporter.py << 'SCRIPT'
+                  import asyncio
+                  import json
+                  import os
+                  import sys
+                  from datetime import datetime, timezone
 
-                  async function main() {
-                    const client = new Client({
-                      name: 'flux-mcp-reporter',
-                      version: '1.0.0'
-                    }, {
-                      capabilities: {}
-                    });
+                  import httpx
 
-                    await client.connect({
-                      transport: 'sse',
-                      url: 'https://flux-operator-mcp.chkpwd.com/sse'
-                    });
 
-                    let report = {
-                      timestamp: new Date().toISOString(),
-                      fluxInstance: null,
-                      helmReleases: [],
-                      kustomizations: [],
-                      resourcesets: [],
-                      errors: []
-                    };
+                  SSE_URL = "https://flux-operator-mcp.chkpwd.com/sse"
 
-                    try {
-                      const fluxInstance = await client.callTool({
-                        name: 'get_flux_instance',
-                        arguments: {}
-                      });
-                      report.fluxInstance = fluxInstance;
-                    } catch (e) {
-                      report.errors.push('get_flux_instance: ' + e.message);
-                    }
+                  TOOLS = [
+                      "get_flux_instance",
+                      "list_flux_helmreleases",
+                      "list_flux_kustomizations",
+                      "list_flux_resourcesets",
+                  ]
 
-                    try {
-                      const helmReleases = await client.callTool({
-                        name: 'list_flux_helmreleases',
-                        arguments: {}
-                      });
-                      report.helmReleases = helmReleases;
-                    } catch (e) {
-                      report.errors.push('list_flux_helmreleases: ' + e.message);
-                    }
-
-                    try {
-                      const kustomizations = await client.callTool({
-                        name: 'list_flux_kustomizations',
-                        arguments: {}
-                      });
-                      report.kustomizations = kustomizations;
-                    } catch (e) {
-                      report.errors.push('list_flux_kustomizations: ' + e.message);
-                    }
-
-                    try {
-                      const resourcesets = await client.callTool({
-                        name: 'list_flux_resourcesets',
-                        arguments: {}
-                      });
-                      report.resourcesets = resourcesets;
-                    } catch (e) {
-                      report.errors.push('list_flux_resourcesets: ' + e.message);
-                    }
-
-                    const webhookUrl = process.env.WEBHOOK_URL || '';
-                    if (webhookUrl) {
-                      const response = await fetch(webhookUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(report)
-                      });
-                      if (!response.ok) {
-                        console.error('Webhook failed:', response.status, await response.text());
-                        process.exit(1);
-                      }
-                      console.log('Webhook sent successfully');
-                    } else {
-                      console.log(JSON.stringify(report, null, 2));
-                    }
-
-                    await client.close();
+                  REPORT_KEYS = {
+                      "get_flux_instance": "fluxInstance",
+                      "list_flux_helmreleases": "helmReleases",
+                      "list_flux_kustomizations": "kustomizations",
+                      "list_flux_resourcesets": "resourcesets",
                   }
 
-                  main().catch(e => {
-                    console.error(e);
-                    process.exit(1);
-                  });
+
+                  async def read_sse_event(response):
+                      """Read a single SSE event from the stream and return parsed JSON."""
+                      event_data = {}
+                      async for line in response.aiter_lines():
+                          line = line.strip()
+                          if line.startswith("event:"):
+                              event_data["event"] = line[len("event:"):].strip()
+                          elif line.startswith("data:"):
+                              raw = line[len("data:"):].strip()
+                              try:
+                                  event_data["data"] = json.loads(raw)
+                              except json.JSONDecodeError:
+                                  event_data["data"] = raw
+                          elif line == "" and event_data:
+                              return event_data
+                      return event_data
+
+
+                  async def call_tool(client, session_url, tool_name, msg_id):
+                      """Send a JSON-RPC tools/call request and return the result."""
+                      payload = {
+                          "jsonrpc": "2.0",
+                          "id": msg_id,
+                          "method": "tools/call",
+                          "params": {
+                              "name": tool_name,
+                              "arguments": {},
+                          },
+                      }
+                      resp = await client.post(session_url, json=payload)
+                      resp.raise_for_status()
+                      return resp.json()
+
+
+                  async def main():
+                      report = {
+                          "timestamp": datetime.now(timezone.utc).isoformat(),
+                          "fluxInstance": None,
+                          "helmReleases": [],
+                          "kustomizations": [],
+                          "resourcesets": [],
+                          "errors": [],
+                      }
+
+                      async with httpx.AsyncClient(timeout=30) as client:
+                          # Open SSE connection and grab the session endpoint
+                          async with client.stream("GET", SSE_URL) as sse_resp:
+                              sse_resp.raise_for_status()
+
+                              session_url = None
+                              async for line in sse_resp.aiter_lines():
+                                  line = line.strip()
+                                  if line.startswith("data:"):
+                                      session_url = line[len("data:"):].strip()
+                                      break
+
+                              if not session_url:
+                                  print("ERROR: Could not obtain MCP session URL", file=sys.stderr)
+                                  sys.exit(1)
+
+                              # Call each tool sequentially
+                              for idx, tool in enumerate(TOOLS, start=1):
+                                  try:
+                                      result = await call_tool(client, session_url, tool, idx)
+                                      key = REPORT_KEYS[tool]
+                                      report[key] = result.get("result")
+                                  except Exception as exc:
+                                      report["errors"].append(f"{tool}: {exc}")
+
+                      webhook_url = os.environ.get("WEBHOOK_URL", "")
+                      if webhook_url:
+                          async with httpx.AsyncClient(timeout=15) as client:
+                              resp = await client.post(
+                                  webhook_url,
+                                  content=json.dumps(report),
+                                  headers={"Content-Type": "application/json"},
+                              )
+                              if resp.is_error:
+                                  print(
+                                      f"Webhook failed: {resp.status_code} {resp.text}",
+                                      file=sys.stderr,
+                                  )
+                                  sys.exit(1)
+                              print("Webhook sent successfully")
+                      else:
+                          print(json.dumps(report, indent=2))
+
+
+                  asyncio.run(main())
                   SCRIPT
 
-                  node /tmp/reporter.js
+                  python /tmp/reporter.py
               env:
                 - name: WEBHOOK_URL
                   valueFrom:
@@ -134,6 +160,9 @@ spec:
                 limits:
                   cpu: 500m
                   memory: 512Mi
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
               securityContext:
                 readOnlyRootFilesystem: true
                 runAsNonRoot: true
