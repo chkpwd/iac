@@ -1,0 +1,28 @@
+---
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSet
+metadata:
+  name: namespaces
+  namespace: flux-system
+spec:
+  inputs:
+    - name: actions-runner-system
+    - name: ai
+    - name: databases
+    - name: media
+    - name: monitoring
+    - name: networking
+    - name: rook-ceph
+    - name: runners
+    - name: security
+    - name: storage
+    - name: system
+    - name: tools
+  resources:
+    - apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: << inputs.name >>
+        annotations:
+          kustomize.toolkit.fluxcd.io/prune: disabled
+          volsync.backube/privileged-movers: "true"
