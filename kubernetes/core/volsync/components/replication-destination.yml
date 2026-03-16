@@ -9,7 +9,7 @@ metadata:
 spec:
   trigger:
     manual: restore-once
-  restic:
+  kopia:
     repository: "${APP}-volsync"
     copyMethod: Snapshot
     volumeSnapshotClassName: csi-ceph-blockpool
@@ -19,6 +19,14 @@ spec:
     cacheAccessModes: ["${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}"]
     accessModes: ["${VOLSYNC_ACCESSMODES:=ReadWriteOnce}"]
     capacity: "${VOLSYNC_CAPACITY}"
+    sourceIdentity:
+      sourceName: ${APP}
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            path: /volume1/vault-01/backups/kubernetes/volsync/kopia
+            server: nas-srv-01.chkpwd.com
     moverSecurityContext:
       runAsUser: ${VOLSYNC_PUID:=1000}
       runAsGroup: ${VOLSYNC_PGID:=100}

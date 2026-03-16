@@ -4,7 +4,7 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: &app snapshot-controller
-  namespace: &ns storage
+  namespace: &ns kube-system
 spec:
   targetNamespace: *ns
   interval: 1h

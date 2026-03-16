@@ -8,19 +8,28 @@ spec:
   sourcePVC: "${CLAIM:=${APP}}"
   trigger:
     schedule: 0 0 * * *
-  restic:
+  kopia:
     repository: "${APP}-volsync"
     copyMethod: Snapshot
-    pruneIntervalDays: 7
-    volumeSnapshotClassName: csi-ceph-blockpool
-    cacheStorageClassName: ceph-block
-    storageClassName: ceph-block
+    compression: zstd-fastest
+    parallelism: 2
+    pruneIntervalDays: 10
     cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=4Gi}"
-    cacheAccessModes: ["${VOLSYNC_CACHE_ACCESSMODES:=ReadWriteOnce}"]
-    accessModes: ["${VOLSYNC_ACCESSMODES:=ReadWriteOnce}"]
+    cacheStorageClassName: ceph-block
+    cacheAccessModes: ["ReadWriteOnce"]
+    volumeSnapshotClassName: csi-ceph-blockpool
+    storageClassName: ceph-block
+    moverVolumes:
+      - mountPath: repository
+        volumeSource:
+          nfs:
+            path: /volume1/vault-01/backups/kubernetes/volsync/kopia
+            server: nas-srv-01.chkpwd.com
     moverSecurityContext:
       runAsUser: ${VOLSYNC_UID:=1000}
       runAsGroup: ${VOLSYNC_GID:=100}
       fsGroup: ${VOLSYNC_GID:=100}
     retain:
-      daily: 7
+      hourly: 24
+      daily: 10
+      within: 3d
