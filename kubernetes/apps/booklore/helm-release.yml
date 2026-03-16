@@ -34,14 +34,25 @@ spec:
               #   name: "${APP}"
               globalMounts:
                 - path: /app/data
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1999
+            runAsGroup: 1999
+            fsGroup: 1999
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile: {type: RuntimeDefault}
         containers:
           app:
             image:
               repository: booklore/booklore
-              tag: v2.0.4
+              tag: v2.2.1
+            command:
+              - java
+            args:
+              - -jar
+              - /app/app.jar
             env:
-              USER_ID: "0"
-              GROUP_ID: "0"
               TZ: "America/New_York"
               DATABASE_URL: "jdbc:mariadb://booklore-mariadb:3306/booklore"
               DATABASE_USERNAME: "booklore"
@@ -51,8 +62,41 @@ spec:
                     name: booklore
                     key: DATABASE_PASSWORD
               BOOKLORE_PORT: &port 6060
+              DISK_TYPE: NETWORK
               SWAGGER_ENABLED: "true"
               FORCE_DISABLE_OIDC: "true"
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/healthcheck
+                    port: &httpPort 6060
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/healthcheck
+                    port: *httpPort
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 10
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: true
             resources:
               requests:
                 cpu: 100m
@@ -151,3 +195,10 @@ spec:
           booklore:
             app:
               - path: /bookdrop
+      tmpfs:
+        type: emptyDir
+        advancedMounts:
+          booklore:
+            app:
+              - path: /tmp
+                subPath: app
