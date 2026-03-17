@@ -1,6 +1,24 @@
 ---
 http:
   routers:
+    k10-primary:
+      entryPoints:
+        - "https"
+      rule: "Host(`k10-primary.chkpwd.com`)"
+      middlewares:
+        - https-redirectscheme
+      service: k10-primary
+      tls:
+        certResolver: cloudflare
+    k10-secondary:
+      entryPoints:
+        - "https"
+      rule: "Host(`k10-secondary.chkpwd.com`)"
+      middlewares:
+        - https-redirectscheme
+      service: k10-secondary
+      tls:
+        certResolver: cloudflare
     mikrotik:
       entryPoints:
         - "https"
@@ -56,6 +74,14 @@ http:
       tls:
         certResolver: cloudflare
   services:
+    k10-primary:
+      loadBalancer:
+        servers:
+          - url: "http://10.0.10.95"
+    k10-secondary:
+      loadBalancer:
+        servers:
+          - url: "http://10.0.10.94"
     mikrotik:
       loadBalancer:
         servers:
