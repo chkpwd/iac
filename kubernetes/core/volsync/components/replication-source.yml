@@ -13,7 +13,6 @@ spec:
     copyMethod: Snapshot
     compression: zstd-fastest
     parallelism: 2
-    pruneIntervalDays: 10
     cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=4Gi}"
     cacheStorageClassName: ceph-block
     cacheAccessModes: ["ReadWriteOnce"]
