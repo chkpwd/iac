@@ -3,22 +3,29 @@
   customManagers: [
     {
       customType: "regex",
-      description: ["Process custom dependencies"],
+      description: "Process annotated dependencies",
       managerFilePatterns: ["^kubernetes/talos/talconfig\\.ya?ml$"],
       matchStrings: [
-        "# renovate: depName=(?<depName>\\S+) datasource=(?<datasource>\\S+)\n(?<key>\\S+): (?<currentValue>v?\\d[\\d\\.]+)",
+        // # renovate: datasource=helm depName=cilium repository=https://helm.cilium.io
+        // version: 1.15.1
+        // # renovate: datasource=docker depName=ghcr.io/siderolabs/kubelet
+        // KUBERNETES_VERSION=v1.35.2
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( repository=(?<registryUrl>\\S+))?\\n.+(:\\s|=)(&\\S+\\s)?(?<currentValue>\\S+)",
+        // # renovate: datasource=docker depName=ghcr.io/prometheus-operator/prometheus-operator
+        // https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+/(?<currentValue>(v|\\d)[^/]+)",
       ],
-      datasourceTemplate: "custom.talos-versions",
-      versioningTemplate: "regex:^(?<major>\\d+)$",
+      datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
     },
-    // {
-    //   customType: "regex",
-    //   managerFilePatterns: ["/^terraform/aws/.+\\.(tf|tofu)$/"],
-    //   matchStrings: [
-    //     '.*amiFilter=(?<packageName>.*?)\n(?:.*currentImageName=(?<currentDigest>.*?)\n)?(?:.*\n)?.*?(?<depName>[a-zA-Z0-9_:.-]+)[ ]*[:=][ ]*"?(?<currentValue>ami-[a-z0-9]{17})"?.*',
-    //   ],
-    //   datasourceTemplate: "aws-machine-image",
-    //   versioningTemplate: "aws-machine-image",
-    // },
+    {
+      customType: "regex",
+      description: "Detect AMI changes in Terraform",
+      managerFilePatterns: ["^terraform/aws/.+\\.(tf|tofu)$"],
+      matchStrings: [
+        ".*amiFilter=(?<packageName>.*?)\\n(.*currentImageName=(?<currentDigest>.*?)\\n)?(.*\\n)?.*?(?<depName>[a-zA-Z0-9-_:]*)[ ]*?[:|=][ ]*?[\"|']?(?<currentValue>ami-[a-z0-9]{17})[\"|']?.*",
+      ],
+      datasourceTemplate: "aws-machine-image",
+      versioningTemplate: "aws-machine-image",
+    },
   ],
 }
