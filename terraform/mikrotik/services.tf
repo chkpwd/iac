@@ -87,15 +87,13 @@ resource "routeros_system_clock" "timezone" {
   time_zone_autodetect = false
 }
 
-resource "routeros_system_script" "script" {
-  name = "ddns-cf-update"
-  source = <<EOF
-    ${templatefile("${path.module}/scripts/ddns-cf-update.rsc", {
-  CloudflareZoneID   = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
-  CloudflareRecordID = data.external.bws_lookup.result["mikrotik-ddns_record_id"]
-  CloudflareAPIKey   = data.external.bws_lookup.result["mikrotik-ddns_zone_token"]
-})}
+resource "routeros_ip_cloud" "this" {
+  ddns_enabled         = "yes"
+  ddns_update_interval = "5m"
+  back_to_home_vpn     = "revoked-and-disabled"
+  update_time          = false
+}
 
-    EOF
-policy = ["read", "write", "test", "policy"]
+resource "routeros_ip_cloud_advanced" "this" {
+  use_local_address = false
 }

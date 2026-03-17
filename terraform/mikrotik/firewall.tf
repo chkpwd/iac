@@ -39,7 +39,7 @@ locals {
     forward_fasttrack                = { order = 120, chain = "forward", action = "fasttrack-connection", comment = "fasttrack", connection_state = "established,related", hw_offload = true }
     forward_accept_ipsec_in          = { order = 130, chain = "forward", action = "accept", comment = "accept in ipsec policy", ipsec_policy = "in,ipsec" }
     forward_accept_ipsec_out         = { order = 140, chain = "forward", action = "accept", comment = "accept out ipsec policy", ipsec_policy = "out,ipsec" }
-    forward_allow_wg_gatus_icmp_only = { order = 150, chain = "forward", action = "drop", comment = "drop all but icmp from WireGuard peer", protocol = "!icmp", src_address = "10.6.6.4/32" }
+    forward_allow_wg_gatus_icmp_only = { order = 150, chain = "forward", action = "drop", comment = "drop all but icmp from WireGuard peer", protocol = "!icmp", src_address = "10.6.6.4" }
     forward_iot_dns_udp              = { order = 200, chain = "forward", action = "accept", comment = "iot allow DNS (UDP)", protocol = "udp", dst_address = var.dns_ip, dst_port = "53", in_interface = "iot" }
     forward_iot_dns_tcp              = { order = 210, chain = "forward", action = "accept", comment = "iot allow DNS (TCP)", protocol = "tcp", dst_address = var.dns_ip, dst_port = "53", in_interface = "iot" }
     forward_iot_wan                  = { order = 220, chain = "forward", action = "accept", comment = "iot -> WAN allow", in_interface = "iot", out_interface_list = "WAN" }
