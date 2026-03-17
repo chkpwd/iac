@@ -3,9 +3,9 @@
 clusterName: cattle-k8s
 endpoint: https://10.0.10.13:6443
 # renovate: depName=ghcr.io/siderolabs/installer datasource=docker
-talosVersion: v1.11.5
+talosVersion: v1.12.5
 # renovate: depName=ghcr.io/siderolabs/kubelet datasource=docker
-kubernetesVersion: v1.34.2
+kubernetesVersion: v1.35.2
 additionalApiServerCertSans: &sans
   - 127.0.0.1
 additionalMachineCertSans: *sans
@@ -57,21 +57,20 @@ nodes:
 controlPlane:
   schematic:
     customization:
-      extraKernelArgs:
-        - intel_iommu=on
-        - iommu=pt
-        - apparmor=0
-        - init_on_free=0
-        - init_on_alloc=0
-        - mitigations=off
-        - security=none
-        - net.ifnames=1
       systemExtensions:
         officialExtensions:
           - siderolabs/i915
           - siderolabs/intel-ucode
           - siderolabs/mei
   patches:
+    # Disable oom-killer (addresses talos v1.12.x bug)
+    - |-
+      ---
+      apiVersion: v1alpha1
+      kind: OOMConfig
+      triggerExpression: "false"
+      cgroupRankingExpression: "0.0"
+      sampleInterval: "5s"
     # Configure containerd
     # - discard_unpacked_layers (spegel, https://spegel.dev/docs/getting-started/#talos)
     - |-
@@ -111,6 +110,9 @@ controlPlane:
         kubelet:
           extraConfig:
             maxPods: 150
+            serializeImagePulls: false
+            imageGCHighThresholdPercent: 70
+            imageGCLowThresholdPercent: 50
           nodeIP:
             validSubnets:
                 - 10.0.10.0/24
@@ -118,6 +120,13 @@ controlPlane:
     - |-
       cluster:
         allowSchedulingOnControlPlanes: true
+        apiServer:
+          admissionControl:
+            - name: PodSecurity
+              $$patch: delete
+          extraArgs:
+            feature-gates: MutatingAdmissionPolicy=true
+            runtime-config: admissionregistration.k8s.io/v1beta1=true
         coreDNS:
             disabled: true
         proxy:
@@ -165,11 +174,12 @@ controlPlane:
           net.core.wmem_max: 67108864                 # max socket send buffer size (for high throughput apps) - QUIC
           net.core.default_qdisc: fq                  # Sets default queuing discipline to Fair Queueing (FQ)
           net.ipv4.tcp_congestion_control: bbr        # Enables BBR for TCP congestion control
-          # user.max_user_namespaces: "11255"           # needed for rootless containers (hostUsers)
+          user.max_user_namespaces: "11255"           # needed for rootless containers (hostUsers)
     # Disable default API server admission plugins.
     - |-
-      - op: remove
-        path: /cluster/apiServer/admissionControl
+      cluster:
+        apiServer:
+          admissionControl: []
     # Enable K8s Talos API Access
     - |-
       machine:
@@ -180,4 +190,3 @@ controlPlane:
               - os:admin
             allowedKubernetesNamespaces:
               - actions-runner-system
-              - system-upgrade
