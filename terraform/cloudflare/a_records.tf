@@ -1,9 +1,9 @@
 resource "cloudflare_dns_record" "main" {
-  name    = "chkpwd.com"
+  name    = "@"
   proxied = true
   ttl     = 1
-  type    = "A"
-  content = data.external.bws_lookup.result["infra-network-secrets_public_ip"]
+  type    = "CNAME"
+  content = data.tfe_outputs.mikrotik.values.dns_name
   zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
 }
 
@@ -11,8 +11,8 @@ resource "cloudflare_dns_record" "www_main" {
   name    = "www"
   proxied = true
   ttl     = 1
-  type    = "A"
-  content = data.external.bws_lookup.result["infra-network-secrets_public_ip"]
+  type    = "CNAME"
+  content = data.tfe_outputs.mikrotik.values.dns_name
   zone_id = data.external.bws_lookup.result["cloudflare-dns-secrets_zone_id"]
 }
 
