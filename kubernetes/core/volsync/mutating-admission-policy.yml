@@ -3,7 +3,7 @@
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingAdmissionPolicy
 metadata:
-  name: volsync-mover-jitter
+  name: volsync-mover-shuffle
   namespace: storage
 spec:
   matchConstraints:
@@ -21,20 +21,17 @@ spec:
     - name: has-volsync-job-name-prefix
       expression: >-
         object.metadata.name.startsWith("volsync-src-")
-
     - name: has-volsync-created-by-labels
       expression: >-
         object.metadata.?labels["app.kubernetes.io/created-by"].orValue("") == "volsync"
-
   failurePolicy: Fail
   reinvocationPolicy: IfNeeded
   mutations:
     - patchType: JSONPatch
       jsonPatch:
         expression:
-          >- # Jitter adds a random sleep to the startup of the volsync mover pod to avoid all jobs initiating at the same time
+          >- # write random permutation to the startup of the volsync mover pod to avoid all jobs initiating at the same time
           [
-
             JSONPatch{
               op: "add", path: "/spec/template/spec/initContainers",
               value: []
@@ -42,8 +39,8 @@ spec:
             JSONPatch{
               op: "add", path: "/spec/template/spec/initContainers/-",
               value: Object.spec.template.spec.initContainers{
-                name: "jitter",
-                image: "ghcr.io/home-operations/busybox:1.37.0@sha256:026ed7273270ec08f6902b4ae8334c23b473e5394bec3bbbdbfe580c710d50bc",
+                name: "shuffle",
+                image: "busybox:1.37.0",
                 imagePullPolicy: "IfNotPresent",
                 command: ["sh", "-c", "sleep $(shuf -i 0-150 -n 1)"]
               }
@@ -54,6 +51,6 @@ spec:
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: MutatingAdmissionPolicyBinding
 metadata:
-  name: volsync-mover-jitter
+  name: volsync-mover-shuffle
 spec:
-  policyName: volsync-mover-jitter
+  policyName: volsync-mover-shuffle
