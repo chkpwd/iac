@@ -1,0 +1,23 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/volsync.backube/kopiamaintenance_v1alpha1.json
+apiVersion: volsync.backube/v1alpha1
+kind: KopiaMaintenance
+metadata:
+  name: daily
+spec:
+  enabled: true
+  trigger:
+    schedule: 30 2,4 * * *
+  moverVolumes:
+    - mountPath: repository
+      volumeSource:
+        nfs:
+          path: /volume1/vault-01/backups/kubernetes/volsync/kopia
+          server: nas-srv-01.chkpwd.com
+  repository:
+    repository: volsync-kopia
+  failedJobsHistoryLimit: 2
+  successfulJobsHistoryLimit: 1
+  moverPodLabels:
+    app.kubernetes.io/name: kopia-maintenance
+  suspend: false
