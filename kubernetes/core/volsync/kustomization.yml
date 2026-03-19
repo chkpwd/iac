@@ -4,7 +4,8 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - external-secret.yml
-  - helm-release.yml
+  - kopia-hr.yml
+  - volsync-hr.yml
   - source.yml
   - prometheus-rule.yml
   - mutating-admission-policy.yml
