@@ -10,20 +10,25 @@ spec:
     kind: OCIRepository
     name: volsync
   values:
-    fullnameOverride: volsync # required for perfectra1n fork
+    fullnameOverride: volsync # volsync-volsync nor pretty
+    image:
+      repository: ghcr.io/perfectra1n/volsync
+      tag: v0.17.11
     manageCRDs: true
     metrics:
       disableAuth: true
-    image: &image
-      repository: ghcr.io/perfectra1n/volsync # use perfectra1n fork with kopia support
-      tag: v0.17.11
-    kopia: *image
-    rclone: *image
-    restic: *image
-    rsync: *image
-    rsync-tls: *image
-    syncthing: *image
     podSecurityContext:
       runAsNonRoot: true
       runAsUser: 1000
       runAsGroup: 1000
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities: {drop: ["ALL"]}
+      readOnlyRootFilesystem: true
+    resources:
+      limits:
+        cpu: 1000m
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 64Mi
