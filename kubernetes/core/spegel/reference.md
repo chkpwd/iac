@@ -55,4 +55,3 @@ kubectl -n spegel logs <spegel-pod>
 # Verify pulls are being served locally (check metrics)
 kubectl -n spegel port-forward svc/spegel 5000:5000
 curl http://localhost:5000/metrics | grep spegel_
-```

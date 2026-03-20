@@ -38,7 +38,7 @@ Both gateways:
 
 ## TLS Certificate
 
-Managed by cert-manager (`ClusterIssuer: main-issuer`). Covers `chkpwd.com` and `*.chkpwd.com`, stored in Secret `chkpwd-com-tls`. Duration is 160h (just under 7 days) — short rotation, relies on cert-manager's auto-renewal.
+Managed by cert-manager (`ClusterIssuer: main-issuer`). Covers `chkpwd.com` and `*.chkpwd.com`, stored in Secret `chkpwd-com-tls`. Duration is **160h** (just under 7 days) — short rotation, relies on cert-manager's auto-renewal.
 
 ---
 
@@ -85,4 +85,3 @@ kubectl get httproutes -A
 # Check cert
 kubectl -n kube-system get certificate chkpwd-com
 kubectl -n kube-system get secret chkpwd-com-tls
-```

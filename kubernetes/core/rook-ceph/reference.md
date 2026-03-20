@@ -138,4 +138,3 @@ kubectl -n rook-ceph exec deploy/rook-ceph-tools -- ceph osd tree
 
 # Check operator logs
 kubectl -n rook-ceph logs deploy/rook-ceph-operator
-```

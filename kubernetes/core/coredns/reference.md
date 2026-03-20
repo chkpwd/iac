@@ -56,6 +56,8 @@ affinity:
             - key: node-role.kubernetes.io/control-plane
               operator: Exists
 tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
   - key: node-role.kubernetes.io/control-plane
     effect: NoSchedule
 ```
@@ -78,4 +80,3 @@ kubectl run -it --rm dnstest --image=busybox --restart=Never -- nslookup kuberne
 
 # Check metrics
 kubectl -n kube-system port-forward svc/coredns-metrics 9153:9153
-```

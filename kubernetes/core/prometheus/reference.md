@@ -1,6 +1,6 @@
 # Prometheus (kube-prometheus-stack) Reference
 
-Helm chart **kube-prometheus-stack v82.10.5**.
+Helm chart **kube-prometheus-stack v82.12.0**.
 
 ---
 
@@ -154,4 +154,3 @@ kubectl -n monitoring logs deploy/prometheus-prometheus-operator
 
 # Check if a ServiceMonitor is being picked up
 kubectl -n monitoring get servicemonitors -A
-```

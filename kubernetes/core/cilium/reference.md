@@ -96,4 +96,3 @@ kubectl get ciliumloadbalancerippools
 
 # Verify kube-proxy replacement
 kubectl -n kube-system exec ds/cilium -- cilium status | grep KubeProxy
-```
