@@ -50,6 +50,7 @@ SYSTEM_UPDATE = textwrap.dedent("""\
     - Preserve all existing content that is still accurate — do not rewrite for style or completeness.
     - Do not add sections that weren't there before unless a genuinely new config area warrants it.
     - Do not add commentary about what you changed — just return the updated doc.
+    - Do not make style changes: do not add or remove bold/italic formatting, reword descriptions, or reorder content.
     - Return only the raw markdown content of the updated reference.md, nothing else.
     - If nothing meaningful has changed, return the existing doc unchanged.
 """)
@@ -125,12 +126,17 @@ def set_output(key: str, value: str) -> None:
 
 
 def strip_code_fence(text: str) -> str:
+    """Only unwrap if the model wrapped the entire response in a code fence."""
     text = text.strip()
+    wrapped = False
     if text.startswith("```markdown"):
         text = text[len("```markdown"):].lstrip("\n")
-    elif text.startswith("```"):
+        wrapped = True
+    elif text.startswith("```") and not text.startswith("```\n#"):
+        # Only strip if the opening fence isn't itself content (e.g. a bash block)
         text = text[3:].lstrip("\n")
-    if text.endswith("```"):
+        wrapped = True
+    if wrapped and text.endswith("```"):
         text = text[:-3].rstrip("\n")
     return text.strip()
 
