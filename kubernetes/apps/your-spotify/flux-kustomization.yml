@@ -18,6 +18,17 @@ spec:
       APP: *app
       CLAIM: config-your-spotify-mongodb-0
       VOLSYNC_CAPACITY: "2Gi"
+  patches:
+    - patch: |
+        - op: replace
+          path: /spec/kopia/retain
+          value:
+            daily: 14
+            weekly: 8
+            monthly: 6
+      target:
+        kind: ReplicationSource
+        name: your-spotify
   prune: true
   sourceRef:
     kind: GitRepository

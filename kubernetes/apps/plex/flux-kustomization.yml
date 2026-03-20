@@ -22,6 +22,17 @@ spec:
       VOLSYNC_PGID: "100"
       VOLSYNC_CAPACITY: "5Gi"
       VOLSYNC_CACHE_CAPACITY: "10Gi"
+  patches:
+    - patch: |
+        - op: replace
+          path: /spec/kopia/retain
+          value:
+            daily: 14
+            weekly: 8
+            monthly: 6
+      target:
+        kind: ReplicationSource
+        name: plex
   prune: true
   sourceRef:
     kind: GitRepository
