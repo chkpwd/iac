@@ -1,0 +1,56 @@
+---
+name: "k8s - Reference Docs Update"
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+defaults:
+  run:
+    shell: bash -euxo pipefail {0}
+permissions:
+  contents: write
+  pull-requests: write
+  models: read
+jobs:
+  update-reference-docs:
+    name: Update reference docs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install openai
+
+      - name: Run reference updater
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python .github/scripts/update-reference-docs.py
+
+      - name: Check for changes
+        id: changes
+        run: |
+          git diff --quiet && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Open PR
+        if: steps.changes.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: docs/reference-update-${{ github.run_id }}
+          delete-branch: true
+          title: "docs(k8s): update component reference docs"
+          body: |
+            Weekly automated review of component reference docs.
+
+            Updated by `update-reference-docs.py` using GitHub Models (`gpt-4o-mini`).
+            Trigger: `${{ github.event_name }}` / run `${{ github.run_id }}`
+          commit-message: "docs(k8s): update component reference docs"
+          labels: documentation
