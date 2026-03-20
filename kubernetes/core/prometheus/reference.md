@@ -41,7 +41,7 @@ Retention is dual — whichever limit hits first triggers pruning.
 
 All four selector flags are set to `false`:
 
-```
+```text
 podMonitorSelectorNilUsesHelmValues: false
 probeSelectorNilUsesHelmValues: false
 ruleSelectorNilUsesHelmValues: false
@@ -53,7 +53,7 @@ This makes Prometheus pick up ServiceMonitors, PodMonitors, PrometheusRules, and
 
 ### Resources
 
-```
+```text
 requests: 100m CPU
 limits:   2000Mi memory
 ```
@@ -68,7 +68,7 @@ Stores alerts in a 1Gi `ceph-block` PVC. External URL `https://alertmanager.chkp
 
 ### Routing (`AlertmanagerConfig`)
 
-```
+```text
 groupBy: [alertname, job]
 groupWait: 1m       # wait before sending first notification
 groupInterval: 10m  # wait before sending update on ongoing alert
@@ -110,7 +110,7 @@ The dropped metrics (`apiserver_request_duration_seconds_bucket`, `rest_client_r
 
 ### `DockerhubRateLimitRisk`
 
-```
+```text
 count(time() - container_last_seen{image=~"(docker.io).*",container!=""} < 30) > 100
 ```
 
@@ -118,7 +118,7 @@ Fires critical if more than 100 containers are pulling from `docker.io` in a 30-
 
 ### `OomKilled`
 
-```
+```text
 (kube_pod_container_status_restarts_total offset 10m >= 1)
 AND min_over_time(kube_pod_container_status_last_terminated_reason{reason="OOMKilled"}[10m]) == 1
 ```
@@ -131,7 +131,7 @@ Fires critical if a container restarted and the last termination reason was OOMK
 
 Grafana is not deployed by this chart (`grafana.enabled: false`), but dashboard ConfigMaps are still deployed (`forceDeployDashboards: true`). The grafana-operator picks them up via:
 
-```
+```text
 label: dashboards=external-grafana
 searchNamespace: ALL
 grafana_folder: Kubernetes

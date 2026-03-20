@@ -26,7 +26,7 @@ Resource limits are set conservatively for each CSI sidecar (`csi-provisioner`, 
 
 ### Operator resources
 
-```
+```text
 requests: 128Mi memory, 100Mi CPU
 limits: none
 ```

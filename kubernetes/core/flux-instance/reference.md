@@ -27,7 +27,7 @@ Only the four core controllers are enabled — image automation excluded:
 
 `kustomize-controller`, `helm-controller`, and `source-controller` all get:
 
-```
+```text
 --concurrent=10
 --requeue-dependency=5s
 ```
@@ -40,7 +40,7 @@ All three controllers get a `2Gi` memory limit. Needed for large Helm chart rend
 
 ### In-memory kustomize builds
 
-```
+```text
 --concurrent=20
 temp volume: emptyDir(medium: Memory)
 ```
@@ -49,7 +49,7 @@ kustomize-controller builds kustomizations in a RAM-backed tmpfs instead of disk
 
 ### Helm repository caching (source-controller)
 
-```
+```text
 --helm-cache-max-size=10
 --helm-cache-ttl=60m
 --helm-cache-purge-interval=5m
@@ -59,7 +59,7 @@ Caches up to 10 Helm repository indexes in memory for 60 minutes. Avoids re-fetc
 
 ### OOM watch (helm-controller)
 
-```
+```text
 --feature-gates=OOMWatch=true
 --oom-watch-memory-threshold=95
 --oom-watch-interval=500ms
@@ -69,7 +69,7 @@ helm-controller watches its own memory use every 500ms. If it hits 95% of the li
 
 ### Cancel health checks on new revision (kustomize-controller)
 
-```
+```text
 --feature-gates=CancelHealthCheckOnNewRevision=true
 ```
 
@@ -77,7 +77,7 @@ If a new commit lands while kustomize-controller is still doing health checks on
 
 ### Config watch label selector
 
-```
+```text
 --watch-configs-label-selector=owner!=helm
 ```
 
