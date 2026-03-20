@@ -56,6 +56,8 @@ affinity:
             - key: node-role.kubernetes.io/control-plane
               operator: Exists
 tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
   - key: node-role.kubernetes.io/control-plane
     effect: NoSchedule
 ```
