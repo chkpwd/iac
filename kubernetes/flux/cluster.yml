@@ -3,12 +3,28 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
+  name: sources
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  path: ./kubernetes/flux/sources
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+  timeout: 5m
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
   name: apps
   namespace: flux-system
 spec:
   interval: 10m0s
   dependsOn:
     - name: core
+    - name: sources
   path: ./kubernetes/apps
   prune: true
   sourceRef:
@@ -110,6 +126,8 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
+  dependsOn:
+    - name: sources
   path: ./kubernetes/core
   prune: true
   sourceRef:
