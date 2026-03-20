@@ -11,8 +11,6 @@ spec:
   kopia:
     repository: "${APP}-volsync"
     copyMethod: Snapshot
-    compression: zstd-fastest
-    parallelism: 2
     cacheCapacity: "${VOLSYNC_CACHE_CAPACITY:=4Gi}"
     cacheStorageClassName: ceph-block
     cacheAccessModes: ["ReadWriteOnce"]
@@ -28,6 +26,24 @@ spec:
       runAsUser: ${VOLSYNC_UID:=1000}
       runAsGroup: ${VOLSYNC_GID:=100}
       fsGroup: ${VOLSYNC_GID:=100}
+    compression: zstd-fastest
+    parallelism: 2
     retain:
-      hourly: 24
-      daily: 10
+      daily: 7
+      weekly: 4
+      monthly: 3
+    policyConfig:
+      repositoryConfig: |-
+        {
+          "errorHandling": {
+            "ignoreFileErrors": false,
+            "ignoreDirectoryErrors": false,
+            "ignoreUnknownTypes": true
+          },
+          "files": {
+            "ignore": ["lost+found/"],
+            "ignoreCacheDirs": true,
+            "dotFiles": "include",
+            "oneFileSystem": true
+          }
+        }
