@@ -32,8 +32,7 @@ spec:
               #   kind: ReplicationDestination
               #   apiGroup: volsync.backube
               #   name: "${APP}"
-              globalMounts:
-                - path: /app/data
+              globalMounts: []
         pod:
           securityContext:
             runAsNonRoot: true
@@ -42,6 +41,58 @@ spec:
             fsGroup: 1999
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile: {type: RuntimeDefault}
+        initContainers:
+          mariadb:
+            image:
+              repository: docker.io/library/mariadb
+              tag: "11.4"
+            env:
+              MARIADB_DATABASE: booklore
+              MARIADB_USER: booklore
+              MARIADB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: booklore
+                    key: DATABASE_PASSWORD
+              MARIADB_ROOT_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: booklore
+                    key: DATABASE_ROOT_PASSWORD
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - bash
+                      - -c
+                      - |-
+                        mariadb-admin ping --socket=/run/mysqld/mysqld.sock --user=root --password=${MARIADB_ROOT_PASSWORD}
+            restartPolicy: Always
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+              readOnlyRootFilesystem: true
+              runAsUser: 999
+              runAsGroup: 999
+              seccompProfile: {type: Unconfined}
+          wait-for-mariadb:
+            image:
+              repository: wait4x/wait4x
+              tag: 3.6.0
+            args:
+              - "mysql"
+              - "booklore:$(DB_PASSWORD)@tcp(localhost:3306)/booklore"
+            env:
+              DB_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: booklore
+                    key: DATABASE_PASSWORD
         containers:
           app:
             image:
@@ -54,7 +105,7 @@ spec:
               - /app/app.jar
             env:
               TZ: "America/New_York"
-              DATABASE_URL: "jdbc:mariadb://booklore-mariadb:3306/booklore"
+              DATABASE_URL: "jdbc:mariadb://localhost:3306/booklore"
               DATABASE_USERNAME: "booklore"
               DATABASE_PASSWORD:
                 valueFrom:
@@ -102,54 +153,6 @@ spec:
                 cpu: 100m
               limits:
                 memory: 700Mi
-      mariadb:
-        type: statefulset
-        statefulset:
-          volumeClaimTemplates:
-            - name: data
-              accessMode: ReadWriteOnce
-              size: "1Gi"
-              storageClass: ceph-block
-              # dataSourceRef:
-              #   kind: ReplicationDestination
-              #   apiGroup: volsync.backube
-              #   name: "${APP}-mariadb"
-              globalMounts:
-                - path: /config
-        containers:
-          app:
-            image:
-              repository: lscr.io/linuxserver/mariadb
-              tag: 11.4.9
-            env:
-              TZ: "America/New_York"
-              MYSQL_USER: booklore
-              MYSQL_DATABASE: booklore
-              MYSQL_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: booklore
-                    key: DATABASE_PASSWORD
-              MYSQL_ROOT_PASSWORD:
-                valueFrom:
-                  secretKeyRef:
-                    name: booklore
-                    key: DATABASE_ROOT_PASSWORD
-            probes:
-              liveness: &mariadb-probes
-                enabled: true
-                custom: true
-                spec:
-                  exec:
-                    command:
-                      - mariadb-admin
-                      - ping
-                      - --silent
-                  initialDelaySeconds: 5
-                  periodSeconds: 5
-                  timeoutSeconds: 5
-                  failureThreshold: 10
-              readiness: *mariadb-probes
     service:
       booklore:
         primary: true
@@ -157,11 +160,6 @@ spec:
         ports:
           http:
             port: *port
-      mariadb:
-        controller: mariadb
-        ports:
-          mysql:
-            port: 3306
     route:
       private:
         kind: HTTPRoute
@@ -179,6 +177,16 @@ spec:
             namespace: kube-system
             sectionName: https
     persistence:
+      config:
+        existingClaim: config-booklore-0
+        advancedMounts:
+          booklore:
+            app:
+              - path: /app/data
+                subPath: app
+            mariadb:
+              - path: /var/lib/mysql
+                subPath: mysql
       books:
         type: nfs
         server: "nas-srv-01.chkpwd.com"
@@ -195,6 +203,14 @@ spec:
           booklore:
             app:
               - path: /bookdrop
+      mysqld:
+        type: emptyDir
+        medium: Memory
+        sizeLimit: 1Mi
+        advancedMounts:
+          booklore:
+            mariadb:
+              - path: /run/mysqld
       tmpfs:
         type: emptyDir
         advancedMounts:
@@ -202,3 +218,6 @@ spec:
             app:
               - path: /tmp
                 subPath: app
+            mariadb:
+              - path: /tmp
+                subPath: mysql

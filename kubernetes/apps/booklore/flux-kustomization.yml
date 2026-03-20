@@ -12,15 +12,26 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    # - ../../core/volsync/components
+    - ../../core/volsync/components/
     - ../../core/keda-operator/_components/nfs/
   postBuild:
     substitute:
       APP: *app
-      # CLAIM: config-booklore-0
-      # VOLSYNC_PUID: "1026"
-      # VOLSYNC_PGID: "100"
-      VOLSYNC_CAPACITY: "500Mi"
+      CLAIM: config-booklore-0
+      VOLSYNC_UID: "1999"
+      VOLSYNC_GID: "1999"
+      VOLSYNC_CAPACITY: "2Gi"
+  patches:
+    - patch: |
+        - op: replace
+          path: /spec/kopia/retain
+          value:
+            daily: 14
+            weekly: 8
+            monthly: 6
+      target:
+        kind: ReplicationSource
+        name: booklore
   prune: true
   sourceRef:
     kind: GitRepository
