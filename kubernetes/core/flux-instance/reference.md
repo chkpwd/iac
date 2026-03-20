@@ -128,4 +128,3 @@ flux reconcile kustomization chkpwd-ops
 
 # Check webhook receiver URL (for GitHub webhook config)
 kubectl -n flux-system get receiver github-receiver -o jsonpath='{.status.webhookPath}'
-```
