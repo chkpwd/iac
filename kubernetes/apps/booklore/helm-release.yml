@@ -33,13 +33,12 @@ spec:
                 apiGroup: volsync.backube
                 name: "${APP}"
               advancedMounts:
-                booklore:
-                  app:
-                    - path: /app/data
-                      subPath: app
-                  mariadb:
-                    - path: /var/lib/mysql
-                      subPath: mysql
+                app:
+                  - path: /app/data
+                    subPath: app
+                mariadb:
+                  - path: /var/lib/mysql
+                    subPath: mysql
         pod:
           securityContext:
             runAsNonRoot: true
@@ -76,7 +75,7 @@ spec:
                       - bash
                       - -c
                       - |-
-                        mariadb-admin ping --socket=/run/mysqld/mysqld.sock --user=root --password=${MARIADB_ROOT_PASSWORD}
+                        mariadb-admin ping --socket=/run/mysqld/mysqld.sock
             restartPolicy: Always
             securityContext:
               allowPrivilegeEscalation: false
