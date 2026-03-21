@@ -38,7 +38,7 @@ Both gateways:
 
 ## TLS Certificate
 
-Managed by cert-manager (`ClusterIssuer: main-issuer`). Covers `chkpwd.com` and `*.chkpwd.com`, stored in Secret `chkpwd-com-tls`. Duration is 160h (just under 7 days) — short rotation, relies on cert-manager's auto-renewal.
+Managed by cert-manager (`ClusterIssuer: main-issuer`). Covers `chkpwd.com` and `*.chkpwd.com`, stored in Secret `chkpwd-com-tls`. Duration is **160h** (just under 7 days) — short rotation, relies on cert-manager's auto-renewal.
 
 ---
 
