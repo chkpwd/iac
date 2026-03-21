@@ -23,7 +23,7 @@ jobs:
     name: Update reference docs
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           # Checkout the PR branch so we can commit back to it
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
