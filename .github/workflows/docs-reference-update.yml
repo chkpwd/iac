@@ -5,13 +5,23 @@ on:
     branches: ["main"]
     paths:
       - "kubernetes/core/cilium/values.yml"
+      - "kubernetes/core/cilium/helm-release.yml"
+      - "kubernetes/core/cilium/source.yml"
       - "kubernetes/core/coredns/values.yml"
+      - "kubernetes/core/coredns/helm-release.yml"
+      - "kubernetes/core/coredns/source.yml"
       - "kubernetes/core/flux-instance/values.yml"
+      - "kubernetes/core/flux-instance/helm-release.yml"
+      - "kubernetes/core/flux-instance/source.yml"
       - "kubernetes/core/gateway-api/helm-release.yml"
       - "kubernetes/core/prometheus/helm-release.yml"
+      - "kubernetes/core/prometheus/source.yml"
       - "kubernetes/core/rook-ceph/helm-release.yml"
+      - "kubernetes/core/rook-ceph/source.yml"
       - "kubernetes/core/rook-ceph/cluster/helm-release.yml"
       - "kubernetes/core/spegel/values.yml"
+      - "kubernetes/core/spegel/helm-release.yml"
+      - "kubernetes/core/spegel/source.yml"
   schedule:
     - cron: "0 6 * * 1"
   workflow_dispatch:

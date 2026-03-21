@@ -24,13 +24,13 @@ CORE = REPO_ROOT / "kubernetes" / "core"
 
 # (slug, display name, config files to feed to the model)
 COMPONENTS = [
-    ("cilium",        "Cilium",        ["values.yml", "pools.yml", "policy.yml", "helm-release.yml"]),
-    ("coredns",       "CoreDNS",       ["values.yml", "helm-release.yml"]),
-    ("flux-instance", "Flux Instance", ["values.yml", "helm-release.yml", "components/kustomization.yml"]),
+    ("cilium",        "Cilium",        ["values.yml", "pools.yml", "policy.yml", "helm-release.yml", "source.yml"]),
+    ("coredns",       "CoreDNS",       ["values.yml", "helm-release.yml", "source.yml"]),
+    ("flux-instance", "Flux Instance", ["values.yml", "helm-release.yml", "source.yml", "components/kustomization.yml"]),
     ("gateway-api",   "Gateway API",   ["flux-kustomization.yml", "certificate.yml", "private-class.yml", "public-class.yml", "redirect-route.yml"]),
-    ("prometheus",    "Prometheus",    ["helm-release.yml", "alert-manager-config.yml"]),
-    ("rook-ceph",     "Rook-Ceph",     ["helm-release.yml", "cluster/helm-release.yml"]),
-    ("spegel",        "Spegel",        ["values.yml", "helm-release.yml"]),
+    ("prometheus",    "Prometheus",    ["helm-release.yml", "source.yml", "alert-manager-config.yml"]),
+    ("rook-ceph",     "Rook-Ceph",     ["helm-release.yml", "source.yml", "cluster/helm-release.yml"]),
+    ("spegel",        "Spegel",        ["values.yml", "helm-release.yml", "source.yml"]),
 ]
 
 # Map config file paths → component slug for PR mode lookup
