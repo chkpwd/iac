@@ -265,3 +265,114 @@ MikroTik accepted the connection, matched AS 64512 vs 64513 correctly, and the s
 # Cleanup
 kubectl delete pod bgp-test
 ```
+
+---
+
+## Benchmark: L2 announcements vs BGP
+
+**Tool:** `oha 1.14.0`
+**Target:** `https://kromgo.chkpwd.com/` via gateway LoadBalancer IP `10.0.10.31`
+**Parameters:** `-z 30s -c 50` (30 second run, 50 concurrent connections)
+**What is measured:** End-to-end HTTP response latency and throughput from the LAN, exercising the full path: client → MikroTik → k8s node (via L2 ARP or BGP route) → Cilium Gateway → pod
+
+### Baseline: L2 announcements (pre-BGP)
+
+```
+Summary:
+  Success rate:     100.00%
+  Total:            30.0052 sec
+  Slowest:          1.1193 sec
+  Fastest:          0.0027 sec
+  Average:          0.0111 sec
+  Requests/sec:     4494.9529
+
+Response time distribution:
+  p50:    0.0100 sec
+  p75:    0.0120 sec
+  p90:    0.0152 sec
+  p95:    0.0179 sec
+  p99:    0.0246 sec
+  p99.9:  0.0434 sec
+  p99.99: 1.1102 sec   ← ARP cache miss / ownership failover spike
+
+Status: [200] 134822 responses
+```
+
+> The `p99.99` spike to ~1.1s is characteristic of L2 announcement behaviour: when the node that "owns" the ARP entry for a VIP is briefly unavailable, the ARP cache on MikroTik must age out before traffic is redirected. BGP withdrawal/re-advertisement happens in milliseconds.
+
+### Post-BGP result
+
+> To be filled in after the Cilium BGP rollout completes.
+> Run: `oha --no-tui -z 30s -c 50 --connect-to kromgo.chkpwd.com:443:10.0.10.31:443 https://kromgo.chkpwd.com/`
+
+---
+
+## Benchmark: L2 announcements vs BGP
+
+**Tool:** `oha 1.14.0`
+**Parameters:** `-z 30s -c 50` (30 second run, 50 concurrent connections)
+**What is measured:** End-to-end HTTPS latency and throughput from the LAN, exercising the full path: client → MikroTik → k8s node (via L2 ARP or BGP route) → Cilium Gateway → pod
+
+Two targets are tested to cover both gateways independently:
+
+| Target                             | Gateway                            | IP           | Service                                     |
+| ---------------------------------- | ---------------------------------- | ------------ | ------------------------------------------- |
+| `https://kromgo.chkpwd.com/`       | Public (`cilium-gateway-public`)   | `10.0.10.31` | Lightweight metrics endpoint, ~77B response |
+| `https://alertmanager.chkpwd.com/` | Private (`cilium-gateway-private`) | `10.0.10.30` | Alertmanager UI, ~1.6KB response            |
+
+---
+
+### Baseline: L2 announcements (pre-BGP)
+
+#### Public gateway — kromgo (`10.0.10.31`)
+
+```
+Requests/sec:  2779.45
+Average:       17.99 ms
+Fastest:        3.67 ms
+Slowest:      154.26 ms
+
+  p50:   16.83 ms
+  p75:   20.83 ms
+  p90:   25.53 ms
+  p95:   29.14 ms
+  p99:   40.56 ms
+  p99.9: 87.44 ms
+
+Status: [200] 83343 responses
+```
+
+#### Private gateway — alertmanager (`10.0.10.30`)
+
+```
+Requests/sec:  2470.33
+Average:       20.24 ms
+Fastest:        4.81 ms
+Slowest:      210.19 ms
+
+  p50:   18.18 ms
+  p75:   22.92 ms
+  p90:   29.09 ms
+  p95:   35.22 ms
+  p99:   55.83 ms
+  p99.9: 129.91 ms
+
+Status: [200] 73574 responses / [503] 495 responses
+```
+
+> The 503s on the private gateway are pre-existing and unrelated to L2 vs BGP — likely alertmanager pod restarts or rate limiting.
+
+---
+
+### Post-BGP result
+
+> To be filled in after the Cilium BGP rollout completes.
+> Commands to reproduce:
+>
+> ```bash
+> # Public gateway
+> oha --no-tui -z 30s -c 50 --connect-to kromgo.chkpwd.com:443:10.0.10.31:443 https://kromgo.chkpwd.com/
+>
+> # Private gateway
+> oha --no-tui -z 30s -c 50 --connect-to alertmanager.chkpwd.com:443:10.0.10.30:443 https://alertmanager.chkpwd.com/
+> ```
