@@ -18,11 +18,14 @@ spec:
     - name: storage
     - name: system
     - name: tools
-  resources:
-    - apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: << inputs.name >>
-        annotations:
-          kustomize.toolkit.fluxcd.io/prune: disabled
-          volsync.backube/privileged-movers: "true"
+  resourcesTemplate: |
+    ---
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: << inputs.name >>
+      annotations:
+        kustomize.toolkit.fluxcd.io/prune: disabled
+        << if or (eq inputs.name "media") (eq inputs.name "tools") >>
+        volsync.backube/privileged-movers: "true"
+        << end >>
