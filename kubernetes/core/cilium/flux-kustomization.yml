@@ -15,10 +15,17 @@ spec:
     substitute:
       APP: hubble
       RECORD_NAME: hubble
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: cilium
+      namespace: *ns
   prune: false
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
     namespace: flux-system
-  wait: false
+  wait: true
   interval: 15m
+  retryInterval: 2m
+  timeout: 5m
