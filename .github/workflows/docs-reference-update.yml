@@ -28,15 +28,12 @@ jobs:
           # Checkout the PR branch so we can commit back to it
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
           fetch-depth: 0
-
       - uses: actions/setup-python@v6
         with:
           python-version: "3.14"
           cache: pip
-
       - name: Install dependencies
         run: pip install openai
-
       - name: Run reference updater
         id: updater
         env:
@@ -47,16 +44,12 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           EVENT_NAME: ${{ github.event_name }}
         run: python .github/scripts/update-reference-docs.py
-
-      # --- PR-only steps ---
-
       - name: Post analysis comment
         if: github.event_name == 'pull_request' && steps.updater.outputs.comment != ''
         uses: mshick/add-pr-comment@v3
         with:
           message-id: "reference-docs-analysis"
           message: ${{ steps.updater.outputs.comment }}
-
       - name: Commit updated reference.md files
         if: github.event_name == 'pull_request'
         run: |
@@ -66,7 +59,6 @@ jobs:
           git add -u
           git commit -m "docs(k8s): update reference docs for changed components"
           git push
-
       - name: Submit PR review
         if: github.event_name == 'pull_request' && steps.updater.outputs.review_event != ''
         env:
@@ -75,15 +67,11 @@ jobs:
           gh pr review ${{ github.event.pull_request.number }} \
             --${{ steps.updater.outputs.review_event }} \
             --body "${{ steps.updater.outputs.review_body }}"
-
-      # --- Schedule / manual steps ---
-
       - name: Check for changes
         if: github.event_name != 'pull_request'
         id: changes
         run: |
           git diff --quiet && echo "changed=false" >> "$GITHUB_OUTPUT" || echo "changed=true" >> "$GITHUB_OUTPUT"
-
       - name: Open PR
         if: github.event_name != 'pull_request' && steps.changes.outputs.changed == 'true'
         uses: peter-evans/create-pull-request@v8
@@ -94,7 +82,6 @@ jobs:
           title: "docs(k8s): update component reference docs"
           body: |
             Automated weekly reference doc refresh.
-
             Updated by `update-reference-docs.py` using GitHub Models (`gpt-4o-mini`).
             Trigger: `${{ github.event_name }}` / run `${{ github.run_id }}`
           commit-message: "docs(k8s): update component reference docs"
