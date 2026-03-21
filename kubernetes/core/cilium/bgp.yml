@@ -1,11 +1,9 @@
 ---
-# CiliumBGPClusterConfig declares the local ASN for all nodes matching the
-# nodeSelector and links to the peering policy below.
 # yaml-language-server: $schema=https://lds-schemas.pages.dev/cilium.io/ciliumbgpclusterconfig_v2.json
 apiVersion: cilium.io/v2
 kind: CiliumBGPClusterConfig
 metadata:
-  name: cilium-bgp
+  name: bgp
 spec:
   nodeSelector:
     matchLabels:
@@ -20,17 +18,12 @@ spec:
           peerConfigRef:
             name: cilium-peer-mikrotik
 ---
-# CiliumBGPPeerConfig holds the per-peer tuning knobs (timers, auth, etc.)
-# and what to advertise (services from the LoadBalancer pool).
 # yaml-language-server: $schema=https://lds-schemas.pages.dev/cilium.io/ciliumbgppeerconfig_v2.json
 apiVersion: cilium.io/v2
 kind: CiliumBGPPeerConfig
 metadata:
-  name: cilium-peer-mikrotik
+  name: peer-mikrotik
 spec:
-  timers:
-    holdTimeSeconds: 90
-    keepAliveTimeSeconds: 30
   families:
     - afi: ipv4
       safi: unicast
@@ -38,24 +31,22 @@ spec:
         matchLabels:
           advertise: "bgp"
 ---
-# CiliumBGPAdvertisement selects which LoadBalancer IPs to announce.
-# The label "advertise: bgp" links this to the peerConfig above.
-# yaml-language-server: $schema=https://lds-schemas.pages.dev/cilium.io/ciliumbgpadvertisement_v2alpha1.json
-apiVersion: cilium.io/v2alpha1
+# yaml-language-server: $schema=https://lds-schemas.pages.dev/cilium.io/ciliumbgpadvertisement_v2.json
+apiVersion: cilium.io/v2
 kind: CiliumBGPAdvertisement
 metadata:
-  name: cilium-bgp-advertisements
+  name: bgp-advertisements
   labels:
     advertise: "bgp"
 spec:
   advertisements:
-    - advertisementType: "Service"
+    - advertisementType: Service
       service:
         addresses:
           - LoadBalancerIP
-      selector:
-        matchExpressions:
-          - key: somekey
-            operator: NotIn
-            values:
-              - never-match
+        selector:
+          matchExpressions:
+            - key: somekey
+              operator: NotIn
+              values:
+                - never-used-value

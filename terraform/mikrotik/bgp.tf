@@ -22,6 +22,10 @@ resource "routeros_routing_bgp_connection" "k8s_nodes" {
   connect = true
   listen  = true
 
+  # Rewrite next-hop to MikroTik's own IP so return traffic for DSR
+  # passes through the router and stays in the connection tracking table.
+  nexthop_choice = "force-self"
+
   local {
     role    = "ebgp"
     address = "10.0.10.1"

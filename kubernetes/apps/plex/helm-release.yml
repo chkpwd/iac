@@ -61,7 +61,7 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: "America/New_York"
-              PLEX_ADVERTISE_URL: https://10.0.10.35:32400,https://plex.chkpwd.com
+              PLEX_ADVERTISE_URL: https://10.0.45.35:32400,https://plex.chkpwd.com
               PLEX_NO_AUTH_NETWORKS: 10.244.0.0/16
               PLEX_CLAIM:
                 valueFrom:
@@ -101,7 +101,7 @@ spec:
       app:
         controller: plex
         annotations:
-          lbipam.cilium.io/ips: 10.0.10.35
+          lbipam.cilium.io/ips: 10.0.45.35
         type: LoadBalancer
         externalTrafficPolicy: Cluster
         ports:

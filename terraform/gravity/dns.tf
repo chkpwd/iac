@@ -50,7 +50,7 @@ resource "gravity_dns_record" "private_gateway" {
   zone     = gravity_dns_zone.chkpwd.name
   hostname = "gateway"
   uid      = var.default_uid
-  data     = "10.0.10.30"
+  data     = "10.0.45.30"
   type     = "A"
 }
 

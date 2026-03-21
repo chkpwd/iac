@@ -133,7 +133,7 @@ Creates one `routeros_routing_bgp_connection` per k8s node (ct-k8s-01/02/03) wit
    kubectl -n kube-system exec ds/cilium -- cilium bgp routes
    ```
 
-   You should see the LoadBalancer IPs from the `10.0.10.0/24` pool.
+   You should see the LoadBalancer IPs from the `10.0.45.0/24` pool.
 
 5. **Verify on MikroTik**
 
@@ -176,7 +176,7 @@ kubectl -n kube-system exec ds/cilium -- cilium status
 | Session `Active` but never `Established`    | ASN mismatch or wrong peer IP         | Verify MikroTik peer has `remote.as = 64513` and correct node IPs                                                               |
 | Session establishes but no routes           | `CiliumBGPAdvertisement` not matching | Check label `advertise: bgp` propagation on `CiliumBGPPeerConfig`                                                               |
 | Routes installed but traffic fails          | DSR interaction                       | Check `loadBalancer.mode: dsr` is still functional — DSR requires that the node receiving the packet is also the one responding |
-| MikroTik shows routes but LB IP unreachable | No firewall forward rule              | Ensure MikroTik forwards traffic for `10.0.10.0/24` on the LAN bridge                                                           |
+| MikroTik shows routes but LB IP unreachable | No firewall forward rule              | Ensure MikroTik forwards traffic for `10.0.45.0/24` on the LAN bridge                                                           |
 
 ---
 
@@ -271,7 +271,7 @@ kubectl delete pod bgp-test
 ## Benchmark: L2 announcements vs BGP
 
 **Tool:** `oha 1.14.0`
-**Target:** `https://kromgo.chkpwd.com/` via gateway LoadBalancer IP `10.0.10.31`
+**Target:** `https://kromgo.chkpwd.com/` via gateway LoadBalancer IP `10.0.45.31`
 **Parameters:** `-z 30s -c 50` (30 second run, 50 concurrent connections)
 **What is measured:** End-to-end HTTP response latency and throughput from the LAN, exercising the full path: client → MikroTik → k8s node (via L2 ARP or BGP route) → Cilium Gateway → pod
 
@@ -303,7 +303,7 @@ Status: [200] 134822 responses
 ### Post-BGP result
 
 > To be filled in after the Cilium BGP rollout completes.
-> Run: `oha --no-tui -z 30s -c 50 --connect-to kromgo.chkpwd.com:443:10.0.10.31:443 https://kromgo.chkpwd.com/`
+> Run: `oha --no-tui -z 30s -c 50 --connect-to kromgo.chkpwd.com:443:10.0.45.31:443 https://kromgo.chkpwd.com/`
 
 ---
 
@@ -317,14 +317,14 @@ Two targets are tested to cover both gateways independently:
 
 | Target                             | Gateway                            | IP           | Service                                     |
 | ---------------------------------- | ---------------------------------- | ------------ | ------------------------------------------- |
-| `https://kromgo.chkpwd.com/`       | Public (`cilium-gateway-public`)   | `10.0.10.31` | Lightweight metrics endpoint, ~77B response |
-| `https://alertmanager.chkpwd.com/` | Private (`cilium-gateway-private`) | `10.0.10.30` | Alertmanager UI, ~1.6KB response            |
+| `https://kromgo.chkpwd.com/`       | Public (`cilium-gateway-public`)   | `10.0.45.31` | Lightweight metrics endpoint, ~77B response |
+| `https://alertmanager.chkpwd.com/` | Private (`cilium-gateway-private`) | `10.0.45.30` | Alertmanager UI, ~1.6KB response            |
 
 ---
 
 ### Baseline: L2 announcements (pre-BGP)
 
-#### Public gateway — kromgo (`10.0.10.31`)
+#### Public gateway — kromgo (`10.0.45.31`)
 
 ```
 Requests/sec:  2779.45
@@ -342,7 +342,7 @@ Slowest:      154.26 ms
 Status: [200] 83343 responses
 ```
 
-#### Private gateway — alertmanager (`10.0.10.30`)
+#### Private gateway — alertmanager (`10.0.45.30`)
 
 ```
 Requests/sec:  2470.33
@@ -371,8 +371,8 @@ Status: [200] 73574 responses / [503] 495 responses
 >
 > ```bash
 > # Public gateway
-> oha --no-tui -z 30s -c 50 --connect-to kromgo.chkpwd.com:443:10.0.10.31:443 https://kromgo.chkpwd.com/
+> oha --no-tui -z 30s -c 50 --connect-to kromgo.chkpwd.com:443:10.0.45.31:443 https://kromgo.chkpwd.com/
 >
 > # Private gateway
-> oha --no-tui -z 30s -c 50 --connect-to alertmanager.chkpwd.com:443:10.0.10.30:443 https://alertmanager.chkpwd.com/
+> oha --no-tui -z 30s -c 50 --connect-to alertmanager.chkpwd.com:443:10.0.45.30:443 https://alertmanager.chkpwd.com/
 > ```

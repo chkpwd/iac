@@ -19,11 +19,11 @@ The `gateway-api-crd` GitRepository pulls only `config/crd/experimental` from th
 
 ## Gateways
 
-### `private` — `10.0.10.30`
+### `private` — `10.0.45.30`
 
 Internal services. DNS target `gateway.chkpwd.com` (via `external-dns` annotation).
 
-### `public` — `10.0.10.31`
+### `public` — `10.0.45.31`
 
 Externally reachable services. DNS target `chkpwd.com`.
 
