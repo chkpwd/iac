@@ -16,7 +16,7 @@ spec:
           peerASN: 64512
           peerAddress: 10.0.10.1
           peerConfigRef:
-            name: cilium-peer-mikrotik
+            name: peer-mikrotik
 ---
 # yaml-language-server: $schema=https://lds-schemas.pages.dev/cilium.io/ciliumbgppeerconfig_v2.json
 apiVersion: cilium.io/v2
@@ -44,9 +44,3 @@ spec:
       service:
         addresses:
           - LoadBalancerIP
-        selector:
-          matchExpressions:
-            - key: somekey
-              operator: NotIn
-              values:
-                - never-used-value
