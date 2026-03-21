@@ -28,11 +28,18 @@ spec:
               accessMode: ReadWriteOnce
               size: "${VOLSYNC_CAPACITY}"
               storageClass: ceph-block
-              # dataSourceRef:
-              #   kind: ReplicationDestination
-              #   apiGroup: volsync.backube
-              #   name: "${APP}"
-              globalMounts: []
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              advancedMounts:
+                booklore:
+                  app:
+                    - path: /app/data
+                      subPath: app
+                  mariadb:
+                    - path: /var/lib/mysql
+                      subPath: mysql
         pod:
           securityContext:
             runAsNonRoot: true
@@ -177,16 +184,6 @@ spec:
             namespace: kube-system
             sectionName: https
     persistence:
-      config:
-        existingClaim: config-booklore-0
-        advancedMounts:
-          booklore:
-            app:
-              - path: /app/data
-                subPath: app
-            mariadb:
-              - path: /var/lib/mysql
-                subPath: mysql
       books:
         type: nfs
         server: "nas-srv-01.chkpwd.com"
