@@ -22,22 +22,49 @@ from openai import OpenAI
 REPO_ROOT = Path(__file__).parents[2]
 CORE = REPO_ROOT / "kubernetes" / "core"
 
-# (slug, display name, config files to feed to the model)
-COMPONENTS = [
-    ("cilium",        "Cilium",        ["values.yml", "pools.yml", "policy.yml", "helm-release.yml", "source.yml"]),
-    ("coredns",       "CoreDNS",       ["values.yml", "helm-release.yml", "source.yml"]),
-    ("flux-instance", "Flux Instance", ["values.yml", "helm-release.yml", "source.yml", "components/kustomization.yml"]),
-    ("gateway-api",   "Gateway API",   ["flux-kustomization.yml", "certificate.yml", "private-class.yml", "public-class.yml", "redirect-route.yml"]),
-    ("prometheus",    "Prometheus",    ["helm-release.yml", "source.yml", "alert-manager-config.yml"]),
-    ("rook-ceph",     "Rook-Ceph",     ["helm-release.yml", "source.yml", "cluster/helm-release.yml"]),
-    ("spegel",        "Spegel",        ["values.yml", "helm-release.yml", "source.yml"]),
-]
+# Excluded filenames when collecting config files to feed the model
+_CONFIG_EXCLUDES = {"reference.md", "kustomization.yml", "flux-kustomization.yml"}
 
-# Map config file paths → component slug for PR mode lookup
-PATH_TO_SLUG: dict[str, str] = {}
-for slug, _, globs in COMPONENTS:
-    for g in globs:
-        PATH_TO_SLUG[f"kubernetes/core/{slug}/{g}"] = slug
+# Display name overrides for slugs whose title-case form is wrong
+_DISPLAY_NAME_OVERRIDES: dict[str, str] = {
+    "coredns":      "CoreDNS",
+    "gateway-api":  "Gateway API",
+    "rook-ceph":    "Rook-Ceph",
+    "volsync":      "VolSync",
+}
+
+
+def discover_components() -> list[tuple[str, str, list[str]]]:
+    """
+    Auto-discover tracked components by finding all reference.md files under
+    kubernetes/core/*/reference.md. Returns a list of (slug, display_name, config_globs).
+    Config globs are all .yml files in the component directory tree, relative to
+    the component dir, excluding kustomization files.
+    """
+    components = []
+    for ref in sorted(CORE.glob("*/reference.md")):
+        component_dir = ref.parent
+        slug = component_dir.name
+        display_name = _DISPLAY_NAME_OVERRIDES.get(slug, slug.replace("-", " ").title())
+
+        # Collect all .yml paths relative to the component dir, excluding noise files
+        config_files = sorted(
+            str(p.relative_to(component_dir))
+            for p in component_dir.rglob("*.yml")
+            if p.name not in _CONFIG_EXCLUDES
+        )
+        components.append((slug, display_name, config_files))
+    return components
+
+
+COMPONENTS = discover_components()
+
+# Map config file paths → component slug for PR mode lookup (built dynamically)
+PATH_TO_SLUG: dict[str, str] = {
+    f"kubernetes/core/{slug}/{cfg}": slug
+    for slug, _, cfgs in COMPONENTS
+    for cfg in cfgs
+}
 
 SYSTEM_UPDATE = textwrap.dedent("""\
     You are a technical documentation assistant maintaining reference docs for a personal Kubernetes homelab cluster.
