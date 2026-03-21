@@ -129,3 +129,30 @@ flux reconcile kustomization chkpwd-ops
 # Check webhook receiver URL (for GitHub webhook config)
 kubectl -n flux-system get receiver github-receiver -o jsonpath='{.status.webhookPath}'
 ```
+
+---
+
+## Sync architecture
+
+The flux-operator syncs `kubernetes/flux` directly. Files dropped there are applied as-is, but `flux-local` only discovers resources by walking paths declared in `Kustomization.spec.path` — loose files in the sync root are invisible to it.
+
+To satisfy both, all `HelmRepository` definitions live under `flux/sources/` and are owned by a dedicated `sources` Kustomization. Both `core` and `apps` declare `dependsOn: sources`.
+
+```mermaid
+flowchart TD
+    GR["GitRepository · chkpwd-ops"]
+
+    subgraph flux["kubernetes/flux (sync root)"]
+        KS_SRC["Kustomization: sources\npath: kubernetes/flux/sources"]
+        KS_CORE["Kustomization: core\npath: kubernetes/core\ndependsOn: sources"]
+        KS_APPS["Kustomization: apps\npath: kubernetes/apps\ndependsOn: core, sources"]
+
+        subgraph sources["flux/sources/"]
+            BJWS["HelmRepository: bjw-s-labs"]
+        end
+    end
+
+    GR --> KS_SRC & KS_CORE & KS_APPS
+    KS_SRC --> BJWS
+    BJWS -.->|required by| KS_CORE & KS_APPS
+```
