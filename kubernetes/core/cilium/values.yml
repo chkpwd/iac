@@ -6,8 +6,8 @@ operator:
 autoDirectNodeRoutes: true
 bpf:
   masquerade: true
-bgp:
-  enabled: false
+bgpControlPlane:
+  enabled: true
 endpointRoutes:
   enabled: true
 envoy:
@@ -29,7 +29,7 @@ k8sServicePort: 7445
 kubeProxyReplacement: true
 kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
 l2announcements:
-  enabled: true
+  enabled: false
 loadBalancer:
   algorithm: maglev
   mode: dsr

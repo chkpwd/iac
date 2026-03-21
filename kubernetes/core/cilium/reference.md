@@ -6,7 +6,7 @@ Helm chart **v1.19.1**.
 
 ## What it does
 
-Cilium replaces kube-proxy entirely (`kubeProxyReplacement: true`) and handles all pod networking via eBPF. It also runs the GatewayAPI controller that creates the `private` and `public` Gateways, and does L2 announcements for LoadBalancer IPs.
+Cilium replaces kube-proxy entirely (`kubeProxyReplacement: true`) and handles all pod networking via eBPF. It also runs the GatewayAPI controller that creates the `private` and `public` Gateways, and advertises LoadBalancer IPs to MikroTik via BGP.
 
 ---
 
@@ -39,15 +39,22 @@ Cilium replaces kube-proxy entirely (`kubeProxyReplacement: true`) and handles a
 | `loadBalancer.mode`      | `dsr`    | Direct Server Return: reply traffic bypasses the load balancer node         |
 | `localRedirectPolicy`    | `true`   | Redirects traffic to local node backends first when available               |
 
-### L2 / BGP
+### BGP
 
-| Value                     | Setting | Effect                                                                |
-| ------------------------- | ------- | --------------------------------------------------------------------- |
-| `l2announcements.enabled` | `true`  | Cilium sends ARP/NDP replies for LoadBalancer IPs (no MetalLB needed) |
-| `bgp.enabled`             | `false` | BGP control plane disabled — using L2 announcements instead           |
+| Value                     | Setting | Effect                                                                                |
+| ------------------------- | ------- | ------------------------------------------------------------------------------------- |
+| `bgpControlPlane.enabled` | `true`  | Enables Cilium's BGP control plane (new API, replaces legacy `bgp.enabled`)           |
+| `l2announcements.enabled` | `false` | L2 announcements disabled — BGP is used exclusively for LoadBalancer IP advertisement |
+
+BGP sessions are configured via `bgp.yml` (`CiliumBGPClusterConfig` + `CiliumBGPPeerConfig` + `CiliumBGPAdvertisement`):
+
+- **Cilium ASN**: `64513` (all k8s nodes)
+- **MikroTik ASN**: `64512` (peer: `10.0.10.1`)
+- **Advertised IPs**: all `LoadBalancer` service IPs (from the `10.0.10.0/24` pool)
+
+MikroTik peer connections are managed in `terraform/mikrotik/bgp.tf`.
 
 > The `CiliumLoadBalancerIPPool` in `pools.yml` allocates `10.0.10.0/24` for LoadBalancer Services.
-> The `CiliumL2AnnouncementPolicy` in `policy.yml` advertises those IPs on interfaces matching `^enp.*`.
 
 ### Gateway API
 
@@ -88,12 +95,19 @@ The `securityContext.capabilities` block is required for the eBPF agent to funct
 # Check Cilium agent status on a node
 kubectl -n kube-system exec ds/cilium -- cilium status
 
-# Check L2 announcement leases (which node owns which IP)
-kubectl -n kube-system get ciliuml2announcementpolicies
+# Check BGP peer session state
+kubectl -n kube-system exec ds/cilium -- cilium bgp peers
+
+# Check BGP route advertisements
+kubectl -n kube-system exec ds/cilium -- cilium bgp routes
 
 # Check LoadBalancer IP pool usage
 kubectl get ciliumloadbalancerippools
 
 # Verify kube-proxy replacement
 kubectl -n kube-system exec ds/cilium -- cilium status | grep KubeProxy
+
+# On MikroTik: verify BGP sessions and installed routes
+# /routing bgp session print
+# /ip route print where bgp
 ```
