@@ -27,7 +27,7 @@ spec:
           hostnames: ["alertmanager.chkpwd.com"]
           parentRefs:
             - name: private
-              namespace: kube-system
+              namespace: networking
               sectionName: https
       alertmanagerSpec:
         alertmanagerConfiguration:
@@ -117,7 +117,7 @@ spec:
           hostnames: ["k8s-{{ .Release.Name }}.chkpwd.com"]
           parentRefs:
             - name: private
-              namespace: kube-system
+              namespace: networking
               sectionName: https
       prometheusSpec:
         image:

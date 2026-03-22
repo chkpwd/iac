@@ -101,7 +101,7 @@ spec:
               backendRequest: 2h
         parentRefs:
           - name: public
-            namespace: kube-system
+            namespace: networking
             sectionName: https
       hijack-http:
         kind: HTTPRoute
@@ -127,7 +127,7 @@ spec:
               backendRequest: 2h
         parentRefs:
           - name: public
-            namespace: kube-system
+            namespace: networking
             sectionName: https
       # hijack-mqtt:
       #   kind: HTTPRoute

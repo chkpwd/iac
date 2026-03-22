@@ -1,0 +1,28 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app envoy-gateway
+  namespace: &ns networking
+spec:
+  targetNamespace: *ns
+  path: ./kubernetes/core/envoy-gateway/
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  dependsOn:
+    - name: gateway-api-crd
+      namespace: kube-system
+  healthChecks:
+    - apiVersion: helm.toolkit.fluxcd.io/v2
+      kind: HelmRelease
+      name: envoy-gateway
+      namespace: *ns
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  wait: true
+  interval: 30m

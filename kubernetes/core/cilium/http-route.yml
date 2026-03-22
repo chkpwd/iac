@@ -8,10 +8,10 @@ spec:
   hostnames: ["hubble.chkpwd.com"]
   parentRefs:
     - name: private
-      namespace: kube-system
+      namespace: networking
       sectionName: https
   rules:
     - backendRefs:
         - name: hubble-ui
-          namespace: kube-system
+          namespace: networking
           port: 80

@@ -1,19 +1,19 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
-apiVersion: gateway.networking.k8s.io/v1beta1
 metadata:
   name: http-redirect
-  namespace: kube-system
 spec:
   parentRefs:
-    - namespace: kube-system
-      name: private
+    - name: private
+      namespace: networking
       sectionName: http
-    - namespace: kube-system
-      name: public
+    - name: public
+      namespace: networking
       sectionName: http
   rules:
     - filters:
         - type: RequestRedirect
           requestRedirect:
             scheme: https
-            statusCode: 301 # no temporary redirect
+            statusCode: 301

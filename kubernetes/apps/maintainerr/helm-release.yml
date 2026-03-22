@@ -72,7 +72,7 @@ spec:
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
         parentRefs:
           - name: private
-            namespace: kube-system
+            namespace: networking
             sectionName: https
     persistence:
       tmp:
