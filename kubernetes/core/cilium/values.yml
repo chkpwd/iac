@@ -16,6 +16,8 @@ gatewayAPI:
   enabled: true
   gatewayClass:
     create: "true"
+  hostNetwork:
+    enabled: true
   secretsNamespace:
     create: false
     name: kube-system
