@@ -7,6 +7,7 @@ autoDirectNodeRoutes: true
 bpf:
   masquerade: true
   lbModeAnnotation: true
+  tproxy: true
 bgpControlPlane:
   enabled: true
 endpointRoutes:
@@ -15,7 +16,6 @@ envoy:
   enabled: false
 gatewayAPI:
   enabled: true
-  enableAlpn: true
   gatewayClass:
     create: "true"
   secretsNamespace:
