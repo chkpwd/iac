@@ -33,7 +33,6 @@ locals {
     input_accept_loopback            = { order = 60, chain = "input", action = "accept", comment = "accept to local loopback (for CAPsMAN)", dst_address = "127.0.0.1" }
     input_allow_dhcp_iot             = { order = 70, chain = "input", action = "accept", comment = "allow DHCP from IoT", protocol = "udp", dst_port = "67,68", in_interface = "iot" }
     input_allow_dhcp_guest           = { order = 80, chain = "input", action = "accept", comment = "allow DHCP from Guest", protocol = "udp", dst_port = "67,68", in_interface = "guest" }
-    input_allow_bgp                  = { order = 85, chain = "input", action = "accept", comment = "allow BGP TCP 179 from k8s nodes", protocol = "tcp", dst_port = "179", src_address = "10.0.10.0/24" }
     input_drop_not_lan               = { order = 90, chain = "input", action = "drop", comment = "drop all not coming from LAN", in_interface_list = "!LAN" }
     forward_drop_invalid             = { order = 100, chain = "forward", action = "drop", comment = "drop invalid", connection_state = "invalid" }
     forward_accept_established       = { order = 110, chain = "forward", action = "accept", comment = "accept established,related, untracked", connection_state = "established,related,untracked" }
@@ -41,7 +40,6 @@ locals {
     forward_accept_ipsec_in          = { order = 130, chain = "forward", action = "accept", comment = "accept in ipsec policy", ipsec_policy = "in,ipsec" }
     forward_accept_ipsec_out         = { order = 140, chain = "forward", action = "accept", comment = "accept out ipsec policy", ipsec_policy = "out,ipsec" }
     forward_allow_wg_gatus_icmp_only = { order = 150, chain = "forward", action = "drop", comment = "drop all but icmp from WireGuard peer", protocol = "!icmp", src_address = "10.6.6.4" }
-    forward_lan_to_k8s_lb            = { order = 160, chain = "forward", action = "accept", comment = "allow LAN to k8s BGP LoadBalancer IPs", in_interface_list = "LAN", dst_address = "10.0.45.0/24" }
     forward_wan_dstnat_to_k8s_lb     = { order = 165, chain = "forward", action = "accept", comment = "allow DSTNATed WAN to k8s LB IPs", connection_nat_state = "dstnat", dst_address = "10.0.45.0/24", in_interface_list = "WAN" }
     forward_iot_dns_udp              = { order = 200, chain = "forward", action = "accept", comment = "iot allow DNS (UDP)", protocol = "udp", dst_address = var.dns_ip, dst_port = "53", in_interface = "iot" }
     forward_iot_dns_tcp              = { order = 210, chain = "forward", action = "accept", comment = "iot allow DNS (TCP)", protocol = "tcp", dst_address = var.dns_ip, dst_port = "53", in_interface = "iot" }
