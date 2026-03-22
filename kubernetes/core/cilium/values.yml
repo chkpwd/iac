@@ -3,11 +3,26 @@ cni:
   exclusive: false
 operator:
   rollOutPods: true
+  dashboards:
+    enabled: true
+    annotations:
+      grafana_folder: Kubernetes
 autoDirectNodeRoutes: true
 bpf:
+  datapathMode: netkit
   masquerade: true
+  preallocateMaps: true
   lbModeAnnotation: true
   tproxy: true
+cgroup:
+  autoMount:
+    enabled: false
+  hostRoot: /sys/fs/cgroup
+dashboards:
+  enabled: true
+  annotations:
+    grafana_folder: Kubernetes
+enableIPv4BIGTCP: true
 bgpControlPlane:
   enabled: true
 endpointRoutes:
@@ -33,11 +48,15 @@ kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
 l2announcements:
   enabled: false
 loadBalancer:
+  acceleration: best-effort
   algorithm: maglev
   mode: snat
   dsrDispatch: opt
-localRedirectPolicy: true
+localRedirectPolicies:
+  enabled: true
 rollOutCiliumPods: true
+pmtuDiscovery:
+  enabled: true
 routingMode: native
 securityContext:
   capabilities:
@@ -49,6 +68,8 @@ securityContext:
       - IPC_LOCK
       - SYS_ADMIN
       - SYS_RESOURCE
+      - PERFMON
+      - BPF
       - DAC_OVERRIDE
       - FOWNER
       - SETGID
@@ -57,6 +78,8 @@ securityContext:
       - NET_ADMIN
       - SYS_ADMIN
       - SYS_RESOURCE
+      - PERFMON
+      - BPF
 socketLB:
   enabled: true
   hostNamespaceOnly: true
