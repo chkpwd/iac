@@ -6,13 +6,12 @@ operator:
 autoDirectNodeRoutes: true
 bpf:
   masquerade: true
-  tproxy: true
 bgpControlPlane:
   enabled: true
 endpointRoutes:
   enabled: true
 envoy:
-  enabled: false
+  enabled: true
 gatewayAPI:
   enabled: true
   gatewayClass:
