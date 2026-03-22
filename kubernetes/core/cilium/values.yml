@@ -12,12 +12,19 @@ endpointRoutes:
   enabled: true
 envoy:
   enabled: true
+  securityContext:
+    capabilities:
+      keepCapNetBindService: true
+      envoy:
+        - NET_ADMIN
+        - SYS_ADMIN
+        - NET_BIND_SERVICE
 gatewayAPI:
   enabled: true
   gatewayClass:
     create: "true"
   hostNetwork:
-    enabled: true
+    enabled: false
   secretsNamespace:
     create: false
     name: kube-system
