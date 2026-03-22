@@ -37,6 +37,7 @@ spec:
             metadata:
               annotations:
                 lbipam.cilium.io/ips: 10.0.45.36
+                service.cilium.io/forwarding-mode: dsr
       target:
         kind: PostgresCluster
   postBuild:
