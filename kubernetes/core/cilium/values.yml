@@ -12,7 +12,6 @@ bpf:
   datapathMode: netkit
   masquerade: true
   preallocateMaps: true
-  lbModeAnnotation: true
 cgroup:
   autoMount:
     enabled: false
@@ -30,6 +29,8 @@ envoy:
   enabled: false
 gatewayAPI:
   enabled: false
+l2announcements:
+  enabled: false
 hubble:
   enabled: false
 ipam:
@@ -39,13 +40,10 @@ k8sServiceHost: 127.0.0.1
 k8sServicePort: 7445
 kubeProxyReplacement: true
 kubeProxyReplacementHealthzBindAddr: 0.0.0.0:10256
-l2announcements:
-  enabled: false
 loadBalancer:
   acceleration: best-effort
   algorithm: maglev
-  mode: snat
-  dsrDispatch: opt
+  mode: dsr
 localRedirectPolicies:
   enabled: true
 rollOutCiliumPods: true

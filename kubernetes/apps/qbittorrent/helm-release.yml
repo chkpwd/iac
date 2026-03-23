@@ -98,7 +98,6 @@ spec:
         type: LoadBalancer
         annotations:
           lbipam.cilium.io/ips: 10.0.45.34
-          service.cilium.io/forwarding-mode: dsr
         ports:
           http:
             port: *webPort

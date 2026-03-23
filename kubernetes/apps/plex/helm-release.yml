@@ -102,7 +102,6 @@ spec:
         controller: plex
         annotations:
           lbipam.cilium.io/ips: 10.0.45.35
-          service.cilium.io/forwarding-mode: dsr
         type: LoadBalancer
         externalTrafficPolicy: Cluster
         ports:
