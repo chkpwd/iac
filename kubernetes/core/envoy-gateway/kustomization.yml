@@ -5,10 +5,8 @@ kind: Kustomization
 resources:
   - helm-release.yml
   - source.yml
-  - gateway-class.yml
-  - client-traffic-policy.yml
-  - backend-traffic-policy.yml
-  - private-class.yml
-  - public-class.yml
+  - config.yml
+  - traffic-policies.yml
+  - gateways.yml
   - redirect-route.yml
   - certificate.yml

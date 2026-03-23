@@ -9,14 +9,14 @@ spec:
   parametersRef:
     group: gateway.envoyproxy.io
     kind: EnvoyProxy
-    name: envoy-proxy-config
+    name: config
     namespace: networking
 ---
 # yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.envoyproxy.io/envoyproxy_v1alpha1.json
 apiVersion: gateway.envoyproxy.io/v1alpha1
 kind: EnvoyProxy
 metadata:
-  name: envoy-proxy-config
+  name: config
 spec:
   logging:
     level:

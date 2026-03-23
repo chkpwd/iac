@@ -1,0 +1,52 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.envoyproxy.io/clienttrafficpolicy_v1alpha1.json
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: ClientTrafficPolicy
+metadata:
+  name: envoy
+spec:
+  targetSelectors:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+  clientIPDetection:
+    xForwardedFor:
+      trustedCIDRs: ["10.244.0.0/16"]
+  http2:
+    onInvalidMessage: TerminateStream
+  http3: {}
+  tls:
+    alpnProtocols:
+      - http/1.1
+      - h2
+    minVersion: "1.2"
+    maxVersion: "1.3"
+  connection:
+    bufferLimit: 8Mi
+  tcpKeepalive: {}
+  timeout:
+    http:
+      idleTimeout: 60s
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.envoyproxy.io/backendtrafficpolicy_v1alpha1.json
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: BackendTrafficPolicy
+metadata:
+  name: envoy
+spec:
+  targetSelectors:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+  compressor:
+    - type: Brotli
+    - type: Gzip
+    - type: Zstd
+  retry:
+    numRetries: 2
+    retryOn:
+      triggers:
+        - reset
+  connection:
+    bufferLimit: 8Mi
+  timeout:
+    http:
+      requestTimeout: 0s

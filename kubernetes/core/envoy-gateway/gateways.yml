@@ -36,3 +36,41 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/gateway.networking.k8s.io/gateway_v1.json
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: public
+  annotations:
+    external-dns.alpha.kubernetes.io/target: &hostname chkpwd.com
+spec:
+  gatewayClassName: envoy-gateway
+  addresses:
+    - type: IPAddress
+      value: 10.0.45.31
+  infrastructure:
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: *hostname
+      lbipam.cilium.io/ips: 10.0.45.31
+  listeners:
+    - protocol: HTTP
+      port: 80
+      name: http
+      hostname: "*.chkpwd.com"
+      allowedRoutes:
+        namespaces:
+          from: Same
+    - protocol: HTTPS
+      port: 443
+      hostname: "*.chkpwd.com"
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - group: ""
+            kind: Secret
+            name: chkpwd-com-tls
+      name: https
+      allowedRoutes:
+        namespaces:
+          from: All
