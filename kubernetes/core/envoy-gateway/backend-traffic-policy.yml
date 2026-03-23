@@ -9,7 +9,7 @@ spec:
     - group: gateway.networking.k8s.io
       kind: Gateway
       name: private
-  compression:
+  compressor:
     - type: Brotli
     - type: Gzip
     - type: Zstd
@@ -30,7 +30,7 @@ spec:
     - group: gateway.networking.k8s.io
       kind: Gateway
       name: public
-  compression:
+  compressor:
     - type: Brotli
     - type: Gzip
     - type: Zstd
