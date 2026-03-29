@@ -6,6 +6,10 @@ terraform {
       source  = "terraform-routeros/routeros"
       version = "~> 1"
     }
+    tfe = {
+      source  = "hashicorp/tfe"
+      version = "~> 0.74.0"
+    }
     external = {
       source  = "hashicorp/external"
       version = "~> 2"

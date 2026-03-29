@@ -16,14 +16,14 @@
       ansible.builtin.copy:
         content: |
           [Interface]
-          PrivateKey = {{ lookup('ripplefcl.bwscache.secret', 'cloud-aws-secrets').value.wireguard_priv_key }}
+          PrivateKey = {{ lookup('cloud.terraform.tf_output', 'gatus_wg_peer_privkey', project_path='../terraform/mikrotik') }}
           Address = 10.6.6.4/24
           DNS = 10.6.6.1, chkpwd.com
 
           [Peer]
-          PublicKey = 4I36daUwGtIHki9xIGr36ZGFoXS6FMGuZsFwbmgIZQM=
+          PublicKey = {{ lookup('cloud.terraform.tf_output', 'wireguard_interface_pubkey', project_path='../terraform/mikrotik') }}
           AllowedIPs = 0.0.0.0/0
-          Endpoint = {{ lookup('ripplefcl.bwscache.secret', 'infra-network-secrets').value.public_ip }}:{{ lookup('ripplefcl.bwscache.secret', 'cloud-aws-secrets').value.wireguard_port }}
+          Endpoint = {{ lookup('cloud.terraform.tf_output', 'public_address', project_path='../terraform/mikrotik') }}:53834
         dest: "{{ configuration_path }}/wireguard/wg_confs/wg0.conf"
         owner: root
         group: root
