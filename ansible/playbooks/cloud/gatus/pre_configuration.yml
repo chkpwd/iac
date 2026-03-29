@@ -22,6 +22,7 @@
 
           [Peer]
           PublicKey = {{ lookup('cloud.terraform.tf_output', 'wireguard_interface_pubkey', project_path='../terraform/mikrotik') }}
+          PresharedKey = {{ lookup('cloud.terraform.tf_output', 'gatus_wg_peer_preshared', project_path='../terraform/mikrotik' )}}
           AllowedIPs = 0.0.0.0/0
           Endpoint = {{ lookup('cloud.terraform.tf_output', 'public_address', project_path='../terraform/mikrotik') }}:53834
         dest: "{{ configuration_path }}/wireguard/wg_confs/wg0.conf"
