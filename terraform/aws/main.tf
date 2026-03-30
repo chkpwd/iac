@@ -15,3 +15,14 @@ module "ct-01-ec2" {
   subnet_id           = aws_subnet.main.id
   vpc_security_groups = [aws_security_group.main.id, aws_security_group.secondary.id]
 }
+
+resource "ansible_host" "ct-01-ec2" {
+  name   = module.ct-01-ec2.name
+  groups = ["aws", "linux", "docker_hosts", "gatus"]
+  variables = {
+    ansible_host                 = module.ct-01-ec2.public_ip,
+    ansible_user                 = "admin",
+    ansible_ssh_private_key_file = "~/.ssh/aws",
+    ansible_python_interpreter   = "/usr/bin/python3"
+  }
+}

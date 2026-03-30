@@ -5,6 +5,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "~> 6.0"
     }
+    ansible = {
+      source  = "ansible/ansible"
+      version = "~> 1.4"
+    }
     external = {
       source  = "hashicorp/external"
       version = "~> 2"
@@ -19,7 +23,6 @@ data "external" "bws_lookup" {
   }
 }
 
-# Configure the AWS Provider
 provider "aws" {
   region     = "us-east-1"
   access_key = data.external.bws_lookup.result["cloud-aws-secrets_aws_access_key_id"]
