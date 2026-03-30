@@ -4,17 +4,14 @@ all:
     localhost:
       ansible_connection: local
   children:
-    hypervisors:
-      children:
-        proxmox:
-          hosts:
-            pve-srv-01:
-              ansible_user: root
+    proxmox:
+      hosts:
+        pve-srv-01:
+          ansible_user: root
     linux:
       hosts:
         mgmt-srv-01:
         ai-inference-01:
-        ct-01-ec2:
         pve-srv-01:
         gs-srv-01:
     windows:
@@ -24,7 +21,6 @@ all:
         ansible_become_method: runas
     docker_hosts:
       hosts:
-        ct-01-ec2:
         mgmt-srv-01:
         gs-srv-01:
     dns_servers:
@@ -42,23 +38,6 @@ all:
       vars:
         ansible_user: pi
         ansible_become_user: pi
-    aws:
-      hosts:
-        ct-01-ec2:
-          ansible_host: 100.53.243.190
-    gatus:
-      hosts:
-        ct-01-ec2:
     cloud:
       children:
         aws:
-    onprem:
-      children:
-        hypervisors:
-        linux:
-        windows:
-        printers:
-    datacenter:
-      children:
-        cloud:
-        onprem:
