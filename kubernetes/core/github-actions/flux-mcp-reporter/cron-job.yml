@@ -25,7 +25,8 @@ spec:
                 - /bin/sh
                 - -c
                 - |
-                  pip install --quiet httpx-sse httpx 2>/dev/null
+                  pip install --quiet --target /tmp/pylibs httpx 2>/dev/null
+                  export PYTHONPATH=/tmp/pylibs
 
                   cat > /tmp/reporter.py << 'SCRIPT'
                   import asyncio
@@ -36,54 +37,50 @@ spec:
 
                   import httpx
 
+                  MCP_URL = "http://flux-operator-mcp.flux-system.svc.cluster.local:9090/sse"
 
-                  SSE_URL = "https://flux-operator-mcp.chkpwd.com/sse"
-
-                  TOOLS = [
-                      "get_flux_instance",
-                      "list_flux_helmreleases",
-                      "list_flux_kustomizations",
-                      "list_flux_resourcesets",
-                  ]
-
-                  REPORT_KEYS = {
-                      "get_flux_instance": "fluxInstance",
-                      "list_flux_helmreleases": "helmReleases",
-                      "list_flux_kustomizations": "kustomizations",
-                      "list_flux_resourcesets": "resourcesets",
-                  }
+                  MSG_ID = 0
 
 
-                  async def read_sse_event(response):
-                      """Read a single SSE event from the stream and return parsed JSON."""
-                      event_data = {}
+                  def next_id():
+                      global MSG_ID
+                      MSG_ID += 1
+                      return MSG_ID
+
+
+                  async def read_sse_events(response, stop_after=None):
+                      """Yield parsed SSE events from a streaming response."""
+                      event_type = None
+                      data_buf = ""
+                      count = 0
                       async for line in response.aiter_lines():
-                          line = line.strip()
                           if line.startswith("event:"):
-                              event_data["event"] = line[len("event:"):].strip()
+                              event_type = line[len("event:"):].strip()
                           elif line.startswith("data:"):
-                              raw = line[len("data:"):].strip()
+                              data_buf += line[len("data:"):].strip()
+                          elif line.strip() == "" and data_buf:
                               try:
-                                  event_data["data"] = json.loads(raw)
+                                  parsed = json.loads(data_buf)
                               except json.JSONDecodeError:
-                                  event_data["data"] = raw
-                          elif line == "" and event_data:
-                              return event_data
-                      return event_data
+                                  parsed = data_buf
+                              yield {"event": event_type, "data": parsed}
+                              event_type = None
+                              data_buf = ""
+                              count += 1
+                              if stop_after and count >= stop_after:
+                                  return
 
 
-                  async def call_tool(client, session_url, tool_name, msg_id):
-                      """Send a JSON-RPC tools/call request and return the result."""
+                  async def mcp_post(client, url, method, params=None):
+                      """Send a JSON-RPC request and return the parsed response."""
                       payload = {
                           "jsonrpc": "2.0",
-                          "id": msg_id,
-                          "method": "tools/call",
-                          "params": {
-                              "name": tool_name,
-                              "arguments": {},
-                          },
+                          "id": next_id(),
+                          "method": method,
                       }
-                      resp = await client.post(session_url, json=payload)
+                      if params is not None:
+                          payload["params"] = params
+                      resp = await client.post(url, json=payload)
                       resp.raise_for_status()
                       return resp.json()
 
@@ -92,37 +89,95 @@ spec:
                       report = {
                           "timestamp": datetime.now(timezone.utc).isoformat(),
                           "fluxInstance": None,
-                          "helmReleases": [],
-                          "kustomizations": [],
-                          "resourcesets": [],
+                          "helmReleases": None,
+                          "kustomizations": None,
                           "errors": [],
                       }
 
-                      async with httpx.AsyncClient(timeout=30) as client:
-                          # Open SSE connection and grab the session endpoint
-                          async with client.stream("GET", SSE_URL) as sse_resp:
-                              sse_resp.raise_for_status()
+                      async with httpx.AsyncClient(timeout=60) as client:
+                          # 1. Open SSE stream to get session URL
+                          async with client.stream("GET", MCP_URL) as sse:
+                              sse.raise_for_status()
 
                               session_url = None
-                              async for line in sse_resp.aiter_lines():
-                                  line = line.strip()
-                                  if line.startswith("data:"):
-                                      session_url = line[len("data:"):].strip()
+                              async for event in read_sse_events(sse, stop_after=1):
+                                  if event.get("event") == "endpoint":
+                                      endpoint = event["data"]
+                                      # The endpoint may be relative; resolve against base
+                                      if isinstance(endpoint, str) and endpoint.startswith("/"):
+                                          base = MCP_URL.rsplit("/", 1)[0]
+                                          session_url = f"{base}{endpoint}"
+                                      elif isinstance(endpoint, str):
+                                          session_url = endpoint
                                       break
 
                               if not session_url:
                                   print("ERROR: Could not obtain MCP session URL", file=sys.stderr)
                                   sys.exit(1)
 
-                              # Call each tool sequentially
-                              for idx, tool in enumerate(TOOLS, start=1):
-                                  try:
-                                      result = await call_tool(client, session_url, tool, idx)
-                                      key = REPORT_KEYS[tool]
-                                      report[key] = result.get("result")
-                                  except Exception as exc:
-                                      report["errors"].append(f"{tool}: {exc}")
+                              # 2. Initialize the MCP session
+                              init_resp = await mcp_post(client, session_url, "initialize", {
+                                  "protocolVersion": "2024-11-05",
+                                  "capabilities": {},
+                                  "clientInfo": {"name": "flux-reporter", "version": "1.0.0"},
+                              })
 
+                              if "error" in init_resp:
+                                  print(f"ERROR: MCP init failed: {init_resp['error']}", file=sys.stderr)
+                                  sys.exit(1)
+
+                              # Send initialized notification
+                              await client.post(session_url, json={
+                                  "jsonrpc": "2.0",
+                                  "method": "notifications/initialized",
+                              })
+
+                              # 3. Call get_flux_instance for the overview/report
+                              try:
+                                  result = await mcp_post(client, session_url, "tools/call", {
+                                      "name": "get_flux_instance",
+                                      "arguments": {},
+                                  })
+                                  if "result" in result:
+                                      report["fluxInstance"] = result["result"]
+                                  elif "error" in result:
+                                      report["errors"].append(f"get_flux_instance: {result['error']}")
+                              except Exception as exc:
+                                  report["errors"].append(f"get_flux_instance: {exc}")
+
+                              # 4. Get HelmReleases via get_kubernetes_resources
+                              try:
+                                  result = await mcp_post(client, session_url, "tools/call", {
+                                      "name": "get_kubernetes_resources",
+                                      "arguments": {
+                                          "apiVersion": "helm.toolkit.fluxcd.io/v2",
+                                          "kind": "HelmRelease",
+                                      },
+                                  })
+                                  if "result" in result:
+                                      report["helmReleases"] = result["result"]
+                                  elif "error" in result:
+                                      report["errors"].append(f"helmreleases: {result['error']}")
+                              except Exception as exc:
+                                  report["errors"].append(f"helmreleases: {exc}")
+
+                              # 5. Get Kustomizations via get_kubernetes_resources
+                              try:
+                                  result = await mcp_post(client, session_url, "tools/call", {
+                                      "name": "get_kubernetes_resources",
+                                      "arguments": {
+                                          "apiVersion": "kustomize.toolkit.fluxcd.io/v1",
+                                          "kind": "Kustomization",
+                                      },
+                                  })
+                                  if "result" in result:
+                                      report["kustomizations"] = result["result"]
+                                  elif "error" in result:
+                                      report["errors"].append(f"kustomizations: {result['error']}")
+                              except Exception as exc:
+                                  report["errors"].append(f"kustomizations: {exc}")
+
+                      # 6. Send report
                       webhook_url = os.environ.get("WEBHOOK_URL", "")
                       if webhook_url:
                           async with httpx.AsyncClient(timeout=15) as client:
@@ -137,7 +192,7 @@ spec:
                                       file=sys.stderr,
                                   )
                                   sys.exit(1)
-                              print("Webhook sent successfully")
+                              print("Report sent to webhook successfully")
                       else:
                           print(json.dumps(report, indent=2))
 
@@ -170,3 +225,7 @@ spec:
                 capabilities:
                   drop:
                     - ALL
+          volumes:
+            - name: tmp
+              emptyDir:
+                sizeLimit: 256Mi

@@ -9,6 +9,7 @@ spec:
       namespace: flux-system
       accessFrom:
         - networking
+        - runners
       gateway: private
   resources:
     - apiVersion: source.toolkit.fluxcd.io/v1
