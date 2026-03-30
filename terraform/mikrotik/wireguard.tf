@@ -27,6 +27,7 @@ resource "routeros_interface_wireguard_peer" "gatus" {
   interface       = routeros_interface_wireguard.this.name
   public_key      = routeros_wireguard_keys.wgk.keys[2].public
   private_key     = routeros_wireguard_keys.wgk.keys[2].private
+  preshared_key   = routeros_wireguard_keys.wgk.keys[2].preshared
   allowed_address = ["${cidrhost("${routeros_ip_address.wireguard.network}/24", 4)}/32"]
   comment         = "gatus"
 }

@@ -23,3 +23,9 @@ output "gatus_wg_peer_privkey" {
   value       = routeros_wireguard_keys.wgk.keys[2].private
   sensitive   = true
 }
+
+output "gatus_wg_peer_preshared" {
+  description = "The preshared key of the Gatus Wireguard Peer"
+  value       = routeros_wireguard_keys.wgk.keys[2].preshared
+  sensitive   = true
+}
