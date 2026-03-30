@@ -155,4 +155,3 @@ flowchart TD
     GR --> KS_SRC & KS_CORE & KS_APPS
     KS_SRC --> BJWS
     BJWS -.->|required by| KS_CORE & KS_APPS
-```
