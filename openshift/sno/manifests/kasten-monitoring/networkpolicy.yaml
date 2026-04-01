@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  labels:
+    app: k10
+  name: allow-openshift-monitoring
+  namespace: kasten-io
+spec:
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: openshift-user-workload-monitoring
+    - ports:
+        - port: http
+          protocol: TCP
+  podSelector:
+    matchLabels:
+      release: k10
+  policyTypes:
+    - Ingress

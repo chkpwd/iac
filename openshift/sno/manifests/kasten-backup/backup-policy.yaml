@@ -1,0 +1,23 @@
+apiVersion: config.kio.kasten.io/v1alpha1
+kind: Policy
+metadata:
+  name: cassandra-backup
+  namespace: kasten-io
+spec:
+  frequency: "@onDemand"
+  selector:
+    matchExpressions:
+      - key: k10.kasten.io/appNamespace
+        operator: In
+        values:
+          - cassandra
+  actions:
+    - action: backup
+    - action: export
+      exportParameters:
+        frequency: "@onDemand"
+        profile:
+          name: s3-bucket1
+          namespace: kasten-io
+        exportData:
+          enabled: true

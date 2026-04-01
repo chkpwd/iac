@@ -1,0 +1,54 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: kasten-alerts
+  namespace: kasten-io
+  labels:
+    release: k10
+    openshift.io/prometheus-rule-evaluation-scope: leaf-prometheus
+spec:
+  groups:
+    - name: kasten-backup
+      rules:
+        - alert: KastenBackupFailed
+          expr: increase(catalog_actions_count{status="failed", type="backup"}[10m]) > 0
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Kasten backup failed"
+            description: >-
+              Backup action failed for policy {{ $labels.policy }} targeting
+              namespace {{ $labels.exported_namespace }}.
+        - alert: KastenExportFailed
+          expr: increase(catalog_actions_count{status="failed", type="export"}[10m]) > 0
+          for: 0m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Kasten export failed"
+            description: >-
+              Export action failed for policy {{ $labels.policy }}.
+              Backup data was not exported to the location profile.
+    - name: kasten-catalog
+      rules:
+        - alert: KastenCatalogDiskHigh
+          expr: 100 - catalog_persistent_volume_free_space_percent > 80
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Kasten catalog disk usage above 80%"
+            description: >-
+              Catalog PVC usage is at {{ $value | printf "%.1f" }}%.
+              Consider expanding the PVC or running garbage collection.
+        - alert: KastenCatalogDiskCritical
+          expr: 100 - catalog_persistent_volume_free_space_percent > 95
+          for: 5m
+          labels:
+            severity: critical
+          annotations:
+            summary: "Kasten catalog disk usage above 95%"
+            description: >-
+              Catalog PVC usage is at {{ $value | printf "%.1f" }}%.
+              Immediate action required — catalog writes may fail.

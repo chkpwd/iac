@@ -1,0 +1,30 @@
+apiVersion: v1alpha1
+kind: AgentConfig
+metadata:
+  name: sno
+rendezvousIP: 10.0.10.55
+additionalNTPSources:
+  - 10.0.10.1
+hosts:
+  - hostname: sno
+    role: master
+    interfaces:
+      - name: ens18
+        macAddress: bc:24:11:df:af:4d
+    networkConfig:
+      interfaces:
+        - name: ens18
+          type: ethernet
+          state: up
+          mac-address: bc:24:11:df:af:4d
+          ipv4:
+            enabled: true
+            dhcp: true
+            auto-dns: false
+          ipv6:
+            enabled: false
+      dns-resolver:
+        config:
+          server:
+            - 10.0.10.4
+          search: []

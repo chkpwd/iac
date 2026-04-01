@@ -1,0 +1,18 @@
+# Patch file — not directly applicable with `oc apply`.
+# Use: oc annotate volumesnapshotclass lvms-vg1 k10.kasten.io/is-snapshot-class=true
+#
+# This annotation tells Kasten K10 which VolumeSnapshotClass to use when
+# snapshotting PVCs during backup. Without it, backups fail with:
+#   "Failed to find VolumeSnapshotClass with annotation k10.kasten.io/is-snapshot-class=true"
+#
+# The VolumeSnapshotClass is created and owned by the LVM Storage Operator
+# (via the LVMCluster CR), so it cannot be managed declaratively without
+# conflicting with the operator's reconciliation loop.
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshotClass
+metadata:
+  name: lvms-vg1
+  annotations:
+    k10.kasten.io/is-snapshot-class: "true"
+driver: topolvm.io
+deletionPolicy: Delete

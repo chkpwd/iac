@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: cassandra
+  namespace: cassandra
+  labels:
+    app: cassandra
+spec:
+  serviceName: cassandra
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cassandra
+  template:
+    metadata:
+      labels:
+        app: cassandra
+    spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+      terminationGracePeriodSeconds: 120
+      containers:
+        - name: cassandra
+          image: docker.io/cassandra:4.1
+          ports:
+            - containerPort: 7000
+              name: intra-node
+            - containerPort: 9042
+              name: cql
+          resources:
+            limits:
+              cpu: "500m"
+              memory: 1Gi
+            requests:
+              cpu: "500m"
+              memory: 1Gi
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - nodetool drain
+          env:
+            - name: MAX_HEAP_SIZE
+              value: 512M
+            - name: HEAP_NEWSIZE
+              value: 100M
+            - name: CASSANDRA_SEEDS
+              value: "cassandra-0.cassandra.cassandra.svc.cluster.local"
+            - name: CASSANDRA_CLUSTER_NAME
+              value: "K8Demo"
+            - name: CASSANDRA_DC
+              value: "DC1-K8Demo"
+            - name: CASSANDRA_RACK
+              value: "Rack1-K8Demo"
+            - name: CASSANDRA_ENDPOINT_SNITCH
+              value: "SimpleSnitch"
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - cqlsh -e 'SELECT now() FROM system.local'
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+            periodSeconds: 10
+          volumeMounts:
+            - name: cassandra-data
+              mountPath: /var/lib/cassandra
+  volumeClaimTemplates:
+    - metadata:
+        name: cassandra-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: lvms-vg1
+        resources:
+          requests:
+            storage: 1Gi

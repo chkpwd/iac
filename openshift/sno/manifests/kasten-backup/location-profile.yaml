@@ -1,0 +1,22 @@
+apiVersion: config.kio.kasten.io/v1alpha1
+kind: Profile
+metadata:
+  name: s3-bucket1
+  namespace: kasten-io
+spec:
+  type: Location
+  locationSpec:
+    type: ObjectStore
+    credential:
+      secretType: AwsAccessKey
+      secret:
+        apiVersion: v1
+        kind: Secret
+        name: k10-s3-bucket1-creds
+        namespace: kasten-io
+    objectStore:
+      objectStoreType: S3
+      endpoint: http://garage.garage.svc.cluster.local:3900
+      name: bucket1
+      region: garage
+      skipSSLVerify: true

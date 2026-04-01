@@ -1,0 +1,19 @@
+# Grant nonroot-v2 SCC to the garage service account.
+# Required because the chart sets runAsUser: 1000 which is outside OpenShift's
+# namespace UID range. nonroot-v2 allows arbitrary non-root UIDs.
+#
+# Apply with:
+#   oc adm policy add-scc-to-user nonroot-v2 -z garage -n garage
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: garage-scc-nonroot-v2
+  namespace: garage
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: system:openshift:scc:nonroot-v2
+subjects:
+  - kind: ServiceAccount
+    name: garage
+    namespace: garage

@@ -1,0 +1,44 @@
+garage:
+  replicationFactor: 1
+  admin:
+    token:
+      create: true
+      secret:
+        create: true
+  s3:
+    api:
+      region: "garage"
+      rootDomain: ".s3.garage.sno.chkpwd.com"
+    web:
+      rootDomain: ".web.garage.sno.chkpwd.com"
+      index: "index.html"
+
+deployment:
+  replicaCount: 1
+
+persistence:
+  meta:
+    storageClass: "lvms-vg1"
+    size: 100Mi
+  data:
+    storageClass: "lvms-vg1"
+    size: 1Gi
+
+ingress:
+  s3:
+    api:
+      enabled: true
+      className: "openshift-default"
+      hosts:
+        - host: s3-api.apps.sno.chkpwd.com
+          paths:
+            - path: /
+              pathType: Prefix
+
+monitoring:
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      labels:
+        k8s-app: garage
