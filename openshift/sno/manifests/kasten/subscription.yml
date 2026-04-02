@@ -1,0 +1,11 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: k10-kasten-operator-rhmp
+  namespace: kasten-io
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: k10-kasten-operator-rhmp
+  source: redhat-marketplace
+  sourceNamespace: openshift-marketplace
