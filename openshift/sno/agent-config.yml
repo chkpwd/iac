@@ -2,7 +2,7 @@ apiVersion: v1alpha1
 kind: AgentConfig
 metadata:
   name: sno
-rendezvousIP: 10.0.10.55
+rendezvousIP: 10.0.30.50
 additionalNTPSources:
   - 10.0.10.1
 hosts:
@@ -19,10 +19,17 @@ hosts:
           mac-address: bc:24:11:df:af:4d
           ipv4:
             enabled: true
-            dhcp: true
-            auto-dns: false
+            dhcp: false
+            address:
+              - ip: 10.0.30.50
+                prefix-length: 24
           ipv6:
             enabled: false
+      routes:
+        config:
+          - destination: 0.0.0.0/0
+            next-hop-address: 10.0.30.1
+            next-hop-interface: ens18
       dns-resolver:
         config:
           server:
