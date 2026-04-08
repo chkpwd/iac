@@ -201,4 +201,3 @@ Let VolSync handle retention and compression; use `repositoryConfig` only for wh
     "compressorName": "zstd-fastest"
   }
 }
-```
