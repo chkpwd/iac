@@ -1,6 +1,6 @@
 # Rook-Ceph Reference
 
-Helm charts **rook-ceph v1.19.2** (operator) + **rook-ceph-cluster v1.19.2** (cluster).
+Helm charts **rook-ceph v1.19.3** (operator) + **rook-ceph-cluster v1.19.3** (cluster).
 
 ---
 
@@ -138,4 +138,3 @@ kubectl -n rook-ceph exec deploy/rook-ceph-tools -- ceph osd tree
 
 # Check operator logs
 kubectl -n rook-ceph logs deploy/rook-ceph-operator
-```
