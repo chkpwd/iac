@@ -20,7 +20,7 @@ service_definitions:
     env:
       DEVICES: "airscan:e0:Epson ET-2850;escl:https://10.0.30.8:443"
       PAPERLESS_URL: "https://paperless-ngx.{{ domain }}"
-      PAPERLESS_API_TOKEN: "{{ lookup('ripplefcl.bwscache.secret', 'ns-tools-paperless-ngx').value.token }}"
+      PAPERLESS_API_TOKEN: "{{ lookup('ripplefcl.bwscache.secret', 'paperless-ngx').value.token }}"
       PAPERLESS_DELETE_AFTER_UPLOAD: "true"
     volumes:
       - "{{ compose_configuration_path }}/scanservjs/output:/var/lib/scanservjs/output"
