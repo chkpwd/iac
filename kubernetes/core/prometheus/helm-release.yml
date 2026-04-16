@@ -173,6 +173,16 @@ spec:
                 expr: (kube_pod_container_status_restarts_total - kube_pod_container_status_restarts_total offset 10m >= 1) and ignoring (reason) min_over_time(kube_pod_container_status_last_terminated_reason{reason="OOMKilled"}[10m]) == 1
                 labels:
                   severity: critical
+      rook-ceph-silenced:
+        groups:
+          - name: rook-ceph-silenced
+            rules:
+              - alert: CPUThrottlingHigh
+                annotations:
+                  summary: Silenced for rook-ceph namespace
+                expr: rate(container_cpu_cfs_throttled_seconds_total{namespace="rook-ceph"}[5m]) == 0
+                labels:
+                  severity: none
     thanosRuler:
       enabled: false
     defaultRules:
