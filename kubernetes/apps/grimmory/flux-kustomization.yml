@@ -3,11 +3,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app booklore
+  name: &app grimmory
   namespace: &ns media
 spec:
   targetNamespace: *ns
-  path: ./kubernetes/apps/booklore/
+  path: ./kubernetes/apps/grimmory/
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -17,9 +17,9 @@ spec:
   postBuild:
     substitute:
       APP: *app
-      CLAIM: config-booklore-0
-      VOLSYNC_UID: "1999"
-      VOLSYNC_GID: "1999"
+      CLAIM: config-grimmory-0
+      # VOLSYNC_UID: "1999"
+      # VOLSYNC_GID: "1999"
       VOLSYNC_CAPACITY: "2Gi"
   patches:
     - patch: |
@@ -31,7 +31,7 @@ spec:
             monthly: 6
       target:
         kind: ReplicationSource
-        name: booklore
+        name: grimmory
   prune: true
   sourceRef:
     kind: GitRepository

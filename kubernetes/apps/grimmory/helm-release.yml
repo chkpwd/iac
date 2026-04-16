@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: booklore
+  name: grimmory
 spec:
   interval: 1h
   chart:
@@ -16,7 +16,7 @@ spec:
         namespace: flux-system
   values:
     controllers:
-      booklore:
+      grimmory:
         enabled: true
         type: statefulset
         annotations:
@@ -51,20 +51,20 @@ spec:
           mariadb:
             image:
               repository: docker.io/library/mariadb
-              tag: "12.2"
+              tag: 12.2.2-noble
             env:
-              MARIADB_DATABASE: booklore
-              MARIADB_USER: booklore
+              MARIADB_USER: grimmory
+              MARIADB_DATABASE: grimmory
               MARIADB_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: booklore
-                    key: DATABASE_PASSWORD
+                    name: grimmory
+                    key: database_password
               MARIADB_ROOT_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: booklore
-                    key: DATABASE_ROOT_PASSWORD
+                    name: grimmory
+                    key: database_root_password
             probes:
               liveness:
                 enabled: true
@@ -92,18 +92,18 @@ spec:
               tag: 3.6.0
             args:
               - "mysql"
-              - "booklore:$(DB_PASSWORD)@tcp(localhost:3306)/booklore"
+              - "grimmory:$(DB_PASSWORD)@tcp(localhost:3306)/grimmory"
             env:
               DB_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: booklore
-                    key: DATABASE_PASSWORD
+                    name: grimmory
+                    key: database_password
         containers:
           app:
             image:
-              repository: booklore/booklore
-              tag: v2.2.1
+              repository: ghcr.io/grimmory-tools/grimmory
+              tag: v2.3.0
             command:
               - java
             args:
@@ -111,16 +111,13 @@ spec:
               - /app/app.jar
             env:
               TZ: "America/New_York"
-              DATABASE_URL: "jdbc:mariadb://localhost:3306/booklore"
-              DATABASE_USERNAME: "booklore"
+              DATABASE_URL: jdbc:mariadb://localhost:3306/grimmory
+              DATABASE_USERNAME: grimmory
               DATABASE_PASSWORD:
                 valueFrom:
                   secretKeyRef:
-                    name: booklore
-                    key: DATABASE_PASSWORD
-              BOOKLORE_PORT: &port 6060
-              DISK_TYPE: NETWORK
-              SWAGGER_ENABLED: "true"
+                    name: grimmory
+                    key: database_password
               FORCE_DISABLE_OIDC: "true"
             probes:
               liveness:
@@ -160,12 +157,12 @@ spec:
               limits:
                 memory: 700Mi
     service:
-      booklore:
+      grimmory:
         primary: true
-        controller: booklore
+        controller: grimmory
         ports:
           http:
-            port: *port
+            port: 6060
     route:
       private:
         kind: HTTPRoute
@@ -176,8 +173,8 @@ spec:
                   type: PathPrefix
                   value: /
             backendRefs:
-              - name: booklore
-                port: *port
+              - name: grimmory
+                port: 6060
         parentRefs:
           - name: private
             namespace: networking
@@ -188,7 +185,7 @@ spec:
         server: "nas-srv-01.chkpwd.com"
         path: /volume1/vault-01/media/books
         advancedMounts:
-          booklore:
+          grimmory:
             app:
               - path: /books
       ingest:
@@ -196,7 +193,7 @@ spec:
         server: "nas-srv-01.chkpwd.com"
         path: /volume1/vault-01/media/books/ingest
         advancedMounts:
-          booklore:
+          grimmory:
             app:
               - path: /bookdrop
       mysqld:
@@ -204,13 +201,13 @@ spec:
         medium: Memory
         sizeLimit: 1Mi
         advancedMounts:
-          booklore:
+          grimmory:
             mariadb:
               - path: /run/mysqld
       tmpfs:
         type: emptyDir
         advancedMounts:
-          booklore:
+          grimmory:
             app:
               - path: /tmp
                 subPath: app
