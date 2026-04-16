@@ -28,7 +28,7 @@ releases:
   - name: coredns
     namespace: kube-system
     chart: oci://ghcr.io/coredns/charts/coredns
-    version: 1.43.3
+    version: 1.45.2
     values: ["../core/coredns/values.yml"]
     needs: ["kube-system/cilium"]
   - name: cert-manager
