@@ -1,5 +1,3 @@
----
-#.yml-language-server: $schema=https://kubernetes-schemas.pages.dev/helm.toolkit.fluxcd.io/helmrelease_v2.json
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -84,7 +82,7 @@ spec:
       operator:
         dashboardsConfigMapRefEnabled: true
         matchLabels:
-          dashboards: "external-grafana"
+          dashboards: external-grafana
         resyncPeriod: 10m
         folder: Kubernetes
       sidecar:
@@ -92,7 +90,7 @@ spec:
           annotations:
             grafana_folder: Kubernetes
           label: dashboards
-          labelValue: "external-grafana"
+          labelValue: external-grafana
           searchNamespace: ALL
           enableNewTablePanelSyntax: true
     prometheusOperator:
@@ -103,7 +101,6 @@ spec:
         limits:
           memory: 326M
       prometheusConfigReloader:
-        # resource config for prometheusConfigReloader
         resources:
           requests:
             cpu: 5m
@@ -178,3 +175,7 @@ spec:
                   severity: critical
     thanosRuler:
       enabled: false
+    defaultRules:
+      create: true
+      disabled:
+        Watchdog: true
