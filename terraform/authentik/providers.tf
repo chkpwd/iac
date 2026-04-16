@@ -19,12 +19,12 @@ terraform {
 data "external" "bws_lookup" {
   program = ["python3", "../bws_lookup.py"]
   query = { # TODO: need to revisit this and find a cleaner approach
-    key = "ns-security-authentik,infra-media-secrets,ns-tools-miniflux,ns-tools-karakeep,booklore,mediamanager"
-    # authentik = "ns-security-authentik_bootstrap_token"
+    key = "authentik,plex,miniflux,karakeep,grimmory,mediamanager"
+    # authentik = "authentik_bootstrap_token"
   }
 }
 
 provider "authentik" {
   url   = "https://authentik.chkpwd.com"
-  token = data.external.bws_lookup.result["ns-security-authentik_bootstrap_token"]
+  token = data.external.bws_lookup.result["authentik_bootstrap_token"]
 }

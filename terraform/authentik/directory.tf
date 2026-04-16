@@ -2,14 +2,14 @@ resource "authentik_user" "main" {
   email    = "authentik@chkpwd.com"
   username = "chkpwd"
   name     = "Bryan Jones"
-  password = data.external.bws_lookup.result["ns-security-authentik_main_user_password"]
+  password = data.external.bws_lookup.result["authentik_main_user_password"]
 
 }
 
 resource "authentik_user" "secondary" {
   username = "erykuh"
   name     = "Approving Wife"
-  password = data.external.bws_lookup.result["ns-security-authentik_secondary_user_password"]
+  password = data.external.bws_lookup.result["authentik_secondary_user_password"]
 }
 
 resource "authentik_group" "main" {

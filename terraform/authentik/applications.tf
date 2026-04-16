@@ -4,7 +4,7 @@ module "authentik-app-miniflux" {
   group  = "main"
   oauth2_values = {
     client_id         = "miniflux"
-    client_secret     = data.external.bws_lookup.result["ns-tools-miniflux_client_secret"]
+    client_secret     = data.external.bws_lookup.result["miniflux_client_secret"]
     property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
     allowed_redirect_uris = [
       {
@@ -18,9 +18,7 @@ module "authentik-app-miniflux" {
     meta_description = "RSS Feed Reader"
   }
 
-  access_group = {
-    main = authentik_group.main.id
-  }
+  access_group = { main = authentik_group.main.id }
 }
 
 module "authentik-app-mediamanager" {
@@ -43,36 +41,30 @@ module "authentik-app-mediamanager" {
     meta_description = "Media Management for Linux ISOs"
   }
 
-  access_group = {
-    main      = authentik_group.main.id
-    secondary = authentik_group.secondary.id
-  }
+  access_group = { main = authentik_group.main.id }
 }
 
-module "authentik-app-booklore" {
+module "authentik-app-grimmory" {
   source = "../_modules/authentik/oauth2_app"
-  name   = "Booklore"
+  name   = "grimmory"
   group  = "main"
   oauth2_values = {
-    client_id         = "booklore"
+    client_id         = "grimmory"
     client_type       = "public"
     property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
     allowed_redirect_uris = [
       {
         matching_mode = "strict",
-        url           = "https://booklore.chkpwd.com/oauth2-callback",
+        url           = "https://grimmory.chkpwd.com/oauth2-callback",
       }
     ]
   }
   app_values = {
-    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/booklore.webp"
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/grimmory.webp"
     meta_description = "Book management software"
   }
 
-  access_group = {
-    main      = authentik_group.main.id
-    secondary = authentik_group.secondary.id
-  }
+  access_group = { main = authentik_group.main.id }
 }
 
 module "authentik-app-karakeep" {
@@ -81,7 +73,7 @@ module "authentik-app-karakeep" {
   group  = "main"
   oauth2_values = {
     client_id         = "karakeep"
-    client_secret     = data.external.bws_lookup.result["ns-tools-karakeep_oauth_client_secret"]
+    client_secret     = data.external.bws_lookup.result["karakeep_oauth_client_secret"]
     property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
     allowed_redirect_uris = [
       {
@@ -95,8 +87,5 @@ module "authentik-app-karakeep" {
     meta_description = "Bookmark Everything"
   }
 
-  access_group = {
-    main      = authentik_group.main.id,
-    secondary = authentik_group.secondary.id
-  }
+  access_group = { main = authentik_group.main.id }
 }
