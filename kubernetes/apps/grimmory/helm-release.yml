@@ -153,9 +153,10 @@ spec:
               readOnlyRootFilesystem: true
             resources:
               requests:
-                cpu: 100m
+                cpu: 50m
+                memory: 1Gi
               limits:
-                memory: 700Mi
+                memory: 2Gi
     service:
       grimmory:
         primary: true
