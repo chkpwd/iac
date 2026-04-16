@@ -21,6 +21,11 @@ spec:
     monitoring:
       enabled: true
       createPrometheusRules: true
+      prometheusRuleOverrides:
+        CephPGImbalance:
+          disabled: true
+        CPUThrottlingHigh:
+          disabled: true
     toolbox:
       enabled: true
     cephClusterSpec:
