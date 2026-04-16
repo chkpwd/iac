@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/batch/v1.json
+---
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -37,7 +37,7 @@ spec:
 
                   import httpx
 
-                  MCP_URL = "http://flux-operator-mcp.flux-system.svc.cluster.local:9090/sse"
+                  MCP_URL = "http://flux-operator-mcp.flux-system.svc.cluster.local:9090/mcp"
 
                   MSG_ID = 0
 
@@ -46,29 +46,6 @@ spec:
                       global MSG_ID
                       MSG_ID += 1
                       return MSG_ID
-
-
-                  async def read_sse_events(response, stop_after=None):
-                      """Yield parsed SSE events from a streaming response."""
-                      event_type = None
-                      data_buf = ""
-                      count = 0
-                      async for line in response.aiter_lines():
-                          if line.startswith("event:"):
-                              event_type = line[len("event:"):].strip()
-                          elif line.startswith("data:"):
-                              data_buf += line[len("data:"):].strip()
-                          elif line.strip() == "" and data_buf:
-                              try:
-                                  parsed = json.loads(data_buf)
-                              except json.JSONDecodeError:
-                                  parsed = data_buf
-                              yield {"event": event_type, "data": parsed}
-                              event_type = None
-                              data_buf = ""
-                              count += 1
-                              if stop_after and count >= stop_after:
-                                  return
 
 
                   async def mcp_post(client, url, method, params=None):
@@ -95,89 +72,69 @@ spec:
                       }
 
                       async with httpx.AsyncClient(timeout=60) as client:
-                          # 1. Open SSE stream to get session URL
-                          async with client.stream("GET", MCP_URL) as sse:
-                              sse.raise_for_status()
+                          # 1. Initialize the MCP session
+                          init_resp = await mcp_post(client, MCP_URL, "initialize", {
+                              "protocolVersion": "2024-11-05",
+                              "capabilities": {},
+                              "clientInfo": {"name": "flux-reporter", "version": "1.0.0"},
+                          })
 
-                              session_url = None
-                              async for event in read_sse_events(sse, stop_after=1):
-                                  if event.get("event") == "endpoint":
-                                      endpoint = event["data"]
-                                      # The endpoint may be relative; resolve against base
-                                      if isinstance(endpoint, str) and endpoint.startswith("/"):
-                                          base = MCP_URL.rsplit("/", 1)[0]
-                                          session_url = f"{base}{endpoint}"
-                                      elif isinstance(endpoint, str):
-                                          session_url = endpoint
-                                      break
+                          if "error" in init_resp:
+                              print(f"ERROR: MCP init failed: {init_resp['error']}", file=sys.stderr)
+                              sys.exit(1)
 
-                              if not session_url:
-                                  print("ERROR: Could not obtain MCP session URL", file=sys.stderr)
-                                  sys.exit(1)
+                          # Send initialized notification
+                          await client.post(MCP_URL, json={
+                              "jsonrpc": "2.0",
+                              "method": "notifications/initialized",
+                          })
 
-                              # 2. Initialize the MCP session
-                              init_resp = await mcp_post(client, session_url, "initialize", {
-                                  "protocolVersion": "2024-11-05",
-                                  "capabilities": {},
-                                  "clientInfo": {"name": "flux-reporter", "version": "1.0.0"},
+                          # 2. Call get_flux_instance for the overview/report
+                          try:
+                              result = await mcp_post(client, MCP_URL, "tools/call", {
+                                  "name": "get_flux_instance",
+                                  "arguments": {},
                               })
+                              if "result" in result:
+                                  report["fluxInstance"] = result["result"]
+                              elif "error" in result:
+                                  report["errors"].append(f"get_flux_instance: {result['error']}")
+                          except Exception as exc:
+                              report["errors"].append(f"get_flux_instance: {exc}")
 
-                              if "error" in init_resp:
-                                  print(f"ERROR: MCP init failed: {init_resp['error']}", file=sys.stderr)
-                                  sys.exit(1)
-
-                              # Send initialized notification
-                              await client.post(session_url, json={
-                                  "jsonrpc": "2.0",
-                                  "method": "notifications/initialized",
+                          # 3. Get HelmReleases via get_kubernetes_resources
+                          try:
+                              result = await mcp_post(client, MCP_URL, "tools/call", {
+                                  "name": "get_kubernetes_resources",
+                                  "arguments": {
+                                      "apiVersion": "helm.toolkit.fluxcd.io/v2",
+                                      "kind": "HelmRelease",
+                                  },
                               })
+                              if "result" in result:
+                                  report["helmReleases"] = result["result"]
+                              elif "error" in result:
+                                  report["errors"].append(f"helmreleases: {result['error']}")
+                          except Exception as exc:
+                              report["errors"].append(f"helmreleases: {exc}")
 
-                              # 3. Call get_flux_instance for the overview/report
-                              try:
-                                  result = await mcp_post(client, session_url, "tools/call", {
-                                      "name": "get_flux_instance",
-                                      "arguments": {},
-                                  })
-                                  if "result" in result:
-                                      report["fluxInstance"] = result["result"]
-                                  elif "error" in result:
-                                      report["errors"].append(f"get_flux_instance: {result['error']}")
-                              except Exception as exc:
-                                  report["errors"].append(f"get_flux_instance: {exc}")
+                          # 4. Get Kustomizations via get_kubernetes_resources
+                          try:
+                              result = await mcp_post(client, MCP_URL, "tools/call", {
+                                  "name": "get_kubernetes_resources",
+                                  "arguments": {
+                                      "apiVersion": "kustomize.toolkit.fluxcd.io/v1",
+                                      "kind": "Kustomization",
+                                  },
+                              })
+                              if "result" in result:
+                                  report["kustomizations"] = result["result"]
+                              elif "error" in result:
+                                  report["errors"].append(f"kustomizations: {result['error']}")
+                          except Exception as exc:
+                              report["errors"].append(f"kustomizations: {exc}")
 
-                              # 4. Get HelmReleases via get_kubernetes_resources
-                              try:
-                                  result = await mcp_post(client, session_url, "tools/call", {
-                                      "name": "get_kubernetes_resources",
-                                      "arguments": {
-                                          "apiVersion": "helm.toolkit.fluxcd.io/v2",
-                                          "kind": "HelmRelease",
-                                      },
-                                  })
-                                  if "result" in result:
-                                      report["helmReleases"] = result["result"]
-                                  elif "error" in result:
-                                      report["errors"].append(f"helmreleases: {result['error']}")
-                              except Exception as exc:
-                                  report["errors"].append(f"helmreleases: {exc}")
-
-                              # 5. Get Kustomizations via get_kubernetes_resources
-                              try:
-                                  result = await mcp_post(client, session_url, "tools/call", {
-                                      "name": "get_kubernetes_resources",
-                                      "arguments": {
-                                          "apiVersion": "kustomize.toolkit.fluxcd.io/v1",
-                                          "kind": "Kustomization",
-                                      },
-                                  })
-                                  if "result" in result:
-                                      report["kustomizations"] = result["result"]
-                                  elif "error" in result:
-                                      report["errors"].append(f"kustomizations: {result['error']}")
-                              except Exception as exc:
-                                  report["errors"].append(f"kustomizations: {exc}")
-
-                      # 6. Send report
+                      # 5. Send report
                       webhook_url = os.environ.get("WEBHOOK_URL", "")
                       if webhook_url:
                           async with httpx.AsyncClient(timeout=15) as client:
