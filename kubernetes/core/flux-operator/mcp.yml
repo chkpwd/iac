@@ -37,27 +37,8 @@ spec:
           name: << inputs.provider.name >>
         interval: 30m
         values:
+          transport: http
           readonly: << inputs.readonly >>
           networkPolicy:
             ingress:
               namespaces: << inputs.accessFrom | toYaml | nindent 8 >>
-    - apiVersion: gateway.networking.k8s.io/v1
-      kind: HTTPRoute
-      metadata:
-        name: << inputs.provider.name >>
-        namespace: << inputs.provider.namespace >>
-      spec:
-        hostnames: ["<< inputs.provider.name >>.chkpwd.com"]
-        rules:
-          - matches:
-              - path:
-                  type: PathPrefix
-                  value: /sse
-          - backendRefs:
-              - name: << inputs.provider.name >>
-                namespace: << inputs.provider.namespace >>
-                port: 9090
-        parentRefs:
-          - name: private
-            namespace: networking
-            sectionName: https
