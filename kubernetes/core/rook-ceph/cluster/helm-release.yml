@@ -28,6 +28,14 @@ spec:
           disabled: true
     toolbox:
       enabled: true
+    route:
+      dashboard:
+        host:
+          name: rook.chkpwd.com
+        parentRefs:
+          - name: private
+            namespace: networking
+            sectionName: https
     cephClusterSpec:
       cephConfig:
         global:
