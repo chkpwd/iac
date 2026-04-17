@@ -230,4 +230,2550 @@ metadata:
 </div>
 <div id="properties">
 <div class="prop-leaf">
-  <span class="prop-name">
+  <span class="prop-name">apiVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">APIVersion defines the versioned schema of this representation of an object.
+Servers should convert recognized schemas to the latest internal value, and
+may reject unrecognized values.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is a string value representing the REST resource this object represents.
+Servers may infer this from the endpoint the client submits requests to.
+Cannot be updated.
+In CamelCase.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">spec</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">FilesystemSpec represents the spec of a file system</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">dataPools</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The data pool settings, with optional predefined pool name.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">application</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The application name to set on the pool. Only expected to be set for rgw pools.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">compressionMode</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">DEPRECATED: use Parameters instead, e.g., Parameters[&#34;compression_mode&#34;] = &#34;force&#34;
+The inline compression mode in Bluestore OSD to set to (options are: none, passive, aggressive, force)
+Do NOT set a default value for kubebuilder as this will override the Parameters<div class="leaf-constraints">enum: none, passive, aggressive, force, </div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">crushRoot</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The root of the crush hierarchy utilized by the pool
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">deviceClass</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The device class the OSD should set to for use in the pool
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">enableCrushUpdates</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Allow rook operator to change the pool CRUSH tunables once the pool is created
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">enableRBDStats</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">EnableRBDStats is used to enable gathering of statistics for all RBD images in the pool
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">erasureCoded</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The erasure code settings</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">algorithm</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The algorithm for erasure coding.
+If absent, defaults to the plugin specified in osd_pool_default_erasure_code_profile.<div class="leaf-constraints">enum: isa, jerasure</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">codingChunks</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Number of coding chunks per object in an erasure coded storage pool (required for erasure-coded pool type).
+This is the number of OSDs that can be lost simultaneously before data cannot be recovered.<div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">dataChunks</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Number of data chunks per object in an erasure coded storage pool (required for erasure-coded pool type).
+The number of chunks required to recover an object when any single OSD is lost is the same
+as dataChunks so be aware that the larger the number of data chunks, the higher the cost of recovery.<div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">failureDomain</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The failure domain: osd/host/(region or zone if available) - technically also any type in the crush map
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">mirroring</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The mirroring settings</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">enabled</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Enabled whether this pool is mirrored or not
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">mode</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Mode is the mirroring mode: pool, image or init-only.<div class="leaf-constraints">enum: pool, image, init-only</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">peers</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Peers represents the peers spec</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">secretNames</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">SecretNames represents the Kubernetes Secret names to add rbd-mirror or cephfs-mirror peers
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">snapshotSchedules</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SnapshotSchedules is the scheduling of snapshot for mirrored images/pools</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Interval represent the periodicity of the snapshot.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Path is the path to snapshot, only valid for CephFS
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">startTime</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">StartTime indicates when to start the snapshot
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the pool
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">parameters</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Parameters is a list of properties to enable on a given pool
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">quotas</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The quota settings</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">maxBytes</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxBytes represents the quota in bytes
+Deprecated in favor of MaxSize<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxObjects</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxObjects represents the quota in objects<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxSize</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">MaxSize represents the quota in bytes as a string<div class="leaf-constraints">pattern: ^[0-9]+[\.]?[0-9]*([KMGTPE]i|[kMGTPE])?$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">replicated</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The replication settings</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">hybridStorage</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HybridStorage represents hybrid storage tier settings</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">primaryDeviceClass</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">PrimaryDeviceClass represents high performance tier (for example SSD or NVME) for Primary OSD<div class="leaf-constraints">minLength: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">secondaryDeviceClass</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">SecondaryDeviceClass represents low performance tier (for example HDDs) for remaining OSDs<div class="leaf-constraints">minLength: 1</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">replicasPerFailureDomain</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">ReplicasPerFailureDomain the number of replica in the specified failure domain<div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">requireSafeReplicaSize</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">RequireSafeReplicaSize if false allows you to set replica 1
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">size</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Size - Number of copies per object in a replicated storage pool, including the object itself (required for replicated pool type)<div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">subFailureDomain</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SubFailureDomain the name of the sub-failure domain
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">targetSizeRatio</span>
+  <span class="type-badge">number</span>
+  <div class="leaf-desc">TargetSizeRatio gives a hint (%) to Ceph in terms of expected consumption of the total cluster capacity<div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">statusCheck</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The mirroring statusCheck</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">mirror</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HealthCheckSpec represents the health check of an object store bucket</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">disabled</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Interval is the internal in second or minute for the health check to run like 60s for 60 seconds
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">metadataPool</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The metadata pool settings</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">application</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The application name to set on the pool. Only expected to be set for rgw pools.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">compressionMode</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">DEPRECATED: use Parameters instead, e.g., Parameters[&#34;compression_mode&#34;] = &#34;force&#34;
+The inline compression mode in Bluestore OSD to set to (options are: none, passive, aggressive, force)
+Do NOT set a default value for kubebuilder as this will override the Parameters<div class="leaf-constraints">enum: none, passive, aggressive, force, </div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">crushRoot</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The root of the crush hierarchy utilized by the pool
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">deviceClass</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The device class the OSD should set to for use in the pool
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">enableCrushUpdates</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Allow rook operator to change the pool CRUSH tunables once the pool is created
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">enableRBDStats</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">EnableRBDStats is used to enable gathering of statistics for all RBD images in the pool
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">erasureCoded</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The erasure code settings</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">algorithm</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The algorithm for erasure coding.
+If absent, defaults to the plugin specified in osd_pool_default_erasure_code_profile.<div class="leaf-constraints">enum: isa, jerasure</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">codingChunks</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Number of coding chunks per object in an erasure coded storage pool (required for erasure-coded pool type).
+This is the number of OSDs that can be lost simultaneously before data cannot be recovered.<div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">dataChunks</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Number of data chunks per object in an erasure coded storage pool (required for erasure-coded pool type).
+The number of chunks required to recover an object when any single OSD is lost is the same
+as dataChunks so be aware that the larger the number of data chunks, the higher the cost of recovery.<div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">failureDomain</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The failure domain: osd/host/(region or zone if available) - technically also any type in the crush map
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">mirroring</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The mirroring settings</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">enabled</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Enabled whether this pool is mirrored or not
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">mode</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Mode is the mirroring mode: pool, image or init-only.<div class="leaf-constraints">enum: pool, image, init-only</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">peers</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Peers represents the peers spec</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">secretNames</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">SecretNames represents the Kubernetes Secret names to add rbd-mirror or cephfs-mirror peers
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">snapshotSchedules</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SnapshotSchedules is the scheduling of snapshot for mirrored images/pools</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Interval represent the periodicity of the snapshot.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Path is the path to snapshot, only valid for CephFS
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">startTime</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">StartTime indicates when to start the snapshot
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the pool
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">parameters</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Parameters is a list of properties to enable on a given pool
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">quotas</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The quota settings</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">maxBytes</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxBytes represents the quota in bytes
+Deprecated in favor of MaxSize<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxObjects</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxObjects represents the quota in objects<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxSize</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">MaxSize represents the quota in bytes as a string<div class="leaf-constraints">pattern: ^[0-9]+[\.]?[0-9]*([KMGTPE]i|[kMGTPE])?$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">replicated</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The replication settings</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">hybridStorage</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HybridStorage represents hybrid storage tier settings</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">primaryDeviceClass</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">PrimaryDeviceClass represents high performance tier (for example SSD or NVME) for Primary OSD<div class="leaf-constraints">minLength: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">secondaryDeviceClass</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">SecondaryDeviceClass represents low performance tier (for example HDDs) for remaining OSDs<div class="leaf-constraints">minLength: 1</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">replicasPerFailureDomain</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">ReplicasPerFailureDomain the number of replica in the specified failure domain<div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">requireSafeReplicaSize</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">RequireSafeReplicaSize if false allows you to set replica 1
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">size</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Size - Number of copies per object in a replicated storage pool, including the object itself (required for replicated pool type)<div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">subFailureDomain</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SubFailureDomain the name of the sub-failure domain
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">targetSizeRatio</span>
+  <span class="type-badge">number</span>
+  <div class="leaf-desc">TargetSizeRatio gives a hint (%) to Ceph in terms of expected consumption of the total cluster capacity<div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">statusCheck</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The mirroring statusCheck</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">mirror</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HealthCheckSpec represents the health check of an object store bucket</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">disabled</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Interval is the internal in second or minute for the health check to run like 60s for 60 seconds
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">metadataServer</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The mds pod info</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">activeCount</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The number of metadata servers that are active. The remaining servers in the cluster will be in standby mode.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 50</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">activeStandby</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Whether each active MDS instance will have an active standby with a warm metadata cache for faster failover.
+If false, standbys will still be available, but will not have a warm metadata cache.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">annotations</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">The annotations-related configuration to add/set on each Pod related object.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">cacheMemoryLimitFactor</span>
+  <span class="type-badge">number</span>
+  <div class="leaf-desc">CacheMemoryLimitFactor is the factor applied to the memory limit to determine the MDS cache memory limit.
+MDS cache memory limit should be set to 50-60% of RAM reserved for the MDS container.
+MDS uses approximately 125% of the value of mds_cache_memory_limit in RAM.
+This factor is applied when resources.limits.memory is set.<div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">cacheMemoryRequestFactor</span>
+  <span class="type-badge">number</span>
+  <div class="leaf-desc">CacheMemoryRequestFactor is the factor applied to the memory request to determine the MDS cache memory limit.
+This factor is applied when resources.requests.memory is set and resources.limits.memory is not set.<div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">labels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">The labels-related configuration to add/set on each Pod related object.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">livenessProbe</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ProbeSpec is a wrapper around Probe so it can be enabled or disabled for a Ceph daemon</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">disabled</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Disabled determines whether probe is disable or not
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">probe</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Probe describes a health check to be performed against a container to determine whether it is
+alive or ready to receive traffic.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">exec</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Exec specifies a command to execute in the container.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">command</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Command is the command line to execute inside the container, the working directory for the
+command  is root (&#39;/&#39;) in the container&#39;s filesystem. The command is simply exec&#39;d, it is
+not run inside a shell, so traditional shell instructions (&#39;|&#39;, etc) won&#39;t work. To use
+a shell, you need to explicitly call out to that shell.
+Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">failureThreshold</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Minimum consecutive failures for the probe to be considered failed after having succeeded.
+Defaults to 3. Minimum value is 1.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">grpc</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">GRPC specifies a GRPC HealthCheckRequest.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Port number of the gRPC service. Number must be in the range 1 to 65535.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">service</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Service is the name of the service to place in the gRPC HealthCheckRequest
+(see https://github.com/grpc/grpc/blob/master/doc/health-checking.md).
+
+If this is not specified, the default behavior is defined by gRPC.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">httpGet</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HTTPGet specifies an HTTP GET request to perform.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">host</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Host name to connect to, defaults to the pod IP. You probably want to set
+&#34;Host&#34; in httpHeaders instead.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">httpHeaders</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Custom headers to set in the request. HTTP allows repeated headers.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The header field name.
+This will be canonicalized upon output, so case-variant names will be understood as the same header.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The header field value
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Path to access on the HTTP server.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name or number of the port to access on the container.
+Number must be in the range 1 to 65535.
+Name must be an IANA_SVC_NAME.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">scheme</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Scheme to use for connecting to the host.
+Defaults to HTTP.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">initialDelaySeconds</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Number of seconds after the container has started before liveness probes are initiated.
+More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">periodSeconds</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">How often (in seconds) to perform the probe.
+Default to 10 seconds. Minimum value is 1.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">successThreshold</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Minimum consecutive successes for the probe to be considered successful after having failed.
+Defaults to 1. Must be 1 for liveness and startup. Minimum value is 1.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">tcpSocket</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TCPSocket specifies a connection to a TCP port.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">host</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Optional: Host name to connect to, defaults to the pod IP.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Number or name of the port to access on the container.
+Number must be in the range 1 to 65535.
+Name must be an IANA_SVC_NAME.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">terminationGracePeriodSeconds</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">timeoutSeconds</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Number of seconds after which the probe times out.
+Defaults to 1 second. Minimum value is 1.
+More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">placement</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">nodeAffinity</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">preferredDuringSchedulingIgnoredDuringExecution</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">preference</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">matchFields</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">weight</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">requiredDuringSchedulingIgnoredDuringExecution</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">nodeSelectorTerms</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">matchFields</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">podAffinity</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">preferredDuringSchedulingIgnoredDuringExecution</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">podAffinityTerm</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">labelSelector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabelKeys</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">mismatchLabelKeys</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">namespaceSelector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">namespaces</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">topologyKey</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">weight</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">requiredDuringSchedulingIgnoredDuringExecution</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">labelSelector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabelKeys</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">mismatchLabelKeys</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">namespaceSelector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">namespaces</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">topologyKey</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">podAntiAffinity</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">preferredDuringSchedulingIgnoredDuringExecution</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">podAffinityTerm</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">labelSelector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabelKeys</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">mismatchLabelKeys</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">namespaceSelector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">namespaces</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">topologyKey</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">weight</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">requiredDuringSchedulingIgnoredDuringExecution</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">labelSelector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabelKeys</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">mismatchLabelKeys</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">namespaceSelector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">namespaces</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">topologyKey</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">tolerations</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">effect</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">tolerationSeconds</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">topologySpreadConstraints</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">labelSelector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabelKeys</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxSkew</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">minDomains</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">nodeAffinityPolicy</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">nodeTaintsPolicy</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">topologyKey</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">whenUnsatisfiable</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">priorityClassName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">PriorityClassName sets priority classes on components
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">resources</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The resource requirements for the mds pods</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">claims</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Claims lists the names of resources, defined in spec.resourceClaims,
+that are used by this container.
+
+This field depends on the
+DynamicResourceAllocation feature gate.
+
+This field is immutable. It can only be set for containers.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name must match the name of one entry in pod.spec.resourceClaims of
+the Pod where this field is used. It makes that resource available
+inside a container.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">request</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Request is the name chosen for a request in the referenced claim.
+If empty, everything from the claim is made available, otherwise
+only the result of this request.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">limits</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Limits describes the maximum amount of compute resources allowed.
+More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">requests</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Requests describes the minimum amount of compute resources required.
+If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+otherwise to an implementation-defined value. Requests cannot exceed Limits.
+More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">startupProbe</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ProbeSpec is a wrapper around Probe so it can be enabled or disabled for a Ceph daemon</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">disabled</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Disabled determines whether probe is disable or not
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">probe</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Probe describes a health check to be performed against a container to determine whether it is
+alive or ready to receive traffic.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">exec</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Exec specifies a command to execute in the container.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">command</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Command is the command line to execute inside the container, the working directory for the
+command  is root (&#39;/&#39;) in the container&#39;s filesystem. The command is simply exec&#39;d, it is
+not run inside a shell, so traditional shell instructions (&#39;|&#39;, etc) won&#39;t work. To use
+a shell, you need to explicitly call out to that shell.
+Exit status of 0 is treated as live/healthy and non-zero is unhealthy.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">failureThreshold</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Minimum consecutive failures for the probe to be considered failed after having succeeded.
+Defaults to 3. Minimum value is 1.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">grpc</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">GRPC specifies a GRPC HealthCheckRequest.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Port number of the gRPC service. Number must be in the range 1 to 65535.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">service</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Service is the name of the service to place in the gRPC HealthCheckRequest
+(see https://github.com/grpc/grpc/blob/master/doc/health-checking.md).
+
+If this is not specified, the default behavior is defined by gRPC.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">httpGet</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HTTPGet specifies an HTTP GET request to perform.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">host</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Host name to connect to, defaults to the pod IP. You probably want to set
+&#34;Host&#34; in httpHeaders instead.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">httpHeaders</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Custom headers to set in the request. HTTP allows repeated headers.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The header field name.
+This will be canonicalized upon output, so case-variant names will be understood as the same header.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The header field value
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Path to access on the HTTP server.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name or number of the port to access on the container.
+Number must be in the range 1 to 65535.
+Name must be an IANA_SVC_NAME.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">scheme</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Scheme to use for connecting to the host.
+Defaults to HTTP.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">initialDelaySeconds</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Number of seconds after the container has started before liveness probes are initiated.
+More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">periodSeconds</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">How often (in seconds) to perform the probe.
+Default to 10 seconds. Minimum value is 1.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">successThreshold</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Minimum consecutive successes for the probe to be considered successful after having failed.
+Defaults to 1. Must be 1 for liveness and startup. Minimum value is 1.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">tcpSocket</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TCPSocket specifies a connection to a TCP port.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">host</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Optional: Host name to connect to, defaults to the pod IP.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Number or name of the port to access on the container.
+Number must be in the range 1 to 65535.
+Name must be an IANA_SVC_NAME.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">terminationGracePeriodSeconds</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">timeoutSeconds</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Number of seconds after which the probe times out.
+Defaults to 1 second. Minimum value is 1.
+More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">mirroring</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The mirroring settings</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">enabled</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Enabled whether this filesystem is mirrored or not
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">peers</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Peers represents the peers spec</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">secretNames</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">SecretNames represents the Kubernetes Secret names to add rbd-mirror or cephfs-mirror peers
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">snapshotRetention</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Retention is the retention policy for a snapshot schedule
+One path has exactly one retention policy.
+A policy can however contain multiple count-time period pairs in order to specify complex retention policies</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">duration</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Duration represents the retention duration for a snapshot
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Path is the path to snapshot
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">snapshotSchedules</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SnapshotSchedules is the scheduling of snapshot for mirrored filesystems</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Interval represent the periodicity of the snapshot.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Path is the path to snapshot, only valid for CephFS
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">startTime</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">StartTime indicates when to start the snapshot
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">preserveFilesystemOnDelete</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Preserve the fs in the cluster on CephFilesystem CR deletion. Setting this to true automatically implies PreservePoolsOnDelete is true.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">preservePoolNames</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Preserve pool names as specified
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">preservePoolsOnDelete</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Preserve pools on filesystem deletion
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">statusCheck</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The mirroring statusCheck</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">mirror</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HealthCheckSpec represents the health check of an object store bucket</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">disabled</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Interval is the internal in second or minute for the health check to run like 60s for 60 seconds
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">status</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">CephFilesystemStatus represents the status of a Ceph Filesystem</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">cephx</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">daemon</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Daemon shows the CephX key status for local Ceph daemons associated with this resources.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">keyCephVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">KeyCephVersion reports the Ceph version that created the current generation&#39;s keys. This is
+same string format as reported by `CephCluster.status.version.version` to allow them to be
+compared. E.g., `20.2.0-0`.
+For all newly-created resources, this field set to the version of Ceph that created the key.
+The special value &#34;Uninitialized&#34; indicates that keys are being created for the first time.
+An empty string indicates that the version is unknown, as expected in brownfield deployments.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">keyGeneration</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">KeyGeneration represents the CephX key generation for the last successful reconcile.
+For all newly-created resources, this field is set to `1`.
+When keys are rotated due to any rotation policy, the generation is incremented or updated to
+the configured policy generation.
+Generation `0` indicates that keys existed prior to the implementation of key tracking.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">conditions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">lastHeartbeatTime</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lastTransitionTime</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">message</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">reason</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ConditionReason is a reason for a condition
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">status</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ConditionType represent a resource&#39;s status
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">info</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Use only info and put mirroringStatus in it?
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">mirroringStatus</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">MirroringStatus is the filesystem mirroring status</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">daemonsStatus</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">PoolMirroringStatus is the mirroring status of a filesystem</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">daemon_id</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">DaemonID is the cephfs-mirror name
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">filesystems</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Filesystems is the list of filesystems managed by a given cephfs-mirror daemon</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">directory_count</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">DirectoryCount is the number of directories in the filesystem
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">filesystem_id</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">FilesystemID is the filesystem identifier
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name is name of the filesystem
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">peers</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Peers represents the mirroring peers</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">remote</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Remote are the remote cluster information</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">client_name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ClientName is cephx name
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">cluster_name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ClusterName is the name of the cluster
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">fs_name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">FsName is the filesystem name
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">stats</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Stats are the stat a peer mirror</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">failure_count</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">FailureCount is the number of mirroring failure
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">recovery_count</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">RecoveryCount is the number of recovery attempted after failures
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">uuid</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">UUID is the peer unique identifier
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">details</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Details contains potential status errors
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lastChanged</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">LastChanged is the last time time the status last changed
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lastChecked</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">LastChecked is the last time time the status was checked
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">observedGeneration</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">ObservedGeneration is the latest generation observed by the controller.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">phase</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ConditionType represent a resource&#39;s status
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">snapshotScheduleStatus</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">FilesystemSnapshotScheduleStatusSpec is the status of the snapshot schedule</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">details</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Details contains potential status errors
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lastChanged</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">LastChanged is the last time time the status last changed
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lastChecked</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">LastChecked is the last time time the status was checked
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">snapshotSchedules</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SnapshotSchedules is the list of snapshots scheduled</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">fs</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Fs is the name of the Ceph Filesystem
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Path is the path on the filesystem
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">rel_path</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">retention</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">FilesystemSnapshotScheduleStatusRetention is the retention specification for a filesystem snapshot schedule</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">active</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Active is whether the scheduled is active or not
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">created</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Created is when the snapshot schedule was created
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">created_count</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">CreatedCount is total amount of snapshots
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">first</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">First is when the first snapshot schedule was taken
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">last</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Last is when the last snapshot schedule was taken
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">last_pruned</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">LastPruned is when the last snapshot schedule was pruned
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">pruned_count</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">PrunedCount is total amount of pruned snapshots
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">start</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Start is when the snapshot schedule starts
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">schedule</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">subvol</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Subvol is the name of the sub volume
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+</div>
+<div class="copied-toast" id="toast">Copied!</div>
+<footer>
+  Generated by <a href="https://github.com/sholdee/crd-schema-publisher">crd-schema-publisher</a>
+</footer>
+<script>
+(function(){
+  var props = document.querySelectorAll('.prop');
+  document.getElementById('expand-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.setAttribute('open',''); });
+  });
+  document.getElementById('collapse-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.removeAttribute('open'); });
+  });
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+      }
+      location.href = '/';
+    }
+  });
+  document.getElementById('copy-url').addEventListener('click', function(){
+    var url = location.origin + this.dataset.url;
+    navigator.clipboard.writeText(url).then(function(){
+      clearTimeout(toastTimer);
+      toast.classList.add('show');
+      toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1500);
+    });
+  });
+})();
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+}
+</script>
+</body>
+</html>
