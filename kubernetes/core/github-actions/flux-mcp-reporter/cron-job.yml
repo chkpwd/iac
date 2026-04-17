@@ -32,14 +32,23 @@ spec:
                   import asyncio
                   import json
                   import os
+                  import re
                   import sys
-                  from datetime import datetime, timezone
+                  from datetime import datetime, timezone, timedelta
 
                   import httpx
 
                   MCP_URL = "http://flux-operator-mcp.flux-system.svc.cluster.local:9090/mcp"
                   SESSION_ID = None
                   MSG_ID = 0
+
+                  # Cohesive color palette
+                  C_OK = 0x57F287       # Discord green
+                  C_WARN = 0xFEE75C     # Discord yellow
+                  C_ERR = 0xED4245      # Discord red
+                  C_INFO = 0x5865F2     # Discord blurple
+                  C_DIM = 0x2B2D31      # Dark embed bg
+                  C_ACCENT = 0xEB459E   # Discord fuchsia
 
 
                   def next_id():
@@ -48,7 +57,7 @@ spec:
                       return MSG_ID
 
 
-                  async def mcp_request(client, url, method, params=None, notification=False):
+                  async def mcp_request(client, method, params=None, notification=False):
                       global SESSION_ID
                       payload = {"jsonrpc": "2.0", "method": method}
                       if not notification:
@@ -58,7 +67,7 @@ spec:
                       headers = {"Accept": "application/json, text/event-stream"}
                       if SESSION_ID:
                           headers["Mcp-Session-Id"] = SESSION_ID
-                      resp = await client.post(url, json=payload, headers=headers)
+                      resp = await client.post(MCP_URL, json=payload, headers=headers)
                       new_session = resp.headers.get("mcp-session-id")
                       if new_session:
                           SESSION_ID = new_session
@@ -72,87 +81,1087 @@ spec:
                       return {}
 
 
-                  async def main():
-                      report = {
-                          "timestamp": datetime.now(timezone.utc).isoformat(),
-                          "fluxInstance": None,
-                          "helmReleases": None,
-                          "kustomizations": None,
-                          "errors": [],
-                      }
+                  async def call_tool(client, name, arguments=None):
+                      return await mcp_request(client, "tools/call", {
+                          "name": name,
+                          "arguments": arguments or {},
+                      })
 
-                      async with httpx.AsyncClient(timeout=60) as client:
-                          init_resp = await mcp_request(client, MCP_URL, "initialize", {
-                              "protocolVersion": "2024-11-05",
-                              "capabilities": {},
-                              "clientInfo": {"name": "flux-reporter", "version": "1.0.0"},
+
+                  def extract_text(result):
+                      if not result or "result" not in result:
+                          return ""
+                      content = result["result"].get("content", [])
+                      parts = []
+                      for item in content:
+                          if isinstance(item, dict) and item.get("type") == "text":
+                              parts.append(item["text"])
+                      return "\n".join(parts) if parts else str(result["result"])
+
+
+                  def split_resources(text):
+                      if not text:
+                          return []
+                      blocks = re.split(r"^---\s*$", text, flags=re.MULTILINE)
+                      return [b.strip() for b in blocks if b.strip()]
+
+
+                  def get_name_ns(block):
+                      name_m = re.search(r"^\s+name:\s+(\S+)\s*$", block, re.MULTILINE)
+                      ns_m = re.search(r"^\s+namespace:\s+(\S+)\s*$", block, re.MULTILINE)
+                      if not name_m:
+                          return None, None
+                      return name_m.group(1), ns_m.group(1) if ns_m else "default"
+
+
+                  def check_ready(block):
+                      conditions = re.findall(
+                          r"status:\s+\"?(\w+)\"?\s*\n\s+type:\s+Ready", block
+                      )
+                      if not conditions:
+                          conditions = re.findall(
+                              r"type:\s+Ready\s*\n.*?status:\s+\"?(\w+)\"?", block
+                          )
+                      if conditions and conditions[-1] == "True":
+                          return True, "Ready"
+                      msg_match = re.search(
+                          r"message:\s+(.+?)\s*\n.*?type:\s+Ready", block, re.DOTALL
+                      )
+                      if not msg_match:
+                          msg_match = re.search(
+                              r"type:\s+Ready.*?message:\s+(.+?)$",
+                              block, re.MULTILINE | re.DOTALL
+                          )
+                      msg = msg_match.group(1).strip()[:120] if msg_match else "Not Ready"
+                      return False, msg
+
+
+                  def fmt_bytes(b):
+                      """Format bytes to human readable."""
+                      if b >= 1024**4:
+                          return f"{b / 1024**4:.1f} TiB"
+                      if b >= 1024**3:
+                          return f"{b / 1024**3:.1f} GiB"
+                      if b >= 1024**2:
+                          return f"{b / 1024**2:.1f} MiB"
+                      return f"{b / 1024:.0f} KiB"
+
+
+                  # ─── PARSERS ────────────────────────────────────────────
+
+                  def parse_flux_instance(text):
+                      version = "unknown"
+                      dist_version = None
+                      components = []
+                      m = re.search(r"artifact:.*?:v?([\d.]+)", text)
+                      if m:
+                          version = f"v{m.group(1)}"
+                      dv = re.search(r"distribution:\s*\n\s+.*?\n\s+.*?version:\s+(\S+)", text)
+                      if dv:
+                          dist_version = dv.group(1)
+                      for m in re.finditer(r"^\s+- ([\w-]+controller|[\w-]+server)$", text, re.MULTILINE):
+                          components.append(m.group(1))
+                      ready_match = re.search(
+                          r"conditions:.*?type:\s+Ready\s*\n\s+.*?status:\s+\"?(\w+)\"?",
+                          text, re.DOTALL
+                      )
+                      is_ready = ready_match and ready_match.group(1) == "True" if ready_match else False
+                      return version, dist_version, components, is_ready
+
+
+                  def parse_resource_health(text):
+                      healthy, unhealthy = [], []
+                      for block in split_resources(text):
+                          name, ns = get_name_ns(block)
+                          if not name:
+                              continue
+                          fqn = f"{ns}/{name}"
+                          is_ready, msg = check_ready(block)
+                          if is_ready:
+                              healthy.append(fqn)
+                          else:
+                              unhealthy.append((fqn, msg))
+                      return healthy, unhealthy
+
+
+                  def parse_nodes(text):
+                      nodes = []
+                      for block in split_resources(text):
+                          name, _ = get_name_ns(block)
+                          if not name:
+                              continue
+                          ver_match = re.search(r"kubeletVersion:\s+(\S+)", block)
+                          version = ver_match.group(1) if ver_match else "?"
+                          is_ready, _ = check_ready(block)
+                          pressures = []
+                          for cond in ["MemoryPressure", "DiskPressure", "PIDPressure"]:
+                              m = re.search(
+                                  rf"status:\s+\"?(\w+)\"?\s*\n\s+type:\s+{cond}", block
+                              )
+                              if m and m.group(1) == "True":
+                                  pressures.append(cond.replace("Pressure", ""))
+                          nodes.append({
+                              "name": name, "ready": is_ready,
+                              "version": version, "pressures": pressures,
+                          })
+                      return nodes
+
+
+                  def parse_crashing_pods(text):
+                      crashing = []
+                      seen = set()
+                      for block in split_resources(text):
+                          if not re.search(r"(CrashLoopBackOff|ImagePullBackOff)", block):
+                              continue
+                          name, ns = get_name_ns(block)
+                          if not name:
+                              continue
+                          fqn = f"{ns}/{name}"
+                          if fqn in seen:
+                              continue
+                          seen.add(fqn)
+                          reason_match = re.search(
+                              r"reason:\s+(CrashLoopBackOff|ImagePullBackOff)", block
+                          )
+                          reason = reason_match.group(1) if reason_match else "Failing"
+                          restarts_match = re.search(r"restartCount:\s+(\d+)", block)
+                          restarts = restarts_match.group(1) if restarts_match else "?"
+                          crashing.append({"pod": fqn, "reason": reason, "restarts": restarts})
+                      return crashing
+
+
+                  def parse_high_restart_pods(text, threshold=5):
+                      pods = []
+                      seen = set()
+                      for block in split_resources(text):
+                          if re.search(r"(CrashLoopBackOff|ImagePullBackOff)", block):
+                              continue
+                          name, ns = get_name_ns(block)
+                          if not name:
+                              continue
+                          fqn = f"{ns}/{name}"
+                          if fqn in seen:
+                              continue
+                          seen.add(fqn)
+                          restarts = re.findall(r"restartCount:\s+(\d+)", block)
+                          if restarts:
+                              max_r = max(int(r) for r in restarts)
+                              if max_r >= threshold:
+                                  pods.append({"pod": fqn, "restarts": max_r})
+                      pods.sort(key=lambda p: p["restarts"], reverse=True)
+                      return pods[:15]
+
+
+                  def parse_metrics(text):
+                      pods = []
+                      if not text:
+                          return pods
+                      entries = re.findall(
+                          r"container:\s+(\S+)\s*\n"
+                          r"\s+cpuUsage:\s+(\S+)\s*\n"
+                          r"\s+memUsage:\s+(\S+)\s*\n"
+                          r"\s+namespace:\s+(\S+)\s*\n"
+                          r"\s+pod:\s+(\S+)",
+                          text
+                      )
+                      for container, cpu_raw, mem_raw, ns, pod_name in entries:
+                          cpu_val = 0
+                          if cpu_raw.endswith("n"):
+                              cpu_val = int(cpu_raw[:-1]) / 1_000_000
+                          elif cpu_raw.endswith("m"):
+                              cpu_val = int(cpu_raw[:-1])
+                          mem_val = 0
+                          if mem_raw.endswith("Ki"):
+                              mem_val = int(mem_raw[:-2]) / 1024
+                          elif mem_raw.endswith("Mi"):
+                              mem_val = int(mem_raw[:-2])
+                          elif mem_raw.endswith("Gi"):
+                              mem_val = int(mem_raw[:-2]) * 1024
+                          pods.append({
+                              "pod": f"{ns}/{pod_name}", "container": container,
+                              "cpu": f"{cpu_val:.0f}m", "cpu_val": cpu_val,
+                              "mem": f"{mem_val:.0f}Mi", "mem_val": mem_val,
+                          })
+                      pods.sort(key=lambda p: p["mem_val"], reverse=True)
+                      return pods[:10]
+
+
+                  def parse_certificates(text):
+                      certs = []
+                      now = datetime.now(timezone.utc)
+                      for block in split_resources(text):
+                          name, ns = get_name_ns(block)
+                          if not name:
+                              continue
+                          not_after_m = re.search(r"notAfter:\s+\"?(\S+?)\"?\s*$", block, re.MULTILINE)
+                          renewal_m = re.search(r"renewalTime:\s+\"?(\S+?)\"?\s*$", block, re.MULTILINE)
+                          is_ready, _ = check_ready(block)
+                          days_left = None
+                          if not_after_m:
+                              try:
+                                  not_after = datetime.fromisoformat(
+                                      not_after_m.group(1).replace("Z", "+00:00")
+                                  )
+                                  days_left = (not_after - now).days
+                              except Exception:
+                                  pass
+                          certs.append({
+                              "name": f"{ns}/{name}", "ready": is_ready,
+                              "days_left": days_left,
+                          })
+                      return certs
+
+
+                  def parse_flux_sources(text):
+                      healthy, unhealthy = [], []
+                      for block in split_resources(text):
+                          name, ns = get_name_ns(block)
+                          if not name:
+                              continue
+                          kind_m = re.search(r"^kind:\s+(\S+)", block, re.MULTILINE)
+                          kind = kind_m.group(1) if kind_m else "Source"
+                          fqn = f"{kind}/{ns}/{name}"
+                          is_ready, msg = check_ready(block)
+                          if is_ready:
+                              healthy.append(fqn)
+                          else:
+                              unhealthy.append((fqn, msg))
+                      return healthy, unhealthy
+
+
+                  def parse_external_secrets(text):
+                      healthy, unhealthy = [], []
+                      for block in split_resources(text):
+                          name, ns = get_name_ns(block)
+                          if not name:
+                              continue
+                          fqn = f"{ns}/{name}"
+                          synced = re.findall(
+                              r"status:\s+\"?(\w+)\"?\s*\n\s+type:\s+SecretSynced", block
+                          )
+                          if not synced:
+                              synced = re.findall(
+                                  r"type:\s+SecretSynced\s*\n.*?status:\s+\"?(\w+)\"?", block
+                              )
+                          if not synced:
+                              is_ready, msg = check_ready(block)
+                              (healthy if is_ready else unhealthy).append(
+                                  fqn if is_ready else (fqn, msg)
+                              )
+                              continue
+                          if synced[-1] == "True":
+                              healthy.append(fqn)
+                          else:
+                              msg_m = re.search(
+                                  r"message:\s+(.+?)\s*\n.*?type:\s+SecretSynced",
+                                  block, re.DOTALL
+                              )
+                              msg = msg_m.group(1).strip()[:120] if msg_m else "Sync failed"
+                              unhealthy.append((fqn, msg))
+                      return healthy, unhealthy
+
+
+                  def parse_pvcs(text):
+                      issues = []
+                      total = 0
+                      for block in split_resources(text):
+                          name, ns = get_name_ns(block)
+                          if not name:
+                              continue
+                          total += 1
+                          phase_m = re.search(r"phase:\s+(\S+)", block)
+                          phase = phase_m.group(1) if phase_m else "Unknown"
+                          if phase != "Bound":
+                              issues.append({"pvc": f"{ns}/{name}", "phase": phase})
+                      return total, issues
+
+
+                  def parse_deployments_health(text):
+                      degraded = []
+                      total = 0
+                      for block in split_resources(text):
+                          name, ns = get_name_ns(block)
+                          if not name:
+                              continue
+                          total += 1
+                          kind_m = re.search(r"^kind:\s+(\S+)", block, re.MULTILINE)
+                          kind = kind_m.group(1) if kind_m else "Workload"
+                          desired_m = re.search(r"replicas:\s+(\d+)", block)
+                          ready_m = re.search(r"readyReplicas:\s+(\d+)", block)
+                          unavail_m = re.search(r"unavailableReplicas:\s+(\d+)", block)
+                          desired = int(desired_m.group(1)) if desired_m else 0
+                          ready = int(ready_m.group(1)) if ready_m else 0
+                          unavail = int(unavail_m.group(1)) if unavail_m else 0
+                          if unavail > 0 or (desired > 0 and ready < desired):
+                              degraded.append({
+                                  "name": f"{ns}/{name}", "kind": kind,
+                                  "ready": ready, "desired": desired,
+                              })
+                      return total, degraded
+
+
+                  def parse_warning_events(text):
+                      warnings = []
+                      for block in split_resources(text):
+                          if not re.search(r"type:\s+Warning", block):
+                              continue
+                          name, ns = get_name_ns(block)
+                          reason_m = re.search(r"reason:\s+(\S+)", block)
+                          msg_m = re.search(r"message:\s+(.+?)$", block, re.MULTILINE)
+                          involved_m = re.search(
+                              r"involvedObject:\s*\n\s+.*?name:\s+(\S+)", block
+                          )
+                          count_m = re.search(r"count:\s+(\d+)", block)
+                          warnings.append({
+                              "ns": ns or "?",
+                              "object": involved_m.group(1) if involved_m else (name or "?"),
+                              "reason": reason_m.group(1) if reason_m else "Unknown",
+                              "message": msg_m.group(1).strip()[:80] if msg_m else "",
+                              "count": int(count_m.group(1)) if count_m else 1,
+                          })
+                      seen = {}
+                      for w in warnings:
+                          key = f"{w['ns']}/{w['object']}/{w['reason']}"
+                          if key in seen:
+                              seen[key]["count"] += w["count"]
+                          else:
+                              seen[key] = w
+                      return sorted(seen.values(), key=lambda w: w["count"], reverse=True)[:20]
+
+
+                  def parse_stale_reconciliations(hr_text, ks_text, hours=2):
+                      stale = []
+                      now = datetime.now(timezone.utc)
+                      cutoff = now - timedelta(hours=hours)
+                      for text, kind in [(hr_text, "HelmRelease"), (ks_text, "Kustomization")]:
+                          for block in split_resources(text or ""):
+                              name, ns = get_name_ns(block)
+                              if not name:
+                                  continue
+                              is_ready, _ = check_ready(block)
+                              if is_ready:
+                                  continue
+                              ltt_m = re.search(
+                                  r"lastTransitionTime:\s+\"?(\S+?)\"?\s*\n.*?type:\s+Ready",
+                                  block, re.DOTALL
+                              )
+                              if ltt_m:
+                                  try:
+                                      ltt = datetime.fromisoformat(
+                                          ltt_m.group(1).replace("Z", "+00:00")
+                                      )
+                                      if ltt < cutoff:
+                                          age_h = (now - ltt).total_seconds() / 3600
+                                          stale.append({
+                                              "name": f"{ns}/{name}",
+                                              "kind": kind,
+                                              "hours": f"{age_h:.0f}",
+                                          })
+                                  except Exception:
+                                      pass
+                      return stale
+
+
+                  def parse_ceph_cluster(text):
+                      info = {
+                          "health": "UNKNOWN", "version": "unknown",
+                          "total_bytes": 0, "used_bytes": 0, "avail_bytes": 0,
+                          "osd_count": 0, "phase": "Unknown",
+                      }
+                      if not text:
+                          return info
+                      for key, pattern in [
+                          ("health", r"health:\s+(HEALTH_\w+)"),
+                          ("phase", r"phase:\s+(\w+)"),
+                          ("version", r"version:\s+(\S+)"),
+                      ]:
+                          m = re.search(pattern, text)
+                          if m:
+                              info[key] = m.group(1)
+                      for key, pattern in [
+                          ("total_bytes", r"bytesTotal:\s+(\d+)"),
+                          ("used_bytes", r"bytesUsed:\s+(\d+)"),
+                          ("avail_bytes", r"bytesAvailable:\s+(\d+)"),
+                          ("osd_count", r"bluestore:\s+(\d+)"),
+                      ]:
+                          m = re.search(pattern, text)
+                          if m:
+                              info[key] = int(m.group(1))
+                      return info
+
+
+                  def parse_ceph_blockpools(text):
+                      pools = []
+                      for block in split_resources(text):
+                          name, ns = get_name_ns(block)
+                          if not name:
+                              continue
+                          phase_m = re.search(r"phase:\s+(\w+)", block)
+                          pools.append({
+                              "name": name,
+                              "phase": phase_m.group(1) if phase_m else "Unknown",
+                          })
+                      return pools
+
+
+                  def parse_cilium_lb_pools(text):
+                      """Parse CiliumLoadBalancerIPPool status for IP allocation."""
+                      pools = []
+                      for block in split_resources(text):
+                          name, _ = get_name_ns(block)
+                          if not name:
+                              continue
+                          total_m = re.search(r"type:\s+cilium\.io/IPsTotal.*?message:\s+\"?(\d+)", block, re.DOTALL)
+                          avail_m = re.search(r"type:\s+cilium\.io/IPsAvailable.*?message:\s+\"?(\d+)", block, re.DOTALL)
+                          # Try alternate order (message before type)
+                          if not total_m:
+                              total_m = re.search(r"message:\s+\"?(\d+)\"?.*?type:\s+cilium\.io/IPsTotal", block, re.DOTALL)
+                          if not avail_m:
+                              avail_m = re.search(r"message:\s+\"?(\d+)\"?.*?type:\s+cilium\.io/IPsAvailable", block, re.DOTALL)
+                          cidr_m = re.search(r"cidr:\s+(\S+)", block)
+                          total = int(total_m.group(1)) if total_m else 0
+                          avail = int(avail_m.group(1)) if avail_m else 0
+                          pools.append({
+                              "name": name,
+                              "cidr": cidr_m.group(1) if cidr_m else "?",
+                              "total": total, "available": avail,
+                              "used": total - avail,
+                          })
+                      return pools
+
+
+                  def count_cilium_resources(endpoints_text, identities_text):
+                      """Count CiliumEndpoints and CiliumIdentities."""
+                      ep_count = len(split_resources(endpoints_text)) if endpoints_text else 0
+                      id_count = len(split_resources(identities_text)) if identities_text else 0
+                      return ep_count, id_count
+
+
+                  def parse_resource_usage_vs_limits(pods_text, metrics_text):
+                      limits = {}
+                      for block in split_resources(pods_text or ""):
+                          name, ns = get_name_ns(block)
+                          if not name:
+                              continue
+                          container_blocks = re.findall(
+                              r"- (?:name|containerPort).*?(?=\n\s+- |\nstatus:|\Z)",
+                              block, re.DOTALL
+                          )
+                          for cb in container_blocks:
+                              cn_m = re.search(r"name:\s+(\S+)", cb)
+                              lim_m = re.search(r"limits:\s*\n\s+.*?memory:\s+(\S+)", cb)
+                              if cn_m and lim_m:
+                                  lim_raw = lim_m.group(1)
+                                  lim_mi = 0
+                                  if lim_raw.endswith("Mi"):
+                                      lim_mi = int(lim_raw[:-2])
+                                  elif lim_raw.endswith("Gi"):
+                                      lim_mi = int(lim_raw[:-2]) * 1024
+                                  elif lim_raw.endswith("Ki"):
+                                      lim_mi = int(lim_raw[:-2]) / 1024
+                                  if lim_mi > 0:
+                                      limits[f"{ns}/{name}/{cn_m.group(1)}"] = lim_mi
+                      at_risk = []
+                      if not metrics_text:
+                          return at_risk
+                      entries = re.findall(
+                          r"container:\s+(\S+)\s*\n"
+                          r"\s+cpuUsage:\s+(\S+)\s*\n"
+                          r"\s+memUsage:\s+(\S+)\s*\n"
+                          r"\s+namespace:\s+(\S+)\s*\n"
+                          r"\s+pod:\s+(\S+)",
+                          metrics_text
+                      )
+                      for container, _, mem_raw, ns, pod_name in entries:
+                          mem_val = 0
+                          if mem_raw.endswith("Ki"):
+                              mem_val = int(mem_raw[:-2]) / 1024
+                          elif mem_raw.endswith("Mi"):
+                              mem_val = int(mem_raw[:-2])
+                          elif mem_raw.endswith("Gi"):
+                              mem_val = int(mem_raw[:-2]) * 1024
+                          key = f"{ns}/{pod_name}/{container}"
+                          if key in limits:
+                              limit = limits[key]
+                              pct = (mem_val / limit) * 100
+                              if pct >= 80:
+                                  at_risk.append({
+                                      "pod": f"{ns}/{pod_name}",
+                                      "container": container,
+                                      "usage_mi": mem_val,
+                                      "limit_mi": limit,
+                                      "pct": pct,
+                                  })
+                      at_risk.sort(key=lambda x: x["pct"], reverse=True)
+                      return at_risk[:10]
+
+
+                  # ─── EMBED CONSTRUCTION ─────────────────────────────────
+
+                  def build_all_embeds(data, errors):
+                      embeds = []
+                      has_issues = False
+                      now = datetime.now(timezone.utc)
+                      now_iso = now.isoformat()
+                      issue_summary = []
+
+                      # ── 1. HEADER + CLUSTER OVERVIEW ──────────────────
+                      # Collected after we know issue state — inserted at pos 0 later
+
+                      # ── 2. FLUX GITOPS ────────────────────────────────
+                      version, dist_ver, components, flux_ready = parse_flux_instance(
+                          data.get("flux_instance", "")
+                      )
+                      hr_ok, hr_fail = parse_resource_health(data.get("helm_releases", ""))
+                      ks_ok, ks_fail = parse_resource_health(data.get("kustomizations", ""))
+                      src_ok, src_fail = [], []
+                      for key in ["git_repos", "oci_repos", "helm_repos"]:
+                          h, u = parse_flux_sources(data.get(key, ""))
+                          src_ok.extend(h)
+                          src_fail.extend(u)
+
+                      if not flux_ready:
+                          has_issues = True
+                          issue_summary.append("Flux not ready")
+
+                      flux_fields = [
+                          {
+                              "name": "Flux",
+                              "value": f"`{version}`{(' · dist ' + dist_ver) if dist_ver else ''}",
+                              "inline": True,
+                          },
+                          {
+                              "name": "Status",
+                              "value": "Operational" if flux_ready else "Degraded",
+                              "inline": True,
+                          },
+                          {
+                              "name": "\u200b",  # spacer
+                              "value": "\u200b",
+                              "inline": True,
+                          },
+                          {
+                              "name": "HelmReleases",
+                              "value": f"`{len(hr_ok)}` / `{len(hr_ok) + len(hr_fail)}` ready",
+                              "inline": True,
+                          },
+                          {
+                              "name": "Kustomizations",
+                              "value": f"`{len(ks_ok)}` / `{len(ks_ok) + len(ks_fail)}` ready",
+                              "inline": True,
+                          },
+                          {
+                              "name": "Sources",
+                              "value": f"`{len(src_ok)}` / `{len(src_ok) + len(src_fail)}` ready",
+                              "inline": True,
+                          },
+                      ]
+
+                      # Build failure details
+                      fail_lines = []
+                      for fqn, msg in hr_fail[:5]:
+                          fail_lines.append(f"` HR ` {fqn}\n> {msg}")
+                          has_issues = True
+                      for fqn, msg in ks_fail[:5]:
+                          fail_lines.append(f"` KS ` {fqn}\n> {msg}")
+                          has_issues = True
+                      for fqn, msg in src_fail[:3]:
+                          fail_lines.append(f"` SR ` {fqn}\n> {msg}")
+                          has_issues = True
+
+                      if hr_fail:
+                          issue_summary.append(f"{len(hr_fail)} HelmRelease(s) failing")
+                      if ks_fail:
+                          issue_summary.append(f"{len(ks_fail)} Kustomization(s) failing")
+                      if src_fail:
+                          issue_summary.append(f"{len(src_fail)} source(s) failing")
+
+                      # Stale reconciliations
+                      stale = parse_stale_reconciliations(
+                          data.get("helm_releases", ""), data.get("kustomizations", "")
+                      )
+                      if stale:
+                          fail_lines.append("")
+                          for s in stale[:3]:
+                              fail_lines.append(
+                                  f"` STALE ` {s['kind']}/{s['name']} — stuck {s['hours']}h"
+                              )
+                          issue_summary.append(f"{len(stale)} stale reconciliation(s)")
+
+                      flux_desc = "\n".join(fail_lines) if fail_lines else ""
+                      flux_color = C_ERR if (hr_fail or ks_fail or src_fail) else C_OK
+
+                      flux_embed = {
+                          "author": {"name": "GitOps · Flux CD"},
+                          "color": flux_color,
+                          "fields": flux_fields,
+                      }
+                      if flux_desc:
+                          flux_embed["description"] = flux_desc[:4096]
+                      embeds.append(flux_embed)
+
+                      # ── 3. INFRASTRUCTURE ─────────────────────────────
+                      # Nodes
+                      nodes = parse_nodes(data.get("nodes", ""))
+                      node_lines = []
+                      node_ok = True
+                      for n in nodes:
+                          indicator = "●" if n["ready"] and not n["pressures"] else "○"
+                          line = f"`{indicator}` **{n['name']}** — {n['version']}"
+                          if n["pressures"]:
+                              line += f" · {', '.join(n['pressures'])} pressure"
+                              node_ok = False
+                              has_issues = True
+                              issue_summary.append(f"{n['name']} has {', '.join(n['pressures'])} pressure")
+                          if not n["ready"]:
+                              node_ok = False
+                              has_issues = True
+                              issue_summary.append(f"{n['name']} not ready")
+                          node_lines.append(line)
+
+                      # Ceph
+                      ceph = parse_ceph_cluster(data.get("ceph_cluster", ""))
+                      ceph_pools = parse_ceph_blockpools(data.get("ceph_blockpools", ""))
+                      total_b = ceph["total_bytes"]
+                      used_b = ceph["used_bytes"]
+                      avail_b = ceph["avail_bytes"]
+                      usage_pct = (used_b / total_b * 100) if total_b > 0 else 0
+
+                      ceph_healthy = ceph["health"] == "HEALTH_OK"
+                      if not ceph_healthy:
+                          has_issues = True
+                          issue_summary.append(f"Ceph {ceph['health']}")
+                      if usage_pct >= 85:
+                          has_issues = True
+                          issue_summary.append(f"Ceph storage {usage_pct:.0f}% full")
+
+                      ceph_status = ceph["health"].replace("HEALTH_", "")
+                      ceph_line = (
+                          f"**{ceph_status}** · v{ceph['version']} · "
+                          f"{ceph['osd_count']} OSDs — "
+                          f"{usage_pct:.1f}% used "
+                          f"({fmt_bytes(used_b)} / {fmt_bytes(total_b)}, "
+                          f"{fmt_bytes(avail_b)} free)"
+                      )
+                      if ceph_pools:
+                          pool_str = " · ".join(f"{p['name']}: {p['phase']}" for p in ceph_pools)
+                          ceph_line += f"\nPools: {pool_str}"
+
+                      # Cilium
+                      cilium_pools = parse_cilium_lb_pools(data.get("cilium_lb_pools", ""))
+                      ep_count, id_count = count_cilium_resources(
+                          data.get("cilium_endpoints", ""),
+                          data.get("cilium_identities", ""),
+                      )
+                      cilium_parts = [f"`{ep_count}` endpoints · `{id_count}` identities"]
+                      for pool in cilium_pools:
+                          pct = (pool["used"] / pool["total"] * 100) if pool["total"] > 0 else 0
+                          cilium_parts.append(
+                              f"LB Pool **{pool['name']}** ({pool['cidr']}): "
+                              f"`{pool['used']}` / `{pool['total']}` IPs allocated ({pct:.0f}%)"
+                          )
+
+                      infra_color = C_OK
+                      if not node_ok or not ceph_healthy:
+                          infra_color = C_ERR
+                      elif usage_pct >= 70:
+                          infra_color = C_WARN
+
+                      infra_fields = [
+                          {
+                              "name": "Nodes",
+                              "value": "\n".join(node_lines) if node_lines else "No data",
+                              "inline": False,
+                          },
+                          {
+                              "name": "Ceph Storage",
+                              "value": ceph_line[:1024],
+                              "inline": False,
+                          },
+                          {
+                              "name": "Cilium",
+                              "value": "\n".join(cilium_parts)[:1024],
+                              "inline": False,
+                          },
+                      ]
+
+                      embeds.append({
+                          "author": {"name": "Infrastructure"},
+                          "color": infra_color,
+                          "fields": infra_fields,
+                      })
+
+                      # ── 4. SECURITY & SECRETS ─────────────────────────
+                      certs = parse_certificates(data.get("certificates", ""))
+                      es_ok, es_fail = parse_external_secrets(data.get("external_secrets", ""))
+                      es_total = len(es_ok) + len(es_fail)
+
+                      expiring = [c for c in certs if c["days_left"] is not None and c["days_left"] <= 14]
+                      not_ready_certs = [c for c in certs if not c["ready"] and c not in expiring]
+                      cert_issues = expiring + not_ready_certs
+
+                      sec_lines = []
+
+                      # Certs summary
+                      if cert_issues:
+                          has_issues = True
+                          for c in cert_issues[:5]:
+                              if c["days_left"] is not None and c["days_left"] <= 0:
+                                  sec_lines.append(f"` EXPIRED ` **{c['name']}**")
+                                  issue_summary.append(f"Certificate expired: {c['name']}")
+                              elif c["days_left"] is not None and c["days_left"] <= 7:
+                                  sec_lines.append(
+                                      f"` {c['days_left']}d ` **{c['name']}** — expiring soon"
+                                  )
+                                  issue_summary.append(f"Certificate expiring in {c['days_left']}d")
+                              elif c["days_left"] is not None:
+                                  sec_lines.append(
+                                      f"` {c['days_left']}d ` **{c['name']}**"
+                                  )
+                              elif not c["ready"]:
+                                  sec_lines.append(f"` FAIL ` **{c['name']}** — not ready")
+                      else:
+                          sec_lines.append(
+                              f"All `{len(certs)}` certificates valid"
+                          )
+
+                      sec_lines.append("")  # spacer
+
+                      # ExternalSecrets
+                      if es_fail:
+                          has_issues = True
+                          issue_summary.append(f"{len(es_fail)} ExternalSecret(s) failing")
+                          for fqn, msg in es_fail[:5]:
+                              sec_lines.append(f"` DESYNC ` **{fqn}**\n> {msg}")
+                      else:
+                          sec_lines.append(
+                              f"All `{es_total}` external secrets synced"
+                          )
+
+                      sec_color = C_ERR if (cert_issues or es_fail) else C_OK
+                      embeds.append({
+                          "author": {"name": "Security & Secrets"},
+                          "color": sec_color,
+                          "description": "\n".join(sec_lines)[:4096],
+                      })
+
+                      # ── 5. WORKLOAD HEALTH ────────────────────────────
+                      crashing = parse_crashing_pods(data.get("pods", ""))
+                      flapping = parse_high_restart_pods(data.get("pods", ""))
+                      dep_total, dep_bad = parse_deployments_health(data.get("deployments", ""))
+                      sts_total, sts_bad = parse_deployments_health(data.get("statefulsets", ""))
+                      all_degraded = dep_bad + sts_bad
+                      pvc_total, pvc_issues = parse_pvcs(data.get("pvcs", ""))
+
+                      wl_lines = []
+                      wl_has_issues = False
+
+                      # Degraded workloads
+                      if all_degraded:
+                          wl_has_issues = True
+                          has_issues = True
+                          issue_summary.append(f"{len(all_degraded)} workload(s) degraded")
+                          for d in all_degraded[:8]:
+                              wl_lines.append(
+                                  f"` {d['ready']}/{d['desired']} ` "
+                                  f"{d['name']}"
+                              )
+
+                      # Crashing pods
+                      if crashing:
+                          wl_has_issues = True
+                          has_issues = True
+                          issue_summary.append(f"{len(crashing)} pod(s) crashing")
+                          if wl_lines:
+                              wl_lines.append("")
+                          for p in crashing[:8]:
+                              wl_lines.append(
+                                  f"` CRASH ` {p['pod']} — "
+                                  f"{p['reason']} ×{p['restarts']}"
+                              )
+
+                      # Flapping pods
+                      if flapping:
+                          if wl_lines:
+                              wl_lines.append("")
+                          for p in flapping[:5]:
+                              wl_lines.append(
+                                  f"` {p['restarts']}× ` {p['pod']} — restarting"
+                              )
+
+                      # PVC issues
+                      if pvc_issues:
+                          wl_has_issues = True
+                          has_issues = True
+                          issue_summary.append(f"{len(pvc_issues)} PVC(s) not bound")
+                          if wl_lines:
+                              wl_lines.append("")
+                          for p in pvc_issues[:5]:
+                              wl_lines.append(f"` {p['phase']} ` PVC {p['pvc']}")
+
+                      if not wl_lines:
+                          wl_total = dep_total + sts_total
+                          wl_lines.append(
+                              f"All `{wl_total}` workloads running · "
+                              f"`{pvc_total}` PVCs bound"
+                          )
+
+                      wl_color = C_ERR if wl_has_issues else (C_WARN if flapping else C_OK)
+                      embeds.append({
+                          "author": {"name": "Workload Health"},
+                          "color": wl_color,
+                          "description": "\n".join(wl_lines)[:4096],
+                      })
+
+                      # ── 6. RESOURCE PRESSURE ──────────────────────────
+                      at_risk = parse_resource_usage_vs_limits(
+                          data.get("pods", ""), data.get("metrics", "")
+                      )
+                      top_pods = parse_metrics(data.get("metrics", ""))
+
+                      res_fields = []
+
+                      if at_risk:
+                          risk_lines = []
+                          for r in at_risk[:8]:
+                              risk_lines.append(
+                                  f"**{r['pct']:.0f}%** — "
+                                  f"{r['pod']} ({r['container']})"
+                              )
+                          res_fields.append({
+                              "name": f"Memory Pressure — {len(at_risk)} pod(s) >80% of limit",
+                              "value": "\n".join(risk_lines)[:1024],
+                              "inline": False,
                           })
 
-                          if "error" in init_resp:
-                              print(f"ERROR: MCP init failed: {init_resp['error']}", file=sys.stderr)
-                              sys.exit(1)
+                      if top_pods:
+                          top_lines = []
+                          for p in top_pods:
+                              top_lines.append(
+                                  f"**{p['mem']}** · {p['cpu']} cpu — "
+                                  f"{p['pod']}"
+                              )
+                          res_fields.append({
+                              "name": "Top Consumers by Memory",
+                              "value": "\n".join(top_lines)[:1024],
+                              "inline": False,
+                          })
 
-                          await mcp_request(client, MCP_URL, "notifications/initialized", notification=True)
+                      if res_fields:
+                          embeds.append({
+                              "author": {"name": "Resource Usage"},
+                              "color": C_WARN if at_risk else C_INFO,
+                              "fields": res_fields,
+                          })
 
+                      # ── 7. EVENTS ─────────────────────────────────────
+                      warnings = parse_warning_events(data.get("events", ""))
+                      if warnings:
+                          evt_lines = []
+                          for w in warnings[:12]:
+                              count_str = f" ×{w['count']}" if w["count"] > 1 else ""
+                              evt_lines.append(
+                                  f"**{w['reason']}**{count_str} — "
+                                  f"`{w['ns']}/{w['object']}`\n"
+                                  f"> {w['message']}"
+                              )
+                          embeds.append({
+                              "author": {"name": f"Warning Events — {len(warnings)} unique"},
+                              "color": C_WARN,
+                              "description": "\n".join(evt_lines)[:4096],
+                          })
+
+                      # ── 8. ERRORS ─────────────────────────────────────
+                      if errors:
+                          embeds.append({
+                              "author": {"name": "Collection Errors"},
+                              "color": C_DIM,
+                              "description": "\n".join(
+                                  f"` ERR ` {e}" for e in errors
+                              )[:4096],
+                          })
+
+                      # ── 0. HEADER (insert at position 0) ──────────────
+                      if has_issues:
+                          header_color = C_ERR
+                          status_text = "Issues Detected"
+                          status_icon = "✖"
+                      else:
+                          header_color = C_OK
+                          status_text = "All Systems Operational"
+                          status_icon = "✔"
+
+                      # Build compact summary description
+                      summary_parts = []
+                      summary_parts.append(
+                          f"**{len(nodes)}** nodes · "
+                          f"**{len(hr_ok) + len(hr_fail)}** releases · "
+                          f"**{len(ks_ok) + len(ks_fail)}** kustomizations · "
+                          f"**{es_total}** secrets"
+                      )
+                      if issue_summary:
+                          summary_parts.append(
+                              "\n".join(f"› {s}" for s in issue_summary[:8])
+                          )
+
+                      embeds.insert(0, {
+                          "title": f"{status_icon}  {status_text}",
+                          "color": header_color,
+                          "description": "\n\n".join(summary_parts)[:4096],
+                          "timestamp": now_iso,
+                          "footer": {
+                              "text": f"Daily Cluster Report · {now.strftime('%B %d, %Y')}",
+                          },
+                      })
+
+                      # Split into groups of 10
+                      groups = []
+                      for i in range(0, len(embeds), 10):
+                          groups.append(embeds[i:i + 10])
+                      return groups
+
+
+                  async def collect_data(client):
+                      data = {}
+                      errors = []
+
+                      async def safe_call(key, tool, args=None):
                           try:
-                              result = await mcp_request(client, MCP_URL, "tools/call", {
-                                  "name": "get_flux_instance",
-                                  "arguments": {},
-                              })
-                              if "result" in result:
-                                  report["fluxInstance"] = result["result"]
-                              elif "error" in result:
-                                  report["errors"].append(f"get_flux_instance: {result['error']}")
+                              result = await call_tool(client, tool, args)
+                              data[key] = extract_text(result)
                           except Exception as exc:
-                              report["errors"].append(f"get_flux_instance: {exc}")
+                              errors.append(f"{key}: {exc}")
 
-                          try:
-                              result = await mcp_request(client, MCP_URL, "tools/call", {
-                                  "name": "get_kubernetes_resources",
-                                  "arguments": {
-                                      "apiVersion": "helm.toolkit.fluxcd.io/v2",
-                                      "kind": "HelmRelease",
-                                  },
-                              })
-                              if "result" in result:
-                                  report["helmReleases"] = result["result"]
-                              elif "error" in result:
-                                  report["errors"].append(f"helmreleases: {result['error']}")
-                          except Exception as exc:
-                              report["errors"].append(f"helmreleases: {exc}")
+                      await safe_call("flux_instance", "get_flux_instance")
+                      await safe_call("helm_releases", "get_kubernetes_resources", {
+                          "apiVersion": "helm.toolkit.fluxcd.io/v2", "kind": "HelmRelease",
+                      })
+                      await safe_call("kustomizations", "get_kubernetes_resources", {
+                          "apiVersion": "kustomize.toolkit.fluxcd.io/v1", "kind": "Kustomization",
+                      })
+                      await safe_call("git_repos", "get_kubernetes_resources", {
+                          "apiVersion": "source.toolkit.fluxcd.io/v1", "kind": "GitRepository",
+                      })
+                      await safe_call("oci_repos", "get_kubernetes_resources", {
+                          "apiVersion": "source.toolkit.fluxcd.io/v1beta2", "kind": "OCIRepository",
+                      })
+                      await safe_call("helm_repos", "get_kubernetes_resources", {
+                          "apiVersion": "source.toolkit.fluxcd.io/v1", "kind": "HelmRepository",
+                      })
+                      await safe_call("nodes", "get_kubernetes_resources", {
+                          "apiVersion": "v1", "kind": "Node",
+                      })
+                      await safe_call("pods", "get_kubernetes_resources", {
+                          "apiVersion": "v1", "kind": "Pod",
+                      })
+                      await safe_call("pvcs", "get_kubernetes_resources", {
+                          "apiVersion": "v1", "kind": "PersistentVolumeClaim",
+                      })
+                      await safe_call("events", "get_kubernetes_resources", {
+                          "apiVersion": "v1", "kind": "Event",
+                      })
+                      await safe_call("deployments", "get_kubernetes_resources", {
+                          "apiVersion": "apps/v1", "kind": "Deployment",
+                      })
+                      await safe_call("statefulsets", "get_kubernetes_resources", {
+                          "apiVersion": "apps/v1", "kind": "StatefulSet",
+                      })
+                      await safe_call("certificates", "get_kubernetes_resources", {
+                          "apiVersion": "cert-manager.io/v1", "kind": "Certificate",
+                      })
+                      await safe_call("external_secrets", "get_kubernetes_resources", {
+                          "apiVersion": "external-secrets.io/v1", "kind": "ExternalSecret",
+                      })
+                      await safe_call("ceph_cluster", "get_kubernetes_resources", {
+                          "apiVersion": "ceph.rook.io/v1", "kind": "CephCluster",
+                      })
+                      await safe_call("ceph_blockpools", "get_kubernetes_resources", {
+                          "apiVersion": "ceph.rook.io/v1", "kind": "CephBlockPool",
+                      })
+                      await safe_call("cilium_lb_pools", "get_kubernetes_resources", {
+                          "apiVersion": "cilium.io/v2", "kind": "CiliumLoadBalancerIPPool",
+                      })
+                      await safe_call("cilium_endpoints", "get_kubernetes_resources", {
+                          "apiVersion": "cilium.io/v2", "kind": "CiliumEndpoint",
+                      })
+                      await safe_call("cilium_identities", "get_kubernetes_resources", {
+                          "apiVersion": "cilium.io/v2", "kind": "CiliumIdentity",
+                      })
 
-                          try:
-                              result = await mcp_request(client, MCP_URL, "tools/call", {
-                                  "name": "get_kubernetes_resources",
-                                  "arguments": {
-                                      "apiVersion": "kustomize.toolkit.fluxcd.io/v1",
-                                      "kind": "Kustomization",
-                                  },
-                              })
-                              if "result" in result:
-                                  report["kustomizations"] = result["result"]
-                              elif "error" in result:
-                                  report["errors"].append(f"kustomizations: {result['error']}")
-                          except Exception as exc:
-                              report["errors"].append(f"kustomizations: {exc}")
+                      # Metrics per-namespace
+                      try:
+                          ns_result = await call_tool(client, "get_kubernetes_resources", {
+                              "apiVersion": "v1", "kind": "Namespace",
+                          })
+                          ns_text = extract_text(ns_result)
+                          namespaces = re.findall(
+                              r"^\s+name:\s+(\S+)\s*$", ns_text, re.MULTILINE
+                          )
+                          all_metrics = []
+                          for ns in namespaces:
+                              try:
+                                  result = await call_tool(client, "get_kubernetes_metrics", {
+                                      "pod_namespace": ns,
+                                  })
+                                  text = extract_text(result)
+                                  if text:
+                                      all_metrics.append(text)
+                              except Exception:
+                                  pass
+                          data["metrics"] = "\n".join(all_metrics)
+                      except Exception as exc:
+                          errors.append(f"metrics: {exc}")
 
-                      webhook_url = os.environ.get("WEBHOOK_URL", "")
-                      if webhook_url:
-                          async with httpx.AsyncClient(timeout=15) as client:
+                      return data, errors
+
+
+                  async def send_webhook(webhook_url, embed_groups):
+                      async with httpx.AsyncClient(timeout=15) as client:
+                          for i, group in enumerate(embed_groups):
+                              payload = {"username": "Cluster Report", "embeds": group}
                               resp = await client.post(
                                   webhook_url,
-                                  content=json.dumps(report),
+                                  content=json.dumps(payload),
                                   headers={"Content-Type": "application/json"},
                               )
                               if resp.is_error:
                                   print(
-                                      f"Webhook failed: {resp.status_code} {resp.text}",
+                                      f"Webhook msg {i+1} failed: {resp.status_code} "
+                                      f"{resp.text}",
                                       file=sys.stderr,
                                   )
                                   sys.exit(1)
-                              print("Report sent to webhook successfully")
+                              if i < len(embed_groups) - 1:
+                                  await asyncio.sleep(1)
+                      print(f"Report sent ({len(embed_groups)} message(s))")
+
+
+                  async def main():
+                      async with httpx.AsyncClient(timeout=120) as client:
+                          init_resp = await mcp_request(client, "initialize", {
+                              "protocolVersion": "2024-11-05",
+                              "capabilities": {},
+                              "clientInfo": {"name": "flux-reporter", "version": "2.0.0"},
+                          })
+                          if not init_resp or "error" in init_resp:
+                              print(f"MCP init failed: {init_resp}", file=sys.stderr)
+                              sys.exit(1)
+                          await mcp_request(
+                              client, "notifications/initialized", notification=True
+                          )
+                          data, errors = await collect_data(client)
+
+                      if errors:
+                          print(f"Collection errors: {errors}", file=sys.stderr)
+
+                      embed_groups = build_all_embeds(data, errors)
+
+                      webhook_url = os.environ.get("WEBHOOK_URL", "")
+                      if webhook_url:
+                          await send_webhook(webhook_url, embed_groups)
                       else:
-                          print(json.dumps(report, indent=2))
+                          for group in embed_groups:
+                              print(json.dumps({"embeds": group}, indent=2))
 
 
                   asyncio.run(main())
