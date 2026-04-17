@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kustomization v1 — kustomize.toolkit.fluxcd.io</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root {
+    --bg: #09090b;
+    --bg-surface: rgba(24, 24, 27, 0.6);
+    --bg-hover: rgba(24, 24, 27, 0.8);
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --accent: #6bc1fe;
+    --accent-dim: rgba(107, 193, 254, 0.15);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-active: #6bc1fe;
+    --stat-fg: #fafafa;
+    --required-bg: rgba(251, 191, 36, 0.15);
+    --required-fg: #fbbf24;
+    --stripes-dark: repeating-linear-gradient(100deg, #000 0%, #000 7%, transparent 10%, transparent 12%, #000 16%);
+    --rainbow: repeating-linear-gradient(100deg, #fff 10%, #fff 16%, #fff 22%, #fff 30%);
+  }
+  .light {
+    --bg: #f5f7fa;
+    --bg-surface: #ffffff;
+    --bg-hover: #edf0f4;
+    --fg: #18181b;
+    --fg-muted: #6b7785;
+    --accent: #2563b0;
+    --accent-dim: rgba(37, 99, 176, 0.08);
+    --border: #d8dde4;
+    --border-active: #2563b0;
+    --stat-fg: #18181b;
+    --required-bg: rgba(217, 119, 6, 0.1);
+    --required-fg: #b45309;
+    --stripes-dark: none;
+    --rainbow: none;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--fg);
+    max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem;
+    position: relative; z-index: 1;
+    transition: background 0.2s, color 0.2s;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 31px 47px, rgba(255,255,255,1), transparent),
+      radial-gradient(1px 1px at 212px 23px, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 68px 289px, rgba(255,255,255,0.84), transparent),
+      radial-gradient(1px 1px at 313px 151px, rgba(255,255,255,0.56), transparent),
+      radial-gradient(1px 1px at 157px 371px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(2px 2px at 19px 83px, rgba(255,255,255,0.96), transparent),
+      radial-gradient(1px 1px at 301px 41px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 127px 409px, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 443px 237px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 67px 491px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1px 1px at 11px 37px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1.5px 1.5px at 191px 213px, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1px 1px at 53px 7px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 271px 103px, rgba(255,255,255,0.64), transparent);
+    background-size:
+      397px 397px, 397px 397px, 397px 397px, 397px 397px, 397px 397px,
+      509px 509px, 509px 509px, 509px 509px, 509px 509px, 509px 509px,
+      311px 311px, 311px 311px, 311px 311px, 311px 311px;
+    mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+  }
+  .flare {
+    position: fixed; top: 0; right: 0;
+    width: 100vw; height: 450px; z-index: -1;
+    pointer-events: none;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 300% 200%;
+    background-position: 50% 50%;
+    filter: opacity(50%) saturate(200%);
+    opacity: 0.25;
+    mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+  }
+  .flare::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 200% 100%;
+    background-attachment: fixed;
+    mix-blend-mode: difference;
+  }
+  .light body::before, .light .flare { display: none; }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--fg-muted); cursor: pointer; padding: 0.35rem 0.6rem; font-size: 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .copied-toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #09090b; padding: 0.4rem 1rem;
+    border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none; z-index: 10;
+  }
+  .copied-toast.show { opacity: 1; }
+  footer {
+    margin-top: 3rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center; font-size: 0.8rem; color: var(--fg-muted);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .back-link { font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; }
+  .back-link kbd {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.6rem; color: var(--fg-muted); background: var(--bg-surface);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 0.1rem 0.35rem; line-height: 1;
+  }
+  .meta-cards {
+    display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+  }
+  .meta-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.5rem 1rem;
+  }
+  .meta-card .label { font-size: 0.7rem; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .meta-card .value { font-size: 1rem; font-weight: 600; }
+  .yaml-block {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.5rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.8rem; white-space: pre; overflow-x: auto; color: var(--fg);
+  }
+  .toolbar {
+    display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+    align-items: center; justify-content: space-between;
+  }
+  .toolbar-left { display: flex; gap: 0.75rem; }
+  .toolbar button, .toolbar a {
+    background: none; border: none; color: var(--fg-muted); cursor: pointer;
+    font-size: 0.8rem; padding: 0.2rem 0; transition: color 0.15s;
+  }
+  .toolbar button:hover, .toolbar a:hover { color: var(--accent); text-decoration: underline; }
+  .prop {
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; transition: border-color 0.2s;
+  }
+  .prop[open] { border-color: var(--border-active); border-left-width: 2px; }
+  .prop > summary {
+    padding: 0.5rem 0.75rem; cursor: pointer;
+    font-size: 0.85rem; background: var(--bg-surface); border-radius: 6px;
+    list-style: none; display: flex; align-items: center; gap: 0.5rem;
+    transition: background 0.15s;
+  }
+  .prop > summary::-webkit-details-marker { display: none; }
+  .prop > summary::before { content: "\25B8"; color: var(--fg-muted); font-size: 0.7rem; }
+  .prop[open] > summary::before { content: "\25BE"; color: var(--accent); }
+  .prop > summary:hover { background: var(--bg-hover); }
+  .prop-content { padding: 0.5rem 0.75rem 0.75rem; padding-left: 1.5rem; }
+  .prop-leaf {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem; display: flex; align-items: flex-start; gap: 0.5rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; background: var(--bg-surface);
+  }
+  .prop-leaf .prop-name { min-width: 0; }
+  .prop-name {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    color: var(--accent); font-weight: 600; white-space: nowrap;
+  }
+  .type-badge {
+    background: var(--accent-dim); color: var(--accent);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .required-badge {
+    background: var(--required-bg); color: var(--required-fg);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .prop-desc { color: var(--fg-muted); font-size: 0.82rem; margin-top: 0.25rem; }
+  .prop-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.2rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+  .prop-children { margin-top: 0.5rem; }
+  .leaf-desc { color: var(--fg-muted); font-size: 0.82rem; flex: 1; min-width: 0; }
+  .leaf-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.15rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+</style>
+<script>if(localStorage.getItem('theme')==='light')document.documentElement.className='light';</script>
+</head>
+<body>
+<div class="flare"></div>
+<div class="nav-row">
+  <a href="/" class="back-link">← Back to index <kbd>Esc</kbd></a>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
+</div>
+<div class="meta-cards">
+  <div class="meta-card"><div class="label">Kind</div><div class="value">Kustomization</div></div>
+  <div class="meta-card"><div class="label">Group</div><div class="value">kustomize.toolkit.fluxcd.io</div></div>
+  <div class="meta-card"><div class="label">Version</div><div class="value">v1</div></div>
+</div>
+<div class="yaml-block">apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: example</div>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <button id="expand-all">Expand all</button>
+    <button id="collapse-all">Collapse all</button>
+  </div>
+  <div class="toolbar-left">
+    <a href="/kustomize.toolkit.fluxcd.io/kustomization_v1.json" target="_blank">View raw schema</a>
+    <button id="copy-url" data-url="/kustomize.toolkit.fluxcd.io/kustomization_v1.json">Copy schema URL</button>
+  </div>
+</div>
+<div id="properties">
+<div class="prop-leaf">
+  <span class="prop-name">apiVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">APIVersion defines the versioned schema of this representation of an object.
+Servers should convert recognized schemas to the latest internal value, and
+may reject unrecognized values.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is a string value representing the REST resource this object represents.
+Servers may infer this from the endpoint the client submits requests to.
+Cannot be updated.
+In CamelCase.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">spec</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">KustomizationSpec defines the configuration to calculate the desired state
+from a Source using Kustomize.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">commonMetadata</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">CommonMetadata specifies the common labels and annotations that are
+applied to all resources. Any existing label or annotation will be
+overridden if its key matches a common one.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">annotations</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Annotations to be added to the object&#39;s metadata.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">labels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Labels to be added to the object&#39;s metadata.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">components</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Components specifies relative paths to kustomize Components.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">decryption</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Decrypt Kubernetes secrets before applying them on the cluster.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">provider</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Provider is the name of the decryption engine.<div class="leaf-constraints">enum: sops</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">secretRef</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The secret name containing the private OpenPGP keys used for decryption.
+A static credential for a cloud provider defined inside the Secret
+takes priority to secret-less authentication with the ServiceAccountName
+field.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the referent.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">serviceAccountName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ServiceAccountName is the name of the service account used to
+authenticate with KMS services from cloud providers. If a
+static credential for a given cloud provider is defined
+inside the Secret referenced by SecretRef, that static
+credential takes priority.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">deletionPolicy</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">DeletionPolicy can be used to control garbage collection when this
+Kustomization is deleted. Valid values are (&#39;MirrorPrune&#39;, &#39;Delete&#39;,
+&#39;WaitForTermination&#39;, &#39;Orphan&#39;). &#39;MirrorPrune&#39; mirrors the Prune field
+(orphan if false, delete if true). Defaults to &#39;MirrorPrune&#39;.<div class="leaf-constraints">enum: MirrorPrune, Delete, WaitForTermination, Orphan</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">dependsOn</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">DependsOn may contain a DependencyReference slice
+with references to Kustomization resources that must be ready before this
+Kustomization can be reconciled.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the referent.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace of the referent, defaults to the namespace of the Kustomization
+resource object that contains the reference.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">readyExpr</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ReadyExpr is a CEL expression that can be used to assess the readiness
+of a dependency. When specified, the built-in readiness check
+is replaced by the logic defined in the CEL expression.
+To make the CEL expression additive to the built-in readiness check,
+the feature gate `AdditiveCELDependencyCheck` must be set to `true`.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">force</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Force instructs the controller to recreate resources
+when patching fails due to an immutable field change.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">healthCheckExprs</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HealthCheckExprs is a list of healthcheck expressions for evaluating the
+health of custom resources using Common Expression Language (CEL).
+The expressions are evaluated only when Wait or HealthChecks are specified.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">apiVersion</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">APIVersion of the custom resource under evaluation.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">current</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Current is the CEL expression that determines if the status
+of the custom resource has reached the desired state.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">failed</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Failed is the CEL expression that determines if the status
+of the custom resource has failed to reach the desired state.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">inProgress</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">InProgress is the CEL expression that determines if the status
+of the custom resource has not yet reached the desired state.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind of the custom resource under evaluation.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">healthChecks</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">A list of resources to be included in the health assessment.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">apiVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">API version of the referent, if not specified the Kubernetes preferred version will be used.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind of the referent.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the referent.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace of the referent, when not specified it acts as LocalObjectReference.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">ignoreMissingComponents</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">IgnoreMissingComponents instructs the controller to ignore Components paths
+not found in source by removing them from the generated kustomization.yaml
+before running kustomize build.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">images</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Images is a list of (image name, new name, new tag or digest)
+for changing image names, tags or digests. This can also be achieved with a
+patch, but this operator is simpler to specify.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">digest</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Digest is the value used to replace the original image tag.
+If digest is present NewTag value is ignored.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is a tag-less image name.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">newName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">NewName is the value used to replace the original name.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">newTag</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">NewTag is the value used to replace the original tag.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The interval at which to reconcile the Kustomization.
+This interval is approximate and may be subject to jitter to ensure
+efficient use of resources.<div class="leaf-constraints">pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">kubeConfig</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The KubeConfig for reconciling the Kustomization on a remote cluster.
+When used in combination with KustomizationSpec.ServiceAccountName,
+forces the controller to act on behalf of that Service Account at the
+target cluster.
+If the --default-service-account flag is set, its value will be used as
+a controller level fallback for when KustomizationSpec.ServiceAccountName
+is empty.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">configMapRef</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ConfigMapRef holds an optional name of a ConfigMap that contains
+the following keys:
+
+- `provider`: the provider to use. One of `aws`, `azure`, `gcp`, or
+   `generic`. Required.
+- `cluster`: the fully qualified resource name of the Kubernetes
+   cluster in the cloud provider API. Not used by the `generic`
+   provider. Required when one of `address` or `ca.crt` is not set.
+- `address`: the address of the Kubernetes API server. Required
+   for `generic`. For the other providers, if not specified, the
+   first address in the cluster resource will be used, and if
+   specified, it must match one of the addresses in the cluster
+   resource.
+   If audiences is not set, will be used as the audience for the
+   `generic` provider.
+- `ca.crt`: the optional PEM-encoded CA certificate for the
+   Kubernetes API server. If not set, the controller will use the
+   CA certificate from the cluster resource.
+- `audiences`: the optional audiences as a list of
+   line-break-separated strings for the Kubernetes ServiceAccount
+   token. Defaults to the `address` for the `generic` provider, or
+   to specific values for the other providers depending on the
+   provider.
+-  `serviceAccountName`: the optional name of the Kubernetes
+   ServiceAccount in the same namespace that should be used
+   for authentication. If not specified, the controller
+   ServiceAccount will be used.
+
+Mutually exclusive with SecretRef.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the referent.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">secretRef</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SecretRef holds an optional name of a secret that contains a key with
+the kubeconfig file as the value. If no key is set, the key will default
+to &#39;value&#39;. Mutually exclusive with ConfigMapRef.
+It is recommended that the kubeconfig is self-contained, and the secret
+is regularly updated if credentials such as a cloud-access-token expire.
+Cloud specific `cmd-path` auth helpers will not function without adding
+binaries and credentials to the Pod that is responsible for reconciling
+Kubernetes resources. Supported only for the generic provider.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Key in the Secret, when not specified an implementation-specific default key is used.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the Secret.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">namePrefix</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">NamePrefix will prefix the names of all managed resources.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 200</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">nameSuffix</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">NameSuffix will suffix the names of all managed resources.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 200</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">patches</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Strategic merge and JSON patches, defined as inline YAML objects,
+capable of targeting objects based on kind, label and annotation selectors.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">patch</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Patch contains an inline StrategicMerge patch or an inline JSON6902 patch with
+an array of operation objects.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">target</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Target points to the resources that the patch document should be applied to.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">annotationSelector</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">AnnotationSelector is a string that follows the label selection expression
+https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#api
+It matches with the resource annotations.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the API group to select resources from.
+Together with Version and Kind it is capable of unambiguously identifying and/or selecting resources.
+https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/api-group.md
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind of the API Group to select resources from.
+Together with Group and Version it is capable of unambiguously
+identifying and/or selecting resources.
+https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/api-group.md
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">labelSelector</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">LabelSelector is a string that follows the label selection expression
+https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#api
+It matches with the resource labels.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name to match resources with.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace to select resources from.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">version</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Version of the API Group to select resources from.
+Together with Group and Kind it is capable of unambiguously identifying and/or selecting resources.
+https://github.com/kubernetes/community/blob/master/contributors/design-proposals/api-machinery/api-group.md
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Path to the directory containing the kustomization.yaml file, or the
+set of plain YAMLs a kustomization.yaml should be generated for.
+Defaults to &#39;None&#39;, which translates to the root path of the SourceRef.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">postBuild</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">PostBuild describes which actions to perform on the YAML manifest
+generated by building the kustomize overlay.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">substitute</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Substitute holds a map of key/value pairs.
+The variables defined in your YAML manifests that match any of the keys
+defined in the map will be substituted with the set value.
+Includes support for bash string replacement functions
+e.g. ${var:=default}, ${var:position} and ${var/substring/replacement}.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">substituteFrom</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SubstituteFrom holds references to ConfigMaps and Secrets containing
+the variables and their values to be substituted in the YAML manifests.
+The ConfigMap and the Secret data keys represent the var names, and they
+must match the vars declared in the manifests for the substitution to
+happen.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind of the values referent, valid values are (&#39;Secret&#39;, &#39;ConfigMap&#39;).<div class="leaf-constraints">enum: Secret, ConfigMap</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the values referent. Should reside in the same namespace as the
+referring resource.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Optional indicates whether the referenced resource must exist, or whether to
+tolerate its absence. If true and the referenced resource is absent, proceed
+as if the resource was present but empty, without any variables defined.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">prune</span>
+  <span class="type-badge">boolean</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Prune enables garbage collection.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">retryInterval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The interval at which to retry a previously failed reconciliation.
+When not specified, the controller uses the KustomizationSpec.Interval
+value to retry failures.<div class="leaf-constraints">pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">serviceAccountName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The name of the Kubernetes service account to impersonate
+when reconciling this Kustomization.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">sourceRef</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Reference of the source where the kustomization file is.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">apiVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">API version of the referent.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind of the referent.<div class="leaf-constraints">enum: OCIRepository, GitRepository, Bucket, ExternalArtifact</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the referent.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace of the referent, defaults to the namespace of the Kubernetes
+resource object that contains the reference.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">suspend</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">This flag tells the controller to suspend subsequent kustomize executions,
+it does not apply to already started executions. Defaults to false.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">targetNamespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">TargetNamespace sets or overrides the namespace in the
+kustomization.yaml file.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Timeout for validation, apply and health checking operations.
+Defaults to &#39;Interval&#39; duration.<div class="leaf-constraints">pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">wait</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Wait instructs the controller to check the health of all the reconciled
+resources. When enabled, the HealthChecks are ignored. Defaults to false.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">status</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">KustomizationStatus defines the observed state of a kustomization.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">conditions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content">
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">lastTransitionTime</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">lastTransitionTime is the last time the condition transitioned from one status to another.
+This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.<div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">message</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">message is a human readable message indicating details about the transition.
+This may be an empty string.<div class="leaf-constraints">maxLength: 32768</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">observedGeneration</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">observedGeneration represents the .metadata.generation that the condition was set based upon.
+For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+with respect to the current state of the instance.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">reason</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">reason contains a programmatic identifier indicating the reason for the condition&#39;s last transition.
+Producers of specific condition types may define expected values and meanings for this field,
+and whether the values are considered a guaranteed API.
+The value should be a CamelCase string.
+This field may not be empty.<div class="leaf-constraints">pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">status</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">status of the condition, one of True, False, Unknown.<div class="leaf-constraints">enum: True, False, Unknown</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">type of condition in CamelCase or in foo.example.com/CamelCase.<div class="leaf-constraints">pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$</div><div class="leaf-constraints">maxLength: 316</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">history</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">History contains a set of snapshots of the last reconciliation attempts
+tracking the revision, the state and the duration of each attempt.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">digest</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Digest is the checksum in the format `&lt;algo&gt;:&lt;hex&gt;` of the resources in this snapshot.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">firstReconciled</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">FirstReconciled is the time when this revision was first reconciled to the cluster.<div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lastReconciled</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">LastReconciled is the time when this revision was last reconciled to the cluster.<div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lastReconciledDuration</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">LastReconciledDuration is time it took to reconcile the resources in this revision.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lastReconciledStatus</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">LastReconciledStatus is the status of the last reconciliation.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Metadata contains additional information about the snapshot.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">totalReconciliations</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">TotalReconciliations is the total number of reconciliations that have occurred for this snapshot.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">inventory</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Inventory contains the list of Kubernetes resource object references that
+have been successfully applied.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">entries</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Entries of Kubernetes resource object references.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">id</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">ID is the string representation of the Kubernetes resource object&#39;s metadata,
+in the format &#39;&lt;namespace&gt;_&lt;name&gt;_&lt;group&gt;_&lt;kind&gt;&#39;.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">v</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Version is the API version of the Kubernetes resource object&#39;s kind.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">lastAppliedOriginRevision</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The last successfully applied origin revision.
+Equals the origin revision of the applied Artifact from the referenced Source.
+Usually present on the Metadata of the applied Artifact and depends on the
+Source type, e.g. for OCI it&#39;s the value associated with the key
+&#34;org.opencontainers.image.revision&#34;.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lastAppliedRevision</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The last successfully applied revision.
+Equals the Revision of the applied Artifact from the referenced Source.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lastAttemptedRevision</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">LastAttemptedRevision is the revision of the last reconciliation attempt.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lastHandledReconcileAt</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">LastHandledReconcileAt holds the value of the most recent
+reconcile request value, so a change of the annotation value
+can be detected.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">observedGeneration</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">ObservedGeneration is the last reconciled generation.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+</div>
+<div class="copied-toast" id="toast">Copied!</div>
+<footer>
+  Generated by <a href="https://github.com/sholdee/crd-schema-publisher">crd-schema-publisher</a>
+</footer>
+<script>
+(function(){
+  var props = document.querySelectorAll('.prop');
+  document.getElementById('expand-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.setAttribute('open',''); });
+  });
+  document.getElementById('collapse-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.removeAttribute('open'); });
+  });
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+      }
+      location.href = '/';
+    }
+  });
+  document.getElementById('copy-url').addEventListener('click', function(){
+    var url = location.origin + this.dataset.url;
+    navigator.clipboard.writeText(url).then(function(){
+      clearTimeout(toastTimer);
+      toast.classList.add('show');
+      toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1500);
+    });
+  });
+})();
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+}
+</script>
+</body>
+</html>

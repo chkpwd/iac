@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gitrepository v1 — source.toolkit.fluxcd.io</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root {
+    --bg: #09090b;
+    --bg-surface: rgba(24, 24, 27, 0.6);
+    --bg-hover: rgba(24, 24, 27, 0.8);
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --accent: #6bc1fe;
+    --accent-dim: rgba(107, 193, 254, 0.15);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-active: #6bc1fe;
+    --stat-fg: #fafafa;
+    --required-bg: rgba(251, 191, 36, 0.15);
+    --required-fg: #fbbf24;
+    --stripes-dark: repeating-linear-gradient(100deg, #000 0%, #000 7%, transparent 10%, transparent 12%, #000 16%);
+    --rainbow: repeating-linear-gradient(100deg, #fff 10%, #fff 16%, #fff 22%, #fff 30%);
+  }
+  .light {
+    --bg: #f5f7fa;
+    --bg-surface: #ffffff;
+    --bg-hover: #edf0f4;
+    --fg: #18181b;
+    --fg-muted: #6b7785;
+    --accent: #2563b0;
+    --accent-dim: rgba(37, 99, 176, 0.08);
+    --border: #d8dde4;
+    --border-active: #2563b0;
+    --stat-fg: #18181b;
+    --required-bg: rgba(217, 119, 6, 0.1);
+    --required-fg: #b45309;
+    --stripes-dark: none;
+    --rainbow: none;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--fg);
+    max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem;
+    position: relative; z-index: 1;
+    transition: background 0.2s, color 0.2s;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 31px 47px, rgba(255,255,255,1), transparent),
+      radial-gradient(1px 1px at 212px 23px, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 68px 289px, rgba(255,255,255,0.84), transparent),
+      radial-gradient(1px 1px at 313px 151px, rgba(255,255,255,0.56), transparent),
+      radial-gradient(1px 1px at 157px 371px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(2px 2px at 19px 83px, rgba(255,255,255,0.96), transparent),
+      radial-gradient(1px 1px at 301px 41px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 127px 409px, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 443px 237px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 67px 491px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1px 1px at 11px 37px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1.5px 1.5px at 191px 213px, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1px 1px at 53px 7px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 271px 103px, rgba(255,255,255,0.64), transparent);
+    background-size:
+      397px 397px, 397px 397px, 397px 397px, 397px 397px, 397px 397px,
+      509px 509px, 509px 509px, 509px 509px, 509px 509px, 509px 509px,
+      311px 311px, 311px 311px, 311px 311px, 311px 311px;
+    mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+  }
+  .flare {
+    position: fixed; top: 0; right: 0;
+    width: 100vw; height: 450px; z-index: -1;
+    pointer-events: none;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 300% 200%;
+    background-position: 50% 50%;
+    filter: opacity(50%) saturate(200%);
+    opacity: 0.25;
+    mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+  }
+  .flare::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 200% 100%;
+    background-attachment: fixed;
+    mix-blend-mode: difference;
+  }
+  .light body::before, .light .flare { display: none; }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--fg-muted); cursor: pointer; padding: 0.35rem 0.6rem; font-size: 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .copied-toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #09090b; padding: 0.4rem 1rem;
+    border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none; z-index: 10;
+  }
+  .copied-toast.show { opacity: 1; }
+  footer {
+    margin-top: 3rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center; font-size: 0.8rem; color: var(--fg-muted);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .back-link { font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; }
+  .back-link kbd {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.6rem; color: var(--fg-muted); background: var(--bg-surface);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 0.1rem 0.35rem; line-height: 1;
+  }
+  .meta-cards {
+    display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+  }
+  .meta-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.5rem 1rem;
+  }
+  .meta-card .label { font-size: 0.7rem; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .meta-card .value { font-size: 1rem; font-weight: 600; }
+  .yaml-block {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.5rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.8rem; white-space: pre; overflow-x: auto; color: var(--fg);
+  }
+  .toolbar {
+    display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+    align-items: center; justify-content: space-between;
+  }
+  .toolbar-left { display: flex; gap: 0.75rem; }
+  .toolbar button, .toolbar a {
+    background: none; border: none; color: var(--fg-muted); cursor: pointer;
+    font-size: 0.8rem; padding: 0.2rem 0; transition: color 0.15s;
+  }
+  .toolbar button:hover, .toolbar a:hover { color: var(--accent); text-decoration: underline; }
+  .prop {
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; transition: border-color 0.2s;
+  }
+  .prop[open] { border-color: var(--border-active); border-left-width: 2px; }
+  .prop > summary {
+    padding: 0.5rem 0.75rem; cursor: pointer;
+    font-size: 0.85rem; background: var(--bg-surface); border-radius: 6px;
+    list-style: none; display: flex; align-items: center; gap: 0.5rem;
+    transition: background 0.15s;
+  }
+  .prop > summary::-webkit-details-marker { display: none; }
+  .prop > summary::before { content: "\25B8"; color: var(--fg-muted); font-size: 0.7rem; }
+  .prop[open] > summary::before { content: "\25BE"; color: var(--accent); }
+  .prop > summary:hover { background: var(--bg-hover); }
+  .prop-content { padding: 0.5rem 0.75rem 0.75rem; padding-left: 1.5rem; }
+  .prop-leaf {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem; display: flex; align-items: flex-start; gap: 0.5rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; background: var(--bg-surface);
+  }
+  .prop-leaf .prop-name { min-width: 0; }
+  .prop-name {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    color: var(--accent); font-weight: 600; white-space: nowrap;
+  }
+  .type-badge {
+    background: var(--accent-dim); color: var(--accent);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .required-badge {
+    background: var(--required-bg); color: var(--required-fg);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .prop-desc { color: var(--fg-muted); font-size: 0.82rem; margin-top: 0.25rem; }
+  .prop-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.2rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+  .prop-children { margin-top: 0.5rem; }
+  .leaf-desc { color: var(--fg-muted); font-size: 0.82rem; flex: 1; min-width: 0; }
+  .leaf-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.15rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+</style>
+<script>if(localStorage.getItem('theme')==='light')document.documentElement.className='light';</script>
+</head>
+<body>
+<div class="flare"></div>
+<div class="nav-row">
+  <a href="/" class="back-link">← Back to index <kbd>Esc</kbd></a>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
+</div>
+<div class="meta-cards">
+  <div class="meta-card"><div class="label">Kind</div><div class="value">Gitrepository</div></div>
+  <div class="meta-card"><div class="label">Group</div><div class="value">source.toolkit.fluxcd.io</div></div>
+  <div class="meta-card"><div class="label">Version</div><div class="value">v1</div></div>
+</div>
+<div class="yaml-block">apiVersion: source.toolkit.fluxcd.io/v1
+kind: Gitrepository
+metadata:
+  name: example</div>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <button id="expand-all">Expand all</button>
+    <button id="collapse-all">Collapse all</button>
+  </div>
+  <div class="toolbar-left">
+    <a href="/source.toolkit.fluxcd.io/gitrepository_v1.json" target="_blank">View raw schema</a>
+    <button id="copy-url" data-url="/source.toolkit.fluxcd.io/gitrepository_v1.json">Copy schema URL</button>
+  </div>
+</div>
+<div id="properties">
+<div class="prop-leaf">
+  <span class="prop-name">apiVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">APIVersion defines the versioned schema of this representation of an object.
+Servers should convert recognized schemas to the latest internal value, and
+may reject unrecognized values.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is a string value representing the REST resource this object represents.
+Servers may infer this from the endpoint the client submits requests to.
+Cannot be updated.
+In CamelCase.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">spec</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">GitRepositorySpec specifies the required configuration to produce an
+Artifact for a Git repository.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">ignore</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Ignore overrides the set of excluded patterns in the .sourceignore format
+(which is the same as .gitignore). If not provided, a default will be used,
+consult the documentation for your version to find out what those are.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">include</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Include specifies a list of GitRepository resources which Artifacts
+should be included in the Artifact produced for this GitRepository.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">fromPath</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">FromPath specifies the path to copy contents from, defaults to the root
+of the Artifact.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">repository</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">GitRepositoryRef specifies the GitRepository which Artifact contents
+must be included.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the referent.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">toPath</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ToPath specifies the path to copy contents to, defaults to the name of
+the GitRepositoryRef.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Interval at which the GitRepository URL is checked for updates.
+This interval is approximate and may be subject to jitter to ensure
+efficient use of resources.<div class="leaf-constraints">pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m|h))+$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">provider</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Provider used for authentication, can be &#39;azure&#39;, &#39;github&#39;, &#39;generic&#39;.
+When not specified, defaults to &#39;generic&#39;.<div class="leaf-constraints">enum: generic, azure, github</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">proxySecretRef</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ProxySecretRef specifies the Secret containing the proxy configuration
+to use while communicating with the Git server.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the referent.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">recurseSubmodules</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">RecurseSubmodules enables the initialization of all submodules within
+the GitRepository as cloned from the URL, using their default settings.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">ref</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Reference specifies the Git reference to resolve and monitor for
+changes, defaults to the &#39;master&#39; branch.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">branch</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Branch to check out, defaults to &#39;master&#39; if no other field is defined.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">commit</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Commit SHA to check out, takes precedence over all reference fields.
+
+This can be combined with Branch to shallow clone the branch, in which
+the commit is expected to exist.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the reference to check out; takes precedence over Branch, Tag and SemVer.
+
+It must be a valid Git reference: https://git-scm.com/docs/git-check-ref-format#_description
+Examples: &#34;refs/heads/main&#34;, &#34;refs/tags/v0.1.0&#34;, &#34;refs/pull/420/head&#34;, &#34;refs/merge-requests/1/head&#34;
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">semver</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SemVer tag expression to check out, takes precedence over Tag.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">tag</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Tag to check out, takes precedence over Branch.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">secretRef</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SecretRef specifies the Secret containing authentication credentials for
+the GitRepository.
+For HTTPS repositories the Secret must contain &#39;username&#39; and &#39;password&#39;
+fields for basic auth or &#39;bearerToken&#39; field for token auth.
+For SSH repositories the Secret must contain &#39;identity&#39;
+and &#39;known_hosts&#39; fields.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the referent.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">serviceAccountName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ServiceAccountName is the name of the Kubernetes ServiceAccount used to
+authenticate to the GitRepository. This field is only supported for &#39;azure&#39; provider.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sparseCheckout</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">SparseCheckout specifies a list of directories to checkout when cloning
+the repository. If specified, only these directories are included in the
+Artifact produced for this GitRepository.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">suspend</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Suspend tells the controller to suspend the reconciliation of this
+GitRepository.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Timeout for Git operations like cloning, defaults to 60s.<div class="leaf-constraints">pattern: ^([0-9]+(\.[0-9]+)?(ms|s|m))+$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">url</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">URL specifies the Git repository URL, it can be an HTTP/S or SSH address.<div class="leaf-constraints">pattern: ^(http|https|ssh)://.*$</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">verify</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Verification specifies the configuration to verify the Git commit
+signature(s).</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">mode</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Mode specifies which Git object(s) should be verified.
+
+The variants &#34;head&#34; and &#34;HEAD&#34; both imply the same thing, i.e. verify
+the commit that the HEAD of the Git repository points to. The variant
+&#34;head&#34; solely exists to ensure backwards compatibility.<div class="leaf-constraints">enum: head, HEAD, Tag, TagAndHEAD</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">secretRef</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SecretRef specifies the Secret containing the public keys of trusted Git
+authors.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the referent.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">status</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">GitRepositoryStatus records the observed state of a Git repository.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">artifact</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Artifact represents the last successful GitRepository reconciliation.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">digest</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Digest is the digest of the file in the form of &#39;&lt;algorithm&gt;:&lt;checksum&gt;&#39;.<div class="leaf-constraints">pattern: ^[a-z0-9]+(?:[.+_-][a-z0-9]+)*:[a-zA-Z0-9=_-]+$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lastUpdateTime</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">LastUpdateTime is the timestamp corresponding to the last update of the
+Artifact.<div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Metadata holds upstream information such as OCI annotations.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Path is the relative file path of the Artifact. It can be used to locate
+the file in the root of the Artifact storage on the local file system of
+the controller managing the Source.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">revision</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Revision is a human-readable identifier traceable in the origin source
+system. It can be a Git commit SHA, Git tag, a Helm chart version, etc.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">size</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Size is the number of bytes in the file.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">url</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">URL is the HTTP address of the Artifact as exposed by the controller
+managing the Source. It can be used to retrieve the Artifact for
+consumption, e.g. by another controller applying the Artifact contents.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">conditions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Conditions holds the conditions for the GitRepository.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">lastTransitionTime</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">lastTransitionTime is the last time the condition transitioned from one status to another.
+This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.<div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">message</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">message is a human readable message indicating details about the transition.
+This may be an empty string.<div class="leaf-constraints">maxLength: 32768</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">observedGeneration</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">observedGeneration represents the .metadata.generation that the condition was set based upon.
+For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+with respect to the current state of the instance.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">reason</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">reason contains a programmatic identifier indicating the reason for the condition&#39;s last transition.
+Producers of specific condition types may define expected values and meanings for this field,
+and whether the values are considered a guaranteed API.
+The value should be a CamelCase string.
+This field may not be empty.<div class="leaf-constraints">pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">status</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">status of the condition, one of True, False, Unknown.<div class="leaf-constraints">enum: True, False, Unknown</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">type of condition in CamelCase or in foo.example.com/CamelCase.<div class="leaf-constraints">pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$</div><div class="leaf-constraints">maxLength: 316</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">includedArtifacts</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">IncludedArtifacts contains a list of the last successfully included
+Artifacts as instructed by GitRepositorySpec.Include.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">digest</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Digest is the digest of the file in the form of &#39;&lt;algorithm&gt;:&lt;checksum&gt;&#39;.<div class="leaf-constraints">pattern: ^[a-z0-9]+(?:[.+_-][a-z0-9]+)*:[a-zA-Z0-9=_-]+$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lastUpdateTime</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">LastUpdateTime is the timestamp corresponding to the last update of the
+Artifact.<div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Metadata holds upstream information such as OCI annotations.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Path is the relative file path of the Artifact. It can be used to locate
+the file in the root of the Artifact storage on the local file system of
+the controller managing the Source.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">revision</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Revision is a human-readable identifier traceable in the origin source
+system. It can be a Git commit SHA, Git tag, a Helm chart version, etc.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">size</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Size is the number of bytes in the file.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">url</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">URL is the HTTP address of the Artifact as exposed by the controller
+managing the Source. It can be used to retrieve the Artifact for
+consumption, e.g. by another controller applying the Artifact contents.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">lastHandledReconcileAt</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">LastHandledReconcileAt holds the value of the most recent
+reconcile request value, so a change of the annotation value
+can be detected.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">observedGeneration</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">ObservedGeneration is the last observed generation of the GitRepository
+object.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">observedIgnore</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ObservedIgnore is the observed exclusion patterns used for constructing
+the source artifact.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">observedInclude</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ObservedInclude is the observed list of GitRepository resources used to
+produce the current Artifact.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">fromPath</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">FromPath specifies the path to copy contents from, defaults to the root
+of the Artifact.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">repository</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">GitRepositoryRef specifies the GitRepository which Artifact contents
+must be included.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the referent.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">toPath</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ToPath specifies the path to copy contents to, defaults to the name of
+the GitRepositoryRef.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">observedRecurseSubmodules</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">ObservedRecurseSubmodules is the observed resource submodules
+configuration used to produce the current Artifact.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">observedSparseCheckout</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">ObservedSparseCheckout is the observed list of directories used to
+produce the current Artifact.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sourceVerificationMode</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SourceVerificationMode is the last used verification mode indicating
+which Git object(s) have been verified.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+</div>
+<div class="copied-toast" id="toast">Copied!</div>
+<footer>
+  Generated by <a href="https://github.com/sholdee/crd-schema-publisher">crd-schema-publisher</a>
+</footer>
+<script>
+(function(){
+  var props = document.querySelectorAll('.prop');
+  document.getElementById('expand-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.setAttribute('open',''); });
+  });
+  document.getElementById('collapse-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.removeAttribute('open'); });
+  });
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+      }
+      location.href = '/';
+    }
+  });
+  document.getElementById('copy-url').addEventListener('click', function(){
+    var url = location.origin + this.dataset.url;
+    navigator.clipboard.writeText(url).then(function(){
+      clearTimeout(toastTimer);
+      toast.classList.add('show');
+      toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1500);
+    });
+  });
+})();
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+}
+</script>
+</body>
+</html>

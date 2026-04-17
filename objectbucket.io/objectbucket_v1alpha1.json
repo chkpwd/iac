@@ -1,0 +1,109 @@
+{
+  "properties": {
+    "spec": {
+      "additionalProperties": false,
+      "properties": {
+        "additionalState": {
+          "nullable": true,
+          "type": [
+            "object",
+            "null"
+          ],
+          "x-kubernetes-preserve-unknown-fields": true
+        },
+        "authentication": {
+          "items": {
+            "type": "object",
+            "x-kubernetes-preserve-unknown-fields": true
+          },
+          "nullable": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "claimRef": {
+          "nullable": true,
+          "type": [
+            "object",
+            "null"
+          ],
+          "x-kubernetes-preserve-unknown-fields": true
+        },
+        "endpoint": {
+          "additionalProperties": false,
+          "nullable": true,
+          "properties": {
+            "additionalConfig": {
+              "nullable": true,
+              "type": [
+                "object",
+                "null"
+              ],
+              "x-kubernetes-preserve-unknown-fields": true
+            },
+            "bucketHost": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "bucketName": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "bucketPort": {
+              "format": "int32",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "region": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "subRegion": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "reclaimPolicy": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "storageClassName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "status": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "x-kubernetes-preserve-unknown-fields": true
+    }
+  },
+  "type": "object"
+}

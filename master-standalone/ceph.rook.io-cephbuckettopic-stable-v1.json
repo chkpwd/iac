@@ -1,0 +1,344 @@
+{
+  "description": "CephBucketTopic represents a Ceph Object Topic for Bucket Notifications",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "additionalProperties": false,
+      "description": "BucketTopicSpec represent the spec of a Bucket Topic",
+      "properties": {
+        "endpoint": {
+          "additionalProperties": false,
+          "description": "Contains the endpoint spec of the topic",
+          "properties": {
+            "amqp": {
+              "additionalProperties": false,
+              "description": "Spec of AMQP endpoint",
+              "properties": {
+                "ackLevel": {
+                  "default": "broker",
+                  "description": "The ack level required for this topic (none/broker/routeable)",
+                  "enum": [
+                    "none",
+                    "broker",
+                    "routeable"
+                  ],
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "disableVerifySSL": {
+                  "description": "Indicate whether the server certificate is validated by the client or not",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "exchange": {
+                  "description": "Name of the exchange that is used to route messages based on topics",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "uri": {
+                  "description": "The URI of the AMQP endpoint to push notification to",
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "exchange",
+                "uri"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "http": {
+              "additionalProperties": false,
+              "description": "Spec of HTTP endpoint",
+              "properties": {
+                "disableVerifySSL": {
+                  "description": "Indicate whether the server certificate is validated by the client or not",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "sendCloudEvents": {
+                  "description": "Send the notifications with the CloudEvents header: https://github.com/cloudevents/spec/blob/main/cloudevents/adapters/aws-s3.md",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "uri": {
+                  "description": "The URI of the HTTP endpoint to push notification to",
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "uri"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "kafka": {
+              "additionalProperties": false,
+              "description": "Spec of Kafka endpoint",
+              "properties": {
+                "ackLevel": {
+                  "default": "broker",
+                  "description": "The ack level required for this topic (none/broker)",
+                  "enum": [
+                    "none",
+                    "broker"
+                  ],
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "disableVerifySSL": {
+                  "description": "Indicate whether the server certificate is validated by the client or not",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "mechanism": {
+                  "default": "PLAIN",
+                  "description": "The authentication mechanism for this topic (PLAIN/SCRAM-SHA-512/SCRAM-SHA-256/GSSAPI/OAUTHBEARER)",
+                  "enum": [
+                    "PLAIN",
+                    "SCRAM-SHA-512",
+                    "SCRAM-SHA-256",
+                    "GSSAPI",
+                    "OAUTHBEARER"
+                  ],
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "passwordSecretRef": {
+                  "additionalProperties": false,
+                  "description": "The kafka password to use for authentication",
+                  "properties": {
+                    "key": {
+                      "description": "The key of the secret to select from.  Must be a valid secret key.",
+                      "type": "string"
+                    },
+                    "name": {
+                      "default": "",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "optional": {
+                      "description": "Specify whether the Secret or its key must be defined",
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "key"
+                  ],
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "x-kubernetes-map-type": "atomic"
+                },
+                "uri": {
+                  "description": "The URI of the Kafka endpoint to push notification to",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "useSSL": {
+                  "description": "Indicate whether to use SSL when communicating with the broker",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "userSecretRef": {
+                  "additionalProperties": false,
+                  "description": "The kafka user name to use for authentication",
+                  "properties": {
+                    "key": {
+                      "description": "The key of the secret to select from.  Must be a valid secret key.",
+                      "type": "string"
+                    },
+                    "name": {
+                      "default": "",
+                      "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "optional": {
+                      "description": "Specify whether the Secret or its key must be defined",
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "key"
+                  ],
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "x-kubernetes-map-type": "atomic"
+                }
+              },
+              "required": [
+                "uri"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "objectStoreName": {
+          "description": "The name of the object store on which to define the topic",
+          "minLength": 1,
+          "type": "string"
+        },
+        "objectStoreNamespace": {
+          "description": "The namespace of the object store on which to define the topic",
+          "minLength": 1,
+          "type": "string"
+        },
+        "opaqueData": {
+          "description": "Data which is sent in each event",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "persistent": {
+          "description": "Indication whether notifications to this endpoint are persistent or not",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "endpoint",
+        "objectStoreName",
+        "objectStoreNamespace"
+      ],
+      "type": "object"
+    },
+    "status": {
+      "additionalProperties": false,
+      "description": "BucketTopicStatus represents the Status of a CephBucketTopic",
+      "properties": {
+        "ARN": {
+          "description": "The ARN of the topic generated by the RGW",
+          "nullable": true,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "observedGeneration": {
+          "description": "ObservedGeneration is the latest generation observed by the controller.",
+          "format": "int64",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "phase": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "secrets": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "description": "name is unique within a namespace to reference a secret resource.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "description": "namespace defines the space within which the secret name must be unique.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "resourceVersion": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "uid": {
+                "description": "UID is a type that holds unique ID values, including UUIDs.  Because we\ndon't ONLY use UUIDs, this is an alias to string.  Being a type captures\nintent and helps make sure that UIDs and names do not get conflated.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object",
+            "x-kubernetes-map-type": "atomic"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ],
+      "x-kubernetes-preserve-unknown-fields": true
+    }
+  },
+  "required": [
+    "metadata",
+    "spec"
+  ],
+  "type": "object"
+}

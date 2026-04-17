@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Envoypatchpolicy v1alpha1 — gateway.envoyproxy.io</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root {
+    --bg: #09090b;
+    --bg-surface: rgba(24, 24, 27, 0.6);
+    --bg-hover: rgba(24, 24, 27, 0.8);
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --accent: #6bc1fe;
+    --accent-dim: rgba(107, 193, 254, 0.15);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-active: #6bc1fe;
+    --stat-fg: #fafafa;
+    --required-bg: rgba(251, 191, 36, 0.15);
+    --required-fg: #fbbf24;
+    --stripes-dark: repeating-linear-gradient(100deg, #000 0%, #000 7%, transparent 10%, transparent 12%, #000 16%);
+    --rainbow: repeating-linear-gradient(100deg, #fff 10%, #fff 16%, #fff 22%, #fff 30%);
+  }
+  .light {
+    --bg: #f5f7fa;
+    --bg-surface: #ffffff;
+    --bg-hover: #edf0f4;
+    --fg: #18181b;
+    --fg-muted: #6b7785;
+    --accent: #2563b0;
+    --accent-dim: rgba(37, 99, 176, 0.08);
+    --border: #d8dde4;
+    --border-active: #2563b0;
+    --stat-fg: #18181b;
+    --required-bg: rgba(217, 119, 6, 0.1);
+    --required-fg: #b45309;
+    --stripes-dark: none;
+    --rainbow: none;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--fg);
+    max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem;
+    position: relative; z-index: 1;
+    transition: background 0.2s, color 0.2s;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 31px 47px, rgba(255,255,255,1), transparent),
+      radial-gradient(1px 1px at 212px 23px, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 68px 289px, rgba(255,255,255,0.84), transparent),
+      radial-gradient(1px 1px at 313px 151px, rgba(255,255,255,0.56), transparent),
+      radial-gradient(1px 1px at 157px 371px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(2px 2px at 19px 83px, rgba(255,255,255,0.96), transparent),
+      radial-gradient(1px 1px at 301px 41px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 127px 409px, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 443px 237px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 67px 491px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1px 1px at 11px 37px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1.5px 1.5px at 191px 213px, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1px 1px at 53px 7px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 271px 103px, rgba(255,255,255,0.64), transparent);
+    background-size:
+      397px 397px, 397px 397px, 397px 397px, 397px 397px, 397px 397px,
+      509px 509px, 509px 509px, 509px 509px, 509px 509px, 509px 509px,
+      311px 311px, 311px 311px, 311px 311px, 311px 311px;
+    mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+  }
+  .flare {
+    position: fixed; top: 0; right: 0;
+    width: 100vw; height: 450px; z-index: -1;
+    pointer-events: none;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 300% 200%;
+    background-position: 50% 50%;
+    filter: opacity(50%) saturate(200%);
+    opacity: 0.25;
+    mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+  }
+  .flare::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 200% 100%;
+    background-attachment: fixed;
+    mix-blend-mode: difference;
+  }
+  .light body::before, .light .flare { display: none; }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--fg-muted); cursor: pointer; padding: 0.35rem 0.6rem; font-size: 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .copied-toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #09090b; padding: 0.4rem 1rem;
+    border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none; z-index: 10;
+  }
+  .copied-toast.show { opacity: 1; }
+  footer {
+    margin-top: 3rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center; font-size: 0.8rem; color: var(--fg-muted);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .back-link { font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; }
+  .back-link kbd {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.6rem; color: var(--fg-muted); background: var(--bg-surface);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 0.1rem 0.35rem; line-height: 1;
+  }
+  .meta-cards {
+    display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+  }
+  .meta-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.5rem 1rem;
+  }
+  .meta-card .label { font-size: 0.7rem; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .meta-card .value { font-size: 1rem; font-weight: 600; }
+  .yaml-block {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.5rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.8rem; white-space: pre; overflow-x: auto; color: var(--fg);
+  }
+  .toolbar {
+    display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+    align-items: center; justify-content: space-between;
+  }
+  .toolbar-left { display: flex; gap: 0.75rem; }
+  .toolbar button, .toolbar a {
+    background: none; border: none; color: var(--fg-muted); cursor: pointer;
+    font-size: 0.8rem; padding: 0.2rem 0; transition: color 0.15s;
+  }
+  .toolbar button:hover, .toolbar a:hover { color: var(--accent); text-decoration: underline; }
+  .prop {
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; transition: border-color 0.2s;
+  }
+  .prop[open] { border-color: var(--border-active); border-left-width: 2px; }
+  .prop > summary {
+    padding: 0.5rem 0.75rem; cursor: pointer;
+    font-size: 0.85rem; background: var(--bg-surface); border-radius: 6px;
+    list-style: none; display: flex; align-items: center; gap: 0.5rem;
+    transition: background 0.15s;
+  }
+  .prop > summary::-webkit-details-marker { display: none; }
+  .prop > summary::before { content: "\25B8"; color: var(--fg-muted); font-size: 0.7rem; }
+  .prop[open] > summary::before { content: "\25BE"; color: var(--accent); }
+  .prop > summary:hover { background: var(--bg-hover); }
+  .prop-content { padding: 0.5rem 0.75rem 0.75rem; padding-left: 1.5rem; }
+  .prop-leaf {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem; display: flex; align-items: flex-start; gap: 0.5rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; background: var(--bg-surface);
+  }
+  .prop-leaf .prop-name { min-width: 0; }
+  .prop-name {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    color: var(--accent); font-weight: 600; white-space: nowrap;
+  }
+  .type-badge {
+    background: var(--accent-dim); color: var(--accent);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .required-badge {
+    background: var(--required-bg); color: var(--required-fg);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .prop-desc { color: var(--fg-muted); font-size: 0.82rem; margin-top: 0.25rem; }
+  .prop-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.2rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+  .prop-children { margin-top: 0.5rem; }
+  .leaf-desc { color: var(--fg-muted); font-size: 0.82rem; flex: 1; min-width: 0; }
+  .leaf-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.15rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+</style>
+<script>if(localStorage.getItem('theme')==='light')document.documentElement.className='light';</script>
+</head>
+<body>
+<div class="flare"></div>
+<div class="nav-row">
+  <a href="/" class="back-link">← Back to index <kbd>Esc</kbd></a>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
+</div>
+<div class="meta-cards">
+  <div class="meta-card"><div class="label">Kind</div><div class="value">Envoypatchpolicy</div></div>
+  <div class="meta-card"><div class="label">Group</div><div class="value">gateway.envoyproxy.io</div></div>
+  <div class="meta-card"><div class="label">Version</div><div class="value">v1alpha1</div></div>
+</div>
+<div class="yaml-block">apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Envoypatchpolicy
+metadata:
+  name: example</div>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <button id="expand-all">Expand all</button>
+    <button id="collapse-all">Collapse all</button>
+  </div>
+  <div class="toolbar-left">
+    <a href="/gateway.envoyproxy.io/envoypatchpolicy_v1alpha1.json" target="_blank">View raw schema</a>
+    <button id="copy-url" data-url="/gateway.envoyproxy.io/envoypatchpolicy_v1alpha1.json">Copy schema URL</button>
+  </div>
+</div>
+<div id="properties">
+<div class="prop-leaf">
+  <span class="prop-name">apiVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">APIVersion defines the versioned schema of this representation of an object.
+Servers should convert recognized schemas to the latest internal value, and
+may reject unrecognized values.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is a string value representing the REST resource this object represents.
+Servers may infer this from the endpoint the client submits requests to.
+Cannot be updated.
+In CamelCase.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">spec</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Spec defines the desired state of EnvoyPatchPolicy.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">jsonPatches</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">JSONPatch defines the JSONPatch configuration.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the resource
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">operation</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Patch defines the JSON Patch Operation</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">from</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">From is the source location of the value to be copied or moved. Only valid
+for move or copy operations
+Refer to https://datatracker.ietf.org/doc/html/rfc6901 for more details.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">jsonPath</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">JSONPath is a JSONPath expression. Refer to https://datatracker.ietf.org/doc/rfc9535/ for more details.
+It produces one or more JSONPointer expressions based on the given JSON document.
+If no JSONPointer is found, it will result in an error.
+If the &#39;Path&#39; property is also set, it will be appended to the resulting JSONPointer expressions from the JSONPath evaluation.
+This is useful when creating a property that does not yet exist in the JSON document.
+The final JSONPointer expressions specifies the locations in the target document/field where the operation will be applied.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">op</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Op is the type of operation to perform<div class="leaf-constraints">enum: add, remove, replace, move, copy, test</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Path is a JSONPointer expression. Refer to https://datatracker.ietf.org/doc/html/rfc6901 for more details.
+It specifies the location of the target document/field where the operation will be performed
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Value is the new value of the path location. The value is only used by
+the `add` and `replace` operations.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type is the typed URL of the Envoy xDS Resource<div class="leaf-constraints">enum: type.googleapis.com/envoy.config.listener.v3.Listener, type.googleapis.com/envoy.config.route.v3.RouteConfiguration, type.googleapis.com/envoy.config.cluster.v3.Cluster, type.googleapis.com/envoy.config.endpoint.v3.ClusterLoadAssignment, type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.Secret</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">priority</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Priority of the EnvoyPatchPolicy.
+If multiple EnvoyPatchPolicies are applied to the same
+TargetRef, they will be applied in the ascending order of
+the priority i.e. int32.min has the highest priority and
+int32.max has the lowest priority.
+Defaults to 0.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">targetRef</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TargetRef is the name of the Gateway API resource this policy
+is being attached to.
+By default, attaching to Gateway is supported and
+when mergeGateways is enabled it should attach to GatewayClass.
+This Policy and the TargetRef MUST be in the same namespace
+for this Policy to have effect and be applied to the Gateway
+TargetRef</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Group is the group of the target resource.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is kind of the target resource.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the target resource.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type decides the type of patch.
+Valid EnvoyPatchType values are &#34;JSONPatch&#34;.<div class="leaf-constraints">enum: JSONPatch</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">status</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Status defines the current status of EnvoyPatchPolicy.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">ancestors</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Ancestors is a list of ancestor resources (usually Gateways) that are
+associated with the policy, and the status of the policy with respect to
+each ancestor. When this policy attaches to a parent, the controller that
+manages the parent and the ancestors MUST add an entry to this list when
+the controller first sees the policy and SHOULD update the entry as
+appropriate when the relevant ancestor is modified.
+
+Note that choosing the relevant ancestor is left to the Policy designers;
+an important part of Policy design is designing the right object level at
+which to namespace this status.
+
+Note also that implementations MUST ONLY populate ancestor status for
+the Ancestor resources they are responsible for. Implementations MUST
+use the ControllerName field to uniquely identify the entries in this list
+that they are responsible for.
+
+Note that to achieve this, the list of PolicyAncestorStatus structs
+MUST be treated as a map with a composite key, made up of the AncestorRef
+and ControllerName fields combined.
+
+A maximum of 16 ancestors will be represented in this list. An empty list
+means the Policy is not relevant for any ancestors.
+
+If this slice is full, implementations MUST NOT add further entries.
+Instead they MUST consider the policy unimplementable and signal that
+on any related resources such as the ancestor that would be referenced
+here. For example, if this list was full on BackendTLSPolicy, no
+additional Gateways would be able to reference the Service targeted by
+the BackendTLSPolicy.</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">ancestorRef</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">AncestorRef corresponds with a ParentRef in the spec that this
+PolicyAncestorStatus struct describes the status of.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent.
+When unspecified, &#34;gateway.networking.k8s.io&#34; is inferred.
+To set the core API group (such as for a &#34;Service&#34; kind referent),
+Group must be explicitly set to &#34;&#34; (empty string).
+
+Support: Core<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is kind of the referent.
+
+There are two kinds of parent resources with &#34;Core&#34; support:
+
+* Gateway (Gateway conformance profile)
+* Service (Mesh conformance profile, ClusterIP Services only)
+
+Support for other resources is Implementation-Specific.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.
+
+Support: Core<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the referent. When unspecified, this refers
+to the local namespace of the Route.
+
+Note that there are specific rules for ParentRefs which cross namespace
+boundaries. Cross-namespace references are only valid if they are explicitly
+allowed by something in the namespace they are referring to. For example:
+Gateway has the AllowedRoutes field, and ReferenceGrant provides a
+generic way to enable any other kind of cross-namespace reference.
+
+&lt;gateway:experimental:description&gt;
+ParentRefs from a Route to a Service in the same namespace are &#34;producer&#34;
+routes, which apply default routing rules to inbound connections from
+any namespace to the Service.
+
+ParentRefs from a Route to a Service in a different namespace are
+&#34;consumer&#34; routes, and these routing rules are only applied to outbound
+connections originating from the same namespace as the Route, for which
+the intended destination of the connections are a Service targeted as a
+ParentRef of the Route.
+&lt;/gateway:experimental:description&gt;
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port is the network port this Route targets. It can be interpreted
+differently based on the type of parent resource.
+
+When the parent resource is a Gateway, this targets all listeners
+listening on the specified port that also support this kind of Route(and
+select this Route). It&#39;s not recommended to set `Port` unless the
+networking behaviors specified in a Route must apply to a specific port
+as opposed to a listener(s) whose port(s) may be changed. When both Port
+and SectionName are specified, the name and port of the selected listener
+must match both specified values.
+
+&lt;gateway:experimental:description&gt;
+When the parent resource is a Service, this targets a specific port in the
+Service spec. When both Port (experimental) and SectionName are specified,
+the name and port of the selected port must match both specified values.
+&lt;/gateway:experimental:description&gt;
+
+Implementations MAY choose to support other parent resources.
+Implementations supporting other types of parent resources MUST clearly
+document how/if Port is interpreted.
+
+For the purpose of status, an attachment is considered successful as
+long as the parent resource accepts it partially. For example, Gateway
+listeners can restrict which Routes can attach to them by Route kind,
+namespace, or hostname. If 1 of 2 Gateway listeners accept attachment
+from the referencing Route, the Route MUST be considered successfully
+attached. If no Gateway listeners accept attachment from this Route,
+the Route MUST be considered detached from the Gateway.
+
+Support: Extended<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sectionName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SectionName is the name of a section within the target resource. In the
+following resources, SectionName is interpreted as the following:
+
+* Gateway: Listener name. When both Port (experimental) and SectionName
+are specified, the name and port of the selected listener must match
+both specified values.
+* Service: Port name. When both Port (experimental) and SectionName
+are specified, the name and port of the selected listener must match
+both specified values.
+
+Implementations MAY choose to support attaching Routes to other resources.
+If that is the case, they MUST clearly document how SectionName is
+interpreted.
+
+When unspecified (empty string), this will reference the entire resource.
+For the purpose of status, an attachment is considered successful if at
+least one section in the parent resource accepts it. For example, Gateway
+listeners can restrict which Routes can attach to them by Route kind,
+namespace, or hostname. If 1 of 2 Gateway listeners accept attachment from
+the referencing Route, the Route MUST be considered successfully
+attached. If no Gateway listeners accept attachment from this Route, the
+Route MUST be considered detached from the Gateway.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">conditions</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Conditions describes the status of the Policy with respect to the given Ancestor.
+
+&lt;gateway:util:excludeFromCRD&gt;
+
+Notes for implementors:
+
+Conditions are a listType `map`, which means that they function like a
+map with a key of the `type` field _in the k8s apiserver_.
+
+This means that implementations must obey some rules when updating this
+section.
+
+* Implementations MUST perform a read-modify-write cycle on this field
+  before modifying it. That is, when modifying this field, implementations
+  must be confident they have fetched the most recent version of this field,
+  and ensure that changes they make are on that recent version.
+* Implementations MUST NOT remove or reorder Conditions that they are not
+  directly responsible for. For example, if an implementation sees a Condition
+  with type `special.io/SomeField`, it MUST NOT remove, change or update that
+  Condition.
+* Implementations MUST always _merge_ changes into Conditions of the same Type,
+  rather than creating more than one Condition of the same Type.
+* Implementations MUST always update the `observedGeneration` field of the
+  Condition to the `metadata.generation` of the Gateway at the time of update creation.
+* If the `observedGeneration` of a Condition is _greater than_ the value the
+  implementation knows about, then it MUST NOT perform the update on that Condition,
+  but must wait for a future reconciliation and status update. (The assumption is that
+  the implementation&#39;s copy of the object is stale and an update will be re-triggered
+  if relevant.)
+
+&lt;/gateway:util:excludeFromCRD&gt;</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">lastTransitionTime</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">lastTransitionTime is the last time the condition transitioned from one status to another.
+This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.<div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">message</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">message is a human readable message indicating details about the transition.
+This may be an empty string.<div class="leaf-constraints">maxLength: 32768</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">observedGeneration</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">observedGeneration represents the .metadata.generation that the condition was set based upon.
+For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+with respect to the current state of the instance.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">reason</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">reason contains a programmatic identifier indicating the reason for the condition&#39;s last transition.
+Producers of specific condition types may define expected values and meanings for this field,
+and whether the values are considered a guaranteed API.
+The value should be a CamelCase string.
+This field may not be empty.<div class="leaf-constraints">pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">status</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">status of the condition, one of True, False, Unknown.<div class="leaf-constraints">enum: True, False, Unknown</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">type of condition in CamelCase or in foo.example.com/CamelCase.<div class="leaf-constraints">pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$</div><div class="leaf-constraints">maxLength: 316</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">controllerName</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">ControllerName is a domain/path string that indicates the name of the
+controller that wrote this status. This corresponds with the
+controllerName field on GatewayClass.
+
+Example: &#34;example.net/gateway-controller&#34;.
+
+The format of this field is DOMAIN &#34;/&#34; PATH, where DOMAIN and PATH are
+valid Kubernetes names
+(https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names).
+
+Controllers MUST populate this field when writing status. Controllers should ensure that
+entries to status populated with their ControllerName are cleaned up when they are no
+longer necessary.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*\/[A-Za-z0-9\/\-._~%!$&amp;&#39;()*+,;=:]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+</div>
+<div class="copied-toast" id="toast">Copied!</div>
+<footer>
+  Generated by <a href="https://github.com/sholdee/crd-schema-publisher">crd-schema-publisher</a>
+</footer>
+<script>
+(function(){
+  var props = document.querySelectorAll('.prop');
+  document.getElementById('expand-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.setAttribute('open',''); });
+  });
+  document.getElementById('collapse-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.removeAttribute('open'); });
+  });
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+      }
+      location.href = '/';
+    }
+  });
+  document.getElementById('copy-url').addEventListener('click', function(){
+    var url = location.origin + this.dataset.url;
+    navigator.clipboard.writeText(url).then(function(){
+      clearTimeout(toastTimer);
+      toast.classList.add('show');
+      toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1500);
+    });
+  });
+})();
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+}
+</script>
+</body>
+</html>

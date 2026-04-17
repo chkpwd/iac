@@ -1,0 +1,3888 @@
+{
+  "description": "CephObjectStore represents a Ceph Object Store Gateway",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "additionalProperties": false,
+      "description": "ObjectStoreSpec represent the spec of a pool",
+      "properties": {
+        "allowUsersInNamespaces": {
+          "description": "The list of allowed namespaces in addition to the object store namespace\nwhere ceph object store users may be created. Specify \"*\" to allow all\nnamespaces, otherwise list individual namespaces that are to be allowed.\nThis is useful for applications that need object store credentials\nto be created in their own namespace, where neither OBCs nor COSI\nis being used to create buckets. The default is empty.",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "auth": {
+          "additionalProperties": false,
+          "description": "The authentication configuration",
+          "properties": {
+            "keystone": {
+              "additionalProperties": false,
+              "description": "The spec for Keystone",
+              "nullable": true,
+              "properties": {
+                "acceptedRoles": {
+                  "description": "The roles requires to serve requests.",
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "implicitTenants": {
+                  "description": "Create new users in their own tenants of the same name. Possible values are true, false, swift and s3. The latter have the effect of splitting the identity space such that only the indicated protocol will use implicit tenants.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "revocationInterval": {
+                  "description": "The number of seconds between token revocation checks.",
+                  "nullable": true,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "serviceUserSecretName": {
+                  "description": "The name of the secret containing the credentials for the service user account used by RGW. It has to be in the same namespace as the object store resource.",
+                  "type": "string"
+                },
+                "tokenCacheSize": {
+                  "description": "The maximum number of entries in each Keystone token cache.",
+                  "nullable": true,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "url": {
+                  "description": "The URL for the Keystone server.",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "acceptedRoles",
+                "serviceUserSecretName",
+                "url"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "dataPool": {
+          "additionalProperties": false,
+          "description": "The data pool settings",
+          "nullable": true,
+          "properties": {
+            "application": {
+              "description": "The application name to set on the pool. Only expected to be set for rgw pools.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "compressionMode": {
+              "description": "DEPRECATED: use Parameters instead, e.g., Parameters[\"compression_mode\"] = \"force\"\nThe inline compression mode in Bluestore OSD to set to (options are: none, passive, aggressive, force)\nDo NOT set a default value for kubebuilder as this will override the Parameters",
+              "enum": [
+                "none",
+                "passive",
+                "aggressive",
+                "force",
+                ""
+              ],
+              "nullable": true,
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "crushRoot": {
+              "description": "The root of the crush hierarchy utilized by the pool",
+              "nullable": true,
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "deviceClass": {
+              "description": "The device class the OSD should set to for use in the pool",
+              "nullable": true,
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "enableCrushUpdates": {
+              "description": "Allow rook operator to change the pool CRUSH tunables once the pool is created",
+              "nullable": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "enableRBDStats": {
+              "description": "EnableRBDStats is used to enable gathering of statistics for all RBD images in the pool",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "erasureCoded": {
+              "additionalProperties": false,
+              "description": "The erasure code settings",
+              "properties": {
+                "algorithm": {
+                  "description": "The algorithm for erasure coding.\nIf absent, defaults to the plugin specified in osd_pool_default_erasure_code_profile.",
+                  "enum": [
+                    "isa",
+                    "jerasure"
+                  ],
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "codingChunks": {
+                  "description": "Number of coding chunks per object in an erasure coded storage pool (required for erasure-coded pool type).\nThis is the number of OSDs that can be lost simultaneously before data cannot be recovered.",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "dataChunks": {
+                  "description": "Number of data chunks per object in an erasure coded storage pool (required for erasure-coded pool type).\nThe number of chunks required to recover an object when any single OSD is lost is the same\nas dataChunks so be aware that the larger the number of data chunks, the higher the cost of recovery.",
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "codingChunks",
+                "dataChunks"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "failureDomain": {
+              "description": "The failure domain: osd/host/(region or zone if available) - technically also any type in the crush map",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mirroring": {
+              "additionalProperties": false,
+              "description": "The mirroring settings",
+              "properties": {
+                "enabled": {
+                  "description": "Enabled whether this pool is mirrored or not",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "mode": {
+                  "description": "Mode is the mirroring mode: pool, image or init-only.",
+                  "enum": [
+                    "pool",
+                    "image",
+                    "init-only"
+                  ],
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "peers": {
+                  "additionalProperties": false,
+                  "description": "Peers represents the peers spec",
+                  "nullable": true,
+                  "properties": {
+                    "secretNames": {
+                      "description": "SecretNames represents the Kubernetes Secret names to add rbd-mirror or cephfs-mirror peers",
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": [
+                        "array",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "snapshotSchedules": {
+                  "description": "SnapshotSchedules is the scheduling of snapshot for mirrored images/pools",
+                  "items": {
+                    "additionalProperties": false,
+                    "description": "SnapshotScheduleSpec represents the snapshot scheduling settings of a mirrored pool",
+                    "properties": {
+                      "interval": {
+                        "description": "Interval represent the periodicity of the snapshot.",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "path": {
+                        "description": "Path is the path to snapshot, only valid for CephFS",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "startTime": {
+                        "description": "StartTime indicates when to start the snapshot",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "parameters": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "Parameters is a list of properties to enable on a given pool",
+              "nullable": true,
+              "type": [
+                "object",
+                "null"
+              ],
+              "x-kubernetes-preserve-unknown-fields": true
+            },
+            "quotas": {
+              "additionalProperties": false,
+              "description": "The quota settings",
+              "nullable": true,
+              "properties": {
+                "maxBytes": {
+                  "description": "MaxBytes represents the quota in bytes\nDeprecated in favor of MaxSize",
+                  "format": "int64",
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "maxObjects": {
+                  "description": "MaxObjects represents the quota in objects",
+                  "format": "int64",
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "maxSize": {
+                  "description": "MaxSize represents the quota in bytes as a string",
+                  "pattern": "^[0-9]+[\\.]?[0-9]*([KMGTPE]i|[kMGTPE])?$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "replicated": {
+              "additionalProperties": false,
+              "description": "The replication settings",
+              "properties": {
+                "hybridStorage": {
+                  "additionalProperties": false,
+                  "description": "HybridStorage represents hybrid storage tier settings",
+                  "nullable": true,
+                  "properties": {
+                    "primaryDeviceClass": {
+                      "description": "PrimaryDeviceClass represents high performance tier (for example SSD or NVME) for Primary OSD",
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "secondaryDeviceClass": {
+                      "description": "SecondaryDeviceClass represents low performance tier (for example HDDs) for remaining OSDs",
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "primaryDeviceClass",
+                    "secondaryDeviceClass"
+                  ],
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "replicasPerFailureDomain": {
+                  "description": "ReplicasPerFailureDomain the number of replica in the specified failure domain",
+                  "minimum": 1,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "requireSafeReplicaSize": {
+                  "description": "RequireSafeReplicaSize if false allows you to set replica 1",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "size": {
+                  "description": "Size - Number of copies per object in a replicated storage pool, including the object itself (required for replicated pool type)",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "subFailureDomain": {
+                  "description": "SubFailureDomain the name of the sub-failure domain",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "targetSizeRatio": {
+                  "description": "TargetSizeRatio gives a hint (%) to Ceph in terms of expected consumption of the total cluster capacity",
+                  "minimum": 0,
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "size"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "statusCheck": {
+              "additionalProperties": false,
+              "description": "The mirroring statusCheck",
+              "properties": {
+                "mirror": {
+                  "additionalProperties": false,
+                  "description": "HealthCheckSpec represents the health check of an object store bucket",
+                  "nullable": true,
+                  "properties": {
+                    "disabled": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "interval": {
+                      "description": "Interval is the internal in second or minute for the health check to run like 60s for 60 seconds",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "timeout": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ],
+              "x-kubernetes-preserve-unknown-fields": true
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "defaultRealm": {
+          "description": "Set this realm as the default in Ceph. Only one realm should be default.\nDo not set this true on more than one CephObjectStore.\nThis may not be set when zone is also specified; in this case, the realm\nreferenced by the zone's zonegroup should configure defaulting behavior.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "gateway": {
+          "additionalProperties": false,
+          "description": "The rgw pod info",
+          "nullable": true,
+          "properties": {
+            "additionalVolumeMounts": {
+              "description": "AdditionalVolumeMounts allows additional volumes to be mounted to the RGW pod.\nThe root directory for each additional volume mount is `/var/rgw`.\nExample: for an additional mount at subPath `ldap`, mounted from a secret that has key\n`bindpass.secret`, the file would reside at `/var/rgw/ldap/bindpass.secret`.",
+              "items": {
+                "additionalProperties": false,
+                "description": "AdditionalVolumeMount represents the source from where additional files in pod containers\nshould come from and what subdirectory they are made available in.",
+                "properties": {
+                  "subPath": {
+                    "description": "SubPath defines the sub-path (subdirectory) of the directory root where the volumeSource will\nbe mounted. All files/keys in the volume source's volume will be mounted to the subdirectory.\nThis is not the same as the Kubernetes `subPath` volume mount option.\nEach subPath definition must be unique and must not contain ':'.",
+                    "minLength": 1,
+                    "pattern": "^[^:]+$",
+                    "type": "string"
+                  },
+                  "volumeSource": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "configMap": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "defaultMode": {
+                            "format": "int32",
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "items": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "mode": {
+                                  "format": "int32",
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "path": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "key",
+                                "path"
+                              ],
+                              "type": "object"
+                            },
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "x-kubernetes-list-type": "atomic"
+                          },
+                          "name": {
+                            "default": "",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "optional": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "x-kubernetes-map-type": "atomic"
+                      },
+                      "emptyDir": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "medium": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "sizeLimit": {
+                            "anyOf": [
+                              {
+                                "type": "integer"
+                              },
+                              {
+                                "type": "string"
+                              }
+                            ],
+                            "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
+                            "x-kubernetes-int-or-string": true
+                          }
+                        },
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      },
+                      "hostPath": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "path": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "path"
+                        ],
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      },
+                      "persistentVolumeClaim": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "claimName": {
+                            "type": "string"
+                          },
+                          "readOnly": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "claimName"
+                        ],
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      },
+                      "projected": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "defaultMode": {
+                            "format": "int32",
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "sources": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "clusterTrustBundle": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "labelSelector": {
+                                      "additionalProperties": false,
+                                      "properties": {
+                                        "matchExpressions": {
+                                          "items": {
+                                            "additionalProperties": false,
+                                            "properties": {
+                                              "key": {
+                                                "type": "string"
+                                              },
+                                              "operator": {
+                                                "type": "string"
+                                              },
+                                              "values": {
+                                                "items": {
+                                                  "type": "string"
+                                                },
+                                                "type": [
+                                                  "array",
+                                                  "null"
+                                                ],
+                                                "x-kubernetes-list-type": "atomic"
+                                              }
+                                            },
+                                            "required": [
+                                              "key",
+                                              "operator"
+                                            ],
+                                            "type": "object"
+                                          },
+                                          "type": [
+                                            "array",
+                                            "null"
+                                          ],
+                                          "x-kubernetes-list-type": "atomic"
+                                        },
+                                        "matchLabels": {
+                                          "additionalProperties": {
+                                            "type": "string"
+                                          },
+                                          "type": [
+                                            "object",
+                                            "null"
+                                          ]
+                                        }
+                                      },
+                                      "type": [
+                                        "object",
+                                        "null"
+                                      ],
+                                      "x-kubernetes-map-type": "atomic"
+                                    },
+                                    "name": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "optional": {
+                                      "type": [
+                                        "boolean",
+                                        "null"
+                                      ]
+                                    },
+                                    "path": {
+                                      "type": "string"
+                                    },
+                                    "signerName": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "path"
+                                  ],
+                                  "type": [
+                                    "object",
+                                    "null"
+                                  ]
+                                },
+                                "configMap": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "items": {
+                                      "items": {
+                                        "additionalProperties": false,
+                                        "properties": {
+                                          "key": {
+                                            "type": "string"
+                                          },
+                                          "mode": {
+                                            "format": "int32",
+                                            "type": [
+                                              "integer",
+                                              "null"
+                                            ]
+                                          },
+                                          "path": {
+                                            "type": "string"
+                                          }
+                                        },
+                                        "required": [
+                                          "key",
+                                          "path"
+                                        ],
+                                        "type": "object"
+                                      },
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ],
+                                      "x-kubernetes-list-type": "atomic"
+                                    },
+                                    "name": {
+                                      "default": "",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "optional": {
+                                      "type": [
+                                        "boolean",
+                                        "null"
+                                      ]
+                                    }
+                                  },
+                                  "type": [
+                                    "object",
+                                    "null"
+                                  ],
+                                  "x-kubernetes-map-type": "atomic"
+                                },
+                                "downwardAPI": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "items": {
+                                      "items": {
+                                        "additionalProperties": false,
+                                        "properties": {
+                                          "fieldRef": {
+                                            "additionalProperties": false,
+                                            "properties": {
+                                              "apiVersion": {
+                                                "type": [
+                                                  "string",
+                                                  "null"
+                                                ]
+                                              },
+                                              "fieldPath": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "fieldPath"
+                                            ],
+                                            "type": [
+                                              "object",
+                                              "null"
+                                            ],
+                                            "x-kubernetes-map-type": "atomic"
+                                          },
+                                          "mode": {
+                                            "format": "int32",
+                                            "type": [
+                                              "integer",
+                                              "null"
+                                            ]
+                                          },
+                                          "path": {
+                                            "type": "string"
+                                          },
+                                          "resourceFieldRef": {
+                                            "additionalProperties": false,
+                                            "properties": {
+                                              "containerName": {
+                                                "type": [
+                                                  "string",
+                                                  "null"
+                                                ]
+                                              },
+                                              "divisor": {
+                                                "anyOf": [
+                                                  {
+                                                    "type": "integer"
+                                                  },
+                                                  {
+                                                    "type": "string"
+                                                  }
+                                                ],
+                                                "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
+                                                "x-kubernetes-int-or-string": true
+                                              },
+                                              "resource": {
+                                                "type": "string"
+                                              }
+                                            },
+                                            "required": [
+                                              "resource"
+                                            ],
+                                            "type": [
+                                              "object",
+                                              "null"
+                                            ],
+                                            "x-kubernetes-map-type": "atomic"
+                                          }
+                                        },
+                                        "required": [
+                                          "path"
+                                        ],
+                                        "type": "object"
+                                      },
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ],
+                                      "x-kubernetes-list-type": "atomic"
+                                    }
+                                  },
+                                  "type": [
+                                    "object",
+                                    "null"
+                                  ]
+                                },
+                                "podCertificate": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "certificateChainPath": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "credentialBundlePath": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "keyPath": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "keyType": {
+                                      "type": "string"
+                                    },
+                                    "maxExpirationSeconds": {
+                                      "format": "int32",
+                                      "type": [
+                                        "integer",
+                                        "null"
+                                      ]
+                                    },
+                                    "signerName": {
+                                      "type": "string"
+                                    },
+                                    "userAnnotations": {
+                                      "additionalProperties": {
+                                        "type": "string"
+                                      },
+                                      "type": [
+                                        "object",
+                                        "null"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "keyType",
+                                    "signerName"
+                                  ],
+                                  "type": [
+                                    "object",
+                                    "null"
+                                  ]
+                                },
+                                "secret": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "items": {
+                                      "items": {
+                                        "additionalProperties": false,
+                                        "properties": {
+                                          "key": {
+                                            "type": "string"
+                                          },
+                                          "mode": {
+                                            "format": "int32",
+                                            "type": [
+                                              "integer",
+                                              "null"
+                                            ]
+                                          },
+                                          "path": {
+                                            "type": "string"
+                                          }
+                                        },
+                                        "required": [
+                                          "key",
+                                          "path"
+                                        ],
+                                        "type": "object"
+                                      },
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ],
+                                      "x-kubernetes-list-type": "atomic"
+                                    },
+                                    "name": {
+                                      "default": "",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "optional": {
+                                      "type": [
+                                        "boolean",
+                                        "null"
+                                      ]
+                                    }
+                                  },
+                                  "type": [
+                                    "object",
+                                    "null"
+                                  ],
+                                  "x-kubernetes-map-type": "atomic"
+                                },
+                                "serviceAccountToken": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "audience": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "expirationSeconds": {
+                                      "format": "int64",
+                                      "type": [
+                                        "integer",
+                                        "null"
+                                      ]
+                                    },
+                                    "path": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "path"
+                                  ],
+                                  "type": [
+                                    "object",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "type": "object"
+                            },
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "x-kubernetes-list-type": "atomic"
+                          }
+                        },
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      },
+                      "secret": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "defaultMode": {
+                            "format": "int32",
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "items": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "mode": {
+                                  "format": "int32",
+                                  "type": [
+                                    "integer",
+                                    "null"
+                                  ]
+                                },
+                                "path": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "key",
+                                "path"
+                              ],
+                              "type": "object"
+                            },
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "x-kubernetes-list-type": "atomic"
+                          },
+                          "optional": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
+                          },
+                          "secretName": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "type": "object"
+                  }
+                },
+                "required": [
+                  "subPath",
+                  "volumeSource"
+                ],
+                "type": "object"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "annotations": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "The annotations-related configuration to add/set on each Pod related object.",
+              "nullable": true,
+              "type": [
+                "object",
+                "null"
+              ],
+              "x-kubernetes-preserve-unknown-fields": true
+            },
+            "caBundleRef": {
+              "description": "The name of the secret that stores custom ca-bundle with root and intermediate certificates.",
+              "nullable": true,
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "dashboardEnabled": {
+              "description": "Whether rgw dashboard is enabled for the rgw daemon. If not set, the rgw dashboard will be enabled.",
+              "nullable": true,
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "x-kubernetes-preserve-unknown-fields": true
+            },
+            "disableMultisiteSyncTraffic": {
+              "description": "DisableMultisiteSyncTraffic, when true, prevents this object store's gateways from\ntransmitting multisite replication data. Note that this value does not affect whether\ngateways receive multisite replication traffic: see ObjectZone.spec.customEndpoints for that.\nIf false or unset, this object store's gateways will be able to transmit multisite\nreplication data.",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "externalRgwEndpoints": {
+              "description": "ExternalRgwEndpoints points to external RGW endpoint(s). Multiple endpoints can be given, but\nfor stability of ObjectBucketClaims, we highly recommend that users give only a single\nexternal RGW endpoint that is a load balancer that sends requests to the multiple RGWs.",
+              "items": {
+                "additionalProperties": false,
+                "description": "EndpointAddress is a tuple that describes a single IP address or host name. This is a subset of\nKubernetes's v1.EndpointAddress.",
+                "properties": {
+                  "hostname": {
+                    "description": "The DNS-addressable Hostname of this endpoint. This field will be preferred over IP if both are given.",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "ip": {
+                    "description": "The IP of this endpoint. As a legacy behavior, this supports being given a DNS-addressable hostname as well.",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "type": "object",
+                "x-kubernetes-map-type": "atomic"
+              },
+              "nullable": true,
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "hostNetwork": {
+              "description": "Whether host networking is enabled for the rgw daemon. If not set, the network settings from the cluster CR will be applied.",
+              "nullable": true,
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "x-kubernetes-preserve-unknown-fields": true
+            },
+            "instances": {
+              "description": "The number of pods in the rgw replicaset.",
+              "format": "int32",
+              "nullable": true,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "labels": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "The labels-related configuration to add/set on each Pod related object.",
+              "nullable": true,
+              "type": [
+                "object",
+                "null"
+              ],
+              "x-kubernetes-preserve-unknown-fields": true
+            },
+            "opsLogSidecar": {
+              "additionalProperties": false,
+              "description": "Enable enhanced operation Logs for S3 in a sidecar named ops-log",
+              "nullable": true,
+              "properties": {
+                "resources": {
+                  "additionalProperties": false,
+                  "description": "Resources represents the way to specify resource requirements for the ops-log sidecar",
+                  "properties": {
+                    "claims": {
+                      "description": "Claims lists the names of resources, defined in spec.resourceClaims,\nthat are used by this container.\n\nThis field depends on the\nDynamicResourceAllocation feature gate.\n\nThis field is immutable. It can only be set for containers.",
+                      "items": {
+                        "additionalProperties": false,
+                        "description": "ResourceClaim references one entry in PodSpec.ResourceClaims.",
+                        "properties": {
+                          "name": {
+                            "description": "Name must match the name of one entry in pod.spec.resourceClaims of\nthe Pod where this field is used. It makes that resource available\ninside a container.",
+                            "type": "string"
+                          },
+                          "request": {
+                            "description": "Request is the name chosen for a request in the referenced claim.\nIf empty, everything from the claim is made available, otherwise\nonly the result of this request.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "name"
+                        ],
+                        "type": "object"
+                      },
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "x-kubernetes-list-map-keys": [
+                        "name"
+                      ],
+                      "x-kubernetes-list-type": "map"
+                    },
+                    "limits": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "integer"
+                          },
+                          {
+                            "type": "string"
+                          }
+                        ],
+                        "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
+                        "x-kubernetes-int-or-string": true
+                      },
+                      "description": "Limits describes the maximum amount of compute resources allowed.\nMore info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    },
+                    "requests": {
+                      "additionalProperties": {
+                        "anyOf": [
+                          {
+                            "type": "integer"
+                          },
+                          {
+                            "type": "string"
+                          }
+                        ],
+                        "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
+                        "x-kubernetes-int-or-string": true
+                      },
+                      "description": "Requests describes the minimum amount of compute resources required.\nIf Requests is omitted for a container, it defaults to Limits if that is explicitly specified,\notherwise to an implementation-defined value. Requests cannot exceed Limits.\nMore info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "placement": {
+              "additionalProperties": false,
+              "nullable": true,
+              "properties": {
+                "nodeAffinity": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "preferredDuringSchedulingIgnoredDuringExecution": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "preference": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "matchExpressions": {
+                                "items": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "key": {
+                                      "type": "string"
+                                    },
+                                    "operator": {
+                                      "type": "string"
+                                    },
+                                    "values": {
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ],
+                                      "x-kubernetes-list-type": "atomic"
+                                    }
+                                  },
+                                  "required": [
+                                    "key",
+                                    "operator"
+                                  ],
+                                  "type": "object"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              },
+                              "matchFields": {
+                                "items": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "key": {
+                                      "type": "string"
+                                    },
+                                    "operator": {
+                                      "type": "string"
+                                    },
+                                    "values": {
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ],
+                                      "x-kubernetes-list-type": "atomic"
+                                    }
+                                  },
+                                  "required": [
+                                    "key",
+                                    "operator"
+                                  ],
+                                  "type": "object"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              }
+                            },
+                            "type": "object",
+                            "x-kubernetes-map-type": "atomic"
+                          },
+                          "weight": {
+                            "format": "int32",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "preference",
+                          "weight"
+                        ],
+                        "type": "object"
+                      },
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "x-kubernetes-list-type": "atomic"
+                    },
+                    "requiredDuringSchedulingIgnoredDuringExecution": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "nodeSelectorTerms": {
+                          "items": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "matchExpressions": {
+                                "items": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "key": {
+                                      "type": "string"
+                                    },
+                                    "operator": {
+                                      "type": "string"
+                                    },
+                                    "values": {
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ],
+                                      "x-kubernetes-list-type": "atomic"
+                                    }
+                                  },
+                                  "required": [
+                                    "key",
+                                    "operator"
+                                  ],
+                                  "type": "object"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              },
+                              "matchFields": {
+                                "items": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "key": {
+                                      "type": "string"
+                                    },
+                                    "operator": {
+                                      "type": "string"
+                                    },
+                                    "values": {
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ],
+                                      "x-kubernetes-list-type": "atomic"
+                                    }
+                                  },
+                                  "required": [
+                                    "key",
+                                    "operator"
+                                  ],
+                                  "type": "object"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              }
+                            },
+                            "type": "object",
+                            "x-kubernetes-map-type": "atomic"
+                          },
+                          "type": "array",
+                          "x-kubernetes-list-type": "atomic"
+                        }
+                      },
+                      "required": [
+                        "nodeSelectorTerms"
+                      ],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "x-kubernetes-map-type": "atomic"
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "podAffinity": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "preferredDuringSchedulingIgnoredDuringExecution": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "podAffinityTerm": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "labelSelector": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "matchExpressions": {
+                                    "items": {
+                                      "additionalProperties": false,
+                                      "properties": {
+                                        "key": {
+                                          "type": "string"
+                                        },
+                                        "operator": {
+                                          "type": "string"
+                                        },
+                                        "values": {
+                                          "items": {
+                                            "type": "string"
+                                          },
+                                          "type": [
+                                            "array",
+                                            "null"
+                                          ],
+                                          "x-kubernetes-list-type": "atomic"
+                                        }
+                                      },
+                                      "required": [
+                                        "key",
+                                        "operator"
+                                      ],
+                                      "type": "object"
+                                    },
+                                    "type": [
+                                      "array",
+                                      "null"
+                                    ],
+                                    "x-kubernetes-list-type": "atomic"
+                                  },
+                                  "matchLabels": {
+                                    "additionalProperties": {
+                                      "type": "string"
+                                    },
+                                    "type": [
+                                      "object",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "type": [
+                                  "object",
+                                  "null"
+                                ],
+                                "x-kubernetes-map-type": "atomic"
+                              },
+                              "matchLabelKeys": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              },
+                              "mismatchLabelKeys": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              },
+                              "namespaceSelector": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "matchExpressions": {
+                                    "items": {
+                                      "additionalProperties": false,
+                                      "properties": {
+                                        "key": {
+                                          "type": "string"
+                                        },
+                                        "operator": {
+                                          "type": "string"
+                                        },
+                                        "values": {
+                                          "items": {
+                                            "type": "string"
+                                          },
+                                          "type": [
+                                            "array",
+                                            "null"
+                                          ],
+                                          "x-kubernetes-list-type": "atomic"
+                                        }
+                                      },
+                                      "required": [
+                                        "key",
+                                        "operator"
+                                      ],
+                                      "type": "object"
+                                    },
+                                    "type": [
+                                      "array",
+                                      "null"
+                                    ],
+                                    "x-kubernetes-list-type": "atomic"
+                                  },
+                                  "matchLabels": {
+                                    "additionalProperties": {
+                                      "type": "string"
+                                    },
+                                    "type": [
+                                      "object",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "type": [
+                                  "object",
+                                  "null"
+                                ],
+                                "x-kubernetes-map-type": "atomic"
+                              },
+                              "namespaces": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              },
+                              "topologyKey": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "topologyKey"
+                            ],
+                            "type": "object"
+                          },
+                          "weight": {
+                            "format": "int32",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "podAffinityTerm",
+                          "weight"
+                        ],
+                        "type": "object"
+                      },
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "x-kubernetes-list-type": "atomic"
+                    },
+                    "requiredDuringSchedulingIgnoredDuringExecution": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "labelSelector": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "matchExpressions": {
+                                "items": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "key": {
+                                      "type": "string"
+                                    },
+                                    "operator": {
+                                      "type": "string"
+                                    },
+                                    "values": {
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ],
+                                      "x-kubernetes-list-type": "atomic"
+                                    }
+                                  },
+                                  "required": [
+                                    "key",
+                                    "operator"
+                                  ],
+                                  "type": "object"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              },
+                              "matchLabels": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "x-kubernetes-map-type": "atomic"
+                          },
+                          "matchLabelKeys": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "x-kubernetes-list-type": "atomic"
+                          },
+                          "mismatchLabelKeys": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "x-kubernetes-list-type": "atomic"
+                          },
+                          "namespaceSelector": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "matchExpressions": {
+                                "items": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "key": {
+                                      "type": "string"
+                                    },
+                                    "operator": {
+                                      "type": "string"
+                                    },
+                                    "values": {
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ],
+                                      "x-kubernetes-list-type": "atomic"
+                                    }
+                                  },
+                                  "required": [
+                                    "key",
+                                    "operator"
+                                  ],
+                                  "type": "object"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              },
+                              "matchLabels": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "x-kubernetes-map-type": "atomic"
+                          },
+                          "namespaces": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "x-kubernetes-list-type": "atomic"
+                          },
+                          "topologyKey": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "topologyKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "x-kubernetes-list-type": "atomic"
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "podAntiAffinity": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "preferredDuringSchedulingIgnoredDuringExecution": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "podAffinityTerm": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "labelSelector": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "matchExpressions": {
+                                    "items": {
+                                      "additionalProperties": false,
+                                      "properties": {
+                                        "key": {
+                                          "type": "string"
+                                        },
+                                        "operator": {
+                                          "type": "string"
+                                        },
+                                        "values": {
+                                          "items": {
+                                            "type": "string"
+                                          },
+                                          "type": [
+                                            "array",
+                                            "null"
+                                          ],
+                                          "x-kubernetes-list-type": "atomic"
+                                        }
+                                      },
+                                      "required": [
+                                        "key",
+                                        "operator"
+                                      ],
+                                      "type": "object"
+                                    },
+                                    "type": [
+                                      "array",
+                                      "null"
+                                    ],
+                                    "x-kubernetes-list-type": "atomic"
+                                  },
+                                  "matchLabels": {
+                                    "additionalProperties": {
+                                      "type": "string"
+                                    },
+                                    "type": [
+                                      "object",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "type": [
+                                  "object",
+                                  "null"
+                                ],
+                                "x-kubernetes-map-type": "atomic"
+                              },
+                              "matchLabelKeys": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              },
+                              "mismatchLabelKeys": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              },
+                              "namespaceSelector": {
+                                "additionalProperties": false,
+                                "properties": {
+                                  "matchExpressions": {
+                                    "items": {
+                                      "additionalProperties": false,
+                                      "properties": {
+                                        "key": {
+                                          "type": "string"
+                                        },
+                                        "operator": {
+                                          "type": "string"
+                                        },
+                                        "values": {
+                                          "items": {
+                                            "type": "string"
+                                          },
+                                          "type": [
+                                            "array",
+                                            "null"
+                                          ],
+                                          "x-kubernetes-list-type": "atomic"
+                                        }
+                                      },
+                                      "required": [
+                                        "key",
+                                        "operator"
+                                      ],
+                                      "type": "object"
+                                    },
+                                    "type": [
+                                      "array",
+                                      "null"
+                                    ],
+                                    "x-kubernetes-list-type": "atomic"
+                                  },
+                                  "matchLabels": {
+                                    "additionalProperties": {
+                                      "type": "string"
+                                    },
+                                    "type": [
+                                      "object",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "type": [
+                                  "object",
+                                  "null"
+                                ],
+                                "x-kubernetes-map-type": "atomic"
+                              },
+                              "namespaces": {
+                                "items": {
+                                  "type": "string"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              },
+                              "topologyKey": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "topologyKey"
+                            ],
+                            "type": "object"
+                          },
+                          "weight": {
+                            "format": "int32",
+                            "type": "integer"
+                          }
+                        },
+                        "required": [
+                          "podAffinityTerm",
+                          "weight"
+                        ],
+                        "type": "object"
+                      },
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "x-kubernetes-list-type": "atomic"
+                    },
+                    "requiredDuringSchedulingIgnoredDuringExecution": {
+                      "items": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "labelSelector": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "matchExpressions": {
+                                "items": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "key": {
+                                      "type": "string"
+                                    },
+                                    "operator": {
+                                      "type": "string"
+                                    },
+                                    "values": {
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ],
+                                      "x-kubernetes-list-type": "atomic"
+                                    }
+                                  },
+                                  "required": [
+                                    "key",
+                                    "operator"
+                                  ],
+                                  "type": "object"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              },
+                              "matchLabels": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "x-kubernetes-map-type": "atomic"
+                          },
+                          "matchLabelKeys": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "x-kubernetes-list-type": "atomic"
+                          },
+                          "mismatchLabelKeys": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "x-kubernetes-list-type": "atomic"
+                          },
+                          "namespaceSelector": {
+                            "additionalProperties": false,
+                            "properties": {
+                              "matchExpressions": {
+                                "items": {
+                                  "additionalProperties": false,
+                                  "properties": {
+                                    "key": {
+                                      "type": "string"
+                                    },
+                                    "operator": {
+                                      "type": "string"
+                                    },
+                                    "values": {
+                                      "items": {
+                                        "type": "string"
+                                      },
+                                      "type": [
+                                        "array",
+                                        "null"
+                                      ],
+                                      "x-kubernetes-list-type": "atomic"
+                                    }
+                                  },
+                                  "required": [
+                                    "key",
+                                    "operator"
+                                  ],
+                                  "type": "object"
+                                },
+                                "type": [
+                                  "array",
+                                  "null"
+                                ],
+                                "x-kubernetes-list-type": "atomic"
+                              },
+                              "matchLabels": {
+                                "additionalProperties": {
+                                  "type": "string"
+                                },
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "x-kubernetes-map-type": "atomic"
+                          },
+                          "namespaces": {
+                            "items": {
+                              "type": "string"
+                            },
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "x-kubernetes-list-type": "atomic"
+                          },
+                          "topologyKey": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "topologyKey"
+                        ],
+                        "type": "object"
+                      },
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "x-kubernetes-list-type": "atomic"
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "tolerations": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "effect": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "key": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "operator": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "tolerationSeconds": {
+                        "format": "int64",
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "value": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "topologySpreadConstraints": {
+                  "items": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "labelSelector": {
+                        "additionalProperties": false,
+                        "properties": {
+                          "matchExpressions": {
+                            "items": {
+                              "additionalProperties": false,
+                              "properties": {
+                                "key": {
+                                  "type": "string"
+                                },
+                                "operator": {
+                                  "type": "string"
+                                },
+                                "values": {
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "type": [
+                                    "array",
+                                    "null"
+                                  ],
+                                  "x-kubernetes-list-type": "atomic"
+                                }
+                              },
+                              "required": [
+                                "key",
+                                "operator"
+                              ],
+                              "type": "object"
+                            },
+                            "type": [
+                              "array",
+                              "null"
+                            ],
+                            "x-kubernetes-list-type": "atomic"
+                          },
+                          "matchLabels": {
+                            "additionalProperties": {
+                              "type": "string"
+                            },
+                            "type": [
+                              "object",
+                              "null"
+                            ]
+                          }
+                        },
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "x-kubernetes-map-type": "atomic"
+                      },
+                      "matchLabelKeys": {
+                        "items": {
+                          "type": "string"
+                        },
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "x-kubernetes-list-type": "atomic"
+                      },
+                      "maxSkew": {
+                        "format": "int32",
+                        "type": "integer"
+                      },
+                      "minDomains": {
+                        "format": "int32",
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "nodeAffinityPolicy": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "nodeTaintsPolicy": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "topologyKey": {
+                        "type": "string"
+                      },
+                      "whenUnsatisfiable": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "maxSkew",
+                      "topologyKey",
+                      "whenUnsatisfiable"
+                    ],
+                    "type": "object"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ],
+              "x-kubernetes-preserve-unknown-fields": true
+            },
+            "port": {
+              "description": "The port the rgw service will be listening on (http)",
+              "format": "int32",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "priorityClassName": {
+              "description": "PriorityClassName sets priority classes on the rgw pods",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "readAffinity": {
+              "additionalProperties": false,
+              "description": "ReadAffinity defines the RGW read affinity policy to optimize the read requests for the RGW clients\nNote: Only supported from Ceph Tentacle (v20)",
+              "properties": {
+                "type": {
+                  "description": "Type defines the RGW ReadAffinity type\nlocalize: read from the nearest OSD based on crush location of the RGW client\nbalance: picks a random OSD from the PG's active set\ndefault: read from the primary OSD",
+                  "enum": [
+                    "localize",
+                    "balance",
+                    "default"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "resources": {
+              "additionalProperties": false,
+              "description": "The resource requirements for the rgw pods",
+              "nullable": true,
+              "properties": {
+                "claims": {
+                  "description": "Claims lists the names of resources, defined in spec.resourceClaims,\nthat are used by this container.\n\nThis field depends on the\nDynamicResourceAllocation feature gate.\n\nThis field is immutable. It can only be set for containers.",
+                  "items": {
+                    "additionalProperties": false,
+                    "description": "ResourceClaim references one entry in PodSpec.ResourceClaims.",
+                    "properties": {
+                      "name": {
+                        "description": "Name must match the name of one entry in pod.spec.resourceClaims of\nthe Pod where this field is used. It makes that resource available\ninside a container.",
+                        "type": "string"
+                      },
+                      "request": {
+                        "description": "Request is the name chosen for a request in the referenced claim.\nIf empty, everything from the claim is made available, otherwise\nonly the result of this request.",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ],
+                    "type": "object"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "x-kubernetes-list-map-keys": [
+                    "name"
+                  ],
+                  "x-kubernetes-list-type": "map"
+                },
+                "limits": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ],
+                    "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
+                    "x-kubernetes-int-or-string": true
+                  },
+                  "description": "Limits describes the maximum amount of compute resources allowed.\nMore info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "requests": {
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "type": "integer"
+                      },
+                      {
+                        "type": "string"
+                      }
+                    ],
+                    "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
+                    "x-kubernetes-int-or-string": true
+                  },
+                  "description": "Requests describes the minimum amount of compute resources required.\nIf Requests is omitted for a container, it defaults to Limits if that is explicitly specified,\notherwise to an implementation-defined value. Requests cannot exceed Limits.\nMore info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/",
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ],
+              "x-kubernetes-preserve-unknown-fields": true
+            },
+            "rgwCommandFlags": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "RgwCommandFlags sets Ceph RGW config values for the gateway clients that serve this object\nstore. Values are modified at RGW startup, resulting in RGW pod restarts.\nThis feature is intended for advanced users. It allows breaking configurations to be easily\napplied. Use with caution.",
+              "nullable": true,
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "rgwConfig": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "RgwConfig sets Ceph RGW config values for the gateway clients that serve this object store.\nValues are modified at runtime without RGW restart.\nThis feature is intended for advanced users. It allows breaking configurations to be easily\napplied. Use with caution.",
+              "nullable": true,
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "rgwConfigFromSecret": {
+              "additionalProperties": {
+                "additionalProperties": false,
+                "description": "SecretKeySelector selects a key of a Secret.",
+                "properties": {
+                  "key": {
+                    "description": "The key of the secret to select from.  Must be a valid secret key.",
+                    "type": "string"
+                  },
+                  "name": {
+                    "default": "",
+                    "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "optional": {
+                    "description": "Specify whether the Secret or its key must be defined",
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "key"
+                ],
+                "type": "object",
+                "x-kubernetes-map-type": "atomic"
+              },
+              "description": "RgwConfigFromSecret works exactly like RgwConfig but takes config value from Secret Key reference.\nValues are modified at runtime without RGW restart.\nThis feature is intended for advanced users. It allows breaking configurations to be easily\napplied. Use with caution.",
+              "nullable": true,
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "securePort": {
+              "description": "The port the rgw service will be listening on (https)",
+              "format": "int32",
+              "maximum": 65535,
+              "minimum": 0,
+              "nullable": true,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "service": {
+              "additionalProperties": false,
+              "description": "The configuration related to add/set on each rgw service.",
+              "nullable": true,
+              "properties": {
+                "annotations": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "description": "The annotations-related configuration to add/set on each rgw service.\nnullable\noptional",
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "sslCertificateRef": {
+              "description": "The name of the secret that stores the ssl certificate for secure rgw connections",
+              "nullable": true,
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "healthCheck": {
+          "additionalProperties": false,
+          "description": "The RGW health probes",
+          "nullable": true,
+          "properties": {
+            "readinessProbe": {
+              "additionalProperties": false,
+              "description": "ProbeSpec is a wrapper around Probe so it can be enabled or disabled for a Ceph daemon",
+              "properties": {
+                "disabled": {
+                  "description": "Disabled determines whether probe is disable or not",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "probe": {
+                  "additionalProperties": false,
+                  "description": "Probe describes a health check to be performed against a container to determine whether it is\nalive or ready to receive traffic.",
+                  "properties": {
+                    "exec": {
+                      "additionalProperties": false,
+                      "description": "Exec specifies a command to execute in the container.",
+                      "properties": {
+                        "command": {
+                          "description": "Command is the command line to execute inside the container, the working directory for the\ncommand  is root ('/') in the container's filesystem. The command is simply exec'd, it is\nnot run inside a shell, so traditional shell instructions ('|', etc) won't work. To use\na shell, you need to explicitly call out to that shell.\nExit status of 0 is treated as live/healthy and non-zero is unhealthy.",
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": [
+                            "array",
+                            "null"
+                          ],
+                          "x-kubernetes-list-type": "atomic"
+                        }
+                      },
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    },
+                    "failureThreshold": {
+                      "description": "Minimum consecutive failures for the probe to be considered failed after having succeeded.\nDefaults to 3. Minimum value is 1.",
+                      "format": "int32",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "grpc": {
+                      "additionalProperties": false,
+                      "description": "GRPC specifies a GRPC HealthCheckRequest.",
+                      "properties": {
+                        "port": {
+                          "description": "Port number of the gRPC service. Number must be in the range 1 to 65535.",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "service": {
+                          "default": "",
+                          "description": "Service is the name of the service to place in the gRPC HealthCheckRequest\n(see https://github.com/grpc/grpc/blob/master/doc/health-checking.md).\n\nIf this is not specified, the default behavior is defined by gRPC.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "port"
+                      ],
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    },
+                    "httpGet": {
+                      "additionalProperties": false,
+                      "description": "HTTPGet specifies an HTTP GET request to perform.",
+                      "properties": {
+                        "host": {
+                          "description": "Host name to connect to, defaults to the pod IP. You probably want to set\n\"Host\" in httpHeaders instead.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "httpHeaders": {
+                          "description": "Custom headers to set in the request. HTTP allows repeated headers.",
+                          "items": {
+                            "additionalProperties": false,
+                            "description": "HTTPHeader describes a custom header to be used in HTTP probes",
+                            "properties": {
+                              "name": {
+                                "description": "The header field name.\nThis will be canonicalized upon output, so case-variant names will be understood as the same header.",
+                                "type": "string"
+                              },
+                              "value": {
+                                "description": "The header field value",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "name",
+                              "value"
+                            ],
+                            "type": "object"
+                          },
+                          "type": [
+                            "array",
+                            "null"
+                          ],
+                          "x-kubernetes-list-type": "atomic"
+                        },
+                        "path": {
+                          "description": "Path to access on the HTTP server.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "port": {
+                          "anyOf": [
+                            {
+                              "type": "integer"
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ],
+                          "description": "Name or number of the port to access on the container.\nNumber must be in the range 1 to 65535.\nName must be an IANA_SVC_NAME.",
+                          "x-kubernetes-int-or-string": true
+                        },
+                        "scheme": {
+                          "description": "Scheme to use for connecting to the host.\nDefaults to HTTP.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "port"
+                      ],
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    },
+                    "initialDelaySeconds": {
+                      "description": "Number of seconds after the container has started before liveness probes are initiated.\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes",
+                      "format": "int32",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "periodSeconds": {
+                      "description": "How often (in seconds) to perform the probe.\nDefault to 10 seconds. Minimum value is 1.",
+                      "format": "int32",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "successThreshold": {
+                      "description": "Minimum consecutive successes for the probe to be considered successful after having failed.\nDefaults to 1. Must be 1 for liveness and startup. Minimum value is 1.",
+                      "format": "int32",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "tcpSocket": {
+                      "additionalProperties": false,
+                      "description": "TCPSocket specifies a connection to a TCP port.",
+                      "properties": {
+                        "host": {
+                          "description": "Optional: Host name to connect to, defaults to the pod IP.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "port": {
+                          "anyOf": [
+                            {
+                              "type": "integer"
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ],
+                          "description": "Number or name of the port to access on the container.\nNumber must be in the range 1 to 65535.\nName must be an IANA_SVC_NAME.",
+                          "x-kubernetes-int-or-string": true
+                        }
+                      },
+                      "required": [
+                        "port"
+                      ],
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    },
+                    "terminationGracePeriodSeconds": {
+                      "format": "int64",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "timeoutSeconds": {
+                      "description": "Number of seconds after which the probe times out.\nDefaults to 1 second. Minimum value is 1.\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes",
+                      "format": "int32",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ],
+              "x-kubernetes-preserve-unknown-fields": true
+            },
+            "startupProbe": {
+              "additionalProperties": false,
+              "description": "ProbeSpec is a wrapper around Probe so it can be enabled or disabled for a Ceph daemon",
+              "properties": {
+                "disabled": {
+                  "description": "Disabled determines whether probe is disable or not",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "probe": {
+                  "additionalProperties": false,
+                  "description": "Probe describes a health check to be performed against a container to determine whether it is\nalive or ready to receive traffic.",
+                  "properties": {
+                    "exec": {
+                      "additionalProperties": false,
+                      "description": "Exec specifies a command to execute in the container.",
+                      "properties": {
+                        "command": {
+                          "description": "Command is the command line to execute inside the container, the working directory for the\ncommand  is root ('/') in the container's filesystem. The command is simply exec'd, it is\nnot run inside a shell, so traditional shell instructions ('|', etc) won't work. To use\na shell, you need to explicitly call out to that shell.\nExit status of 0 is treated as live/healthy and non-zero is unhealthy.",
+                          "items": {
+                            "type": "string"
+                          },
+                          "type": [
+                            "array",
+                            "null"
+                          ],
+                          "x-kubernetes-list-type": "atomic"
+                        }
+                      },
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    },
+                    "failureThreshold": {
+                      "description": "Minimum consecutive failures for the probe to be considered failed after having succeeded.\nDefaults to 3. Minimum value is 1.",
+                      "format": "int32",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "grpc": {
+                      "additionalProperties": false,
+                      "description": "GRPC specifies a GRPC HealthCheckRequest.",
+                      "properties": {
+                        "port": {
+                          "description": "Port number of the gRPC service. Number must be in the range 1 to 65535.",
+                          "format": "int32",
+                          "type": "integer"
+                        },
+                        "service": {
+                          "default": "",
+                          "description": "Service is the name of the service to place in the gRPC HealthCheckRequest\n(see https://github.com/grpc/grpc/blob/master/doc/health-checking.md).\n\nIf this is not specified, the default behavior is defined by gRPC.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "port"
+                      ],
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    },
+                    "httpGet": {
+                      "additionalProperties": false,
+                      "description": "HTTPGet specifies an HTTP GET request to perform.",
+                      "properties": {
+                        "host": {
+                          "description": "Host name to connect to, defaults to the pod IP. You probably want to set\n\"Host\" in httpHeaders instead.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "httpHeaders": {
+                          "description": "Custom headers to set in the request. HTTP allows repeated headers.",
+                          "items": {
+                            "additionalProperties": false,
+                            "description": "HTTPHeader describes a custom header to be used in HTTP probes",
+                            "properties": {
+                              "name": {
+                                "description": "The header field name.\nThis will be canonicalized upon output, so case-variant names will be understood as the same header.",
+                                "type": "string"
+                              },
+                              "value": {
+                                "description": "The header field value",
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "name",
+                              "value"
+                            ],
+                            "type": "object"
+                          },
+                          "type": [
+                            "array",
+                            "null"
+                          ],
+                          "x-kubernetes-list-type": "atomic"
+                        },
+                        "path": {
+                          "description": "Path to access on the HTTP server.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "port": {
+                          "anyOf": [
+                            {
+                              "type": "integer"
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ],
+                          "description": "Name or number of the port to access on the container.\nNumber must be in the range 1 to 65535.\nName must be an IANA_SVC_NAME.",
+                          "x-kubernetes-int-or-string": true
+                        },
+                        "scheme": {
+                          "description": "Scheme to use for connecting to the host.\nDefaults to HTTP.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "port"
+                      ],
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    },
+                    "initialDelaySeconds": {
+                      "description": "Number of seconds after the container has started before liveness probes are initiated.\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes",
+                      "format": "int32",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "periodSeconds": {
+                      "description": "How often (in seconds) to perform the probe.\nDefault to 10 seconds. Minimum value is 1.",
+                      "format": "int32",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "successThreshold": {
+                      "description": "Minimum consecutive successes for the probe to be considered successful after having failed.\nDefaults to 1. Must be 1 for liveness and startup. Minimum value is 1.",
+                      "format": "int32",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "tcpSocket": {
+                      "additionalProperties": false,
+                      "description": "TCPSocket specifies a connection to a TCP port.",
+                      "properties": {
+                        "host": {
+                          "description": "Optional: Host name to connect to, defaults to the pod IP.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "port": {
+                          "anyOf": [
+                            {
+                              "type": "integer"
+                            },
+                            {
+                              "type": "string"
+                            }
+                          ],
+                          "description": "Number or name of the port to access on the container.\nNumber must be in the range 1 to 65535.\nName must be an IANA_SVC_NAME.",
+                          "x-kubernetes-int-or-string": true
+                        }
+                      },
+                      "required": [
+                        "port"
+                      ],
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    },
+                    "terminationGracePeriodSeconds": {
+                      "format": "int64",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "timeoutSeconds": {
+                      "description": "Number of seconds after which the probe times out.\nDefaults to 1 second. Minimum value is 1.\nMore info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#container-probes",
+                      "format": "int32",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "hosting": {
+          "additionalProperties": false,
+          "description": "Hosting settings for the object store.\nA common use case for hosting configuration is to inform Rook of endpoints that support DNS\nwildcards, which in turn allows virtual host-style bucket addressing.",
+          "nullable": true,
+          "properties": {
+            "advertiseEndpoint": {
+              "additionalProperties": false,
+              "description": "AdvertiseEndpoint is the default endpoint Rook will return for resources dependent on this\nobject store. This endpoint will be returned to CephObjectStoreUsers, Object Bucket Claims,\nand COSI Buckets/Accesses.\nBy default, Rook returns the endpoint for the object store's Kubernetes service using HTTPS\nwith `gateway.securePort` if it is defined (otherwise, HTTP with `gateway.port`).",
+              "nullable": true,
+              "properties": {
+                "dnsName": {
+                  "description": "DnsName is the DNS name (in RFC-1123 format) of the endpoint.\nIf the DNS name corresponds to an endpoint with DNS wildcard support, do not include the\nwildcard itself in the list of hostnames.\nE.g., use \"mystore.example.com\" instead of \"*.mystore.example.com\".",
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "port": {
+                  "description": "Port is the port on which S3 connections can be made for this endpoint.",
+                  "format": "int32",
+                  "maximum": 65535,
+                  "minimum": 1,
+                  "type": "integer"
+                },
+                "useTls": {
+                  "description": "UseTls defines whether the endpoint uses TLS (HTTPS) or not (HTTP).",
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "dnsName",
+                "port",
+                "useTls"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "dnsNames": {
+              "description": "A list of DNS host names on which object store gateways will accept client S3 connections.\nWhen specified, object store gateways will reject client S3 connections to hostnames that are\nnot present in this list, so include all endpoints.\nThe object store's advertiseEndpoint and Kubernetes service endpoint, plus CephObjectZone\n`customEndpoints` are automatically added to the list but may be set here again if desired.\nEach DNS name must be valid according RFC-1123.\nIf the DNS name corresponds to an endpoint with DNS wildcard support, do not include the\nwildcard itself in the list of hostnames.\nE.g., use \"mystore.example.com\" instead of \"*.mystore.example.com\".",
+              "items": {
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "metadataPool": {
+          "additionalProperties": false,
+          "description": "The metadata pool settings",
+          "nullable": true,
+          "properties": {
+            "application": {
+              "description": "The application name to set on the pool. Only expected to be set for rgw pools.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "compressionMode": {
+              "description": "DEPRECATED: use Parameters instead, e.g., Parameters[\"compression_mode\"] = \"force\"\nThe inline compression mode in Bluestore OSD to set to (options are: none, passive, aggressive, force)\nDo NOT set a default value for kubebuilder as this will override the Parameters",
+              "enum": [
+                "none",
+                "passive",
+                "aggressive",
+                "force",
+                ""
+              ],
+              "nullable": true,
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "crushRoot": {
+              "description": "The root of the crush hierarchy utilized by the pool",
+              "nullable": true,
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "deviceClass": {
+              "description": "The device class the OSD should set to for use in the pool",
+              "nullable": true,
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "enableCrushUpdates": {
+              "description": "Allow rook operator to change the pool CRUSH tunables once the pool is created",
+              "nullable": true,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "enableRBDStats": {
+              "description": "EnableRBDStats is used to enable gathering of statistics for all RBD images in the pool",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "erasureCoded": {
+              "additionalProperties": false,
+              "description": "The erasure code settings",
+              "properties": {
+                "algorithm": {
+                  "description": "The algorithm for erasure coding.\nIf absent, defaults to the plugin specified in osd_pool_default_erasure_code_profile.",
+                  "enum": [
+                    "isa",
+                    "jerasure"
+                  ],
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "codingChunks": {
+                  "description": "Number of coding chunks per object in an erasure coded storage pool (required for erasure-coded pool type).\nThis is the number of OSDs that can be lost simultaneously before data cannot be recovered.",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "dataChunks": {
+                  "description": "Number of data chunks per object in an erasure coded storage pool (required for erasure-coded pool type).\nThe number of chunks required to recover an object when any single OSD is lost is the same\nas dataChunks so be aware that the larger the number of data chunks, the higher the cost of recovery.",
+                  "minimum": 0,
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "codingChunks",
+                "dataChunks"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "failureDomain": {
+              "description": "The failure domain: osd/host/(region or zone if available) - technically also any type in the crush map",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mirroring": {
+              "additionalProperties": false,
+              "description": "The mirroring settings",
+              "properties": {
+                "enabled": {
+                  "description": "Enabled whether this pool is mirrored or not",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "mode": {
+                  "description": "Mode is the mirroring mode: pool, image or init-only.",
+                  "enum": [
+                    "pool",
+                    "image",
+                    "init-only"
+                  ],
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "peers": {
+                  "additionalProperties": false,
+                  "description": "Peers represents the peers spec",
+                  "nullable": true,
+                  "properties": {
+                    "secretNames": {
+                      "description": "SecretNames represents the Kubernetes Secret names to add rbd-mirror or cephfs-mirror peers",
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": [
+                        "array",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "snapshotSchedules": {
+                  "description": "SnapshotSchedules is the scheduling of snapshot for mirrored images/pools",
+                  "items": {
+                    "additionalProperties": false,
+                    "description": "SnapshotScheduleSpec represents the snapshot scheduling settings of a mirrored pool",
+                    "properties": {
+                      "interval": {
+                        "description": "Interval represent the periodicity of the snapshot.",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "path": {
+                        "description": "Path is the path to snapshot, only valid for CephFS",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "startTime": {
+                        "description": "StartTime indicates when to start the snapshot",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "parameters": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "Parameters is a list of properties to enable on a given pool",
+              "nullable": true,
+              "type": [
+                "object",
+                "null"
+              ],
+              "x-kubernetes-preserve-unknown-fields": true
+            },
+            "quotas": {
+              "additionalProperties": false,
+              "description": "The quota settings",
+              "nullable": true,
+              "properties": {
+                "maxBytes": {
+                  "description": "MaxBytes represents the quota in bytes\nDeprecated in favor of MaxSize",
+                  "format": "int64",
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "maxObjects": {
+                  "description": "MaxObjects represents the quota in objects",
+                  "format": "int64",
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "maxSize": {
+                  "description": "MaxSize represents the quota in bytes as a string",
+                  "pattern": "^[0-9]+[\\.]?[0-9]*([KMGTPE]i|[kMGTPE])?$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "replicated": {
+              "additionalProperties": false,
+              "description": "The replication settings",
+              "properties": {
+                "hybridStorage": {
+                  "additionalProperties": false,
+                  "description": "HybridStorage represents hybrid storage tier settings",
+                  "nullable": true,
+                  "properties": {
+                    "primaryDeviceClass": {
+                      "description": "PrimaryDeviceClass represents high performance tier (for example SSD or NVME) for Primary OSD",
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    "secondaryDeviceClass": {
+                      "description": "SecondaryDeviceClass represents low performance tier (for example HDDs) for remaining OSDs",
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "primaryDeviceClass",
+                    "secondaryDeviceClass"
+                  ],
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "replicasPerFailureDomain": {
+                  "description": "ReplicasPerFailureDomain the number of replica in the specified failure domain",
+                  "minimum": 1,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "requireSafeReplicaSize": {
+                  "description": "RequireSafeReplicaSize if false allows you to set replica 1",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "size": {
+                  "description": "Size - Number of copies per object in a replicated storage pool, including the object itself (required for replicated pool type)",
+                  "minimum": 0,
+                  "type": "integer"
+                },
+                "subFailureDomain": {
+                  "description": "SubFailureDomain the name of the sub-failure domain",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "targetSizeRatio": {
+                  "description": "TargetSizeRatio gives a hint (%) to Ceph in terms of expected consumption of the total cluster capacity",
+                  "minimum": 0,
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "size"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "statusCheck": {
+              "additionalProperties": false,
+              "description": "The mirroring statusCheck",
+              "properties": {
+                "mirror": {
+                  "additionalProperties": false,
+                  "description": "HealthCheckSpec represents the health check of an object store bucket",
+                  "nullable": true,
+                  "properties": {
+                    "disabled": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "interval": {
+                      "description": "Interval is the internal in second or minute for the health check to run like 60s for 60 seconds",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "timeout": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ],
+              "x-kubernetes-preserve-unknown-fields": true
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "preservePoolsOnDelete": {
+          "description": "Preserve pools on object store deletion",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "protocols": {
+          "additionalProperties": false,
+          "description": "The protocol specification",
+          "properties": {
+            "enableAPIs": {
+              "description": "Represents RGW 'rgw_enable_apis' config option. See: https://docs.ceph.com/en/reef/radosgw/config-ref/#confval-rgw_enable_apis\nIf no value provided then all APIs will be enabled: s3, s3website, swift, swift_auth, admin, sts, iam, notifications\nIf enabled APIs are set, all remaining APIs will be disabled.\nThis option overrides S3.Enabled value.",
+              "items": {
+                "enum": [
+                  "s3",
+                  "s3website",
+                  "swift",
+                  "swift_auth",
+                  "admin",
+                  "sts",
+                  "iam",
+                  "notifications"
+                ],
+                "type": "string"
+              },
+              "nullable": true,
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "s3": {
+              "additionalProperties": false,
+              "description": "The spec for S3",
+              "nullable": true,
+              "properties": {
+                "authUseKeystone": {
+                  "description": "Whether to use Keystone for authentication. This option maps directly to the rgw_s3_auth_use_keystone option. Enabling it allows generating S3 credentials via an OpenStack API call, see the docs. If not given, the defaults of the corresponding RGW option apply.",
+                  "nullable": true,
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "enabled": {
+                  "description": "Deprecated: use protocol.enableAPIs instead.\nWhether to enable S3. This defaults to true (even if protocols.s3 is not present in the CRD). This maintains backwards compatibility – by default S3 is enabled.",
+                  "nullable": true,
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "swift": {
+              "additionalProperties": false,
+              "description": "The spec for Swift",
+              "nullable": true,
+              "properties": {
+                "accountInUrl": {
+                  "description": "Whether or not the Swift account name should be included in the Swift API URL. If set to false (the default), then the Swift API will listen on a URL formed like http://host:port/\u003crgw_swift_url_prefix\u003e/v1. If set to true, the Swift API URL will be http://host:port/\u003crgw_swift_url_prefix\u003e/v1/AUTH_\u003caccount_name\u003e. You must set this option to true (and update the Keystone service catalog) if you want radosgw to support publicly-readable containers and temporary URLs.",
+                  "nullable": true,
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "urlPrefix": {
+                  "description": "The URL prefix for the Swift API, to distinguish it from the S3 API endpoint. The default is swift, which makes the Swift API available at the URL http://host:port/swift/v1 (or http://host:port/swift/v1/AUTH_%(tenant_id)s if rgw swift account in url is enabled).",
+                  "nullable": true,
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "versioningEnabled": {
+                  "description": "Enables the Object Versioning of OpenStack Object Storage API. This allows clients to put the X-Versions-Location attribute on containers that should be versioned.",
+                  "nullable": true,
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "security": {
+          "additionalProperties": false,
+          "description": "Security represents security settings",
+          "nullable": true,
+          "properties": {
+            "keyRotation": {
+              "additionalProperties": false,
+              "description": "KeyRotation defines options for Key Rotation.",
+              "nullable": true,
+              "properties": {
+                "enabled": {
+                  "default": false,
+                  "description": "Enabled represents whether the key rotation is enabled.",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "schedule": {
+                  "description": "Schedule represents the cron schedule for key rotation.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "kms": {
+              "additionalProperties": false,
+              "description": "KeyManagementService is the main Key Management option",
+              "nullable": true,
+              "properties": {
+                "connectionDetails": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "description": "ConnectionDetails contains the KMS connection details (address, port etc)",
+                  "nullable": true,
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "x-kubernetes-preserve-unknown-fields": true
+                },
+                "tokenSecretName": {
+                  "description": "TokenSecretName is the kubernetes secret containing the KMS token",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "s3": {
+              "additionalProperties": false,
+              "description": "The settings for supporting AWS-SSE:S3 with RGW",
+              "nullable": true,
+              "properties": {
+                "connectionDetails": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "description": "ConnectionDetails contains the KMS connection details (address, port etc)",
+                  "nullable": true,
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "x-kubernetes-preserve-unknown-fields": true
+                },
+                "tokenSecretName": {
+                  "description": "TokenSecretName is the kubernetes secret containing the KMS token",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "sharedPools": {
+          "additionalProperties": false,
+          "description": "The pool information when configuring RADOS namespaces in existing pools.",
+          "nullable": true,
+          "properties": {
+            "dataPoolName": {
+              "description": "The data pool used for creating RADOS namespaces in the object store",
+              "type": [
+                "string",
+                "null"
+              ],
+              "x-kubernetes-validations": [
+                {
+                  "message": "object store shared data pool is immutable",
+                  "rule": "self == oldSelf"
+                }
+              ]
+            },
+            "metadataPoolName": {
+              "description": "The metadata pool used for creating RADOS namespaces in the object store",
+              "type": [
+                "string",
+                "null"
+              ],
+              "x-kubernetes-validations": [
+                {
+                  "message": "object store shared metadata pool is immutable",
+                  "rule": "self == oldSelf"
+                }
+              ]
+            },
+            "poolPlacements": {
+              "description": "PoolPlacements control which Pools are associated with a particular RGW bucket.\nOnce PoolPlacements are defined, RGW client will be able to associate pool\nwith ObjectStore bucket by providing \"\u003cLocationConstraint\u003e\" during s3 bucket creation\nor \"X-Storage-Policy\" header during swift container creation.\nSee: https://docs.ceph.com/en/latest/radosgw/placement/#placement-targets\nPoolPlacement with name: \"default\" will be used as a default pool if no option\nis provided during bucket creation.\nIf default placement is not provided, spec.sharedPools.dataPoolName and spec.sharedPools.MetadataPoolName will be used as default pools.\nIf spec.sharedPools are also empty, then RGW pools (spec.dataPool and spec.metadataPool) will be used as defaults.",
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "dataNonECPoolName": {
+                    "description": "The data pool used to store ObjectStore data that cannot use erasure coding (ex: multi-part uploads).\nIf dataPoolName is not erasure coded, then there is no need for dataNonECPoolName.\nWARNING: Do not change this field after creation. Pool names are used in RADOS namespaces and renaming leads to data loss.",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "dataPoolName": {
+                    "description": "The data pool used to store ObjectStore objects data.\nWARNING: Do not change this field after creation. Pool names are used in RADOS namespaces and renaming leads to data loss.",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "default": {
+                    "description": "Sets given placement as default. Only one placement in the list can be marked as default.\nDefault is false.",
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "metadataPoolName": {
+                    "description": "The metadata pool used to store ObjectStore bucket index.\nWARNING: Do not change this field after creation. Pool names are used in RADOS namespaces and renaming leads to data loss.",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "name": {
+                    "description": "Pool placement name. Name can be arbitrary. Placement with name \"default\" will be used as default.",
+                    "minLength": 1,
+                    "pattern": "^[a-zA-Z0-9._/-]+$",
+                    "type": "string"
+                  },
+                  "storageClasses": {
+                    "description": "StorageClasses can be selected by user to override dataPoolName during object creation.\nEach placement has default STANDARD StorageClass pointing to dataPoolName.\nThis list allows defining additional StorageClasses on top of default STANDARD storage class.",
+                    "items": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "dataPoolName": {
+                          "description": "DataPoolName is the data pool used to store ObjectStore objects data.\nWARNING: Do not change this field after creation. Pool names are used in RADOS namespaces and renaming leads to data loss.",
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "name": {
+                          "description": "Name is the StorageClass name. Ceph allows arbitrary name for StorageClasses,\nhowever most clients/libs insist on AWS names so it is recommended to use\none of the valid x-amz-storage-class values for better compatibility:\nREDUCED_REDUNDANCY | STANDARD_IA | ONEZONE_IA | INTELLIGENT_TIERING | GLACIER | DEEP_ARCHIVE | OUTPOSTS | GLACIER_IR | SNOW | EXPRESS_ONEZONE\nSee AWS docs: https://aws.amazon.com/de/s3/storage-classes/",
+                          "minLength": 1,
+                          "pattern": "^[a-zA-Z0-9._/-]+$",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "dataPoolName",
+                        "name"
+                      ],
+                      "type": "object"
+                    },
+                    "maxItems": 10,
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "dataPoolName",
+                  "metadataPoolName",
+                  "name"
+                ],
+                "type": "object"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "preserveRadosNamespaceDataOnDelete": {
+              "description": "Whether the RADOS namespaces should be preserved on deletion of the object store",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "zone": {
+          "additionalProperties": false,
+          "description": "The multisite info",
+          "nullable": true,
+          "properties": {
+            "name": {
+              "description": "CephObjectStoreZone name this CephObjectStore is part of",
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "type": "object",
+      "x-kubernetes-validations": [
+        {
+          "message": "defaultRealm must not be true when zone.name is set (multisite configuration)",
+          "rule": "!(has(self.defaultRealm) \u0026\u0026 self.defaultRealm == true \u0026\u0026 has(self.zone) \u0026\u0026 size(self.zone.name) \u003e 0)"
+        }
+      ]
+    },
+    "status": {
+      "additionalProperties": false,
+      "description": "ObjectStoreStatus represents the status of a Ceph Object Store resource",
+      "properties": {
+        "cephx": {
+          "additionalProperties": false,
+          "properties": {
+            "daemon": {
+              "additionalProperties": false,
+              "description": "Daemon shows the CephX key status for local Ceph daemons associated with this resources.",
+              "properties": {
+                "keyCephVersion": {
+                  "description": "KeyCephVersion reports the Ceph version that created the current generation's keys. This is\nsame string format as reported by `CephCluster.status.version.version` to allow them to be\ncompared. E.g., `20.2.0-0`.\nFor all newly-created resources, this field set to the version of Ceph that created the key.\nThe special value \"Uninitialized\" indicates that keys are being created for the first time.\nAn empty string indicates that the version is unknown, as expected in brownfield deployments.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "keyGeneration": {
+                  "description": "KeyGeneration represents the CephX key generation for the last successful reconcile.\nFor all newly-created resources, this field is set to `1`.\nWhen keys are rotated due to any rotation policy, the generation is incremented or updated to\nthe configured policy generation.\nGeneration `0` indicates that keys existed prior to the implementation of key tracking.",
+                  "format": "int32",
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "conditions": {
+          "items": {
+            "additionalProperties": false,
+            "description": "Condition represents a status condition on any Rook-Ceph Custom Resource.",
+            "properties": {
+              "lastHeartbeatTime": {
+                "format": "date-time",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lastTransitionTime": {
+                "format": "date-time",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "message": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reason": {
+                "description": "ConditionReason is a reason for a condition",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "type": {
+                "description": "ConditionType represent a resource's status",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "endpoints": {
+          "additionalProperties": false,
+          "properties": {
+            "insecure": {
+              "items": {
+                "type": "string"
+              },
+              "nullable": true,
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "secure": {
+              "items": {
+                "type": "string"
+              },
+              "nullable": true,
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "info": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "nullable": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "message": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "observedGeneration": {
+          "description": "ObservedGeneration is the latest generation observed by the controller.",
+          "format": "int64",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "phase": {
+          "description": "ConditionType represent a resource's status",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "replicas": {
+          "format": "int32",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "selector": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ],
+      "x-kubernetes-preserve-unknown-fields": true
+    }
+  },
+  "required": [
+    "metadata",
+    "spec"
+  ],
+  "type": "object"
+}

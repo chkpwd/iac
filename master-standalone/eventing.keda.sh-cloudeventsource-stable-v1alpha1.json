@@ -1,0 +1,225 @@
+{
+  "description": "CloudEventSource defines how a KEDA event will be sent to event sink",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "spec": {
+      "additionalProperties": false,
+      "description": "CloudEventSourceSpec defines the spec of CloudEventSource",
+      "properties": {
+        "authenticationRef": {
+          "additionalProperties": false,
+          "description": "AuthenticationRef points to the TriggerAuthentication or ClusterTriggerAuthentication object that\nis used to authenticate the scaler with the environment",
+          "properties": {
+            "kind": {
+              "description": "Kind of the resource being referred to. Defaults to TriggerAuthentication.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "clusterName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "destination": {
+          "additionalProperties": false,
+          "description": "Destination defines the various ways to emit events",
+          "properties": {
+            "azureEventGridTopic": {
+              "additionalProperties": false,
+              "properties": {
+                "endpoint": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "endpoint"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "http": {
+              "additionalProperties": false,
+              "properties": {
+                "uri": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "uri"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": "object"
+        },
+        "eventSubscription": {
+          "additionalProperties": false,
+          "description": "EventSubscription defines filters for events",
+          "properties": {
+            "excludedEventTypes": {
+              "items": {
+                "enum": [
+                  "keda.scaledobject.ready.v1",
+                  "keda.scaledobject.failed.v1",
+                  "keda.scaledobject.removed.v1",
+                  "keda.scaledobject.paused.v1",
+                  "keda.scaledobject.unpaused.v1",
+                  "keda.scaledjob.ready.v1",
+                  "keda.scaledjob.failed.v1",
+                  "keda.scaledjob.removed.v1",
+                  "keda.scaledjob.paused.v1",
+                  "keda.scaledjob.unpaused.v1",
+                  "keda.scaledjob.rolloutcleanup.started.v1",
+                  "keda.scaledjob.rolloutcleanup.completed.v1",
+                  "keda.scaledjob.rolloutcleanup.failed.v1",
+                  "keda.authentication.triggerauthentication.created.v1",
+                  "keda.authentication.triggerauthentication.updated.v1",
+                  "keda.authentication.triggerauthentication.removed.v1",
+                  "keda.authentication.clustertriggerauthentication.created.v1",
+                  "keda.authentication.clustertriggerauthentication.updated.v1",
+                  "keda.authentication.clustertriggerauthentication.removed.v1"
+                ],
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "includedEventTypes": {
+              "items": {
+                "enum": [
+                  "keda.scaledobject.ready.v1",
+                  "keda.scaledobject.failed.v1",
+                  "keda.scaledobject.removed.v1",
+                  "keda.scaledobject.paused.v1",
+                  "keda.scaledobject.unpaused.v1",
+                  "keda.scaledjob.ready.v1",
+                  "keda.scaledjob.failed.v1",
+                  "keda.scaledjob.removed.v1",
+                  "keda.scaledjob.paused.v1",
+                  "keda.scaledjob.unpaused.v1",
+                  "keda.scaledjob.rolloutcleanup.started.v1",
+                  "keda.scaledjob.rolloutcleanup.completed.v1",
+                  "keda.scaledjob.rolloutcleanup.failed.v1",
+                  "keda.authentication.triggerauthentication.created.v1",
+                  "keda.authentication.triggerauthentication.updated.v1",
+                  "keda.authentication.triggerauthentication.removed.v1",
+                  "keda.authentication.clustertriggerauthentication.created.v1",
+                  "keda.authentication.clustertriggerauthentication.updated.v1",
+                  "keda.authentication.clustertriggerauthentication.removed.v1"
+                ],
+                "type": "string"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "destination"
+      ],
+      "type": "object"
+    },
+    "status": {
+      "additionalProperties": false,
+      "description": "CloudEventSourceStatus defines the observed state of CloudEventSource",
+      "properties": {
+        "conditions": {
+          "description": "Conditions an array representation to store multiple Conditions",
+          "items": {
+            "additionalProperties": false,
+            "description": "Condition to store the condition state",
+            "properties": {
+              "message": {
+                "description": "A human readable message indicating details about the transition.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reason": {
+                "description": "The reason for the condition's last transition.",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "description": "Status of the condition, one of True, False, Unknown.",
+                "type": "string"
+              },
+              "type": {
+                "description": "Type of condition",
+                "type": "string"
+              }
+            },
+            "required": [
+              "status",
+              "type"
+            ],
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "spec"
+  ],
+  "type": "object"
+}

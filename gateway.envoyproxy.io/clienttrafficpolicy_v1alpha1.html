@@ -1,0 +1,2051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clienttrafficpolicy v1alpha1 — gateway.envoyproxy.io</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root {
+    --bg: #09090b;
+    --bg-surface: rgba(24, 24, 27, 0.6);
+    --bg-hover: rgba(24, 24, 27, 0.8);
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --accent: #6bc1fe;
+    --accent-dim: rgba(107, 193, 254, 0.15);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-active: #6bc1fe;
+    --stat-fg: #fafafa;
+    --required-bg: rgba(251, 191, 36, 0.15);
+    --required-fg: #fbbf24;
+    --stripes-dark: repeating-linear-gradient(100deg, #000 0%, #000 7%, transparent 10%, transparent 12%, #000 16%);
+    --rainbow: repeating-linear-gradient(100deg, #fff 10%, #fff 16%, #fff 22%, #fff 30%);
+  }
+  .light {
+    --bg: #f5f7fa;
+    --bg-surface: #ffffff;
+    --bg-hover: #edf0f4;
+    --fg: #18181b;
+    --fg-muted: #6b7785;
+    --accent: #2563b0;
+    --accent-dim: rgba(37, 99, 176, 0.08);
+    --border: #d8dde4;
+    --border-active: #2563b0;
+    --stat-fg: #18181b;
+    --required-bg: rgba(217, 119, 6, 0.1);
+    --required-fg: #b45309;
+    --stripes-dark: none;
+    --rainbow: none;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--fg);
+    max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem;
+    position: relative; z-index: 1;
+    transition: background 0.2s, color 0.2s;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 31px 47px, rgba(255,255,255,1), transparent),
+      radial-gradient(1px 1px at 212px 23px, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 68px 289px, rgba(255,255,255,0.84), transparent),
+      radial-gradient(1px 1px at 313px 151px, rgba(255,255,255,0.56), transparent),
+      radial-gradient(1px 1px at 157px 371px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(2px 2px at 19px 83px, rgba(255,255,255,0.96), transparent),
+      radial-gradient(1px 1px at 301px 41px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 127px 409px, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 443px 237px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 67px 491px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1px 1px at 11px 37px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1.5px 1.5px at 191px 213px, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1px 1px at 53px 7px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 271px 103px, rgba(255,255,255,0.64), transparent);
+    background-size:
+      397px 397px, 397px 397px, 397px 397px, 397px 397px, 397px 397px,
+      509px 509px, 509px 509px, 509px 509px, 509px 509px, 509px 509px,
+      311px 311px, 311px 311px, 311px 311px, 311px 311px;
+    mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+  }
+  .flare {
+    position: fixed; top: 0; right: 0;
+    width: 100vw; height: 450px; z-index: -1;
+    pointer-events: none;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 300% 200%;
+    background-position: 50% 50%;
+    filter: opacity(50%) saturate(200%);
+    opacity: 0.25;
+    mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+  }
+  .flare::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 200% 100%;
+    background-attachment: fixed;
+    mix-blend-mode: difference;
+  }
+  .light body::before, .light .flare { display: none; }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--fg-muted); cursor: pointer; padding: 0.35rem 0.6rem; font-size: 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .copied-toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #09090b; padding: 0.4rem 1rem;
+    border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none; z-index: 10;
+  }
+  .copied-toast.show { opacity: 1; }
+  footer {
+    margin-top: 3rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center; font-size: 0.8rem; color: var(--fg-muted);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .back-link { font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; }
+  .back-link kbd {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.6rem; color: var(--fg-muted); background: var(--bg-surface);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 0.1rem 0.35rem; line-height: 1;
+  }
+  .meta-cards {
+    display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+  }
+  .meta-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.5rem 1rem;
+  }
+  .meta-card .label { font-size: 0.7rem; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .meta-card .value { font-size: 1rem; font-weight: 600; }
+  .yaml-block {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.5rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.8rem; white-space: pre; overflow-x: auto; color: var(--fg);
+  }
+  .toolbar {
+    display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+    align-items: center; justify-content: space-between;
+  }
+  .toolbar-left { display: flex; gap: 0.75rem; }
+  .toolbar button, .toolbar a {
+    background: none; border: none; color: var(--fg-muted); cursor: pointer;
+    font-size: 0.8rem; padding: 0.2rem 0; transition: color 0.15s;
+  }
+  .toolbar button:hover, .toolbar a:hover { color: var(--accent); text-decoration: underline; }
+  .prop {
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; transition: border-color 0.2s;
+  }
+  .prop[open] { border-color: var(--border-active); border-left-width: 2px; }
+  .prop > summary {
+    padding: 0.5rem 0.75rem; cursor: pointer;
+    font-size: 0.85rem; background: var(--bg-surface); border-radius: 6px;
+    list-style: none; display: flex; align-items: center; gap: 0.5rem;
+    transition: background 0.15s;
+  }
+  .prop > summary::-webkit-details-marker { display: none; }
+  .prop > summary::before { content: "\25B8"; color: var(--fg-muted); font-size: 0.7rem; }
+  .prop[open] > summary::before { content: "\25BE"; color: var(--accent); }
+  .prop > summary:hover { background: var(--bg-hover); }
+  .prop-content { padding: 0.5rem 0.75rem 0.75rem; padding-left: 1.5rem; }
+  .prop-leaf {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem; display: flex; align-items: flex-start; gap: 0.5rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; background: var(--bg-surface);
+  }
+  .prop-leaf .prop-name { min-width: 0; }
+  .prop-name {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    color: var(--accent); font-weight: 600; white-space: nowrap;
+  }
+  .type-badge {
+    background: var(--accent-dim); color: var(--accent);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .required-badge {
+    background: var(--required-bg); color: var(--required-fg);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .prop-desc { color: var(--fg-muted); font-size: 0.82rem; margin-top: 0.25rem; }
+  .prop-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.2rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+  .prop-children { margin-top: 0.5rem; }
+  .leaf-desc { color: var(--fg-muted); font-size: 0.82rem; flex: 1; min-width: 0; }
+  .leaf-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.15rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+</style>
+<script>if(localStorage.getItem('theme')==='light')document.documentElement.className='light';</script>
+</head>
+<body>
+<div class="flare"></div>
+<div class="nav-row">
+  <a href="/" class="back-link">← Back to index <kbd>Esc</kbd></a>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
+</div>
+<div class="meta-cards">
+  <div class="meta-card"><div class="label">Kind</div><div class="value">Clienttrafficpolicy</div></div>
+  <div class="meta-card"><div class="label">Group</div><div class="value">gateway.envoyproxy.io</div></div>
+  <div class="meta-card"><div class="label">Version</div><div class="value">v1alpha1</div></div>
+</div>
+<div class="yaml-block">apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Clienttrafficpolicy
+metadata:
+  name: example</div>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <button id="expand-all">Expand all</button>
+    <button id="collapse-all">Collapse all</button>
+  </div>
+  <div class="toolbar-left">
+    <a href="/gateway.envoyproxy.io/clienttrafficpolicy_v1alpha1.json" target="_blank">View raw schema</a>
+    <button id="copy-url" data-url="/gateway.envoyproxy.io/clienttrafficpolicy_v1alpha1.json">Copy schema URL</button>
+  </div>
+</div>
+<div id="properties">
+<div class="prop-leaf">
+  <span class="prop-name">apiVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">APIVersion defines the versioned schema of this representation of an object.
+Servers should convert recognized schemas to the latest internal value, and
+may reject unrecognized values.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is a string value representing the REST resource this object represents.
+Servers may infer this from the endpoint the client submits requests to.
+Cannot be updated.
+In CamelCase.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">spec</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Spec defines the desired state of ClientTrafficPolicy.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">clientIPDetection</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ClientIPDetectionSettings provides configuration for determining the original client IP address for requests.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">customHeader</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">CustomHeader provides configuration for determining the client IP address for a request based on
+a trusted custom HTTP header. This uses the custom_header original IP detection extension.
+Refer to https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/http/original_ip_detection/custom_header/v3/custom_header.proto
+for more details.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">failClosed</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">FailClosed is a switch used to control the flow of traffic when client IP detection
+fails. If set to true, the listener will respond with 403 Forbidden when the client
+IP address cannot be determined.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the header containing the original downstream remote address, if present.<div class="leaf-constraints">pattern: ^[A-Za-z0-9-]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 255</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">xForwardedFor</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">XForwardedForSettings provides configuration for using X-Forwarded-For headers for determining the client IP address.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">numTrustedHops</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">NumTrustedHops specifies how many trusted hops to count from the rightmost side of
+the X-Forwarded-For (XFF) header when determining the original client’s IP address.
+
+If NumTrustedHops is set to N, the client IP is taken from the Nth address from the
+right end of the XFF header.
+
+Example:
+  XFF = &#34;203.0.113.128, 203.0.113.10, 203.0.113.1&#34;
+  NumTrustedHops = 2
+  → Trusted client address = 203.0.113.10
+
+Only one of NumTrustedHops or TrustedCIDRs should be configured.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">trustedCIDRs</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">TrustedCIDRs is a list of CIDR ranges to trust when evaluating
+the remote IP address to determine the original client’s IP address.
+When the remote IP address matches a trusted CIDR and the x-forwarded-for header was sent,
+each entry in the x-forwarded-for header is evaluated from right to left
+and the first public non-trusted address is used as the original client address.
+If all addresses in x-forwarded-for are within the trusted list, the first (leftmost) entry is used.
+Only one of NumTrustedHops and TrustedCIDRs must be set.<div class="leaf-constraints">minItems: 1</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">connection</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Connection includes client connection settings.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">bufferLimit</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">BufferLimit provides configuration for the maximum buffer size in bytes for each incoming connection.
+BufferLimit applies to connection streaming (maybe non-streaming) channel between processes, it&#39;s in user space.
+For example, 20Mi, 1Gi, 256Ki etc.
+Note that when the suffix is not provided, the value is interpreted as bytes.
+Default: 32768 bytes.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">connectionLimit</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ConnectionLimit defines limits related to connections</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">closeDelay</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">CloseDelay defines the delay to use before closing connections that are rejected
+once the limit value is reached.
+Default: none.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxConnectionDuration</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">MaxConnectionDuration is the maximum amount of time a connection can remain established
+(usually via TCP/HTTP Keepalive packets) before being drained and/or closed.
+If not specified, there is no limit.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxRequestsPerConnection</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxRequestsPerConnection defines the maximum number of requests allowed over a single connection.
+If not specified, there is no limit. Setting this parameter to 1 will effectively disable keep alive.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxStreamDuration</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">MaxStreamDuration is the maximum amount of time to keep alive an http stream. When the limit is reached
+the stream will be reset independent of any other timeouts. If not specified, no value is set.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Value of the maximum concurrent connections limit.
+When the limit is reached, incoming connections will be closed after the CloseDelay duration.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">maxAcceptPerSocketEvent</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxAcceptPerSocketEvent provides configuration for the maximum number of connections to accept from the kernel
+per socket event. If there are more than MaxAcceptPerSocketEvent connections pending accept, connections over
+this threshold will be accepted in later event loop iterations.
+Defaults to 1 and can be disabled by setting to 0 for allowing unlimited accepted connections.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">socketBufferLimit</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">SocketBufferLimit provides configuration for the maximum buffer size in bytes for each incoming socket.
+SocketBufferLimit applies to socket streaming channel between TCP/IP stacks, it&#39;s in kernel space.
+For example, 20Mi, 1Gi, 256Ki etc.
+Note that when the suffix is not provided, the value is interpreted as bytes.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">enableProxyProtocol</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">EnableProxyProtocol interprets the ProxyProtocol header and adds the
+Client Address into the X-Forwarded-For header.
+Note Proxy Protocol must be present when this field is set, else the connection
+is closed.
+
+Deprecated: Use ProxyProtocol instead.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">headers</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HeaderSettings provides configuration for header management.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">disableRateLimitHeaders</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">DisableRateLimitHeaders configures Envoy Proxy to omit the &#34;X-RateLimit-&#34; response headers
+when rate limiting is enabled.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">earlyRequestHeaders</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">EarlyRequestHeaders defines settings for early request header modification, before envoy performs
+routing, tracing and built-in header manipulation.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">add</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Add adds the given header(s) (name, value) to the request
+before the action. It appends to any existing values associated
+with the header name.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  add:
+  - name: &#34;my-header&#34;
+    value: &#34;bar,baz&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: foo,bar,baz</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 64</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">addIfAbsent</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">AddIfAbsent adds the given header(s) (name, value) to the request/response
+only if the header does not already exist. Unlike Add which appends to
+existing values, this is a no-op if the header is already present.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  addIfAbsent:
+  - name: &#34;my-header&#34;
+    value: &#34;bar&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: foo</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 64</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">remove</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Remove the given header(s) from the HTTP request before the action. The
+value of Remove is a list of HTTP header names. Note that the header
+names are case-insensitive (see
+https://datatracker.ietf.org/doc/html/rfc2616#section-4.2).
+
+Input:
+  GET /foo HTTP/1.1
+  my-header1: foo
+  my-header2: bar
+  my-header3: baz
+
+Config:
+  remove: [&#34;my-header1&#34;, &#34;my-header3&#34;]
+
+Output:
+  GET /foo HTTP/1.1
+  my-header2: bar<div class="leaf-constraints">minItems: 1</div><div class="leaf-constraints">maxItems: 64</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">removeOnMatch</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RemoveOnMatch removes headers whose names match the specified string matchers.
+Matching is performed on the header name (case-insensitive).</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 64</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against a string.<div class="leaf-constraints">enum: Exact, Prefix, Suffix, RegularExpression</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value specifies the string value that the match must have.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">set</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Set overwrites the request with the given header (name, value)
+before the action.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  set:
+  - name: &#34;my-header&#34;
+    value: &#34;bar&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: bar</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 64</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">enableEnvoyHeaders</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">EnableEnvoyHeaders configures Envoy Proxy to add the &#34;X-Envoy-&#34; headers to requests
+and responses.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">lateResponseHeaders</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">LateResponseHeaders defines settings for global response header modification.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">add</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Add adds the given header(s) (name, value) to the request
+before the action. It appends to any existing values associated
+with the header name.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  add:
+  - name: &#34;my-header&#34;
+    value: &#34;bar,baz&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: foo,bar,baz</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 64</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">addIfAbsent</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">AddIfAbsent adds the given header(s) (name, value) to the request/response
+only if the header does not already exist. Unlike Add which appends to
+existing values, this is a no-op if the header is already present.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  addIfAbsent:
+  - name: &#34;my-header&#34;
+    value: &#34;bar&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: foo</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 64</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">remove</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Remove the given header(s) from the HTTP request before the action. The
+value of Remove is a list of HTTP header names. Note that the header
+names are case-insensitive (see
+https://datatracker.ietf.org/doc/html/rfc2616#section-4.2).
+
+Input:
+  GET /foo HTTP/1.1
+  my-header1: foo
+  my-header2: bar
+  my-header3: baz
+
+Config:
+  remove: [&#34;my-header1&#34;, &#34;my-header3&#34;]
+
+Output:
+  GET /foo HTTP/1.1
+  my-header2: bar<div class="leaf-constraints">minItems: 1</div><div class="leaf-constraints">maxItems: 64</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">removeOnMatch</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RemoveOnMatch removes headers whose names match the specified string matchers.
+Matching is performed on the header name (case-insensitive).</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 64</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against a string.<div class="leaf-constraints">enum: Exact, Prefix, Suffix, RegularExpression</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value specifies the string value that the match must have.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">set</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Set overwrites the request with the given header (name, value)
+before the action.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  set:
+  - name: &#34;my-header&#34;
+    value: &#34;bar&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: bar</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 64</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">preserveXRequestID</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">PreserveXRequestID configures Envoy to keep the X-Request-ID header if passed for a request that is edge
+(Edge request is the request from external clients to front Envoy) and not reset it, which is the current Envoy behaviour.
+Defaults to false and cannot be combined with RequestID.
+Deprecated: use RequestID=PreserveOrGenerate instead
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">requestID</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">RequestID configures Envoy&#39;s behavior for handling the `X-Request-ID` header.
+When omitted default behavior is `Generate` which builds the `X-Request-ID` for every request
+ and ignores pre-existing values from the edge.
+(An &#34;edge request&#34; refers to a request from an external client to the Envoy entrypoint.)<div class="leaf-constraints">enum: PreserveOrGenerate, Preserve, Generate, Disable</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">withUnderscoresAction</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">WithUnderscoresAction configures the action to take when an HTTP header with underscores
+is encountered. The default action is to reject the request.<div class="leaf-constraints">enum: Allow, RejectRequest, DropHeader</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">xForwardedClientCert</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">XForwardedClientCert configures how Envoy Proxy handle the x-forwarded-client-cert (XFCC) HTTP header.
+
+x-forwarded-client-cert (XFCC) is an HTTP header used to forward the certificate
+information of part or all of the clients or proxies that a request has flowed through,
+on its way from the client to the server.
+
+Envoy proxy may choose to sanitize/append/forward the XFCC header before proxying the request.
+
+If not set, the default behavior is sanitizing the XFCC header.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">certDetailsToAdd</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">CertDetailsToAdd specifies the fields in the client certificate to be forwarded in the XFCC header.
+
+Hash(the SHA 256 digest of the current client certificate) and By(the Subject Alternative Name)
+are always included if the client certificate is forwarded.
+
+This field is only applicable when the mode is set to `AppendForward` or
+`SanitizeSet` and the client connection is mTLS.<div class="leaf-constraints">maxItems: 5</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">mode</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Mode defines how XFCC header is handled by Envoy Proxy.
+If not set, the default mode is `Sanitize`.<div class="leaf-constraints">enum: Sanitize, ForwardOnly, AppendForward, SanitizeSet, AlwaysForwardOnly</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">healthCheck</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HealthCheck provides configuration for determining whether the HTTP/HTTPS listener is healthy.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Path specifies the HTTP path to match on for health check requests.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">http1</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HTTP1 provides HTTP/1 configuration on the listener.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">disableSafeMaxConnectionDuration</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">DisableSafeMaxConnectionDuration controls the close behavior for HTTP/1 connections.
+By default, connection closure is delayed until the next request arrives after maxConnectionDuration is exceeded.
+It then adds a Connection: close header and gracefully closes the connection after the response completes.
+When set to true (disabled), Envoy uses its default drain behavior, closing the connection shortly after maxConnectionDuration elapses.
+Has no effect unless maxConnectionDuration is set.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">enableTrailers</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">EnableTrailers defines if HTTP/1 trailers should be proxied by Envoy.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">http10</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HTTP10 turns on support for HTTP/1.0 and HTTP/0.9 requests.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">useDefaultHost</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">UseDefaultHost specifies whether a default Host header should be injected
+into HTTP/1.0 requests that do not include one.
+
+When set to true, Envoy Gateway injects the hostname associated with the
+listener or route into the request, in the following order:
+
+  1. If the targeted listener has a non-wildcard hostname, use that hostname.
+  2. If there is exactly one HTTPRoute with a non-wildcard hostname under
+     the targeted listener, use that hostname.
+
+ Note: Setting this field to true without a non-wildcard hostname makes the
+ClientTrafficPolicy invalid.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">preserveHeaderCase</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">PreserveHeaderCase defines if Envoy should preserve the letter case of headers.
+By default, Envoy will lowercase all the headers.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">http2</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HTTP2 provides HTTP/2 configuration on the listener.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">initialConnectionWindowSize</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">InitialConnectionWindowSize sets the initial window size for HTTP/2 connections.
+If not set, the default value is 1 MiB.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">initialStreamWindowSize</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">InitialStreamWindowSize sets the initial window size for HTTP/2 streams.
+If not set, the default value is 64 KiB(64*1024).
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxConcurrentStreams</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxConcurrentStreams sets the maximum number of concurrent streams allowed per connection.
+If not set, the default value is 100.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 2.147483647e+09</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">onInvalidMessage</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">OnInvalidMessage determines if Envoy will terminate the connection or just the offending stream in the event of HTTP messaging error
+It&#39;s recommended for L2 Envoy deployments to set this value to TerminateStream.
+https://www.envoyproxy.io/docs/envoy/latest/configuration/best_practices/level_two
+Default: TerminateConnection
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">http3</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">HTTP3 provides HTTP/3 configuration on the listener.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">path</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Path enables managing how the incoming path set by clients can be normalized.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">disableMergeSlashes</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">DisableMergeSlashes allows disabling the default configuration of merging adjacent
+slashes in the path.
+Note that slash merging is not part of the HTTP spec and is provided for convenience.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">escapedSlashesAction</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">EscapedSlashesAction determines how %2f, %2F, %5c, or %5C sequences in the path URI
+should be handled.
+The default is UnescapeAndRedirect.<div class="leaf-constraints">enum: KeepUnchanged, RejectRequest, UnescapeAndForward, UnescapeAndRedirect</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">proxyProtocol</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ProxyProtocol configures the Proxy Protocol settings. When configured,
+the Proxy Protocol header will be interpreted and the Client Address
+will be added into the X-Forwarded-For header.
+If both EnableProxyProtocol and ProxyProtocol are set, ProxyProtocol takes precedence.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Optional allows requests without a Proxy Protocol header to be proxied.
+If set to true, the listener will accept requests without a Proxy Protocol header.
+If set to false, the listener will reject requests without a Proxy Protocol header.
+If not set, the default behavior is to reject requests without a Proxy Protocol header.
+Warning: Optional breaks conformance with the specification. Only enable if ALL traffic to the listener comes from a trusted source.
+For more information on security implications, see haproxy.org/download/2.1/doc/proxy-protocol.txt
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">scheme</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Scheme configures how the :scheme pseudo-header is set for requests forwarded to backends.
+
+- Preserve (default): Preserves the :scheme from the original client request.
+  Use this when backends need to know the original client scheme for URL generation or redirects.
+
+- MatchBackend: Sets the :scheme to match the backend transport protocol.
+  If the backend uses TLS, the scheme is &#34;https&#34;, otherwise &#34;http&#34;.
+  Use this when backends require the scheme to match the actual transport protocol,
+  such as strictly HTTPS services that validate the :scheme header.<div class="leaf-constraints">enum: Preserve, MatchBackend</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">targetRef</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TargetRef is the name of the resource this policy is being attached to.
+This policy and the TargetRef MUST be in the same namespace for this
+Policy to have effect
+
+Deprecated: use targetRefs/targetSelectors instead</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Group is the group of the target resource.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is kind of the target resource.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the target resource.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sectionName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SectionName is the name of a section within the target resource. When
+unspecified, this targetRef targets the entire resource. In the following
+resources, SectionName is interpreted as the following:
+
+* Gateway: Listener name
+* HTTPRoute: HTTPRouteRule name
+* Service: Port name
+
+If a SectionName is specified, but does not exist on the targeted object,
+the Policy must fail to attach, and the policy implementation should record
+a `ResolvedRefs` or similar Condition in the Policy&#39;s status.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">targetRefs</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TargetRefs are the names of the Gateway resources this policy
+is being attached to.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Group is the group of the target resource.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is kind of the target resource.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the target resource.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sectionName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SectionName is the name of a section within the target resource. When
+unspecified, this targetRef targets the entire resource. In the following
+resources, SectionName is interpreted as the following:
+
+* Gateway: Listener name
+* HTTPRoute: HTTPRouteRule name
+* Service: Port name
+
+If a SectionName is specified, but does not exist on the targeted object,
+the Policy must fail to attach, and the policy implementation should record
+a `ResolvedRefs` or similar Condition in the Policy&#39;s status.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">targetSelectors</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TargetSelectors allow targeting resources for this policy based on labels</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group that this selector targets. Defaults to gateway.networking.k8s.io<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is the resource kind that this selector targets.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">MatchExpressions is a list of label selector requirements. The requirements are ANDed.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">key is the label key that the selector applies to.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">operator represents a key&#39;s relationship to a set of values.
+Valid operators are In, NotIn, Exists and DoesNotExist.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">values is an array of string values. If the operator is In or NotIn,
+the values array must be non-empty. If the operator is Exists or DoesNotExist,
+the values array must be empty. This array is replaced during a strategic
+merge patch.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">MatchLabels are the set of label selectors for identifying the targeted resource
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">tcpKeepalive</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TcpKeepalive settings associated with the downstream client connection.
+If defined, sets SO_KEEPALIVE on the listener socket to enable TCP Keepalives.
+Disabled by default.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">idleTime</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The duration a connection needs to be idle before keep-alive
+probes start being sent.
+The duration format is
+Defaults to `7200s`.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The duration between keep-alive probes.
+Defaults to `75s`.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">probes</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">The total number of unacknowledged probes to send before deciding
+the connection is dead.
+Defaults to 9.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Timeout settings for the client connections.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">http</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Timeout settings for HTTP.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">idleTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">IdleTimeout for an HTTP connection. Idle time is defined as a period in which there are no active requests in the connection.
+Default: 1 hour.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">requestReceivedTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">RequestReceivedTimeout is the duration envoy waits for the complete request reception. This timer starts upon request
+initiation and stops when either the last byte of the request is sent upstream or when the response begins.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">streamIdleTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc"> The stream idle timeout defines the amount of time a stream can exist without any upstream or downstream activity.
+ Default: 5 minutes.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">tcp</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Timeout settings for TCP.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">idleTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">IdleTimeout for a TCP connection. Idle time is defined as a period in which there are no
+bytes sent or received on either the upstream or downstream connection.
+Default: 1 hour.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">tls</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TLS settings configure TLS termination settings with the downstream client.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">alpnProtocols</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">ALPNProtocols supplies the list of ALPN protocols that should be
+exposed by the listener or used by the proxy to connect to the backend.
+Defaults:
+1. HTTPS Routes: h2 and http/1.1 are enabled in listener context.
+2. Other Routes: ALPN is disabled.
+3. Backends: proxy uses the appropriate ALPN options for the backend protocol.
+When an empty list is provided, the ALPN TLS extension is disabled.
+
+Defaults to [h2, http/1.1] if not specified.
+
+Typical Supported values are:
+- http/1.0
+- http/1.1
+- h2
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">ciphers</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Ciphers specifies the set of cipher suites supported when
+negotiating TLS 1.0 - 1.2. This setting has no effect for TLS 1.3.
+In non-FIPS Envoy Proxy builds the default cipher list is:
+- [ECDHE-ECDSA-AES128-GCM-SHA256|ECDHE-ECDSA-CHACHA20-POLY1305]
+- [ECDHE-RSA-AES128-GCM-SHA256|ECDHE-RSA-CHACHA20-POLY1305]
+- ECDHE-ECDSA-AES256-GCM-SHA384
+- ECDHE-RSA-AES256-GCM-SHA384
+In builds using BoringSSL FIPS the default cipher list is:
+- ECDHE-ECDSA-AES128-GCM-SHA256
+- ECDHE-RSA-AES128-GCM-SHA256
+- ECDHE-ECDSA-AES256-GCM-SHA384
+- ECDHE-RSA-AES256-GCM-SHA384
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">clientValidation</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ClientValidation specifies the configuration to validate the client
+initiating the TLS connection to the Gateway listener.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">caCertificateRefs</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">CACertificateRefs contains one or more references to
+Kubernetes objects that contain TLS certificates of
+the Certificate Authorities that can be used
+as a trust anchor to validate the certificates presented by the client.
+
+A single reference to a Kubernetes ConfigMap or a Kubernetes Secret,
+with the CA certificate in a key named `ca.crt` is currently supported.
+
+References to a resource in different namespace are invalid UNLESS there
+is a ReferenceGrant in the target namespace that allows the certificate
+to be attached.</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When unspecified or empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is kind of the referent. For example &#34;Secret&#34;.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the referenced object. When unspecified, the local
+namespace is inferred.
+
+Note that when a namespace different than the local namespace is specified,
+a ReferenceGrant object is required in the referent namespace to allow that
+namespace&#39;s owner to accept the reference. See the ReferenceGrant
+documentation for details.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">certificateHashes</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">An optional list of hex-encoded SHA-256 hashes. If specified, Envoy will
+verify that the SHA-256 of the DER-encoded presented certificate matches
+one of the specified values.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">crl</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Crl specifies the crl configuration that can be used to validate the client initiating the TLS connection</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">onlyVerifyLeafCertificate</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">If this option is set to true,  Envoy will only verify the certificate at the end of the certificate chain against the CRL.
+Defaults to false, which will verify the entire certificate chain against the CRL.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">refs</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Refs contains one or more references to a Kubernetes ConfigMap or a Kubernetes Secret,
+containing the certificate revocation list in PEM format
+Expects the content in a key named `ca.crl`.
+
+References to a resource in different namespace are invalid UNLESS there
+is a ReferenceGrant in the target namespace that allows the crl
+to be attached.</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When unspecified or empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is kind of the referent. For example &#34;Secret&#34;.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the referenced object. When unspecified, the local
+namespace is inferred.
+
+Note that when a namespace different than the local namespace is specified,
+a ReferenceGrant object is required in the referent namespace to allow that
+namespace&#39;s owner to accept the reference. See the ReferenceGrant
+documentation for details.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Optional set to true accepts connections even when a client doesn&#39;t present a certificate.
+Defaults to false, which rejects connections without a valid client certificate.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">spkiHashes</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">An optional list of base64-encoded SHA-256 hashes. If specified, Envoy will
+verify that the SHA-256 of the DER-encoded Subject Public Key Information
+(SPKI) of the presented certificate matches one of the specified values.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">subjectAltNames</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">An optional list of Subject Alternative name matchers. If specified, Envoy
+will verify that the Subject Alternative Name of the presented certificate
+matches one of the specified matchers</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">dnsNames</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">DNS names matchers</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against a string.<div class="leaf-constraints">enum: Exact, Prefix, Suffix, RegularExpression</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value specifies the string value that the match must have.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">emailAddresses</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Email addresses matchers</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against a string.<div class="leaf-constraints">enum: Exact, Prefix, Suffix, RegularExpression</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value specifies the string value that the match must have.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">ipAddresses</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">IP addresses matchers</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against a string.<div class="leaf-constraints">enum: Exact, Prefix, Suffix, RegularExpression</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value specifies the string value that the match must have.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">otherNames</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Other names matchers</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">oid</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">OID Value
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against a string.<div class="leaf-constraints">enum: Exact, Prefix, Suffix, RegularExpression</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value specifies the string value that the match must have.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">uris</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">URIs matchers</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against a string.<div class="leaf-constraints">enum: Exact, Prefix, Suffix, RegularExpression</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value specifies the string value that the match must have.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">ecdhCurves</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">ECDHCurves specifies the set of supported ECDH curves.
+In non-FIPS Envoy Proxy builds the default curves are:
+- X25519
+- P-256
+In builds using BoringSSL FIPS the default curve is:
+- P-256
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Max specifies the maximal TLS protocol version to allow
+The default is TLS 1.3 if this is not specified.<div class="leaf-constraints">enum: Auto, 1.0, 1.1, 1.2, 1.3</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">minVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Min specifies the minimal TLS protocol version to allow.
+The default is TLS 1.2 if this is not specified.<div class="leaf-constraints">enum: Auto, 1.0, 1.1, 1.2, 1.3</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">session</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Session defines settings related to TLS session management.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">resumption</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Resumption determines the proxy&#39;s supported TLS session resumption option.
+By default, Envoy Gateway does not enable session resumption. Use sessionResumption to
+enable stateful and stateless session resumption. Users should consider security impacts
+of different resumption methods. Performance gains from resumption are diminished when
+Envoy proxy is deployed with more than one replica.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">stateful</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Stateful defines setting for stateful (session-id based) session resumption
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">stateless</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Stateless defines setting for stateless (session-ticket based) session resumption
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">signatureAlgorithms</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">SignatureAlgorithms specifies which signature algorithms the listener should
+support.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">status</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Status defines the current status of ClientTrafficPolicy.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">ancestors</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Ancestors is a list of ancestor resources (usually Gateways) that are
+associated with the policy, and the status of the policy with respect to
+each ancestor. When this policy attaches to a parent, the controller that
+manages the parent and the ancestors MUST add an entry to this list when
+the controller first sees the policy and SHOULD update the entry as
+appropriate when the relevant ancestor is modified.
+
+Note that choosing the relevant ancestor is left to the Policy designers;
+an important part of Policy design is designing the right object level at
+which to namespace this status.
+
+Note also that implementations MUST ONLY populate ancestor status for
+the Ancestor resources they are responsible for. Implementations MUST
+use the ControllerName field to uniquely identify the entries in this list
+that they are responsible for.
+
+Note that to achieve this, the list of PolicyAncestorStatus structs
+MUST be treated as a map with a composite key, made up of the AncestorRef
+and ControllerName fields combined.
+
+A maximum of 16 ancestors will be represented in this list. An empty list
+means the Policy is not relevant for any ancestors.
+
+If this slice is full, implementations MUST NOT add further entries.
+Instead they MUST consider the policy unimplementable and signal that
+on any related resources such as the ancestor that would be referenced
+here. For example, if this list was full on BackendTLSPolicy, no
+additional Gateways would be able to reference the Service targeted by
+the BackendTLSPolicy.</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">ancestorRef</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">AncestorRef corresponds with a ParentRef in the spec that this
+PolicyAncestorStatus struct describes the status of.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent.
+When unspecified, &#34;gateway.networking.k8s.io&#34; is inferred.
+To set the core API group (such as for a &#34;Service&#34; kind referent),
+Group must be explicitly set to &#34;&#34; (empty string).
+
+Support: Core<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is kind of the referent.
+
+There are two kinds of parent resources with &#34;Core&#34; support:
+
+* Gateway (Gateway conformance profile)
+* Service (Mesh conformance profile, ClusterIP Services only)
+
+Support for other resources is Implementation-Specific.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.
+
+Support: Core<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the referent. When unspecified, this refers
+to the local namespace of the Route.
+
+Note that there are specific rules for ParentRefs which cross namespace
+boundaries. Cross-namespace references are only valid if they are explicitly
+allowed by something in the namespace they are referring to. For example:
+Gateway has the AllowedRoutes field, and ReferenceGrant provides a
+generic way to enable any other kind of cross-namespace reference.
+
+&lt;gateway:experimental:description&gt;
+ParentRefs from a Route to a Service in the same namespace are &#34;producer&#34;
+routes, which apply default routing rules to inbound connections from
+any namespace to the Service.
+
+ParentRefs from a Route to a Service in a different namespace are
+&#34;consumer&#34; routes, and these routing rules are only applied to outbound
+connections originating from the same namespace as the Route, for which
+the intended destination of the connections are a Service targeted as a
+ParentRef of the Route.
+&lt;/gateway:experimental:description&gt;
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port is the network port this Route targets. It can be interpreted
+differently based on the type of parent resource.
+
+When the parent resource is a Gateway, this targets all listeners
+listening on the specified port that also support this kind of Route(and
+select this Route). It&#39;s not recommended to set `Port` unless the
+networking behaviors specified in a Route must apply to a specific port
+as opposed to a listener(s) whose port(s) may be changed. When both Port
+and SectionName are specified, the name and port of the selected listener
+must match both specified values.
+
+&lt;gateway:experimental:description&gt;
+When the parent resource is a Service, this targets a specific port in the
+Service spec. When both Port (experimental) and SectionName are specified,
+the name and port of the selected port must match both specified values.
+&lt;/gateway:experimental:description&gt;
+
+Implementations MAY choose to support other parent resources.
+Implementations supporting other types of parent resources MUST clearly
+document how/if Port is interpreted.
+
+For the purpose of status, an attachment is considered successful as
+long as the parent resource accepts it partially. For example, Gateway
+listeners can restrict which Routes can attach to them by Route kind,
+namespace, or hostname. If 1 of 2 Gateway listeners accept attachment
+from the referencing Route, the Route MUST be considered successfully
+attached. If no Gateway listeners accept attachment from this Route,
+the Route MUST be considered detached from the Gateway.
+
+Support: Extended<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sectionName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SectionName is the name of a section within the target resource. In the
+following resources, SectionName is interpreted as the following:
+
+* Gateway: Listener name. When both Port (experimental) and SectionName
+are specified, the name and port of the selected listener must match
+both specified values.
+* Service: Port name. When both Port (experimental) and SectionName
+are specified, the name and port of the selected listener must match
+both specified values.
+
+Implementations MAY choose to support attaching Routes to other resources.
+If that is the case, they MUST clearly document how SectionName is
+interpreted.
+
+When unspecified (empty string), this will reference the entire resource.
+For the purpose of status, an attachment is considered successful if at
+least one section in the parent resource accepts it. For example, Gateway
+listeners can restrict which Routes can attach to them by Route kind,
+namespace, or hostname. If 1 of 2 Gateway listeners accept attachment from
+the referencing Route, the Route MUST be considered successfully
+attached. If no Gateway listeners accept attachment from this Route, the
+Route MUST be considered detached from the Gateway.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">conditions</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Conditions describes the status of the Policy with respect to the given Ancestor.
+
+&lt;gateway:util:excludeFromCRD&gt;
+
+Notes for implementors:
+
+Conditions are a listType `map`, which means that they function like a
+map with a key of the `type` field _in the k8s apiserver_.
+
+This means that implementations must obey some rules when updating this
+section.
+
+* Implementations MUST perform a read-modify-write cycle on this field
+  before modifying it. That is, when modifying this field, implementations
+  must be confident they have fetched the most recent version of this field,
+  and ensure that changes they make are on that recent version.
+* Implementations MUST NOT remove or reorder Conditions that they are not
+  directly responsible for. For example, if an implementation sees a Condition
+  with type `special.io/SomeField`, it MUST NOT remove, change or update that
+  Condition.
+* Implementations MUST always _merge_ changes into Conditions of the same Type,
+  rather than creating more than one Condition of the same Type.
+* Implementations MUST always update the `observedGeneration` field of the
+  Condition to the `metadata.generation` of the Gateway at the time of update creation.
+* If the `observedGeneration` of a Condition is _greater than_ the value the
+  implementation knows about, then it MUST NOT perform the update on that Condition,
+  but must wait for a future reconciliation and status update. (The assumption is that
+  the implementation&#39;s copy of the object is stale and an update will be re-triggered
+  if relevant.)
+
+&lt;/gateway:util:excludeFromCRD&gt;</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">lastTransitionTime</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">lastTransitionTime is the last time the condition transitioned from one status to another.
+This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.<div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">message</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">message is a human readable message indicating details about the transition.
+This may be an empty string.<div class="leaf-constraints">maxLength: 32768</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">observedGeneration</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">observedGeneration represents the .metadata.generation that the condition was set based upon.
+For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+with respect to the current state of the instance.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">reason</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">reason contains a programmatic identifier indicating the reason for the condition&#39;s last transition.
+Producers of specific condition types may define expected values and meanings for this field,
+and whether the values are considered a guaranteed API.
+The value should be a CamelCase string.
+This field may not be empty.<div class="leaf-constraints">pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">status</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">status of the condition, one of True, False, Unknown.<div class="leaf-constraints">enum: True, False, Unknown</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">type of condition in CamelCase or in foo.example.com/CamelCase.<div class="leaf-constraints">pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$</div><div class="leaf-constraints">maxLength: 316</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">controllerName</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">ControllerName is a domain/path string that indicates the name of the
+controller that wrote this status. This corresponds with the
+controllerName field on GatewayClass.
+
+Example: &#34;example.net/gateway-controller&#34;.
+
+The format of this field is DOMAIN &#34;/&#34; PATH, where DOMAIN and PATH are
+valid Kubernetes names
+(https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names).
+
+Controllers MUST populate this field when writing status. Controllers should ensure that
+entries to status populated with their ControllerName are cleaned up when they are no
+longer necessary.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*\/[A-Za-z0-9\/\-._~%!$&amp;&#39;()*+,;=:]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+</div>
+<div class="copied-toast" id="toast">Copied!</div>
+<footer>
+  Generated by <a href="https://github.com/sholdee/crd-schema-publisher">crd-schema-publisher</a>
+</footer>
+<script>
+(function(){
+  var props = document.querySelectorAll('.prop');
+  document.getElementById('expand-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.setAttribute('open',''); });
+  });
+  document.getElementById('collapse-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.removeAttribute('open'); });
+  });
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+      }
+      location.href = '/';
+    }
+  });
+  document.getElementById('copy-url').addEventListener('click', function(){
+    var url = location.origin + this.dataset.url;
+    navigator.clipboard.writeText(url).then(function(){
+      clearTimeout(toastTimer);
+      toast.classList.add('show');
+      toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1500);
+    });
+  });
+})();
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kubernetes CRD Schemas</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root {
+    --bg: #09090b;
+    --bg-surface: rgba(24, 24, 27, 0.6);
+    --bg-hover: rgba(24, 24, 27, 0.8);
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --accent: #6bc1fe;
+    --accent-dim: rgba(107, 193, 254, 0.15);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-active: #6bc1fe;
+    --stat-fg: #fafafa;
+    --required-bg: rgba(251, 191, 36, 0.15);
+    --required-fg: #fbbf24;
+    --stripes-dark: repeating-linear-gradient(100deg, #000 0%, #000 7%, transparent 10%, transparent 12%, #000 16%);
+    --rainbow: repeating-linear-gradient(100deg, #fff 10%, #fff 16%, #fff 22%, #fff 30%);
+  }
+  .light {
+    --bg: #f5f7fa;
+    --bg-surface: #ffffff;
+    --bg-hover: #edf0f4;
+    --fg: #18181b;
+    --fg-muted: #6b7785;
+    --accent: #2563b0;
+    --accent-dim: rgba(37, 99, 176, 0.08);
+    --border: #d8dde4;
+    --border-active: #2563b0;
+    --stat-fg: #18181b;
+    --required-bg: rgba(217, 119, 6, 0.1);
+    --required-fg: #b45309;
+    --stripes-dark: none;
+    --rainbow: none;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--fg);
+    max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem;
+    position: relative; z-index: 1;
+    transition: background 0.2s, color 0.2s;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 31px 47px, rgba(255,255,255,1), transparent),
+      radial-gradient(1px 1px at 212px 23px, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 68px 289px, rgba(255,255,255,0.84), transparent),
+      radial-gradient(1px 1px at 313px 151px, rgba(255,255,255,0.56), transparent),
+      radial-gradient(1px 1px at 157px 371px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(2px 2px at 19px 83px, rgba(255,255,255,0.96), transparent),
+      radial-gradient(1px 1px at 301px 41px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 127px 409px, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 443px 237px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 67px 491px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1px 1px at 11px 37px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1.5px 1.5px at 191px 213px, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1px 1px at 53px 7px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 271px 103px, rgba(255,255,255,0.64), transparent);
+    background-size:
+      397px 397px, 397px 397px, 397px 397px, 397px 397px, 397px 397px,
+      509px 509px, 509px 509px, 509px 509px, 509px 509px, 509px 509px,
+      311px 311px, 311px 311px, 311px 311px, 311px 311px;
+    mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+  }
+  .flare {
+    position: fixed; top: 0; right: 0;
+    width: 100vw; height: 450px; z-index: -1;
+    pointer-events: none;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 300% 200%;
+    background-position: 50% 50%;
+    filter: opacity(50%) saturate(200%);
+    opacity: 0.25;
+    mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+  }
+  .flare::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 200% 100%;
+    background-attachment: fixed;
+    mix-blend-mode: difference;
+  }
+  .light body::before, .light .flare { display: none; }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--fg-muted); cursor: pointer; padding: 0.35rem 0.6rem; font-size: 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .copied-toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #09090b; padding: 0.4rem 1rem;
+    border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none; z-index: 10;
+  }
+  .copied-toast.show { opacity: 1; }
+  footer {
+    margin-top: 3rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center; font-size: 0.8rem; color: var(--fg-muted);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  header { margin-bottom: 2rem; }
+  .title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem; }
+  .title-group { display: flex; align-items: center; gap: 0.6rem; }
+  .title-icon { width: 28px; height: 28px; flex-shrink: 0; }
+  h1 { font-size: 1.6rem; font-weight: 700; letter-spacing: -0.02em; }
+  .subtitle { color: var(--fg-muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+  .stats {
+    display: flex; gap: 1.5rem; margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .stat { font-size: 0.85rem; color: var(--fg-muted); }
+  .stat strong { color: var(--stat-fg); font-size: 1.1rem; font-weight: 700; margin-right: 0.3rem; }
+  .search-box {
+    width: 100%; padding: 0.65rem 1rem; font-size: 0.95rem;
+    background: var(--bg-surface); color: var(--fg);
+    border: 1px solid var(--border); border-radius: 6px;
+    outline: none; transition: border-color 0.2s;
+    margin-bottom: 1.5rem;
+  }
+  .search-box::placeholder { color: var(--fg-muted); }
+  .search-box:focus { border-color: var(--accent); }
+  .toolbar {
+    display: flex; justify-content: flex-end; margin-bottom: 0.75rem;
+  }
+  .toolbar button {
+    background: none; border: none; color: var(--fg-muted); cursor: pointer;
+    font-size: 0.8rem; padding: 0.2rem 0;
+    transition: color 0.15s;
+  }
+  .toolbar button:hover { color: var(--accent); }
+  .no-results {
+    text-align: center; color: var(--fg-muted); padding: 3rem 1rem;
+    font-size: 0.95rem; display: none;
+  }
+  .usage-section { margin-bottom: 1.5rem; }
+  .usage-section details { border: 1px solid var(--border); border-radius: 6px; }
+  .usage-section summary {
+    padding: 0.65rem 1rem; cursor: pointer; font-weight: 600;
+    font-size: 0.85rem; color: var(--fg-muted);
+    background: var(--bg-surface); border-radius: 6px;
+    list-style: none;
+  }
+  .usage-section summary::-webkit-details-marker { display: none; }
+  .usage-section summary::before { content: "▸ "; transition: transform 0.2s; }
+  .usage-section details[open] summary::before { content: "▾ "; }
+  .usage-section summary:hover { color: var(--fg); }
+  .usage-content {
+    padding: 1rem; font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+  }
+  .usage-content p { margin-bottom: 0.5rem; color: var(--fg-muted); }
+  .usage-content code {
+    display: block; background: var(--bg); border: 1px solid var(--border);
+    border-radius: 4px; padding: 0.75rem 1rem; font-size: 0.8rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    overflow-x: auto; white-space: pre; color: var(--fg);
+  }
+  .group {
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.5rem; transition: border-color 0.2s;
+  }
+  .group[open] { border-color: var(--border-active); border-left-width: 2px; }
+  .group summary {
+    padding: 0.7rem 1rem; cursor: pointer; font-weight: 600;
+    font-size: 0.9rem; background: var(--bg-surface); border-radius: 6px;
+    list-style: none; display: flex; align-items: center; gap: 0.5rem;
+    transition: background 0.15s;
+  }
+  .group summary::-webkit-details-marker { display: none; }
+  .group summary::before { content: "▸"; color: var(--fg-muted); font-size: 0.75rem; transition: transform 0.15s; }
+  .group[open] summary::before { content: "▾"; color: var(--accent); }
+  .group summary:hover { background: var(--bg-hover); }
+  .group summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 6px; }
+  .usage-section summary:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 6px; }
+  .group-name { flex: 1; }
+  .badge {
+    background: var(--accent-dim); color: var(--accent);
+    font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.5rem;
+    border-radius: 10px;
+  }
+  .schemas { padding: 0.4rem 1rem 0.75rem; }
+  @media (min-width: 640px) {
+    .schemas { columns: 2; column-gap: 1.5rem; }
+  }
+  .schemas a {
+    display: block; padding: 0.2rem 0; color: var(--accent);
+    text-decoration: none; font-size: 0.82rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    break-inside: avoid;
+  }
+  .schemas a:hover { text-decoration: underline; }
+  .schemas a .copy-hint {
+    display: none; margin-left: 0.5rem;
+    font-size: 0.65rem; color: var(--fg-muted); font-family: inherit;
+    padding: 0.1rem 0.4rem; border-radius: 4px;
+    transition: background 0.15s, color 0.15s;
+  }
+  .schemas a:hover .copy-hint { display: inline; }
+  .schemas a .copy-hint:hover { background: var(--accent-dim); color: var(--accent); }
+  .back-to-top {
+    position: fixed; bottom: 1.5rem; right: 1.5rem;
+    background: var(--bg-surface); color: var(--fg-muted);
+    border: 1px solid var(--border); border-radius: 50%;
+    width: 2.5rem; height: 2.5rem; font-size: 1.1rem;
+    cursor: pointer; display: none; align-items: center; justify-content: center;
+    transition: color 0.2s, border-color 0.2s;
+    z-index: 10;
+  }
+  .back-to-top:hover { color: var(--accent); border-color: var(--accent); }
+  .back-to-top.visible { display: flex; }
+</style>
+<script>if(localStorage.getItem('theme')==='light')document.documentElement.className='light';</script>
+</head>
+<body>
+<div class="flare"></div>
+<header>
+  <div class="title-row">
+    <div class="title-group">
+      <svg class="title-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+        <line x1="16" y1="3" x2="28.38" y2="7.96" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="28.38" y1="7.96" x2="27.02" y2="21.53" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="27.02" y1="21.53" x2="19.04" y2="28.51" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="19.04" y1="28.51" x2="12.96" y2="28.51" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="12.96" y1="28.51" x2="4.98" y2="21.53" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="4.98" y1="21.53" x2="3.62" y2="7.96" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="3.62" y1="7.96" x2="16" y2="3" stroke="var(--accent)" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="16" cy="3" r="4" fill="var(--accent)" opacity="0.2"/>
+        <circle cx="28.38" cy="7.96" r="4" fill="var(--accent)" opacity="0.2"/>
+        <circle cx="27.02" cy="21.53" r="4" fill="var(--accent)" opacity="0.2"/>
+        <circle cx="19.04" cy="28.51" r="4" fill="var(--accent)" opacity="0.2"/>
+        <circle cx="12.96" cy="28.51" r="4" fill="var(--accent)" opacity="0.2"/>
+        <circle cx="4.98" cy="21.53" r="4" fill="var(--accent)" opacity="0.2"/>
+        <circle cx="3.62" cy="7.96" r="4" fill="var(--accent)" opacity="0.2"/>
+        <circle cx="16" cy="3" r="2.5" fill="var(--fg)"/>
+        <circle cx="28.38" cy="7.96" r="2.5" fill="var(--fg)"/>
+        <circle cx="27.02" cy="21.53" r="2.5" fill="var(--fg)"/>
+        <circle cx="19.04" cy="28.51" r="2.5" fill="var(--fg)"/>
+        <circle cx="12.96" cy="28.51" r="2.5" fill="var(--fg)"/>
+        <circle cx="4.98" cy="21.53" r="2.5" fill="var(--fg)"/>
+        <circle cx="3.62" cy="7.96" r="2.5" fill="var(--fg)"/>
+      </svg>
+      <h1>Kubernetes CRD Schemas</h1>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
+  </div>
+  <p class="subtitle">JSON schemas extracted from live CRD definitions</p>
+  <div class="stats">
+    <div class="stat"><strong id="stat-groups">32</strong> API groups</div>
+    <div class="stat"><strong id="stat-schemas">209</strong> schemas</div>
+    <div class="stat">Updated <strong>2026-04-17 15:48 UTC</strong></div>
+  </div>
+</header>
+<div class="usage-section">
+<details>
+<summary>Usage — yaml-language-server</summary>
+<div class="usage-content">
+<p>Add a modeline to any YAML file. Works in VS Code, Neovim, Helix, and any editor with yaml-language-server:</p>
+<code>
+# yaml-language-server: $schema=https://YOUR_DOMAIN/cert-manager.io/certificate_v1.json
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: example
+</code>
+<p style="margin-top:0.75rem;">Or configure schemas globally in VS Code settings:</p>
+<code>
+// .vscode/settings.json
+"yaml.schemas": {
+  "https://YOUR_DOMAIN/cert-manager.io/certificate_v1.json": ["**/certificates/*.yaml"]
+}
+</code>
+</div>
+</details>
+</div>
+<input type="search" class="search-box" placeholder="Search groups and schemas…  ( / to focus, Esc to clear )" id="search" autocomplete="off" spellcheck="false">
+<div class="toolbar"><button id="toggle-all">Expand all</button></div>
+<div id="groups">
+
+<details class="group" data-group="acme.cert-manager.io">
+<summary><span class="group-name">acme.cert-manager.io</span> <span class="badge">2</span></summary>
+<div class="schemas">
+<a href="/acme.cert-manager.io/challenge_v1.html" data-schema="challenge_v1.json" data-url="/acme.cert-manager.io/challenge_v1.json">challenge_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/acme.cert-manager.io/order_v1.html" data-schema="order_v1.json" data-url="/acme.cert-manager.io/order_v1.json">order_v1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="actions.github.com">
+<summary><span class="group-name">actions.github.com</span> <span class="badge">4</span></summary>
+<div class="schemas">
+<a href="/actions.github.com/autoscalinglistener_v1alpha1.html" data-schema="autoscalinglistener_v1alpha1.json" data-url="/actions.github.com/autoscalinglistener_v1alpha1.json">autoscalinglistener_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/actions.github.com/autoscalingrunnerset_v1alpha1.html" data-schema="autoscalingrunnerset_v1alpha1.json" data-url="/actions.github.com/autoscalingrunnerset_v1alpha1.json">autoscalingrunnerset_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/actions.github.com/ephemeralrunner_v1alpha1.html" data-schema="ephemeralrunner_v1alpha1.json" data-url="/actions.github.com/ephemeralrunner_v1alpha1.json">ephemeralrunner_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/actions.github.com/ephemeralrunnerset_v1alpha1.html" data-schema="ephemeralrunnerset_v1alpha1.json" data-url="/actions.github.com/ephemeralrunnerset_v1alpha1.json">ephemeralrunnerset_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="ceph.rook.io">
+<summary><span class="group-name">ceph.rook.io</span> <span class="badge">18</span></summary>
+<div class="schemas">
+<a href="/ceph.rook.io/cephblockpool_v1.html" data-schema="cephblockpool_v1.json" data-url="/ceph.rook.io/cephblockpool_v1.json">cephblockpool_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephblockpoolradosnamespace_v1.html" data-schema="cephblockpoolradosnamespace_v1.json" data-url="/ceph.rook.io/cephblockpoolradosnamespace_v1.json">cephblockpoolradosnamespace_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephbucketnotification_v1.html" data-schema="cephbucketnotification_v1.json" data-url="/ceph.rook.io/cephbucketnotification_v1.json">cephbucketnotification_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephbuckettopic_v1.html" data-schema="cephbuckettopic_v1.json" data-url="/ceph.rook.io/cephbuckettopic_v1.json">cephbuckettopic_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephclient_v1.html" data-schema="cephclient_v1.json" data-url="/ceph.rook.io/cephclient_v1.json">cephclient_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephcluster_v1.html" data-schema="cephcluster_v1.json" data-url="/ceph.rook.io/cephcluster_v1.json">cephcluster_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephcosidriver_v1.html" data-schema="cephcosidriver_v1.json" data-url="/ceph.rook.io/cephcosidriver_v1.json">cephcosidriver_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephfilesystem_v1.html" data-schema="cephfilesystem_v1.json" data-url="/ceph.rook.io/cephfilesystem_v1.json">cephfilesystem_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephfilesystemmirror_v1.html" data-schema="cephfilesystemmirror_v1.json" data-url="/ceph.rook.io/cephfilesystemmirror_v1.json">cephfilesystemmirror_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephfilesystemsubvolumegroup_v1.html" data-schema="cephfilesystemsubvolumegroup_v1.json" data-url="/ceph.rook.io/cephfilesystemsubvolumegroup_v1.json">cephfilesystemsubvolumegroup_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephnfs_v1.html" data-schema="cephnfs_v1.json" data-url="/ceph.rook.io/cephnfs_v1.json">cephnfs_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephnvmeofgateway_v1.html" data-schema="cephnvmeofgateway_v1.json" data-url="/ceph.rook.io/cephnvmeofgateway_v1.json">cephnvmeofgateway_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephobjectrealm_v1.html" data-schema="cephobjectrealm_v1.json" data-url="/ceph.rook.io/cephobjectrealm_v1.json">cephobjectrealm_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephobjectstore_v1.html" data-schema="cephobjectstore_v1.json" data-url="/ceph.rook.io/cephobjectstore_v1.json">cephobjectstore_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephobjectstoreuser_v1.html" data-schema="cephobjectstoreuser_v1.json" data-url="/ceph.rook.io/cephobjectstoreuser_v1.json">cephobjectstoreuser_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephobjectzone_v1.html" data-schema="cephobjectzone_v1.json" data-url="/ceph.rook.io/cephobjectzone_v1.json">cephobjectzone_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephobjectzonegroup_v1.html" data-schema="cephobjectzonegroup_v1.json" data-url="/ceph.rook.io/cephobjectzonegroup_v1.json">cephobjectzonegroup_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/ceph.rook.io/cephrbdmirror_v1.html" data-schema="cephrbdmirror_v1.json" data-url="/ceph.rook.io/cephrbdmirror_v1.json">cephrbdmirror_v1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="cert-manager.io">
+<summary><span class="group-name">cert-manager.io</span> <span class="badge">4</span></summary>
+<div class="schemas">
+<a href="/cert-manager.io/certificate_v1.html" data-schema="certificate_v1.json" data-url="/cert-manager.io/certificate_v1.json">certificate_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/cert-manager.io/certificaterequest_v1.html" data-schema="certificaterequest_v1.json" data-url="/cert-manager.io/certificaterequest_v1.json">certificaterequest_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/cert-manager.io/clusterissuer_v1.html" data-schema="clusterissuer_v1.json" data-url="/cert-manager.io/clusterissuer_v1.json">clusterissuer_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/cert-manager.io/issuer_v1.html" data-schema="issuer_v1.json" data-url="/cert-manager.io/issuer_v1.json">issuer_v1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="cilium.io">
+<summary><span class="group-name">cilium.io</span> <span class="badge">27</span></summary>
+<div class="schemas">
+<a href="/cilium.io/ciliumbgpadvertisement_v2.html" data-schema="ciliumbgpadvertisement_v2.json" data-url="/cilium.io/ciliumbgpadvertisement_v2.json">ciliumbgpadvertisement_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumbgpadvertisement_v2alpha1.html" data-schema="ciliumbgpadvertisement_v2alpha1.json" data-url="/cilium.io/ciliumbgpadvertisement_v2alpha1.json">ciliumbgpadvertisement_v2alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumbgpclusterconfig_v2.html" data-schema="ciliumbgpclusterconfig_v2.json" data-url="/cilium.io/ciliumbgpclusterconfig_v2.json">ciliumbgpclusterconfig_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumbgpclusterconfig_v2alpha1.html" data-schema="ciliumbgpclusterconfig_v2alpha1.json" data-url="/cilium.io/ciliumbgpclusterconfig_v2alpha1.json">ciliumbgpclusterconfig_v2alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumbgpnodeconfig_v2.html" data-schema="ciliumbgpnodeconfig_v2.json" data-url="/cilium.io/ciliumbgpnodeconfig_v2.json">ciliumbgpnodeconfig_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumbgpnodeconfig_v2alpha1.html" data-schema="ciliumbgpnodeconfig_v2alpha1.json" data-url="/cilium.io/ciliumbgpnodeconfig_v2alpha1.json">ciliumbgpnodeconfig_v2alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumbgpnodeconfigoverride_v2.html" data-schema="ciliumbgpnodeconfigoverride_v2.json" data-url="/cilium.io/ciliumbgpnodeconfigoverride_v2.json">ciliumbgpnodeconfigoverride_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumbgpnodeconfigoverride_v2alpha1.html" data-schema="ciliumbgpnodeconfigoverride_v2alpha1.json" data-url="/cilium.io/ciliumbgpnodeconfigoverride_v2alpha1.json">ciliumbgpnodeconfigoverride_v2alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumbgppeerconfig_v2.html" data-schema="ciliumbgppeerconfig_v2.json" data-url="/cilium.io/ciliumbgppeerconfig_v2.json">ciliumbgppeerconfig_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumbgppeerconfig_v2alpha1.html" data-schema="ciliumbgppeerconfig_v2alpha1.json" data-url="/cilium.io/ciliumbgppeerconfig_v2alpha1.json">ciliumbgppeerconfig_v2alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumcidrgroup_v2.html" data-schema="ciliumcidrgroup_v2.json" data-url="/cilium.io/ciliumcidrgroup_v2.json">ciliumcidrgroup_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumcidrgroup_v2alpha1.html" data-schema="ciliumcidrgroup_v2alpha1.json" data-url="/cilium.io/ciliumcidrgroup_v2alpha1.json">ciliumcidrgroup_v2alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumclusterwideenvoyconfig_v2.html" data-schema="ciliumclusterwideenvoyconfig_v2.json" data-url="/cilium.io/ciliumclusterwideenvoyconfig_v2.json">ciliumclusterwideenvoyconfig_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumclusterwidenetworkpolicy_v2.html" data-schema="ciliumclusterwidenetworkpolicy_v2.json" data-url="/cilium.io/ciliumclusterwidenetworkpolicy_v2.json">ciliumclusterwidenetworkpolicy_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumendpoint_v2.html" data-schema="ciliumendpoint_v2.json" data-url="/cilium.io/ciliumendpoint_v2.json">ciliumendpoint_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumenvoyconfig_v2.html" data-schema="ciliumenvoyconfig_v2.json" data-url="/cilium.io/ciliumenvoyconfig_v2.json">ciliumenvoyconfig_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumgatewayclassconfig_v2alpha1.html" data-schema="ciliumgatewayclassconfig_v2alpha1.json" data-url="/cilium.io/ciliumgatewayclassconfig_v2alpha1.json">ciliumgatewayclassconfig_v2alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumidentity_v2.html" data-schema="ciliumidentity_v2.json" data-url="/cilium.io/ciliumidentity_v2.json">ciliumidentity_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliuml2announcementpolicy_v2alpha1.html" data-schema="ciliuml2announcementpolicy_v2alpha1.json" data-url="/cilium.io/ciliuml2announcementpolicy_v2alpha1.json">ciliuml2announcementpolicy_v2alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumloadbalancerippool_v2.html" data-schema="ciliumloadbalancerippool_v2.json" data-url="/cilium.io/ciliumloadbalancerippool_v2.json">ciliumloadbalancerippool_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumloadbalancerippool_v2alpha1.html" data-schema="ciliumloadbalancerippool_v2alpha1.json" data-url="/cilium.io/ciliumloadbalancerippool_v2alpha1.json">ciliumloadbalancerippool_v2alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumlocalredirectpolicy_v2.html" data-schema="ciliumlocalredirectpolicy_v2.json" data-url="/cilium.io/ciliumlocalredirectpolicy_v2.json">ciliumlocalredirectpolicy_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumnetworkpolicy_v2.html" data-schema="ciliumnetworkpolicy_v2.json" data-url="/cilium.io/ciliumnetworkpolicy_v2.json">ciliumnetworkpolicy_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumnode_v2.html" data-schema="ciliumnode_v2.json" data-url="/cilium.io/ciliumnode_v2.json">ciliumnode_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumnodeconfig_v2.html" data-schema="ciliumnodeconfig_v2.json" data-url="/cilium.io/ciliumnodeconfig_v2.json">ciliumnodeconfig_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumnodeconfig_v2alpha1.html" data-schema="ciliumnodeconfig_v2alpha1.json" data-url="/cilium.io/ciliumnodeconfig_v2alpha1.json">ciliumnodeconfig_v2alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/cilium.io/ciliumpodippool_v2alpha1.html" data-schema="ciliumpodippool_v2alpha1.json" data-url="/cilium.io/ciliumpodippool_v2alpha1.json">ciliumpodippool_v2alpha1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="csi.ceph.io">
+<summary><span class="group-name">csi.ceph.io</span> <span class="badge">10</span></summary>
+<div class="schemas">
+<a href="/csi.ceph.io/cephconnection_v1.html" data-schema="cephconnection_v1.json" data-url="/csi.ceph.io/cephconnection_v1.json">cephconnection_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/csi.ceph.io/cephconnection_v1alpha1.html" data-schema="cephconnection_v1alpha1.json" data-url="/csi.ceph.io/cephconnection_v1alpha1.json">cephconnection_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/csi.ceph.io/clientprofile_v1.html" data-schema="clientprofile_v1.json" data-url="/csi.ceph.io/clientprofile_v1.json">clientprofile_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/csi.ceph.io/clientprofile_v1alpha1.html" data-schema="clientprofile_v1alpha1.json" data-url="/csi.ceph.io/clientprofile_v1alpha1.json">clientprofile_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/csi.ceph.io/clientprofilemapping_v1.html" data-schema="clientprofilemapping_v1.json" data-url="/csi.ceph.io/clientprofilemapping_v1.json">clientprofilemapping_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/csi.ceph.io/clientprofilemapping_v1alpha1.html" data-schema="clientprofilemapping_v1alpha1.json" data-url="/csi.ceph.io/clientprofilemapping_v1alpha1.json">clientprofilemapping_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/csi.ceph.io/driver_v1.html" data-schema="driver_v1.json" data-url="/csi.ceph.io/driver_v1.json">driver_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/csi.ceph.io/driver_v1alpha1.html" data-schema="driver_v1alpha1.json" data-url="/csi.ceph.io/driver_v1alpha1.json">driver_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/csi.ceph.io/operatorconfig_v1.html" data-schema="operatorconfig_v1.json" data-url="/csi.ceph.io/operatorconfig_v1.json">operatorconfig_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/csi.ceph.io/operatorconfig_v1alpha1.html" data-schema="operatorconfig_v1alpha1.json" data-url="/csi.ceph.io/operatorconfig_v1alpha1.json">operatorconfig_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="deviceplugin.intel.com">
+<summary><span class="group-name">deviceplugin.intel.com</span> <span class="badge">8</span></summary>
+<div class="schemas">
+<a href="/deviceplugin.intel.com/dlbdeviceplugin_v1.html" data-schema="dlbdeviceplugin_v1.json" data-url="/deviceplugin.intel.com/dlbdeviceplugin_v1.json">dlbdeviceplugin_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/deviceplugin.intel.com/dsadeviceplugin_v1.html" data-schema="dsadeviceplugin_v1.json" data-url="/deviceplugin.intel.com/dsadeviceplugin_v1.json">dsadeviceplugin_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/deviceplugin.intel.com/fpgadeviceplugin_v1.html" data-schema="fpgadeviceplugin_v1.json" data-url="/deviceplugin.intel.com/fpgadeviceplugin_v1.json">fpgadeviceplugin_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/deviceplugin.intel.com/gpudeviceplugin_v1.html" data-schema="gpudeviceplugin_v1.json" data-url="/deviceplugin.intel.com/gpudeviceplugin_v1.json">gpudeviceplugin_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/deviceplugin.intel.com/iaadeviceplugin_v1.html" data-schema="iaadeviceplugin_v1.json" data-url="/deviceplugin.intel.com/iaadeviceplugin_v1.json">iaadeviceplugin_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/deviceplugin.intel.com/npudeviceplugin_v1.html" data-schema="npudeviceplugin_v1.json" data-url="/deviceplugin.intel.com/npudeviceplugin_v1.json">npudeviceplugin_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/deviceplugin.intel.com/qatdeviceplugin_v1.html" data-schema="qatdeviceplugin_v1.json" data-url="/deviceplugin.intel.com/qatdeviceplugin_v1.json">qatdeviceplugin_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/deviceplugin.intel.com/sgxdeviceplugin_v1.html" data-schema="sgxdeviceplugin_v1.json" data-url="/deviceplugin.intel.com/sgxdeviceplugin_v1.json">sgxdeviceplugin_v1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="dragonflydb.io">
+<summary><span class="group-name">dragonflydb.io</span> <span class="badge">1</span></summary>
+<div class="schemas">
+<a href="/dragonflydb.io/dragonfly_v1alpha1.html" data-schema="dragonfly_v1alpha1.json" data-url="/dragonflydb.io/dragonfly_v1alpha1.json">dragonfly_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="eventing.keda.sh">
+<summary><span class="group-name">eventing.keda.sh</span> <span class="badge">2</span></summary>
+<div class="schemas">
+<a href="/eventing.keda.sh/cloudeventsource_v1alpha1.html" data-schema="cloudeventsource_v1alpha1.json" data-url="/eventing.keda.sh/cloudeventsource_v1alpha1.json">cloudeventsource_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/eventing.keda.sh/clustercloudeventsource_v1alpha1.html" data-schema="clustercloudeventsource_v1alpha1.json" data-url="/eventing.keda.sh/clustercloudeventsource_v1alpha1.json">clustercloudeventsource_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="external-secrets.io">
+<summary><span class="group-name">external-secrets.io</span> <span class="badge">10</span></summary>
+<div class="schemas">
+<a href="/external-secrets.io/clusterexternalsecret_v1.html" data-schema="clusterexternalsecret_v1.json" data-url="/external-secrets.io/clusterexternalsecret_v1.json">clusterexternalsecret_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/external-secrets.io/clusterexternalsecret_v1beta1.html" data-schema="clusterexternalsecret_v1beta1.json" data-url="/external-secrets.io/clusterexternalsecret_v1beta1.json">clusterexternalsecret_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/external-secrets.io/clusterpushsecret_v1alpha1.html" data-schema="clusterpushsecret_v1alpha1.json" data-url="/external-secrets.io/clusterpushsecret_v1alpha1.json">clusterpushsecret_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/external-secrets.io/clustersecretstore_v1.html" data-schema="clustersecretstore_v1.json" data-url="/external-secrets.io/clustersecretstore_v1.json">clustersecretstore_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/external-secrets.io/clustersecretstore_v1beta1.html" data-schema="clustersecretstore_v1beta1.json" data-url="/external-secrets.io/clustersecretstore_v1beta1.json">clustersecretstore_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/external-secrets.io/externalsecret_v1.html" data-schema="externalsecret_v1.json" data-url="/external-secrets.io/externalsecret_v1.json">externalsecret_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/external-secrets.io/externalsecret_v1beta1.html" data-schema="externalsecret_v1beta1.json" data-url="/external-secrets.io/externalsecret_v1beta1.json">externalsecret_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/external-secrets.io/pushsecret_v1alpha1.html" data-schema="pushsecret_v1alpha1.json" data-url="/external-secrets.io/pushsecret_v1alpha1.json">pushsecret_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/external-secrets.io/secretstore_v1.html" data-schema="secretstore_v1.json" data-url="/external-secrets.io/secretstore_v1.json">secretstore_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/external-secrets.io/secretstore_v1beta1.html" data-schema="secretstore_v1beta1.json" data-url="/external-secrets.io/secretstore_v1beta1.json">secretstore_v1beta1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="externaldns.k8s.io">
+<summary><span class="group-name">externaldns.k8s.io</span> <span class="badge">1</span></summary>
+<div class="schemas">
+<a href="/externaldns.k8s.io/dnsendpoint_v1alpha1.html" data-schema="dnsendpoint_v1alpha1.json" data-url="/externaldns.k8s.io/dnsendpoint_v1alpha1.json">dnsendpoint_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="fluxcd.controlplane.io">
+<summary><span class="group-name">fluxcd.controlplane.io</span> <span class="badge">4</span></summary>
+<div class="schemas">
+<a href="/fluxcd.controlplane.io/fluxinstance_v1.html" data-schema="fluxinstance_v1.json" data-url="/fluxcd.controlplane.io/fluxinstance_v1.json">fluxinstance_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/fluxcd.controlplane.io/fluxreport_v1.html" data-schema="fluxreport_v1.json" data-url="/fluxcd.controlplane.io/fluxreport_v1.json">fluxreport_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/fluxcd.controlplane.io/resourceset_v1.html" data-schema="resourceset_v1.json" data-url="/fluxcd.controlplane.io/resourceset_v1.json">resourceset_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/fluxcd.controlplane.io/resourcesetinputprovider_v1.html" data-schema="resourcesetinputprovider_v1.json" data-url="/fluxcd.controlplane.io/resourcesetinputprovider_v1.json">resourcesetinputprovider_v1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="fpga.intel.com">
+<summary><span class="group-name">fpga.intel.com</span> <span class="badge">2</span></summary>
+<div class="schemas">
+<a href="/fpga.intel.com/acceleratorfunction_v2.html" data-schema="acceleratorfunction_v2.json" data-url="/fpga.intel.com/acceleratorfunction_v2.json">acceleratorfunction_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/fpga.intel.com/fpgaregion_v2.html" data-schema="fpgaregion_v2.json" data-url="/fpga.intel.com/fpgaregion_v2.json">fpgaregion_v2.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="gateway.envoyproxy.io">
+<summary><span class="group-name">gateway.envoyproxy.io</span> <span class="badge">8</span></summary>
+<div class="schemas">
+<a href="/gateway.envoyproxy.io/backend_v1alpha1.html" data-schema="backend_v1alpha1.json" data-url="/gateway.envoyproxy.io/backend_v1alpha1.json">backend_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.envoyproxy.io/backendtrafficpolicy_v1alpha1.html" data-schema="backendtrafficpolicy_v1alpha1.json" data-url="/gateway.envoyproxy.io/backendtrafficpolicy_v1alpha1.json">backendtrafficpolicy_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.envoyproxy.io/clienttrafficpolicy_v1alpha1.html" data-schema="clienttrafficpolicy_v1alpha1.json" data-url="/gateway.envoyproxy.io/clienttrafficpolicy_v1alpha1.json">clienttrafficpolicy_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.envoyproxy.io/envoyextensionpolicy_v1alpha1.html" data-schema="envoyextensionpolicy_v1alpha1.json" data-url="/gateway.envoyproxy.io/envoyextensionpolicy_v1alpha1.json">envoyextensionpolicy_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.envoyproxy.io/envoypatchpolicy_v1alpha1.html" data-schema="envoypatchpolicy_v1alpha1.json" data-url="/gateway.envoyproxy.io/envoypatchpolicy_v1alpha1.json">envoypatchpolicy_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.envoyproxy.io/envoyproxy_v1alpha1.html" data-schema="envoyproxy_v1alpha1.json" data-url="/gateway.envoyproxy.io/envoyproxy_v1alpha1.json">envoyproxy_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.envoyproxy.io/httproutefilter_v1alpha1.html" data-schema="httproutefilter_v1alpha1.json" data-url="/gateway.envoyproxy.io/httproutefilter_v1alpha1.json">httproutefilter_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.envoyproxy.io/securitypolicy_v1alpha1.html" data-schema="securitypolicy_v1alpha1.json" data-url="/gateway.envoyproxy.io/securitypolicy_v1alpha1.json">securitypolicy_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="gateway.networking.k8s.io">
+<summary><span class="group-name">gateway.networking.k8s.io</span> <span class="badge">14</span></summary>
+<div class="schemas">
+<a href="/gateway.networking.k8s.io/backendtlspolicy_v1.html" data-schema="backendtlspolicy_v1.json" data-url="/gateway.networking.k8s.io/backendtlspolicy_v1.json">backendtlspolicy_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.k8s.io/backendtlspolicy_v1alpha3.html" data-schema="backendtlspolicy_v1alpha3.json" data-url="/gateway.networking.k8s.io/backendtlspolicy_v1alpha3.json">backendtlspolicy_v1alpha3.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.k8s.io/gateway_v1.html" data-schema="gateway_v1.json" data-url="/gateway.networking.k8s.io/gateway_v1.json">gateway_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.k8s.io/gateway_v1beta1.html" data-schema="gateway_v1beta1.json" data-url="/gateway.networking.k8s.io/gateway_v1beta1.json">gateway_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.k8s.io/gatewayclass_v1.html" data-schema="gatewayclass_v1.json" data-url="/gateway.networking.k8s.io/gatewayclass_v1.json">gatewayclass_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.k8s.io/gatewayclass_v1beta1.html" data-schema="gatewayclass_v1beta1.json" data-url="/gateway.networking.k8s.io/gatewayclass_v1beta1.json">gatewayclass_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.k8s.io/grpcroute_v1.html" data-schema="grpcroute_v1.json" data-url="/gateway.networking.k8s.io/grpcroute_v1.json">grpcroute_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.k8s.io/httproute_v1.html" data-schema="httproute_v1.json" data-url="/gateway.networking.k8s.io/httproute_v1.json">httproute_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.k8s.io/httproute_v1beta1.html" data-schema="httproute_v1beta1.json" data-url="/gateway.networking.k8s.io/httproute_v1beta1.json">httproute_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.k8s.io/referencegrant_v1beta1.html" data-schema="referencegrant_v1beta1.json" data-url="/gateway.networking.k8s.io/referencegrant_v1beta1.json">referencegrant_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.k8s.io/tcproute_v1alpha2.html" data-schema="tcproute_v1alpha2.json" data-url="/gateway.networking.k8s.io/tcproute_v1alpha2.json">tcproute_v1alpha2.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.k8s.io/tlsroute_v1alpha2.html" data-schema="tlsroute_v1alpha2.json" data-url="/gateway.networking.k8s.io/tlsroute_v1alpha2.json">tlsroute_v1alpha2.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.k8s.io/tlsroute_v1alpha3.html" data-schema="tlsroute_v1alpha3.json" data-url="/gateway.networking.k8s.io/tlsroute_v1alpha3.json">tlsroute_v1alpha3.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.k8s.io/udproute_v1alpha2.html" data-schema="udproute_v1alpha2.json" data-url="/gateway.networking.k8s.io/udproute_v1alpha2.json">udproute_v1alpha2.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="gateway.networking.x-k8s.io">
+<summary><span class="group-name">gateway.networking.x-k8s.io</span> <span class="badge">3</span></summary>
+<div class="schemas">
+<a href="/gateway.networking.x-k8s.io/xbackendtrafficpolicy_v1alpha1.html" data-schema="xbackendtrafficpolicy_v1alpha1.json" data-url="/gateway.networking.x-k8s.io/xbackendtrafficpolicy_v1alpha1.json">xbackendtrafficpolicy_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.x-k8s.io/xlistenerset_v1alpha1.html" data-schema="xlistenerset_v1alpha1.json" data-url="/gateway.networking.x-k8s.io/xlistenerset_v1alpha1.json">xlistenerset_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/gateway.networking.x-k8s.io/xmesh_v1alpha1.html" data-schema="xmesh_v1alpha1.json" data-url="/gateway.networking.x-k8s.io/xmesh_v1alpha1.json">xmesh_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="generators.external-secrets.io">
+<summary><span class="group-name">generators.external-secrets.io</span> <span class="badge">17</span></summary>
+<div class="schemas">
+<a href="/generators.external-secrets.io/acraccesstoken_v1alpha1.html" data-schema="acraccesstoken_v1alpha1.json" data-url="/generators.external-secrets.io/acraccesstoken_v1alpha1.json">acraccesstoken_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/cloudsmithaccesstoken_v1alpha1.html" data-schema="cloudsmithaccesstoken_v1alpha1.json" data-url="/generators.external-secrets.io/cloudsmithaccesstoken_v1alpha1.json">cloudsmithaccesstoken_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/clustergenerator_v1alpha1.html" data-schema="clustergenerator_v1alpha1.json" data-url="/generators.external-secrets.io/clustergenerator_v1alpha1.json">clustergenerator_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/ecrauthorizationtoken_v1alpha1.html" data-schema="ecrauthorizationtoken_v1alpha1.json" data-url="/generators.external-secrets.io/ecrauthorizationtoken_v1alpha1.json">ecrauthorizationtoken_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/fake_v1alpha1.html" data-schema="fake_v1alpha1.json" data-url="/generators.external-secrets.io/fake_v1alpha1.json">fake_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/gcraccesstoken_v1alpha1.html" data-schema="gcraccesstoken_v1alpha1.json" data-url="/generators.external-secrets.io/gcraccesstoken_v1alpha1.json">gcraccesstoken_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/generatorstate_v1alpha1.html" data-schema="generatorstate_v1alpha1.json" data-url="/generators.external-secrets.io/generatorstate_v1alpha1.json">generatorstate_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/githubaccesstoken_v1alpha1.html" data-schema="githubaccesstoken_v1alpha1.json" data-url="/generators.external-secrets.io/githubaccesstoken_v1alpha1.json">githubaccesstoken_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/grafana_v1alpha1.html" data-schema="grafana_v1alpha1.json" data-url="/generators.external-secrets.io/grafana_v1alpha1.json">grafana_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/mfa_v1alpha1.html" data-schema="mfa_v1alpha1.json" data-url="/generators.external-secrets.io/mfa_v1alpha1.json">mfa_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/password_v1alpha1.html" data-schema="password_v1alpha1.json" data-url="/generators.external-secrets.io/password_v1alpha1.json">password_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/quayaccesstoken_v1alpha1.html" data-schema="quayaccesstoken_v1alpha1.json" data-url="/generators.external-secrets.io/quayaccesstoken_v1alpha1.json">quayaccesstoken_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/sshkey_v1alpha1.html" data-schema="sshkey_v1alpha1.json" data-url="/generators.external-secrets.io/sshkey_v1alpha1.json">sshkey_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/stssessiontoken_v1alpha1.html" data-schema="stssessiontoken_v1alpha1.json" data-url="/generators.external-secrets.io/stssessiontoken_v1alpha1.json">stssessiontoken_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/uuid_v1alpha1.html" data-schema="uuid_v1alpha1.json" data-url="/generators.external-secrets.io/uuid_v1alpha1.json">uuid_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/vaultdynamicsecret_v1alpha1.html" data-schema="vaultdynamicsecret_v1alpha1.json" data-url="/generators.external-secrets.io/vaultdynamicsecret_v1alpha1.json">vaultdynamicsecret_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/generators.external-secrets.io/webhook_v1alpha1.html" data-schema="webhook_v1alpha1.json" data-url="/generators.external-secrets.io/webhook_v1alpha1.json">webhook_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="grafana.integreatly.org">
+<summary><span class="group-name">grafana.integreatly.org</span> <span class="badge">13</span></summary>
+<div class="schemas">
+<a href="/grafana.integreatly.org/grafana_v1beta1.html" data-schema="grafana_v1beta1.json" data-url="/grafana.integreatly.org/grafana_v1beta1.json">grafana_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/grafana.integreatly.org/grafanaalertrulegroup_v1beta1.html" data-schema="grafanaalertrulegroup_v1beta1.json" data-url="/grafana.integreatly.org/grafanaalertrulegroup_v1beta1.json">grafanaalertrulegroup_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/grafana.integreatly.org/grafanacontactpoint_v1beta1.html" data-schema="grafanacontactpoint_v1beta1.json" data-url="/grafana.integreatly.org/grafanacontactpoint_v1beta1.json">grafanacontactpoint_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/grafana.integreatly.org/grafanadashboard_v1beta1.html" data-schema="grafanadashboard_v1beta1.json" data-url="/grafana.integreatly.org/grafanadashboard_v1beta1.json">grafanadashboard_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/grafana.integreatly.org/grafanadatasource_v1beta1.html" data-schema="grafanadatasource_v1beta1.json" data-url="/grafana.integreatly.org/grafanadatasource_v1beta1.json">grafanadatasource_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/grafana.integreatly.org/grafanafolder_v1beta1.html" data-schema="grafanafolder_v1beta1.json" data-url="/grafana.integreatly.org/grafanafolder_v1beta1.json">grafanafolder_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/grafana.integreatly.org/grafanalibrarypanel_v1beta1.html" data-schema="grafanalibrarypanel_v1beta1.json" data-url="/grafana.integreatly.org/grafanalibrarypanel_v1beta1.json">grafanalibrarypanel_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/grafana.integreatly.org/grafanamanifest_v1beta1.html" data-schema="grafanamanifest_v1beta1.json" data-url="/grafana.integreatly.org/grafanamanifest_v1beta1.json">grafanamanifest_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/grafana.integreatly.org/grafanamutetiming_v1beta1.html" data-schema="grafanamutetiming_v1beta1.json" data-url="/grafana.integreatly.org/grafanamutetiming_v1beta1.json">grafanamutetiming_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/grafana.integreatly.org/grafananotificationpolicy_v1beta1.html" data-schema="grafananotificationpolicy_v1beta1.json" data-url="/grafana.integreatly.org/grafananotificationpolicy_v1beta1.json">grafananotificationpolicy_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/grafana.integreatly.org/grafananotificationpolicyroute_v1beta1.html" data-schema="grafananotificationpolicyroute_v1beta1.json" data-url="/grafana.integreatly.org/grafananotificationpolicyroute_v1beta1.json">grafananotificationpolicyroute_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/grafana.integreatly.org/grafananotificationtemplate_v1beta1.html" data-schema="grafananotificationtemplate_v1beta1.json" data-url="/grafana.integreatly.org/grafananotificationtemplate_v1beta1.json">grafananotificationtemplate_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/grafana.integreatly.org/grafanaserviceaccount_v1beta1.html" data-schema="grafanaserviceaccount_v1beta1.json" data-url="/grafana.integreatly.org/grafanaserviceaccount_v1beta1.json">grafanaserviceaccount_v1beta1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="groupsnapshot.storage.k8s.io">
+<summary><span class="group-name">groupsnapshot.storage.k8s.io</span> <span class="badge">6</span></summary>
+<div class="schemas">
+<a href="/groupsnapshot.storage.k8s.io/volumegroupsnapshot_v1beta1.html" data-schema="volumegroupsnapshot_v1beta1.json" data-url="/groupsnapshot.storage.k8s.io/volumegroupsnapshot_v1beta1.json">volumegroupsnapshot_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/groupsnapshot.storage.k8s.io/volumegroupsnapshot_v1beta2.html" data-schema="volumegroupsnapshot_v1beta2.json" data-url="/groupsnapshot.storage.k8s.io/volumegroupsnapshot_v1beta2.json">volumegroupsnapshot_v1beta2.json<span class="copy-hint">copy URL</span></a>
+<a href="/groupsnapshot.storage.k8s.io/volumegroupsnapshotclass_v1beta1.html" data-schema="volumegroupsnapshotclass_v1beta1.json" data-url="/groupsnapshot.storage.k8s.io/volumegroupsnapshotclass_v1beta1.json">volumegroupsnapshotclass_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/groupsnapshot.storage.k8s.io/volumegroupsnapshotclass_v1beta2.html" data-schema="volumegroupsnapshotclass_v1beta2.json" data-url="/groupsnapshot.storage.k8s.io/volumegroupsnapshotclass_v1beta2.json">volumegroupsnapshotclass_v1beta2.json<span class="copy-hint">copy URL</span></a>
+<a href="/groupsnapshot.storage.k8s.io/volumegroupsnapshotcontent_v1beta1.html" data-schema="volumegroupsnapshotcontent_v1beta1.json" data-url="/groupsnapshot.storage.k8s.io/volumegroupsnapshotcontent_v1beta1.json">volumegroupsnapshotcontent_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/groupsnapshot.storage.k8s.io/volumegroupsnapshotcontent_v1beta2.html" data-schema="volumegroupsnapshotcontent_v1beta2.json" data-url="/groupsnapshot.storage.k8s.io/volumegroupsnapshotcontent_v1beta2.json">volumegroupsnapshotcontent_v1beta2.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="helm.toolkit.fluxcd.io">
+<summary><span class="group-name">helm.toolkit.fluxcd.io</span> <span class="badge">2</span></summary>
+<div class="schemas">
+<a href="/helm.toolkit.fluxcd.io/helmrelease_v2.html" data-schema="helmrelease_v2.json" data-url="/helm.toolkit.fluxcd.io/helmrelease_v2.json">helmrelease_v2.json<span class="copy-hint">copy URL</span></a>
+<a href="/helm.toolkit.fluxcd.io/helmrelease_v2beta2.html" data-schema="helmrelease_v2beta2.json" data-url="/helm.toolkit.fluxcd.io/helmrelease_v2beta2.json">helmrelease_v2beta2.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="infra.contrib.fluxcd.io">
+<summary><span class="group-name">infra.contrib.fluxcd.io</span> <span class="badge">2</span></summary>
+<div class="schemas">
+<a href="/infra.contrib.fluxcd.io/terraform_v1alpha1.html" data-schema="terraform_v1alpha1.json" data-url="/infra.contrib.fluxcd.io/terraform_v1alpha1.json">terraform_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/infra.contrib.fluxcd.io/terraform_v1alpha2.html" data-schema="terraform_v1alpha2.json" data-url="/infra.contrib.fluxcd.io/terraform_v1alpha2.json">terraform_v1alpha2.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="k8s.cni.cncf.io">
+<summary><span class="group-name">k8s.cni.cncf.io</span> <span class="badge">1</span></summary>
+<div class="schemas">
+<a href="/k8s.cni.cncf.io/networkattachmentdefinition_v1.html" data-schema="networkattachmentdefinition_v1.json" data-url="/k8s.cni.cncf.io/networkattachmentdefinition_v1.json">networkattachmentdefinition_v1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="keda.sh">
+<summary><span class="group-name">keda.sh</span> <span class="badge">4</span></summary>
+<div class="schemas">
+<a href="/keda.sh/clustertriggerauthentication_v1alpha1.html" data-schema="clustertriggerauthentication_v1alpha1.json" data-url="/keda.sh/clustertriggerauthentication_v1alpha1.json">clustertriggerauthentication_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/keda.sh/scaledjob_v1alpha1.html" data-schema="scaledjob_v1alpha1.json" data-url="/keda.sh/scaledjob_v1alpha1.json">scaledjob_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/keda.sh/scaledobject_v1alpha1.html" data-schema="scaledobject_v1alpha1.json" data-url="/keda.sh/scaledobject_v1alpha1.json">scaledobject_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/keda.sh/triggerauthentication_v1alpha1.html" data-schema="triggerauthentication_v1alpha1.json" data-url="/keda.sh/triggerauthentication_v1alpha1.json">triggerauthentication_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="kustomize.toolkit.fluxcd.io">
+<summary><span class="group-name">kustomize.toolkit.fluxcd.io</span> <span class="badge">2</span></summary>
+<div class="schemas">
+<a href="/kustomize.toolkit.fluxcd.io/kustomization_v1.html" data-schema="kustomization_v1.json" data-url="/kustomize.toolkit.fluxcd.io/kustomization_v1.json">kustomization_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/kustomize.toolkit.fluxcd.io/kustomization_v1beta2.html" data-schema="kustomization_v1beta2.json" data-url="/kustomize.toolkit.fluxcd.io/kustomization_v1beta2.json">kustomization_v1beta2.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="monitoring.coreos.com">
+<summary><span class="group-name">monitoring.coreos.com</span> <span class="badge">10</span></summary>
+<div class="schemas">
+<a href="/monitoring.coreos.com/alertmanager_v1.html" data-schema="alertmanager_v1.json" data-url="/monitoring.coreos.com/alertmanager_v1.json">alertmanager_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/monitoring.coreos.com/alertmanagerconfig_v1alpha1.html" data-schema="alertmanagerconfig_v1alpha1.json" data-url="/monitoring.coreos.com/alertmanagerconfig_v1alpha1.json">alertmanagerconfig_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/monitoring.coreos.com/podmonitor_v1.html" data-schema="podmonitor_v1.json" data-url="/monitoring.coreos.com/podmonitor_v1.json">podmonitor_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/monitoring.coreos.com/probe_v1.html" data-schema="probe_v1.json" data-url="/monitoring.coreos.com/probe_v1.json">probe_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/monitoring.coreos.com/prometheus_v1.html" data-schema="prometheus_v1.json" data-url="/monitoring.coreos.com/prometheus_v1.json">prometheus_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/monitoring.coreos.com/prometheusagent_v1alpha1.html" data-schema="prometheusagent_v1alpha1.json" data-url="/monitoring.coreos.com/prometheusagent_v1alpha1.json">prometheusagent_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/monitoring.coreos.com/prometheusrule_v1.html" data-schema="prometheusrule_v1.json" data-url="/monitoring.coreos.com/prometheusrule_v1.json">prometheusrule_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/monitoring.coreos.com/scrapeconfig_v1alpha1.html" data-schema="scrapeconfig_v1alpha1.json" data-url="/monitoring.coreos.com/scrapeconfig_v1alpha1.json">scrapeconfig_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/monitoring.coreos.com/servicemonitor_v1.html" data-schema="servicemonitor_v1.json" data-url="/monitoring.coreos.com/servicemonitor_v1.json">servicemonitor_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/monitoring.coreos.com/thanosruler_v1.html" data-schema="thanosruler_v1.json" data-url="/monitoring.coreos.com/thanosruler_v1.json">thanosruler_v1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="notification.toolkit.fluxcd.io">
+<summary><span class="group-name">notification.toolkit.fluxcd.io</span> <span class="badge">6</span></summary>
+<div class="schemas">
+<a href="/notification.toolkit.fluxcd.io/alert_v1beta2.html" data-schema="alert_v1beta2.json" data-url="/notification.toolkit.fluxcd.io/alert_v1beta2.json">alert_v1beta2.json<span class="copy-hint">copy URL</span></a>
+<a href="/notification.toolkit.fluxcd.io/alert_v1beta3.html" data-schema="alert_v1beta3.json" data-url="/notification.toolkit.fluxcd.io/alert_v1beta3.json">alert_v1beta3.json<span class="copy-hint">copy URL</span></a>
+<a href="/notification.toolkit.fluxcd.io/provider_v1beta2.html" data-schema="provider_v1beta2.json" data-url="/notification.toolkit.fluxcd.io/provider_v1beta2.json">provider_v1beta2.json<span class="copy-hint">copy URL</span></a>
+<a href="/notification.toolkit.fluxcd.io/provider_v1beta3.html" data-schema="provider_v1beta3.json" data-url="/notification.toolkit.fluxcd.io/provider_v1beta3.json">provider_v1beta3.json<span class="copy-hint">copy URL</span></a>
+<a href="/notification.toolkit.fluxcd.io/receiver_v1.html" data-schema="receiver_v1.json" data-url="/notification.toolkit.fluxcd.io/receiver_v1.json">receiver_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/notification.toolkit.fluxcd.io/receiver_v1beta2.html" data-schema="receiver_v1beta2.json" data-url="/notification.toolkit.fluxcd.io/receiver_v1beta2.json">receiver_v1beta2.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="objectbucket.io">
+<summary><span class="group-name">objectbucket.io</span> <span class="badge">2</span></summary>
+<div class="schemas">
+<a href="/objectbucket.io/objectbucket_v1alpha1.html" data-schema="objectbucket_v1alpha1.json" data-url="/objectbucket.io/objectbucket_v1alpha1.json">objectbucket_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/objectbucket.io/objectbucketclaim_v1alpha1.html" data-schema="objectbucketclaim_v1alpha1.json" data-url="/objectbucket.io/objectbucketclaim_v1alpha1.json">objectbucketclaim_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="postgres-operator.crunchydata.com">
+<summary><span class="group-name">postgres-operator.crunchydata.com</span> <span class="badge">5</span></summary>
+<div class="schemas">
+<a href="/postgres-operator.crunchydata.com/crunchybridgecluster_v1beta1.html" data-schema="crunchybridgecluster_v1beta1.json" data-url="/postgres-operator.crunchydata.com/crunchybridgecluster_v1beta1.json">crunchybridgecluster_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/postgres-operator.crunchydata.com/pgadmin_v1beta1.html" data-schema="pgadmin_v1beta1.json" data-url="/postgres-operator.crunchydata.com/pgadmin_v1beta1.json">pgadmin_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/postgres-operator.crunchydata.com/pgupgrade_v1beta1.html" data-schema="pgupgrade_v1beta1.json" data-url="/postgres-operator.crunchydata.com/pgupgrade_v1beta1.json">pgupgrade_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/postgres-operator.crunchydata.com/postgrescluster_v1.html" data-schema="postgrescluster_v1.json" data-url="/postgres-operator.crunchydata.com/postgrescluster_v1.json">postgrescluster_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/postgres-operator.crunchydata.com/postgrescluster_v1beta1.html" data-schema="postgrescluster_v1beta1.json" data-url="/postgres-operator.crunchydata.com/postgrescluster_v1beta1.json">postgrescluster_v1beta1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="snapshot.storage.k8s.io">
+<summary><span class="group-name">snapshot.storage.k8s.io</span> <span class="badge">6</span></summary>
+<div class="schemas">
+<a href="/snapshot.storage.k8s.io/volumesnapshot_v1.html" data-schema="volumesnapshot_v1.json" data-url="/snapshot.storage.k8s.io/volumesnapshot_v1.json">volumesnapshot_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/snapshot.storage.k8s.io/volumesnapshot_v1beta1.html" data-schema="volumesnapshot_v1beta1.json" data-url="/snapshot.storage.k8s.io/volumesnapshot_v1beta1.json">volumesnapshot_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/snapshot.storage.k8s.io/volumesnapshotclass_v1.html" data-schema="volumesnapshotclass_v1.json" data-url="/snapshot.storage.k8s.io/volumesnapshotclass_v1.json">volumesnapshotclass_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/snapshot.storage.k8s.io/volumesnapshotclass_v1beta1.html" data-schema="volumesnapshotclass_v1beta1.json" data-url="/snapshot.storage.k8s.io/volumesnapshotclass_v1beta1.json">volumesnapshotclass_v1beta1.json<span class="copy-hint">copy URL</span></a>
+<a href="/snapshot.storage.k8s.io/volumesnapshotcontent_v1.html" data-schema="volumesnapshotcontent_v1.json" data-url="/snapshot.storage.k8s.io/volumesnapshotcontent_v1.json">volumesnapshotcontent_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/snapshot.storage.k8s.io/volumesnapshotcontent_v1beta1.html" data-schema="volumesnapshotcontent_v1beta1.json" data-url="/snapshot.storage.k8s.io/volumesnapshotcontent_v1beta1.json">volumesnapshotcontent_v1beta1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="source.toolkit.fluxcd.io">
+<summary><span class="group-name">source.toolkit.fluxcd.io</span> <span class="badge">11</span></summary>
+<div class="schemas">
+<a href="/source.toolkit.fluxcd.io/bucket_v1.html" data-schema="bucket_v1.json" data-url="/source.toolkit.fluxcd.io/bucket_v1.json">bucket_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/source.toolkit.fluxcd.io/bucket_v1beta2.html" data-schema="bucket_v1beta2.json" data-url="/source.toolkit.fluxcd.io/bucket_v1beta2.json">bucket_v1beta2.json<span class="copy-hint">copy URL</span></a>
+<a href="/source.toolkit.fluxcd.io/externalartifact_v1.html" data-schema="externalartifact_v1.json" data-url="/source.toolkit.fluxcd.io/externalartifact_v1.json">externalartifact_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/source.toolkit.fluxcd.io/gitrepository_v1.html" data-schema="gitrepository_v1.json" data-url="/source.toolkit.fluxcd.io/gitrepository_v1.json">gitrepository_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/source.toolkit.fluxcd.io/gitrepository_v1beta2.html" data-schema="gitrepository_v1beta2.json" data-url="/source.toolkit.fluxcd.io/gitrepository_v1beta2.json">gitrepository_v1beta2.json<span class="copy-hint">copy URL</span></a>
+<a href="/source.toolkit.fluxcd.io/helmchart_v1.html" data-schema="helmchart_v1.json" data-url="/source.toolkit.fluxcd.io/helmchart_v1.json">helmchart_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/source.toolkit.fluxcd.io/helmchart_v1beta2.html" data-schema="helmchart_v1beta2.json" data-url="/source.toolkit.fluxcd.io/helmchart_v1beta2.json">helmchart_v1beta2.json<span class="copy-hint">copy URL</span></a>
+<a href="/source.toolkit.fluxcd.io/helmrepository_v1.html" data-schema="helmrepository_v1.json" data-url="/source.toolkit.fluxcd.io/helmrepository_v1.json">helmrepository_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/source.toolkit.fluxcd.io/helmrepository_v1beta2.html" data-schema="helmrepository_v1beta2.json" data-url="/source.toolkit.fluxcd.io/helmrepository_v1beta2.json">helmrepository_v1beta2.json<span class="copy-hint">copy URL</span></a>
+<a href="/source.toolkit.fluxcd.io/ocirepository_v1.html" data-schema="ocirepository_v1.json" data-url="/source.toolkit.fluxcd.io/ocirepository_v1.json">ocirepository_v1.json<span class="copy-hint">copy URL</span></a>
+<a href="/source.toolkit.fluxcd.io/ocirepository_v1beta2.html" data-schema="ocirepository_v1beta2.json" data-url="/source.toolkit.fluxcd.io/ocirepository_v1beta2.json">ocirepository_v1beta2.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="talos.dev">
+<summary><span class="group-name">talos.dev</span> <span class="badge">1</span></summary>
+<div class="schemas">
+<a href="/talos.dev/serviceaccount_v1alpha1.html" data-schema="serviceaccount_v1alpha1.json" data-url="/talos.dev/serviceaccount_v1alpha1.json">serviceaccount_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+<details class="group" data-group="volsync.backube">
+<summary><span class="group-name">volsync.backube</span> <span class="badge">3</span></summary>
+<div class="schemas">
+<a href="/volsync.backube/kopiamaintenance_v1alpha1.html" data-schema="kopiamaintenance_v1alpha1.json" data-url="/volsync.backube/kopiamaintenance_v1alpha1.json">kopiamaintenance_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/volsync.backube/replicationdestination_v1alpha1.html" data-schema="replicationdestination_v1alpha1.json" data-url="/volsync.backube/replicationdestination_v1alpha1.json">replicationdestination_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+<a href="/volsync.backube/replicationsource_v1alpha1.html" data-schema="replicationsource_v1alpha1.json" data-url="/volsync.backube/replicationsource_v1alpha1.json">replicationsource_v1alpha1.json<span class="copy-hint">copy URL</span></a>
+</div>
+</details>
+
+</div>
+<p class="no-results" id="no-results">No matching groups or schemas.</p>
+<div class="copied-toast" id="toast">Copied!</div>
+<footer>
+  Generated by <a href="https://github.com/sholdee/crd-schema-publisher">crd-schema-publisher</a>
+</footer>
+<button class="back-to-top" id="back-to-top" title="Back to top" aria-label="Back to top">&#8593;</button>
+<script>
+(function(){
+  var input = document.getElementById('search');
+  var groups = document.querySelectorAll('.group');
+  var noResults = document.getElementById('no-results');
+  var statGroups = document.getElementById('stat-groups');
+  var statSchemas = document.getElementById('stat-schemas');
+  var totalGroups = groups.length;
+  var totalSchemas = document.querySelectorAll('.schemas a').length;
+
+  input.addEventListener('input', function(){
+    var q = this.value.toLowerCase().trim();
+    var visible = 0;
+    groups.forEach(function(g){
+      if (!q) {
+        g.style.display = '';
+        g.removeAttribute('open');
+        g.querySelectorAll('.schemas a').forEach(function(a){ a.style.display = ''; });
+        visible++;
+        return;
+      }
+      var groupName = g.dataset.group.toLowerCase();
+      var links = g.querySelectorAll('.schemas a');
+      var groupMatch = groupName.indexOf(q) !== -1;
+      var schemaMatch = false;
+      links.forEach(function(a){
+        if (a.dataset.schema.toLowerCase().indexOf(q) !== -1) {
+          a.style.display = '';
+          schemaMatch = true;
+        } else {
+          a.style.display = groupMatch ? '' : 'none';
+        }
+      });
+      if (groupMatch || schemaMatch) {
+        g.style.display = '';
+        g.setAttribute('open','');
+        visible++;
+      } else {
+        g.style.display = 'none';
+        g.removeAttribute('open');
+      }
+    });
+    noResults.style.display = visible ? 'none' : 'block';
+    if (!q) {
+      statGroups.textContent = totalGroups;
+      statSchemas.textContent = totalSchemas;
+    } else {
+      var visibleSchemas = 0;
+      groups.forEach(function(g){
+        if (g.style.display === 'none') return;
+        g.querySelectorAll('.schemas a').forEach(function(a){
+          if (a.style.display !== 'none') visibleSchemas++;
+        });
+      });
+      statGroups.textContent = visible + ' / ' + totalGroups;
+      statSchemas.textContent = visibleSchemas + ' / ' + totalSchemas;
+    }
+    history.replaceState(null, '', q ? '#q=' + encodeURIComponent(q) : location.pathname);
+  });
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (input.value) {
+        input.value = '';
+        input.dispatchEvent(new Event('input'));
+        input.blur();
+      } else {
+        var hadOpen = false;
+        groups.forEach(function(g){ if (g.hasAttribute('open')) { hadOpen = true; g.removeAttribute('open'); } });
+        if (hadOpen) {
+          allExpanded = false;
+          toggleAll.textContent = 'Expand all';
+        } else {
+          window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+        if (document.activeElement && document.activeElement !== document.body) {
+          document.activeElement.blur();
+        }
+      }
+    }
+    if (e.key === '/' && !e.ctrlKey && !e.metaKey && document.activeElement !== input) {
+      e.preventDefault();
+      input.focus();
+    }
+  });
+
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  document.getElementById('groups').addEventListener('click', function(e){
+    if (!e.target.classList.contains('copy-hint')) return;
+    e.preventDefault();
+    var link = e.target.closest('.schemas a');
+    var url = location.origin + link.dataset.url;
+    navigator.clipboard.writeText(url).then(function(){
+      clearTimeout(toastTimer);
+      toast.classList.add('show');
+      toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1500);
+    });
+  });
+
+  var toggleAll = document.getElementById('toggle-all');
+  var allExpanded = false;
+  toggleAll.addEventListener('click', function(){
+    allExpanded = !allExpanded;
+    groups.forEach(function(g){
+      if (g.style.display === 'none') return;
+      if (allExpanded) g.setAttribute('open','');
+      else g.removeAttribute('open');
+    });
+    toggleAll.textContent = allExpanded ? 'Collapse all' : 'Expand all';
+  });
+
+  (function(){
+    var hash = location.hash;
+    if (hash.indexOf('#q=') === 0) {
+      input.value = decodeURIComponent(hash.slice(3));
+      input.dispatchEvent(new Event('input'));
+    }
+  })();
+
+  var btt = document.getElementById('back-to-top');
+  window.addEventListener('scroll', function(){
+    btt.classList.toggle('visible', window.scrollY > 300);
+  }, {passive: true});
+  btt.addEventListener('click', function(){
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+
+  document.querySelectorAll('.usage-content code').forEach(function(el){
+    el.textContent = el.textContent.replace(/https:\/\/YOUR_DOMAIN/g, location.origin);
+  });
+
+  
+  document.getElementById('groups').addEventListener('click', function(e){
+    var link = e.target.closest('.schemas a');
+    if (!link || e.target.classList.contains('copy-hint')) return;
+    var expanded = [];
+    groups.forEach(function(g){ if (g.hasAttribute('open')) expanded.push(g.dataset.group); });
+    sessionStorage.setItem('indexState', JSON.stringify({
+      expanded: expanded,
+      scroll: window.scrollY,
+      toggleAll: allExpanded,
+      search: input.value
+    }));
+  });
+
+  
+  var saved = sessionStorage.getItem('indexState');
+  if (saved) {
+    sessionStorage.removeItem('indexState');
+    try {
+      var state = JSON.parse(saved);
+      if (state.search) {
+        input.value = state.search;
+        input.dispatchEvent(new Event('input'));
+      }
+      if (state.expanded && state.expanded.length) {
+        groups.forEach(function(g){
+          if (state.expanded.indexOf(g.dataset.group) !== -1) g.setAttribute('open','');
+        });
+      }
+      if (state.toggleAll) {
+        allExpanded = true;
+        toggleAll.textContent = 'Collapse all';
+      }
+      if (state.scroll) {
+        window.scrollTo(0, state.scroll);
+      }
+    } catch(e) {}
+  }
+})();
+
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+}
+</script>
+</body>
+</html>

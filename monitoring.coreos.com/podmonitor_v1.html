@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Podmonitor v1 — monitoring.coreos.com</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root {
+    --bg: #09090b;
+    --bg-surface: rgba(24, 24, 27, 0.6);
+    --bg-hover: rgba(24, 24, 27, 0.8);
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --accent: #6bc1fe;
+    --accent-dim: rgba(107, 193, 254, 0.15);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-active: #6bc1fe;
+    --stat-fg: #fafafa;
+    --required-bg: rgba(251, 191, 36, 0.15);
+    --required-fg: #fbbf24;
+    --stripes-dark: repeating-linear-gradient(100deg, #000 0%, #000 7%, transparent 10%, transparent 12%, #000 16%);
+    --rainbow: repeating-linear-gradient(100deg, #fff 10%, #fff 16%, #fff 22%, #fff 30%);
+  }
+  .light {
+    --bg: #f5f7fa;
+    --bg-surface: #ffffff;
+    --bg-hover: #edf0f4;
+    --fg: #18181b;
+    --fg-muted: #6b7785;
+    --accent: #2563b0;
+    --accent-dim: rgba(37, 99, 176, 0.08);
+    --border: #d8dde4;
+    --border-active: #2563b0;
+    --stat-fg: #18181b;
+    --required-bg: rgba(217, 119, 6, 0.1);
+    --required-fg: #b45309;
+    --stripes-dark: none;
+    --rainbow: none;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--fg);
+    max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem;
+    position: relative; z-index: 1;
+    transition: background 0.2s, color 0.2s;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 31px 47px, rgba(255,255,255,1), transparent),
+      radial-gradient(1px 1px at 212px 23px, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 68px 289px, rgba(255,255,255,0.84), transparent),
+      radial-gradient(1px 1px at 313px 151px, rgba(255,255,255,0.56), transparent),
+      radial-gradient(1px 1px at 157px 371px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(2px 2px at 19px 83px, rgba(255,255,255,0.96), transparent),
+      radial-gradient(1px 1px at 301px 41px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 127px 409px, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 443px 237px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 67px 491px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1px 1px at 11px 37px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1.5px 1.5px at 191px 213px, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1px 1px at 53px 7px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 271px 103px, rgba(255,255,255,0.64), transparent);
+    background-size:
+      397px 397px, 397px 397px, 397px 397px, 397px 397px, 397px 397px,
+      509px 509px, 509px 509px, 509px 509px, 509px 509px, 509px 509px,
+      311px 311px, 311px 311px, 311px 311px, 311px 311px;
+    mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+  }
+  .flare {
+    position: fixed; top: 0; right: 0;
+    width: 100vw; height: 450px; z-index: -1;
+    pointer-events: none;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 300% 200%;
+    background-position: 50% 50%;
+    filter: opacity(50%) saturate(200%);
+    opacity: 0.25;
+    mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+  }
+  .flare::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 200% 100%;
+    background-attachment: fixed;
+    mix-blend-mode: difference;
+  }
+  .light body::before, .light .flare { display: none; }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--fg-muted); cursor: pointer; padding: 0.35rem 0.6rem; font-size: 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .copied-toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #09090b; padding: 0.4rem 1rem;
+    border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none; z-index: 10;
+  }
+  .copied-toast.show { opacity: 1; }
+  footer {
+    margin-top: 3rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center; font-size: 0.8rem; color: var(--fg-muted);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .back-link { font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; }
+  .back-link kbd {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.6rem; color: var(--fg-muted); background: var(--bg-surface);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 0.1rem 0.35rem; line-height: 1;
+  }
+  .meta-cards {
+    display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+  }
+  .meta-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.5rem 1rem;
+  }
+  .meta-card .label { font-size: 0.7rem; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .meta-card .value { font-size: 1rem; font-weight: 600; }
+  .yaml-block {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.5rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.8rem; white-space: pre; overflow-x: auto; color: var(--fg);
+  }
+  .toolbar {
+    display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+    align-items: center; justify-content: space-between;
+  }
+  .toolbar-left { display: flex; gap: 0.75rem; }
+  .toolbar button, .toolbar a {
+    background: none; border: none; color: var(--fg-muted); cursor: pointer;
+    font-size: 0.8rem; padding: 0.2rem 0; transition: color 0.15s;
+  }
+  .toolbar button:hover, .toolbar a:hover { color: var(--accent); text-decoration: underline; }
+  .prop {
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; transition: border-color 0.2s;
+  }
+  .prop[open] { border-color: var(--border-active); border-left-width: 2px; }
+  .prop > summary {
+    padding: 0.5rem 0.75rem; cursor: pointer;
+    font-size: 0.85rem; background: var(--bg-surface); border-radius: 6px;
+    list-style: none; display: flex; align-items: center; gap: 0.5rem;
+    transition: background 0.15s;
+  }
+  .prop > summary::-webkit-details-marker { display: none; }
+  .prop > summary::before { content: "\25B8"; color: var(--fg-muted); font-size: 0.7rem; }
+  .prop[open] > summary::before { content: "\25BE"; color: var(--accent); }
+  .prop > summary:hover { background: var(--bg-hover); }
+  .prop-content { padding: 0.5rem 0.75rem 0.75rem; padding-left: 1.5rem; }
+  .prop-leaf {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem; display: flex; align-items: flex-start; gap: 0.5rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; background: var(--bg-surface);
+  }
+  .prop-leaf .prop-name { min-width: 0; }
+  .prop-name {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    color: var(--accent); font-weight: 600; white-space: nowrap;
+  }
+  .type-badge {
+    background: var(--accent-dim); color: var(--accent);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .required-badge {
+    background: var(--required-bg); color: var(--required-fg);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .prop-desc { color: var(--fg-muted); font-size: 0.82rem; margin-top: 0.25rem; }
+  .prop-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.2rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+  .prop-children { margin-top: 0.5rem; }
+  .leaf-desc { color: var(--fg-muted); font-size: 0.82rem; flex: 1; min-width: 0; }
+  .leaf-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.15rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+</style>
+<script>if(localStorage.getItem('theme')==='light')document.documentElement.className='light';</script>
+</head>
+<body>
+<div class="flare"></div>
+<div class="nav-row">
+  <a href="/" class="back-link">← Back to index <kbd>Esc</kbd></a>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
+</div>
+<div class="meta-cards">
+  <div class="meta-card"><div class="label">Kind</div><div class="value">Podmonitor</div></div>
+  <div class="meta-card"><div class="label">Group</div><div class="value">monitoring.coreos.com</div></div>
+  <div class="meta-card"><div class="label">Version</div><div class="value">v1</div></div>
+</div>
+<div class="yaml-block">apiVersion: monitoring.coreos.com/v1
+kind: Podmonitor
+metadata:
+  name: example</div>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <button id="expand-all">Expand all</button>
+    <button id="collapse-all">Collapse all</button>
+  </div>
+  <div class="toolbar-left">
+    <a href="/monitoring.coreos.com/podmonitor_v1.json" target="_blank">View raw schema</a>
+    <button id="copy-url" data-url="/monitoring.coreos.com/podmonitor_v1.json">Copy schema URL</button>
+  </div>
+</div>
+<div id="properties">
+<div class="prop-leaf">
+  <span class="prop-name">apiVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">APIVersion defines the versioned schema of this representation of an object.
+Servers should convert recognized schemas to the latest internal value, and
+may reject unrecognized values.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is a string value representing the REST resource this object represents.
+Servers may infer this from the endpoint the client submits requests to.
+Cannot be updated.
+In CamelCase.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">spec</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">spec defines the specification of desired Pod selection for target discovery by Prometheus.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">attachMetadata</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">attachMetadata defines additional metadata which is added to the
+discovered targets.
+
+It requires Prometheus &gt;= v2.35.0.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">node</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">node when set to true, Prometheus attaches node metadata to the discovered
+targets.
+
+The Prometheus service account must have the `list` and `watch`
+permissions on the `Nodes` objects.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">bodySizeLimit</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">bodySizeLimit when defined specifies a job level limit on the size
+of uncompressed response body that will be accepted by Prometheus.
+
+It requires Prometheus &gt;= v2.28.0.<div class="leaf-constraints">pattern: (^0|([0-9]*[.])?[0-9]+((K|M|G|T|E|P)i?)?B)$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">convertClassicHistogramsToNHCB</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">convertClassicHistogramsToNHCB defines whether to convert all scraped classic histograms into a native histogram with custom buckets.
+It requires Prometheus &gt;= v3.0.0.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">fallbackScrapeProtocol</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">fallbackScrapeProtocol defines the protocol to use if a scrape returns blank, unparseable, or otherwise invalid Content-Type.
+
+It requires Prometheus &gt;= v3.0.0.<div class="leaf-constraints">enum: PrometheusProto, OpenMetricsText0.0.1, OpenMetricsText1.0.0, PrometheusText0.0.4, PrometheusText1.0.0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">jobLabel</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">jobLabel defines the label to use to retrieve the job name from.
+`jobLabel` selects the label from the associated Kubernetes `Pod`
+object which will be used as the `job` label for all metrics.
+
+For example if `jobLabel` is set to `foo` and the Kubernetes `Pod`
+object is labeled with `foo: bar`, then Prometheus adds the `job=&#34;bar&#34;`
+label to all ingested metrics.
+
+If the value of this field is empty, the `job` label of the metrics
+defaults to the namespace and name of the PodMonitor object (e.g. `&lt;namespace&gt;/&lt;name&gt;`).
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">keepDroppedTargets</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">keepDroppedTargets defines the per-scrape limit on the number of targets dropped by relabeling
+that will be kept in memory. 0 means no limit.
+
+It requires Prometheus &gt;= v2.47.0.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">labelLimit</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">labelLimit defines the per-scrape limit on number of labels that will be accepted for a sample.
+
+It requires Prometheus &gt;= v2.27.0.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">labelNameLengthLimit</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">labelNameLengthLimit defines the per-scrape limit on length of labels name that will be accepted for a sample.
+
+It requires Prometheus &gt;= v2.27.0.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">labelValueLengthLimit</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">labelValueLengthLimit defines the per-scrape limit on length of labels value that will be accepted for a sample.
+
+It requires Prometheus &gt;= v2.27.0.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">namespaceSelector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">namespaceSelector defines in which namespace(s) Prometheus should discover the pods.
+By default, the pods are discovered in the same namespace as the `PodMonitor` object but it is possible to select pods across different/all namespaces.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">any</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">any defines the boolean describing whether all namespaces are selected in contrast to a
+list restricting them.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">matchNames</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">matchNames defines the list of namespace names to select from.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">nativeHistogramBucketLimit</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">nativeHistogramBucketLimit defines ff there are more than this many buckets in a native histogram,
+buckets will be merged to stay within the limit.
+It requires Prometheus &gt;= v2.45.0.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">nativeHistogramMinBucketFactor</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">nativeHistogramMinBucketFactor defines if the growth factor of one bucket to the next is smaller than this,
+buckets will be merged to increase the factor sufficiently.
+It requires Prometheus &gt;= v2.50.0.<div class="leaf-constraints">pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">podMetricsEndpoints</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">podMetricsEndpoints defines how to scrape metrics from the selected pods.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">authorization</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">authorization configures the Authorization header credentials used by
+the client.
+
+Cannot be set at the same time as `basicAuth`, `bearerTokenSecret` or `oauth2`.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">credentials</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">credentials defines a key of a Secret in the namespace that contains the credentials for authentication.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key of the secret to select from.  Must be a valid secret key.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the Secret or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">type defines the authentication type. The value is case-insensitive.
+
+&#34;Basic&#34; is not a supported value.
+
+Default: &#34;Bearer&#34;
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">basicAuth</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">basicAuth defines the Basic Authentication credentials used by the
+client.
+
+Cannot be set at the same time as `authorization`, `bearerTokenSecret` or `oauth2`.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">password</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">password defines a key of a Secret containing the password for
+authentication.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key of the secret to select from.  Must be a valid secret key.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the Secret or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">username</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">username defines a key of a Secret containing the username for
+authentication.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key of the secret to select from.  Must be a valid secret key.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the Secret or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">bearerTokenSecret</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">bearerTokenSecret defines a key of a Secret containing the bearer token
+used by the client for authentication. The secret needs to be in the
+same namespace as the custom resource and readable by the Prometheus
+Operator.
+
+Cannot be set at the same time as `authorization`, `basicAuth` or `oauth2`.
+
+Deprecated: use `authorization` instead.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key of the secret to select from.  Must be a valid secret key.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the Secret or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">enableHttp2</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">enableHttp2 can be used to disable HTTP2.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">filterRunning</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">filterRunning when true, the pods which are not running (e.g. either in Failed or
+Succeeded state) are dropped during the target discovery.
+
+If unset, the filtering is enabled.
+
+More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-phase
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">followRedirects</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">followRedirects defines whether the client should follow HTTP 3xx
+redirects.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">honorLabels</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">honorLabels when true preserves the metric&#39;s labels when they collide
+with the target&#39;s labels.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">honorTimestamps</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">honorTimestamps defines whether Prometheus preserves the timestamps
+when exposed by the target.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">interval at which Prometheus scrapes the metrics from the target.
+
+If empty, Prometheus uses the global scrape interval.<div class="leaf-constraints">pattern: ^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">metricRelabelings</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">metricRelabelings defines the relabeling rules to apply to the
+samples before ingestion.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">action</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">action to perform based on the regex matching.
+
+`Uppercase` and `Lowercase` actions require Prometheus &gt;= v2.36.0.
+`DropEqual` and `KeepEqual` actions require Prometheus &gt;= v2.41.0.
+
+Default: &#34;Replace&#34;<div class="leaf-constraints">enum: replace, Replace, keep, Keep, drop, Drop, hashmod, HashMod, labelmap, LabelMap, labeldrop, LabelDrop, labelkeep, LabelKeep, lowercase, Lowercase, uppercase, Uppercase, keepequal, KeepEqual, dropequal, DropEqual</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">modulus</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">modulus to take of the hash of the source label values.
+
+Only applicable when the action is `HashMod`.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">regex</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">regex defines the regular expression against which the extracted value is matched.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">replacement</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">replacement value against which a Replace action is performed if the
+regular expression matches.
+
+Regex capture groups are available.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">separator</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">separator defines the string between concatenated SourceLabels.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sourceLabels</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">sourceLabels defines the source labels select values from existing labels. Their content is
+concatenated using the configured Separator and matched against the
+configured regular expression.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">targetLabel</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">targetLabel defines the label to which the resulting string is written in a replacement.
+
+It is mandatory for `Replace`, `HashMod`, `Lowercase`, `Uppercase`,
+`KeepEqual` and `DropEqual` actions.
+
+Regex capture groups are available.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">noProxy</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">noProxy defines a comma-separated string that can contain IPs, CIDR notation, domain names
+that should be excluded from proxying. IP and domain names can
+contain port numbers.
+
+It requires Prometheus &gt;= v2.43.0, Alertmanager &gt;= v0.25.0 or Thanos &gt;= v0.32.0.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">oauth2</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">oauth2 defines the OAuth2 settings used by the client.
+
+It requires Prometheus &gt;= 2.27.0.
+
+Cannot be set at the same time as `authorization`, `basicAuth` or `bearerTokenSecret`.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">clientId</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">clientId defines a key of a Secret or ConfigMap containing the
+OAuth2 client&#39;s ID.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">configMap</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">configMap defines the ConfigMap containing data to use for the targets.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key to select.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the ConfigMap or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">secret</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">secret defines the Secret containing data to use for the targets.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key of the secret to select from.  Must be a valid secret key.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the Secret or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">clientSecret</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">clientSecret defines a key of a Secret containing the OAuth2
+client&#39;s secret.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key of the secret to select from.  Must be a valid secret key.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the Secret or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">endpointParams</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">endpointParams configures the HTTP parameters to append to the token
+URL.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">noProxy</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">noProxy defines a comma-separated string that can contain IPs, CIDR notation, domain names
+that should be excluded from proxying. IP and domain names can
+contain port numbers.
+
+It requires Prometheus &gt;= v2.43.0, Alertmanager &gt;= v0.25.0 or Thanos &gt;= v0.32.0.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">proxyConnectHeader</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">proxyConnectHeader optionally specifies headers to send to
+proxies during CONNECT requests.
+
+It requires Prometheus &gt;= v2.43.0, Alertmanager &gt;= v0.25.0 or Thanos &gt;= v0.32.0.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">proxyFromEnvironment</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">proxyFromEnvironment defines whether to use the proxy configuration defined by environment variables (HTTP_PROXY, HTTPS_PROXY, and NO_PROXY).
+
+It requires Prometheus &gt;= v2.43.0, Alertmanager &gt;= v0.25.0 or Thanos &gt;= v0.32.0.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">proxyUrl</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">proxyUrl defines the HTTP proxy server to use.<div class="leaf-constraints">pattern: ^(http|https|socks5)://.+$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">scopes</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">scopes defines the OAuth2 scopes used for the token request.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">tlsConfig</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">tlsConfig defines the TLS configuration to use when connecting to the OAuth2 server.
+It requires Prometheus &gt;= v2.43.0.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">ca</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ca defines the Certificate authority used when verifying server certificates.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">configMap</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">configMap defines the ConfigMap containing data to use for the targets.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key to select.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the ConfigMap or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">secret</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">secret defines the Secret containing data to use for the targets.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key of the secret to select from.  Must be a valid secret key.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the Secret or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">cert</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">cert defines the Client certificate to present when doing client-authentication.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">configMap</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">configMap defines the ConfigMap containing data to use for the targets.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key to select.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the ConfigMap or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">secret</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">secret defines the Secret containing data to use for the targets.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key of the secret to select from.  Must be a valid secret key.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the Secret or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">insecureSkipVerify</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">insecureSkipVerify defines how to disable target certificate validation.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">keySecret</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">keySecret defines the Secret containing the client key file for the targets.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key of the secret to select from.  Must be a valid secret key.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the Secret or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">maxVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">maxVersion defines the maximum acceptable TLS version.
+
+It requires Prometheus &gt;= v2.41.0 or Thanos &gt;= v0.31.0.<div class="leaf-constraints">enum: TLS10, TLS11, TLS12, TLS13</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">minVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">minVersion defines the minimum acceptable TLS version.
+
+It requires Prometheus &gt;= v2.35.0 or Thanos &gt;= v0.28.0.<div class="leaf-constraints">enum: TLS10, TLS11, TLS12, TLS13</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">serverName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">serverName is used to verify the hostname for the targets.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">tokenUrl</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">tokenUrl defines the URL to fetch the token from.<div class="leaf-constraints">minLength: 1</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">params</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">params define optional HTTP URL parameters.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">path defines the HTTP path from which to scrape for metrics.
+
+If empty, Prometheus uses the default value (e.g. `/metrics`).
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">port defines the `Pod` port name which exposes the endpoint.
+
+If the pod doesn&#39;t expose a port with the same name, it will result
+in no targets being discovered.
+
+If a `Pod` has multiple `Port`s with the same name (which is not
+recommended), one target instance per unique port number will be
+generated.
+
+It takes precedence over the `portNumber` and `targetPort` fields.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">portNumber</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">portNumber defines the `Pod` port number which exposes the endpoint.
+
+The `Pod` must declare the specified `Port` in its spec or the
+target will be dropped by Prometheus.
+
+This cannot be used to enable scraping of an undeclared port.
+To scrape targets on a port which isn&#39;t exposed, you need to use
+relabeling to override the `__address__` label (but beware of
+duplicate targets if the `Pod` has other declared ports).
+
+In practice Prometheus will select targets for which the
+matches the target&#39;s __meta_kubernetes_pod_container_port_number.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">proxyConnectHeader</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">proxyConnectHeader optionally specifies headers to send to
+proxies during CONNECT requests.
+
+It requires Prometheus &gt;= v2.43.0, Alertmanager &gt;= v0.25.0 or Thanos &gt;= v0.32.0.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">proxyFromEnvironment</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">proxyFromEnvironment defines whether to use the proxy configuration defined by environment variables (HTTP_PROXY, HTTPS_PROXY, and NO_PROXY).
+
+It requires Prometheus &gt;= v2.43.0, Alertmanager &gt;= v0.25.0 or Thanos &gt;= v0.32.0.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">proxyUrl</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">proxyUrl defines the HTTP proxy server to use.<div class="leaf-constraints">pattern: ^(http|https|socks5)://.+$</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">relabelings</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">relabelings defines the relabeling rules to apply the target&#39;s
+metadata labels.
+
+The Operator automatically adds relabelings for a few standard Kubernetes fields.
+
+The original scrape job&#39;s name is available via the `__tmp_prometheus_job_name` label.
+
+More info: https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">action</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">action to perform based on the regex matching.
+
+`Uppercase` and `Lowercase` actions require Prometheus &gt;= v2.36.0.
+`DropEqual` and `KeepEqual` actions require Prometheus &gt;= v2.41.0.
+
+Default: &#34;Replace&#34;<div class="leaf-constraints">enum: replace, Replace, keep, Keep, drop, Drop, hashmod, HashMod, labelmap, LabelMap, labeldrop, LabelDrop, labelkeep, LabelKeep, lowercase, Lowercase, uppercase, Uppercase, keepequal, KeepEqual, dropequal, DropEqual</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">modulus</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">modulus to take of the hash of the source label values.
+
+Only applicable when the action is `HashMod`.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">regex</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">regex defines the regular expression against which the extracted value is matched.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">replacement</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">replacement value against which a Replace action is performed if the
+regular expression matches.
+
+Regex capture groups are available.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">separator</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">separator defines the string between concatenated SourceLabels.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sourceLabels</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">sourceLabels defines the source labels select values from existing labels. Their content is
+concatenated using the configured Separator and matched against the
+configured regular expression.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">targetLabel</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">targetLabel defines the label to which the resulting string is written in a replacement.
+
+It is mandatory for `Replace`, `HashMod`, `Lowercase`, `Uppercase`,
+`KeepEqual` and `DropEqual` actions.
+
+Regex capture groups are available.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">scheme</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">scheme defines the HTTP scheme to use for scraping.<div class="leaf-constraints">enum: http, https, HTTP, HTTPS</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">scrapeTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">scrapeTimeout defines the timeout after which Prometheus considers the scrape to be failed.
+
+If empty, Prometheus uses the global scrape timeout unless it is less
+than the target&#39;s scrape interval value in which the latter is used.
+The value cannot be greater than the scrape interval otherwise the operator will reject the resource.<div class="leaf-constraints">pattern: ^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">targetPort</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">targetPort defines the name or number of the target port of the `Pod` object behind the Service, the
+port must be specified with container port property.
+
+Deprecated: use &#39;port&#39; or &#39;portNumber&#39; instead.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">tlsConfig</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">tlsConfig defines the TLS configuration used by the client.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">ca</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ca defines the Certificate authority used when verifying server certificates.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">configMap</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">configMap defines the ConfigMap containing data to use for the targets.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key to select.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the ConfigMap or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">secret</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">secret defines the Secret containing data to use for the targets.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key of the secret to select from.  Must be a valid secret key.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the Secret or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">cert</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">cert defines the Client certificate to present when doing client-authentication.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">configMap</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">configMap defines the ConfigMap containing data to use for the targets.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key to select.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the ConfigMap or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">secret</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">secret defines the Secret containing data to use for the targets.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key of the secret to select from.  Must be a valid secret key.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the Secret or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">insecureSkipVerify</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">insecureSkipVerify defines how to disable target certificate validation.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">keySecret</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">keySecret defines the Secret containing the client key file for the targets.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The key of the secret to select from.  Must be a valid secret key.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name of the referent.
+This field is effectively required, but due to backwards compatibility is
+allowed to be empty. Instances of this type with an empty value here are
+almost certainly wrong.
+More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">optional</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Specify whether the Secret or its key must be defined
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">maxVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">maxVersion defines the maximum acceptable TLS version.
+
+It requires Prometheus &gt;= v2.41.0 or Thanos &gt;= v0.31.0.<div class="leaf-constraints">enum: TLS10, TLS11, TLS12, TLS13</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">minVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">minVersion defines the minimum acceptable TLS version.
+
+It requires Prometheus &gt;= v2.35.0 or Thanos &gt;= v0.28.0.<div class="leaf-constraints">enum: TLS10, TLS11, TLS12, TLS13</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">serverName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">serverName is used to verify the hostname for the targets.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">trackTimestampsStaleness</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">trackTimestampsStaleness defines whether Prometheus tracks staleness of
+the metrics that have an explicit timestamp present in scraped data.
+Has no effect if `honorTimestamps` is false.
+
+It requires Prometheus &gt;= v2.48.0.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">podTargetLabels</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">podTargetLabels defines the labels which are transferred from the
+associated Kubernetes `Pod` object onto the ingested metrics.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sampleLimit</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">sampleLimit defines a per-scrape limit on the number of scraped samples
+that will be accepted.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">scrapeClass</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">scrapeClass defines the scrape class to apply.<div class="leaf-constraints">minLength: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">scrapeClassicHistograms</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">scrapeClassicHistograms defines whether to scrape a classic histogram that is also exposed as a native histogram.
+It requires Prometheus &gt;= v2.45.0.
+
+Notice: `scrapeClassicHistograms` corresponds to the `always_scrape_classic_histograms` field in the Prometheus configuration.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">scrapeNativeHistograms</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">scrapeNativeHistograms defines whether to enable scraping of native histograms.
+It requires Prometheus &gt;= v3.8.0.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">scrapeProtocols</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">scrapeProtocols defines the protocols to negotiate during a scrape. It tells clients the
+protocols supported by Prometheus in order of preference (from most to least preferred).
+
+If unset, Prometheus uses its default value.
+
+It requires Prometheus &gt;= v2.49.0.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">selector</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">selector defines the label selector to select the Kubernetes `Pod` objects to scrape metrics from.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">matchExpressions is a list of label selector requirements. The requirements are ANDed.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">key is the label key that the selector applies to.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">operator represents a key&#39;s relationship to a set of values.
+Valid operators are In, NotIn, Exists and DoesNotExist.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">values is an array of string values. If the operator is In or NotIn,
+the values array must be non-empty. If the operator is Exists or DoesNotExist,
+the values array must be empty. This array is replaced during a strategic
+merge patch.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+map is equivalent to an element of matchExpressions, whose key field is &#34;key&#34;, the
+operator is &#34;In&#34;, and the values array contains only &#34;value&#34;. The requirements are ANDed.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">selectorMechanism</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">selectorMechanism defines the mechanism used to select the endpoints to scrape.
+By default, the selection process relies on relabel configurations to filter the discovered targets.
+Alternatively, you can opt in for role selectors, which may offer better efficiency in large clusters.
+Which strategy is best for your use case needs to be carefully evaluated.
+
+It requires Prometheus &gt;= v2.17.0.<div class="leaf-constraints">enum: RelabelConfig, RoleSelector</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">targetLimit</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">targetLimit defines a limit on the number of scraped targets that will
+be accepted.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">status</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">status defines the status subresource. It is under active development and is updated only when the
+&#34;StatusForConfigurationResources&#34; feature gate is enabled.
+
+Most recent observed status of the PodMonitor. Read-only.
+More info:
+https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#spec-and-status</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">bindings</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">bindings defines the list of workload resources (Prometheus, PrometheusAgent, ThanosRuler or Alertmanager) which select the configuration resource.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">conditions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">conditions defines the current state of the configuration resource when bound to the referenced Workload object.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">lastTransitionTime</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">lastTransitionTime defines the time of the last update to the current status property.<div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">message</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">message defines the human-readable message indicating details for the condition&#39;s last transition.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">observedGeneration</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">observedGeneration defines the .metadata.generation that the
+condition was set based upon. For instance, if `.metadata.generation` is
+currently 12, but the `.status.conditions[].observedGeneration` is 9, the
+condition is out of date with respect to the current state of the object.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">reason</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">reason for the condition&#39;s last transition.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">status</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">status of the condition.<div class="leaf-constraints">minLength: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">type of the condition being reported.
+Currently, only &#34;Accepted&#34; is supported.<div class="leaf-constraints">enum: Accepted</div><div class="leaf-constraints">minLength: 1</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">group defines the group of the referenced resource.<div class="leaf-constraints">enum: monitoring.coreos.com</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">name defines the name of the referenced object.<div class="leaf-constraints">minLength: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">namespace defines the namespace of the referenced object.<div class="leaf-constraints">minLength: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">resource</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">resource defines the type of resource being referenced (e.g. Prometheus, PrometheusAgent, ThanosRuler or Alertmanager).<div class="leaf-constraints">enum: prometheuses, prometheusagents, thanosrulers, alertmanagers</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+</div>
+<div class="copied-toast" id="toast">Copied!</div>
+<footer>
+  Generated by <a href="https://github.com/sholdee/crd-schema-publisher">crd-schema-publisher</a>
+</footer>
+<script>
+(function(){
+  var props = document.querySelectorAll('.prop');
+  document.getElementById('expand-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.setAttribute('open',''); });
+  });
+  document.getElementById('collapse-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.removeAttribute('open'); });
+  });
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+      }
+      location.href = '/';
+    }
+  });
+  document.getElementById('copy-url').addEventListener('click', function(){
+    var url = location.origin + this.dataset.url;
+    navigator.clipboard.writeText(url).then(function(){
+      clearTimeout(toastTimer);
+      toast.classList.add('show');
+      toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1500);
+    });
+  });
+})();
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+}
+</script>
+</body>
+</html>

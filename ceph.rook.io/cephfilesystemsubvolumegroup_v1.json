@@ -1,0 +1,175 @@
+{
+  "description": "CephFilesystemSubVolumeGroup represents a Ceph Filesystem SubVolumeGroup",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "additionalProperties": false,
+      "description": "Spec represents the specification of a Ceph Filesystem SubVolumeGroup",
+      "properties": {
+        "clusterID": {
+          "description": "ClusterID to be used for this subvolume group in the CSI configuration.\nIt must be unique among all Ceph clusters managed by Rook.\nIf not specified, the clusterID will be generated and can be found in the CR status.",
+          "maxLength": 36,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "ClusterID is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "dataPoolName": {
+          "description": "The data pool name for the Ceph Filesystem subvolume group layout, if the default CephFS pool is not desired.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "filesystemName": {
+          "description": "FilesystemName is the name of Ceph Filesystem SubVolumeGroup volume name. Typically it's the name of\nthe CephFilesystem CR. If not coming from the CephFilesystem CR, it can be retrieved from the\nlist of Ceph Filesystem volumes with `ceph fs volume ls`. To learn more about Ceph Filesystem\nabstractions see https://docs.ceph.com/en/latest/cephfs/fs-volumes/#fs-volumes-and-subvolumes",
+          "type": "string",
+          "x-kubernetes-validations": [
+            {
+              "message": "filesystemName is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "name": {
+          "description": "The name of the subvolume group. If not set, the default is the name of the subvolumeGroup CR.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "name is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "pinning": {
+          "additionalProperties": false,
+          "description": "Pinning configuration of CephFilesystemSubVolumeGroup,\nreference https://docs.ceph.com/en/latest/cephfs/fs-volumes/#pinning-subvolumes-and-subvolume-groups\nonly one out of (export, distributed, random) can be set at a time",
+          "properties": {
+            "distributed": {
+              "maximum": 1,
+              "minimum": 0,
+              "nullable": true,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "export": {
+              "maximum": 256,
+              "minimum": -1,
+              "nullable": true,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "random": {
+              "maximum": 1,
+              "minimum": 0,
+              "nullable": true,
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "only one pinning type should be set",
+              "rule": "(has(self.export) \u0026\u0026 !has(self.distributed) \u0026\u0026 !has(self.random)) || (!has(self.export) \u0026\u0026 has(self.distributed) \u0026\u0026 !has(self.random)) || (!has(self.export) \u0026\u0026 !has(self.distributed) \u0026\u0026 has(self.random)) || (!has(self.export) \u0026\u0026 !has(self.distributed) \u0026\u0026 !has(self.random))"
+            }
+          ]
+        },
+        "quota": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "description": "Quota size of the Ceph Filesystem subvolume group.",
+          "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
+          "x-kubernetes-int-or-string": true
+        }
+      },
+      "required": [
+        "filesystemName"
+      ],
+      "type": "object"
+    },
+    "status": {
+      "additionalProperties": false,
+      "description": "Status represents the status of a CephFilesystem SubvolumeGroup",
+      "properties": {
+        "info": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "nullable": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "observedGeneration": {
+          "description": "ObservedGeneration is the latest generation observed by the controller.",
+          "format": "int64",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "phase": {
+          "description": "ConditionType represent a resource's status",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ],
+      "x-kubernetes-preserve-unknown-fields": true
+    }
+  },
+  "required": [
+    "metadata",
+    "spec"
+  ],
+  "type": "object"
+}

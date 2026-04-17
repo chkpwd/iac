@@ -1,0 +1,3745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Httproute v1beta1 — gateway.networking.k8s.io</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root {
+    --bg: #09090b;
+    --bg-surface: rgba(24, 24, 27, 0.6);
+    --bg-hover: rgba(24, 24, 27, 0.8);
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --accent: #6bc1fe;
+    --accent-dim: rgba(107, 193, 254, 0.15);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-active: #6bc1fe;
+    --stat-fg: #fafafa;
+    --required-bg: rgba(251, 191, 36, 0.15);
+    --required-fg: #fbbf24;
+    --stripes-dark: repeating-linear-gradient(100deg, #000 0%, #000 7%, transparent 10%, transparent 12%, #000 16%);
+    --rainbow: repeating-linear-gradient(100deg, #fff 10%, #fff 16%, #fff 22%, #fff 30%);
+  }
+  .light {
+    --bg: #f5f7fa;
+    --bg-surface: #ffffff;
+    --bg-hover: #edf0f4;
+    --fg: #18181b;
+    --fg-muted: #6b7785;
+    --accent: #2563b0;
+    --accent-dim: rgba(37, 99, 176, 0.08);
+    --border: #d8dde4;
+    --border-active: #2563b0;
+    --stat-fg: #18181b;
+    --required-bg: rgba(217, 119, 6, 0.1);
+    --required-fg: #b45309;
+    --stripes-dark: none;
+    --rainbow: none;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--fg);
+    max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem;
+    position: relative; z-index: 1;
+    transition: background 0.2s, color 0.2s;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 31px 47px, rgba(255,255,255,1), transparent),
+      radial-gradient(1px 1px at 212px 23px, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 68px 289px, rgba(255,255,255,0.84), transparent),
+      radial-gradient(1px 1px at 313px 151px, rgba(255,255,255,0.56), transparent),
+      radial-gradient(1px 1px at 157px 371px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(2px 2px at 19px 83px, rgba(255,255,255,0.96), transparent),
+      radial-gradient(1px 1px at 301px 41px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 127px 409px, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 443px 237px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 67px 491px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1px 1px at 11px 37px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1.5px 1.5px at 191px 213px, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1px 1px at 53px 7px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 271px 103px, rgba(255,255,255,0.64), transparent);
+    background-size:
+      397px 397px, 397px 397px, 397px 397px, 397px 397px, 397px 397px,
+      509px 509px, 509px 509px, 509px 509px, 509px 509px, 509px 509px,
+      311px 311px, 311px 311px, 311px 311px, 311px 311px;
+    mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+  }
+  .flare {
+    position: fixed; top: 0; right: 0;
+    width: 100vw; height: 450px; z-index: -1;
+    pointer-events: none;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 300% 200%;
+    background-position: 50% 50%;
+    filter: opacity(50%) saturate(200%);
+    opacity: 0.25;
+    mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+  }
+  .flare::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 200% 100%;
+    background-attachment: fixed;
+    mix-blend-mode: difference;
+  }
+  .light body::before, .light .flare { display: none; }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--fg-muted); cursor: pointer; padding: 0.35rem 0.6rem; font-size: 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .copied-toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #09090b; padding: 0.4rem 1rem;
+    border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none; z-index: 10;
+  }
+  .copied-toast.show { opacity: 1; }
+  footer {
+    margin-top: 3rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center; font-size: 0.8rem; color: var(--fg-muted);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .back-link { font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; }
+  .back-link kbd {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.6rem; color: var(--fg-muted); background: var(--bg-surface);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 0.1rem 0.35rem; line-height: 1;
+  }
+  .meta-cards {
+    display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+  }
+  .meta-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.5rem 1rem;
+  }
+  .meta-card .label { font-size: 0.7rem; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .meta-card .value { font-size: 1rem; font-weight: 600; }
+  .yaml-block {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.5rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.8rem; white-space: pre; overflow-x: auto; color: var(--fg);
+  }
+  .toolbar {
+    display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+    align-items: center; justify-content: space-between;
+  }
+  .toolbar-left { display: flex; gap: 0.75rem; }
+  .toolbar button, .toolbar a {
+    background: none; border: none; color: var(--fg-muted); cursor: pointer;
+    font-size: 0.8rem; padding: 0.2rem 0; transition: color 0.15s;
+  }
+  .toolbar button:hover, .toolbar a:hover { color: var(--accent); text-decoration: underline; }
+  .prop {
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; transition: border-color 0.2s;
+  }
+  .prop[open] { border-color: var(--border-active); border-left-width: 2px; }
+  .prop > summary {
+    padding: 0.5rem 0.75rem; cursor: pointer;
+    font-size: 0.85rem; background: var(--bg-surface); border-radius: 6px;
+    list-style: none; display: flex; align-items: center; gap: 0.5rem;
+    transition: background 0.15s;
+  }
+  .prop > summary::-webkit-details-marker { display: none; }
+  .prop > summary::before { content: "\25B8"; color: var(--fg-muted); font-size: 0.7rem; }
+  .prop[open] > summary::before { content: "\25BE"; color: var(--accent); }
+  .prop > summary:hover { background: var(--bg-hover); }
+  .prop-content { padding: 0.5rem 0.75rem 0.75rem; padding-left: 1.5rem; }
+  .prop-leaf {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem; display: flex; align-items: flex-start; gap: 0.5rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; background: var(--bg-surface);
+  }
+  .prop-leaf .prop-name { min-width: 0; }
+  .prop-name {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    color: var(--accent); font-weight: 600; white-space: nowrap;
+  }
+  .type-badge {
+    background: var(--accent-dim); color: var(--accent);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .required-badge {
+    background: var(--required-bg); color: var(--required-fg);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .prop-desc { color: var(--fg-muted); font-size: 0.82rem; margin-top: 0.25rem; }
+  .prop-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.2rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+  .prop-children { margin-top: 0.5rem; }
+  .leaf-desc { color: var(--fg-muted); font-size: 0.82rem; flex: 1; min-width: 0; }
+  .leaf-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.15rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+</style>
+<script>if(localStorage.getItem('theme')==='light')document.documentElement.className='light';</script>
+</head>
+<body>
+<div class="flare"></div>
+<div class="nav-row">
+  <a href="/" class="back-link">← Back to index <kbd>Esc</kbd></a>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
+</div>
+<div class="meta-cards">
+  <div class="meta-card"><div class="label">Kind</div><div class="value">Httproute</div></div>
+  <div class="meta-card"><div class="label">Group</div><div class="value">gateway.networking.k8s.io</div></div>
+  <div class="meta-card"><div class="label">Version</div><div class="value">v1beta1</div></div>
+</div>
+<div class="yaml-block">apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Httproute
+metadata:
+  name: example</div>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <button id="expand-all">Expand all</button>
+    <button id="collapse-all">Collapse all</button>
+  </div>
+  <div class="toolbar-left">
+    <a href="/gateway.networking.k8s.io/httproute_v1beta1.json" target="_blank">View raw schema</a>
+    <button id="copy-url" data-url="/gateway.networking.k8s.io/httproute_v1beta1.json">Copy schema URL</button>
+  </div>
+</div>
+<div id="properties">
+<div class="prop-leaf">
+  <span class="prop-name">apiVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">APIVersion defines the versioned schema of this representation of an object.
+Servers should convert recognized schemas to the latest internal value, and
+may reject unrecognized values.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is a string value representing the REST resource this object represents.
+Servers may infer this from the endpoint the client submits requests to.
+Cannot be updated.
+In CamelCase.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">spec</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Spec defines the desired state of HTTPRoute.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">hostnames</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Hostnames defines a set of hostnames that should match against the HTTP Host
+header to select a HTTPRoute used to process the request. Implementations
+MUST ignore any port value specified in the HTTP Host header while
+performing a match and (absent of any applicable header modification
+configuration) MUST forward this header unmodified to the backend.
+
+Valid values for Hostnames are determined by RFC 1123 definition of a
+hostname with 2 notable exceptions:
+
+1. IPs are not allowed.
+2. A hostname may be prefixed with a wildcard label (`*.`). The wildcard
+   label must appear by itself as the first label.
+
+If a hostname is specified by both the Listener and HTTPRoute, there
+must be at least one intersecting hostname for the HTTPRoute to be
+attached to the Listener. For example:
+
+* A Listener with `test.example.com` as the hostname matches HTTPRoutes
+  that have either not specified any hostnames, or have specified at
+  least one of `test.example.com` or `*.example.com`.
+* A Listener with `*.example.com` as the hostname matches HTTPRoutes
+  that have either not specified any hostnames or have specified at least
+  one hostname that matches the Listener hostname. For example,
+  `*.example.com`, `test.example.com`, and `foo.test.example.com` would
+  all match. On the other hand, `example.com` and `test.example.net` would
+  not match.
+
+Hostnames that are prefixed with a wildcard label (`*.`) are interpreted
+as a suffix match. That means that a match for `*.example.com` would match
+both `test.example.com`, and `foo.test.example.com`, but not `example.com`.
+
+If both the Listener and HTTPRoute have specified hostnames, any
+HTTPRoute hostnames that do not match the Listener hostname MUST be
+ignored. For example, if a Listener specified `*.example.com`, and the
+HTTPRoute specified `test.example.com` and `test.example.net`,
+`test.example.net` must not be considered for a match.
+
+If both the Listener and HTTPRoute have specified hostnames, and none
+match with the criteria above, then the HTTPRoute is not accepted. The
+implementation must raise an &#39;Accepted&#39; Condition with a status of
+`False` in the corresponding RouteParentStatus.
+
+In the event that multiple HTTPRoutes specify intersecting hostnames (e.g.
+overlapping wildcard matching and exact matching hostnames), precedence must
+be given to rules from the HTTPRoute with the largest number of:
+
+* Characters in a matching non-wildcard hostname.
+* Characters in a matching hostname.
+
+If ties exist across multiple Routes, the matching precedence rules for
+HTTPRouteMatches takes over.
+
+Support: Core<div class="leaf-constraints">maxItems: 16</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">parentRefs</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ParentRefs references the resources (usually Gateways) that a Route wants
+to be attached to. Note that the referenced parent resource needs to
+allow this for the attachment to be complete. For Gateways, that means
+the Gateway needs to allow attachment from Routes of this kind and
+namespace. For Services, that means the Service must either be in the same
+namespace for a &#34;producer&#34; route, or the mesh implementation must support
+and allow &#34;consumer&#34; routes for the referenced Service. ReferenceGrant is
+not applicable for governing ParentRefs to Services - it is not possible to
+create a &#34;producer&#34; route for a Service in a different namespace from the
+Route.
+
+There are two kinds of parent resources with &#34;Core&#34; support:
+
+* Gateway (Gateway conformance profile)
+* Service (Mesh conformance profile, ClusterIP Services only)
+
+This API may be extended in the future to support additional kinds of parent
+resources.
+
+ParentRefs must be _distinct_. This means either that:
+
+* They select different objects.  If this is the case, then parentRef
+  entries are distinct. In terms of fields, this means that the
+  multi-part key defined by `group`, `kind`, `namespace`, and `name` must
+  be unique across all parentRef entries in the Route.
+* They do not select different objects, but for each optional field used,
+  each ParentRef that selects the same object must set the same set of
+  optional fields to different values. If one ParentRef sets a
+  combination of optional fields, all must set the same combination.
+
+Some examples:
+
+* If one ParentRef sets `sectionName`, all ParentRefs referencing the
+  same object must also set `sectionName`.
+* If one ParentRef sets `port`, all ParentRefs referencing the same
+  object must also set `port`.
+* If one ParentRef sets `sectionName` and `port`, all ParentRefs
+  referencing the same object must also set `sectionName` and `port`.
+
+It is possible to separately reference multiple distinct objects that may
+be collapsed by an implementation. For example, some implementations may
+choose to merge compatible Gateway Listeners together. If that is the
+case, the list of routes attached to those resources should also be
+merged.
+
+Note that for ParentRefs that cross namespace boundaries, there are specific
+rules. Cross-namespace references are only valid if they are explicitly
+allowed by something in the namespace they are referring to. For example,
+Gateway has the AllowedRoutes field, and ReferenceGrant provides a
+generic way to enable other kinds of cross-namespace reference.
+
+
+ParentRefs from a Route to a Service in the same namespace are &#34;producer&#34;
+routes, which apply default routing rules to inbound connections from
+any namespace to the Service.
+
+ParentRefs from a Route to a Service in a different namespace are
+&#34;consumer&#34; routes, and these routing rules are only applied to outbound
+connections originating from the same namespace as the Route, for which
+the intended destination of the connections are a Service targeted as a
+ParentRef of the Route.</div><div class="prop-constraints">maxItems: 32</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent.
+When unspecified, &#34;gateway.networking.k8s.io&#34; is inferred.
+To set the core API group (such as for a &#34;Service&#34; kind referent),
+Group must be explicitly set to &#34;&#34; (empty string).
+
+Support: Core<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is kind of the referent.
+
+There are two kinds of parent resources with &#34;Core&#34; support:
+
+* Gateway (Gateway conformance profile)
+* Service (Mesh conformance profile, ClusterIP Services only)
+
+Support for other resources is Implementation-Specific.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.
+
+Support: Core<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the referent. When unspecified, this refers
+to the local namespace of the Route.
+
+Note that there are specific rules for ParentRefs which cross namespace
+boundaries. Cross-namespace references are only valid if they are explicitly
+allowed by something in the namespace they are referring to. For example:
+Gateway has the AllowedRoutes field, and ReferenceGrant provides a
+generic way to enable any other kind of cross-namespace reference.
+
+
+ParentRefs from a Route to a Service in the same namespace are &#34;producer&#34;
+routes, which apply default routing rules to inbound connections from
+any namespace to the Service.
+
+ParentRefs from a Route to a Service in a different namespace are
+&#34;consumer&#34; routes, and these routing rules are only applied to outbound
+connections originating from the same namespace as the Route, for which
+the intended destination of the connections are a Service targeted as a
+ParentRef of the Route.
+
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port is the network port this Route targets. It can be interpreted
+differently based on the type of parent resource.
+
+When the parent resource is a Gateway, this targets all listeners
+listening on the specified port that also support this kind of Route(and
+select this Route). It&#39;s not recommended to set `Port` unless the
+networking behaviors specified in a Route must apply to a specific port
+as opposed to a listener(s) whose port(s) may be changed. When both Port
+and SectionName are specified, the name and port of the selected listener
+must match both specified values.
+
+
+When the parent resource is a Service, this targets a specific port in the
+Service spec. When both Port (experimental) and SectionName are specified,
+the name and port of the selected port must match both specified values.
+
+
+Implementations MAY choose to support other parent resources.
+Implementations supporting other types of parent resources MUST clearly
+document how/if Port is interpreted.
+
+For the purpose of status, an attachment is considered successful as
+long as the parent resource accepts it partially. For example, Gateway
+listeners can restrict which Routes can attach to them by Route kind,
+namespace, or hostname. If 1 of 2 Gateway listeners accept attachment
+from the referencing Route, the Route MUST be considered successfully
+attached. If no Gateway listeners accept attachment from this Route,
+the Route MUST be considered detached from the Gateway.
+
+Support: Extended<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sectionName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SectionName is the name of a section within the target resource. In the
+following resources, SectionName is interpreted as the following:
+
+* Gateway: Listener name. When both Port (experimental) and SectionName
+are specified, the name and port of the selected listener must match
+both specified values.
+* Service: Port name. When both Port (experimental) and SectionName
+are specified, the name and port of the selected listener must match
+both specified values.
+
+Implementations MAY choose to support attaching Routes to other resources.
+If that is the case, they MUST clearly document how SectionName is
+interpreted.
+
+When unspecified (empty string), this will reference the entire resource.
+For the purpose of status, an attachment is considered successful if at
+least one section in the parent resource accepts it. For example, Gateway
+listeners can restrict which Routes can attach to them by Route kind,
+namespace, or hostname. If 1 of 2 Gateway listeners accept attachment from
+the referencing Route, the Route MUST be considered successfully
+attached. If no Gateway listeners accept attachment from this Route, the
+Route MUST be considered detached from the Gateway.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">rules</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Rules are a list of HTTP matchers, filters and actions.</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">backendRefs</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">BackendRefs defines the backend(s) where matching requests should be
+sent.
+
+Failure behavior here depends on how many BackendRefs are specified and
+how many are invalid.
+
+If *all* entries in BackendRefs are invalid, and there are also no filters
+specified in this route rule, *all* traffic which matches this rule MUST
+receive a 500 status code.
+
+See the HTTPBackendRef definition for the rules about what makes a single
+HTTPBackendRef invalid.
+
+When a HTTPBackendRef is invalid, 500 status codes MUST be returned for
+requests that would have otherwise been routed to an invalid backend. If
+multiple backends are specified, and some are invalid, the proportion of
+requests that would otherwise have been routed to an invalid backend
+MUST receive a 500 status code.
+
+For example, if two backends are specified with equal weights, and one is
+invalid, 50 percent of traffic must receive a 500. Implementations may
+choose how that 50 percent is determined.
+
+When a HTTPBackendRef refers to a Service that has no ready endpoints,
+implementations SHOULD return a 503 for requests to that backend instead.
+If an implementation chooses to do this, all of the above rules for 500 responses
+MUST also apply for responses that return a 503.
+
+Support: Core for Kubernetes Service
+
+Support: Extended for Kubernetes ServiceImport
+
+Support: Implementation-specific for any other resource
+
+Support for weight: Core</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">filters</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Filters defined at this level should be executed if and only if the
+request is being forwarded to the backend defined here.
+
+Support: Implementation-specific (For broader support of filters, use the
+Filters field in HTTPRouteRule.)</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">cors</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">CORS defines a schema for a filter that responds to the
+cross-origin request based on HTTP response header.
+
+Support: Extended</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">allowCredentials</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">AllowCredentials indicates whether the actual cross-origin request allows
+to include credentials.
+
+When set to true, the gateway will include the `Access-Control-Allow-Credentials`
+response header with value true (case-sensitive).
+
+When set to false or omitted the gateway will omit the header
+`Access-Control-Allow-Credentials` entirely (this is the standard CORS
+behavior).
+
+Support: Extended
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">allowHeaders</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">AllowHeaders indicates which HTTP request headers are supported for
+accessing the requested resource.
+
+Header names are not case sensitive.
+
+Multiple header names in the value of the `Access-Control-Allow-Headers`
+response header are separated by a comma (&#34;,&#34;).
+
+When the `AllowHeaders` field is configured with one or more headers, the
+gateway must return the `Access-Control-Allow-Headers` response header
+which value is present in the `AllowHeaders` field.
+
+If any header name in the `Access-Control-Request-Headers` request header
+is not included in the list of header names specified by the response
+header `Access-Control-Allow-Headers`, it will present an error on the
+client side.
+
+If any header name in the `Access-Control-Allow-Headers` response header
+does not recognize by the client, it will also occur an error on the
+client side.
+
+A wildcard indicates that the requests with all HTTP headers are allowed.
+The `Access-Control-Allow-Headers` response header can only use `*`
+wildcard as value when the `AllowCredentials` field is false or omitted.
+
+When the `AllowCredentials` field is true and `AllowHeaders` field
+specified with the `*` wildcard, the gateway must specify one or more
+HTTP headers in the value of the `Access-Control-Allow-Headers` response
+header. The value of the header `Access-Control-Allow-Headers` is same as
+the `Access-Control-Request-Headers` header provided by the client. If
+the header `Access-Control-Request-Headers` is not included in the
+request, the gateway will omit the `Access-Control-Allow-Headers`
+response header, instead of specifying the `*` wildcard. A Gateway
+implementation may choose to add implementation-specific default headers.
+
+Support: Extended<div class="leaf-constraints">maxItems: 64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">allowMethods</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">AllowMethods indicates which HTTP methods are supported for accessing the
+requested resource.
+
+Valid values are any method defined by RFC9110, along with the special
+value `*`, which represents all HTTP methods are allowed.
+
+Method names are case sensitive, so these values are also case-sensitive.
+(See https://www.rfc-editor.org/rfc/rfc2616#section-5.1.1)
+
+Multiple method names in the value of the `Access-Control-Allow-Methods`
+response header are separated by a comma (&#34;,&#34;).
+
+A CORS-safelisted method is a method that is `GET`, `HEAD`, or `POST`.
+(See https://fetch.spec.whatwg.org/#cors-safelisted-method) The
+CORS-safelisted methods are always allowed, regardless of whether they
+are specified in the `AllowMethods` field.
+
+When the `AllowMethods` field is configured with one or more methods, the
+gateway must return the `Access-Control-Allow-Methods` response header
+which value is present in the `AllowMethods` field.
+
+If the HTTP method of the `Access-Control-Request-Method` request header
+is not included in the list of methods specified by the response header
+`Access-Control-Allow-Methods`, it will present an error on the client
+side.
+
+The `Access-Control-Allow-Methods` response header can only use `*`
+wildcard as value when the `AllowCredentials` field is false or omitted.
+
+When the `AllowCredentials` field is true and `AllowMethods` field
+specified with the `*` wildcard, the gateway must specify one HTTP method
+in the value of the Access-Control-Allow-Methods response header. The
+value of the header `Access-Control-Allow-Methods` is same as the
+`Access-Control-Request-Method` header provided by the client. If the
+header `Access-Control-Request-Method` is not included in the request,
+the gateway will omit the `Access-Control-Allow-Methods` response header,
+instead of specifying the `*` wildcard. A Gateway implementation may
+choose to add implementation-specific default methods.
+
+Support: Extended<div class="leaf-constraints">maxItems: 9</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">allowOrigins</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">AllowOrigins indicates whether the response can be shared with requested
+resource from the given `Origin`.
+
+The `Origin` consists of a scheme and a host, with an optional port, and
+takes the form `&lt;scheme&gt;://&lt;host&gt;(:&lt;port&gt;)`.
+
+Valid values for scheme are: `http` and `https`.
+
+Valid values for port are any integer between 1 and 65535 (the list of
+available TCP/UDP ports). Note that, if not included, port `80` is
+assumed for `http` scheme origins, and port `443` is assumed for `https`
+origins. This may affect origin matching.
+
+The host part of the origin may contain the wildcard character `*`. These
+wildcard characters behave as follows:
+
+* `*` is a greedy match to the _left_, including any number of
+  DNS labels to the left of its position. This also means that
+  `*` will include any number of period `.` characters to the
+  left of its position.
+* A wildcard by itself matches all hosts.
+
+An origin value that includes _only_ the `*` character indicates requests
+from all `Origin`s are allowed.
+
+When the `AllowOrigins` field is configured with multiple origins, it
+means the server supports clients from multiple origins. If the request
+`Origin` matches the configured allowed origins, the gateway must return
+the given `Origin` and sets value of the header
+`Access-Control-Allow-Origin` same as the `Origin` header provided by the
+client.
+
+The status code of a successful response to a &#34;preflight&#34; request is
+always an OK status (i.e., 204 or 200).
+
+If the request `Origin` does not match the configured allowed origins,
+the gateway returns 204/200 response but doesn&#39;t set the relevant
+cross-origin response headers. Alternatively, the gateway responds with
+403 status to the &#34;preflight&#34; request is denied, coupled with omitting
+the CORS headers. The cross-origin request fails on the client side.
+Therefore, the client doesn&#39;t attempt the actual cross-origin request.
+
+The `Access-Control-Allow-Origin` response header can only use `*`
+wildcard as value when the `AllowCredentials` field is false or omitted.
+
+When the `AllowCredentials` field is true and `AllowOrigins` field
+specified with the `*` wildcard, the gateway must return a single origin
+in the value of the `Access-Control-Allow-Origin` response header,
+instead of specifying the `*` wildcard. The value of the header
+`Access-Control-Allow-Origin` is same as the `Origin` header provided by
+the client.
+
+Support: Extended<div class="leaf-constraints">maxItems: 64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">exposeHeaders</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">ExposeHeaders indicates which HTTP response headers can be exposed
+to client-side scripts in response to a cross-origin request.
+
+A CORS-safelisted response header is an HTTP header in a CORS response
+that it is considered safe to expose to the client scripts.
+The CORS-safelisted response headers include the following headers:
+`Cache-Control`
+`Content-Language`
+`Content-Length`
+`Content-Type`
+`Expires`
+`Last-Modified`
+`Pragma`
+(See https://fetch.spec.whatwg.org/#cors-safelisted-response-header-name)
+The CORS-safelisted response headers are exposed to client by default.
+
+When an HTTP header name is specified using the `ExposeHeaders` field,
+this additional header will be exposed as part of the response to the
+client.
+
+Header names are not case sensitive.
+
+Multiple header names in the value of the `Access-Control-Expose-Headers`
+response header are separated by a comma (&#34;,&#34;).
+
+A wildcard indicates that the responses with all HTTP headers are exposed
+to clients. The `Access-Control-Expose-Headers` response header can only
+use `*` wildcard as value when the `AllowCredentials` field is false or omitted.
+
+Support: Extended<div class="leaf-constraints">maxItems: 64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxAge</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxAge indicates the duration (in seconds) for the client to cache the
+results of a &#34;preflight&#34; request.
+
+The information provided by the `Access-Control-Allow-Methods` and
+`Access-Control-Allow-Headers` response headers can be cached by the
+client until the time specified by `Access-Control-Max-Age` elapses.
+
+The default value of `Access-Control-Max-Age` response header is 5
+(seconds).<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">extensionRef</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ExtensionRef is an optional, implementation-specific extension to the
+&#34;filter&#34; behavior.  For example, resource &#34;myroutefilter&#34; in group
+&#34;networking.example.net&#34;). ExtensionRef MUST NOT be used for core and
+extended filters.
+
+This filter can be used multiple times within the same rule.
+
+Support: Implementation-specific</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When unspecified or empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is kind of the referent. For example &#34;HTTPRoute&#34; or &#34;Service&#34;.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">externalAuth</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ExternalAuth configures settings related to sending request details
+to an external auth service. The external service MUST authenticate
+the request, and MAY authorize the request as well.
+
+If there is any problem communicating with the external service,
+this filter MUST fail closed.
+
+Support: Extended</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">backendRef</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">BackendRef is a reference to a backend to send authorization
+requests to.
+
+The backend must speak the selected protocol (GRPC or HTTP) on the
+referenced port.
+
+If the backend service requires TLS, use BackendTLSPolicy to tell the
+implementation to supply the TLS details to be used to connect to that
+backend.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When unspecified or empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is the Kubernetes resource kind of the referent. For example
+&#34;Service&#34;.
+
+Defaults to &#34;Service&#34; when not specified.
+
+ExternalName services can refer to CNAME DNS records that may live
+outside of the cluster and as such are difficult to reason about in
+terms of conformance. They also may not be safe to forward to (see
+CVE-2021-25740 for more information). Implementations SHOULD NOT
+support ExternalName Services.
+
+Support: Core (Services with a type other than ExternalName)
+
+Support: Implementation-specific (Services with type ExternalName)<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the backend. When unspecified, the local
+namespace is inferred.
+
+Note that when a namespace different than the local namespace is specified,
+a ReferenceGrant object is required in the referent namespace to allow that
+namespace&#39;s owner to accept the reference. See the ReferenceGrant
+documentation for details.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port specifies the destination port number to use for this resource.
+Port is required when the referent is a Kubernetes Service. In this
+case, the port number is the service port number, not the target port.
+For other resources, destination port might be derived from the referent
+resource or this field.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">forwardBody</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ForwardBody controls if requests to the authorization server should include
+the body of the client request; and if so, how big that body is allowed
+to be.
+
+It is expected that implementations will buffer the request body up to
+`forwardBody.maxSize` bytes. Bodies over that size must be rejected with a
+4xx series error (413 or 403 are common examples), and fail processing
+of the filter.
+
+If unset, or `forwardBody.maxSize` is set to `0`, then the body will not
+be forwarded.
+
+Feature Name: HTTPRouteExternalAuthForwardBody</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">maxSize</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxSize specifies how large in bytes the largest body that will be buffered
+and sent to the authorization server. If the body size is larger than
+`maxSize`, then the body sent to the authorization server must be
+truncated to `maxSize` bytes.
+
+Experimental note: This behavior needs to be checked against
+various dataplanes; it may need to be changed.
+See https://github.com/kubernetes-sigs/gateway-api/pull/4001#discussion_r2291405746
+for more.
+
+If 0, the body will not be sent to the authorization server.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">grpc</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">GRPCAuthConfig contains configuration for communication with ext_authz
+protocol-speaking backends.
+
+If unset, implementations must assume the default behavior for each
+included field is intended.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">allowedHeaders</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">AllowedRequestHeaders specifies what headers from the client request
+will be sent to the authorization server.
+
+If this list is empty, then all headers must be sent.
+
+If the list has entries, only those entries must be sent.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">http</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HTTPAuthConfig contains configuration for communication with HTTP-speaking
+backends.
+
+If unset, implementations must assume the default behavior for each
+included field is intended.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">allowedHeaders</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">AllowedRequestHeaders specifies what additional headers from the client request
+will be sent to the authorization server.
+
+The following headers must always be sent to the authorization server,
+regardless of this setting:
+
+* `Host`
+* `Method`
+* `Path`
+* `Content-Length`
+* `Authorization`
+
+If this list is empty, then only those headers must be sent.
+
+Note that `Content-Length` has a special behavior, in that the length
+sent must be correct for the actual request to the external authorization
+server - that is, it must reflect the actual number of bytes sent in the
+body of the request to the authorization server.
+
+So if the `forwardBody` stanza is unset, or `forwardBody.maxSize` is set
+to `0`, then `Content-Length` must be `0`. If `forwardBody.maxSize` is set
+to anything other than `0`, then the `Content-Length` of the authorization
+request must be set to the actual number of bytes forwarded.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">allowedResponseHeaders</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">AllowedResponseHeaders specifies what headers from the authorization response
+will be copied into the request to the backend.
+
+If this list is empty, then all headers from the authorization server
+except Authority or Host must be copied.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Path sets the prefix that paths from the client request will have added
+when forwarded to the authorization server.
+
+When empty or unspecified, no prefix is added.
+
+Valid values are the same as the &#34;value&#34; regex for path values in the `match`
+stanza, and the validation regex will screen out invalid paths in the same way.
+Even with the validation, implementations MUST sanitize this input before using it
+directly.<div class="leaf-constraints">pattern: ^(?:[-A-Za-z0-9/._~!$&amp;&#39;()*+,;=:@]|[%][0-9a-fA-F]{2})+$</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">protocol</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">ExternalAuthProtocol describes which protocol to use when communicating with an
+ext_authz authorization server.
+
+When this is set to GRPC, each backend must use the Envoy ext_authz protocol
+on the port specified in `backendRefs`. Requests and responses are defined
+in the protobufs explained at:
+https://www.envoyproxy.io/docs/envoy/latest/api-v3/service/auth/v3/external_auth.proto
+
+When this is set to HTTP, each backend must respond with a `200` status
+code in on a successful authorization. Any other code is considered
+an authorization failure.
+
+Feature Names:
+GRPC Support - HTTPRouteExternalAuthGRPC
+HTTP Support - HTTPRouteExternalAuthHTTP<div class="leaf-constraints">enum: HTTP, GRPC</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">requestHeaderModifier</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RequestHeaderModifier defines a schema for a filter that modifies request
+headers.
+
+Support: Core</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">add</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Add adds the given header(s) (name, value) to the request
+before the action. It appends to any existing values associated
+with the header name.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  add:
+  - name: &#34;my-header&#34;
+    value: &#34;bar,baz&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: foo,bar,baz</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">remove</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Remove the given header(s) from the HTTP request before the action. The
+value of Remove is a list of HTTP header names. Note that the header
+names are case-insensitive (see
+https://datatracker.ietf.org/doc/html/rfc2616#section-4.2).
+
+Input:
+  GET /foo HTTP/1.1
+  my-header1: foo
+  my-header2: bar
+  my-header3: baz
+
+Config:
+  remove: [&#34;my-header1&#34;, &#34;my-header3&#34;]
+
+Output:
+  GET /foo HTTP/1.1
+  my-header2: bar<div class="leaf-constraints">maxItems: 16</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">set</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Set overwrites the request with the given header (name, value)
+before the action.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  set:
+  - name: &#34;my-header&#34;
+    value: &#34;bar&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: bar</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">requestMirror</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RequestMirror defines a schema for a filter that mirrors requests.
+Requests are sent to the specified destination, but responses from
+that destination are ignored.
+
+This filter can be used multiple times within the same rule. Note that
+not all implementations will be able to support mirroring to multiple
+backends.
+
+Support: Extended</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">backendRef</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">BackendRef references a resource where mirrored requests are sent.
+
+Mirrored requests must be sent only to a single destination endpoint
+within this BackendRef, irrespective of how many endpoints are present
+within this BackendRef.
+
+If the referent cannot be found, this BackendRef is invalid and must be
+dropped from the Gateway. The controller must ensure the &#34;ResolvedRefs&#34;
+condition on the Route status is set to `status: False` and not configure
+this backend in the underlying implementation.
+
+If there is a cross-namespace reference to an *existing* object
+that is not allowed by a ReferenceGrant, the controller must ensure the
+&#34;ResolvedRefs&#34;  condition on the Route is set to `status: False`,
+with the &#34;RefNotPermitted&#34; reason and not configure this backend in the
+underlying implementation.
+
+In either error case, the Message of the `ResolvedRefs` Condition
+should be used to provide more detail about the problem.
+
+Support: Extended for Kubernetes Service
+
+Support: Implementation-specific for any other resource</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When unspecified or empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is the Kubernetes resource kind of the referent. For example
+&#34;Service&#34;.
+
+Defaults to &#34;Service&#34; when not specified.
+
+ExternalName services can refer to CNAME DNS records that may live
+outside of the cluster and as such are difficult to reason about in
+terms of conformance. They also may not be safe to forward to (see
+CVE-2021-25740 for more information). Implementations SHOULD NOT
+support ExternalName Services.
+
+Support: Core (Services with a type other than ExternalName)
+
+Support: Implementation-specific (Services with type ExternalName)<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the backend. When unspecified, the local
+namespace is inferred.
+
+Note that when a namespace different than the local namespace is specified,
+a ReferenceGrant object is required in the referent namespace to allow that
+namespace&#39;s owner to accept the reference. See the ReferenceGrant
+documentation for details.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port specifies the destination port number to use for this resource.
+Port is required when the referent is a Kubernetes Service. In this
+case, the port number is the service port number, not the target port.
+For other resources, destination port might be derived from the referent
+resource or this field.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">fraction</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Fraction represents the fraction of requests that should be
+mirrored to BackendRef.
+
+Only one of Fraction or Percent may be specified. If neither field
+is specified, 100% of requests will be mirrored.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">denominator</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">numerator</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">percent</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Percent represents the percentage of requests that should be
+mirrored to BackendRef. Its minimum value is 0 (indicating 0% of
+requests) and its maximum value is 100 (indicating 100% of requests).
+
+Only one of Fraction or Percent may be specified. If neither field
+is specified, 100% of requests will be mirrored.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">requestRedirect</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RequestRedirect defines a schema for a filter that responds to the
+request with an HTTP redirection.
+
+Support: Core</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">hostname</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Hostname is the hostname to be used in the value of the `Location`
+header in the response.
+When empty, the hostname in the `Host` header of the request is used.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">path</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Path defines parameters used to modify the path of the incoming request.
+The modified path is then used to construct the `Location` header. When
+empty, the request path is used as-is.
+
+Support: Extended</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">replaceFullPath</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ReplaceFullPath specifies the value with which to replace the full path
+of a request during a rewrite or redirect.<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">replacePrefixMatch</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ReplacePrefixMatch specifies the value with which to replace the prefix
+match of a request during a rewrite or redirect. For example, a request
+to &#34;/foo/bar&#34; with a prefix match of &#34;/foo&#34; and a ReplacePrefixMatch
+of &#34;/xyz&#34; would be modified to &#34;/xyz/bar&#34;.
+
+Note that this matches the behavior of the PathPrefix match type. This
+matches full path elements. A path element refers to the list of labels
+in the path split by the `/` separator. When specified, a trailing `/` is
+ignored. For example, the paths `/abc`, `/abc/`, and `/abc/def` would all
+match the prefix `/abc`, but the path `/abcd` would not.
+
+ReplacePrefixMatch is only compatible with a `PathPrefix` HTTPRouteMatch.
+Using any other HTTPRouteMatch type on the same HTTPRouteRule will result in
+the implementation setting the Accepted Condition for the Route to `status: False`.
+
+Request Path | Prefix Match | Replace Prefix | Modified Path<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type defines the type of path modifier. Additional types may be
+added in a future release of the API.
+
+Note that values may be added to this enum, implementations
+must ensure that unknown values will not cause a crash.
+
+Unknown values here must result in the implementation setting the
+Accepted Condition for the Route to `status: False`, with a
+Reason of `UnsupportedValue`.<div class="leaf-constraints">enum: ReplaceFullPath, ReplacePrefixMatch</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port is the port to be used in the value of the `Location`
+header in the response.
+
+If no port is specified, the redirect port MUST be derived using the
+following rules:
+
+* If redirect scheme is not-empty, the redirect port MUST be the well-known
+  port associated with the redirect scheme. Specifically &#34;http&#34; to port 80
+  and &#34;https&#34; to port 443. If the redirect scheme does not have a
+  well-known port, the listener port of the Gateway SHOULD be used.
+* If redirect scheme is empty, the redirect port MUST be the Gateway
+  Listener port.
+
+Implementations SHOULD NOT add the port number in the &#39;Location&#39;
+header in the following cases:
+
+* A Location header that will use HTTP (whether that is determined via
+  the Listener protocol or the Scheme field) _and_ use port 80.
+* A Location header that will use HTTPS (whether that is determined via
+  the Listener protocol or the Scheme field) _and_ use port 443.
+
+Support: Extended<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">scheme</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Scheme is the scheme to be used in the value of the `Location` header in
+the response. When empty, the scheme of the request is used.
+
+Scheme redirects can affect the port of the redirect, for more information,
+refer to the documentation for the port field of this filter.
+
+Note that values may be added to this enum, implementations
+must ensure that unknown values will not cause a crash.
+
+Unknown values here must result in the implementation setting the
+Accepted Condition for the Route to `status: False`, with a
+Reason of `UnsupportedValue`.
+
+Support: Extended<div class="leaf-constraints">enum: http, https</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">statusCode</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">StatusCode is the HTTP status code to be used in response.
+
+Note that values may be added to this enum, implementations
+must ensure that unknown values will not cause a crash.
+
+Unknown values here must result in the implementation setting the
+Accepted Condition for the Route to `status: False`, with a
+Reason of `UnsupportedValue`.
+
+Support: Core<div class="leaf-constraints">enum: 301, 302</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">responseHeaderModifier</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ResponseHeaderModifier defines a schema for a filter that modifies response
+headers.
+
+Support: Extended</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">add</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Add adds the given header(s) (name, value) to the request
+before the action. It appends to any existing values associated
+with the header name.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  add:
+  - name: &#34;my-header&#34;
+    value: &#34;bar,baz&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: foo,bar,baz</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">remove</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Remove the given header(s) from the HTTP request before the action. The
+value of Remove is a list of HTTP header names. Note that the header
+names are case-insensitive (see
+https://datatracker.ietf.org/doc/html/rfc2616#section-4.2).
+
+Input:
+  GET /foo HTTP/1.1
+  my-header1: foo
+  my-header2: bar
+  my-header3: baz
+
+Config:
+  remove: [&#34;my-header1&#34;, &#34;my-header3&#34;]
+
+Output:
+  GET /foo HTTP/1.1
+  my-header2: bar<div class="leaf-constraints">maxItems: 16</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">set</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Set overwrites the request with the given header (name, value)
+before the action.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  set:
+  - name: &#34;my-header&#34;
+    value: &#34;bar&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: bar</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type identifies the type of filter to apply. As with other API fields,
+types are classified into three conformance levels:
+
+- Core: Filter types and their corresponding configuration defined by
+  &#34;Support: Core&#34; in this package, e.g. &#34;RequestHeaderModifier&#34;. All
+  implementations must support core filters.
+
+- Extended: Filter types and their corresponding configuration defined by
+  &#34;Support: Extended&#34; in this package, e.g. &#34;RequestMirror&#34;. Implementers
+  are encouraged to support extended filters.
+
+- Implementation-specific: Filters that are defined and supported by
+  specific vendors.
+  In the future, filters showing convergence in behavior across multiple
+  implementations will be considered for inclusion in extended or core
+  conformance levels. Filter-specific configuration for such filters
+  is specified using the ExtensionRef field. `Type` should be set to
+  &#34;ExtensionRef&#34; for custom filters.
+
+Implementers are encouraged to define custom implementation types to
+extend the core API with implementation-specific behavior.
+
+If a reference to a custom filter type cannot be resolved, the filter
+MUST NOT be skipped. Instead, requests that would have been processed by
+that filter MUST receive a HTTP error response.
+
+Note that values may be added to this enum, implementations
+must ensure that unknown values will not cause a crash.
+
+Unknown values here must result in the implementation setting the
+Accepted Condition for the Route to `status: False`, with a
+Reason of `UnsupportedValue`.<div class="leaf-constraints">enum: RequestHeaderModifier, ResponseHeaderModifier, RequestMirror, RequestRedirect, URLRewrite, ExtensionRef, CORS, ExternalAuth</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">urlRewrite</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">URLRewrite defines a schema for a filter that modifies a request during forwarding.
+
+Support: Extended</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">hostname</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Hostname is the value to be used to replace the Host header value during
+forwarding.
+
+Support: Extended<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">path</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Path defines a path rewrite.
+
+Support: Extended</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">replaceFullPath</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ReplaceFullPath specifies the value with which to replace the full path
+of a request during a rewrite or redirect.<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">replacePrefixMatch</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ReplacePrefixMatch specifies the value with which to replace the prefix
+match of a request during a rewrite or redirect. For example, a request
+to &#34;/foo/bar&#34; with a prefix match of &#34;/foo&#34; and a ReplacePrefixMatch
+of &#34;/xyz&#34; would be modified to &#34;/xyz/bar&#34;.
+
+Note that this matches the behavior of the PathPrefix match type. This
+matches full path elements. A path element refers to the list of labels
+in the path split by the `/` separator. When specified, a trailing `/` is
+ignored. For example, the paths `/abc`, `/abc/`, and `/abc/def` would all
+match the prefix `/abc`, but the path `/abcd` would not.
+
+ReplacePrefixMatch is only compatible with a `PathPrefix` HTTPRouteMatch.
+Using any other HTTPRouteMatch type on the same HTTPRouteRule will result in
+the implementation setting the Accepted Condition for the Route to `status: False`.
+
+Request Path | Prefix Match | Replace Prefix | Modified Path<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type defines the type of path modifier. Additional types may be
+added in a future release of the API.
+
+Note that values may be added to this enum, implementations
+must ensure that unknown values will not cause a crash.
+
+Unknown values here must result in the implementation setting the
+Accepted Condition for the Route to `status: False`, with a
+Reason of `UnsupportedValue`.<div class="leaf-constraints">enum: ReplaceFullPath, ReplacePrefixMatch</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When unspecified or empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is the Kubernetes resource kind of the referent. For example
+&#34;Service&#34;.
+
+Defaults to &#34;Service&#34; when not specified.
+
+ExternalName services can refer to CNAME DNS records that may live
+outside of the cluster and as such are difficult to reason about in
+terms of conformance. They also may not be safe to forward to (see
+CVE-2021-25740 for more information). Implementations SHOULD NOT
+support ExternalName Services.
+
+Support: Core (Services with a type other than ExternalName)
+
+Support: Implementation-specific (Services with type ExternalName)<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the backend. When unspecified, the local
+namespace is inferred.
+
+Note that when a namespace different than the local namespace is specified,
+a ReferenceGrant object is required in the referent namespace to allow that
+namespace&#39;s owner to accept the reference. See the ReferenceGrant
+documentation for details.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port specifies the destination port number to use for this resource.
+Port is required when the referent is a Kubernetes Service. In this
+case, the port number is the service port number, not the target port.
+For other resources, destination port might be derived from the referent
+resource or this field.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">weight</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Weight specifies the proportion of requests forwarded to the referenced
+backend. This is computed as weight/(sum of all weights in this
+BackendRefs list). For non-zero values, there may be some epsilon from
+the exact proportion defined here depending on the precision an
+implementation supports. Weight is not a percentage and the sum of
+weights does not need to equal 100.
+
+If only one backend is specified and it has a weight greater than 0, 100%
+of the traffic is forwarded to that backend. If weight is set to 0, no
+traffic should be forwarded for this entry. If unspecified, weight
+defaults to 1.
+
+Support for this field varies based on the context where used.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 1e+06</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">filters</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Filters define the filters that are applied to requests that match
+this rule.
+
+Wherever possible, implementations SHOULD implement filters in the order
+they are specified.
+
+Implementations MAY choose to implement this ordering strictly, rejecting
+any combination or order of filters that cannot be supported. If implementations
+choose a strict interpretation of filter ordering, they MUST clearly document
+that behavior.
+
+To reject an invalid combination or order of filters, implementations SHOULD
+consider the Route Rules with this configuration invalid. If all Route Rules
+in a Route are invalid, the entire Route would be considered invalid. If only
+a portion of Route Rules are invalid, implementations MUST set the
+&#34;PartiallyInvalid&#34; condition for the Route.
+
+Conformance-levels at this level are defined based on the type of filter:
+
+- ALL core filters MUST be supported by all implementations.
+- Implementers are encouraged to support extended filters.
+- Implementation-specific custom filters have no API guarantees across
+  implementations.
+
+Specifying the same filter multiple times is not supported unless explicitly
+indicated in the filter.
+
+All filters are expected to be compatible with each other except for the
+URLRewrite and RequestRedirect filters, which may not be combined. If an
+implementation cannot support other combinations of filters, they must clearly
+document that limitation. In cases where incompatible or unsupported
+filters are specified and cause the `Accepted` condition to be set to status
+`False`, implementations may use the `IncompatibleFilters` reason to specify
+this configuration error.
+
+Support: Core</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">cors</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">CORS defines a schema for a filter that responds to the
+cross-origin request based on HTTP response header.
+
+Support: Extended</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">allowCredentials</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">AllowCredentials indicates whether the actual cross-origin request allows
+to include credentials.
+
+When set to true, the gateway will include the `Access-Control-Allow-Credentials`
+response header with value true (case-sensitive).
+
+When set to false or omitted the gateway will omit the header
+`Access-Control-Allow-Credentials` entirely (this is the standard CORS
+behavior).
+
+Support: Extended
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">allowHeaders</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">AllowHeaders indicates which HTTP request headers are supported for
+accessing the requested resource.
+
+Header names are not case sensitive.
+
+Multiple header names in the value of the `Access-Control-Allow-Headers`
+response header are separated by a comma (&#34;,&#34;).
+
+When the `AllowHeaders` field is configured with one or more headers, the
+gateway must return the `Access-Control-Allow-Headers` response header
+which value is present in the `AllowHeaders` field.
+
+If any header name in the `Access-Control-Request-Headers` request header
+is not included in the list of header names specified by the response
+header `Access-Control-Allow-Headers`, it will present an error on the
+client side.
+
+If any header name in the `Access-Control-Allow-Headers` response header
+does not recognize by the client, it will also occur an error on the
+client side.
+
+A wildcard indicates that the requests with all HTTP headers are allowed.
+The `Access-Control-Allow-Headers` response header can only use `*`
+wildcard as value when the `AllowCredentials` field is false or omitted.
+
+When the `AllowCredentials` field is true and `AllowHeaders` field
+specified with the `*` wildcard, the gateway must specify one or more
+HTTP headers in the value of the `Access-Control-Allow-Headers` response
+header. The value of the header `Access-Control-Allow-Headers` is same as
+the `Access-Control-Request-Headers` header provided by the client. If
+the header `Access-Control-Request-Headers` is not included in the
+request, the gateway will omit the `Access-Control-Allow-Headers`
+response header, instead of specifying the `*` wildcard. A Gateway
+implementation may choose to add implementation-specific default headers.
+
+Support: Extended<div class="leaf-constraints">maxItems: 64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">allowMethods</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">AllowMethods indicates which HTTP methods are supported for accessing the
+requested resource.
+
+Valid values are any method defined by RFC9110, along with the special
+value `*`, which represents all HTTP methods are allowed.
+
+Method names are case sensitive, so these values are also case-sensitive.
+(See https://www.rfc-editor.org/rfc/rfc2616#section-5.1.1)
+
+Multiple method names in the value of the `Access-Control-Allow-Methods`
+response header are separated by a comma (&#34;,&#34;).
+
+A CORS-safelisted method is a method that is `GET`, `HEAD`, or `POST`.
+(See https://fetch.spec.whatwg.org/#cors-safelisted-method) The
+CORS-safelisted methods are always allowed, regardless of whether they
+are specified in the `AllowMethods` field.
+
+When the `AllowMethods` field is configured with one or more methods, the
+gateway must return the `Access-Control-Allow-Methods` response header
+which value is present in the `AllowMethods` field.
+
+If the HTTP method of the `Access-Control-Request-Method` request header
+is not included in the list of methods specified by the response header
+`Access-Control-Allow-Methods`, it will present an error on the client
+side.
+
+The `Access-Control-Allow-Methods` response header can only use `*`
+wildcard as value when the `AllowCredentials` field is false or omitted.
+
+When the `AllowCredentials` field is true and `AllowMethods` field
+specified with the `*` wildcard, the gateway must specify one HTTP method
+in the value of the Access-Control-Allow-Methods response header. The
+value of the header `Access-Control-Allow-Methods` is same as the
+`Access-Control-Request-Method` header provided by the client. If the
+header `Access-Control-Request-Method` is not included in the request,
+the gateway will omit the `Access-Control-Allow-Methods` response header,
+instead of specifying the `*` wildcard. A Gateway implementation may
+choose to add implementation-specific default methods.
+
+Support: Extended<div class="leaf-constraints">maxItems: 9</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">allowOrigins</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">AllowOrigins indicates whether the response can be shared with requested
+resource from the given `Origin`.
+
+The `Origin` consists of a scheme and a host, with an optional port, and
+takes the form `&lt;scheme&gt;://&lt;host&gt;(:&lt;port&gt;)`.
+
+Valid values for scheme are: `http` and `https`.
+
+Valid values for port are any integer between 1 and 65535 (the list of
+available TCP/UDP ports). Note that, if not included, port `80` is
+assumed for `http` scheme origins, and port `443` is assumed for `https`
+origins. This may affect origin matching.
+
+The host part of the origin may contain the wildcard character `*`. These
+wildcard characters behave as follows:
+
+* `*` is a greedy match to the _left_, including any number of
+  DNS labels to the left of its position. This also means that
+  `*` will include any number of period `.` characters to the
+  left of its position.
+* A wildcard by itself matches all hosts.
+
+An origin value that includes _only_ the `*` character indicates requests
+from all `Origin`s are allowed.
+
+When the `AllowOrigins` field is configured with multiple origins, it
+means the server supports clients from multiple origins. If the request
+`Origin` matches the configured allowed origins, the gateway must return
+the given `Origin` and sets value of the header
+`Access-Control-Allow-Origin` same as the `Origin` header provided by the
+client.
+
+The status code of a successful response to a &#34;preflight&#34; request is
+always an OK status (i.e., 204 or 200).
+
+If the request `Origin` does not match the configured allowed origins,
+the gateway returns 204/200 response but doesn&#39;t set the relevant
+cross-origin response headers. Alternatively, the gateway responds with
+403 status to the &#34;preflight&#34; request is denied, coupled with omitting
+the CORS headers. The cross-origin request fails on the client side.
+Therefore, the client doesn&#39;t attempt the actual cross-origin request.
+
+The `Access-Control-Allow-Origin` response header can only use `*`
+wildcard as value when the `AllowCredentials` field is false or omitted.
+
+When the `AllowCredentials` field is true and `AllowOrigins` field
+specified with the `*` wildcard, the gateway must return a single origin
+in the value of the `Access-Control-Allow-Origin` response header,
+instead of specifying the `*` wildcard. The value of the header
+`Access-Control-Allow-Origin` is same as the `Origin` header provided by
+the client.
+
+Support: Extended<div class="leaf-constraints">maxItems: 64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">exposeHeaders</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">ExposeHeaders indicates which HTTP response headers can be exposed
+to client-side scripts in response to a cross-origin request.
+
+A CORS-safelisted response header is an HTTP header in a CORS response
+that it is considered safe to expose to the client scripts.
+The CORS-safelisted response headers include the following headers:
+`Cache-Control`
+`Content-Language`
+`Content-Length`
+`Content-Type`
+`Expires`
+`Last-Modified`
+`Pragma`
+(See https://fetch.spec.whatwg.org/#cors-safelisted-response-header-name)
+The CORS-safelisted response headers are exposed to client by default.
+
+When an HTTP header name is specified using the `ExposeHeaders` field,
+this additional header will be exposed as part of the response to the
+client.
+
+Header names are not case sensitive.
+
+Multiple header names in the value of the `Access-Control-Expose-Headers`
+response header are separated by a comma (&#34;,&#34;).
+
+A wildcard indicates that the responses with all HTTP headers are exposed
+to clients. The `Access-Control-Expose-Headers` response header can only
+use `*` wildcard as value when the `AllowCredentials` field is false or omitted.
+
+Support: Extended<div class="leaf-constraints">maxItems: 64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxAge</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxAge indicates the duration (in seconds) for the client to cache the
+results of a &#34;preflight&#34; request.
+
+The information provided by the `Access-Control-Allow-Methods` and
+`Access-Control-Allow-Headers` response headers can be cached by the
+client until the time specified by `Access-Control-Max-Age` elapses.
+
+The default value of `Access-Control-Max-Age` response header is 5
+(seconds).<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">extensionRef</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ExtensionRef is an optional, implementation-specific extension to the
+&#34;filter&#34; behavior.  For example, resource &#34;myroutefilter&#34; in group
+&#34;networking.example.net&#34;). ExtensionRef MUST NOT be used for core and
+extended filters.
+
+This filter can be used multiple times within the same rule.
+
+Support: Implementation-specific</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When unspecified or empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is kind of the referent. For example &#34;HTTPRoute&#34; or &#34;Service&#34;.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">externalAuth</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ExternalAuth configures settings related to sending request details
+to an external auth service. The external service MUST authenticate
+the request, and MAY authorize the request as well.
+
+If there is any problem communicating with the external service,
+this filter MUST fail closed.
+
+Support: Extended</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">backendRef</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">BackendRef is a reference to a backend to send authorization
+requests to.
+
+The backend must speak the selected protocol (GRPC or HTTP) on the
+referenced port.
+
+If the backend service requires TLS, use BackendTLSPolicy to tell the
+implementation to supply the TLS details to be used to connect to that
+backend.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When unspecified or empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is the Kubernetes resource kind of the referent. For example
+&#34;Service&#34;.
+
+Defaults to &#34;Service&#34; when not specified.
+
+ExternalName services can refer to CNAME DNS records that may live
+outside of the cluster and as such are difficult to reason about in
+terms of conformance. They also may not be safe to forward to (see
+CVE-2021-25740 for more information). Implementations SHOULD NOT
+support ExternalName Services.
+
+Support: Core (Services with a type other than ExternalName)
+
+Support: Implementation-specific (Services with type ExternalName)<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the backend. When unspecified, the local
+namespace is inferred.
+
+Note that when a namespace different than the local namespace is specified,
+a ReferenceGrant object is required in the referent namespace to allow that
+namespace&#39;s owner to accept the reference. See the ReferenceGrant
+documentation for details.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port specifies the destination port number to use for this resource.
+Port is required when the referent is a Kubernetes Service. In this
+case, the port number is the service port number, not the target port.
+For other resources, destination port might be derived from the referent
+resource or this field.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">forwardBody</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ForwardBody controls if requests to the authorization server should include
+the body of the client request; and if so, how big that body is allowed
+to be.
+
+It is expected that implementations will buffer the request body up to
+`forwardBody.maxSize` bytes. Bodies over that size must be rejected with a
+4xx series error (413 or 403 are common examples), and fail processing
+of the filter.
+
+If unset, or `forwardBody.maxSize` is set to `0`, then the body will not
+be forwarded.
+
+Feature Name: HTTPRouteExternalAuthForwardBody</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">maxSize</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxSize specifies how large in bytes the largest body that will be buffered
+and sent to the authorization server. If the body size is larger than
+`maxSize`, then the body sent to the authorization server must be
+truncated to `maxSize` bytes.
+
+Experimental note: This behavior needs to be checked against
+various dataplanes; it may need to be changed.
+See https://github.com/kubernetes-sigs/gateway-api/pull/4001#discussion_r2291405746
+for more.
+
+If 0, the body will not be sent to the authorization server.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">grpc</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">GRPCAuthConfig contains configuration for communication with ext_authz
+protocol-speaking backends.
+
+If unset, implementations must assume the default behavior for each
+included field is intended.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">allowedHeaders</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">AllowedRequestHeaders specifies what headers from the client request
+will be sent to the authorization server.
+
+If this list is empty, then all headers must be sent.
+
+If the list has entries, only those entries must be sent.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">http</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HTTPAuthConfig contains configuration for communication with HTTP-speaking
+backends.
+
+If unset, implementations must assume the default behavior for each
+included field is intended.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">allowedHeaders</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">AllowedRequestHeaders specifies what additional headers from the client request
+will be sent to the authorization server.
+
+The following headers must always be sent to the authorization server,
+regardless of this setting:
+
+* `Host`
+* `Method`
+* `Path`
+* `Content-Length`
+* `Authorization`
+
+If this list is empty, then only those headers must be sent.
+
+Note that `Content-Length` has a special behavior, in that the length
+sent must be correct for the actual request to the external authorization
+server - that is, it must reflect the actual number of bytes sent in the
+body of the request to the authorization server.
+
+So if the `forwardBody` stanza is unset, or `forwardBody.maxSize` is set
+to `0`, then `Content-Length` must be `0`. If `forwardBody.maxSize` is set
+to anything other than `0`, then the `Content-Length` of the authorization
+request must be set to the actual number of bytes forwarded.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">allowedResponseHeaders</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">AllowedResponseHeaders specifies what headers from the authorization response
+will be copied into the request to the backend.
+
+If this list is empty, then all headers from the authorization server
+except Authority or Host must be copied.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Path sets the prefix that paths from the client request will have added
+when forwarded to the authorization server.
+
+When empty or unspecified, no prefix is added.
+
+Valid values are the same as the &#34;value&#34; regex for path values in the `match`
+stanza, and the validation regex will screen out invalid paths in the same way.
+Even with the validation, implementations MUST sanitize this input before using it
+directly.<div class="leaf-constraints">pattern: ^(?:[-A-Za-z0-9/._~!$&amp;&#39;()*+,;=:@]|[%][0-9a-fA-F]{2})+$</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">protocol</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">ExternalAuthProtocol describes which protocol to use when communicating with an
+ext_authz authorization server.
+
+When this is set to GRPC, each backend must use the Envoy ext_authz protocol
+on the port specified in `backendRefs`. Requests and responses are defined
+in the protobufs explained at:
+https://www.envoyproxy.io/docs/envoy/latest/api-v3/service/auth/v3/external_auth.proto
+
+When this is set to HTTP, each backend must respond with a `200` status
+code in on a successful authorization. Any other code is considered
+an authorization failure.
+
+Feature Names:
+GRPC Support - HTTPRouteExternalAuthGRPC
+HTTP Support - HTTPRouteExternalAuthHTTP<div class="leaf-constraints">enum: HTTP, GRPC</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">requestHeaderModifier</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RequestHeaderModifier defines a schema for a filter that modifies request
+headers.
+
+Support: Core</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">add</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Add adds the given header(s) (name, value) to the request
+before the action. It appends to any existing values associated
+with the header name.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  add:
+  - name: &#34;my-header&#34;
+    value: &#34;bar,baz&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: foo,bar,baz</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">remove</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Remove the given header(s) from the HTTP request before the action. The
+value of Remove is a list of HTTP header names. Note that the header
+names are case-insensitive (see
+https://datatracker.ietf.org/doc/html/rfc2616#section-4.2).
+
+Input:
+  GET /foo HTTP/1.1
+  my-header1: foo
+  my-header2: bar
+  my-header3: baz
+
+Config:
+  remove: [&#34;my-header1&#34;, &#34;my-header3&#34;]
+
+Output:
+  GET /foo HTTP/1.1
+  my-header2: bar<div class="leaf-constraints">maxItems: 16</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">set</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Set overwrites the request with the given header (name, value)
+before the action.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  set:
+  - name: &#34;my-header&#34;
+    value: &#34;bar&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: bar</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">requestMirror</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RequestMirror defines a schema for a filter that mirrors requests.
+Requests are sent to the specified destination, but responses from
+that destination are ignored.
+
+This filter can be used multiple times within the same rule. Note that
+not all implementations will be able to support mirroring to multiple
+backends.
+
+Support: Extended</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">backendRef</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">BackendRef references a resource where mirrored requests are sent.
+
+Mirrored requests must be sent only to a single destination endpoint
+within this BackendRef, irrespective of how many endpoints are present
+within this BackendRef.
+
+If the referent cannot be found, this BackendRef is invalid and must be
+dropped from the Gateway. The controller must ensure the &#34;ResolvedRefs&#34;
+condition on the Route status is set to `status: False` and not configure
+this backend in the underlying implementation.
+
+If there is a cross-namespace reference to an *existing* object
+that is not allowed by a ReferenceGrant, the controller must ensure the
+&#34;ResolvedRefs&#34;  condition on the Route is set to `status: False`,
+with the &#34;RefNotPermitted&#34; reason and not configure this backend in the
+underlying implementation.
+
+In either error case, the Message of the `ResolvedRefs` Condition
+should be used to provide more detail about the problem.
+
+Support: Extended for Kubernetes Service
+
+Support: Implementation-specific for any other resource</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When unspecified or empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is the Kubernetes resource kind of the referent. For example
+&#34;Service&#34;.
+
+Defaults to &#34;Service&#34; when not specified.
+
+ExternalName services can refer to CNAME DNS records that may live
+outside of the cluster and as such are difficult to reason about in
+terms of conformance. They also may not be safe to forward to (see
+CVE-2021-25740 for more information). Implementations SHOULD NOT
+support ExternalName Services.
+
+Support: Core (Services with a type other than ExternalName)
+
+Support: Implementation-specific (Services with type ExternalName)<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the backend. When unspecified, the local
+namespace is inferred.
+
+Note that when a namespace different than the local namespace is specified,
+a ReferenceGrant object is required in the referent namespace to allow that
+namespace&#39;s owner to accept the reference. See the ReferenceGrant
+documentation for details.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port specifies the destination port number to use for this resource.
+Port is required when the referent is a Kubernetes Service. In this
+case, the port number is the service port number, not the target port.
+For other resources, destination port might be derived from the referent
+resource or this field.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">fraction</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Fraction represents the fraction of requests that should be
+mirrored to BackendRef.
+
+Only one of Fraction or Percent may be specified. If neither field
+is specified, 100% of requests will be mirrored.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">denominator</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">numerator</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">percent</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Percent represents the percentage of requests that should be
+mirrored to BackendRef. Its minimum value is 0 (indicating 0% of
+requests) and its maximum value is 100 (indicating 100% of requests).
+
+Only one of Fraction or Percent may be specified. If neither field
+is specified, 100% of requests will be mirrored.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">requestRedirect</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RequestRedirect defines a schema for a filter that responds to the
+request with an HTTP redirection.
+
+Support: Core</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">hostname</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Hostname is the hostname to be used in the value of the `Location`
+header in the response.
+When empty, the hostname in the `Host` header of the request is used.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">path</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Path defines parameters used to modify the path of the incoming request.
+The modified path is then used to construct the `Location` header. When
+empty, the request path is used as-is.
+
+Support: Extended</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">replaceFullPath</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ReplaceFullPath specifies the value with which to replace the full path
+of a request during a rewrite or redirect.<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">replacePrefixMatch</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ReplacePrefixMatch specifies the value with which to replace the prefix
+match of a request during a rewrite or redirect. For example, a request
+to &#34;/foo/bar&#34; with a prefix match of &#34;/foo&#34; and a ReplacePrefixMatch
+of &#34;/xyz&#34; would be modified to &#34;/xyz/bar&#34;.
+
+Note that this matches the behavior of the PathPrefix match type. This
+matches full path elements. A path element refers to the list of labels
+in the path split by the `/` separator. When specified, a trailing `/` is
+ignored. For example, the paths `/abc`, `/abc/`, and `/abc/def` would all
+match the prefix `/abc`, but the path `/abcd` would not.
+
+ReplacePrefixMatch is only compatible with a `PathPrefix` HTTPRouteMatch.
+Using any other HTTPRouteMatch type on the same HTTPRouteRule will result in
+the implementation setting the Accepted Condition for the Route to `status: False`.
+
+Request Path | Prefix Match | Replace Prefix | Modified Path<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type defines the type of path modifier. Additional types may be
+added in a future release of the API.
+
+Note that values may be added to this enum, implementations
+must ensure that unknown values will not cause a crash.
+
+Unknown values here must result in the implementation setting the
+Accepted Condition for the Route to `status: False`, with a
+Reason of `UnsupportedValue`.<div class="leaf-constraints">enum: ReplaceFullPath, ReplacePrefixMatch</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port is the port to be used in the value of the `Location`
+header in the response.
+
+If no port is specified, the redirect port MUST be derived using the
+following rules:
+
+* If redirect scheme is not-empty, the redirect port MUST be the well-known
+  port associated with the redirect scheme. Specifically &#34;http&#34; to port 80
+  and &#34;https&#34; to port 443. If the redirect scheme does not have a
+  well-known port, the listener port of the Gateway SHOULD be used.
+* If redirect scheme is empty, the redirect port MUST be the Gateway
+  Listener port.
+
+Implementations SHOULD NOT add the port number in the &#39;Location&#39;
+header in the following cases:
+
+* A Location header that will use HTTP (whether that is determined via
+  the Listener protocol or the Scheme field) _and_ use port 80.
+* A Location header that will use HTTPS (whether that is determined via
+  the Listener protocol or the Scheme field) _and_ use port 443.
+
+Support: Extended<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">scheme</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Scheme is the scheme to be used in the value of the `Location` header in
+the response. When empty, the scheme of the request is used.
+
+Scheme redirects can affect the port of the redirect, for more information,
+refer to the documentation for the port field of this filter.
+
+Note that values may be added to this enum, implementations
+must ensure that unknown values will not cause a crash.
+
+Unknown values here must result in the implementation setting the
+Accepted Condition for the Route to `status: False`, with a
+Reason of `UnsupportedValue`.
+
+Support: Extended<div class="leaf-constraints">enum: http, https</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">statusCode</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">StatusCode is the HTTP status code to be used in response.
+
+Note that values may be added to this enum, implementations
+must ensure that unknown values will not cause a crash.
+
+Unknown values here must result in the implementation setting the
+Accepted Condition for the Route to `status: False`, with a
+Reason of `UnsupportedValue`.
+
+Support: Core<div class="leaf-constraints">enum: 301, 302</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">responseHeaderModifier</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ResponseHeaderModifier defines a schema for a filter that modifies response
+headers.
+
+Support: Extended</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">add</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Add adds the given header(s) (name, value) to the request
+before the action. It appends to any existing values associated
+with the header name.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  add:
+  - name: &#34;my-header&#34;
+    value: &#34;bar,baz&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: foo,bar,baz</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">remove</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Remove the given header(s) from the HTTP request before the action. The
+value of Remove is a list of HTTP header names. Note that the header
+names are case-insensitive (see
+https://datatracker.ietf.org/doc/html/rfc2616#section-4.2).
+
+Input:
+  GET /foo HTTP/1.1
+  my-header1: foo
+  my-header2: bar
+  my-header3: baz
+
+Config:
+  remove: [&#34;my-header1&#34;, &#34;my-header3&#34;]
+
+Output:
+  GET /foo HTTP/1.1
+  my-header2: bar<div class="leaf-constraints">maxItems: 16</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">set</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Set overwrites the request with the given header (name, value)
+before the action.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  set:
+  - name: &#34;my-header&#34;
+    value: &#34;bar&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: bar</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type identifies the type of filter to apply. As with other API fields,
+types are classified into three conformance levels:
+
+- Core: Filter types and their corresponding configuration defined by
+  &#34;Support: Core&#34; in this package, e.g. &#34;RequestHeaderModifier&#34;. All
+  implementations must support core filters.
+
+- Extended: Filter types and their corresponding configuration defined by
+  &#34;Support: Extended&#34; in this package, e.g. &#34;RequestMirror&#34;. Implementers
+  are encouraged to support extended filters.
+
+- Implementation-specific: Filters that are defined and supported by
+  specific vendors.
+  In the future, filters showing convergence in behavior across multiple
+  implementations will be considered for inclusion in extended or core
+  conformance levels. Filter-specific configuration for such filters
+  is specified using the ExtensionRef field. `Type` should be set to
+  &#34;ExtensionRef&#34; for custom filters.
+
+Implementers are encouraged to define custom implementation types to
+extend the core API with implementation-specific behavior.
+
+If a reference to a custom filter type cannot be resolved, the filter
+MUST NOT be skipped. Instead, requests that would have been processed by
+that filter MUST receive a HTTP error response.
+
+Note that values may be added to this enum, implementations
+must ensure that unknown values will not cause a crash.
+
+Unknown values here must result in the implementation setting the
+Accepted Condition for the Route to `status: False`, with a
+Reason of `UnsupportedValue`.<div class="leaf-constraints">enum: RequestHeaderModifier, ResponseHeaderModifier, RequestMirror, RequestRedirect, URLRewrite, ExtensionRef, CORS, ExternalAuth</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">urlRewrite</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">URLRewrite defines a schema for a filter that modifies a request during forwarding.
+
+Support: Extended</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">hostname</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Hostname is the value to be used to replace the Host header value during
+forwarding.
+
+Support: Extended<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">path</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Path defines a path rewrite.
+
+Support: Extended</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">replaceFullPath</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ReplaceFullPath specifies the value with which to replace the full path
+of a request during a rewrite or redirect.<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">replacePrefixMatch</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ReplacePrefixMatch specifies the value with which to replace the prefix
+match of a request during a rewrite or redirect. For example, a request
+to &#34;/foo/bar&#34; with a prefix match of &#34;/foo&#34; and a ReplacePrefixMatch
+of &#34;/xyz&#34; would be modified to &#34;/xyz/bar&#34;.
+
+Note that this matches the behavior of the PathPrefix match type. This
+matches full path elements. A path element refers to the list of labels
+in the path split by the `/` separator. When specified, a trailing `/` is
+ignored. For example, the paths `/abc`, `/abc/`, and `/abc/def` would all
+match the prefix `/abc`, but the path `/abcd` would not.
+
+ReplacePrefixMatch is only compatible with a `PathPrefix` HTTPRouteMatch.
+Using any other HTTPRouteMatch type on the same HTTPRouteRule will result in
+the implementation setting the Accepted Condition for the Route to `status: False`.
+
+Request Path | Prefix Match | Replace Prefix | Modified Path<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type defines the type of path modifier. Additional types may be
+added in a future release of the API.
+
+Note that values may be added to this enum, implementations
+must ensure that unknown values will not cause a crash.
+
+Unknown values here must result in the implementation setting the
+Accepted Condition for the Route to `status: False`, with a
+Reason of `UnsupportedValue`.<div class="leaf-constraints">enum: ReplaceFullPath, ReplacePrefixMatch</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">matches</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Matches define conditions used for matching the rule against incoming
+HTTP requests. Each match is independent, i.e. this rule will be matched
+if **any** one of the matches is satisfied.
+
+For example, take the following matches configuration:
+
+```
+matches:
+- path:
+    value: &#34;/foo&#34;
+  headers:
+  - name: &#34;version&#34;
+    value: &#34;v2&#34;
+- path:
+    value: &#34;/v2/foo&#34;
+```
+
+For a request to match against this rule, a request must satisfy
+EITHER of the two conditions:
+
+- path prefixed with `/foo` AND contains the header `version: v2`
+- path prefix of `/v2/foo`
+
+See the documentation for HTTPRouteMatch on how to specify multiple
+match conditions that should be ANDed together.
+
+If no matches are specified, the default is a prefix
+path match on &#34;/&#34;, which has the effect of matching every
+HTTP request.
+
+Proxy or Load Balancer routing configuration generated from HTTPRoutes
+MUST prioritize matches based on the following criteria, continuing on
+ties. Across all rules specified on applicable Routes, precedence must be
+given to the match having:
+
+* &#34;Exact&#34; path match.
+* &#34;Prefix&#34; path match with largest number of characters.
+* Method match.
+* Largest number of header matches.
+* Largest number of query param matches.
+
+Note: The precedence of RegularExpression path matches are implementation-specific.
+
+If ties still exist across multiple Routes, matching precedence MUST be
+determined in order of the following criteria, continuing on ties:
+
+* The oldest Route based on creation timestamp.
+* The Route appearing first in alphabetical order by
+  &#34;{namespace}/{name}&#34;.
+
+If ties still exist within an HTTPRoute, matching precedence MUST be granted
+to the FIRST matching rule (in list order) with a match meeting the above
+criteria.
+
+When no rules matching a request have been successfully attached to the
+parent a request is coming from, a HTTP 404 status code MUST be returned.</div><div class="prop-constraints">maxItems: 64</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">headers</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Headers specifies HTTP request header matchers. Multiple match values are
+ANDed together, meaning, a request must match all the specified headers
+to select the route.</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, only the first
+entry with an equivalent name MUST be considered for a match. Subsequent
+entries with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.
+
+When a header is repeated in an HTTP request, it is
+implementation-specific behavior as to how this is represented.
+Generally, proxies should follow the guidance from the RFC:
+https://www.rfc-editor.org/rfc/rfc7230.html#section-3.2.2 regarding
+processing a repeated header, with special handling for &#34;Set-Cookie&#34;.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against the value of the header.
+
+Support: Core (Exact)
+
+Support: Implementation-specific (RegularExpression)
+
+Since RegularExpression HeaderMatchType has implementation-specific
+conformance, implementations can support POSIX, PCRE or any other dialects
+of regular expressions. Please read the implementation&#39;s documentation to
+determine the supported dialect.<div class="leaf-constraints">enum: Exact, RegularExpression</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">method</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Method specifies HTTP method matcher.
+When specified, this route will be matched only if the request has the
+specified method.
+
+Support: Extended<div class="leaf-constraints">enum: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">path</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Path specifies a HTTP request path matcher. If this field is not
+specified, a default prefix match on the &#34;/&#34; path is provided.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against the path Value.
+
+Support: Core (Exact, PathPrefix)
+
+Support: Implementation-specific (RegularExpression)<div class="leaf-constraints">enum: Exact, PathPrefix, RegularExpression</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Value of the HTTP path to match against.<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">queryParams</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">QueryParams specifies HTTP query parameter matchers. Multiple match
+values are ANDed together, meaning, a request must match all the
+specified query parameters to select the route.
+
+Support: Extended</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP query param to be matched. This must be an
+exact string match. (See
+https://tools.ietf.org/html/rfc7230#section-2.7.3).
+
+If multiple entries specify equivalent query param names, only the first
+entry with an equivalent name MUST be considered for a match. Subsequent
+entries with an equivalent query param name MUST be ignored.
+
+If a query param is repeated in an HTTP request, the behavior is
+purposely left undefined, since different data planes have different
+capabilities. However, it is *recommended* that implementations should
+match against the first value of the param if the data plane supports it,
+as this behavior is expected in other load balancing contexts outside of
+the Gateway API.
+
+Users SHOULD NOT route traffic based on repeated query params to guard
+themselves against potential differences in the implementations.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against the value of the query parameter.
+
+Support: Extended (Exact)
+
+Support: Implementation-specific (RegularExpression)
+
+Since RegularExpression QueryParamMatchType has Implementation-specific
+conformance, implementations can support POSIX, PCRE or any other
+dialects of regular expressions. Please read the implementation&#39;s
+documentation to determine the supported dialect.<div class="leaf-constraints">enum: Exact, RegularExpression</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP query param to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Name is the name of the route rule. This name MUST be unique within a Route if it is set.
+
+Support: Extended<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">retry</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Retry defines the configuration for when to retry an HTTP request.
+
+Support: Extended</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">attempts</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Attempts specifies the maximum number of times an individual request
+from the gateway to a backend should be retried.
+
+If the maximum number of retries has been attempted without a successful
+response from the backend, the Gateway MUST return an error.
+
+When this field is unspecified, the number of times to attempt to retry
+a backend request is implementation-specific.
+
+Support: Extended
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">backoff</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Backoff specifies the minimum duration a Gateway should wait between
+retry attempts and is represented in Gateway API Duration formatting.
+
+For example, setting the `rules[].retry.backoff` field to the value
+`100ms` will cause a backend request to first be retried approximately
+100 milliseconds after timing out or receiving a response code configured
+to be retryable.
+
+An implementation MAY use an exponential or alternative backoff strategy
+for subsequent retry attempts, MAY cap the maximum backoff duration to
+some amount greater than the specified minimum, and MAY add arbitrary
+jitter to stagger requests, as long as unsuccessful backend requests are
+not retried before the configured minimum duration.
+
+If a Request timeout (`rules[].timeouts.request`) is configured on the
+route, the entire duration of the initial request and any retry attempts
+MUST not exceed the Request timeout duration. If any retry attempts are
+still in progress when the Request timeout duration has been reached,
+these SHOULD be canceled if possible and the Gateway MUST immediately
+return a timeout error.
+
+If a BackendRequest timeout (`rules[].timeouts.backendRequest`) is
+configured on the route, any retry attempts which reach the configured
+BackendRequest timeout duration without a response SHOULD be canceled if
+possible and the Gateway should wait for at least the specified backoff
+duration before attempting to retry the backend request again.
+
+If a BackendRequest timeout is _not_ configured on the route, retry
+attempts MAY time out after an implementation default duration, or MAY
+remain pending until a configured Request timeout or implementation
+default duration for total request time is reached.
+
+When this field is unspecified, the time to wait between retry attempts
+is implementation-specific.
+
+Support: Extended<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">codes</span>
+  <span class="type-badge">[]integer</span>
+  <div class="leaf-desc">Codes defines the HTTP response status codes for which a backend request
+should be retried.
+
+Support: Extended
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">sessionPersistence</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SessionPersistence defines and configures session persistence
+for the route rule.
+
+Support: Extended</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">absoluteTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">AbsoluteTimeout defines the absolute timeout of the persistent
+session. Once the AbsoluteTimeout duration has elapsed, the
+session becomes invalid.
+
+Support: Extended<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">cookieConfig</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">CookieConfig provides configuration settings that are specific
+to cookie-based session persistence.
+
+Support: Core</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">lifetimeType</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">LifetimeType specifies whether the cookie has a permanent or
+session-based lifetime. A permanent cookie persists until its
+specified expiry time, defined by the Expires or Max-Age cookie
+attributes, while a session cookie is deleted when the current
+session ends.
+
+When set to &#34;Permanent&#34;, AbsoluteTimeout indicates the
+cookie&#39;s lifetime via the Expires or Max-Age cookie attributes
+and is required.
+
+When set to &#34;Session&#34;, AbsoluteTimeout indicates the
+absolute lifetime of the cookie tracked by the gateway and
+is optional.
+
+Defaults to &#34;Session&#34;.
+
+Support: Core for &#34;Session&#34; type
+
+Support: Extended for &#34;Permanent&#34; type<div class="leaf-constraints">enum: Permanent, Session</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">idleTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">IdleTimeout defines the idle timeout of the persistent session.
+Once the session has been idle for more than the specified
+IdleTimeout duration, the session becomes invalid.
+
+Support: Extended<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sessionName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SessionName defines the name of the persistent session token
+which may be reflected in the cookie or the header. Users
+should avoid reusing session names to prevent unintended
+consequences, such as rejection or unpredictable behavior.
+
+Support: Implementation-specific<div class="leaf-constraints">maxLength: 128</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type defines the type of session persistence such as through
+the use a header or cookie. Defaults to cookie based session
+persistence.
+
+Support: Core for &#34;Cookie&#34; type
+
+Support: Extended for &#34;Header&#34; type<div class="leaf-constraints">enum: Cookie, Header</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">timeouts</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Timeouts defines the timeouts that can be configured for an HTTP request.
+
+Support: Extended</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">backendRequest</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">BackendRequest specifies a timeout for an individual request from the gateway
+to a backend. This covers the time from when the request first starts being
+sent from the gateway to when the full response has been received from the backend.
+
+Setting a timeout to the zero duration (e.g. &#34;0s&#34;) SHOULD disable the timeout
+completely. Implementations that cannot completely disable the timeout MUST
+instead interpret the zero duration as the longest possible value to which
+the timeout can be set.
+
+An entire client HTTP transaction with a gateway, covered by the Request timeout,
+may result in more than one call from the gateway to the destination backend,
+for example, if automatic retries are supported.
+
+The value of BackendRequest must be a Gateway API Duration string as defined by
+GEP-2257.  When this field is unspecified, its behavior is implementation-specific;
+when specified, the value of BackendRequest must be no more than the value of the
+Request timeout (since the Request timeout encompasses the BackendRequest timeout).
+
+Support: Extended<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">request</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Request specifies the maximum duration for a gateway to respond to an HTTP request.
+If the gateway has not been able to respond before this deadline is met, the gateway
+MUST return a timeout error.
+
+For example, setting the `rules.timeouts.request` field to the value `10s` in an
+`HTTPRoute` will cause a timeout if a client request is taking longer than 10 seconds
+to complete.
+
+Setting a timeout to the zero duration (e.g. &#34;0s&#34;) SHOULD disable the timeout
+completely. Implementations that cannot completely disable the timeout MUST
+instead interpret the zero duration as the longest possible value to which
+the timeout can be set.
+
+This timeout is intended to cover as close to the whole request-response transaction
+as possible although an implementation MAY choose to start the timeout after the entire
+request stream has been received instead of immediately after the transaction is
+initiated by the client.
+
+The value of Request is a Gateway API Duration string as defined by GEP-2257. When this
+field is unspecified, request timeout behavior is implementation-specific.
+
+Support: Extended<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">useDefaultGateways</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">UseDefaultGateways indicates the default Gateway scope to use for this
+Route. If unset (the default) or set to None, the Route will not be
+attached to any default Gateway; if set, it will be attached to any
+default Gateway supporting the named scope, subject to the usual rules
+about which Routes a Gateway is allowed to claim.
+
+Think carefully before using this functionality! The set of default
+Gateways supporting the requested scope can change over time without
+any notice to the Route author, and in many situations it will not be
+appropriate to request a default Gateway for a given Route -- for
+example, a Route with specific security requirements should almost
+certainly not use a default Gateway.<div class="leaf-constraints">enum: All, None</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">status</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Status defines the current state of HTTPRoute.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">parents</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Parents is a list of parent resources (usually Gateways) that are
+associated with the route, and the status of the route with respect to
+each parent. When this route attaches to a parent, the controller that
+manages the parent must add an entry to this list when the controller
+first sees the route and should update the entry as appropriate when the
+route or gateway is modified.
+
+Note that parent references that cannot be resolved by an implementation
+of this API will not be added to this list. Implementations of this API
+can only populate Route status for the Gateways/parent resources they are
+responsible for.
+
+A maximum of 32 Gateways will be represented in this list. An empty list
+means the route has not been attached to any Gateway.</div><div class="prop-constraints">maxItems: 32</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">conditions</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Conditions describes the status of the route with respect to the Gateway.
+Note that the route&#39;s availability is also subject to the Gateway&#39;s own
+status conditions and listener status.
+
+If the Route&#39;s ParentRef specifies an existing Gateway that supports
+Routes of this kind AND that Gateway&#39;s controller has sufficient access,
+then that Gateway&#39;s controller MUST set the &#34;Accepted&#34; condition on the
+Route, to indicate whether the route has been accepted or rejected by the
+Gateway, and why.
+
+A Route MUST be considered &#34;Accepted&#34; if at least one of the Route&#39;s
+rules is implemented by the Gateway.
+
+There are a number of cases where the &#34;Accepted&#34; condition may not be set
+due to lack of controller visibility, that includes when:
+
+* The Route refers to a nonexistent parent.
+* The Route is of a type that the controller does not support.
+* The Route is in a namespace the controller does not have access to.</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">lastTransitionTime</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">lastTransitionTime is the last time the condition transitioned from one status to another.
+This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.<div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">message</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">message is a human readable message indicating details about the transition.
+This may be an empty string.<div class="leaf-constraints">maxLength: 32768</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">observedGeneration</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">observedGeneration represents the .metadata.generation that the condition was set based upon.
+For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+with respect to the current state of the instance.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">reason</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">reason contains a programmatic identifier indicating the reason for the condition&#39;s last transition.
+Producers of specific condition types may define expected values and meanings for this field,
+and whether the values are considered a guaranteed API.
+The value should be a CamelCase string.
+This field may not be empty.<div class="leaf-constraints">pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">status</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">status of the condition, one of True, False, Unknown.<div class="leaf-constraints">enum: True, False, Unknown</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">type of condition in CamelCase or in foo.example.com/CamelCase.<div class="leaf-constraints">pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$</div><div class="leaf-constraints">maxLength: 316</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">controllerName</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">ControllerName is a domain/path string that indicates the name of the
+controller that wrote this status. This corresponds with the
+controllerName field on GatewayClass.
+
+Example: &#34;example.net/gateway-controller&#34;.
+
+The format of this field is DOMAIN &#34;/&#34; PATH, where DOMAIN and PATH are
+valid Kubernetes names
+(https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names).
+
+Controllers MUST populate this field when writing status. Controllers should ensure that
+entries to status populated with their ControllerName are cleaned up when they are no
+longer necessary.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*\/[A-Za-z0-9\/\-._~%!$&amp;&#39;()*+,;=:]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">parentRef</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ParentRef corresponds with a ParentRef in the spec that this
+RouteParentStatus struct describes the status of.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent.
+When unspecified, &#34;gateway.networking.k8s.io&#34; is inferred.
+To set the core API group (such as for a &#34;Service&#34; kind referent),
+Group must be explicitly set to &#34;&#34; (empty string).
+
+Support: Core<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is kind of the referent.
+
+There are two kinds of parent resources with &#34;Core&#34; support:
+
+* Gateway (Gateway conformance profile)
+* Service (Mesh conformance profile, ClusterIP Services only)
+
+Support for other resources is Implementation-Specific.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.
+
+Support: Core<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the referent. When unspecified, this refers
+to the local namespace of the Route.
+
+Note that there are specific rules for ParentRefs which cross namespace
+boundaries. Cross-namespace references are only valid if they are explicitly
+allowed by something in the namespace they are referring to. For example:
+Gateway has the AllowedRoutes field, and ReferenceGrant provides a
+generic way to enable any other kind of cross-namespace reference.
+
+
+ParentRefs from a Route to a Service in the same namespace are &#34;producer&#34;
+routes, which apply default routing rules to inbound connections from
+any namespace to the Service.
+
+ParentRefs from a Route to a Service in a different namespace are
+&#34;consumer&#34; routes, and these routing rules are only applied to outbound
+connections originating from the same namespace as the Route, for which
+the intended destination of the connections are a Service targeted as a
+ParentRef of the Route.
+
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port is the network port this Route targets. It can be interpreted
+differently based on the type of parent resource.
+
+When the parent resource is a Gateway, this targets all listeners
+listening on the specified port that also support this kind of Route(and
+select this Route). It&#39;s not recommended to set `Port` unless the
+networking behaviors specified in a Route must apply to a specific port
+as opposed to a listener(s) whose port(s) may be changed. When both Port
+and SectionName are specified, the name and port of the selected listener
+must match both specified values.
+
+
+When the parent resource is a Service, this targets a specific port in the
+Service spec. When both Port (experimental) and SectionName are specified,
+the name and port of the selected port must match both specified values.
+
+
+Implementations MAY choose to support other parent resources.
+Implementations supporting other types of parent resources MUST clearly
+document how/if Port is interpreted.
+
+For the purpose of status, an attachment is considered successful as
+long as the parent resource accepts it partially. For example, Gateway
+listeners can restrict which Routes can attach to them by Route kind,
+namespace, or hostname. If 1 of 2 Gateway listeners accept attachment
+from the referencing Route, the Route MUST be considered successfully
+attached. If no Gateway listeners accept attachment from this Route,
+the Route MUST be considered detached from the Gateway.
+
+Support: Extended<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sectionName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SectionName is the name of a section within the target resource. In the
+following resources, SectionName is interpreted as the following:
+
+* Gateway: Listener name. When both Port (experimental) and SectionName
+are specified, the name and port of the selected listener must match
+both specified values.
+* Service: Port name. When both Port (experimental) and SectionName
+are specified, the name and port of the selected listener must match
+both specified values.
+
+Implementations MAY choose to support attaching Routes to other resources.
+If that is the case, they MUST clearly document how SectionName is
+interpreted.
+
+When unspecified (empty string), this will reference the entire resource.
+For the purpose of status, an attachment is considered successful if at
+least one section in the parent resource accepts it. For example, Gateway
+listeners can restrict which Routes can attach to them by Route kind,
+namespace, or hostname. If 1 of 2 Gateway listeners accept attachment from
+the referencing Route, the Route MUST be considered successfully
+attached. If no Gateway listeners accept attachment from this Route, the
+Route MUST be considered detached from the Gateway.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+</div>
+<div class="copied-toast" id="toast">Copied!</div>
+<footer>
+  Generated by <a href="https://github.com/sholdee/crd-schema-publisher">crd-schema-publisher</a>
+</footer>
+<script>
+(function(){
+  var props = document.querySelectorAll('.prop');
+  document.getElementById('expand-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.setAttribute('open',''); });
+  });
+  document.getElementById('collapse-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.removeAttribute('open'); });
+  });
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+      }
+      location.href = '/';
+    }
+  });
+  document.getElementById('copy-url').addEventListener('click', function(){
+    var url = location.origin + this.dataset.url;
+    navigator.clipboard.writeText(url).then(function(){
+      clearTimeout(toastTimer);
+      toast.classList.add('show');
+      toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1500);
+    });
+  });
+})();
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+}
+</script>
+</body>
+</html>

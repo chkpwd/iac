@@ -1,0 +1,139 @@
+{
+  "description": "CephObjectRealm represents a Ceph Object Store Gateway Realm",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "additionalProperties": false,
+      "description": "ObjectRealmSpec represent the spec of an ObjectRealm",
+      "nullable": true,
+      "properties": {
+        "defaultRealm": {
+          "description": "Set this realm as the default in Ceph. Only one realm should be default.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "pull": {
+          "additionalProperties": false,
+          "description": "PullSpec represents the pulling specification of a Ceph Object Storage Gateway Realm",
+          "properties": {
+            "endpoint": {
+              "pattern": "^https*://",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "status": {
+      "additionalProperties": false,
+      "description": "Status represents the status of an object",
+      "properties": {
+        "conditions": {
+          "items": {
+            "additionalProperties": false,
+            "description": "Condition represents a status condition on any Rook-Ceph Custom Resource.",
+            "properties": {
+              "lastHeartbeatTime": {
+                "format": "date-time",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lastTransitionTime": {
+                "format": "date-time",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "message": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reason": {
+                "description": "ConditionReason is a reason for a condition",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "type": {
+                "description": "ConditionType represent a resource's status",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "observedGeneration": {
+          "description": "ObservedGeneration is the latest generation observed by the controller.",
+          "format": "int64",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "phase": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ],
+      "x-kubernetes-preserve-unknown-fields": true
+    }
+  },
+  "required": [
+    "metadata"
+  ],
+  "type": "object"
+}

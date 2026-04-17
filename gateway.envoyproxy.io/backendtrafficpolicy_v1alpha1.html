@@ -1,0 +1,3151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Backendtrafficpolicy v1alpha1 — gateway.envoyproxy.io</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root {
+    --bg: #09090b;
+    --bg-surface: rgba(24, 24, 27, 0.6);
+    --bg-hover: rgba(24, 24, 27, 0.8);
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --accent: #6bc1fe;
+    --accent-dim: rgba(107, 193, 254, 0.15);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-active: #6bc1fe;
+    --stat-fg: #fafafa;
+    --required-bg: rgba(251, 191, 36, 0.15);
+    --required-fg: #fbbf24;
+    --stripes-dark: repeating-linear-gradient(100deg, #000 0%, #000 7%, transparent 10%, transparent 12%, #000 16%);
+    --rainbow: repeating-linear-gradient(100deg, #fff 10%, #fff 16%, #fff 22%, #fff 30%);
+  }
+  .light {
+    --bg: #f5f7fa;
+    --bg-surface: #ffffff;
+    --bg-hover: #edf0f4;
+    --fg: #18181b;
+    --fg-muted: #6b7785;
+    --accent: #2563b0;
+    --accent-dim: rgba(37, 99, 176, 0.08);
+    --border: #d8dde4;
+    --border-active: #2563b0;
+    --stat-fg: #18181b;
+    --required-bg: rgba(217, 119, 6, 0.1);
+    --required-fg: #b45309;
+    --stripes-dark: none;
+    --rainbow: none;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--fg);
+    max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem;
+    position: relative; z-index: 1;
+    transition: background 0.2s, color 0.2s;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 31px 47px, rgba(255,255,255,1), transparent),
+      radial-gradient(1px 1px at 212px 23px, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 68px 289px, rgba(255,255,255,0.84), transparent),
+      radial-gradient(1px 1px at 313px 151px, rgba(255,255,255,0.56), transparent),
+      radial-gradient(1px 1px at 157px 371px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(2px 2px at 19px 83px, rgba(255,255,255,0.96), transparent),
+      radial-gradient(1px 1px at 301px 41px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 127px 409px, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 443px 237px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 67px 491px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1px 1px at 11px 37px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1.5px 1.5px at 191px 213px, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1px 1px at 53px 7px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 271px 103px, rgba(255,255,255,0.64), transparent);
+    background-size:
+      397px 397px, 397px 397px, 397px 397px, 397px 397px, 397px 397px,
+      509px 509px, 509px 509px, 509px 509px, 509px 509px, 509px 509px,
+      311px 311px, 311px 311px, 311px 311px, 311px 311px;
+    mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+  }
+  .flare {
+    position: fixed; top: 0; right: 0;
+    width: 100vw; height: 450px; z-index: -1;
+    pointer-events: none;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 300% 200%;
+    background-position: 50% 50%;
+    filter: opacity(50%) saturate(200%);
+    opacity: 0.25;
+    mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+  }
+  .flare::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 200% 100%;
+    background-attachment: fixed;
+    mix-blend-mode: difference;
+  }
+  .light body::before, .light .flare { display: none; }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--fg-muted); cursor: pointer; padding: 0.35rem 0.6rem; font-size: 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .copied-toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #09090b; padding: 0.4rem 1rem;
+    border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none; z-index: 10;
+  }
+  .copied-toast.show { opacity: 1; }
+  footer {
+    margin-top: 3rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center; font-size: 0.8rem; color: var(--fg-muted);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .back-link { font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; }
+  .back-link kbd {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.6rem; color: var(--fg-muted); background: var(--bg-surface);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 0.1rem 0.35rem; line-height: 1;
+  }
+  .meta-cards {
+    display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+  }
+  .meta-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.5rem 1rem;
+  }
+  .meta-card .label { font-size: 0.7rem; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .meta-card .value { font-size: 1rem; font-weight: 600; }
+  .yaml-block {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.5rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.8rem; white-space: pre; overflow-x: auto; color: var(--fg);
+  }
+  .toolbar {
+    display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+    align-items: center; justify-content: space-between;
+  }
+  .toolbar-left { display: flex; gap: 0.75rem; }
+  .toolbar button, .toolbar a {
+    background: none; border: none; color: var(--fg-muted); cursor: pointer;
+    font-size: 0.8rem; padding: 0.2rem 0; transition: color 0.15s;
+  }
+  .toolbar button:hover, .toolbar a:hover { color: var(--accent); text-decoration: underline; }
+  .prop {
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; transition: border-color 0.2s;
+  }
+  .prop[open] { border-color: var(--border-active); border-left-width: 2px; }
+  .prop > summary {
+    padding: 0.5rem 0.75rem; cursor: pointer;
+    font-size: 0.85rem; background: var(--bg-surface); border-radius: 6px;
+    list-style: none; display: flex; align-items: center; gap: 0.5rem;
+    transition: background 0.15s;
+  }
+  .prop > summary::-webkit-details-marker { display: none; }
+  .prop > summary::before { content: "\25B8"; color: var(--fg-muted); font-size: 0.7rem; }
+  .prop[open] > summary::before { content: "\25BE"; color: var(--accent); }
+  .prop > summary:hover { background: var(--bg-hover); }
+  .prop-content { padding: 0.5rem 0.75rem 0.75rem; padding-left: 1.5rem; }
+  .prop-leaf {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem; display: flex; align-items: flex-start; gap: 0.5rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; background: var(--bg-surface);
+  }
+  .prop-leaf .prop-name { min-width: 0; }
+  .prop-name {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    color: var(--accent); font-weight: 600; white-space: nowrap;
+  }
+  .type-badge {
+    background: var(--accent-dim); color: var(--accent);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .required-badge {
+    background: var(--required-bg); color: var(--required-fg);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .prop-desc { color: var(--fg-muted); font-size: 0.82rem; margin-top: 0.25rem; }
+  .prop-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.2rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+  .prop-children { margin-top: 0.5rem; }
+  .leaf-desc { color: var(--fg-muted); font-size: 0.82rem; flex: 1; min-width: 0; }
+  .leaf-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.15rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+</style>
+<script>if(localStorage.getItem('theme')==='light')document.documentElement.className='light';</script>
+</head>
+<body>
+<div class="flare"></div>
+<div class="nav-row">
+  <a href="/" class="back-link">← Back to index <kbd>Esc</kbd></a>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
+</div>
+<div class="meta-cards">
+  <div class="meta-card"><div class="label">Kind</div><div class="value">Backendtrafficpolicy</div></div>
+  <div class="meta-card"><div class="label">Group</div><div class="value">gateway.envoyproxy.io</div></div>
+  <div class="meta-card"><div class="label">Version</div><div class="value">v1alpha1</div></div>
+</div>
+<div class="yaml-block">apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: Backendtrafficpolicy
+metadata:
+  name: example</div>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <button id="expand-all">Expand all</button>
+    <button id="collapse-all">Collapse all</button>
+  </div>
+  <div class="toolbar-left">
+    <a href="/gateway.envoyproxy.io/backendtrafficpolicy_v1alpha1.json" target="_blank">View raw schema</a>
+    <button id="copy-url" data-url="/gateway.envoyproxy.io/backendtrafficpolicy_v1alpha1.json">Copy schema URL</button>
+  </div>
+</div>
+<div id="properties">
+<div class="prop-leaf">
+  <span class="prop-name">apiVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">APIVersion defines the versioned schema of this representation of an object.
+Servers should convert recognized schemas to the latest internal value, and
+may reject unrecognized values.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is a string value representing the REST resource this object represents.
+Servers may infer this from the endpoint the client submits requests to.
+Cannot be updated.
+In CamelCase.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">spec</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">spec defines the desired state of BackendTrafficPolicy.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">circuitBreaker</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Circuit Breaker settings for the upstream connections and requests.
+If not set, circuit breakers will be enabled with the default thresholds</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">maxConnections</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">The maximum number of connections that Envoy will establish to the referenced backend defined within a xRoute rule.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 4.294967295e+09</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxParallelRequests</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">The maximum number of parallel requests that Envoy will make to the referenced backend defined within a xRoute rule.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 4.294967295e+09</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxParallelRetries</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">The maximum number of parallel retries that Envoy will make to the referenced backend defined within a xRoute rule.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 4.294967295e+09</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxPendingRequests</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">The maximum number of pending requests that Envoy will queue to the referenced backend defined within a xRoute rule.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 4.294967295e+09</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxRequestsPerConnection</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">The maximum number of requests that Envoy will make over a single connection to the referenced backend defined within a xRoute rule.
+Default: unlimited.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 4.294967295e+09</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">perEndpoint</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">PerEndpoint defines Circuit Breakers that will apply per-endpoint for an upstream cluster</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">maxConnections</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxConnections configures the maximum number of connections that Envoy will establish per-endpoint to the referenced backend defined within a xRoute rule.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 4.294967295e+09</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">compression</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The compression config for the http streams.
+Deprecated: Use Compressor instead.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">brotli</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">The configuration for Brotli compressor.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">gzip</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">The configuration for GZIP compressor.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">minContentLength</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">MinContentLength defines the minimum response size in bytes to apply compression.
+Responses smaller than this threshold will not be compressed.
+Must be at least 30 bytes as enforced by Envoy Proxy.
+Note that when the suffix is not provided, the value is interpreted as bytes.
+Default: 30 bytes
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">CompressorType defines the compressor type to use for compression.<div class="leaf-constraints">enum: Gzip, Brotli, Zstd</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">zstd</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">The configuration for Zstd compressor.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">compressor</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">The compressor config for the http streams.
+This provides more granular control over compression configuration.
+Order matters: The first compressor in the list is preferred when q-values in Accept-Encoding are equal.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">brotli</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">The configuration for Brotli compressor.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">gzip</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">The configuration for GZIP compressor.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">minContentLength</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">MinContentLength defines the minimum response size in bytes to apply compression.
+Responses smaller than this threshold will not be compressed.
+Must be at least 30 bytes as enforced by Envoy Proxy.
+Note that when the suffix is not provided, the value is interpreted as bytes.
+Default: 30 bytes
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">CompressorType defines the compressor type to use for compression.<div class="leaf-constraints">enum: Gzip, Brotli, Zstd</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">zstd</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">The configuration for Zstd compressor.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">connection</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Connection includes backend connection settings.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">bufferLimit</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">BufferLimit Soft limit on size of the cluster’s connections read and write buffers.
+BufferLimit applies to connection streaming (maybe non-streaming) channel between processes, it&#39;s in user space.
+If unspecified, an implementation defined default is applied (32768 bytes).
+For example, 20Mi, 1Gi, 256Ki etc.
+Note: that when the suffix is not provided, the value is interpreted as bytes.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">preconnect</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Preconnect configures proactive upstream connections to reduce latency by establishing
+connections before they’re needed and avoiding connection establishment overhead.
+
+If unset, Envoy will fetch connections as needed to serve in-flight requests.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">perEndpointPercent</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">PerEndpointPercent configures how many additional connections to maintain per
+upstream endpoint, useful for high-QPS or latency sensitive services. Expressed as a
+percentage of the connections required by active streams
+(e.g. 100 = preconnect disabled, 105 = 1.05x connections per-endpoint, 200 = 2.00×).
+
+Allowed value range is between 100-300. When both PerEndpointPercent and
+PredictivePercent are set, Envoy ensures both are satisfied (max of the two).<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 100</div><div class="leaf-constraints">maximum: 300</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">predictivePercent</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">PredictivePercent configures how many additional connections to maintain
+across the cluster by anticipating which upstream endpoint the load balancer
+will select next, useful for low-QPS services. Relies on deterministic
+loadbalancing and is only supported with Random or RoundRobin.
+Expressed as a percentage of the connections required by active streams
+(e.g. 100 = 1.0 (no preconnect), 105 = 1.05× connections across the cluster, 200 = 2.00×).
+
+Minimum allowed value is 100. When both PerEndpointPercent and PredictivePercent are
+set Envoy ensures both are satisfied per host (max of the two).<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 100</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">socketBufferLimit</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">SocketBufferLimit provides configuration for the maximum buffer size in bytes for each socket
+to backend.
+SocketBufferLimit applies to socket streaming channel between TCP/IP stacks, it&#39;s in kernel space.
+For example, 20Mi, 1Gi, 256Ki etc.
+Note that when the suffix is not provided, the value is interpreted as bytes.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">dns</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">DNS includes dns resolution settings.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">dnsRefreshRate</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">DNSRefreshRate specifies the rate at which DNS records should be refreshed.
+Defaults to 30 seconds.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lookupFamily</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">LookupFamily determines how Envoy would resolve DNS for Routes where the backend is specified as a fully qualified domain name (FQDN).
+If set, this configuration overrides other defaults.<div class="leaf-constraints">enum: IPv4, IPv6, IPv4Preferred, IPv6Preferred, IPv4AndIPv6</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">respectDnsTtl</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">RespectDNSTTL indicates whether the DNS Time-To-Live (TTL) should be respected.
+If the value is set to true, the DNS refresh rate will be set to the resource record’s TTL.
+Defaults to true.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">faultInjection</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">FaultInjection defines the fault injection policy to be applied. This configuration can be used to
+inject delays and abort requests to mimic failure scenarios such as service failures and overloads</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">abort</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">If specified, the request will be aborted if it meets the configuration criteria.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">grpcStatus</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">GrpcStatus specifies the GRPC status code to be returned<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">httpStatus</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">StatusCode specifies the HTTP status code to be returned<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 200</div><div class="leaf-constraints">maximum: 600</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">percentage</span>
+  <span class="type-badge">number</span>
+  <div class="leaf-desc">Percentage specifies the percentage of requests to be aborted. Default 100%, if set 0, no requests will be aborted. Accuracy to 0.0001%.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">delay</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">If specified, a delay will be injected into the request.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">fixedDelay</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">FixedDelay specifies the fixed delay duration<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">percentage</span>
+  <span class="type-badge">number</span>
+  <div class="leaf-desc">Percentage specifies the percentage of requests to be delayed. Default 100%, if set 0, no requests will be delayed. Accuracy to 0.0001%.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">healthCheck</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HealthCheck allows gateway to perform active health checking on backends.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">active</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Active health check configuration</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">grpc</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">GRPC defines the configuration of the GRPC health checker.
+It&#39;s optional, and can only be used if the specified type is GRPC.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">service</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Service to send in the health check request.
+If this is not specified, then the health check request applies to the entire
+server and not to a specific service.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">healthyThreshold</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">HealthyThreshold defines the number of healthy health checks required before a backend host is marked healthy.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">http</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HTTP defines the configuration of http health checker.
+It&#39;s required while the health checker type is HTTP.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">expectedResponse</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ExpectedResponse defines a list of HTTP expected responses to match.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">binary</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Binary payload base64 encoded.<div class="leaf-constraints">format: byte</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">text</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Text payload in plain text.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type defines the type of the payload.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">expectedStatuses</span>
+  <span class="type-badge">[]integer</span>
+  <div class="leaf-desc">ExpectedStatuses defines a list of HTTP response statuses considered healthy.
+Defaults to 200 only
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">hostname</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Hostname defines the HTTP host that will be requested during health checking.
+Default: HTTPRoute or GRPCRoute hostname.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">method</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Method defines the HTTP method used for health checking.
+Defaults to GET
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Path defines the HTTP path that will be requested during health checking.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">initialJitter</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">InitialJitter defines the maximum time Envoy will wait before the first health check.
+Envoy will randomly select a value between 0 and the initial jitter value.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Interval defines the time between active health checks.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">tcp</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TCP defines the configuration of tcp health checker.
+It&#39;s required while the health checker type is TCP.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">receive</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Receive defines the expected response payload.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">binary</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Binary payload base64 encoded.<div class="leaf-constraints">format: byte</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">text</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Text payload in plain text.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type defines the type of the payload.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">send</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Send defines the request payload.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">binary</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Binary payload base64 encoded.<div class="leaf-constraints">format: byte</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">text</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Text payload in plain text.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type defines the type of the payload.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Timeout defines the time to wait for a health check response.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type defines the type of health checker.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">unhealthyThreshold</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">UnhealthyThreshold defines the number of unhealthy health checks required before a backend host is marked unhealthy.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">panicThreshold</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">When number of unhealthy endpoints for a backend reaches this threshold
+Envoy will disregard health status and balance across all endpoints.
+It&#39;s designed to prevent a situation in which host failures cascade throughout the cluster
+as load increases. If not set, the default value is 50%. To disable panic mode, set value to `0`.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">passive</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Passive passive check configuration</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">baseEjectionTime</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">BaseEjectionTime defines the base duration for which a host will be ejected on consecutive failures.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">consecutive5XxErrors</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Consecutive5xxErrors sets the number of consecutive 5xx errors triggering ejection.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">consecutiveGatewayErrors</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">ConsecutiveGatewayErrors sets the number of consecutive gateway errors triggering ejection.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">consecutiveLocalOriginFailures</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">ConsecutiveLocalOriginFailures sets the number of consecutive local origin failures triggering ejection.
+Parameter takes effect only when split_external_local_origin_errors is set to true.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">failurePercentageThreshold</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">FailurePercentageThreshold sets the failure percentage threshold for outlier detection.
+If the failure percentage of a given host is greater than or equal to this value, it will be ejected.
+Defaults to 85.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Interval defines the time between passive health checks.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxEjectionPercent</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxEjectionPercent sets the maximum percentage of hosts in a cluster that can be ejected.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">splitExternalLocalOriginErrors</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">SplitExternalLocalOriginErrors enables splitting of errors between external and local origin.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">http2</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HTTP2 provides HTTP/2 configuration for backend connections.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">initialConnectionWindowSize</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">InitialConnectionWindowSize sets the initial window size for HTTP/2 connections.
+If not set, the default value is 1 MiB.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">initialStreamWindowSize</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">InitialStreamWindowSize sets the initial window size for HTTP/2 streams.
+If not set, the default value is 64 KiB(64*1024).
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxConcurrentStreams</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MaxConcurrentStreams sets the maximum number of concurrent streams allowed per connection.
+If not set, the default value is 100.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 2.147483647e+09</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">onInvalidMessage</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">OnInvalidMessage determines if Envoy will terminate the connection or just the offending stream in the event of HTTP messaging error
+It&#39;s recommended for L2 Envoy deployments to set this value to TerminateStream.
+https://www.envoyproxy.io/docs/envoy/latest/configuration/best_practices/level_two
+Default: TerminateConnection
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">httpUpgrade</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HTTPUpgrade defines the configuration for HTTP protocol upgrades.
+If not specified, the default upgrade configuration(websocket) will be used.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">connect</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Connect specifies the configuration for the CONNECT config.
+This is allowed only when type is CONNECT.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">terminate</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Terminate the CONNECT request, and forwards the payload as raw TCP data.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type is the case-insensitive type of protocol upgrade.
+e.g. `websocket`, `CONNECT`, `spdy/3.1` etc.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">loadBalancer</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">LoadBalancer policy to apply when routing traffic from the gateway to
+the backend endpoints. Defaults to `LeastRequest`.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">consistentHash</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ConsistentHash defines the configuration when the load balancer type is
+set to ConsistentHash</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">cookie</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Cookie configures the cookie hash policy when the consistent hash type is set to Cookie.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">attributes</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Additional Attributes to set for the generated cookie.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the cookie to hash.
+If this cookie does not exist in the request, Envoy will generate a cookie and set
+the TTL on the response back to the client based on Layer 4
+attributes of the backend endpoint, to ensure that these future requests
+go to the same backend endpoint. Make sure to set the TTL field for this case.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">ttl</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">TTL of the generated cookie if the cookie is not present. This value sets the
+Max-Age attribute value.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">header</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Header configures the header hash policy when the consistent hash type is set to Header.
+
+Deprecated: use Headers instead</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the header to hash.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">headers</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Headers configures the header hash policy for each header, when the consistent hash type is set to Headers.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the header to hash.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">queryParams</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">QueryParams configures the query parameter hash policy when the consistent hash type is set to QueryParams.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the query param to hash.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">tableSize</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">The table size for consistent hashing, must be prime number limited to 5000011.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 2</div><div class="leaf-constraints">maximum: 5.000011e+06</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">ConsistentHashType defines the type of input to hash on. Valid Type values are
+&#34;SourceIP&#34;,
+&#34;Header&#34;,
+&#34;Headers&#34;,
+&#34;Cookie&#34;.
+&#34;QueryParams&#34;.<div class="leaf-constraints">enum: SourceIP, Header, Headers, Cookie, QueryParams</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">endpointOverride</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">EndpointOverride defines the configuration for endpoint override.
+When specified, the load balancer will attempt to route requests to endpoints
+based on the override information extracted from request headers or metadata.
+ If the override endpoints are not available, the configured load balancer policy will be used as fallback.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">extractFrom</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ExtractFrom defines the sources to extract endpoint override information from.</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 10</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">header</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Header defines the header to get the override endpoint addresses.
+The header value must specify at least one endpoint in `IP:Port` format or multiple endpoints in `IP:Port,IP:Port,...` format.
+For example `10.0.0.5:8080` or `[2600:4040:5204::1574:24ae]:80`.
+The IPv6 address is enclosed in square brackets.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">slowStart</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SlowStart defines the configuration related to the slow start load balancer policy.
+If set, during slow start window, traffic sent to the newly added hosts will gradually increase.
+Currently this is only supported for RoundRobin and LeastRequest load balancers</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">window</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Window defines the duration of the warm up period for newly added host.
+During slow start window, traffic sent to the newly added hosts will gradually increase.
+Currently only supports linear growth of traffic. For additional details,
+see https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-slowstartconfig<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type decides the type of Load Balancer policy.
+Valid LoadBalancerType values are
+&#34;ConsistentHash&#34;,
+&#34;LeastRequest&#34;,
+&#34;Random&#34;,
+&#34;RoundRobin&#34;.<div class="leaf-constraints">enum: ConsistentHash, LeastRequest, Random, RoundRobin</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">zoneAware</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ZoneAware defines the configuration related to the distribution of requests between locality zones.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">preferLocal</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">PreferLocalZone configures zone-aware routing to prefer sending traffic to the local locality zone.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">force</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ForceLocalZone defines override configuration for forcing all traffic to stay within the local zone instead of the default behavior
+which maintains equal distribution among upstream endpoints while sending as much traffic as possible locally.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">minEndpointsInZoneThreshold</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MinEndpointsInZoneThreshold is the minimum number of upstream endpoints in the local zone required to honor the forceLocalZone
+override. This is useful for protecting zones with fewer endpoints.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">minEndpointsThreshold</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MinEndpointsThreshold is the minimum number of total upstream endpoints across all zones required to enable zone-aware routing.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">percentageEnabled</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Configures percentage of requests that will be considered for zone aware routing if zone aware routing is configured. If not specified, Envoy defaults to 100%.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">mergeType</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">MergeType determines how this configuration is merged with existing BackendTrafficPolicy
+configurations targeting a parent resource. When set, this configuration will be merged
+into a parent BackendTrafficPolicy (i.e. the one targeting a Gateway or Listener).
+This field cannot be set when targeting a parent resource (Gateway).
+If unset, no merging occurs, and only the most specific configuration takes effect.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">proxyProtocol</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ProxyProtocol enables the Proxy Protocol when communicating with the backend.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">version</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Version of ProxyProtol
+Valid ProxyProtocolVersion values are
+&#34;V1&#34;
+&#34;V2&#34;<div class="leaf-constraints">enum: V1, V2</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">rateLimit</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RateLimit allows the user to limit the number of incoming requests
+to a predefined value based on attributes within the traffic flow.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">global</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Global defines global rate limit configuration.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">rules</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Rules are a list of RateLimit selectors and limits. Each rule and its
+associated limit is applied in a mutually exclusive way. If a request
+matches multiple rules, each of their associated limits get applied, so a
+single request might increase the rate limit counters for multiple rules
+if selected. The rate limit service will return a logical OR of the individual
+rate limit decisions of all matching rules. For example, if a request
+matches two rules, one rate limited and one not, the final decision will be
+to rate limit the request.</div><div class="prop-constraints">maxItems: 128</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">clientSelectors</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ClientSelectors holds the list of select conditions to select
+specific clients using attributes from the traffic flow.
+All individual select conditions must hold True for this rule
+and its limit to be applied.
+
+If no client selectors are specified, the rule applies to all traffic of
+the targeted Route.
+
+If the policy targets a Gateway, the rule applies to each Route of the Gateway.
+Please note that each Route has its own rate limit counters. For example,
+if a Gateway has two Routes, and the policy has a rule with limit 10rps,
+each Route will have its own 10rps limit.</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">headers</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Headers is a list of request headers to match. Multiple header values are ANDed together,
+meaning, a request MUST match all the specified headers.</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">invert</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Invert specifies whether the value match result will be inverted.
+Do not set this field when Type=&#34;Distinct&#34;, implying matching on any/all unique
+values within the header.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the HTTP header.
+The header name is case-insensitive unless PreserveHeaderCase is set to true.
+For example, &#34;Foo&#34; and &#34;foo&#34; are considered the same header.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against the value of the header.<div class="leaf-constraints">enum: Exact, RegularExpression, Distinct</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Value within the HTTP header.
+Do not set this field when Type=&#34;Distinct&#34;, implying matching on any/all unique
+values within the header.<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">methods</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Methods is a list of request methods to match. Multiple method values are ORed together,
+meaning, a request can match any one of the specified methods. If not specified, it matches all methods.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">invert</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Invert specifies whether the value match result will be inverted.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value specifies the HTTP method.<div class="leaf-constraints">enum: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">path</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Path is the request path to match.
+Support Exact, PathPrefix and RegularExpression match types.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">invert</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Invert specifies whether the value match result will be inverted.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against the value of the path.<div class="leaf-constraints">enum: Exact, PathPrefix, RegularExpression</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value specifies the HTTP path.<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">queryParams</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">QueryParams is a list of query parameters to match. Multiple query parameter values are ANDed together,
+meaning, a request MUST match all the specified query parameters.</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">invert</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Invert specifies whether the value match result will be inverted.
+Do not set this field when Type=&#34;Distinct&#34;, implying matching on any/all unique
+values within the query parameter.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the query parameter.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against the value of the query parameter.<div class="leaf-constraints">enum: Exact, RegularExpression, Distinct</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Value of the query parameter.
+Do not set this field when Type=&#34;Distinct&#34;, implying matching on any/all unique
+values within the query parameter.<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">sourceCIDR</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SourceCIDR is the client IP Address range to match on.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc"><div class="leaf-constraints">enum: Exact, Distinct</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the IP CIDR that represents the range of Source IP Addresses of the client.
+These could also be the intermediate addresses through which the request has flown through and is part of the  `X-Forwarded-For` header.
+For example, `192.168.0.1/32`, `192.168.0.0/24`, `001:db8::/64`.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">cost</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Cost specifies the cost of requests and responses for the rule.
+
+This is optional and if not specified, the default behavior is to reduce the rate limit counters by 1 on
+the request path and do not reduce the rate limit counters on the response path.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">request</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Request specifies the number to reduce the rate limit counters
+on the request path. If this is not specified, the default behavior
+is to reduce the rate limit counters by 1.
+
+When Envoy receives a request that matches the rule, it tries to reduce the
+rate limit counters by the specified number. If the counter doesn&#39;t have
+enough capacity, the request is rate limited.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">from</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">From specifies where to get the rate limit cost. Currently, only &#34;Number&#34; and &#34;Metadata&#34; are supported.<div class="leaf-constraints">enum: Number, Metadata</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Metadata specifies the per-request metadata to retrieve the usage number from.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Key is the key to retrieve the usage number from the filter metadata.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Namespace is the namespace of the dynamic metadata.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">number</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Number specifies the fixed usage number to reduce the rate limit counters.
+Using zero can be used to only check the rate limit counters without reducing them.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">response</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Response specifies the number to reduce the rate limit counters
+after the response is sent back to the client or the request stream is closed.
+
+The cost is used to reduce the rate limit counters for the matching requests.
+Since the reduction happens after the request stream is complete, the rate limit
+won&#39;t be enforced for the current request, but for the subsequent matching requests.
+
+This is optional and if not specified, the rate limit counters are not reduced
+on the response path.
+
+Currently, this is only supported for HTTP Global Rate Limits.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">from</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">From specifies where to get the rate limit cost. Currently, only &#34;Number&#34; and &#34;Metadata&#34; are supported.<div class="leaf-constraints">enum: Number, Metadata</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Metadata specifies the per-request metadata to retrieve the usage number from.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Key is the key to retrieve the usage number from the filter metadata.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Namespace is the namespace of the dynamic metadata.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">number</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Number specifies the fixed usage number to reduce the rate limit counters.
+Using zero can be used to only check the rate limit counters without reducing them.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">limit</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Limit holds the rate limit values.
+This limit is applied for traffic flows when the selectors
+compute to True, causing the request to be counted towards the limit.
+The limit is enforced and the request is ratelimited, i.e. a response with
+429 HTTP status code is sent back to the client when
+the selected requests have reached the limit.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">requests</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">unit</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">RateLimitUnit specifies the intervals for setting rate limits.
+Valid RateLimitUnit values are &#34;Second&#34;, &#34;Minute&#34;, &#34;Hour&#34;, &#34;Day&#34;, &#34;Month&#34; and &#34;Year&#34;.<div class="leaf-constraints">enum: Second, Minute, Hour, Day, Month, Year</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">shadowMode</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">ShadowMode indicates whether this rate-limit rule runs in shadow mode.
+When enabled, all rate-limiting operations are performed (cache lookups,
+counter updates, telemetry generation), but the outcome is never enforced.
+The request always succeeds, even if the configured limit is exceeded.
+
+Only supported for Global Rate Limits.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">shared</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Shared determines whether this rate limit rule applies across all the policy targets.
+If set to true, the rule is treated as a common bucket and is shared across all policy targets (xRoutes).
+Default: false.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">local</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Local defines local rate limit configuration.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">rules</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Rules are a list of RateLimit selectors and limits. If a request matches
+multiple rules, the strictest limit is applied. For example, if a request
+matches two rules, one with 10rps and one with 20rps, the final limit will
+be based on the rule with 10rps.</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">clientSelectors</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ClientSelectors holds the list of select conditions to select
+specific clients using attributes from the traffic flow.
+All individual select conditions must hold True for this rule
+and its limit to be applied.
+
+If no client selectors are specified, the rule applies to all traffic of
+the targeted Route.
+
+If the policy targets a Gateway, the rule applies to each Route of the Gateway.
+Please note that each Route has its own rate limit counters. For example,
+if a Gateway has two Routes, and the policy has a rule with limit 10rps,
+each Route will have its own 10rps limit.</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">headers</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Headers is a list of request headers to match. Multiple header values are ANDed together,
+meaning, a request MUST match all the specified headers.</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">invert</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Invert specifies whether the value match result will be inverted.
+Do not set this field when Type=&#34;Distinct&#34;, implying matching on any/all unique
+values within the header.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the HTTP header.
+The header name is case-insensitive unless PreserveHeaderCase is set to true.
+For example, &#34;Foo&#34; and &#34;foo&#34; are considered the same header.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against the value of the header.<div class="leaf-constraints">enum: Exact, RegularExpression, Distinct</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Value within the HTTP header.
+Do not set this field when Type=&#34;Distinct&#34;, implying matching on any/all unique
+values within the header.<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">methods</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Methods is a list of request methods to match. Multiple method values are ORed together,
+meaning, a request can match any one of the specified methods. If not specified, it matches all methods.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">invert</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Invert specifies whether the value match result will be inverted.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value specifies the HTTP method.<div class="leaf-constraints">enum: GET, HEAD, POST, PUT, DELETE, CONNECT, OPTIONS, TRACE, PATCH</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">path</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Path is the request path to match.
+Support Exact, PathPrefix and RegularExpression match types.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">invert</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Invert specifies whether the value match result will be inverted.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against the value of the path.<div class="leaf-constraints">enum: Exact, PathPrefix, RegularExpression</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value specifies the HTTP path.<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">queryParams</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">QueryParams is a list of query parameters to match. Multiple query parameter values are ANDed together,
+meaning, a request MUST match all the specified query parameters.</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">invert</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Invert specifies whether the value match result will be inverted.
+Do not set this field when Type=&#34;Distinct&#34;, implying matching on any/all unique
+values within the query parameter.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name of the query parameter.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against the value of the query parameter.<div class="leaf-constraints">enum: Exact, RegularExpression, Distinct</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Value of the query parameter.
+Do not set this field when Type=&#34;Distinct&#34;, implying matching on any/all unique
+values within the query parameter.<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">sourceCIDR</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SourceCIDR is the client IP Address range to match on.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc"><div class="leaf-constraints">enum: Exact, Distinct</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the IP CIDR that represents the range of Source IP Addresses of the client.
+These could also be the intermediate addresses through which the request has flown through and is part of the  `X-Forwarded-For` header.
+For example, `192.168.0.1/32`, `192.168.0.0/24`, `001:db8::/64`.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">cost</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Cost specifies the cost of requests and responses for the rule.
+
+This is optional and if not specified, the default behavior is to reduce the rate limit counters by 1 on
+the request path and do not reduce the rate limit counters on the response path.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">request</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Request specifies the number to reduce the rate limit counters
+on the request path. If this is not specified, the default behavior
+is to reduce the rate limit counters by 1.
+
+When Envoy receives a request that matches the rule, it tries to reduce the
+rate limit counters by the specified number. If the counter doesn&#39;t have
+enough capacity, the request is rate limited.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">from</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">From specifies where to get the rate limit cost. Currently, only &#34;Number&#34; and &#34;Metadata&#34; are supported.<div class="leaf-constraints">enum: Number, Metadata</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Metadata specifies the per-request metadata to retrieve the usage number from.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Key is the key to retrieve the usage number from the filter metadata.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Namespace is the namespace of the dynamic metadata.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">number</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Number specifies the fixed usage number to reduce the rate limit counters.
+Using zero can be used to only check the rate limit counters without reducing them.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">response</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Response specifies the number to reduce the rate limit counters
+after the response is sent back to the client or the request stream is closed.
+
+The cost is used to reduce the rate limit counters for the matching requests.
+Since the reduction happens after the request stream is complete, the rate limit
+won&#39;t be enforced for the current request, but for the subsequent matching requests.
+
+This is optional and if not specified, the rate limit counters are not reduced
+on the response path.
+
+Currently, this is only supported for HTTP Global Rate Limits.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">from</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">From specifies where to get the rate limit cost. Currently, only &#34;Number&#34; and &#34;Metadata&#34; are supported.<div class="leaf-constraints">enum: Number, Metadata</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Metadata specifies the per-request metadata to retrieve the usage number from.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Key is the key to retrieve the usage number from the filter metadata.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Namespace is the namespace of the dynamic metadata.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">number</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Number specifies the fixed usage number to reduce the rate limit counters.
+Using zero can be used to only check the rate limit counters without reducing them.<div class="leaf-constraints">format: int64</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">limit</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Limit holds the rate limit values.
+This limit is applied for traffic flows when the selectors
+compute to True, causing the request to be counted towards the limit.
+The limit is enforced and the request is ratelimited, i.e. a response with
+429 HTTP status code is sent back to the client when
+the selected requests have reached the limit.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">requests</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">unit</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">RateLimitUnit specifies the intervals for setting rate limits.
+Valid RateLimitUnit values are &#34;Second&#34;, &#34;Minute&#34;, &#34;Hour&#34;, &#34;Day&#34;, &#34;Month&#34; and &#34;Year&#34;.<div class="leaf-constraints">enum: Second, Minute, Hour, Day, Month, Year</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">shadowMode</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">ShadowMode indicates whether this rate-limit rule runs in shadow mode.
+When enabled, all rate-limiting operations are performed (cache lookups,
+counter updates, telemetry generation), but the outcome is never enforced.
+The request always succeeds, even if the configured limit is exceeded.
+
+Only supported for Global Rate Limits.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">shared</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">Shared determines whether this rate limit rule applies across all the policy targets.
+If set to true, the rule is treated as a common bucket and is shared across all policy targets (xRoutes).
+Default: false.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type decides the scope for the RateLimits.
+Valid RateLimitType values are &#34;Global&#34; or &#34;Local&#34;.
+
+Deprecated: Use Global and/or Local fields directly instead. Both can be specified simultaneously for combined rate limiting.<div class="leaf-constraints">enum: Global, Local</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">requestBuffer</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RequestBuffer allows the gateway to buffer and fully receive each request from a client before continuing to send the request
+upstream to the backends. This can be helpful to shield your backend servers from slow clients, and also to enforce a maximum size per request
+as any requests larger than the buffer size will be rejected.
+
+This can have a negative performance impact so should only be enabled when necessary.
+
+When enabling this option, you should also configure your connection buffer size to account for these request buffers. There will also be an
+increase in memory usage for Envoy that should be accounted for in your deployment settings.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">limit</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Limit specifies the maximum allowed size in bytes for each incoming request buffer.
+If exceeded, the request will be rejected with HTTP 413 Content Too Large.
+
+Accepts values in resource.Quantity format (e.g., &#34;10Mi&#34;, &#34;500Ki&#34;).
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">responseOverride</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ResponseOverride defines the configuration to override specific responses with a custom one.
+If multiple configurations are specified, the first one to match wins.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">match</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Match configuration.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">statusCodes</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Status code to match on. The match evaluates to true if any of the matches are successful.</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 50</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">range</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Range contains the range of status codes.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">end</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">End of the range, including the end value.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">start</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Start of the range, including the start value.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type is the type of value.
+Valid values are Value and Range, default is Value.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Value contains the value of the status code.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">redirect</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Redirect configuration</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">hostname</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Hostname is the hostname to be used in the value of the `Location`
+header in the response.
+When empty, the hostname in the `Host` header of the request is used.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">path</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Path defines parameters used to modify the path of the incoming request.
+The modified path is then used to construct the `Location` header. When
+empty, the request path is used as-is.
+Only ReplaceFullPath path modifier is supported currently.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">replaceFullPath</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ReplaceFullPath specifies the value with which to replace the full path
+of a request during a rewrite or redirect.<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">replacePrefixMatch</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ReplacePrefixMatch specifies the value with which to replace the prefix
+match of a request during a rewrite or redirect. For example, a request
+to &#34;/foo/bar&#34; with a prefix match of &#34;/foo&#34; and a ReplacePrefixMatch
+of &#34;/xyz&#34; would be modified to &#34;/xyz/bar&#34;.
+
+Note that this matches the behavior of the PathPrefix match type. This
+matches full path elements. A path element refers to the list of labels
+in the path split by the `/` separator. When specified, a trailing `/` is
+ignored. For example, the paths `/abc`, `/abc/`, and `/abc/def` would all
+match the prefix `/abc`, but the path `/abcd` would not.
+
+ReplacePrefixMatch is only compatible with a `PathPrefix` HTTPRouteMatch.
+Using any other HTTPRouteMatch type on the same HTTPRouteRule will result in
+the implementation setting the Accepted Condition for the Route to `status: False`.
+
+Request Path | Prefix Match | Replace Prefix | Modified Path<div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type defines the type of path modifier. Additional types may be
+added in a future release of the API.
+
+Note that values may be added to this enum, implementations
+must ensure that unknown values will not cause a crash.
+
+Unknown values here must result in the implementation setting the
+Accepted Condition for the Route to `status: False`, with a
+Reason of `UnsupportedValue`.<div class="leaf-constraints">enum: ReplaceFullPath, ReplacePrefixMatch</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port is the port to be used in the value of the `Location`
+header in the response.
+
+If redirect scheme is not-empty, the well-known port associated with the redirect scheme will be used.
+Specifically &#34;http&#34; to port 80 and &#34;https&#34; to port 443. If the redirect scheme does not have a
+well-known port or redirect scheme is empty, the listener port of the Gateway will be used.
+
+Port will not be added in the &#39;Location&#39; header if scheme is HTTP and port is 80
+or scheme is HTTPS and port is 443.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">scheme</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Scheme is the scheme to be used in the value of the `Location` header in
+the response. When empty, the scheme of the request is used.<div class="leaf-constraints">enum: http, https</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">statusCode</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">StatusCode is the HTTP status code to be used in response.<div class="leaf-constraints">enum: 301, 302</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">response</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Response configuration.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">body</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Body of the Custom Response
+Supports Envoy command operators for dynamic content (see https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators).</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">inline</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Inline contains the value as an inline string.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type is the type of method to use to read the body value.
+Valid values are Inline and ValueRef, default is Inline.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">valueRef</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ValueRef contains the contents of the body
+specified as a local object reference.
+Only a reference to ConfigMap is supported.
+
+The value of key `response.body` in the ConfigMap will be used as the response body.
+If the key is not found, the first value in the ConfigMap will be used.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When unspecified or empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is kind of the referent. For example &#34;HTTPRoute&#34; or &#34;Service&#34;.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">contentType</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Content Type of the response. This will be set in the Content-Type header.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">header</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Header defines headers to add, set or remove from the response.
+This allows the response policy to append, add or override headers
+of the final response before it is sent to a downstream client.
+Note: Header removal is not supported for responseOverride.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">add</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Add adds the given header(s) (name, value) to the request
+before the action. It appends to any existing values associated
+with the header name.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  add:
+  - name: &#34;my-header&#34;
+    value: &#34;bar,baz&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: foo,bar,baz</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">remove</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Remove the given header(s) from the HTTP request before the action. The
+value of Remove is a list of HTTP header names. Note that the header
+names are case-insensitive (see
+https://datatracker.ietf.org/doc/html/rfc2616#section-4.2).
+
+Input:
+  GET /foo HTTP/1.1
+  my-header1: foo
+  my-header2: bar
+  my-header3: baz
+
+Config:
+  remove: [&#34;my-header1&#34;, &#34;my-header3&#34;]
+
+Output:
+  GET /foo HTTP/1.1
+  my-header2: bar<div class="leaf-constraints">maxItems: 16</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">set</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Set overwrites the request with the given header (name, value)
+before the action.
+
+Input:
+  GET /foo HTTP/1.1
+  my-header: foo
+
+Config:
+  set:
+  - name: &#34;my-header&#34;
+    value: &#34;bar&#34;
+
+Output:
+  GET /foo HTTP/1.1
+  my-header: bar</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the HTTP Header to be matched. Name matching MUST be
+case-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).
+
+If multiple entries specify equivalent header names, the first entry with
+an equivalent name MUST be considered for a match. Subsequent entries
+with an equivalent header name MUST be ignored. Due to the
+case-insensitivity of header names, &#34;foo&#34; and &#34;Foo&#34; are considered
+equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.^_\x60|~]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 256</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">statusCode</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Status Code of the Custom Response
+If unset, does not override the status of response.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">retry</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Retry provides more advanced usage, allowing users to customize the number of retries, retry fallback strategy, and retry triggering conditions.
+If not set, retry will be disabled.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">numAttemptsPerPriority</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">NumAttemptsPerPriority defines the number of requests (initial attempt &#43; retries)
+that should be sent to the same priority before switching to a different one.
+If not specified or set to 0, all requests are sent to the highest priority that is healthy.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">numRetries</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">NumRetries is the number of retries to be attempted. Defaults to 2.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">perRetry</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">PerRetry is the retry policy to be applied per retry attempt.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">backOff</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Backoff is the backoff policy to be applied per retry attempt. gateway uses a fully jittered exponential
+back-off algorithm for retries. For additional details,
+see https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/router_filter#config-http-filters-router-x-envoy-max-retries</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">baseInterval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">BaseInterval is the base interval between retries.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxInterval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">MaxInterval is the maximum interval between retries. This parameter is optional, but must be greater than or equal to the base_interval if set.
+The default is 10 times the base_interval<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Timeout is the timeout per retry attempt.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">retryOn</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RetryOn specifies the retry trigger condition.
+
+If not specified, the default is to retry on connect-failure,refused-stream,unavailable,cancelled,retriable-status-codes(503).</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">httpStatusCodes</span>
+  <span class="type-badge">[]integer</span>
+  <div class="leaf-desc">HttpStatusCodes specifies the http status codes to be retried.
+The retriable-status-codes trigger must also be configured for these status codes to trigger a retry.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">triggers</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Triggers specifies the retry trigger condition(Http/Grpc).
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">routingType</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">RoutingType can be set to &#34;Service&#34; to use the Service Cluster IP for routing to the backend,
+or it can be set to &#34;Endpoint&#34; to use Endpoint routing.
+When specified, this overrides the EnvoyProxy-level setting for the relevant targeRefs.
+If not specified, the EnvoyProxy-level setting is used.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">targetRef</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TargetRef is the name of the resource this policy is being attached to.
+This policy and the TargetRef MUST be in the same namespace for this
+Policy to have effect
+
+Deprecated: use targetRefs/targetSelectors instead</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Group is the group of the target resource.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is kind of the target resource.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the target resource.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sectionName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SectionName is the name of a section within the target resource. When
+unspecified, this targetRef targets the entire resource. In the following
+resources, SectionName is interpreted as the following:
+
+* Gateway: Listener name
+* HTTPRoute: HTTPRouteRule name
+* Service: Port name
+
+If a SectionName is specified, but does not exist on the targeted object,
+the Policy must fail to attach, and the policy implementation should record
+a `ResolvedRefs` or similar Condition in the Policy&#39;s status.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">targetRefs</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TargetRefs are the names of the Gateway resources this policy
+is being attached to.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Group is the group of the target resource.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is kind of the target resource.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the target resource.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sectionName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SectionName is the name of a section within the target resource. When
+unspecified, this targetRef targets the entire resource. In the following
+resources, SectionName is interpreted as the following:
+
+* Gateway: Listener name
+* HTTPRoute: HTTPRouteRule name
+* Service: Port name
+
+If a SectionName is specified, but does not exist on the targeted object,
+the Policy must fail to attach, and the policy implementation should record
+a `ResolvedRefs` or similar Condition in the Policy&#39;s status.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">targetSelectors</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TargetSelectors allow targeting resources for this policy based on labels</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group that this selector targets. Defaults to gateway.networking.k8s.io<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is the resource kind that this selector targets.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">MatchExpressions is a list of label selector requirements. The requirements are ANDed.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">key is the label key that the selector applies to.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">operator represents a key&#39;s relationship to a set of values.
+Valid operators are In, NotIn, Exists and DoesNotExist.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">values is an array of string values. If the operator is In or NotIn,
+the values array must be non-empty. If the operator is Exists or DoesNotExist,
+the values array must be empty. This array is replaced during a strategic
+merge patch.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">MatchLabels are the set of label selectors for identifying the targeted resource
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">tcpKeepalive</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TcpKeepalive settings associated with the upstream client connection.
+Disabled by default.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">idleTime</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The duration a connection needs to be idle before keep-alive
+probes start being sent.
+The duration format is
+Defaults to `7200s`.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The duration between keep-alive probes.
+Defaults to `75s`.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">probes</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">The total number of unacknowledged probes to send before deciding
+the connection is dead.
+Defaults to 9.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">telemetry</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Telemetry configures the telemetry settings for the policy target (Gateway or xRoute).
+This will override the telemetry settings in the EnvoyProxy resource.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">metrics</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Metrics defines metrics configuration for the backend or Route.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">routeStatName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">RouteStatName defines the value of the Route stat_prefix, determining how the route stats are named.
+For more details, see envoy docs: https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/route/v3/route_components.proto#config-route-v3-route
+The supported operators for this pattern are:
+%ROUTE_NAME%: name of Gateway API xRoute resource
+%ROUTE_NAMESPACE%: namespace of Gateway API xRoute resource
+%ROUTE_KIND%: kind of Gateway API xRoute resource
+Example: %ROUTE_KIND%/%ROUTE_NAMESPACE%/%ROUTE_NAME% =&gt; httproute/my-ns/my-route
+Disabled by default.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">tracing</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Tracing configures the tracing settings for the backend or HTTPRoute.
+
+This takes precedence over EnvoyProxy tracing when set.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">customTags</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">CustomTags defines the custom tags to add to each span.
+If provider is kubernetes, pod name and namespace are added by default.
+
+Deprecated: Use Tags instead.
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">samplingFraction</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SamplingFraction represents the fraction of requests that should be
+selected for tracing if no prior sampling decision has been made.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">denominator</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">numerator</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">spanName</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SpanName defines the name of the span which will be used for tracing.
+Envoy [command operators](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators) may be used in the value.
+The [format string documentation](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#config-access-log-format-strings) provides more information.
+
+If not set, the span name is provider specific.
+e.g. Datadog use `ingress` as the default client span name,
+and `router &lt;UPSTREAM_CLUSTER&gt; egress` as the server span name.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">client</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Client defines operation name of the span which will be used for tracing.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">server</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Server defines the operation name of the upstream span which will be used for tracing.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">tags</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Tags defines the custom tags to add to each span.
+Envoy [command operators](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators) may be used in the value.
+The [format string documentation](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#config-access-log-format-strings) provides more information.
+If provider is kubernetes, pod name and namespace are added by default.
+
+Same keys take precedence over CustomTags.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Timeout settings for the backend connections.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">http</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Timeout settings for HTTP.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">connectionIdleTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The idle timeout for an HTTP connection. Idle time is defined as a period in which there are no active requests in the connection.
+Default: 1 hour.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxConnectionDuration</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The maximum duration of an HTTP connection.
+Default: unlimited.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">maxStreamDuration</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">MaxStreamDuration is the maximum duration for a stream to complete. This timeout measures the time
+from when the request is sent until the response stream is fully consumed and does not apply to
+non-streaming requests.
+When set to &#34;0s&#34;, no max duration is applied and streams can run indefinitely.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">requestTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">RequestTimeout is the time until which entire response is received from the upstream.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">tcp</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Timeout settings for TCP.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">connectTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The timeout for network connection establishment, including TCP and TLS handshakes.
+Default: 10 seconds.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">useClientProtocol</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">UseClientProtocol configures Envoy to prefer sending requests to backends using
+the same HTTP protocol that the incoming request used. Defaults to false, which means
+that Envoy will use the protocol indicated by the attached BackendRef.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">status</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">status defines the current status of BackendTrafficPolicy.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">ancestors</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Ancestors is a list of ancestor resources (usually Gateways) that are
+associated with the policy, and the status of the policy with respect to
+each ancestor. When this policy attaches to a parent, the controller that
+manages the parent and the ancestors MUST add an entry to this list when
+the controller first sees the policy and SHOULD update the entry as
+appropriate when the relevant ancestor is modified.
+
+Note that choosing the relevant ancestor is left to the Policy designers;
+an important part of Policy design is designing the right object level at
+which to namespace this status.
+
+Note also that implementations MUST ONLY populate ancestor status for
+the Ancestor resources they are responsible for. Implementations MUST
+use the ControllerName field to uniquely identify the entries in this list
+that they are responsible for.
+
+Note that to achieve this, the list of PolicyAncestorStatus structs
+MUST be treated as a map with a composite key, made up of the AncestorRef
+and ControllerName fields combined.
+
+A maximum of 16 ancestors will be represented in this list. An empty list
+means the Policy is not relevant for any ancestors.
+
+If this slice is full, implementations MUST NOT add further entries.
+Instead they MUST consider the policy unimplementable and signal that
+on any related resources such as the ancestor that would be referenced
+here. For example, if this list was full on BackendTLSPolicy, no
+additional Gateways would be able to reference the Service targeted by
+the BackendTLSPolicy.</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">ancestorRef</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">AncestorRef corresponds with a ParentRef in the spec that this
+PolicyAncestorStatus struct describes the status of.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent.
+When unspecified, &#34;gateway.networking.k8s.io&#34; is inferred.
+To set the core API group (such as for a &#34;Service&#34; kind referent),
+Group must be explicitly set to &#34;&#34; (empty string).
+
+Support: Core<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is kind of the referent.
+
+There are two kinds of parent resources with &#34;Core&#34; support:
+
+* Gateway (Gateway conformance profile)
+* Service (Mesh conformance profile, ClusterIP Services only)
+
+Support for other resources is Implementation-Specific.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.
+
+Support: Core<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the referent. When unspecified, this refers
+to the local namespace of the Route.
+
+Note that there are specific rules for ParentRefs which cross namespace
+boundaries. Cross-namespace references are only valid if they are explicitly
+allowed by something in the namespace they are referring to. For example:
+Gateway has the AllowedRoutes field, and ReferenceGrant provides a
+generic way to enable any other kind of cross-namespace reference.
+
+&lt;gateway:experimental:description&gt;
+ParentRefs from a Route to a Service in the same namespace are &#34;producer&#34;
+routes, which apply default routing rules to inbound connections from
+any namespace to the Service.
+
+ParentRefs from a Route to a Service in a different namespace are
+&#34;consumer&#34; routes, and these routing rules are only applied to outbound
+connections originating from the same namespace as the Route, for which
+the intended destination of the connections are a Service targeted as a
+ParentRef of the Route.
+&lt;/gateway:experimental:description&gt;
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port is the network port this Route targets. It can be interpreted
+differently based on the type of parent resource.
+
+When the parent resource is a Gateway, this targets all listeners
+listening on the specified port that also support this kind of Route(and
+select this Route). It&#39;s not recommended to set `Port` unless the
+networking behaviors specified in a Route must apply to a specific port
+as opposed to a listener(s) whose port(s) may be changed. When both Port
+and SectionName are specified, the name and port of the selected listener
+must match both specified values.
+
+&lt;gateway:experimental:description&gt;
+When the parent resource is a Service, this targets a specific port in the
+Service spec. When both Port (experimental) and SectionName are specified,
+the name and port of the selected port must match both specified values.
+&lt;/gateway:experimental:description&gt;
+
+Implementations MAY choose to support other parent resources.
+Implementations supporting other types of parent resources MUST clearly
+document how/if Port is interpreted.
+
+For the purpose of status, an attachment is considered successful as
+long as the parent resource accepts it partially. For example, Gateway
+listeners can restrict which Routes can attach to them by Route kind,
+namespace, or hostname. If 1 of 2 Gateway listeners accept attachment
+from the referencing Route, the Route MUST be considered successfully
+attached. If no Gateway listeners accept attachment from this Route,
+the Route MUST be considered detached from the Gateway.
+
+Support: Extended<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">sectionName</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">SectionName is the name of a section within the target resource. In the
+following resources, SectionName is interpreted as the following:
+
+* Gateway: Listener name. When both Port (experimental) and SectionName
+are specified, the name and port of the selected listener must match
+both specified values.
+* Service: Port name. When both Port (experimental) and SectionName
+are specified, the name and port of the selected listener must match
+both specified values.
+
+Implementations MAY choose to support attaching Routes to other resources.
+If that is the case, they MUST clearly document how SectionName is
+interpreted.
+
+When unspecified (empty string), this will reference the entire resource.
+For the purpose of status, an attachment is considered successful if at
+least one section in the parent resource accepts it. For example, Gateway
+listeners can restrict which Routes can attach to them by Route kind,
+namespace, or hostname. If 1 of 2 Gateway listeners accept attachment from
+the referencing Route, the Route MUST be considered successfully
+attached. If no Gateway listeners accept attachment from this Route, the
+Route MUST be considered detached from the Gateway.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">conditions</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Conditions describes the status of the Policy with respect to the given Ancestor.
+
+&lt;gateway:util:excludeFromCRD&gt;
+
+Notes for implementors:
+
+Conditions are a listType `map`, which means that they function like a
+map with a key of the `type` field _in the k8s apiserver_.
+
+This means that implementations must obey some rules when updating this
+section.
+
+* Implementations MUST perform a read-modify-write cycle on this field
+  before modifying it. That is, when modifying this field, implementations
+  must be confident they have fetched the most recent version of this field,
+  and ensure that changes they make are on that recent version.
+* Implementations MUST NOT remove or reorder Conditions that they are not
+  directly responsible for. For example, if an implementation sees a Condition
+  with type `special.io/SomeField`, it MUST NOT remove, change or update that
+  Condition.
+* Implementations MUST always _merge_ changes into Conditions of the same Type,
+  rather than creating more than one Condition of the same Type.
+* Implementations MUST always update the `observedGeneration` field of the
+  Condition to the `metadata.generation` of the Gateway at the time of update creation.
+* If the `observedGeneration` of a Condition is _greater than_ the value the
+  implementation knows about, then it MUST NOT perform the update on that Condition,
+  but must wait for a future reconciliation and status update. (The assumption is that
+  the implementation&#39;s copy of the object is stale and an update will be re-triggered
+  if relevant.)
+
+&lt;/gateway:util:excludeFromCRD&gt;</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">lastTransitionTime</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">lastTransitionTime is the last time the condition transitioned from one status to another.
+This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.<div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">message</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">message is a human readable message indicating details about the transition.
+This may be an empty string.<div class="leaf-constraints">maxLength: 32768</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">observedGeneration</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">observedGeneration represents the .metadata.generation that the condition was set based upon.
+For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+with respect to the current state of the instance.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">reason</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">reason contains a programmatic identifier indicating the reason for the condition&#39;s last transition.
+Producers of specific condition types may define expected values and meanings for this field,
+and whether the values are considered a guaranteed API.
+The value should be a CamelCase string.
+This field may not be empty.<div class="leaf-constraints">pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">status</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">status of the condition, one of True, False, Unknown.<div class="leaf-constraints">enum: True, False, Unknown</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">type of condition in CamelCase or in foo.example.com/CamelCase.<div class="leaf-constraints">pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$</div><div class="leaf-constraints">maxLength: 316</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">controllerName</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">ControllerName is a domain/path string that indicates the name of the
+controller that wrote this status. This corresponds with the
+controllerName field on GatewayClass.
+
+Example: &#34;example.net/gateway-controller&#34;.
+
+The format of this field is DOMAIN &#34;/&#34; PATH, where DOMAIN and PATH are
+valid Kubernetes names
+(https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names).
+
+Controllers MUST populate this field when writing status. Controllers should ensure that
+entries to status populated with their ControllerName are cleaned up when they are no
+longer necessary.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*\/[A-Za-z0-9\/\-._~%!$&amp;&#39;()*+,;=:]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+</div>
+<div class="copied-toast" id="toast">Copied!</div>
+<footer>
+  Generated by <a href="https://github.com/sholdee/crd-schema-publisher">crd-schema-publisher</a>
+</footer>
+<script>
+(function(){
+  var props = document.querySelectorAll('.prop');
+  document.getElementById('expand-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.setAttribute('open',''); });
+  });
+  document.getElementById('collapse-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.removeAttribute('open'); });
+  });
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+      }
+      location.href = '/';
+    }
+  });
+  document.getElementById('copy-url').addEventListener('click', function(){
+    var url = location.origin + this.dataset.url;
+    navigator.clipboard.writeText(url).then(function(){
+      clearTimeout(toastTimer);
+      toast.classList.add('show');
+      toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1500);
+    });
+  });
+})();
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+}
+</script>
+</body>
+</html>

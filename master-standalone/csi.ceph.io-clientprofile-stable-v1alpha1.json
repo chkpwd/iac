@@ -1,0 +1,143 @@
+{
+  "description": "ClientProfile is the Schema for the clientprofiles API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "spec": {
+      "additionalProperties": false,
+      "description": "ClientProfileSpec defines the desired state of Ceph CSI\nconfiguration for volumes and snapshots configured to use\nthis profile",
+      "properties": {
+        "cephConnectionRef": {
+          "additionalProperties": false,
+          "description": "LocalObjectReference contains enough information to let you locate the\nreferenced object inside the same namespace.",
+          "properties": {
+            "name": {
+              "default": "",
+              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": "object",
+          "x-kubernetes-map-type": "atomic",
+          "x-kubernetes-validations": [
+            {
+              "message": "'.name' cannot be empty",
+              "rule": "self.name != \"\""
+            }
+          ]
+        },
+        "cephFs": {
+          "additionalProperties": false,
+          "description": "CephFsConfigSpec defines the desired CephFs configuration",
+          "properties": {
+            "fuseMountOptions": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "kernelMountOptions": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "radosNamespace": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "x-kubernetes-validations": [
+                {
+                  "message": "field is immutable",
+                  "rule": "self == oldSelf"
+                }
+              ]
+            },
+            "subVolumeGroup": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "nfs": {
+          "description": "NfsConfigSpec cdefines the desired NFS configuration",
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "rbd": {
+          "additionalProperties": false,
+          "description": "RbdConfigSpec defines the desired RBD configuration",
+          "properties": {
+            "radosNamespace": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "x-kubernetes-validations": [
+                {
+                  "message": "field is immutable",
+                  "rule": "self == oldSelf"
+                }
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "cephConnectionRef"
+      ],
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "status": {
+      "description": "ClientProfileStatus defines the observed state of Ceph CSI\nconfiguration for volumes and snapshots configured to use\nthis profile",
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

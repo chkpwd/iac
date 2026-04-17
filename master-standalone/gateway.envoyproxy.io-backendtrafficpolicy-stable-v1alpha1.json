@@ -1,0 +1,3493 @@
+{
+  "description": "BackendTrafficPolicy allows the user to configure the behavior of the connection\nbetween the Envoy Proxy listener and the backend service.",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "spec": {
+      "additionalProperties": false,
+      "description": "spec defines the desired state of BackendTrafficPolicy.",
+      "properties": {
+        "circuitBreaker": {
+          "additionalProperties": false,
+          "description": "Circuit Breaker settings for the upstream connections and requests.\nIf not set, circuit breakers will be enabled with the default thresholds",
+          "properties": {
+            "maxConnections": {
+              "default": 1024,
+              "description": "The maximum number of connections that Envoy will establish to the referenced backend defined within a xRoute rule.",
+              "format": "int64",
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "maxParallelRequests": {
+              "default": 1024,
+              "description": "The maximum number of parallel requests that Envoy will make to the referenced backend defined within a xRoute rule.",
+              "format": "int64",
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "maxParallelRetries": {
+              "default": 1024,
+              "description": "The maximum number of parallel retries that Envoy will make to the referenced backend defined within a xRoute rule.",
+              "format": "int64",
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "maxPendingRequests": {
+              "default": 1024,
+              "description": "The maximum number of pending requests that Envoy will queue to the referenced backend defined within a xRoute rule.",
+              "format": "int64",
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "maxRequestsPerConnection": {
+              "description": "The maximum number of requests that Envoy will make over a single connection to the referenced backend defined within a xRoute rule.\nDefault: unlimited.",
+              "format": "int64",
+              "maximum": 4294967295,
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "perEndpoint": {
+              "additionalProperties": false,
+              "description": "PerEndpoint defines Circuit Breakers that will apply per-endpoint for an upstream cluster",
+              "properties": {
+                "maxConnections": {
+                  "default": 1024,
+                  "description": "MaxConnections configures the maximum number of connections that Envoy will establish per-endpoint to the referenced backend defined within a xRoute rule.",
+                  "format": "int64",
+                  "maximum": 4294967295,
+                  "minimum": 0,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "compression": {
+          "description": "The compression config for the http streams.\nDeprecated: Use Compressor instead.",
+          "items": {
+            "additionalProperties": false,
+            "description": "Compression defines the config of enabling compression.\nThis can help reduce the bandwidth at the expense of higher CPU.",
+            "properties": {
+              "brotli": {
+                "description": "The configuration for Brotli compressor.",
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "gzip": {
+                "description": "The configuration for GZIP compressor.",
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "minContentLength": {
+                "allOf": [
+                  {
+                    "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
+                  },
+                  {
+                    "pattern": "^[1-9]+[0-9]*([EPTGMK]i|[EPTGMk])?$"
+                  }
+                ],
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "description": "MinContentLength defines the minimum response size in bytes to apply compression.\nResponses smaller than this threshold will not be compressed.\nMust be at least 30 bytes as enforced by Envoy Proxy.\nNote that when the suffix is not provided, the value is interpreted as bytes.\nDefault: 30 bytes",
+                "x-kubernetes-int-or-string": true
+              },
+              "type": {
+                "description": "CompressorType defines the compressor type to use for compression.",
+                "enum": [
+                  "Gzip",
+                  "Brotli",
+                  "Zstd"
+                ],
+                "type": "string"
+              },
+              "zstd": {
+                "description": "The configuration for Zstd compressor.",
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "compressor": {
+          "description": "The compressor config for the http streams.\nThis provides more granular control over compression configuration.\nOrder matters: The first compressor in the list is preferred when q-values in Accept-Encoding are equal.",
+          "items": {
+            "additionalProperties": false,
+            "description": "Compression defines the config of enabling compression.\nThis can help reduce the bandwidth at the expense of higher CPU.",
+            "properties": {
+              "brotli": {
+                "description": "The configuration for Brotli compressor.",
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "gzip": {
+                "description": "The configuration for GZIP compressor.",
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "minContentLength": {
+                "allOf": [
+                  {
+                    "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
+                  },
+                  {
+                    "pattern": "^[1-9]+[0-9]*([EPTGMK]i|[EPTGMk])?$"
+                  }
+                ],
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "description": "MinContentLength defines the minimum response size in bytes to apply compression.\nResponses smaller than this threshold will not be compressed.\nMust be at least 30 bytes as enforced by Envoy Proxy.\nNote that when the suffix is not provided, the value is interpreted as bytes.\nDefault: 30 bytes",
+                "x-kubernetes-int-or-string": true
+              },
+              "type": {
+                "description": "CompressorType defines the compressor type to use for compression.",
+                "enum": [
+                  "Gzip",
+                  "Brotli",
+                  "Zstd"
+                ],
+                "type": "string"
+              },
+              "zstd": {
+                "description": "The configuration for Zstd compressor.",
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "connection": {
+          "additionalProperties": false,
+          "description": "Connection includes backend connection settings.",
+          "properties": {
+            "bufferLimit": {
+              "allOf": [
+                {
+                  "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
+                },
+                {
+                  "pattern": "^[1-9]+[0-9]*([EPTGMK]i|[EPTGMk])?$"
+                }
+              ],
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "description": "BufferLimit Soft limit on size of the cluster’s connections read and write buffers.\nBufferLimit applies to connection streaming (maybe non-streaming) channel between processes, it's in user space.\nIf unspecified, an implementation defined default is applied (32768 bytes).\nFor example, 20Mi, 1Gi, 256Ki etc.\nNote: that when the suffix is not provided, the value is interpreted as bytes.",
+              "x-kubernetes-int-or-string": true
+            },
+            "preconnect": {
+              "additionalProperties": false,
+              "description": "Preconnect configures proactive upstream connections to reduce latency by establishing\nconnections before they’re needed and avoiding connection establishment overhead.\n\nIf unset, Envoy will fetch connections as needed to serve in-flight requests.",
+              "properties": {
+                "perEndpointPercent": {
+                  "description": "PerEndpointPercent configures how many additional connections to maintain per\nupstream endpoint, useful for high-QPS or latency sensitive services. Expressed as a\npercentage of the connections required by active streams\n(e.g. 100 = preconnect disabled, 105 = 1.05x connections per-endpoint, 200 = 2.00×).\n\nAllowed value range is between 100-300. When both PerEndpointPercent and\nPredictivePercent are set, Envoy ensures both are satisfied (max of the two).",
+                  "format": "int32",
+                  "maximum": 300,
+                  "minimum": 100,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "predictivePercent": {
+                  "description": "PredictivePercent configures how many additional connections to maintain\nacross the cluster by anticipating which upstream endpoint the load balancer\nwill select next, useful for low-QPS services. Relies on deterministic\nloadbalancing and is only supported with Random or RoundRobin.\nExpressed as a percentage of the connections required by active streams\n(e.g. 100 = 1.0 (no preconnect), 105 = 1.05× connections across the cluster, 200 = 2.00×).\n\nMinimum allowed value is 100. When both PerEndpointPercent and PredictivePercent are\nset Envoy ensures both are satisfied per host (max of the two).",
+                  "format": "int32",
+                  "minimum": 100,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "socketBufferLimit": {
+              "allOf": [
+                {
+                  "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
+                },
+                {
+                  "pattern": "^[1-9]+[0-9]*([EPTGMK]i|[EPTGMk])?$"
+                }
+              ],
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "description": "SocketBufferLimit provides configuration for the maximum buffer size in bytes for each socket\nto backend.\nSocketBufferLimit applies to socket streaming channel between TCP/IP stacks, it's in kernel space.\nFor example, 20Mi, 1Gi, 256Ki etc.\nNote that when the suffix is not provided, the value is interpreted as bytes.",
+              "x-kubernetes-int-or-string": true
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "dns": {
+          "additionalProperties": false,
+          "description": "DNS includes dns resolution settings.",
+          "properties": {
+            "dnsRefreshRate": {
+              "description": "DNSRefreshRate specifies the rate at which DNS records should be refreshed.\nDefaults to 30 seconds.",
+              "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "lookupFamily": {
+              "description": "LookupFamily determines how Envoy would resolve DNS for Routes where the backend is specified as a fully qualified domain name (FQDN).\nIf set, this configuration overrides other defaults.",
+              "enum": [
+                "IPv4",
+                "IPv6",
+                "IPv4Preferred",
+                "IPv6Preferred",
+                "IPv4AndIPv6"
+              ],
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "respectDnsTtl": {
+              "description": "RespectDNSTTL indicates whether the DNS Time-To-Live (TTL) should be respected.\nIf the value is set to true, the DNS refresh rate will be set to the resource record’s TTL.\nDefaults to true.",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "faultInjection": {
+          "additionalProperties": false,
+          "description": "FaultInjection defines the fault injection policy to be applied. This configuration can be used to\ninject delays and abort requests to mimic failure scenarios such as service failures and overloads",
+          "properties": {
+            "abort": {
+              "additionalProperties": false,
+              "description": "If specified, the request will be aborted if it meets the configuration criteria.",
+              "properties": {
+                "grpcStatus": {
+                  "description": "GrpcStatus specifies the GRPC status code to be returned",
+                  "format": "int32",
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "httpStatus": {
+                  "description": "StatusCode specifies the HTTP status code to be returned",
+                  "format": "int32",
+                  "maximum": 600,
+                  "minimum": 200,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "percentage": {
+                  "default": 100,
+                  "description": "Percentage specifies the percentage of requests to be aborted. Default 100%, if set 0, no requests will be aborted. Accuracy to 0.0001%.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ],
+              "x-kubernetes-validations": [
+                {
+                  "message": "httpStatus and grpcStatus cannot be simultaneously defined.",
+                  "rule": " !(has(self.httpStatus) \u0026\u0026 has(self.grpcStatus)) "
+                },
+                {
+                  "message": "httpStatus and grpcStatus are set at least one.",
+                  "rule": " has(self.httpStatus) || has(self.grpcStatus) "
+                }
+              ]
+            },
+            "delay": {
+              "additionalProperties": false,
+              "description": "If specified, a delay will be injected into the request.",
+              "properties": {
+                "fixedDelay": {
+                  "description": "FixedDelay specifies the fixed delay duration",
+                  "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                  "type": "string"
+                },
+                "percentage": {
+                  "default": 100,
+                  "description": "Percentage specifies the percentage of requests to be delayed. Default 100%, if set 0, no requests will be delayed. Accuracy to 0.0001%.",
+                  "type": [
+                    "number",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "fixedDelay"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "Delay and abort faults are set at least one.",
+              "rule": " has(self.delay) || has(self.abort) "
+            }
+          ]
+        },
+        "healthCheck": {
+          "additionalProperties": false,
+          "description": "HealthCheck allows gateway to perform active health checking on backends.",
+          "properties": {
+            "active": {
+              "additionalProperties": false,
+              "description": "Active health check configuration",
+              "properties": {
+                "grpc": {
+                  "additionalProperties": false,
+                  "description": "GRPC defines the configuration of the GRPC health checker.\nIt's optional, and can only be used if the specified type is GRPC.",
+                  "properties": {
+                    "service": {
+                      "description": "Service to send in the health check request.\nIf this is not specified, then the health check request applies to the entire\nserver and not to a specific service.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "healthyThreshold": {
+                  "default": 1,
+                  "description": "HealthyThreshold defines the number of healthy health checks required before a backend host is marked healthy.",
+                  "format": "int32",
+                  "minimum": 1,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "http": {
+                  "additionalProperties": false,
+                  "description": "HTTP defines the configuration of http health checker.\nIt's required while the health checker type is HTTP.",
+                  "properties": {
+                    "expectedResponse": {
+                      "additionalProperties": false,
+                      "description": "ExpectedResponse defines a list of HTTP expected responses to match.",
+                      "properties": {
+                        "binary": {
+                          "description": "Binary payload base64 encoded.",
+                          "format": "byte",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "text": {
+                          "description": "Text payload in plain text.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "allOf": [
+                            {
+                              "enum": [
+                                "Text",
+                                "Binary"
+                              ]
+                            },
+                            {
+                              "enum": [
+                                "Text",
+                                "Binary"
+                              ]
+                            }
+                          ],
+                          "description": "Type defines the type of the payload.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "x-kubernetes-validations": [
+                        {
+                          "message": "If payload type is Text, text field needs to be set.",
+                          "rule": "self.type == 'Text' ? has(self.text) : !has(self.text)"
+                        },
+                        {
+                          "message": "If payload type is Binary, binary field needs to be set.",
+                          "rule": "self.type == 'Binary' ? has(self.binary) : !has(self.binary)"
+                        }
+                      ]
+                    },
+                    "expectedStatuses": {
+                      "description": "ExpectedStatuses defines a list of HTTP response statuses considered healthy.\nDefaults to 200 only",
+                      "items": {
+                        "description": "HTTPStatus defines the http status code.",
+                        "maximum": 599,
+                        "minimum": 100,
+                        "type": "integer"
+                      },
+                      "type": [
+                        "array",
+                        "null"
+                      ]
+                    },
+                    "hostname": {
+                      "description": "Hostname defines the HTTP host that will be requested during health checking.\nDefault: HTTPRoute or GRPCRoute hostname.",
+                      "maxLength": 253,
+                      "minLength": 1,
+                      "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "method": {
+                      "description": "Method defines the HTTP method used for health checking.\nDefaults to GET",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "path": {
+                      "description": "Path defines the HTTP path that will be requested during health checking.",
+                      "maxLength": 1024,
+                      "minLength": 1,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "path"
+                  ],
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "initialJitter": {
+                  "description": "InitialJitter defines the maximum time Envoy will wait before the first health check.\nEnvoy will randomly select a value between 0 and the initial jitter value.",
+                  "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "interval": {
+                  "default": "3s",
+                  "description": "Interval defines the time between active health checks.",
+                  "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "tcp": {
+                  "additionalProperties": false,
+                  "description": "TCP defines the configuration of tcp health checker.\nIt's required while the health checker type is TCP.",
+                  "properties": {
+                    "receive": {
+                      "additionalProperties": false,
+                      "description": "Receive defines the expected response payload.",
+                      "properties": {
+                        "binary": {
+                          "description": "Binary payload base64 encoded.",
+                          "format": "byte",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "text": {
+                          "description": "Text payload in plain text.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "allOf": [
+                            {
+                              "enum": [
+                                "Text",
+                                "Binary"
+                              ]
+                            },
+                            {
+                              "enum": [
+                                "Text",
+                                "Binary"
+                              ]
+                            }
+                          ],
+                          "description": "Type defines the type of the payload.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "x-kubernetes-validations": [
+                        {
+                          "message": "If payload type is Text, text field needs to be set.",
+                          "rule": "self.type == 'Text' ? has(self.text) : !has(self.text)"
+                        },
+                        {
+                          "message": "If payload type is Binary, binary field needs to be set.",
+                          "rule": "self.type == 'Binary' ? has(self.binary) : !has(self.binary)"
+                        }
+                      ]
+                    },
+                    "send": {
+                      "additionalProperties": false,
+                      "description": "Send defines the request payload.",
+                      "properties": {
+                        "binary": {
+                          "description": "Binary payload base64 encoded.",
+                          "format": "byte",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "text": {
+                          "description": "Text payload in plain text.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "allOf": [
+                            {
+                              "enum": [
+                                "Text",
+                                "Binary"
+                              ]
+                            },
+                            {
+                              "enum": [
+                                "Text",
+                                "Binary"
+                              ]
+                            }
+                          ],
+                          "description": "Type defines the type of the payload.",
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "x-kubernetes-validations": [
+                        {
+                          "message": "If payload type is Text, text field needs to be set.",
+                          "rule": "self.type == 'Text' ? has(self.text) : !has(self.text)"
+                        },
+                        {
+                          "message": "If payload type is Binary, binary field needs to be set.",
+                          "rule": "self.type == 'Binary' ? has(self.binary) : !has(self.binary)"
+                        }
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "timeout": {
+                  "default": "1s",
+                  "description": "Timeout defines the time to wait for a health check response.",
+                  "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "type": {
+                  "allOf": [
+                    {
+                      "enum": [
+                        "HTTP",
+                        "TCP",
+                        "GRPC"
+                      ]
+                    },
+                    {
+                      "enum": [
+                        "HTTP",
+                        "TCP",
+                        "GRPC"
+                      ]
+                    }
+                  ],
+                  "description": "Type defines the type of health checker.",
+                  "type": "string"
+                },
+                "unhealthyThreshold": {
+                  "default": 3,
+                  "description": "UnhealthyThreshold defines the number of unhealthy health checks required before a backend host is marked unhealthy.",
+                  "format": "int32",
+                  "minimum": 1,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "type": [
+                "object",
+                "null"
+              ],
+              "x-kubernetes-validations": [
+                {
+                  "message": "If Health Checker type is HTTP, http field needs to be set.",
+                  "rule": "self.type == 'HTTP' ? has(self.http) : !has(self.http)"
+                },
+                {
+                  "message": "If Health Checker type is TCP, tcp field needs to be set.",
+                  "rule": "self.type == 'TCP' ? has(self.tcp) : !has(self.tcp)"
+                },
+                {
+                  "message": "The grpc field can only be set if the Health Checker type is GRPC.",
+                  "rule": "has(self.grpc) ? self.type == 'GRPC' : true"
+                }
+              ]
+            },
+            "panicThreshold": {
+              "description": "When number of unhealthy endpoints for a backend reaches this threshold\nEnvoy will disregard health status and balance across all endpoints.\nIt's designed to prevent a situation in which host failures cascade throughout the cluster\nas load increases. If not set, the default value is 50%. To disable panic mode, set value to `0`.",
+              "format": "int32",
+              "maximum": 100,
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "passive": {
+              "additionalProperties": false,
+              "description": "Passive passive check configuration",
+              "properties": {
+                "baseEjectionTime": {
+                  "default": "30s",
+                  "description": "BaseEjectionTime defines the base duration for which a host will be ejected on consecutive failures.",
+                  "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "consecutive5XxErrors": {
+                  "default": 5,
+                  "description": "Consecutive5xxErrors sets the number of consecutive 5xx errors triggering ejection.",
+                  "format": "int32",
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "consecutiveGatewayErrors": {
+                  "description": "ConsecutiveGatewayErrors sets the number of consecutive gateway errors triggering ejection.",
+                  "format": "int32",
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "consecutiveLocalOriginFailures": {
+                  "default": 5,
+                  "description": "ConsecutiveLocalOriginFailures sets the number of consecutive local origin failures triggering ejection.\nParameter takes effect only when split_external_local_origin_errors is set to true.",
+                  "format": "int32",
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "failurePercentageThreshold": {
+                  "description": "FailurePercentageThreshold sets the failure percentage threshold for outlier detection.\nIf the failure percentage of a given host is greater than or equal to this value, it will be ejected.\nDefaults to 85.",
+                  "format": "int32",
+                  "maximum": 100,
+                  "minimum": 0,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "interval": {
+                  "default": "3s",
+                  "description": "Interval defines the time between passive health checks.",
+                  "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "maxEjectionPercent": {
+                  "default": 10,
+                  "description": "MaxEjectionPercent sets the maximum percentage of hosts in a cluster that can be ejected.",
+                  "format": "int32",
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "splitExternalLocalOriginErrors": {
+                  "default": false,
+                  "description": "SplitExternalLocalOriginErrors enables splitting of errors between external and local origin.",
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "http2": {
+          "additionalProperties": false,
+          "description": "HTTP2 provides HTTP/2 configuration for backend connections.",
+          "properties": {
+            "initialConnectionWindowSize": {
+              "allOf": [
+                {
+                  "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
+                },
+                {
+                  "pattern": "^[1-9]+[0-9]*([EPTGMK]i|[EPTGMk])?$"
+                }
+              ],
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "description": "InitialConnectionWindowSize sets the initial window size for HTTP/2 connections.\nIf not set, the default value is 1 MiB.",
+              "x-kubernetes-int-or-string": true
+            },
+            "initialStreamWindowSize": {
+              "allOf": [
+                {
+                  "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
+                },
+                {
+                  "pattern": "^[1-9]+[0-9]*([EPTGMK]i|[EPTGMk])?$"
+                }
+              ],
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "description": "InitialStreamWindowSize sets the initial window size for HTTP/2 streams.\nIf not set, the default value is 64 KiB(64*1024).",
+              "x-kubernetes-int-or-string": true
+            },
+            "maxConcurrentStreams": {
+              "description": "MaxConcurrentStreams sets the maximum number of concurrent streams allowed per connection.\nIf not set, the default value is 100.",
+              "format": "int32",
+              "maximum": 2147483647,
+              "minimum": 1,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "onInvalidMessage": {
+              "description": "OnInvalidMessage determines if Envoy will terminate the connection or just the offending stream in the event of HTTP messaging error\nIt's recommended for L2 Envoy deployments to set this value to TerminateStream.\nhttps://www.envoyproxy.io/docs/envoy/latest/configuration/best_practices/level_two\nDefault: TerminateConnection",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "httpUpgrade": {
+          "description": "HTTPUpgrade defines the configuration for HTTP protocol upgrades.\nIf not specified, the default upgrade configuration(websocket) will be used.",
+          "items": {
+            "additionalProperties": false,
+            "description": "ProtocolUpgradeConfig specifies the configuration for protocol upgrades.",
+            "properties": {
+              "connect": {
+                "additionalProperties": false,
+                "description": "Connect specifies the configuration for the CONNECT config.\nThis is allowed only when type is CONNECT.",
+                "properties": {
+                  "terminate": {
+                    "description": "Terminate the CONNECT request, and forwards the payload as raw TCP data.",
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  }
+                },
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "type": {
+                "description": "Type is the case-insensitive type of protocol upgrade.\ne.g. `websocket`, `CONNECT`, `spdy/3.1` etc.",
+                "type": "string"
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "type": "object",
+            "x-kubernetes-validations": [
+              {
+                "message": "The connect configuration is only allowed when the type is CONNECT.",
+                "rule": "!has(self.connect) || self.type == 'CONNECT'"
+              }
+            ]
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "loadBalancer": {
+          "additionalProperties": false,
+          "description": "LoadBalancer policy to apply when routing traffic from the gateway to\nthe backend endpoints. Defaults to `LeastRequest`.",
+          "properties": {
+            "consistentHash": {
+              "additionalProperties": false,
+              "description": "ConsistentHash defines the configuration when the load balancer type is\nset to ConsistentHash",
+              "properties": {
+                "cookie": {
+                  "additionalProperties": false,
+                  "description": "Cookie configures the cookie hash policy when the consistent hash type is set to Cookie.",
+                  "properties": {
+                    "attributes": {
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "description": "Additional Attributes to set for the generated cookie.",
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "description": "Name of the cookie to hash.\nIf this cookie does not exist in the request, Envoy will generate a cookie and set\nthe TTL on the response back to the client based on Layer 4\nattributes of the backend endpoint, to ensure that these future requests\ngo to the same backend endpoint. Make sure to set the TTL field for this case.",
+                      "type": "string"
+                    },
+                    "ttl": {
+                      "description": "TTL of the generated cookie if the cookie is not present. This value sets the\nMax-Age attribute value.",
+                      "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "header": {
+                  "additionalProperties": false,
+                  "description": "Header configures the header hash policy when the consistent hash type is set to Header.\n\nDeprecated: use Headers instead",
+                  "properties": {
+                    "name": {
+                      "description": "Name of the header to hash.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ],
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "headers": {
+                  "description": "Headers configures the header hash policy for each header, when the consistent hash type is set to Headers.",
+                  "items": {
+                    "additionalProperties": false,
+                    "description": "Header defines the header hashing configuration for consistent hash based\nload balancing.",
+                    "properties": {
+                      "name": {
+                        "description": "Name of the header to hash.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ],
+                    "type": "object"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "queryParams": {
+                  "description": "QueryParams configures the query parameter hash policy when the consistent hash type is set to QueryParams.",
+                  "items": {
+                    "additionalProperties": false,
+                    "description": "QueryParam defines the query parameter name hashing configuration for consistent hash based\nload balancing.",
+                    "properties": {
+                      "name": {
+                        "description": "Name of the query param to hash.",
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "name"
+                    ],
+                    "type": "object"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "tableSize": {
+                  "default": 65537,
+                  "description": "The table size for consistent hashing, must be prime number limited to 5000011.",
+                  "format": "int64",
+                  "maximum": 5000011,
+                  "minimum": 2,
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "type": {
+                  "description": "ConsistentHashType defines the type of input to hash on. Valid Type values are\n\"SourceIP\",\n\"Header\",\n\"Headers\",\n\"Cookie\".\n\"QueryParams\".",
+                  "enum": [
+                    "SourceIP",
+                    "Header",
+                    "Headers",
+                    "Cookie",
+                    "QueryParams"
+                  ],
+                  "type": "string"
+                }
+              },
+              "required": [
+                "type"
+              ],
+              "type": [
+                "object",
+                "null"
+              ],
+              "x-kubernetes-validations": [
+                {
+                  "message": "If consistent hash type is header, the header field must be set.",
+                  "rule": "self.type == 'Header' ? has(self.header) : !has(self.header)"
+                },
+                {
+                  "message": "If consistent hash type is headers, the headers field must be set.",
+                  "rule": "self.type == 'Headers' ? has(self.headers) : !has(self.headers)"
+                },
+                {
+                  "message": "If consistent hash type is cookie, the cookie field must be set.",
+                  "rule": "self.type == 'Cookie' ? has(self.cookie) : !has(self.cookie)"
+                },
+                {
+                  "message": "If consistent hash type is queryParams, the queryParams field must be set.",
+                  "rule": "self.type == 'QueryParams' ? has(self.queryParams) : !has(self.queryParams)"
+                }
+              ]
+            },
+            "endpointOverride": {
+              "additionalProperties": false,
+              "description": "EndpointOverride defines the configuration for endpoint override.\nWhen specified, the load balancer will attempt to route requests to endpoints\nbased on the override information extracted from request headers or metadata.\n If the override endpoints are not available, the configured load balancer policy will be used as fallback.",
+              "properties": {
+                "extractFrom": {
+                  "description": "ExtractFrom defines the sources to extract endpoint override information from.",
+                  "items": {
+                    "additionalProperties": false,
+                    "description": "EndpointOverrideExtractFrom defines a source to extract endpoint override information from.",
+                    "properties": {
+                      "header": {
+                        "description": "Header defines the header to get the override endpoint addresses.\nThe header value must specify at least one endpoint in `IP:Port` format or multiple endpoints in `IP:Port,IP:Port,...` format.\nFor example `10.0.0.5:8080` or `[2600:4040:5204::1574:24ae]:80`.\nThe IPv6 address is enclosed in square brackets.",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "maxItems": 10,
+                  "minItems": 1,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "extractFrom"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "slowStart": {
+              "additionalProperties": false,
+              "description": "SlowStart defines the configuration related to the slow start load balancer policy.\nIf set, during slow start window, traffic sent to the newly added hosts will gradually increase.\nCurrently this is only supported for RoundRobin and LeastRequest load balancers",
+              "properties": {
+                "window": {
+                  "description": "Window defines the duration of the warm up period for newly added host.\nDuring slow start window, traffic sent to the newly added hosts will gradually increase.\nCurrently only supports linear growth of traffic. For additional details,\nsee https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/cluster/v3/cluster.proto#config-cluster-v3-cluster-slowstartconfig",
+                  "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "window"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "type": {
+              "description": "Type decides the type of Load Balancer policy.\nValid LoadBalancerType values are\n\"ConsistentHash\",\n\"LeastRequest\",\n\"Random\",\n\"RoundRobin\".",
+              "enum": [
+                "ConsistentHash",
+                "LeastRequest",
+                "Random",
+                "RoundRobin"
+              ],
+              "type": "string"
+            },
+            "zoneAware": {
+              "additionalProperties": false,
+              "description": "ZoneAware defines the configuration related to the distribution of requests between locality zones.",
+              "properties": {
+                "preferLocal": {
+                  "additionalProperties": false,
+                  "description": "PreferLocalZone configures zone-aware routing to prefer sending traffic to the local locality zone.",
+                  "properties": {
+                    "force": {
+                      "additionalProperties": false,
+                      "description": "ForceLocalZone defines override configuration for forcing all traffic to stay within the local zone instead of the default behavior\nwhich maintains equal distribution among upstream endpoints while sending as much traffic as possible locally.",
+                      "properties": {
+                        "minEndpointsInZoneThreshold": {
+                          "description": "MinEndpointsInZoneThreshold is the minimum number of upstream endpoints in the local zone required to honor the forceLocalZone\noverride. This is useful for protecting zones with fewer endpoints.",
+                          "format": "int32",
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        }
+                      },
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    },
+                    "minEndpointsThreshold": {
+                      "description": "MinEndpointsThreshold is the minimum number of total upstream endpoints across all zones required to enable zone-aware routing.",
+                      "format": "int64",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "percentageEnabled": {
+                      "description": "Configures percentage of requests that will be considered for zone aware routing if zone aware routing is configured. If not specified, Envoy defaults to 100%.",
+                      "format": "int32",
+                      "maximum": 100,
+                      "minimum": 0,
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "type"
+          ],
+          "type": [
+            "object",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "If LoadBalancer type is consistentHash, consistentHash field needs to be set.",
+              "rule": "self.type == 'ConsistentHash' ? has(self.consistentHash) : !has(self.consistentHash)"
+            },
+            {
+              "message": "Currently SlowStart is only supported for RoundRobin and LeastRequest load balancers.",
+              "rule": "self.type in ['Random', 'ConsistentHash'] ? !has(self.slowStart) : true "
+            },
+            {
+              "message": "Currently ZoneAware is only supported for LeastRequest, Random, and RoundRobin load balancers.",
+              "rule": "self.type == 'ConsistentHash' ? !has(self.zoneAware) : true "
+            }
+          ]
+        },
+        "mergeType": {
+          "description": "MergeType determines how this configuration is merged with existing BackendTrafficPolicy\nconfigurations targeting a parent resource. When set, this configuration will be merged\ninto a parent BackendTrafficPolicy (i.e. the one targeting a Gateway or Listener).\nThis field cannot be set when targeting a parent resource (Gateway).\nIf unset, no merging occurs, and only the most specific configuration takes effect.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "proxyProtocol": {
+          "additionalProperties": false,
+          "description": "ProxyProtocol enables the Proxy Protocol when communicating with the backend.",
+          "properties": {
+            "version": {
+              "description": "Version of ProxyProtol\nValid ProxyProtocolVersion values are\n\"V1\"\n\"V2\"",
+              "enum": [
+                "V1",
+                "V2"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "version"
+          ],
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "rateLimit": {
+          "additionalProperties": false,
+          "description": "RateLimit allows the user to limit the number of incoming requests\nto a predefined value based on attributes within the traffic flow.",
+          "properties": {
+            "global": {
+              "additionalProperties": false,
+              "description": "Global defines global rate limit configuration.",
+              "properties": {
+                "rules": {
+                  "description": "Rules are a list of RateLimit selectors and limits. Each rule and its\nassociated limit is applied in a mutually exclusive way. If a request\nmatches multiple rules, each of their associated limits get applied, so a\nsingle request might increase the rate limit counters for multiple rules\nif selected. The rate limit service will return a logical OR of the individual\nrate limit decisions of all matching rules. For example, if a request\nmatches two rules, one rate limited and one not, the final decision will be\nto rate limit the request.",
+                  "items": {
+                    "additionalProperties": false,
+                    "description": "RateLimitRule defines the semantics for matching attributes\nfrom the incoming requests, and setting limits for them.",
+                    "properties": {
+                      "clientSelectors": {
+                        "description": "ClientSelectors holds the list of select conditions to select\nspecific clients using attributes from the traffic flow.\nAll individual select conditions must hold True for this rule\nand its limit to be applied.\n\nIf no client selectors are specified, the rule applies to all traffic of\nthe targeted Route.\n\nIf the policy targets a Gateway, the rule applies to each Route of the Gateway.\nPlease note that each Route has its own rate limit counters. For example,\nif a Gateway has two Routes, and the policy has a rule with limit 10rps,\neach Route will have its own 10rps limit.",
+                        "items": {
+                          "additionalProperties": false,
+                          "description": "RateLimitSelectCondition specifies the attributes within the traffic flow that can\nbe used to select a subset of clients to be ratelimited.\nAll the individual conditions must hold True for the overall condition to hold True.\nAnd, at least one of headers or methods or path or sourceCIDR or queryParams condition must be specified.",
+                          "properties": {
+                            "headers": {
+                              "description": "Headers is a list of request headers to match. Multiple header values are ANDed together,\nmeaning, a request MUST match all the specified headers.",
+                              "items": {
+                                "additionalProperties": false,
+                                "description": "HeaderMatch defines the match attributes within the HTTP Headers of the request.",
+                                "properties": {
+                                  "invert": {
+                                    "default": false,
+                                    "description": "Invert specifies whether the value match result will be inverted.\nDo not set this field when Type=\"Distinct\", implying matching on any/all unique\nvalues within the header.",
+                                    "type": [
+                                      "boolean",
+                                      "null"
+                                    ]
+                                  },
+                                  "name": {
+                                    "description": "Name of the HTTP header.\nThe header name is case-insensitive unless PreserveHeaderCase is set to true.\nFor example, \"Foo\" and \"foo\" are considered the same header.",
+                                    "maxLength": 256,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "default": "Exact",
+                                    "description": "Type specifies how to match against the value of the header.",
+                                    "enum": [
+                                      "Exact",
+                                      "RegularExpression",
+                                      "Distinct"
+                                    ],
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "value": {
+                                    "description": "Value within the HTTP header.\nDo not set this field when Type=\"Distinct\", implying matching on any/all unique\nvalues within the header.",
+                                    "maxLength": 1024,
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "name"
+                                ],
+                                "type": "object"
+                              },
+                              "maxItems": 16,
+                              "type": [
+                                "array",
+                                "null"
+                              ]
+                            },
+                            "methods": {
+                              "description": "Methods is a list of request methods to match. Multiple method values are ORed together,\nmeaning, a request can match any one of the specified methods. If not specified, it matches all methods.",
+                              "items": {
+                                "additionalProperties": false,
+                                "description": "MethodMatch defines the matching criteria for the HTTP method of a request.",
+                                "properties": {
+                                  "invert": {
+                                    "default": false,
+                                    "description": "Invert specifies whether the value match result will be inverted.",
+                                    "type": [
+                                      "boolean",
+                                      "null"
+                                    ]
+                                  },
+                                  "value": {
+                                    "description": "Value specifies the HTTP method.",
+                                    "enum": [
+                                      "GET",
+                                      "HEAD",
+                                      "POST",
+                                      "PUT",
+                                      "DELETE",
+                                      "CONNECT",
+                                      "OPTIONS",
+                                      "TRACE",
+                                      "PATCH"
+                                    ],
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "value"
+                                ],
+                                "type": "object"
+                              },
+                              "type": [
+                                "array",
+                                "null"
+                              ]
+                            },
+                            "path": {
+                              "additionalProperties": false,
+                              "description": "Path is the request path to match.\nSupport Exact, PathPrefix and RegularExpression match types.",
+                              "properties": {
+                                "invert": {
+                                  "default": false,
+                                  "description": "Invert specifies whether the value match result will be inverted.",
+                                  "type": [
+                                    "boolean",
+                                    "null"
+                                  ]
+                                },
+                                "type": {
+                                  "default": "PathPrefix",
+                                  "description": "Type specifies how to match against the value of the path.",
+                                  "enum": [
+                                    "Exact",
+                                    "PathPrefix",
+                                    "RegularExpression"
+                                  ],
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "value": {
+                                  "default": "/",
+                                  "description": "Value specifies the HTTP path.",
+                                  "maxLength": 1024,
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "value"
+                              ],
+                              "type": [
+                                "object",
+                                "null"
+                              ]
+                            },
+                            "queryParams": {
+                              "description": "QueryParams is a list of query parameters to match. Multiple query parameter values are ANDed together,\nmeaning, a request MUST match all the specified query parameters.",
+                              "items": {
+                                "additionalProperties": false,
+                                "description": "QueryParamMatch defines the match attributes within the query parameters of the request.",
+                                "properties": {
+                                  "invert": {
+                                    "default": false,
+                                    "description": "Invert specifies whether the value match result will be inverted.\nDo not set this field when Type=\"Distinct\", implying matching on any/all unique\nvalues within the query parameter.",
+                                    "type": [
+                                      "boolean",
+                                      "null"
+                                    ]
+                                  },
+                                  "name": {
+                                    "description": "Name of the query parameter.",
+                                    "maxLength": 256,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "default": "Exact",
+                                    "description": "Type specifies how to match against the value of the query parameter.",
+                                    "enum": [
+                                      "Exact",
+                                      "RegularExpression",
+                                      "Distinct"
+                                    ],
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "value": {
+                                    "description": "Value of the query parameter.\nDo not set this field when Type=\"Distinct\", implying matching on any/all unique\nvalues within the query parameter.",
+                                    "maxLength": 1024,
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "name"
+                                ],
+                                "type": "object"
+                              },
+                              "maxItems": 16,
+                              "type": [
+                                "array",
+                                "null"
+                              ]
+                            },
+                            "sourceCIDR": {
+                              "additionalProperties": false,
+                              "description": "SourceCIDR is the client IP Address range to match on.",
+                              "properties": {
+                                "type": {
+                                  "default": "Exact",
+                                  "enum": [
+                                    "Exact",
+                                    "Distinct"
+                                  ],
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "value": {
+                                  "description": "Value is the IP CIDR that represents the range of Source IP Addresses of the client.\nThese could also be the intermediate addresses through which the request has flown through and is part of the  `X-Forwarded-For` header.\nFor example, `192.168.0.1/32`, `192.168.0.0/24`, `001:db8::/64`.",
+                                  "maxLength": 256,
+                                  "minLength": 1,
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "value"
+                              ],
+                              "type": [
+                                "object",
+                                "null"
+                              ]
+                            }
+                          },
+                          "type": "object",
+                          "x-kubernetes-validations": [
+                            {
+                              "message": "at least one of headers, methods, path, sourceCIDR or queryParams must be specified",
+                              "rule": "has(self.headers) || has(self.methods) || has(self.path) || has(self.sourceCIDR) || has(self.queryParams)"
+                            }
+                          ]
+                        },
+                        "maxItems": 8,
+                        "type": [
+                          "array",
+                          "null"
+                        ]
+                      },
+                      "cost": {
+                        "additionalProperties": false,
+                        "description": "Cost specifies the cost of requests and responses for the rule.\n\nThis is optional and if not specified, the default behavior is to reduce the rate limit counters by 1 on\nthe request path and do not reduce the rate limit counters on the response path.",
+                        "properties": {
+                          "request": {
+                            "additionalProperties": false,
+                            "description": "Request specifies the number to reduce the rate limit counters\non the request path. If this is not specified, the default behavior\nis to reduce the rate limit counters by 1.\n\nWhen Envoy receives a request that matches the rule, it tries to reduce the\nrate limit counters by the specified number. If the counter doesn't have\nenough capacity, the request is rate limited.",
+                            "properties": {
+                              "from": {
+                                "description": "From specifies where to get the rate limit cost. Currently, only \"Number\" and \"Metadata\" are supported.",
+                                "enum": [
+                                  "Number",
+                                  "Metadata"
+                                ],
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": false,
+                                "description": "Metadata specifies the per-request metadata to retrieve the usage number from.",
+                                "properties": {
+                                  "key": {
+                                    "description": "Key is the key to retrieve the usage number from the filter metadata.",
+                                    "type": "string"
+                                  },
+                                  "namespace": {
+                                    "description": "Namespace is the namespace of the dynamic metadata.",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "key",
+                                  "namespace"
+                                ],
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              },
+                              "number": {
+                                "description": "Number specifies the fixed usage number to reduce the rate limit counters.\nUsing zero can be used to only check the rate limit counters without reducing them.",
+                                "format": "int64",
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "from"
+                            ],
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "x-kubernetes-validations": [
+                              {
+                                "message": "only one of number or metadata can be specified",
+                                "rule": "!(has(self.number) \u0026\u0026 has(self.metadata))"
+                              }
+                            ]
+                          },
+                          "response": {
+                            "additionalProperties": false,
+                            "description": "Response specifies the number to reduce the rate limit counters\nafter the response is sent back to the client or the request stream is closed.\n\nThe cost is used to reduce the rate limit counters for the matching requests.\nSince the reduction happens after the request stream is complete, the rate limit\nwon't be enforced for the current request, but for the subsequent matching requests.\n\nThis is optional and if not specified, the rate limit counters are not reduced\non the response path.\n\nCurrently, this is only supported for HTTP Global Rate Limits.",
+                            "properties": {
+                              "from": {
+                                "description": "From specifies where to get the rate limit cost. Currently, only \"Number\" and \"Metadata\" are supported.",
+                                "enum": [
+                                  "Number",
+                                  "Metadata"
+                                ],
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": false,
+                                "description": "Metadata specifies the per-request metadata to retrieve the usage number from.",
+                                "properties": {
+                                  "key": {
+                                    "description": "Key is the key to retrieve the usage number from the filter metadata.",
+                                    "type": "string"
+                                  },
+                                  "namespace": {
+                                    "description": "Namespace is the namespace of the dynamic metadata.",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "key",
+                                  "namespace"
+                                ],
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              },
+                              "number": {
+                                "description": "Number specifies the fixed usage number to reduce the rate limit counters.\nUsing zero can be used to only check the rate limit counters without reducing them.",
+                                "format": "int64",
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "from"
+                            ],
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "x-kubernetes-validations": [
+                              {
+                                "message": "only one of number or metadata can be specified",
+                                "rule": "!(has(self.number) \u0026\u0026 has(self.metadata))"
+                              }
+                            ]
+                          }
+                        },
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      },
+                      "limit": {
+                        "additionalProperties": false,
+                        "description": "Limit holds the rate limit values.\nThis limit is applied for traffic flows when the selectors\ncompute to True, causing the request to be counted towards the limit.\nThe limit is enforced and the request is ratelimited, i.e. a response with\n429 HTTP status code is sent back to the client when\nthe selected requests have reached the limit.",
+                        "properties": {
+                          "requests": {
+                            "type": "integer"
+                          },
+                          "unit": {
+                            "description": "RateLimitUnit specifies the intervals for setting rate limits.\nValid RateLimitUnit values are \"Second\", \"Minute\", \"Hour\", \"Day\", \"Month\" and \"Year\".",
+                            "enum": [
+                              "Second",
+                              "Minute",
+                              "Hour",
+                              "Day",
+                              "Month",
+                              "Year"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "requests",
+                          "unit"
+                        ],
+                        "type": "object"
+                      },
+                      "shadowMode": {
+                        "description": "ShadowMode indicates whether this rate-limit rule runs in shadow mode.\nWhen enabled, all rate-limiting operations are performed (cache lookups,\ncounter updates, telemetry generation), but the outcome is never enforced.\nThe request always succeeds, even if the configured limit is exceeded.\n\nOnly supported for Global Rate Limits.",
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "shared": {
+                        "description": "Shared determines whether this rate limit rule applies across all the policy targets.\nIf set to true, the rule is treated as a common bucket and is shared across all policy targets (xRoutes).\nDefault: false.",
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "limit"
+                    ],
+                    "type": "object"
+                  },
+                  "maxItems": 128,
+                  "type": "array"
+                }
+              },
+              "required": [
+                "rules"
+              ],
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "local": {
+              "additionalProperties": false,
+              "description": "Local defines local rate limit configuration.",
+              "properties": {
+                "rules": {
+                  "description": "Rules are a list of RateLimit selectors and limits. If a request matches\nmultiple rules, the strictest limit is applied. For example, if a request\nmatches two rules, one with 10rps and one with 20rps, the final limit will\nbe based on the rule with 10rps.",
+                  "items": {
+                    "additionalProperties": false,
+                    "description": "RateLimitRule defines the semantics for matching attributes\nfrom the incoming requests, and setting limits for them.",
+                    "properties": {
+                      "clientSelectors": {
+                        "description": "ClientSelectors holds the list of select conditions to select\nspecific clients using attributes from the traffic flow.\nAll individual select conditions must hold True for this rule\nand its limit to be applied.\n\nIf no client selectors are specified, the rule applies to all traffic of\nthe targeted Route.\n\nIf the policy targets a Gateway, the rule applies to each Route of the Gateway.\nPlease note that each Route has its own rate limit counters. For example,\nif a Gateway has two Routes, and the policy has a rule with limit 10rps,\neach Route will have its own 10rps limit.",
+                        "items": {
+                          "additionalProperties": false,
+                          "description": "RateLimitSelectCondition specifies the attributes within the traffic flow that can\nbe used to select a subset of clients to be ratelimited.\nAll the individual conditions must hold True for the overall condition to hold True.\nAnd, at least one of headers or methods or path or sourceCIDR or queryParams condition must be specified.",
+                          "properties": {
+                            "headers": {
+                              "description": "Headers is a list of request headers to match. Multiple header values are ANDed together,\nmeaning, a request MUST match all the specified headers.",
+                              "items": {
+                                "additionalProperties": false,
+                                "description": "HeaderMatch defines the match attributes within the HTTP Headers of the request.",
+                                "properties": {
+                                  "invert": {
+                                    "default": false,
+                                    "description": "Invert specifies whether the value match result will be inverted.\nDo not set this field when Type=\"Distinct\", implying matching on any/all unique\nvalues within the header.",
+                                    "type": [
+                                      "boolean",
+                                      "null"
+                                    ]
+                                  },
+                                  "name": {
+                                    "description": "Name of the HTTP header.\nThe header name is case-insensitive unless PreserveHeaderCase is set to true.\nFor example, \"Foo\" and \"foo\" are considered the same header.",
+                                    "maxLength": 256,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "default": "Exact",
+                                    "description": "Type specifies how to match against the value of the header.",
+                                    "enum": [
+                                      "Exact",
+                                      "RegularExpression",
+                                      "Distinct"
+                                    ],
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "value": {
+                                    "description": "Value within the HTTP header.\nDo not set this field when Type=\"Distinct\", implying matching on any/all unique\nvalues within the header.",
+                                    "maxLength": 1024,
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "name"
+                                ],
+                                "type": "object"
+                              },
+                              "maxItems": 16,
+                              "type": [
+                                "array",
+                                "null"
+                              ]
+                            },
+                            "methods": {
+                              "description": "Methods is a list of request methods to match. Multiple method values are ORed together,\nmeaning, a request can match any one of the specified methods. If not specified, it matches all methods.",
+                              "items": {
+                                "additionalProperties": false,
+                                "description": "MethodMatch defines the matching criteria for the HTTP method of a request.",
+                                "properties": {
+                                  "invert": {
+                                    "default": false,
+                                    "description": "Invert specifies whether the value match result will be inverted.",
+                                    "type": [
+                                      "boolean",
+                                      "null"
+                                    ]
+                                  },
+                                  "value": {
+                                    "description": "Value specifies the HTTP method.",
+                                    "enum": [
+                                      "GET",
+                                      "HEAD",
+                                      "POST",
+                                      "PUT",
+                                      "DELETE",
+                                      "CONNECT",
+                                      "OPTIONS",
+                                      "TRACE",
+                                      "PATCH"
+                                    ],
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "value"
+                                ],
+                                "type": "object"
+                              },
+                              "type": [
+                                "array",
+                                "null"
+                              ]
+                            },
+                            "path": {
+                              "additionalProperties": false,
+                              "description": "Path is the request path to match.\nSupport Exact, PathPrefix and RegularExpression match types.",
+                              "properties": {
+                                "invert": {
+                                  "default": false,
+                                  "description": "Invert specifies whether the value match result will be inverted.",
+                                  "type": [
+                                    "boolean",
+                                    "null"
+                                  ]
+                                },
+                                "type": {
+                                  "default": "PathPrefix",
+                                  "description": "Type specifies how to match against the value of the path.",
+                                  "enum": [
+                                    "Exact",
+                                    "PathPrefix",
+                                    "RegularExpression"
+                                  ],
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "value": {
+                                  "default": "/",
+                                  "description": "Value specifies the HTTP path.",
+                                  "maxLength": 1024,
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "value"
+                              ],
+                              "type": [
+                                "object",
+                                "null"
+                              ]
+                            },
+                            "queryParams": {
+                              "description": "QueryParams is a list of query parameters to match. Multiple query parameter values are ANDed together,\nmeaning, a request MUST match all the specified query parameters.",
+                              "items": {
+                                "additionalProperties": false,
+                                "description": "QueryParamMatch defines the match attributes within the query parameters of the request.",
+                                "properties": {
+                                  "invert": {
+                                    "default": false,
+                                    "description": "Invert specifies whether the value match result will be inverted.\nDo not set this field when Type=\"Distinct\", implying matching on any/all unique\nvalues within the query parameter.",
+                                    "type": [
+                                      "boolean",
+                                      "null"
+                                    ]
+                                  },
+                                  "name": {
+                                    "description": "Name of the query parameter.",
+                                    "maxLength": 256,
+                                    "minLength": 1,
+                                    "type": "string"
+                                  },
+                                  "type": {
+                                    "default": "Exact",
+                                    "description": "Type specifies how to match against the value of the query parameter.",
+                                    "enum": [
+                                      "Exact",
+                                      "RegularExpression",
+                                      "Distinct"
+                                    ],
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "value": {
+                                    "description": "Value of the query parameter.\nDo not set this field when Type=\"Distinct\", implying matching on any/all unique\nvalues within the query parameter.",
+                                    "maxLength": 1024,
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "name"
+                                ],
+                                "type": "object"
+                              },
+                              "maxItems": 16,
+                              "type": [
+                                "array",
+                                "null"
+                              ]
+                            },
+                            "sourceCIDR": {
+                              "additionalProperties": false,
+                              "description": "SourceCIDR is the client IP Address range to match on.",
+                              "properties": {
+                                "type": {
+                                  "default": "Exact",
+                                  "enum": [
+                                    "Exact",
+                                    "Distinct"
+                                  ],
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "value": {
+                                  "description": "Value is the IP CIDR that represents the range of Source IP Addresses of the client.\nThese could also be the intermediate addresses through which the request has flown through and is part of the  `X-Forwarded-For` header.\nFor example, `192.168.0.1/32`, `192.168.0.0/24`, `001:db8::/64`.",
+                                  "maxLength": 256,
+                                  "minLength": 1,
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "value"
+                              ],
+                              "type": [
+                                "object",
+                                "null"
+                              ]
+                            }
+                          },
+                          "type": "object",
+                          "x-kubernetes-validations": [
+                            {
+                              "message": "at least one of headers, methods, path, sourceCIDR or queryParams must be specified",
+                              "rule": "has(self.headers) || has(self.methods) || has(self.path) || has(self.sourceCIDR) || has(self.queryParams)"
+                            }
+                          ]
+                        },
+                        "maxItems": 8,
+                        "type": [
+                          "array",
+                          "null"
+                        ]
+                      },
+                      "cost": {
+                        "additionalProperties": false,
+                        "description": "Cost specifies the cost of requests and responses for the rule.\n\nThis is optional and if not specified, the default behavior is to reduce the rate limit counters by 1 on\nthe request path and do not reduce the rate limit counters on the response path.",
+                        "properties": {
+                          "request": {
+                            "additionalProperties": false,
+                            "description": "Request specifies the number to reduce the rate limit counters\non the request path. If this is not specified, the default behavior\nis to reduce the rate limit counters by 1.\n\nWhen Envoy receives a request that matches the rule, it tries to reduce the\nrate limit counters by the specified number. If the counter doesn't have\nenough capacity, the request is rate limited.",
+                            "properties": {
+                              "from": {
+                                "description": "From specifies where to get the rate limit cost. Currently, only \"Number\" and \"Metadata\" are supported.",
+                                "enum": [
+                                  "Number",
+                                  "Metadata"
+                                ],
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": false,
+                                "description": "Metadata specifies the per-request metadata to retrieve the usage number from.",
+                                "properties": {
+                                  "key": {
+                                    "description": "Key is the key to retrieve the usage number from the filter metadata.",
+                                    "type": "string"
+                                  },
+                                  "namespace": {
+                                    "description": "Namespace is the namespace of the dynamic metadata.",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "key",
+                                  "namespace"
+                                ],
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              },
+                              "number": {
+                                "description": "Number specifies the fixed usage number to reduce the rate limit counters.\nUsing zero can be used to only check the rate limit counters without reducing them.",
+                                "format": "int64",
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "from"
+                            ],
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "x-kubernetes-validations": [
+                              {
+                                "message": "only one of number or metadata can be specified",
+                                "rule": "!(has(self.number) \u0026\u0026 has(self.metadata))"
+                              }
+                            ]
+                          },
+                          "response": {
+                            "additionalProperties": false,
+                            "description": "Response specifies the number to reduce the rate limit counters\nafter the response is sent back to the client or the request stream is closed.\n\nThe cost is used to reduce the rate limit counters for the matching requests.\nSince the reduction happens after the request stream is complete, the rate limit\nwon't be enforced for the current request, but for the subsequent matching requests.\n\nThis is optional and if not specified, the rate limit counters are not reduced\non the response path.\n\nCurrently, this is only supported for HTTP Global Rate Limits.",
+                            "properties": {
+                              "from": {
+                                "description": "From specifies where to get the rate limit cost. Currently, only \"Number\" and \"Metadata\" are supported.",
+                                "enum": [
+                                  "Number",
+                                  "Metadata"
+                                ],
+                                "type": "string"
+                              },
+                              "metadata": {
+                                "additionalProperties": false,
+                                "description": "Metadata specifies the per-request metadata to retrieve the usage number from.",
+                                "properties": {
+                                  "key": {
+                                    "description": "Key is the key to retrieve the usage number from the filter metadata.",
+                                    "type": "string"
+                                  },
+                                  "namespace": {
+                                    "description": "Namespace is the namespace of the dynamic metadata.",
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "key",
+                                  "namespace"
+                                ],
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
+                              },
+                              "number": {
+                                "description": "Number specifies the fixed usage number to reduce the rate limit counters.\nUsing zero can be used to only check the rate limit counters without reducing them.",
+                                "format": "int64",
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "from"
+                            ],
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "x-kubernetes-validations": [
+                              {
+                                "message": "only one of number or metadata can be specified",
+                                "rule": "!(has(self.number) \u0026\u0026 has(self.metadata))"
+                              }
+                            ]
+                          }
+                        },
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      },
+                      "limit": {
+                        "additionalProperties": false,
+                        "description": "Limit holds the rate limit values.\nThis limit is applied for traffic flows when the selectors\ncompute to True, causing the request to be counted towards the limit.\nThe limit is enforced and the request is ratelimited, i.e. a response with\n429 HTTP status code is sent back to the client when\nthe selected requests have reached the limit.",
+                        "properties": {
+                          "requests": {
+                            "type": "integer"
+                          },
+                          "unit": {
+                            "description": "RateLimitUnit specifies the intervals for setting rate limits.\nValid RateLimitUnit values are \"Second\", \"Minute\", \"Hour\", \"Day\", \"Month\" and \"Year\".",
+                            "enum": [
+                              "Second",
+                              "Minute",
+                              "Hour",
+                              "Day",
+                              "Month",
+                              "Year"
+                            ],
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "requests",
+                          "unit"
+                        ],
+                        "type": "object"
+                      },
+                      "shadowMode": {
+                        "description": "ShadowMode indicates whether this rate-limit rule runs in shadow mode.\nWhen enabled, all rate-limiting operations are performed (cache lookups,\ncounter updates, telemetry generation), but the outcome is never enforced.\nThe request always succeeds, even if the configured limit is exceeded.\n\nOnly supported for Global Rate Limits.",
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "shared": {
+                        "description": "Shared determines whether this rate limit rule applies across all the policy targets.\nIf set to true, the rule is treated as a common bucket and is shared across all policy targets (xRoutes).\nDefault: false.",
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "limit"
+                    ],
+                    "type": "object"
+                  },
+                  "maxItems": 16,
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "x-kubernetes-validations": [
+                    {
+                      "message": "response cost is not supported for Local Rate Limits",
+                      "rule": "self.all(foo, !has(foo.cost) || !has(foo.cost.response))"
+                    },
+                    {
+                      "message": "shadow mode is not supported for Local Rate Limits",
+                      "rule": "self.all(foo, !has(foo.shadowMode))"
+                    }
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "type": {
+              "description": "Type decides the scope for the RateLimits.\nValid RateLimitType values are \"Global\" or \"Local\".\n\nDeprecated: Use Global and/or Local fields directly instead. Both can be specified simultaneously for combined rate limiting.",
+              "enum": [
+                "Global",
+                "Local"
+              ],
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "requestBuffer": {
+          "additionalProperties": false,
+          "description": "RequestBuffer allows the gateway to buffer and fully receive each request from a client before continuing to send the request\nupstream to the backends. This can be helpful to shield your backend servers from slow clients, and also to enforce a maximum size per request\nas any requests larger than the buffer size will be rejected.\n\nThis can have a negative performance impact so should only be enabled when necessary.\n\nWhen enabling this option, you should also configure your connection buffer size to account for these request buffers. There will also be an\nincrease in memory usage for Envoy that should be accounted for in your deployment settings.",
+          "properties": {
+            "limit": {
+              "allOf": [
+                {
+                  "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$"
+                },
+                {
+                  "pattern": "^[1-9]+[0-9]*([EPTGMK]i|[EPTGMk])?$"
+                }
+              ],
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "description": "Limit specifies the maximum allowed size in bytes for each incoming request buffer.\nIf exceeded, the request will be rejected with HTTP 413 Content Too Large.\n\nAccepts values in resource.Quantity format (e.g., \"10Mi\", \"500Ki\").",
+              "x-kubernetes-int-or-string": true
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "responseOverride": {
+          "description": "ResponseOverride defines the configuration to override specific responses with a custom one.\nIf multiple configurations are specified, the first one to match wins.",
+          "items": {
+            "additionalProperties": false,
+            "description": "ResponseOverride defines the configuration to override specific responses with a custom one.",
+            "properties": {
+              "match": {
+                "additionalProperties": false,
+                "description": "Match configuration.",
+                "properties": {
+                  "statusCodes": {
+                    "description": "Status code to match on. The match evaluates to true if any of the matches are successful.",
+                    "items": {
+                      "additionalProperties": false,
+                      "description": "StatusCodeMatch defines the configuration for matching a status code.",
+                      "properties": {
+                        "range": {
+                          "additionalProperties": false,
+                          "description": "Range contains the range of status codes.",
+                          "properties": {
+                            "end": {
+                              "description": "End of the range, including the end value.",
+                              "type": "integer"
+                            },
+                            "start": {
+                              "description": "Start of the range, including the start value.",
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "end",
+                            "start"
+                          ],
+                          "type": [
+                            "object",
+                            "null"
+                          ],
+                          "x-kubernetes-validations": [
+                            {
+                              "message": "end must be greater than start",
+                              "rule": "self.end \u003e self.start"
+                            }
+                          ]
+                        },
+                        "type": {
+                          "allOf": [
+                            {
+                              "enum": [
+                                "Value",
+                                "Range"
+                              ]
+                            },
+                            {
+                              "enum": [
+                                "Value",
+                                "Range"
+                              ]
+                            }
+                          ],
+                          "default": "Value",
+                          "description": "Type is the type of value.\nValid values are Value and Range, default is Value.",
+                          "type": "string"
+                        },
+                        "value": {
+                          "description": "Value contains the value of the status code.",
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ],
+                      "type": "object",
+                      "x-kubernetes-validations": [
+                        {
+                          "message": "value must be set for type Value",
+                          "rule": "(!has(self.type) || self.type == 'Value')? has(self.value) : true"
+                        },
+                        {
+                          "message": "range must be set for type Range",
+                          "rule": "(has(self.type) \u0026\u0026 self.type == 'Range')? has(self.range) : true"
+                        }
+                      ]
+                    },
+                    "maxItems": 50,
+                    "minItems": 1,
+                    "type": "array"
+                  }
+                },
+                "required": [
+                  "statusCodes"
+                ],
+                "type": "object"
+              },
+              "redirect": {
+                "additionalProperties": false,
+                "description": "Redirect configuration",
+                "properties": {
+                  "hostname": {
+                    "description": "Hostname is the hostname to be used in the value of the `Location`\nheader in the response.\nWhen empty, the hostname in the `Host` header of the request is used.",
+                    "maxLength": 253,
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "path": {
+                    "additionalProperties": false,
+                    "description": "Path defines parameters used to modify the path of the incoming request.\nThe modified path is then used to construct the `Location` header. When\nempty, the request path is used as-is.\nOnly ReplaceFullPath path modifier is supported currently.",
+                    "properties": {
+                      "replaceFullPath": {
+                        "description": "ReplaceFullPath specifies the value with which to replace the full path\nof a request during a rewrite or redirect.",
+                        "maxLength": 1024,
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "replacePrefixMatch": {
+                        "description": "ReplacePrefixMatch specifies the value with which to replace the prefix\nmatch of a request during a rewrite or redirect. For example, a request\nto \"/foo/bar\" with a prefix match of \"/foo\" and a ReplacePrefixMatch\nof \"/xyz\" would be modified to \"/xyz/bar\".\n\nNote that this matches the behavior of the PathPrefix match type. This\nmatches full path elements. A path element refers to the list of labels\nin the path split by the `/` separator. When specified, a trailing `/` is\nignored. For example, the paths `/abc`, `/abc/`, and `/abc/def` would all\nmatch the prefix `/abc`, but the path `/abcd` would not.\n\nReplacePrefixMatch is only compatible with a `PathPrefix` HTTPRouteMatch.\nUsing any other HTTPRouteMatch type on the same HTTPRouteRule will result in\nthe implementation setting the Accepted Condition for the Route to `status: False`.\n\nRequest Path | Prefix Match | Replace Prefix | Modified Path",
+                        "maxLength": 1024,
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "type": {
+                        "description": "Type defines the type of path modifier. Additional types may be\nadded in a future release of the API.\n\nNote that values may be added to this enum, implementations\nmust ensure that unknown values will not cause a crash.\n\nUnknown values here must result in the implementation setting the\nAccepted Condition for the Route to `status: False`, with a\nReason of `UnsupportedValue`.",
+                        "enum": [
+                          "ReplaceFullPath",
+                          "ReplacePrefixMatch"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "x-kubernetes-validations": [
+                      {
+                        "message": "only ReplaceFullPath is supported for path.type",
+                        "rule": "self.type == 'ReplaceFullPath'"
+                      },
+                      {
+                        "message": "replaceFullPath must be specified when type is set to 'ReplaceFullPath'",
+                        "rule": "self.type == 'ReplaceFullPath' ? has(self.replaceFullPath) : true"
+                      },
+                      {
+                        "message": "type must be 'ReplaceFullPath' when replaceFullPath is set",
+                        "rule": "has(self.replaceFullPath) ? self.type == 'ReplaceFullPath' : true"
+                      },
+                      {
+                        "message": "replacePrefixMatch must be specified when type is set to 'ReplacePrefixMatch'",
+                        "rule": "self.type == 'ReplacePrefixMatch' ? has(self.replacePrefixMatch) : true"
+                      },
+                      {
+                        "message": "type must be 'ReplacePrefixMatch' when replacePrefixMatch is set",
+                        "rule": "has(self.replacePrefixMatch) ? self.type == 'ReplacePrefixMatch' : true"
+                      }
+                    ]
+                  },
+                  "port": {
+                    "description": "Port is the port to be used in the value of the `Location`\nheader in the response.\n\nIf redirect scheme is not-empty, the well-known port associated with the redirect scheme will be used.\nSpecifically \"http\" to port 80 and \"https\" to port 443. If the redirect scheme does not have a\nwell-known port or redirect scheme is empty, the listener port of the Gateway will be used.\n\nPort will not be added in the 'Location' header if scheme is HTTP and port is 80\nor scheme is HTTPS and port is 443.",
+                    "format": "int32",
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "scheme": {
+                    "description": "Scheme is the scheme to be used in the value of the `Location` header in\nthe response. When empty, the scheme of the request is used.",
+                    "enum": [
+                      "http",
+                      "https"
+                    ],
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "statusCode": {
+                    "default": 302,
+                    "description": "StatusCode is the HTTP status code to be used in response.",
+                    "enum": [
+                      301,
+                      302
+                    ],
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                },
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "response": {
+                "additionalProperties": false,
+                "description": "Response configuration.",
+                "properties": {
+                  "body": {
+                    "additionalProperties": false,
+                    "description": "Body of the Custom Response\nSupports Envoy command operators for dynamic content (see https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators).",
+                    "properties": {
+                      "inline": {
+                        "description": "Inline contains the value as an inline string.",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "type": {
+                        "allOf": [
+                          {
+                            "enum": [
+                              "Inline",
+                              "ValueRef"
+                            ]
+                          },
+                          {
+                            "enum": [
+                              "Inline",
+                              "ValueRef"
+                            ]
+                          }
+                        ],
+                        "default": "Inline",
+                        "description": "Type is the type of method to use to read the body value.\nValid values are Inline and ValueRef, default is Inline.",
+                        "type": "string"
+                      },
+                      "valueRef": {
+                        "additionalProperties": false,
+                        "description": "ValueRef contains the contents of the body\nspecified as a local object reference.\nOnly a reference to ConfigMap is supported.\n\nThe value of key `response.body` in the ConfigMap will be used as the response body.\nIf the key is not found, the first value in the ConfigMap will be used.",
+                        "properties": {
+                          "group": {
+                            "description": "Group is the group of the referent. For example, \"gateway.networking.k8s.io\".\nWhen unspecified or empty string, core API group is inferred.",
+                            "maxLength": 253,
+                            "pattern": "^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+                            "type": "string"
+                          },
+                          "kind": {
+                            "description": "Kind is kind of the referent. For example \"HTTPRoute\" or \"Service\".",
+                            "maxLength": 63,
+                            "minLength": 1,
+                            "pattern": "^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$",
+                            "type": "string"
+                          },
+                          "name": {
+                            "description": "Name is the name of the referent.",
+                            "maxLength": 253,
+                            "minLength": 1,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "group",
+                          "kind",
+                          "name"
+                        ],
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "x-kubernetes-validations": [
+                      {
+                        "message": "inline must be set for type Inline",
+                        "rule": "(!has(self.type) || self.type == 'Inline')? has(self.inline) : true"
+                      },
+                      {
+                        "message": "valueRef must be set for type ValueRef",
+                        "rule": "(has(self.type) \u0026\u0026 self.type == 'ValueRef')? has(self.valueRef) : true"
+                      },
+                      {
+                        "message": "only ConfigMap is supported for ValueRef",
+                        "rule": "has(self.valueRef) ? self.valueRef.kind == 'ConfigMap' : true"
+                      }
+                    ]
+                  },
+                  "contentType": {
+                    "description": "Content Type of the response. This will be set in the Content-Type header.",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "header": {
+                    "additionalProperties": false,
+                    "description": "Header defines headers to add, set or remove from the response.\nThis allows the response policy to append, add or override headers\nof the final response before it is sent to a downstream client.\nNote: Header removal is not supported for responseOverride.",
+                    "properties": {
+                      "add": {
+                        "description": "Add adds the given header(s) (name, value) to the request\nbefore the action. It appends to any existing values associated\nwith the header name.\n\nInput:\n  GET /foo HTTP/1.1\n  my-header: foo\n\nConfig:\n  add:\n  - name: \"my-header\"\n    value: \"bar,baz\"\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header: foo,bar,baz",
+                        "items": {
+                          "additionalProperties": false,
+                          "description": "HTTPHeader represents an HTTP Header name and value as defined by RFC 7230.",
+                          "properties": {
+                            "name": {
+                              "description": "Name is the name of the HTTP Header to be matched. Name matching MUST be\ncase-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).\n\nIf multiple entries specify equivalent header names, the first entry with\nan equivalent name MUST be considered for a match. Subsequent entries\nwith an equivalent header name MUST be ignored. Due to the\ncase-insensitivity of header names, \"foo\" and \"Foo\" are considered\nequivalent.",
+                              "maxLength": 256,
+                              "minLength": 1,
+                              "pattern": "^[A-Za-z0-9!#$%\u0026'*+\\-.^_\\x60|~]+$",
+                              "type": "string"
+                            },
+                            "value": {
+                              "description": "Value is the value of HTTP Header to be matched.",
+                              "maxLength": 4096,
+                              "minLength": 1,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "value"
+                          ],
+                          "type": "object"
+                        },
+                        "maxItems": 16,
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "x-kubernetes-list-map-keys": [
+                          "name"
+                        ],
+                        "x-kubernetes-list-type": "map"
+                      },
+                      "remove": {
+                        "description": "Remove the given header(s) from the HTTP request before the action. The\nvalue of Remove is a list of HTTP header names. Note that the header\nnames are case-insensitive (see\nhttps://datatracker.ietf.org/doc/html/rfc2616#section-4.2).\n\nInput:\n  GET /foo HTTP/1.1\n  my-header1: foo\n  my-header2: bar\n  my-header3: baz\n\nConfig:\n  remove: [\"my-header1\", \"my-header3\"]\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header2: bar",
+                        "items": {
+                          "type": "string"
+                        },
+                        "maxItems": 16,
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "x-kubernetes-list-type": "set"
+                      },
+                      "set": {
+                        "description": "Set overwrites the request with the given header (name, value)\nbefore the action.\n\nInput:\n  GET /foo HTTP/1.1\n  my-header: foo\n\nConfig:\n  set:\n  - name: \"my-header\"\n    value: \"bar\"\n\nOutput:\n  GET /foo HTTP/1.1\n  my-header: bar",
+                        "items": {
+                          "additionalProperties": false,
+                          "description": "HTTPHeader represents an HTTP Header name and value as defined by RFC 7230.",
+                          "properties": {
+                            "name": {
+                              "description": "Name is the name of the HTTP Header to be matched. Name matching MUST be\ncase-insensitive. (See https://tools.ietf.org/html/rfc7230#section-3.2).\n\nIf multiple entries specify equivalent header names, the first entry with\nan equivalent name MUST be considered for a match. Subsequent entries\nwith an equivalent header name MUST be ignored. Due to the\ncase-insensitivity of header names, \"foo\" and \"Foo\" are considered\nequivalent.",
+                              "maxLength": 256,
+                              "minLength": 1,
+                              "pattern": "^[A-Za-z0-9!#$%\u0026'*+\\-.^_\\x60|~]+$",
+                              "type": "string"
+                            },
+                            "value": {
+                              "description": "Value is the value of HTTP Header to be matched.",
+                              "maxLength": 4096,
+                              "minLength": 1,
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "value"
+                          ],
+                          "type": "object"
+                        },
+                        "maxItems": 16,
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "x-kubernetes-list-map-keys": [
+                          "name"
+                        ],
+                        "x-kubernetes-list-type": "map"
+                      }
+                    },
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "x-kubernetes-validations": [
+                      {
+                        "message": "Remove is not supported for header in CustomResponse",
+                        "rule": "!has(self.remove) || size(self.remove) == 0"
+                      }
+                    ]
+                  },
+                  "statusCode": {
+                    "description": "Status Code of the Custom Response\nIf unset, does not override the status of response.",
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                },
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "match"
+            ],
+            "type": "object",
+            "x-kubernetes-validations": [
+              {
+                "message": "exactly one of response or redirect must be specified",
+                "rule": "(has(self.response) \u0026\u0026 !has(self.redirect)) || (!has(self.response) \u0026\u0026 has(self.redirect))"
+              }
+            ]
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "retry": {
+          "additionalProperties": false,
+          "description": "Retry provides more advanced usage, allowing users to customize the number of retries, retry fallback strategy, and retry triggering conditions.\nIf not set, retry will be disabled.",
+          "properties": {
+            "numAttemptsPerPriority": {
+              "description": "NumAttemptsPerPriority defines the number of requests (initial attempt + retries)\nthat should be sent to the same priority before switching to a different one.\nIf not specified or set to 0, all requests are sent to the highest priority that is healthy.",
+              "format": "int32",
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "numRetries": {
+              "default": 2,
+              "description": "NumRetries is the number of retries to be attempted. Defaults to 2.",
+              "format": "int32",
+              "minimum": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "perRetry": {
+              "additionalProperties": false,
+              "description": "PerRetry is the retry policy to be applied per retry attempt.",
+              "properties": {
+                "backOff": {
+                  "additionalProperties": false,
+                  "description": "Backoff is the backoff policy to be applied per retry attempt. gateway uses a fully jittered exponential\nback-off algorithm for retries. For additional details,\nsee https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/router_filter#config-http-filters-router-x-envoy-max-retries",
+                  "properties": {
+                    "baseInterval": {
+                      "description": "BaseInterval is the base interval between retries.",
+                      "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "maxInterval": {
+                      "description": "MaxInterval is the maximum interval between retries. This parameter is optional, but must be greater than or equal to the base_interval if set.\nThe default is 10 times the base_interval",
+                      "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "timeout": {
+                  "description": "Timeout is the timeout per retry attempt.",
+                  "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "retryOn": {
+              "additionalProperties": false,
+              "description": "RetryOn specifies the retry trigger condition.\n\nIf not specified, the default is to retry on connect-failure,refused-stream,unavailable,cancelled,retriable-status-codes(503).",
+              "properties": {
+                "httpStatusCodes": {
+                  "description": "HttpStatusCodes specifies the http status codes to be retried.\nThe retriable-status-codes trigger must also be configured for these status codes to trigger a retry.",
+                  "items": {
+                    "description": "HTTPStatus defines the http status code.",
+                    "maximum": 599,
+                    "minimum": 100,
+                    "type": "integer"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                },
+                "triggers": {
+                  "description": "Triggers specifies the retry trigger condition(Http/Grpc).",
+                  "items": {
+                    "description": "TriggerEnum specifies the conditions that trigger retries.",
+                    "enum": [
+                      "5xx",
+                      "gateway-error",
+                      "reset",
+                      "reset-before-request",
+                      "connect-failure",
+                      "retriable-4xx",
+                      "refused-stream",
+                      "retriable-status-codes",
+                      "cancelled",
+                      "deadline-exceeded",
+                      "internal",
+                      "resource-exhausted",
+                      "unavailable"
+                    ],
+                    "type": "string"
+                  },
+                  "type": [
+                    "array",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "routingType": {
+          "description": "RoutingType can be set to \"Service\" to use the Service Cluster IP for routing to the backend,\nor it can be set to \"Endpoint\" to use Endpoint routing.\nWhen specified, this overrides the EnvoyProxy-level setting for the relevant targeRefs.\nIf not specified, the EnvoyProxy-level setting is used.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "targetRef": {
+          "additionalProperties": false,
+          "description": "TargetRef is the name of the resource this policy is being attached to.\nThis policy and the TargetRef MUST be in the same namespace for this\nPolicy to have effect\n\nDeprecated: use targetRefs/targetSelectors instead",
+          "properties": {
+            "group": {
+              "description": "Group is the group of the target resource.",
+              "maxLength": 253,
+              "pattern": "^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+              "type": "string"
+            },
+            "kind": {
+              "description": "Kind is kind of the target resource.",
+              "maxLength": 63,
+              "minLength": 1,
+              "pattern": "^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$",
+              "type": "string"
+            },
+            "name": {
+              "description": "Name is the name of the target resource.",
+              "maxLength": 253,
+              "minLength": 1,
+              "type": "string"
+            },
+            "sectionName": {
+              "description": "SectionName is the name of a section within the target resource. When\nunspecified, this targetRef targets the entire resource. In the following\nresources, SectionName is interpreted as the following:\n\n* Gateway: Listener name\n* HTTPRoute: HTTPRouteRule name\n* Service: Port name\n\nIf a SectionName is specified, but does not exist on the targeted object,\nthe Policy must fail to attach, and the policy implementation should record\na `ResolvedRefs` or similar Condition in the Policy's status.",
+              "maxLength": 253,
+              "minLength": 1,
+              "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "group",
+            "kind",
+            "name"
+          ],
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "targetRefs": {
+          "description": "TargetRefs are the names of the Gateway resources this policy\nis being attached to.",
+          "items": {
+            "additionalProperties": false,
+            "description": "LocalPolicyTargetReferenceWithSectionName identifies an API object to apply a\ndirect policy to. This should be used as part of Policy resources that can\ntarget single resources. For more information on how this policy attachment\nmode works, and a sample Policy resource, refer to the policy attachment\ndocumentation for Gateway API.\n\nNote: This should only be used for direct policy attachment when references\nto SectionName are actually needed. In all other cases,\nLocalPolicyTargetReference should be used.",
+            "properties": {
+              "group": {
+                "description": "Group is the group of the target resource.",
+                "maxLength": 253,
+                "pattern": "^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+                "type": "string"
+              },
+              "kind": {
+                "description": "Kind is kind of the target resource.",
+                "maxLength": 63,
+                "minLength": 1,
+                "pattern": "^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$",
+                "type": "string"
+              },
+              "name": {
+                "description": "Name is the name of the target resource.",
+                "maxLength": 253,
+                "minLength": 1,
+                "type": "string"
+              },
+              "sectionName": {
+                "description": "SectionName is the name of a section within the target resource. When\nunspecified, this targetRef targets the entire resource. In the following\nresources, SectionName is interpreted as the following:\n\n* Gateway: Listener name\n* HTTPRoute: HTTPRouteRule name\n* Service: Port name\n\nIf a SectionName is specified, but does not exist on the targeted object,\nthe Policy must fail to attach, and the policy implementation should record\na `ResolvedRefs` or similar Condition in the Policy's status.",
+                "maxLength": 253,
+                "minLength": 1,
+                "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "group",
+              "kind",
+              "name"
+            ],
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "targetSelectors": {
+          "description": "TargetSelectors allow targeting resources for this policy based on labels",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "group": {
+                "default": "gateway.networking.k8s.io",
+                "description": "Group is the group that this selector targets. Defaults to gateway.networking.k8s.io",
+                "maxLength": 253,
+                "pattern": "^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "kind": {
+                "description": "Kind is the resource kind that this selector targets.",
+                "maxLength": 63,
+                "minLength": 1,
+                "pattern": "^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$",
+                "type": "string"
+              },
+              "matchExpressions": {
+                "description": "MatchExpressions is a list of label selector requirements. The requirements are ANDed.",
+                "items": {
+                  "additionalProperties": false,
+                  "description": "A label selector requirement is a selector that contains values, a key, and an operator that\nrelates the key and values.",
+                  "properties": {
+                    "key": {
+                      "description": "key is the label key that the selector applies to.",
+                      "type": "string"
+                    },
+                    "operator": {
+                      "description": "operator represents a key's relationship to a set of values.\nValid operators are In, NotIn, Exists and DoesNotExist.",
+                      "type": "string"
+                    },
+                    "values": {
+                      "description": "values is an array of string values. If the operator is In or NotIn,\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\nthe values array must be empty. This array is replaced during a strategic\nmerge patch.",
+                      "items": {
+                        "type": "string"
+                      },
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "x-kubernetes-list-type": "atomic"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "operator"
+                  ],
+                  "type": "object"
+                },
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "x-kubernetes-list-type": "atomic"
+              },
+              "matchLabels": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "description": "MatchLabels are the set of label selectors for identifying the targeted resource",
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "kind"
+            ],
+            "type": "object",
+            "x-kubernetes-validations": [
+              {
+                "message": "group must be gateway.networking.k8s.io",
+                "rule": "has(self.group) ? self.group == 'gateway.networking.k8s.io' : true "
+              }
+            ]
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "tcpKeepalive": {
+          "additionalProperties": false,
+          "description": "TcpKeepalive settings associated with the upstream client connection.\nDisabled by default.",
+          "properties": {
+            "idleTime": {
+              "description": "The duration a connection needs to be idle before keep-alive\nprobes start being sent.\nThe duration format is\nDefaults to `7200s`.",
+              "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "interval": {
+              "description": "The duration between keep-alive probes.\nDefaults to `75s`.",
+              "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "probes": {
+              "description": "The total number of unacknowledged probes to send before deciding\nthe connection is dead.\nDefaults to 9.",
+              "format": "int32",
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "telemetry": {
+          "additionalProperties": false,
+          "description": "Telemetry configures the telemetry settings for the policy target (Gateway or xRoute).\nThis will override the telemetry settings in the EnvoyProxy resource.",
+          "properties": {
+            "metrics": {
+              "additionalProperties": false,
+              "description": "Metrics defines metrics configuration for the backend or Route.",
+              "properties": {
+                "routeStatName": {
+                  "description": "RouteStatName defines the value of the Route stat_prefix, determining how the route stats are named.\nFor more details, see envoy docs: https://www.envoyproxy.io/docs/envoy/latest/api-v3/config/route/v3/route_components.proto#config-route-v3-route\nThe supported operators for this pattern are:\n%ROUTE_NAME%: name of Gateway API xRoute resource\n%ROUTE_NAMESPACE%: namespace of Gateway API xRoute resource\n%ROUTE_KIND%: kind of Gateway API xRoute resource\nExample: %ROUTE_KIND%/%ROUTE_NAMESPACE%/%ROUTE_NAME% =\u003e httproute/my-ns/my-route\nDisabled by default.",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "tracing": {
+              "additionalProperties": false,
+              "description": "Tracing configures the tracing settings for the backend or HTTPRoute.\n\nThis takes precedence over EnvoyProxy tracing when set.",
+              "properties": {
+                "customTags": {
+                  "additionalProperties": {
+                    "additionalProperties": false,
+                    "properties": {
+                      "environment": {
+                        "additionalProperties": false,
+                        "description": "Environment adds value from environment variable to each span.\nIt's required when the type is \"Environment\".",
+                        "properties": {
+                          "defaultValue": {
+                            "description": "DefaultValue defines the default value to use if the environment variable is not set.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "name": {
+                            "description": "Name defines the name of the environment variable which to extract the value from.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name"
+                        ],
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      },
+                      "literal": {
+                        "additionalProperties": false,
+                        "description": "Literal adds hard-coded value to each span.\nIt's required when the type is \"Literal\".",
+                        "properties": {
+                          "value": {
+                            "description": "Value defines the hard-coded value to add to each span.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "value"
+                        ],
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      },
+                      "requestHeader": {
+                        "additionalProperties": false,
+                        "description": "RequestHeader adds value from request header to each span.\nIt's required when the type is \"RequestHeader\".",
+                        "properties": {
+                          "defaultValue": {
+                            "description": "DefaultValue defines the default value to use if the request header is not set.",
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "name": {
+                            "description": "Name defines the name of the request header which to extract the value from.",
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "name"
+                        ],
+                        "type": [
+                          "object",
+                          "null"
+                        ]
+                      },
+                      "type": {
+                        "default": "Literal",
+                        "description": "Type defines the type of custom tag.",
+                        "enum": [
+                          "Literal",
+                          "Environment",
+                          "RequestHeader"
+                        ],
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ],
+                    "type": "object"
+                  },
+                  "description": "CustomTags defines the custom tags to add to each span.\nIf provider is kubernetes, pod name and namespace are added by default.\n\nDeprecated: Use Tags instead.",
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "samplingFraction": {
+                  "additionalProperties": false,
+                  "description": "SamplingFraction represents the fraction of requests that should be\nselected for tracing if no prior sampling decision has been made.",
+                  "properties": {
+                    "denominator": {
+                      "default": 100,
+                      "format": "int32",
+                      "minimum": 1,
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "numerator": {
+                      "format": "int32",
+                      "minimum": 0,
+                      "type": "integer"
+                    }
+                  },
+                  "required": [
+                    "numerator"
+                  ],
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "x-kubernetes-validations": [
+                    {
+                      "message": "numerator must be less than or equal to denominator",
+                      "rule": "self.numerator \u003c= self.denominator"
+                    }
+                  ]
+                },
+                "spanName": {
+                  "additionalProperties": false,
+                  "description": "SpanName defines the name of the span which will be used for tracing.\nEnvoy [command operators](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators) may be used in the value.\nThe [format string documentation](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#config-access-log-format-strings) provides more information.\n\nIf not set, the span name is provider specific.\ne.g. Datadog use `ingress` as the default client span name,\nand `router \u003cUPSTREAM_CLUSTER\u003e egress` as the server span name.",
+                  "properties": {
+                    "client": {
+                      "description": "Client defines operation name of the span which will be used for tracing.",
+                      "type": "string"
+                    },
+                    "server": {
+                      "description": "Server defines the operation name of the upstream span which will be used for tracing.",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "client",
+                    "server"
+                  ],
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "tags": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "description": "Tags defines the custom tags to add to each span.\nEnvoy [command operators](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators) may be used in the value.\nThe [format string documentation](https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#config-access-log-format-strings) provides more information.\nIf provider is kubernetes, pod name and namespace are added by default.\n\nSame keys take precedence over CustomTags.",
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "timeout": {
+          "additionalProperties": false,
+          "description": "Timeout settings for the backend connections.",
+          "properties": {
+            "http": {
+              "additionalProperties": false,
+              "description": "Timeout settings for HTTP.",
+              "properties": {
+                "connectionIdleTimeout": {
+                  "description": "The idle timeout for an HTTP connection. Idle time is defined as a period in which there are no active requests in the connection.\nDefault: 1 hour.",
+                  "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "maxConnectionDuration": {
+                  "description": "The maximum duration of an HTTP connection.\nDefault: unlimited.",
+                  "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "maxStreamDuration": {
+                  "description": "MaxStreamDuration is the maximum duration for a stream to complete. This timeout measures the time\nfrom when the request is sent until the response stream is fully consumed and does not apply to\nnon-streaming requests.\nWhen set to \"0s\", no max duration is applied and streams can run indefinitely.",
+                  "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "requestTimeout": {
+                  "description": "RequestTimeout is the time until which entire response is received from the upstream.",
+                  "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "tcp": {
+              "additionalProperties": false,
+              "description": "Timeout settings for TCP.",
+              "properties": {
+                "connectTimeout": {
+                  "description": "The timeout for network connection establishment, including TCP and TLS handshakes.\nDefault: 10 seconds.",
+                  "pattern": "^([0-9]{1,5}(h|m|s|ms)){1,4}$",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "useClientProtocol": {
+          "description": "UseClientProtocol configures Envoy to prefer sending requests to backends using\nthe same HTTP protocol that the incoming request used. Defaults to false, which means\nthat Envoy will use the protocol indicated by the attached BackendRef.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "type": "object",
+      "x-kubernetes-validations": [
+        {
+          "message": "either targetRef or targetRefs must be used",
+          "rule": "(has(self.targetRef) \u0026\u0026 !has(self.targetRefs)) || (!has(self.targetRef) \u0026\u0026 has(self.targetRefs)) || (has(self.targetSelectors) \u0026\u0026 self.targetSelectors.size() \u003e 0) "
+        },
+        {
+          "message": "this policy can only have a targetRef.group of gateway.networking.k8s.io",
+          "rule": "has(self.targetRef) ? self.targetRef.group == 'gateway.networking.k8s.io' : true "
+        },
+        {
+          "message": "this policy can only have a targetRef.kind of Gateway/HTTPRoute/GRPCRoute/TCPRoute/UDPRoute/TLSRoute",
+          "rule": "has(self.targetRef) ? self.targetRef.kind in ['Gateway', 'HTTPRoute', 'GRPCRoute', 'UDPRoute', 'TCPRoute', 'TLSRoute'] : true"
+        },
+        {
+          "message": "this policy can only have a targetRefs[*].group of gateway.networking.k8s.io",
+          "rule": "has(self.targetRefs) ? self.targetRefs.all(ref, ref.group == 'gateway.networking.k8s.io') : true "
+        },
+        {
+          "message": "this policy can only have a targetRefs[*].kind of Gateway/HTTPRoute/GRPCRoute/TCPRoute/UDPRoute/TLSRoute",
+          "rule": "has(self.targetRefs) ? self.targetRefs.all(ref, ref.kind in ['Gateway', 'HTTPRoute', 'GRPCRoute', 'UDPRoute', 'TCPRoute', 'TLSRoute']) : true "
+        },
+        {
+          "message": "either compression or compressor can be set, not both",
+          "rule": "!has(self.compression) || !has(self.compressor)"
+        },
+        {
+          "message": "predictivePercent in preconnect policy only works with RoundRobin or Random load balancers",
+          "rule": "!((has(self.connection) \u0026\u0026 has(self.connection.preconnect) \u0026\u0026 has(self.connection.preconnect.predictivePercent)) \u0026\u0026 !(has(self.loadBalancer) \u0026\u0026 has(self.loadBalancer.type) \u0026\u0026 self.loadBalancer.type in ['Random', 'RoundRobin']))"
+        }
+      ]
+    },
+    "status": {
+      "additionalProperties": false,
+      "description": "status defines the current status of BackendTrafficPolicy.",
+      "properties": {
+        "ancestors": {
+          "description": "Ancestors is a list of ancestor resources (usually Gateways) that are\nassociated with the policy, and the status of the policy with respect to\neach ancestor. When this policy attaches to a parent, the controller that\nmanages the parent and the ancestors MUST add an entry to this list when\nthe controller first sees the policy and SHOULD update the entry as\nappropriate when the relevant ancestor is modified.\n\nNote that choosing the relevant ancestor is left to the Policy designers;\nan important part of Policy design is designing the right object level at\nwhich to namespace this status.\n\nNote also that implementations MUST ONLY populate ancestor status for\nthe Ancestor resources they are responsible for. Implementations MUST\nuse the ControllerName field to uniquely identify the entries in this list\nthat they are responsible for.\n\nNote that to achieve this, the list of PolicyAncestorStatus structs\nMUST be treated as a map with a composite key, made up of the AncestorRef\nand ControllerName fields combined.\n\nA maximum of 16 ancestors will be represented in this list. An empty list\nmeans the Policy is not relevant for any ancestors.\n\nIf this slice is full, implementations MUST NOT add further entries.\nInstead they MUST consider the policy unimplementable and signal that\non any related resources such as the ancestor that would be referenced\nhere. For example, if this list was full on BackendTLSPolicy, no\nadditional Gateways would be able to reference the Service targeted by\nthe BackendTLSPolicy.",
+          "items": {
+            "additionalProperties": false,
+            "description": "PolicyAncestorStatus describes the status of a route with respect to an\nassociated Ancestor.\n\nAncestors refer to objects that are either the Target of a policy or above it\nin terms of object hierarchy. For example, if a policy targets a Service, the\nPolicy's Ancestors are, in order, the Service, the HTTPRoute, the Gateway, and\nthe GatewayClass. Almost always, in this hierarchy, the Gateway will be the most\nuseful object to place Policy status on, so we recommend that implementations\nSHOULD use Gateway as the PolicyAncestorStatus object unless the designers\nhave a _very_ good reason otherwise.\n\nIn the context of policy attachment, the Ancestor is used to distinguish which\nresource results in a distinct application of this policy. For example, if a policy\ntargets a Service, it may have a distinct result per attached Gateway.\n\nPolicies targeting the same resource may have different effects depending on the\nancestors of those resources. For example, different Gateways targeting the same\nService may have different capabilities, especially if they have different underlying\nimplementations.\n\nFor example, in BackendTLSPolicy, the Policy attaches to a Service that is\nused as a backend in a HTTPRoute that is itself attached to a Gateway.\nIn this case, the relevant object for status is the Gateway, and that is the\nancestor object referred to in this status.\n\nNote that a parent is also an ancestor, so for objects where the parent is the\nrelevant object for status, this struct SHOULD still be used.\n\nThis struct is intended to be used in a slice that's effectively a map,\nwith a composite key made up of the AncestorRef and the ControllerName.",
+            "properties": {
+              "ancestorRef": {
+                "additionalProperties": false,
+                "description": "AncestorRef corresponds with a ParentRef in the spec that this\nPolicyAncestorStatus struct describes the status of.",
+                "properties": {
+                  "group": {
+                    "default": "gateway.networking.k8s.io",
+                    "description": "Group is the group of the referent.\nWhen unspecified, \"gateway.networking.k8s.io\" is inferred.\nTo set the core API group (such as for a \"Service\" kind referent),\nGroup must be explicitly set to \"\" (empty string).\n\nSupport: Core",
+                    "maxLength": 253,
+                    "pattern": "^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "kind": {
+                    "default": "Gateway",
+                    "description": "Kind is kind of the referent.\n\nThere are two kinds of parent resources with \"Core\" support:\n\n* Gateway (Gateway conformance profile)\n* Service (Mesh conformance profile, ClusterIP Services only)\n\nSupport for other resources is Implementation-Specific.",
+                    "maxLength": 63,
+                    "minLength": 1,
+                    "pattern": "^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "description": "Name is the name of the referent.\n\nSupport: Core",
+                    "maxLength": 253,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "namespace": {
+                    "description": "Namespace is the namespace of the referent. When unspecified, this refers\nto the local namespace of the Route.\n\nNote that there are specific rules for ParentRefs which cross namespace\nboundaries. Cross-namespace references are only valid if they are explicitly\nallowed by something in the namespace they are referring to. For example:\nGateway has the AllowedRoutes field, and ReferenceGrant provides a\ngeneric way to enable any other kind of cross-namespace reference.\n\n\u003cgateway:experimental:description\u003e\nParentRefs from a Route to a Service in the same namespace are \"producer\"\nroutes, which apply default routing rules to inbound connections from\nany namespace to the Service.\n\nParentRefs from a Route to a Service in a different namespace are\n\"consumer\" routes, and these routing rules are only applied to outbound\nconnections originating from the same namespace as the Route, for which\nthe intended destination of the connections are a Service targeted as a\nParentRef of the Route.\n\u003c/gateway:experimental:description\u003e\n\nSupport: Core",
+                    "maxLength": 63,
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "port": {
+                    "description": "Port is the network port this Route targets. It can be interpreted\ndifferently based on the type of parent resource.\n\nWhen the parent resource is a Gateway, this targets all listeners\nlistening on the specified port that also support this kind of Route(and\nselect this Route). It's not recommended to set `Port` unless the\nnetworking behaviors specified in a Route must apply to a specific port\nas opposed to a listener(s) whose port(s) may be changed. When both Port\nand SectionName are specified, the name and port of the selected listener\nmust match both specified values.\n\n\u003cgateway:experimental:description\u003e\nWhen the parent resource is a Service, this targets a specific port in the\nService spec. When both Port (experimental) and SectionName are specified,\nthe name and port of the selected port must match both specified values.\n\u003c/gateway:experimental:description\u003e\n\nImplementations MAY choose to support other parent resources.\nImplementations supporting other types of parent resources MUST clearly\ndocument how/if Port is interpreted.\n\nFor the purpose of status, an attachment is considered successful as\nlong as the parent resource accepts it partially. For example, Gateway\nlisteners can restrict which Routes can attach to them by Route kind,\nnamespace, or hostname. If 1 of 2 Gateway listeners accept attachment\nfrom the referencing Route, the Route MUST be considered successfully\nattached. If no Gateway listeners accept attachment from this Route,\nthe Route MUST be considered detached from the Gateway.\n\nSupport: Extended",
+                    "format": "int32",
+                    "maximum": 65535,
+                    "minimum": 1,
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "sectionName": {
+                    "description": "SectionName is the name of a section within the target resource. In the\nfollowing resources, SectionName is interpreted as the following:\n\n* Gateway: Listener name. When both Port (experimental) and SectionName\nare specified, the name and port of the selected listener must match\nboth specified values.\n* Service: Port name. When both Port (experimental) and SectionName\nare specified, the name and port of the selected listener must match\nboth specified values.\n\nImplementations MAY choose to support attaching Routes to other resources.\nIf that is the case, they MUST clearly document how SectionName is\ninterpreted.\n\nWhen unspecified (empty string), this will reference the entire resource.\nFor the purpose of status, an attachment is considered successful if at\nleast one section in the parent resource accepts it. For example, Gateway\nlisteners can restrict which Routes can attach to them by Route kind,\nnamespace, or hostname. If 1 of 2 Gateway listeners accept attachment from\nthe referencing Route, the Route MUST be considered successfully\nattached. If no Gateway listeners accept attachment from this Route, the\nRoute MUST be considered detached from the Gateway.\n\nSupport: Core",
+                    "maxLength": 253,
+                    "minLength": 1,
+                    "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "name"
+                ],
+                "type": "object"
+              },
+              "conditions": {
+                "description": "Conditions describes the status of the Policy with respect to the given Ancestor.\n\n\u003cgateway:util:excludeFromCRD\u003e\n\nNotes for implementors:\n\nConditions are a listType `map`, which means that they function like a\nmap with a key of the `type` field _in the k8s apiserver_.\n\nThis means that implementations must obey some rules when updating this\nsection.\n\n* Implementations MUST perform a read-modify-write cycle on this field\n  before modifying it. That is, when modifying this field, implementations\n  must be confident they have fetched the most recent version of this field,\n  and ensure that changes they make are on that recent version.\n* Implementations MUST NOT remove or reorder Conditions that they are not\n  directly responsible for. For example, if an implementation sees a Condition\n  with type `special.io/SomeField`, it MUST NOT remove, change or update that\n  Condition.\n* Implementations MUST always _merge_ changes into Conditions of the same Type,\n  rather than creating more than one Condition of the same Type.\n* Implementations MUST always update the `observedGeneration` field of the\n  Condition to the `metadata.generation` of the Gateway at the time of update creation.\n* If the `observedGeneration` of a Condition is _greater than_ the value the\n  implementation knows about, then it MUST NOT perform the update on that Condition,\n  but must wait for a future reconciliation and status update. (The assumption is that\n  the implementation's copy of the object is stale and an update will be re-triggered\n  if relevant.)\n\n\u003c/gateway:util:excludeFromCRD\u003e",
+                "items": {
+                  "additionalProperties": false,
+                  "description": "Condition contains details for one aspect of the current state of this API Resource.",
+                  "properties": {
+                    "lastTransitionTime": {
+                      "description": "lastTransitionTime is the last time the condition transitioned from one status to another.\nThis should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.",
+                      "format": "date-time",
+                      "type": "string"
+                    },
+                    "message": {
+                      "description": "message is a human readable message indicating details about the transition.\nThis may be an empty string.",
+                      "maxLength": 32768,
+                      "type": "string"
+                    },
+                    "observedGeneration": {
+                      "description": "observedGeneration represents the .metadata.generation that the condition was set based upon.\nFor instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date\nwith respect to the current state of the instance.",
+                      "format": "int64",
+                      "minimum": 0,
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "reason": {
+                      "description": "reason contains a programmatic identifier indicating the reason for the condition's last transition.\nProducers of specific condition types may define expected values and meanings for this field,\nand whether the values are considered a guaranteed API.\nThe value should be a CamelCase string.\nThis field may not be empty.",
+                      "maxLength": 1024,
+                      "minLength": 1,
+                      "pattern": "^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$",
+                      "type": "string"
+                    },
+                    "status": {
+                      "description": "status of the condition, one of True, False, Unknown.",
+                      "enum": [
+                        "True",
+                        "False",
+                        "Unknown"
+                      ],
+                      "type": "string"
+                    },
+                    "type": {
+                      "description": "type of condition in CamelCase or in foo.example.com/CamelCase.",
+                      "maxLength": 316,
+                      "pattern": "^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "lastTransitionTime",
+                    "message",
+                    "reason",
+                    "status",
+                    "type"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 8,
+                "minItems": 1,
+                "type": "array",
+                "x-kubernetes-list-map-keys": [
+                  "type"
+                ],
+                "x-kubernetes-list-type": "map"
+              },
+              "controllerName": {
+                "description": "ControllerName is a domain/path string that indicates the name of the\ncontroller that wrote this status. This corresponds with the\ncontrollerName field on GatewayClass.\n\nExample: \"example.net/gateway-controller\".\n\nThe format of this field is DOMAIN \"/\" PATH, where DOMAIN and PATH are\nvalid Kubernetes names\n(https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names).\n\nControllers MUST populate this field when writing status. Controllers should ensure that\nentries to status populated with their ControllerName are cleaned up when they are no\nlonger necessary.",
+                "maxLength": 253,
+                "minLength": 1,
+                "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*\\/[A-Za-z0-9\\/\\-._~%!$\u0026'()*+,;=:]+$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "ancestorRef",
+              "conditions",
+              "controllerName"
+            ],
+            "type": "object"
+          },
+          "maxItems": 16,
+          "type": "array",
+          "x-kubernetes-list-type": "atomic"
+        }
+      },
+      "required": [
+        "ancestors"
+      ],
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "spec"
+  ],
+  "type": "object"
+}

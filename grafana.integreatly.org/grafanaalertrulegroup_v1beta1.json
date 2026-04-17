@@ -1,0 +1,544 @@
+{
+  "description": "GrafanaAlertRuleGroup is the Schema for the grafanaalertrulegroups API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "spec": {
+      "additionalProperties": false,
+      "description": "GrafanaAlertRuleGroupSpec defines the desired state of GrafanaAlertRuleGroup",
+      "properties": {
+        "allowCrossNamespaceImport": {
+          "default": false,
+          "description": "Allow the Operator to match this resource with Grafanas outside the current namespace",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "editable": {
+          "description": "Whether to enable or disable editing of the alert rule group in Grafana UI",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "folderRef": {
+          "description": "Match GrafanaFolders CRs to infer the uid",
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "folderUID": {
+          "description": "UID of the folder containing this rule group\nOverrides the FolderSelector",
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "Value is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "instanceSelector": {
+          "additionalProperties": false,
+          "description": "Selects Grafana instances for import",
+          "properties": {
+            "matchExpressions": {
+              "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.",
+              "items": {
+                "additionalProperties": false,
+                "description": "A label selector requirement is a selector that contains values, a key, and an operator that\nrelates the key and values.",
+                "properties": {
+                  "key": {
+                    "description": "key is the label key that the selector applies to.",
+                    "type": "string"
+                  },
+                  "operator": {
+                    "description": "operator represents a key's relationship to a set of values.\nValid operators are In, NotIn, Exists and DoesNotExist.",
+                    "type": "string"
+                  },
+                  "values": {
+                    "description": "values is an array of string values. If the operator is In or NotIn,\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\nthe values array must be empty. This array is replaced during a strategic\nmerge patch.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "x-kubernetes-list-type": "atomic"
+                  }
+                },
+                "required": [
+                  "key",
+                  "operator"
+                ],
+                "type": "object"
+              },
+              "type": [
+                "array",
+                "null"
+              ],
+              "x-kubernetes-list-type": "atomic"
+            },
+            "matchLabels": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\nmap is equivalent to an element of matchExpressions, whose key field is \"key\", the\noperator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": "object",
+          "x-kubernetes-map-type": "atomic",
+          "x-kubernetes-validations": [
+            {
+              "message": "spec.instanceSelector is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "interval": {
+          "format": "duration",
+          "pattern": "^([0-9]+(\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the alert rule group. If not specified, the resource name will be used.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "resyncPeriod": {
+          "description": "How often the resource is synced, defaults to 10m0s if not set",
+          "pattern": "^([0-9]+(\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rules": {
+          "items": {
+            "additionalProperties": false,
+            "description": "AlertRule defines a specific rule to be evaluated. It is based on the upstream model with some k8s specific type mappings",
+            "properties": {
+              "annotations": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "condition": {
+                "type": "string"
+              },
+              "dashboardUid": {
+                "description": "Deprecated: The field is not used, use rules[].annotations.__dashboardUid__",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "data": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "datasourceUid": {
+                      "description": "Grafana data source unique identifier; it should be '__expr__' for a Server Side Expression operation.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "model": {
+                      "description": "JSON is the raw JSON query and includes the above properties as well as custom properties.",
+                      "x-kubernetes-preserve-unknown-fields": true
+                    },
+                    "queryType": {
+                      "description": "QueryType is an optional identifier for the type of query.\nIt can be used to distinguish different types of queries.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "refId": {
+                      "description": "RefID is the unique identifier of the query, set by the frontend call.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "relativeTimeRange": {
+                      "additionalProperties": false,
+                      "description": "relative time range",
+                      "properties": {
+                        "from": {
+                          "description": "from",
+                          "format": "int64",
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "to": {
+                          "description": "to",
+                          "format": "int64",
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        }
+                      },
+                      "type": [
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              "execErrState": {
+                "enum": [
+                  "OK",
+                  "Alerting",
+                  "Error",
+                  "KeepLast"
+                ],
+                "type": "string"
+              },
+              "for": {
+                "default": "0s",
+                "pattern": "^([0-9]+(\\.[0-9]+)?(s|m|h|d|w))+$",
+                "type": "string"
+              },
+              "isPaused": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "keepFiringFor": {
+                "format": "duration",
+                "pattern": "^([0-9]+(\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "labels": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "missingSeriesEvalsToResolve": {
+                "description": "The number of missing series evaluations that must occur before the rule is considered to be resolved.",
+                "format": "int64",
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "noDataState": {
+                "enum": [
+                  "Alerting",
+                  "NoData",
+                  "OK",
+                  "KeepLast"
+                ],
+                "type": "string"
+              },
+              "notificationSettings": {
+                "additionalProperties": false,
+                "properties": {
+                  "active_time_intervals": {
+                    "description": "ActiveTimeIntervals defines the time intervals during which notifications should NOT be muted.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "group_by": {
+                    "description": "GroupBy defines the labels by which incoming alerts are grouped together.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "group_interval": {
+                    "description": "GroupInterval defines how long to wait before sending a notification about new alerts added\nto a group for which an initial notification has already been sent. (e.g. 5m)",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "group_wait": {
+                    "description": "GroupWait defines how long to initially wait to send a notification for a group of alerts. (e.g. 30s)",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mute_time_intervals": {
+                    "description": "MuteTimeIntervals defines the time intervals during which notifications should be muted.\nThese must match the name of a mute time interval defined in the Alertmanager configuration.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "receiver": {
+                    "description": "Receiver is the name of the receiver to send notifications to.",
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  "repeat_interval": {
+                    "description": "RepeatInterval defines how long to wait before sending a notification again if it has already\nbeen sent successfully for an alert. (e.g. 4h)\nShould not be less than GroupInterval.",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "receiver"
+                ],
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "panelId": {
+                "description": "Deprecated: The field is not used, use rules[].annotations.__panelId__",
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "record": {
+                "additionalProperties": false,
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "metric": {
+                    "type": "string"
+                  },
+                  "targetDatasourceUid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "from",
+                  "metric"
+                ],
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "title": {
+                "example": "Always firing",
+                "maxLength": 190,
+                "minLength": 1,
+                "type": "string"
+              },
+              "uid": {
+                "description": "UID of the alert rule. Can be any string consisting of alphanumeric characters, - and _ with a maximum length of 40",
+                "maxLength": 40,
+                "pattern": "^[a-zA-Z0-9-_]+$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "condition",
+              "data",
+              "execErrState",
+              "for",
+              "noDataState",
+              "title",
+              "uid"
+            ],
+            "type": "object"
+          },
+          "minItems": 1,
+          "type": "array"
+        },
+        "suspend": {
+          "description": "Suspend pauses synchronizing attempts and tells the operator to ignore changes",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "instanceSelector",
+        "interval",
+        "rules"
+      ],
+      "type": "object",
+      "x-kubernetes-validations": [
+        {
+          "message": "Only one of FolderUID or FolderRef can be set and one must be defined",
+          "rule": "(has(self.folderUID) \u0026\u0026 !(has(self.folderRef))) || (has(self.folderRef) \u0026\u0026 !(has(self.folderUID)))"
+        },
+        {
+          "message": "spec.editable is immutable",
+          "rule": "((!has(oldSelf.editable) \u0026\u0026 !has(self.editable)) || (has(oldSelf.editable) \u0026\u0026 has(self.editable)))"
+        },
+        {
+          "message": "spec.folderUID is immutable",
+          "rule": "((!has(oldSelf.folderUID) \u0026\u0026 !has(self.folderUID)) || (has(oldSelf.folderUID) \u0026\u0026 has(self.folderUID)))"
+        },
+        {
+          "message": "spec.folderRef is immutable",
+          "rule": "((!has(oldSelf.folderRef) \u0026\u0026 !has(self.folderRef)) || (has(oldSelf.folderRef) \u0026\u0026 has(self.folderRef)))"
+        },
+        {
+          "message": "disabling spec.allowCrossNamespaceImport requires a recreate to ensure desired state",
+          "rule": "!oldSelf.allowCrossNamespaceImport || (oldSelf.allowCrossNamespaceImport \u0026\u0026 self.allowCrossNamespaceImport)"
+        }
+      ]
+    },
+    "status": {
+      "additionalProperties": false,
+      "description": "The most recent observed state of a Grafana resource",
+      "properties": {
+        "conditions": {
+          "description": "Results when synchronizing resource with Grafana instances",
+          "items": {
+            "additionalProperties": false,
+            "description": "Condition contains details for one aspect of the current state of this API Resource.",
+            "properties": {
+              "lastTransitionTime": {
+                "description": "lastTransitionTime is the last time the condition transitioned from one status to another.\nThis should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "description": "message is a human readable message indicating details about the transition.\nThis may be an empty string.",
+                "maxLength": 32768,
+                "type": "string"
+              },
+              "observedGeneration": {
+                "description": "observedGeneration represents the .metadata.generation that the condition was set based upon.\nFor instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date\nwith respect to the current state of the instance.",
+                "format": "int64",
+                "minimum": 0,
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "reason": {
+                "description": "reason contains a programmatic identifier indicating the reason for the condition's last transition.\nProducers of specific condition types may define expected values and meanings for this field,\nand whether the values are considered a guaranteed API.\nThe value should be a CamelCase string.\nThis field may not be empty.",
+                "maxLength": 1024,
+                "minLength": 1,
+                "pattern": "^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$",
+                "type": "string"
+              },
+              "status": {
+                "description": "status of the condition, one of True, False, Unknown.",
+                "enum": [
+                  "True",
+                  "False",
+                  "Unknown"
+                ],
+                "type": "string"
+              },
+              "type": {
+                "description": "type of condition in CamelCase or in foo.example.com/CamelCase.",
+                "maxLength": 316,
+                "pattern": "^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "lastTransitionTime",
+              "message",
+              "reason",
+              "status",
+              "type"
+            ],
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "lastResync": {
+          "description": "Last time the resource was synchronized with Grafana instances",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "spec"
+  ],
+  "type": "object"
+}

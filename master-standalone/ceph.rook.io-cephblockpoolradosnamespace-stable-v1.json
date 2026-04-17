@@ -1,0 +1,657 @@
+{
+  "description": "CephBlockPoolRadosNamespace represents a Ceph BlockPool Rados Namespace",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "spec": {
+      "additionalProperties": false,
+      "description": "Spec represents the specification of a Ceph BlockPool Rados Namespace",
+      "properties": {
+        "blockPoolName": {
+          "description": "BlockPoolName is the name of Ceph BlockPool. Typically it's the name of\nthe CephBlockPool CR.",
+          "type": "string",
+          "x-kubernetes-validations": [
+            {
+              "message": "blockPoolName is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "clusterID": {
+          "description": "ClusterID to be used for this RadosNamespace in the CSI configuration.\nIt must be unique among all Ceph clusters managed by Rook.\nIf not specified, the clusterID will be generated and can be found in the CR status.",
+          "maxLength": 36,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z0-9_-]+$",
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "ClusterID is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "mirroring": {
+          "additionalProperties": false,
+          "description": "Mirroring configuration of CephBlockPoolRadosNamespace",
+          "properties": {
+            "mode": {
+              "description": "Mode is the mirroring mode; either pool or image.",
+              "enum": [
+                "",
+                "pool",
+                "image"
+              ],
+              "type": "string"
+            },
+            "remoteNamespace": {
+              "description": "RemoteNamespace is the name of the CephBlockPoolRadosNamespace on the secondary cluster CephBlockPool",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "snapshotSchedules": {
+              "description": "SnapshotSchedules is the scheduling of snapshot for mirrored images",
+              "items": {
+                "additionalProperties": false,
+                "description": "SnapshotScheduleSpec represents the snapshot scheduling settings of a mirrored pool",
+                "properties": {
+                  "interval": {
+                    "description": "Interval represent the periodicity of the snapshot.",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "path": {
+                    "description": "Path is the path to snapshot, only valid for CephFS",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "startTime": {
+                    "description": "StartTime indicates when to start the snapshot",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "type": "object"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "mode"
+          ],
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "The name of the CephBlockPoolRadosNamespaceSpec namespace. If not set, the default is the name of the CR.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "name is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        }
+      },
+      "required": [
+        "blockPoolName"
+      ],
+      "type": "object"
+    },
+    "status": {
+      "additionalProperties": false,
+      "description": "Status represents the status of a CephBlockPool Rados Namespace",
+      "properties": {
+        "conditions": {
+          "items": {
+            "additionalProperties": false,
+            "description": "Condition represents a status condition on any Rook-Ceph Custom Resource.",
+            "properties": {
+              "lastHeartbeatTime": {
+                "format": "date-time",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lastTransitionTime": {
+                "format": "date-time",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "message": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reason": {
+                "description": "ConditionReason is a reason for a condition",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "type": {
+                "description": "ConditionType represent a resource's status",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "info": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "nullable": true,
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "mirroringInfo": {
+          "additionalProperties": false,
+          "description": "MirroringInfoSpec is the status of the pool/radosnamespace mirroring",
+          "properties": {
+            "details": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "lastChanged": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "lastChecked": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mode": {
+              "description": "Mode is the mirroring mode",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "peers": {
+              "description": "Peers are the list of peer sites connected to that cluster",
+              "items": {
+                "additionalProperties": false,
+                "description": "PeersSpec contains peer details",
+                "properties": {
+                  "client_name": {
+                    "description": "ClientName is the CephX user used to connect to the peer",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "direction": {
+                    "description": "Direction is the peer mirroring direction",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mirror_uuid": {
+                    "description": "MirrorUUID is the mirror UUID",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "site_name": {
+                    "description": "SiteName is the current site name",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "uuid": {
+                    "description": "UUID is the peer UUID",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "type": "object"
+              },
+              "type": [
+                "array",
+                "null"
+              ]
+            },
+            "site_name": {
+              "description": "SiteName is the current site name",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "mirroringStatus": {
+          "additionalProperties": false,
+          "description": "MirroringStatusSpec is the status of the pool/radosNamespace mirroring",
+          "properties": {
+            "details": {
+              "description": "Details contains potential status errors",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "lastChanged": {
+              "description": "LastChanged is the last time time the status last changed",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "lastChecked": {
+              "description": "LastChecked is the last time time the status was checked",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "summary": {
+              "additionalProperties": false,
+              "description": "Summary is the mirroring status summary",
+              "properties": {
+                "daemon_health": {
+                  "description": "DaemonHealth is the health of the mirroring daemon",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "group_health": {
+                  "description": "GroupHealth is the health of the mirrored image group",
+                  "nullable": true,
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "group_states": {
+                  "additionalProperties": false,
+                  "description": "GroupStates is the various state for all mirrored image groups",
+                  "nullable": true,
+                  "properties": {
+                    "error": {
+                      "description": "Error is when the mirroring state is errored",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "replaying": {
+                      "description": "Replaying is when the replay of the mirroring journal is on-going",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "starting_replay": {
+                      "description": "StartingReplay is when the replay of the mirroring journal starts",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "stopped": {
+                      "description": "Stopped is when the mirroring state is stopped",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "stopping_replay": {
+                      "description": "StopReplaying is when the replay of the mirroring journal stops",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "syncing": {
+                      "description": "Syncing is when the image is syncing",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "unknown": {
+                      "description": "Unknown is when the mirroring state is unknown",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "health": {
+                  "description": "Health is the mirroring health",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "image_health": {
+                  "description": "ImageHealth is the health of the mirrored image",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "image_states": {
+                  "additionalProperties": false,
+                  "description": "ImageStates is the various state for all mirrored images",
+                  "nullable": true,
+                  "properties": {
+                    "error": {
+                      "description": "Error is when the mirroring state is errored",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "replaying": {
+                      "description": "Replaying is when the replay of the mirroring journal is on-going",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "starting_replay": {
+                      "description": "StartingReplay is when the replay of the mirroring journal starts",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "stopped": {
+                      "description": "Stopped is when the mirroring state is stopped",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "stopping_replay": {
+                      "description": "StopReplaying is when the replay of the mirroring journal stops",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "syncing": {
+                      "description": "Syncing is when the image is syncing",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "unknown": {
+                      "description": "Unknown is when the mirroring state is unknown",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                },
+                "states": {
+                  "additionalProperties": false,
+                  "description": "States is the various state for all mirrored images",
+                  "nullable": true,
+                  "properties": {
+                    "error": {
+                      "description": "Error is when the mirroring state is errored",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "replaying": {
+                      "description": "Replaying is when the replay of the mirroring journal is on-going",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "starting_replay": {
+                      "description": "StartingReplay is when the replay of the mirroring journal starts",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "stopped": {
+                      "description": "Stopped is when the mirroring state is stopped",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "stopping_replay": {
+                      "description": "StopReplaying is when the replay of the mirroring journal stops",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "syncing": {
+                      "description": "Syncing is when the image is syncing",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "unknown": {
+                      "description": "Unknown is when the mirroring state is unknown",
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
+                  },
+                  "type": [
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "phase": {
+          "description": "ConditionType represent a resource's status",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "snapshotScheduleStatus": {
+          "additionalProperties": false,
+          "description": "SnapshotScheduleStatusSpec is the status of the snapshot schedule",
+          "properties": {
+            "details": {
+              "description": "Details contains potential status errors",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "lastChanged": {
+              "description": "LastChanged is the last time time the status last changed",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "lastChecked": {
+              "description": "LastChecked is the last time time the status was checked",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "snapshotSchedules": {
+              "description": "SnapshotSchedules is the list of snapshots scheduled",
+              "items": {
+                "additionalProperties": false,
+                "description": "SnapshotSchedulesSpec is the list of snapshot scheduled for images in a pool",
+                "properties": {
+                  "image": {
+                    "description": "Image is the mirrored image",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "items": {
+                    "description": "Items is the list schedules times for a given snapshot",
+                    "items": {
+                      "additionalProperties": false,
+                      "description": "SnapshotSchedule is a schedule",
+                      "properties": {
+                        "interval": {
+                          "description": "Interval is the interval in which snapshots will be taken",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "start_time": {
+                          "description": "StartTime is the snapshot starting time",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "type": "object"
+                    },
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "namespace": {
+                    "description": "Namespace is the RADOS namespace the image is part of",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pool": {
+                    "description": "Pool is the pool name",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "type": "object"
+              },
+              "nullable": true,
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ],
+      "x-kubernetes-preserve-unknown-fields": true
+    }
+  },
+  "required": [
+    "metadata",
+    "spec"
+  ],
+  "type": "object"
+}

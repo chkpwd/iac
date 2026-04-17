@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gateway v1beta1 — gateway.networking.k8s.io</title>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<style>
+  :root {
+    --bg: #09090b;
+    --bg-surface: rgba(24, 24, 27, 0.6);
+    --bg-hover: rgba(24, 24, 27, 0.8);
+    --fg: #fafafa;
+    --fg-muted: #a1a1aa;
+    --accent: #6bc1fe;
+    --accent-dim: rgba(107, 193, 254, 0.15);
+    --border: rgba(255, 255, 255, 0.1);
+    --border-active: #6bc1fe;
+    --stat-fg: #fafafa;
+    --required-bg: rgba(251, 191, 36, 0.15);
+    --required-fg: #fbbf24;
+    --stripes-dark: repeating-linear-gradient(100deg, #000 0%, #000 7%, transparent 10%, transparent 12%, #000 16%);
+    --rainbow: repeating-linear-gradient(100deg, #fff 10%, #fff 16%, #fff 22%, #fff 30%);
+  }
+  .light {
+    --bg: #f5f7fa;
+    --bg-surface: #ffffff;
+    --bg-hover: #edf0f4;
+    --fg: #18181b;
+    --fg-muted: #6b7785;
+    --accent: #2563b0;
+    --accent-dim: rgba(37, 99, 176, 0.08);
+    --border: #d8dde4;
+    --border-active: #2563b0;
+    --stat-fg: #18181b;
+    --required-bg: rgba(217, 119, 6, 0.1);
+    --required-fg: #b45309;
+    --stripes-dark: none;
+    --rainbow: none;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--fg);
+    max-width: 920px; margin: 0 auto; padding: 2.5rem 1.25rem;
+    position: relative; z-index: 1;
+    transition: background 0.2s, color 0.2s;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -2;
+    pointer-events: none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 31px 47px, rgba(255,255,255,1), transparent),
+      radial-gradient(1px 1px at 212px 23px, rgba(255,255,255,0.7), transparent),
+      radial-gradient(1.5px 1.5px at 68px 289px, rgba(255,255,255,0.84), transparent),
+      radial-gradient(1px 1px at 313px 151px, rgba(255,255,255,0.56), transparent),
+      radial-gradient(1px 1px at 157px 371px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(2px 2px at 19px 83px, rgba(255,255,255,0.96), transparent),
+      radial-gradient(1px 1px at 301px 41px, rgba(255,255,255,0.6), transparent),
+      radial-gradient(1.5px 1.5px at 127px 409px, rgba(255,255,255,0.8), transparent),
+      radial-gradient(1px 1px at 443px 237px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1.5px 1.5px at 67px 491px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1px 1px at 11px 37px, rgba(255,255,255,0.72), transparent),
+      radial-gradient(1.5px 1.5px at 191px 213px, rgba(255,255,255,0.9), transparent),
+      radial-gradient(1px 1px at 53px 7px, rgba(255,255,255,0.5), transparent),
+      radial-gradient(1px 1px at 271px 103px, rgba(255,255,255,0.64), transparent);
+    background-size:
+      397px 397px, 397px 397px, 397px 397px, 397px 397px, 397px 397px,
+      509px 509px, 509px 509px, 509px 509px, 509px 509px, 509px 509px,
+      311px 311px, 311px 311px, 311px 311px, 311px 311px;
+    mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, rgba(0,0,0,0.35) 45%, transparent 80%);
+  }
+  .flare {
+    position: fixed; top: 0; right: 0;
+    width: 100vw; height: 450px; z-index: -1;
+    pointer-events: none;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 300% 200%;
+    background-position: 50% 50%;
+    filter: opacity(50%) saturate(200%);
+    opacity: 0.25;
+    mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+  }
+  .flare::after {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: var(--stripes-dark), var(--rainbow);
+    background-size: 200% 100%;
+    background-attachment: fixed;
+    mix-blend-mode: difference;
+  }
+  .light body::before, .light .flare { display: none; }
+  .theme-toggle {
+    background: none; border: 1px solid var(--border); border-radius: 6px;
+    color: var(--fg-muted); cursor: pointer; padding: 0.35rem 0.6rem; font-size: 0.85rem;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .copied-toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: #09090b; padding: 0.4rem 1rem;
+    border-radius: 6px; font-size: 0.8rem; font-weight: 600;
+    opacity: 0; transition: opacity 0.2s;
+    pointer-events: none; z-index: 10;
+  }
+  .copied-toast.show { opacity: 1; }
+  footer {
+    margin-top: 3rem; padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center; font-size: 0.8rem; color: var(--fg-muted);
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .nav-row {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .back-link { font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; }
+  .back-link kbd {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 0.6rem; color: var(--fg-muted); background: var(--bg-surface);
+    border: 1px solid var(--border); border-radius: 4px;
+    padding: 0.1rem 0.35rem; line-height: 1;
+  }
+  .meta-cards {
+    display: flex; gap: 0.75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+  }
+  .meta-card {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.5rem 1rem;
+  }
+  .meta-card .label { font-size: 0.7rem; color: var(--fg-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .meta-card .value { font-size: 1rem; font-weight: 600; }
+  .yaml-block {
+    background: var(--bg-surface); border: 1px solid var(--border);
+    border-radius: 6px; padding: 0.75rem 1rem; margin-bottom: 1.5rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    font-size: 0.8rem; white-space: pre; overflow-x: auto; color: var(--fg);
+  }
+  .toolbar {
+    display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;
+    align-items: center; justify-content: space-between;
+  }
+  .toolbar-left { display: flex; gap: 0.75rem; }
+  .toolbar button, .toolbar a {
+    background: none; border: none; color: var(--fg-muted); cursor: pointer;
+    font-size: 0.8rem; padding: 0.2rem 0; transition: color 0.15s;
+  }
+  .toolbar button:hover, .toolbar a:hover { color: var(--accent); text-decoration: underline; }
+  .prop {
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; transition: border-color 0.2s;
+  }
+  .prop[open] { border-color: var(--border-active); border-left-width: 2px; }
+  .prop > summary {
+    padding: 0.5rem 0.75rem; cursor: pointer;
+    font-size: 0.85rem; background: var(--bg-surface); border-radius: 6px;
+    list-style: none; display: flex; align-items: center; gap: 0.5rem;
+    transition: background 0.15s;
+  }
+  .prop > summary::-webkit-details-marker { display: none; }
+  .prop > summary::before { content: "\25B8"; color: var(--fg-muted); font-size: 0.7rem; }
+  .prop[open] > summary::before { content: "\25BE"; color: var(--accent); }
+  .prop > summary:hover { background: var(--bg-hover); }
+  .prop-content { padding: 0.5rem 0.75rem 0.75rem; padding-left: 1.5rem; }
+  .prop-leaf {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem; display: flex; align-items: flex-start; gap: 0.5rem;
+    border: 1px solid var(--border); border-radius: 6px;
+    margin-bottom: 0.35rem; background: var(--bg-surface);
+  }
+  .prop-leaf .prop-name { min-width: 0; }
+  .prop-name {
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+    color: var(--accent); font-weight: 600; white-space: nowrap;
+  }
+  .type-badge {
+    background: var(--accent-dim); color: var(--accent);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .required-badge {
+    background: var(--required-bg); color: var(--required-fg);
+    font-size: 0.65rem; font-weight: 700; padding: 0.1rem 0.4rem;
+    border-radius: 8px; white-space: nowrap;
+  }
+  .prop-desc { color: var(--fg-muted); font-size: 0.82rem; margin-top: 0.25rem; }
+  .prop-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.2rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+  .prop-children { margin-top: 0.5rem; }
+  .leaf-desc { color: var(--fg-muted); font-size: 0.82rem; flex: 1; min-width: 0; }
+  .leaf-constraints {
+    color: var(--fg-muted); font-size: 0.75rem; margin-top: 0.15rem;
+    font-family: "SF Mono", "Fira Code", "Cascadia Code", monospace;
+  }
+</style>
+<script>if(localStorage.getItem('theme')==='light')document.documentElement.className='light';</script>
+</head>
+<body>
+<div class="flare"></div>
+<div class="nav-row">
+  <a href="/" class="back-link">← Back to index <kbd>Esc</kbd></a>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
+</div>
+<div class="meta-cards">
+  <div class="meta-card"><div class="label">Kind</div><div class="value">Gateway</div></div>
+  <div class="meta-card"><div class="label">Group</div><div class="value">gateway.networking.k8s.io</div></div>
+  <div class="meta-card"><div class="label">Version</div><div class="value">v1beta1</div></div>
+</div>
+<div class="yaml-block">apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: example</div>
+<div class="toolbar">
+  <div class="toolbar-left">
+    <button id="expand-all">Expand all</button>
+    <button id="collapse-all">Collapse all</button>
+  </div>
+  <div class="toolbar-left">
+    <a href="/gateway.networking.k8s.io/gateway_v1beta1.json" target="_blank">View raw schema</a>
+    <button id="copy-url" data-url="/gateway.networking.k8s.io/gateway_v1beta1.json">Copy schema URL</button>
+  </div>
+</div>
+<div id="properties">
+<div class="prop-leaf">
+  <span class="prop-name">apiVersion</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">APIVersion defines the versioned schema of this representation of an object.
+Servers should convert recognized schemas to the latest internal value, and
+may reject unrecognized values.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is a string value representing the REST resource this object represents.
+Servers may infer this from the endpoint the client submits requests to.
+Cannot be updated.
+In CamelCase.
+More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metadata</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">spec</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Spec defines the desired state of Gateway.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">addresses</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Addresses requested for this Gateway. This is optional and behavior can
+depend on the implementation. If a value is set in the spec and the
+requested address is invalid or unavailable, the implementation MUST
+indicate this in an associated entry in GatewayStatus.Conditions.
+
+The Addresses field represents a request for the address(es) on the
+&#34;outside of the Gateway&#34;, that traffic bound for this Gateway will use.
+This could be the IP address or hostname of an external load balancer or
+other networking infrastructure, or some other address that traffic will
+be sent to.
+
+If no Addresses are specified, the implementation MAY schedule the
+Gateway in an implementation-specific manner, assigning an appropriate
+set of Addresses.
+
+The implementation MUST bind all Listeners to every GatewayAddress that
+it assigns to the Gateway and add a corresponding entry in
+GatewayStatus.Addresses.
+
+Support: Extended</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type of the address.<div class="leaf-constraints">pattern: ^Hostname|IPAddress|NamedAddress|[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*\/[A-Za-z0-9\/\-._~%!$&amp;&#39;()*+,;=:]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">When a value is unspecified, an implementation SHOULD automatically
+assign an address matching the requested type if possible.
+
+If an implementation does not support an empty value, they MUST set the
+&#34;Programmed&#34; condition in status to False with a reason of &#34;AddressNotAssigned&#34;.
+
+Examples: `1.2.3.4`, `128::1`, `my-ip-address`.<div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">allowedListeners</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">AllowedListeners defines which ListenerSets can be attached to this Gateway.
+While this feature is experimental, the default value is to allow no ListenerSets.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">namespaces</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Namespaces defines which namespaces ListenerSets can be attached to this Gateway.
+While this feature is experimental, the default value is to allow no ListenerSets.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">from</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">From indicates where ListenerSets can attach to this Gateway. Possible
+values are:
+
+* Same: Only ListenerSets in the same namespace may be attached to this Gateway.
+* Selector: ListenerSets in namespaces selected by the selector may be attached to this Gateway.
+* All: ListenerSets in all namespaces may be attached to this Gateway.
+* None: Only listeners defined in the Gateway&#39;s spec are allowed
+
+While this feature is experimental, the default value None<div class="leaf-constraints">enum: All, Selector, Same, None</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">selector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Selector must be specified when From is set to &#34;Selector&#34;. In that case,
+only ListenerSets in Namespaces matching this Selector will be selected by this
+Gateway. This field is ignored for other values of &#34;From&#34;.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">matchExpressions is a list of label selector requirements. The requirements are ANDed.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">key is the label key that the selector applies to.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">operator represents a key&#39;s relationship to a set of values.
+Valid operators are In, NotIn, Exists and DoesNotExist.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">values is an array of string values. If the operator is In or NotIn,
+the values array must be non-empty. If the operator is Exists or DoesNotExist,
+the values array must be empty. This array is replaced during a strategic
+merge patch.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+map is equivalent to an element of matchExpressions, whose key field is &#34;key&#34;, the
+operator is &#34;In&#34;, and the values array contains only &#34;value&#34;. The requirements are ANDed.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">defaultScope</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">DefaultScope, when set, configures the Gateway as a default Gateway,
+meaning it will dynamically and implicitly have Routes (e.g. HTTPRoute)
+attached to it, according to the scope configured here.
+
+If unset (the default) or set to None, the Gateway will not act as a
+default Gateway; if set, the Gateway will claim any Route with a
+matching scope set in its UseDefaultGateway field, subject to the usual
+rules about which routes the Gateway can attach to.
+
+Think carefully before using this functionality! While the normal rules
+about which Route can apply are still enforced, it is simply easier for
+the wrong Route to be accidentally attached to this Gateway in this
+configuration. If the Gateway operator is not also the operator in
+control of the scope (e.g. namespace) with tight controls and checks on
+what kind of workloads and Routes get added in that scope, we strongly
+recommend not using this just because it seems convenient, and instead
+stick to direct Route attachment.<div class="leaf-constraints">enum: All, None</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">gatewayClassName</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">GatewayClassName used for this Gateway. This is the name of a
+GatewayClass resource.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">infrastructure</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Infrastructure defines infrastructure level attributes about this Gateway instance.
+
+Support: Extended</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">annotations</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Annotations that SHOULD be applied to any resources created in response to this Gateway.
+
+For implementations creating other Kubernetes objects, this should be the `metadata.annotations` field on resources.
+For other implementations, this refers to any relevant (implementation specific) &#34;annotations&#34; concepts.
+
+An implementation may chose to add additional implementation-specific annotations as they see fit.
+
+Support: Extended
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">labels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Labels that SHOULD be applied to any resources created in response to this Gateway.
+
+For implementations creating other Kubernetes objects, this should be the `metadata.labels` field on resources.
+For other implementations, this refers to any relevant (implementation specific) &#34;labels&#34; concepts.
+
+An implementation may chose to add additional implementation-specific labels as they see fit.
+
+If an implementation maps these labels to Pods, or any other resource that would need to be recreated when labels
+change, it SHOULD clearly warn about this behavior in documentation.
+
+Support: Extended
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">parametersRef</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ParametersRef is a reference to a resource that contains the configuration
+parameters corresponding to the Gateway. This is optional if the
+controller does not require any additional configuration.
+
+This follows the same semantics as GatewayClass&#39;s `parametersRef`, but on a per-Gateway basis
+
+The Gateway&#39;s GatewayClass may provide its own `parametersRef`. When both are specified,
+the merging behavior is implementation specific.
+It is generally recommended that GatewayClass provides defaults that can be overridden by a Gateway.
+
+If the referent cannot be found, refers to an unsupported kind, or when
+the data within that resource is malformed, the Gateway SHOULD be
+rejected with the &#34;Accepted&#34; status condition set to &#34;False&#34; and an
+&#34;InvalidParameters&#34; reason.
+
+Support: Implementation-specific</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Group is the group of the referent.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is kind of the referent.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">listeners</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Listeners associated with this Gateway. Listeners define
+logical endpoints that are bound on this Gateway&#39;s addresses.
+At least one Listener MUST be specified.
+
+## Distinct Listeners
+
+Each Listener in a set of Listeners (for example, in a single Gateway)
+MUST be _distinct_, in that a traffic flow MUST be able to be assigned to
+exactly one listener. (This section uses &#34;set of Listeners&#34; rather than
+&#34;Listeners in a single Gateway&#34; because implementations MAY merge configuration
+from multiple Gateways onto a single data plane, and these rules _also_
+apply in that case).
+
+Practically, this means that each listener in a set MUST have a unique
+combination of Port, Protocol, and, if supported by the protocol, Hostname.
+
+Some combinations of port, protocol, and TLS settings are considered
+Core support and MUST be supported by implementations based on the objects
+they support:
+
+HTTPRoute
+
+1. HTTPRoute, Port: 80, Protocol: HTTP
+2. HTTPRoute, Port: 443, Protocol: HTTPS, TLS Mode: Terminate, TLS keypair provided
+
+TLSRoute
+
+1. TLSRoute, Port: 443, Protocol: TLS, TLS Mode: Passthrough
+
+&#34;Distinct&#34; Listeners have the following property:
+
+**The implementation can match inbound requests to a single distinct
+Listener**.
+
+When multiple Listeners share values for fields (for
+example, two Listeners with the same Port value), the implementation
+can match requests to only one of the Listeners using other
+Listener fields.
+
+When multiple listeners have the same value for the Protocol field, then
+each of the Listeners with matching Protocol values MUST have different
+values for other fields.
+
+The set of fields that MUST be different for a Listener differs per protocol.
+The following rules define the rules for what fields MUST be considered for
+Listeners to be distinct with each protocol currently defined in the
+Gateway API spec.
+
+The set of listeners that all share a protocol value MUST have _different_
+values for _at least one_ of these fields to be distinct:
+
+* **HTTP, HTTPS, TLS**: Port, Hostname
+* **TCP, UDP**: Port
+
+One **very** important rule to call out involves what happens when an
+implementation:
+
+* Supports TCP protocol Listeners, as well as HTTP, HTTPS, or TLS protocol
+  Listeners, and
+* sees HTTP, HTTPS, or TLS protocols with the same `port` as one with TCP
+  Protocol.
+
+In this case all the Listeners that share a port with the
+TCP Listener are not distinct and so MUST NOT be accepted.
+
+If an implementation does not support TCP Protocol Listeners, then the
+previous rule does not apply, and the TCP Listeners SHOULD NOT be
+accepted.
+
+Note that the `tls` field is not used for determining if a listener is distinct, because
+Listeners that _only_ differ on TLS config will still conflict in all cases.
+
+### Listeners that are distinct only by Hostname
+
+When the Listeners are distinct based only on Hostname, inbound request
+hostnames MUST match from the most specific to least specific Hostname
+values to choose the correct Listener and its associated set of Routes.
+
+Exact matches MUST be processed before wildcard matches, and wildcard
+matches MUST be processed before fallback (empty Hostname value)
+matches. For example, `&#34;foo.example.com&#34;` takes precedence over
+`&#34;*.example.com&#34;`, and `&#34;*.example.com&#34;` takes precedence over `&#34;&#34;`.
+
+Additionally, if there are multiple wildcard entries, more specific
+wildcard entries must be processed before less specific wildcard entries.
+For example, `&#34;*.foo.example.com&#34;` takes precedence over `&#34;*.example.com&#34;`.
+
+The precise definition here is that the higher the number of dots in the
+hostname to the right of the wildcard character, the higher the precedence.
+
+The wildcard character will match any number of characters _and dots_ to
+the left, however, so `&#34;*.example.com&#34;` will match both
+`&#34;foo.bar.example.com&#34;` _and_ `&#34;bar.example.com&#34;`.
+
+## Handling indistinct Listeners
+
+If a set of Listeners contains Listeners that are not distinct, then those
+Listeners are _Conflicted_, and the implementation MUST set the &#34;Conflicted&#34;
+condition in the Listener Status to &#34;True&#34;.
+
+The words &#34;indistinct&#34; and &#34;conflicted&#34; are considered equivalent for the
+purpose of this documentation.
+
+Implementations MAY choose to accept a Gateway with some Conflicted
+Listeners only if they only accept the partial Listener set that contains
+no Conflicted Listeners.
+
+Specifically, an implementation MAY accept a partial Listener set subject to
+the following rules:
+
+* The implementation MUST NOT pick one conflicting Listener as the winner.
+  ALL indistinct Listeners must not be accepted for processing.
+* At least one distinct Listener MUST be present, or else the Gateway effectively
+  contains _no_ Listeners, and must be rejected from processing as a whole.
+
+The implementation MUST set a &#34;ListenersNotValid&#34; condition on the
+Gateway Status when the Gateway contains Conflicted Listeners whether or
+not they accept the Gateway. That Condition SHOULD clearly
+indicate in the Message which Listeners are conflicted, and which are
+Accepted. Additionally, the Listener status for those listeners SHOULD
+indicate which Listeners are conflicted and not Accepted.
+
+## General Listener behavior
+
+Note that, for all distinct Listeners, requests SHOULD match at most one Listener.
+For example, if Listeners are defined for &#34;foo.example.com&#34; and &#34;*.example.com&#34;, a
+request to &#34;foo.example.com&#34; SHOULD only be routed using routes attached
+to the &#34;foo.example.com&#34; Listener (and not the &#34;*.example.com&#34; Listener).
+
+This concept is known as &#34;Listener Isolation&#34;, and it is an Extended feature
+of Gateway API. Implementations that do not support Listener Isolation MUST
+clearly document this, and MUST NOT claim support for the
+`GatewayHTTPListenerIsolation` feature.
+
+Implementations that _do_ support Listener Isolation SHOULD claim support
+for the Extended `GatewayHTTPListenerIsolation` feature and pass the associated
+conformance tests.
+
+## Compatible Listeners
+
+A Gateway&#39;s Listeners are considered _compatible_ if:
+
+1. They are distinct.
+2. The implementation can serve them in compliance with the Addresses
+   requirement that all Listeners are available on all assigned
+   addresses.
+
+Compatible combinations in Extended support are expected to vary across
+implementations. A combination that is compatible for one implementation
+may not be compatible for another.
+
+For example, an implementation that cannot serve both TCP and UDP listeners
+on the same address, or cannot mix HTTPS and generic TLS listens on the same port
+would not consider those cases compatible, even though they are distinct.
+
+Implementations MAY merge separate Gateways onto a single set of
+Addresses if all Listeners across all Gateways are compatible.
+
+In a future release the MinItems=1 requirement MAY be dropped.
+
+Support: Core</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 64</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">allowedRoutes</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">AllowedRoutes defines the types of routes that MAY be attached to a
+Listener and the trusted namespaces where those Route resources MAY be
+present.
+
+Although a client request may match multiple route rules, only one rule
+may ultimately receive the request. Matching precedence MUST be
+determined in order of the following criteria:
+
+* The most specific match as defined by the Route type.
+* The oldest Route based on creation timestamp. For example, a Route with
+  a creation timestamp of &#34;2020-09-08 01:02:03&#34; is given precedence over
+  a Route with a creation timestamp of &#34;2020-09-08 01:02:04&#34;.
+* If everything else is equivalent, the Route appearing first in
+  alphabetical order (namespace/name) should be given precedence. For
+  example, foo/bar is given precedence over foo/baz.
+
+All valid rules within a Route attached to this Listener should be
+implemented. Invalid Route rules can be ignored (sometimes that will mean
+the full Route). If a Route rule transitions from valid to invalid,
+support for that Route rule should be dropped to ensure consistency. For
+example, even if a filter specified by a Route rule is invalid, the rest
+of the rules within that Route should still be supported.
+
+Support: Core</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">kinds</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Kinds specifies the groups and kinds of Routes that are allowed to bind
+to this Gateway Listener. When unspecified or empty, the kinds of Routes
+selected are determined using the Listener protocol.
+
+A RouteGroupKind MUST correspond to kinds of Routes that are compatible
+with the application protocol specified in the Listener&#39;s Protocol field.
+If an implementation does not support or recognize this resource type, it
+MUST set the &#34;ResolvedRefs&#34; condition to False for this Listener with the
+&#34;InvalidRouteKinds&#34; reason.
+
+Support: Core</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the Route.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is the kind of the Route.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">namespaces</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Namespaces indicates namespaces from which Routes may be attached to this
+Listener. This is restricted to the namespace of this Gateway by default.
+
+Support: Core</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">from</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">From indicates where Routes will be selected for this Gateway. Possible
+values are:
+
+* All: Routes in all namespaces may be used by this Gateway.
+* Selector: Routes in namespaces selected by the selector may be used by
+  this Gateway.
+* Same: Only Routes in the same namespace may be used by this Gateway.
+
+Support: Core<div class="leaf-constraints">enum: All, Selector, Same</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">selector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Selector must be specified when From is set to &#34;Selector&#34;. In that case,
+only Routes in Namespaces matching this Selector will be selected by this
+Gateway. This field is ignored for other values of &#34;From&#34;.
+
+Support: Core</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">matchExpressions is a list of label selector requirements. The requirements are ANDed.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">key is the label key that the selector applies to.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">operator represents a key&#39;s relationship to a set of values.
+Valid operators are In, NotIn, Exists and DoesNotExist.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">values is an array of string values. If the operator is In or NotIn,
+the values array must be non-empty. If the operator is Exists or DoesNotExist,
+the values array must be empty. This array is replaced during a strategic
+merge patch.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+map is equivalent to an element of matchExpressions, whose key field is &#34;key&#34;, the
+operator is &#34;In&#34;, and the values array contains only &#34;value&#34;. The requirements are ANDed.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">hostname</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Hostname specifies the virtual hostname to match for protocol types that
+define this concept. When unspecified, all hostnames are matched. This
+field is ignored for protocols that don&#39;t require hostname based
+matching.
+
+Implementations MUST apply Hostname matching appropriately for each of
+the following protocols:
+
+* TLS: The Listener Hostname MUST match the SNI.
+* HTTP: The Listener Hostname MUST match the Host header of the request.
+* HTTPS: The Listener Hostname SHOULD match both the SNI and Host header.
+  Note that this does not require the SNI and Host header to be the same.
+  The semantics of this are described in more detail below.
+
+To ensure security, Section 11.1 of RFC-6066 emphasizes that server
+implementations that rely on SNI hostname matching MUST also verify
+hostnames within the application protocol.
+
+Section 9.1.2 of RFC-7540 provides a mechanism for servers to reject the
+reuse of a connection by responding with the HTTP 421 Misdirected Request
+status code. This indicates that the origin server has rejected the
+request because it appears to have been misdirected.
+
+To detect misdirected requests, Gateways SHOULD match the authority of
+the requests with all the SNI hostname(s) configured across all the
+Gateway Listeners on the same port and protocol:
+
+* If another Listener has an exact match or more specific wildcard entry,
+  the Gateway SHOULD return a 421.
+* If the current Listener (selected by SNI matching during ClientHello)
+  does not match the Host:
+    * If another Listener does match the Host the Gateway SHOULD return a
+      421.
+    * If no other Listener matches the Host, the Gateway MUST return a
+      404.
+
+For HTTPRoute and TLSRoute resources, there is an interaction with the
+`spec.hostnames` array. When both listener and route specify hostnames,
+there MUST be an intersection between the values for a Route to be
+accepted. For more information, refer to the Route specific Hostnames
+documentation.
+
+Hostnames that are prefixed with a wildcard label (`*.`) are interpreted
+as a suffix match. That means that a match for `*.example.com` would match
+both `test.example.com`, and `foo.test.example.com`, but not `example.com`.
+
+Support: Core<div class="leaf-constraints">pattern: ^(\*\.)?[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the Listener. This name MUST be unique within a
+Gateway.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Port is the network port. Multiple listeners may use the
+same port, subject to the Listener compatibility rules.
+
+Support: Core<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">protocol</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Protocol specifies the network protocol this listener expects to receive.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-zA-Z0-9]([-a-zA-Z0-9]*[a-zA-Z0-9])?$|[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*\/[A-Za-z0-9]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 255</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">tls</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TLS is the TLS configuration for the Listener. This field is required if
+the Protocol field is &#34;HTTPS&#34; or &#34;TLS&#34;. It is invalid to set this field
+if the Protocol field is &#34;HTTP&#34;, &#34;TCP&#34;, or &#34;UDP&#34;.
+
+The association of SNIs to Certificate defined in ListenerTLSConfig is
+defined based on the Hostname field for this listener.
+
+The GatewayClass MUST use the longest matching SNI out of all
+available certificates for any TLS handshake.
+
+Support: Core</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">certificateRefs</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">CertificateRefs contains a series of references to Kubernetes objects that
+contains TLS certificates and private keys. These certificates are used to
+establish a TLS handshake for requests that match the hostname of the
+associated listener.
+
+A single CertificateRef to a Kubernetes Secret has &#34;Core&#34; support.
+Implementations MAY choose to support attaching multiple certificates to
+a Listener, but this behavior is implementation-specific.
+
+References to a resource in different namespace are invalid UNLESS there
+is a ReferenceGrant in the target namespace that allows the certificate
+to be attached. If a ReferenceGrant does not allow this reference, the
+&#34;ResolvedRefs&#34; condition MUST be set to False for this listener with the
+&#34;RefNotPermitted&#34; reason.
+
+This field is required to have at least one element when the mode is set
+to &#34;Terminate&#34; (default) and is optional otherwise.
+
+CertificateRefs can reference to standard Kubernetes resources, i.e.
+Secret, or implementation-specific custom resources.
+
+Support: Core - A single reference to a Kubernetes Secret of type kubernetes.io/tls
+
+Support: Implementation-specific (More than one reference or other resource types)</div><div class="prop-constraints">maxItems: 64</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When unspecified or empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is kind of the referent. For example &#34;Secret&#34;.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the referenced object. When unspecified, the local
+namespace is inferred.
+
+Note that when a namespace different than the local namespace is specified,
+a ReferenceGrant object is required in the referent namespace to allow that
+namespace&#39;s owner to accept the reference. See the ReferenceGrant
+documentation for details.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">mode</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Mode defines the TLS behavior for the TLS session initiated by the client.
+There are two possible modes:
+
+- Terminate: The TLS session between the downstream client and the
+  Gateway is terminated at the Gateway. This mode requires certificates
+  to be specified in some way, such as populating the certificateRefs
+  field.
+- Passthrough: The TLS session is NOT terminated by the Gateway. This
+  implies that the Gateway can&#39;t decipher the TLS stream except for
+  the ClientHello message of the TLS protocol. The certificateRefs field
+  is ignored in this mode.
+
+Support: Core<div class="leaf-constraints">enum: Terminate, Passthrough</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">options</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Options are a list of key/value pairs to enable extended TLS
+configuration for each implementation. For example, configuring the
+minimum TLS version or supported cipher suites.
+
+A set of common keys MAY be defined by the API in the future. To avoid
+any ambiguity, implementation-specific definitions MUST use
+domain-prefixed names, such as `example.com/my-custom-option`.
+Un-prefixed names are reserved for key names defined by Gateway API.
+
+Support: Implementation-specific
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">tls</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TLS specifies frontend and backend tls configuration for entire gateway.
+
+Support: Extended</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">backend</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Backend describes TLS configuration for gateway when connecting
+to backends.
+
+Note that this contains only details for the Gateway as a TLS client,
+and does _not_ imply behavior about how to choose which backend should
+get a TLS connection. That is determined by the presence of a BackendTLSPolicy.
+
+Support: Core</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">clientCertificateRef</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ClientCertificateRef is a reference to an object that contains a Client
+Certificate and the associated private key.
+
+References to a resource in different namespace are invalid UNLESS there
+is a ReferenceGrant in the target namespace that allows the certificate
+to be attached. If a ReferenceGrant does not allow this reference, the
+&#34;ResolvedRefs&#34; condition MUST be set to False for this listener with the
+&#34;RefNotPermitted&#34; reason.
+
+ClientCertificateRef can reference to standard Kubernetes resources, i.e.
+Secret, or implementation-specific custom resources.
+
+Support: Core</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When unspecified or empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Kind is kind of the referent. For example &#34;Secret&#34;.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the referenced object. When unspecified, the local
+namespace is inferred.
+
+Note that when a namespace different than the local namespace is specified,
+a ReferenceGrant object is required in the referent namespace to allow that
+namespace&#39;s owner to accept the reference. See the ReferenceGrant
+documentation for details.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">frontend</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Frontend describes TLS config when client connects to Gateway.
+Support: Core</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">default</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Default specifies the default client certificate validation configuration
+for all Listeners handling HTTPS traffic, unless a per-port configuration
+is defined.
+
+support: Core</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">validation</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Validation holds configuration information for validating the frontend (client).
+Setting this field will result in mutual authentication when connecting to the gateway.
+In browsers this may result in a dialog appearing
+that requests a user to specify the client certificate.
+The maximum depth of a certificate chain accepted in verification is Implementation specific.
+
+Support: Core</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">caCertificateRefs</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">CACertificateRefs contains one or more references to
+Kubernetes objects that contain TLS certificates of
+the Certificate Authorities that can be used
+as a trust anchor to validate the certificates presented by the client.
+
+A single CA certificate reference to a Kubernetes ConfigMap
+has &#34;Core&#34; support.
+Implementations MAY choose to support attaching multiple CA certificates to
+a Listener, but this behavior is implementation-specific.
+
+Support: Core - A single reference to a Kubernetes ConfigMap
+with the CA certificate in a key named `ca.crt`.
+
+Support: Implementation-specific (More than one certificate in a ConfigMap
+with different keys or more than one reference, or other kinds of resources).
+
+References to a resource in a different namespace are invalid UNLESS there
+is a ReferenceGrant in the target namespace that allows the certificate
+to be attached. If a ReferenceGrant does not allow this reference, the
+&#34;ResolvedRefs&#34; condition MUST be set to False for this listener with the
+&#34;RefNotPermitted&#34; reason.</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When set to the empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is kind of the referent. For example &#34;ConfigMap&#34; or &#34;Service&#34;.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the referenced object. When unspecified, the local
+namespace is inferred.
+
+Note that when a namespace different than the local namespace is specified,
+a ReferenceGrant object is required in the referent namespace to allow that
+namespace&#39;s owner to accept the reference. See the ReferenceGrant
+documentation for details.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">mode</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">FrontendValidationMode defines the mode for validating the client certificate.
+There are two possible modes:
+
+- AllowValidOnly: In this mode, the gateway will accept connections only if
+  the client presents a valid certificate. This certificate must successfully
+  pass validation against the CA certificates specified in `CACertificateRefs`.
+- AllowInsecureFallback: In this mode, the gateway will accept connections
+  even if the client certificate is not presented or fails verification.
+
+  This approach delegates client authorization to the backend and introduce
+  a significant security risk. It should be used in testing environments or
+  on a temporary basis in non-testing environments.
+
+Defaults to AllowValidOnly.
+
+Support: Core<div class="leaf-constraints">enum: AllowValidOnly, AllowInsecureFallback</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">perPort</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">PerPort specifies tls configuration assigned per port.
+Per port configuration is optional. Once set this configuration overrides
+the default configuration for all Listeners handling HTTPS traffic
+that match this port.
+Each override port requires a unique TLS configuration.
+
+support: Core</div><div class="prop-constraints">maxItems: 64</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">The Port indicates the Port Number to which the TLS configuration will be
+applied. This configuration will be applied to all Listeners handling HTTPS
+traffic that match this port.
+
+Support: Core<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">tls</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">TLS store the configuration that will be applied to all Listeners handling
+HTTPS traffic and matching given port.
+
+Support: Core</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">validation</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Validation holds configuration information for validating the frontend (client).
+Setting this field will result in mutual authentication when connecting to the gateway.
+In browsers this may result in a dialog appearing
+that requests a user to specify the client certificate.
+The maximum depth of a certificate chain accepted in verification is Implementation specific.
+
+Support: Core</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">caCertificateRefs</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">CACertificateRefs contains one or more references to
+Kubernetes objects that contain TLS certificates of
+the Certificate Authorities that can be used
+as a trust anchor to validate the certificates presented by the client.
+
+A single CA certificate reference to a Kubernetes ConfigMap
+has &#34;Core&#34; support.
+Implementations MAY choose to support attaching multiple CA certificates to
+a Listener, but this behavior is implementation-specific.
+
+Support: Core - A single reference to a Kubernetes ConfigMap
+with the CA certificate in a key named `ca.crt`.
+
+Support: Implementation-specific (More than one certificate in a ConfigMap
+with different keys or more than one reference, or other kinds of resources).
+
+References to a resource in a different namespace are invalid UNLESS there
+is a ReferenceGrant in the target namespace that allows the certificate
+to be attached. If a ReferenceGrant does not allow this reference, the
+&#34;ResolvedRefs&#34; condition MUST be set to False for this listener with the
+&#34;RefNotPermitted&#34; reason.</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Group is the group of the referent. For example, &#34;gateway.networking.k8s.io&#34;.
+When set to the empty string, core API group is inferred.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is kind of the referent. For example &#34;ConfigMap&#34; or &#34;Service&#34;.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the referent.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Namespace is the namespace of the referenced object. When unspecified, the local
+namespace is inferred.
+
+Note that when a namespace different than the local namespace is specified,
+a ReferenceGrant object is required in the referent namespace to allow that
+namespace&#39;s owner to accept the reference. See the ReferenceGrant
+documentation for details.
+
+Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">mode</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">FrontendValidationMode defines the mode for validating the client certificate.
+There are two possible modes:
+
+- AllowValidOnly: In this mode, the gateway will accept connections only if
+  the client presents a valid certificate. This certificate must successfully
+  pass validation against the CA certificates specified in `CACertificateRefs`.
+- AllowInsecureFallback: In this mode, the gateway will accept connections
+  even if the client certificate is not presented or fails verification.
+
+  This approach delegates client authorization to the backend and introduce
+  a significant security risk. It should be used in testing environments or
+  on a temporary basis in non-testing environments.
+
+Defaults to AllowValidOnly.
+
+Support: Core<div class="leaf-constraints">enum: AllowValidOnly, AllowInsecureFallback</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">status</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Status defines the current state of Gateway.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">addresses</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Addresses lists the network addresses that have been bound to the
+Gateway.
+
+This list may differ from the addresses provided in the spec under some
+conditions:
+
+  * no addresses are specified, all addresses are dynamically assigned
+  * a combination of specified and dynamic addresses are assigned
+  * a specified address was unusable (e.g. already in use)</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type of the address.<div class="leaf-constraints">pattern: ^Hostname|IPAddress|NamedAddress|[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*\/[A-Za-z0-9\/\-._~%!$&amp;&#39;()*+,;=:]+$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value of the address. The validity of the values will depend
+on the type and support by the controller.
+
+Examples: `1.2.3.4`, `128::1`, `my-ip-address`.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">conditions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Conditions describe the current conditions of the Gateway.
+
+Implementations should prefer to express Gateway conditions
+using the `GatewayConditionType` and `GatewayConditionReason`
+constants so that operators and tools can converge on a common
+vocabulary to describe Gateway state.
+
+Known condition types are:
+
+* &#34;Accepted&#34;
+* &#34;Programmed&#34;
+* &#34;Ready&#34;</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">lastTransitionTime</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">lastTransitionTime is the last time the condition transitioned from one status to another.
+This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.<div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">message</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">message is a human readable message indicating details about the transition.
+This may be an empty string.<div class="leaf-constraints">maxLength: 32768</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">observedGeneration</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">observedGeneration represents the .metadata.generation that the condition was set based upon.
+For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+with respect to the current state of the instance.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">reason</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">reason contains a programmatic identifier indicating the reason for the condition&#39;s last transition.
+Producers of specific condition types may define expected values and meanings for this field,
+and whether the values are considered a guaranteed API.
+The value should be a CamelCase string.
+This field may not be empty.<div class="leaf-constraints">pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">status</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">status of the condition, one of True, False, Unknown.<div class="leaf-constraints">enum: True, False, Unknown</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">type of condition in CamelCase or in foo.example.com/CamelCase.<div class="leaf-constraints">pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$</div><div class="leaf-constraints">maxLength: 316</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">listeners</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Listeners provide status for each unique listener port defined in the Spec.</div><div class="prop-constraints">maxItems: 64</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">attachedRoutes</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">AttachedRoutes represents the total number of Routes that have been
+successfully attached to this Listener.
+
+Successful attachment of a Route to a Listener is based solely on the
+combination of the AllowedRoutes field on the corresponding Listener
+and the Route&#39;s ParentRefs field. A Route is successfully attached to
+a Listener when it is selected by the Listener&#39;s AllowedRoutes field
+AND the Route has a valid ParentRef selecting the whole Gateway
+resource or a specific Listener as a parent resource (more detail on
+attachment semantics can be found in the documentation on the various
+Route kinds ParentRefs fields). Listener or Route status does not impact
+successful attachment, i.e. the AttachedRoutes field count MUST be set
+for Listeners with condition Accepted: false and MUST count successfully
+attached Routes that may themselves have Accepted: false conditions.
+
+Uses for this field include troubleshooting Route attachment and
+measuring blast radius/impact of changes to a Listener.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">conditions</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Conditions describe the current condition of this listener.</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">lastTransitionTime</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">lastTransitionTime is the last time the condition transitioned from one status to another.
+This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.<div class="leaf-constraints">format: date-time</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">message</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">message is a human readable message indicating details about the transition.
+This may be an empty string.<div class="leaf-constraints">maxLength: 32768</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">observedGeneration</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">observedGeneration represents the .metadata.generation that the condition was set based upon.
+For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+with respect to the current state of the instance.<div class="leaf-constraints">format: int64</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">reason</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">reason contains a programmatic identifier indicating the reason for the condition&#39;s last transition.
+Producers of specific condition types may define expected values and meanings for this field,
+and whether the values are considered a guaranteed API.
+The value should be a CamelCase string.
+This field may not be empty.<div class="leaf-constraints">pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">status</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">status of the condition, one of True, False, Unknown.<div class="leaf-constraints">enum: True, False, Unknown</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">type of condition in CamelCase or in foo.example.com/CamelCase.<div class="leaf-constraints">pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$</div><div class="leaf-constraints">maxLength: 316</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the name of the Listener that this status corresponds to.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">supportedKinds</span>
+  <span class="type-badge">[]object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SupportedKinds is the list indicating the Kinds supported by this
+listener. This MUST represent the kinds an implementation supports for
+that Listener configuration.
+
+If kinds are specified in Spec that are not supported, they MUST NOT
+appear in this list and an implementation MUST set the &#34;ResolvedRefs&#34;
+condition to &#34;False&#34; with the &#34;InvalidRouteKinds&#34; reason. If both valid
+and invalid Route kinds are specified, the implementation MUST
+reference the valid Route kinds that have been specified.</div><div class="prop-constraints">maxItems: 8</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">group</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Group is the group of the Route.<div class="leaf-constraints">pattern: ^$|^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">kind</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Kind is the kind of the Route.<div class="leaf-constraints">pattern: ^[a-zA-Z]([-a-zA-Z0-9]*[a-zA-Z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 63</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+</div>
+<div class="copied-toast" id="toast">Copied!</div>
+<footer>
+  Generated by <a href="https://github.com/sholdee/crd-schema-publisher">crd-schema-publisher</a>
+</footer>
+<script>
+(function(){
+  var props = document.querySelectorAll('.prop');
+  document.getElementById('expand-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.setAttribute('open',''); });
+  });
+  document.getElementById('collapse-all').addEventListener('click', function(){
+    props.forEach(function(p){ p.removeAttribute('open'); });
+  });
+  var toast = document.getElementById('toast');
+  var toastTimer;
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+      }
+      location.href = '/';
+    }
+  });
+  document.getElementById('copy-url').addEventListener('click', function(){
+    var url = location.origin + this.dataset.url;
+    navigator.clipboard.writeText(url).then(function(){
+      clearTimeout(toastTimer);
+      toast.classList.add('show');
+      toastTimer = setTimeout(function(){ toast.classList.remove('show'); }, 1500);
+    });
+  });
+})();
+function toggleTheme(){
+  document.documentElement.classList.toggle('light');
+  localStorage.setItem('theme', document.documentElement.classList.contains('light') ? 'light' : 'dark');
+}
+</script>
+</body>
+</html>

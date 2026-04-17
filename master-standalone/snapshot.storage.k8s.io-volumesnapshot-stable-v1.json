@@ -1,0 +1,172 @@
+{
+  "description": "VolumeSnapshot is a user's request for either creating a point-in-time\nsnapshot of a persistent volume, or binding to a pre-existing snapshot.",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "spec": {
+      "additionalProperties": false,
+      "description": "spec defines the desired characteristics of a snapshot requested by a user.\nMore info: https://kubernetes.io/docs/concepts/storage/volume-snapshots#volumesnapshots\nRequired.",
+      "properties": {
+        "source": {
+          "additionalProperties": false,
+          "description": "source specifies where a snapshot will be created from.\nThis field is immutable after creation.\nRequired.",
+          "properties": {
+            "persistentVolumeClaimName": {
+              "description": "persistentVolumeClaimName specifies the name of the PersistentVolumeClaim\nobject representing the volume from which a snapshot should be created.\nThis PVC is assumed to be in the same namespace as the VolumeSnapshot\nobject.\nThis field should be set if the snapshot does not exists, and needs to be\ncreated.\nThis field is immutable.",
+              "type": [
+                "string",
+                "null"
+              ],
+              "x-kubernetes-validations": [
+                {
+                  "message": "persistentVolumeClaimName is immutable",
+                  "rule": "self == oldSelf"
+                }
+              ]
+            },
+            "volumeSnapshotContentName": {
+              "description": "volumeSnapshotContentName specifies the name of a pre-existing VolumeSnapshotContent\nobject representing an existing volume snapshot.\nThis field should be set if the snapshot already exists and only needs a representation in Kubernetes.\nThis field is immutable.",
+              "type": [
+                "string",
+                "null"
+              ],
+              "x-kubernetes-validations": [
+                {
+                  "message": "volumeSnapshotContentName is immutable",
+                  "rule": "self == oldSelf"
+                }
+              ]
+            }
+          },
+          "type": "object",
+          "x-kubernetes-validations": [
+            {
+              "message": "persistentVolumeClaimName is required once set",
+              "rule": "!has(oldSelf.persistentVolumeClaimName) || has(self.persistentVolumeClaimName)"
+            },
+            {
+              "message": "volumeSnapshotContentName is required once set",
+              "rule": "!has(oldSelf.volumeSnapshotContentName) || has(self.volumeSnapshotContentName)"
+            },
+            {
+              "message": "exactly one of volumeSnapshotContentName and persistentVolumeClaimName must be set",
+              "rule": "(has(self.volumeSnapshotContentName) \u0026\u0026 !has(self.persistentVolumeClaimName)) || (!has(self.volumeSnapshotContentName) \u0026\u0026 has(self.persistentVolumeClaimName))"
+            }
+          ]
+        },
+        "volumeSnapshotClassName": {
+          "description": "VolumeSnapshotClassName is the name of the VolumeSnapshotClass\nrequested by the VolumeSnapshot.\nVolumeSnapshotClassName may be left nil to indicate that the default\nSnapshotClass should be used.\nA given cluster may have multiple default Volume SnapshotClasses: one\ndefault per CSI Driver. If a VolumeSnapshot does not specify a SnapshotClass,\nVolumeSnapshotSource will be checked to figure out what the associated\nCSI Driver is, and the default VolumeSnapshotClass associated with that\nCSI Driver will be used. If more than one VolumeSnapshotClass exist for\na given CSI Driver and more than one have been marked as default,\nCreateSnapshot will fail and generate an event.\nEmpty string is not allowed for this field.",
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "volumeSnapshotClassName must not be the empty string when set",
+              "rule": "size(self) \u003e 0"
+            }
+          ]
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "type": "object"
+    },
+    "status": {
+      "additionalProperties": false,
+      "description": "status represents the current information of a snapshot.\nConsumers must verify binding between VolumeSnapshot and\nVolumeSnapshotContent objects is successful (by validating that both\nVolumeSnapshot and VolumeSnapshotContent point at each other) before\nusing this object.",
+      "properties": {
+        "boundVolumeSnapshotContentName": {
+          "description": "boundVolumeSnapshotContentName is the name of the VolumeSnapshotContent\nobject to which this VolumeSnapshot object intends to bind to.\nIf not specified, it indicates that the VolumeSnapshot object has not been\nsuccessfully bound to a VolumeSnapshotContent object yet.\nNOTE: To avoid possible security issues, consumers must verify binding between\nVolumeSnapshot and VolumeSnapshotContent objects is successful (by validating that\nboth VolumeSnapshot and VolumeSnapshotContent point at each other) before using\nthis object.",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "creationTime": {
+          "description": "creationTime is the timestamp when the point-in-time snapshot is taken\nby the underlying storage system.\nIn dynamic snapshot creation case, this field will be filled in by the\nsnapshot controller with the \"creation_time\" value returned from CSI\n\"CreateSnapshot\" gRPC call.\nFor a pre-existing snapshot, this field will be filled with the \"creation_time\"\nvalue returned from the CSI \"ListSnapshots\" gRPC call if the driver supports it.\nIf not specified, it may indicate that the creation time of the snapshot is unknown.",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "error": {
+          "additionalProperties": false,
+          "description": "error is the last observed error during snapshot creation, if any.\nThis field could be helpful to upper level controllers(i.e., application controller)\nto decide whether they should continue on waiting for the snapshot to be created\nbased on the type of error reported.\nThe snapshot controller will keep retrying when an error occurs during the\nsnapshot creation. Upon success, this error field will be cleared.",
+          "properties": {
+            "message": {
+              "description": "message is a string detailing the encountered error during snapshot\ncreation if specified.\nNOTE: message may be logged, and it should not contain sensitive\ninformation.",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "time": {
+              "description": "time is the timestamp when the error was encountered.",
+              "format": "date-time",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "readyToUse": {
+          "description": "readyToUse indicates if the snapshot is ready to be used to restore a volume.\nIn dynamic snapshot creation case, this field will be filled in by the\nsnapshot controller with the \"ready_to_use\" value returned from CSI\n\"CreateSnapshot\" gRPC call.\nFor a pre-existing snapshot, this field will be filled with the \"ready_to_use\"\nvalue returned from the CSI \"ListSnapshots\" gRPC call if the driver supports it,\notherwise, this field will be set to \"True\".\nIf not specified, it means the readiness of a snapshot is unknown.",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "restoreSize": {
+          "description": "restoreSize represents the minimum size of volume required to create a volume\nfrom this snapshot.\nIn dynamic snapshot creation case, this field will be filled in by the\nsnapshot controller with the \"size_bytes\" value returned from CSI\n\"CreateSnapshot\" gRPC call.\nFor a pre-existing snapshot, this field will be filled with the \"size_bytes\"\nvalue returned from the CSI \"ListSnapshots\" gRPC call if the driver supports it.\nWhen restoring a volume from this snapshot, the size of the volume MUST NOT\nbe smaller than the restoreSize if it is specified, otherwise the restoration will fail.\nIf not specified, it indicates that the size is unknown.",
+          "pattern": "^(\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\+|-)?(([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+))))?$",
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-kubernetes-int-or-string": true
+        },
+        "volumeGroupSnapshotName": {
+          "description": "VolumeGroupSnapshotName is the name of the VolumeGroupSnapshot of which this\nVolumeSnapshot is a part of.",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "spec"
+  ],
+  "type": "object"
+}

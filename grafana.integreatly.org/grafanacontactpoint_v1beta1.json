@@ -1,0 +1,516 @@
+{
+  "description": "GrafanaContactPoint is the Schema for the grafanacontactpoints API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "spec": {
+      "additionalProperties": false,
+      "description": "GrafanaContactPointSpec defines the desired state of GrafanaContactPoint",
+      "properties": {
+        "allowCrossNamespaceImport": {
+          "default": false,
+          "description": "Allow the Operator to match this resource with Grafanas outside the current namespace",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "disableResolveMessage": {
+          "description": "Deprecated: define the receiver under .spec.receivers[]\nWill be removed in a later version",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "editable": {
+          "description": "Whether to enable or disable editing of the contact point in Grafana UI",
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "spec.editable is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "instanceSelector": {
+          "additionalProperties": false,
+          "description": "Selects Grafana instances for import",
+          "properties": {
+            "matchExpressions": {
+              "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.",
+              "items": {
+                "additionalProperties": false,
+                "description": "A label selector requirement is a selector that contains values, a key, and an operator that\nrelates the key and values.",
+                "properties": {
+                  "key": {
+                    "description": "key is the label key that the selector applies to.",
+                    "type": "string"
+                  },
+                  "operator": {
+                    "description": "operator represents a key's relationship to a set of values.\nValid operators are In, NotIn, Exists and DoesNotExist.",
+                    "type": "string"
+                  },
+                  "values": {
+                    "description": "values is an array of string values. If the operator is In or NotIn,\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\nthe values array must be empty. This array is replaced during a strategic\nmerge patch.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "x-kubernetes-list-type": "atomic"
+                  }
+                },
+                "required": [
+                  "key",
+                  "operator"
+                ],
+                "type": "object"
+              },
+              "type": [
+                "array",
+                "null"
+              ],
+              "x-kubernetes-list-type": "atomic"
+            },
+            "matchLabels": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\nmap is equivalent to an element of matchExpressions, whose key field is \"key\", the\noperator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": "object",
+          "x-kubernetes-map-type": "atomic",
+          "x-kubernetes-validations": [
+            {
+              "message": "spec.instanceSelector is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "name": {
+          "description": "Receivers are grouped under the same ContactPoint using the Name\nDefaults to the name of the CR",
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "spec.name is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "receivers": {
+          "description": "List of receivers that Grafana will fan out notifications to",
+          "items": {
+            "additionalProperties": false,
+            "description": "Represents an integration to external services that receive Grafana notifications",
+            "properties": {
+              "disableResolveMessage": {
+                "type": [
+                  "boolean",
+                  "null"
+                ]
+              },
+              "settings": {
+                "x-kubernetes-preserve-unknown-fields": true
+              },
+              "type": {
+                "minLength": 1,
+                "type": "string"
+              },
+              "uid": {
+                "description": "Manually specify the UID the Contact Point is created with. Can be any string consisting of alphanumeric characters, - and _ with a maximum length of 40",
+                "maxLength": 40,
+                "pattern": "^[a-zA-Z0-9-_]+$",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "valuesFrom": {
+                "items": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "targetPath": {
+                      "type": "string"
+                    },
+                    "valueFrom": {
+                      "additionalProperties": false,
+                      "properties": {
+                        "configMapKeyRef": {
+                          "additionalProperties": false,
+                          "description": "Selects a key of a ConfigMap.",
+                          "properties": {
+                            "key": {
+                              "description": "The key to select.",
+                              "type": "string"
+                            },
+                            "name": {
+                              "default": "",
+                              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "optional": {
+                              "description": "Specify whether the ConfigMap or its key must be defined",
+                              "type": [
+                                "boolean",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "key"
+                          ],
+                          "type": [
+                            "object",
+                            "null"
+                          ],
+                          "x-kubernetes-map-type": "atomic"
+                        },
+                        "secretKeyRef": {
+                          "additionalProperties": false,
+                          "description": "Selects a key of a Secret.",
+                          "properties": {
+                            "key": {
+                              "description": "The key of the secret to select from.  Must be a valid secret key.",
+                              "type": "string"
+                            },
+                            "name": {
+                              "default": "",
+                              "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "optional": {
+                              "description": "Specify whether the Secret or its key must be defined",
+                              "type": [
+                                "boolean",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "key"
+                          ],
+                          "type": [
+                            "object",
+                            "null"
+                          ],
+                          "x-kubernetes-map-type": "atomic"
+                        }
+                      },
+                      "type": "object",
+                      "x-kubernetes-validations": [
+                        {
+                          "message": "Either configMapKeyRef or secretKeyRef must be set",
+                          "rule": "(has(self.configMapKeyRef) \u0026\u0026 !has(self.secretKeyRef)) || (!has(self.configMapKeyRef) \u0026\u0026 has(self.secretKeyRef))"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "targetPath",
+                    "valueFrom"
+                  ],
+                  "type": "object"
+                },
+                "maxItems": 99,
+                "type": [
+                  "array",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "settings",
+              "type"
+            ],
+            "type": "object"
+          },
+          "maxItems": 99,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "resyncPeriod": {
+          "description": "How often the resource is synced, defaults to 10m0s if not set",
+          "pattern": "^([0-9]+(\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "settings": {
+          "description": "Deprecated: define the receiver under .spec.receivers[]\nWill be removed in a later version",
+          "x-kubernetes-preserve-unknown-fields": true
+        },
+        "suspend": {
+          "description": "Suspend pauses synchronizing attempts and tells the operator to ignore changes",
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "type": {
+          "description": "Deprecated: define the receiver under .spec.receivers[]\nWill be removed in a later version",
+          "minLength": 1,
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "uid": {
+          "description": "Deprecated: define the receiver under .spec.receivers[]\nManually specify the UID the Contact Point is created with. Can be any string consisting of alphanumeric characters, - and _ with a maximum length of 40",
+          "maxLength": 40,
+          "pattern": "^[a-zA-Z0-9-_]+$",
+          "type": [
+            "string",
+            "null"
+          ],
+          "x-kubernetes-validations": [
+            {
+              "message": "spec.uid is immutable",
+              "rule": "self == oldSelf"
+            }
+          ]
+        },
+        "valuesFrom": {
+          "description": "Deprecated: define the receiver under .spec.receivers[]\nWill be removed in a later version",
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "targetPath": {
+                "type": "string"
+              },
+              "valueFrom": {
+                "additionalProperties": false,
+                "properties": {
+                  "configMapKeyRef": {
+                    "additionalProperties": false,
+                    "description": "Selects a key of a ConfigMap.",
+                    "properties": {
+                      "key": {
+                        "description": "The key to select.",
+                        "type": "string"
+                      },
+                      "name": {
+                        "default": "",
+                        "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "optional": {
+                        "description": "Specify whether the ConfigMap or its key must be defined",
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "key"
+                    ],
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "x-kubernetes-map-type": "atomic"
+                  },
+                  "secretKeyRef": {
+                    "additionalProperties": false,
+                    "description": "Selects a key of a Secret.",
+                    "properties": {
+                      "key": {
+                        "description": "The key of the secret to select from.  Must be a valid secret key.",
+                        "type": "string"
+                      },
+                      "name": {
+                        "default": "",
+                        "description": "Name of the referent.\nThis field is effectively required, but due to backwards compatibility is\nallowed to be empty. Instances of this type with an empty value here are\nalmost certainly wrong.\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names",
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "optional": {
+                        "description": "Specify whether the Secret or its key must be defined",
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "key"
+                    ],
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "x-kubernetes-map-type": "atomic"
+                  }
+                },
+                "type": "object",
+                "x-kubernetes-validations": [
+                  {
+                    "message": "Either configMapKeyRef or secretKeyRef must be set",
+                    "rule": "(has(self.configMapKeyRef) \u0026\u0026 !has(self.secretKeyRef)) || (!has(self.configMapKeyRef) \u0026\u0026 has(self.secretKeyRef))"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "targetPath",
+              "valueFrom"
+            ],
+            "type": "object"
+          },
+          "maxItems": 99,
+          "type": [
+            "array",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "instanceSelector"
+      ],
+      "type": "object",
+      "x-kubernetes-validations": [
+        {
+          "message": "spec.name is immutable",
+          "rule": "((!has(oldSelf.name) \u0026\u0026 !has(self.name)) || (has(oldSelf.name) \u0026\u0026 has(self.name)))"
+        },
+        {
+          "message": "spec.editable is immutable",
+          "rule": "((!has(oldSelf.editable) \u0026\u0026 !has(self.editable)) || (has(oldSelf.editable) \u0026\u0026 has(self.editable)))"
+        },
+        {
+          "message": "disabling spec.allowCrossNamespaceImport requires a recreate to ensure desired state",
+          "rule": "!oldSelf.allowCrossNamespaceImport || (oldSelf.allowCrossNamespaceImport \u0026\u0026 self.allowCrossNamespaceImport)"
+        }
+      ]
+    },
+    "status": {
+      "additionalProperties": false,
+      "description": "The most recent observed state of a Grafana resource",
+      "properties": {
+        "conditions": {
+          "description": "Results when synchronizing resource with Grafana instances",
+          "items": {
+            "additionalProperties": false,
+            "description": "Condition contains details for one aspect of the current state of this API Resource.",
+            "properties": {
+              "lastTransitionTime": {
+                "description": "lastTransitionTime is the last time the condition transitioned from one status to another.\nThis should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.",
+                "format": "date-time",
+                "type": "string"
+              },
+              "message": {
+                "description": "message is a human readable message indicating details about the transition.\nThis may be an empty string.",
+                "maxLength": 32768,
+                "type": "string"
+              },
+              "observedGeneration": {
+                "description": "observedGeneration represents the .metadata.generation that the condition was set based upon.\nFor instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date\nwith respect to the current state of the instance.",
+                "format": "int64",
+                "minimum": 0,
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "reason": {
+                "description": "reason contains a programmatic identifier indicating the reason for the condition's last transition.\nProducers of specific condition types may define expected values and meanings for this field,\nand whether the values are considered a guaranteed API.\nThe value should be a CamelCase string.\nThis field may not be empty.",
+                "maxLength": 1024,
+                "minLength": 1,
+                "pattern": "^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$",
+                "type": "string"
+              },
+              "status": {
+                "description": "status of the condition, one of True, False, Unknown.",
+                "enum": [
+                  "True",
+                  "False",
+                  "Unknown"
+                ],
+                "type": "string"
+              },
+              "type": {
+                "description": "type of condition in CamelCase or in foo.example.com/CamelCase.",
+                "maxLength": 316,
+                "pattern": "^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$",
+                "type": "string"
+              }
+            },
+            "required": [
+              "lastTransitionTime",
+              "message",
+              "reason",
+              "status",
+              "type"
+            ],
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "lastResync": {
+          "description": "Last time the resource was synchronized with Grafana instances",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "spec"
+  ],
+  "type": "object"
+}

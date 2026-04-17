@@ -1,0 +1,53 @@
+{
+  "properties": {
+    "spec": {
+      "additionalProperties": false,
+      "properties": {
+        "additionalConfig": {
+          "nullable": true,
+          "type": [
+            "object",
+            "null"
+          ],
+          "x-kubernetes-preserve-unknown-fields": true
+        },
+        "bucketName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "generateBucketName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "objectBucketName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "storageClassName": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "status": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "x-kubernetes-preserve-unknown-fields": true
+    }
+  },
+  "type": "object"
+}
