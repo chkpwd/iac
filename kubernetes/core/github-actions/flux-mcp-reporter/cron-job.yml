@@ -1,4 +1,4 @@
----
+# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/batch/v1.json
 apiVersion: batch/v1
 kind: CronJob
 metadata:
@@ -38,7 +38,7 @@ spec:
                   import httpx
 
                   MCP_URL = "http://flux-operator-mcp.flux-system.svc.cluster.local:9090/mcp"
-
+                  SESSION_ID = None
                   MSG_ID = 0
 
 
@@ -48,18 +48,28 @@ spec:
                       return MSG_ID
 
 
-                  async def mcp_post(client, url, method, params=None):
-                      """Send a JSON-RPC request and return the parsed response."""
-                      payload = {
-                          "jsonrpc": "2.0",
-                          "id": next_id(),
-                          "method": method,
-                      }
+                  async def mcp_request(client, url, method, params=None, notification=False):
+                      global SESSION_ID
+                      payload = {"jsonrpc": "2.0", "method": method}
+                      if not notification:
+                          payload["id"] = next_id()
                       if params is not None:
                           payload["params"] = params
-                      resp = await client.post(url, json=payload)
+                      headers = {"Accept": "application/json, text/event-stream"}
+                      if SESSION_ID:
+                          headers["Mcp-Session-Id"] = SESSION_ID
+                      resp = await client.post(url, json=payload, headers=headers)
+                      new_session = resp.headers.get("mcp-session-id")
+                      if new_session:
+                          SESSION_ID = new_session
+                      if notification:
+                          return None
                       resp.raise_for_status()
-                      return resp.json()
+                      data = resp.text
+                      for line in data.split("\n"):
+                          if line.startswith("data:"):
+                              return json.loads(line[5:])
+                      return {}
 
 
                   async def main():
@@ -72,8 +82,7 @@ spec:
                       }
 
                       async with httpx.AsyncClient(timeout=60) as client:
-                          # 1. Initialize the MCP session
-                          init_resp = await mcp_post(client, MCP_URL, "initialize", {
+                          init_resp = await mcp_request(client, MCP_URL, "initialize", {
                               "protocolVersion": "2024-11-05",
                               "capabilities": {},
                               "clientInfo": {"name": "flux-reporter", "version": "1.0.0"},
@@ -83,15 +92,10 @@ spec:
                               print(f"ERROR: MCP init failed: {init_resp['error']}", file=sys.stderr)
                               sys.exit(1)
 
-                          # Send initialized notification
-                          await client.post(MCP_URL, json={
-                              "jsonrpc": "2.0",
-                              "method": "notifications/initialized",
-                          })
+                          await mcp_request(client, MCP_URL, "notifications/initialized", notification=True)
 
-                          # 2. Call get_flux_instance for the overview/report
                           try:
-                              result = await mcp_post(client, MCP_URL, "tools/call", {
+                              result = await mcp_request(client, MCP_URL, "tools/call", {
                                   "name": "get_flux_instance",
                                   "arguments": {},
                               })
@@ -102,9 +106,8 @@ spec:
                           except Exception as exc:
                               report["errors"].append(f"get_flux_instance: {exc}")
 
-                          # 3. Get HelmReleases via get_kubernetes_resources
                           try:
-                              result = await mcp_post(client, MCP_URL, "tools/call", {
+                              result = await mcp_request(client, MCP_URL, "tools/call", {
                                   "name": "get_kubernetes_resources",
                                   "arguments": {
                                       "apiVersion": "helm.toolkit.fluxcd.io/v2",
@@ -118,9 +121,8 @@ spec:
                           except Exception as exc:
                               report["errors"].append(f"helmreleases: {exc}")
 
-                          # 4. Get Kustomizations via get_kubernetes_resources
                           try:
-                              result = await mcp_post(client, MCP_URL, "tools/call", {
+                              result = await mcp_request(client, MCP_URL, "tools/call", {
                                   "name": "get_kubernetes_resources",
                                   "arguments": {
                                       "apiVersion": "kustomize.toolkit.fluxcd.io/v1",
@@ -134,7 +136,6 @@ spec:
                           except Exception as exc:
                               report["errors"].append(f"kustomizations: {exc}")
 
-                      # 5. Send report
                       webhook_url = os.environ.get("WEBHOOK_URL", "")
                       if webhook_url:
                           async with httpx.AsyncClient(timeout=15) as client:
