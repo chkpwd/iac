@@ -113,6 +113,10 @@ spec:
           - name: private
             namespace: networking
             sectionName: https
+        rules:
+          - backendRefs:
+              - name: qbittorrent
+                port: *webPort
     persistence:
       data:
         type: nfs
