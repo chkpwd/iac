@@ -70,6 +70,19 @@ spec:
                   cd /repo
 
                   cp -r /data/. /repo/
+
+                  # Rewrite absolute paths in HTML files for GitHub Pages project repos
+                  # The publisher generates paths like href="/group/schema.html" assuming
+                  # root hosting, but project repos are served under /<repo-name>/
+                  if [ -n "${BASE_PATH}" ]; then
+                    echo "Rewriting HTML paths with base path: ${BASE_PATH}"
+                    find /repo -name '*.html' -exec sed -i \
+                      -e "s|href=\"/|href=\"${BASE_PATH}/|g" \
+                      -e "s|data-url=\"/|data-url=\"${BASE_PATH}/|g" \
+                      -e "s|location\.href = '/'|location.href = '${BASE_PATH}/'|g" \
+                      {} +
+                  fi
+
                   git add -A
                   if ! git diff --cached --quiet; then
                     git commit -m "update schemas $(date -u +%Y-%m-%dT%H:%M:%SZ)"
@@ -91,6 +104,8 @@ spec:
                       key: github-repo
                 - name: GIT_BRANCH
                   value: "gh-pages"
+                - name: BASE_PATH
+                  value: "/iac"
                 - name: HOME
                   value: "/home/git"
               resources:
