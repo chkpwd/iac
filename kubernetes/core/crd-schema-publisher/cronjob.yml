@@ -1,0 +1,127 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: crd-schema-publisher
+  namespace: crd-schema-publisher
+spec:
+  schedule: "0 3 * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      activeDeadlineSeconds: 1800
+      template:
+        spec:
+          serviceAccountName: crd-schema-publisher
+          restartPolicy: OnFailure
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65534
+            runAsGroup: 65534
+            fsGroup: 65534
+            seccompProfile:
+              type: RuntimeDefault
+          containers:
+            - name: crd-schema-publisher
+              image: ghcr.io/sholdee/crd-schema-publisher:v2026.415.145511
+              args: ["extract"]
+              env:
+                - name: OUTPUT_DIR
+                  value: /output
+              resources:
+                requests:
+                  cpu: 50m
+                  memory: 1Gi
+                limits:
+                  cpu: 500m
+                  memory: 1Gi
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+              volumeMounts:
+                - name: output
+                  mountPath: /output
+            - name: git-push
+              image: alpine/git:2.49.1
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  while [ ! -f /data/index.html ]; do sleep 5; done
+                  echo "Publisher complete, starting git sync"
+
+                  git config --global user.name "crd-schema-publisher"
+                  git config --global user.email "crd-schema-publisher@users.noreply.github.com"
+                  git config --global --add safe.directory /repo
+
+                  if [ -z "$(ls -A /repo)" ]; then
+                    git clone --branch "${GIT_BRANCH}" --single-branch \
+                      "https://x-access-token:${GITHUB_TOKEN}@github.com/${GIT_REPO}.git" /repo || {
+                      git init /repo
+                      cd /repo
+                      git checkout -b "${GIT_BRANCH}"
+                      git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GIT_REPO}.git"
+                    }
+                  fi
+
+                  cd /repo
+
+                  cp -r /data/. /repo/
+                  git add -A
+                  if ! git diff --cached --quiet; then
+                    git commit -m "update schemas $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+                    git push origin "${GIT_BRANCH}"
+                    echo "Schemas pushed successfully"
+                  else
+                    echo "No changes to push"
+                  fi
+              env:
+                - name: GITHUB_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: crd-schema-publisher-git-push
+                      key: github-token
+                - name: GIT_REPO
+                  valueFrom:
+                    secretKeyRef:
+                      name: crd-schema-publisher-git-push
+                      key: github-repo
+                - name: GIT_BRANCH
+                  value: "gh-pages"
+                - name: HOME
+                  value: "/home/git"
+              resources:
+                requests:
+                  cpu: 10m
+                  memory: 64Mi
+                limits:
+                  memory: 256Mi
+              securityContext:
+                runAsUser: 1000
+                runAsNonRoot: true
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop: ["ALL"]
+              volumeMounts:
+                - name: output
+                  mountPath: /data
+                  readOnly: true
+                - name: git-workspace
+                  mountPath: /repo
+                - name: git-home
+                  mountPath: /home/git
+                - name: git-tmp
+                  mountPath: /tmp
+          volumes:
+            - name: output
+              emptyDir: {}
+            - name: git-workspace
+              emptyDir: {}
+            - name: git-home
+              emptyDir: {}
+            - name: git-tmp
+              emptyDir: {}
