@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Webhook v1alpha1 — generators.external-secrets.io</title>
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="/iac/favicon.svg">
 <style>
   :root {
     --bg: #09090b;
@@ -206,7 +206,7 @@
 <body>
 <div class="flare"></div>
 <div class="nav-row">
-  <a href="/" class="back-link">← Back to index <kbd>Esc</kbd></a>
+  <a href="/iac/" class="back-link">← Back to index <kbd>Esc</kbd></a>
   <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
 </div>
 <div class="meta-cards">
@@ -224,8 +224,8 @@ metadata:
     <button id="collapse-all">Collapse all</button>
   </div>
   <div class="toolbar-left">
-    <a href="/generators.external-secrets.io/webhook_v1alpha1.json" target="_blank">View raw schema</a>
-    <button id="copy-url" data-url="/generators.external-secrets.io/webhook_v1alpha1.json">Copy schema URL</button>
+    <a href="/iac/generators.external-secrets.io/webhook_v1alpha1.json" target="_blank">View raw schema</a>
+    <button id="copy-url" data-url="/iac/generators.external-secrets.io/webhook_v1alpha1.json">Copy schema URL</button>
   </div>
 </div>
 <div id="properties">
@@ -496,7 +496,7 @@ These secrets will be passed to the templating function as key value pairs under
       if (document.activeElement && document.activeElement !== document.body) {
         document.activeElement.blur();
       }
-      location.href = '/';
+      location.href = '/iac/';
     }
   });
   document.getElementById('copy-url').addEventListener('click', function(){

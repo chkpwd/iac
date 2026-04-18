@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cephrbdmirror v1 — ceph.rook.io</title>
-<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="/iac/favicon.svg">
 <style>
   :root {
     --bg: #09090b;
@@ -206,7 +206,7 @@
 <body>
 <div class="flare"></div>
 <div class="nav-row">
-  <a href="/" class="back-link">← Back to index <kbd>Esc</kbd></a>
+  <a href="/iac/" class="back-link">← Back to index <kbd>Esc</kbd></a>
   <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
 </div>
 <div class="meta-cards">
@@ -224,8 +224,8 @@ metadata:
     <button id="collapse-all">Collapse all</button>
   </div>
   <div class="toolbar-left">
-    <a href="/ceph.rook.io/cephrbdmirror_v1.json" target="_blank">View raw schema</a>
-    <button id="copy-url" data-url="/ceph.rook.io/cephrbdmirror_v1.json">Copy schema URL</button>
+    <a href="/iac/ceph.rook.io/cephrbdmirror_v1.json" target="_blank">View raw schema</a>
+    <button id="copy-url" data-url="/iac/ceph.rook.io/cephrbdmirror_v1.json">Copy schema URL</button>
   </div>
 </div>
 <div id="properties">
@@ -1347,7 +1347,7 @@ Generation `0` indicates that keys existed prior to the implementation of key tr
       if (document.activeElement && document.activeElement !== document.body) {
         document.activeElement.blur();
       }
-      location.href = '/';
+      location.href = '/iac/';
     }
   });
   document.getElementById('copy-url').addEventListener('click', function(){
