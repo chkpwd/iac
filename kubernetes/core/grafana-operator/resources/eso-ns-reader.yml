@@ -36,7 +36,7 @@ roleRef:
   name: eso-read-teslamate-pguser-secret
   apiGroup: rbac.authorization.k8s.io
 ---
-# yaml-language-server: $schema=https://kubernetes-schemas.pages.dev/external-secrets.io/secretstore_v1beta1.json
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/external-secrets.io/secretstore_v1beta1.json
 apiVersion: external-secrets.io/v1
 kind: SecretStore
 metadata:
@@ -57,7 +57,7 @@ spec:
           name: eso-k8s-reader
           namespace: monitoring
 ---
-# yaml-language-server: $schema=https://lds-schemas.pages.dev/external-secrets.io/externalsecret_v1beta1.json
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/external-secrets.io/externalsecret_v1beta1.json
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:

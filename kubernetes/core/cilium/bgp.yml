@@ -1,5 +1,5 @@
 ---
-# yaml-language-server: $schema=https://lds-schemas.pages.dev/cilium.io/ciliumbgpclusterconfig_v2.json
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/cilium.io/ciliumbgpclusterconfig_v2.json
 apiVersion: cilium.io/v2
 kind: CiliumBGPClusterConfig
 metadata:
@@ -18,7 +18,7 @@ spec:
           peerConfigRef:
             name: peer-mikrotik
 ---
-# yaml-language-server: $schema=https://lds-schemas.pages.dev/cilium.io/ciliumbgppeerconfig_v2.json
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/cilium.io/ciliumbgppeerconfig_v2.json
 apiVersion: cilium.io/v2
 kind: CiliumBGPPeerConfig
 metadata:
@@ -31,7 +31,7 @@ spec:
         matchLabels:
           advertise: "bgp"
 ---
-# yaml-language-server: $schema=https://lds-schemas.pages.dev/cilium.io/ciliumbgpadvertisement_v2.json
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/cilium.io/ciliumbgpadvertisement_v2.json
 apiVersion: cilium.io/v2
 kind: CiliumBGPAdvertisement
 metadata:
