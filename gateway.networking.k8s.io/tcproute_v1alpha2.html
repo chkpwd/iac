@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tcproute v1alpha2 — gateway.networking.k8s.io</title>
-<link rel="icon" type="image/svg+xml" href="/iac/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <style>
   :root {
     --bg: #09090b;
@@ -203,10 +203,10 @@
 </style>
 <script>if(localStorage.getItem('theme')==='light')document.documentElement.className='light';</script>
 </head>
-<body>
+<body data-base-path="">
 <div class="flare"></div>
 <div class="nav-row">
-  <a href="/iac/" class="back-link">← Back to index <kbd>Esc</kbd></a>
+  <a href="/" class="back-link">← Back to index <kbd>Esc</kbd></a>
   <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
 </div>
 <div class="meta-cards">
@@ -224,8 +224,8 @@ metadata:
     <button id="collapse-all">Collapse all</button>
   </div>
   <div class="toolbar-left">
-    <a href="/iac/gateway.networking.k8s.io/tcproute_v1alpha2.json" target="_blank">View raw schema</a>
-    <button id="copy-url" data-url="/iac/gateway.networking.k8s.io/tcproute_v1alpha2.json">Copy schema URL</button>
+    <a href="/gateway.networking.k8s.io/tcproute_v1alpha2.json" target="_blank">View raw schema</a>
+    <button id="copy-url" data-url="/gateway.networking.k8s.io/tcproute_v1alpha2.json">Copy schema URL</button>
   </div>
 </div>
 <div id="properties">
@@ -868,7 +868,7 @@ Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9]
       if (document.activeElement && document.activeElement !== document.body) {
         document.activeElement.blur();
       }
-      location.href = '/iac/';
+      location.href = document.body.dataset.basePath + '/';
     }
   });
   document.getElementById('copy-url').addEventListener('click', function(){

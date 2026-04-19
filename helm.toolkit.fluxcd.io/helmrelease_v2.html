@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Helmrelease v2 — helm.toolkit.fluxcd.io</title>
-<link rel="icon" type="image/svg+xml" href="/iac/favicon.svg">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <style>
   :root {
     --bg: #09090b;
@@ -203,10 +203,10 @@
 </style>
 <script>if(localStorage.getItem('theme')==='light')document.documentElement.className='light';</script>
 </head>
-<body>
+<body data-base-path="">
 <div class="flare"></div>
 <div class="nav-row">
-  <a href="/iac/" class="back-link">← Back to index <kbd>Esc</kbd></a>
+  <a href="/" class="back-link">← Back to index <kbd>Esc</kbd></a>
   <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
 </div>
 <div class="meta-cards">
@@ -224,8 +224,8 @@ metadata:
     <button id="collapse-all">Collapse all</button>
   </div>
   <div class="toolbar-left">
-    <a href="/iac/helm.toolkit.fluxcd.io/helmrelease_v2.json" target="_blank">View raw schema</a>
-    <button id="copy-url" data-url="/iac/helm.toolkit.fluxcd.io/helmrelease_v2.json">Copy schema URL</button>
+    <a href="/helm.toolkit.fluxcd.io/helmrelease_v2.json" target="_blank">View raw schema</a>
+    <button id="copy-url" data-url="/helm.toolkit.fluxcd.io/helmrelease_v2.json">Copy schema URL</button>
   </div>
 </div>
 <div id="properties">
@@ -1796,7 +1796,7 @@ state. It is reset after a successful reconciliation.<div class="leaf-constraint
       if (document.activeElement && document.activeElement !== document.body) {
         document.activeElement.blur();
       }
-      location.href = '/iac/';
+      location.href = document.body.dataset.basePath + '/';
     }
   });
   document.getElementById('copy-url').addEventListener('click', function(){
