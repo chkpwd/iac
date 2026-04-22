@@ -1,0 +1,92 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  annotations:
+    reloader.stakater.com/auto: "true"
+  name: jellyplex-watched
+spec:
+  concurrencyPolicy: Forbid
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      template:
+        spec:
+          automountServiceAccountToken: true
+          containers:
+            - env:
+                - name: DEBUG
+                  value: "True"
+                - name: DEBUG_LEVEL
+                  value: debug
+                - name: DRYRUN
+                  value: "False"
+                - name: GENERATE_GUIDS
+                  value: "True"
+                - name: GENERATE_LOCATIONS
+                  value: "True"
+                - name: JELLYFIN_BASEURL
+                  value: http://jellyfin.media.svc.cluster.local:8096
+                - name: LOG_FILE
+                  value: /tmp/log.log
+                - name: MARK_FILE
+                  value: /tmp/mark.log
+                - name: MAX_THREADS
+                  value: "32"
+                - name: PLEX_BASEURL
+                  value: http://plex.media.svc.cluster.local:32400
+                - name: REQUEST_TIMEOUT
+                  value: "300"
+                - name: RUN_ONLY_ONCE
+                  value: "True"
+                - name: SSL_BYPASS
+                  value: "True"
+                - name: SYNC_FROM_JELLYFIN_TO_JELLYFIN
+                  value: "False"
+                - name: SYNC_FROM_JELLYFIN_TO_PLEX
+                  value: "True"
+                - name: SYNC_FROM_PLEX_TO_JELLYFIN
+                  value: "True"
+                - name: SYNC_FROM_PLEX_TO_PLEX
+                  value: "False"
+                - name: TZ
+                  value: America/New_York
+              envFrom:
+                - secretRef:
+                    name: jellyplex-watched
+              image: ghcr.io/luigi311/jellyplex-watched:8.5.1-alpine
+              imagePullPolicy: IfNotPresent
+              name: app
+              resources:
+                limits:
+                  memory: 336Mi
+                requests:
+                  cpu: 136m
+                  memory: 309Mi
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities:
+                  drop:
+                    - ALL
+              volumeMounts:
+                - mountPath: /tmp
+                  name: logs
+          dnsPolicy: ClusterFirst
+          enableServiceLinks: false
+          hostIPC: false
+          hostNetwork: false
+          hostPID: false
+          restartPolicy: Never
+          securityContext:
+            fsGroup: 1999
+            fsGroupChangePolicy: OnRootMismatch
+            runAsGroup: 1999
+            runAsUser: 1999
+          serviceAccountName: default
+          volumes:
+            - name: logs
+  schedule: 0 2 * * *
+  startingDeadlineSeconds: 30
+  successfulJobsHistoryLimit: 1
+  suspend: false
