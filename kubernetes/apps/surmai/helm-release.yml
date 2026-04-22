@@ -1,0 +1,82 @@
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: surmai
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.2
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  values:
+    controllers:
+      surmai:
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
+        statefulset:
+          volumeClaimTemplates:
+            - name: data
+              accessMode: ReadWriteOnce
+              size: "${VOLSYNC_CAPACITY}"
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              globalMounts:
+                - path: /pb_data
+        containers:
+          app:
+            image:
+              repository: ghcr.io/rohitkumbhar/surmai
+              tag: latest
+              pullPolicy: IfNotPresent
+            env:
+              PB_DATA_DIRECTORY: /pb_data
+            envFrom:
+              - secretRef:
+                  name: surmai
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/health
+                    port: &port 8080
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+            resources:
+              requests:
+                cpu: 10m
+                memory: 64Mi
+              limits:
+                memory: 512Mi
+    service:
+      app:
+        controller: surmai
+        ports:
+          http:
+            port: *port
+    route:
+      public:
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        parentRefs:
+          - name: public
+            namespace: networking
+            sectionName: https
