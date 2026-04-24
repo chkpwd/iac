@@ -28,10 +28,17 @@ data "aws_eks_cluster_auth" "eks" {
   name = aws_eks_cluster.eks.name
 }
 
+locals {
+  bws_keys = [
+    "cloud-aws-secrets",
+    "demo-kasten",
+  ]
+}
+
 data "external" "bws_lookup" {
   program = ["python3", "../bws_lookup.py"]
   query = {
-    key = "cloud-aws-secrets,demo-kasten"
+    keys = jsonencode(local.bws_keys)
   }
 }
 

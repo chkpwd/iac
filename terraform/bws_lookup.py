@@ -21,7 +21,15 @@ access_token = os.environ.get("BWS_ACCESS_TOKEN")
 if not access_token:
     raise InvalidToken("Token is not set")
 
-key_name = json.load(sys.stdin)["key"].split(",")
+query = json.load(sys.stdin)
+raw = query.get("keys")
+if raw is None:
+    raise ValueError("query must include 'keys' (JSON-encoded list of strings)")
+
+key_name = json.loads(raw)
+if not isinstance(key_name, list) or not all(isinstance(k, str) for k in key_name):
+    raise ValueError("'keys' must decode to a list of strings")
+
 logging.info(key_name)
 
 results = []

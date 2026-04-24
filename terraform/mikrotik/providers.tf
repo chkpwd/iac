@@ -26,10 +26,17 @@ terraform {
   }
 }
 
+locals {
+  bws_keys = [
+    "infra-network-secrets",
+    "cloudflare-dns-secrets",
+  ]
+}
+
 data "external" "bws_lookup" {
   program = ["python3", "../bws_lookup.py"]
   query = {
-    key = "infra-network-secrets,cloudflare-dns-secrets"
+    keys = jsonencode(local.bws_keys)
   }
 }
 
