@@ -2,12 +2,16 @@
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
   packageRules: [
     {
-      description: "Auto merge container patches",
+      description: "Auto merge trusted container patches and minors",
       matchDatasources: ["docker"],
       automerge: true,
       automergeType: "branch",
-      matchUpdateTypes: ["patch"],
-      matchPackagePrefixes: ["ghcr.io/onedr0p", "ghcr.io/bjw-s"],
+      matchUpdateTypes: ["minor", "patch"],
+      matchPackagePrefixes: [
+        "ghcr.io/onedr0p",
+        "ghcr.io/bjw-s",
+        "ghcr.io/home-operations",
+      ],
       ignoreTests: true,
     },
     {
@@ -25,13 +29,7 @@
       automergeType: "pr",
       ignoreTests: false,
       matchUpdateTypes: ["minor", "patch"],
-      matchPackageNames: [
-        "ghcr.io/home-operations/radarr",
-        "ghcr.io/home-operations/sabnzbd",
-        "ghcr.io/home-operations/sonarr",
-        "ghcr.io/home-operations/tautulli",
-        "ghcr.io/recyclarr/recyclarr",
-      ],
+      matchPackageNames: ["ghcr.io/recyclarr/recyclarr"],
     },
     {
       description: "Auto-merge GitHub Actions",
@@ -41,6 +39,24 @@
       matchUpdateTypes: ["minor", "patch", "digest"],
       minimumReleaseAge: "3 days",
       ignoreTests: true,
+    },
+    {
+      description: "Auto-merge ansible collection/dep minors and patches",
+      matchManagers: ["ansible-galaxy", "pip_requirements"],
+      automerge: true,
+      automergeType: "pr",
+      matchUpdateTypes: ["minor", "patch"],
+      minimumReleaseAge: "2 days",
+      ignoreTests: false,
+    },
+    {
+      description: "Auto-merge Terraform provider minors and patches",
+      matchManagers: ["terraform"],
+      automerge: true,
+      automergeType: "pr",
+      matchUpdateTypes: ["minor", "patch"],
+      minimumReleaseAge: "3 days",
+      ignoreTests: false,
     },
   ],
 }

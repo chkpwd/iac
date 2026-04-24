@@ -13,7 +13,7 @@
     {
       description: "Rook-Ceph Group",
       groupName: "Rook-Ceph",
-      matchDatasources: ["docker"],
+      matchDatasources: ["docker", "helm"],
       matchPackageNames: ["/rook-ceph/", "/rook-ceph-cluster/"],
       group: {
         commitMessageTopic: "{{{groupName}}} group",
@@ -38,6 +38,48 @@
         commitMessageTopic: "{{{groupName}}} group",
       },
       minimumGroupSize: 2,
+    },
+    {
+      description: "kube-prometheus-stack Group",
+      groupName: "kube-prometheus-stack",
+      matchDatasources: ["docker", "helm"],
+      matchPackageNames: [
+        "kube-prometheus-stack",
+        "/charts/kube-prometheus-stack/",
+      ],
+      group: {
+        commitMessageTopic: "{{{groupName}}} group",
+      },
+    },
+    {
+      description: "external-secrets Group",
+      groupName: "external-secrets",
+      matchDatasources: ["docker", "helm"],
+      matchPackageNames: ["external-secrets", "/external-secrets/"],
+      group: {
+        commitMessageTopic: "{{{groupName}}} group",
+      },
+    },
+    {
+      description: "Envoy Gateway Group",
+      groupName: "envoyproxy-gateway",
+      matchDatasources: ["docker", "helm"],
+      matchPackageNames: ["/envoyproxy/gateway-helm/"],
+      group: {
+        commitMessageTopic: "{{{groupName}}} group",
+      },
+    },
+    {
+      description: "Actions Runner Controller Group",
+      groupName: "actions-runner-controller",
+      matchDatasources: ["docker", "helm"],
+      matchPackageNames: [
+        "/gha-runner-scale-set/",
+        "/gha-runner-scale-set-controller/",
+      ],
+      group: {
+        commitMessageTopic: "{{{groupName}}} group",
+      },
     },
   ],
 }
