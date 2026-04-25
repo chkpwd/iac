@@ -7,14 +7,41 @@ metadata:
   namespace: &ns tuppr
 spec:
   targetNamespace: *ns
-  path: ./kubernetes/core/tuppr/
+  interval: 30m
+  path: ./kubernetes/core/tuppr/controller
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   prune: true
+  retryInterval: 2m
   sourceRef:
     kind: GitRepository
     name: chkpwd-ops
     namespace: flux-system
+  timeout: 5m
   wait: true
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app tuppr-resources
+  namespace: &ns tuppr
+spec:
+  targetNamespace: *ns
   interval: 30m
+  path: ./kubernetes/core/tuppr/resources
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  prune: true
+  retryInterval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  timeout: 5m
+  wait: true
+  dependsOn:
+    - name: tuppr
+      namespace: tuppr
