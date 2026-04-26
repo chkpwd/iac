@@ -1,0 +1,396 @@
+{
+  "description": "KubernetesUpgrade is the Schema for the kubernetesupgrades API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "spec": {
+      "additionalProperties": false,
+      "description": "KubernetesUpgradeSpec defines the desired state of KubernetesUpgrade",
+      "properties": {
+        "healthChecks": {
+          "description": "HealthChecks defines a list of CEL-based health checks to perform before the upgrade",
+          "items": {
+            "additionalProperties": false,
+            "description": "HealthCheck defines a CEL-based health check",
+            "properties": {
+              "apiVersion": {
+                "description": "APIVersion of the resource to check",
+                "type": "string"
+              },
+              "description": {
+                "description": "Description of what this check validates (for status/logging)",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "expr": {
+                "description": "CEL expression that must evaluate to true for the check to pass\nThe resource object is available as 'object' and status as 'status'",
+                "type": "string"
+              },
+              "kind": {
+                "description": "Kind of the resource to check",
+                "type": "string"
+              },
+              "name": {
+                "description": "Name of the specific resource (optional, if empty checks all resources of this kind)",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "description": "Namespace of the resource (optional, for namespaced resources)",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "timeout": {
+                "description": "Timeout for this health check",
+                "minLength": 2,
+                "pattern": "^([0-9]+[smh])+$",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "apiVersion",
+              "expr",
+              "kind"
+            ],
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "kubernetes": {
+          "additionalProperties": false,
+          "description": "Kubernetes defines the target Kubernetes configuration",
+          "properties": {
+            "version": {
+              "description": "Version is the target Kubernetes version to upgrade to (e.g., \"v1.34.0\")",
+              "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+(-[a-zA-Z0-9\\-\\.]+)?$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "version"
+          ],
+          "type": "object"
+        },
+        "maintenance": {
+          "additionalProperties": false,
+          "description": "Maintenance configuration behavior for upgrade operations",
+          "properties": {
+            "windows": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "duration": {
+                    "description": "How long the window stays open (e.g., \"4h\", \"2h30m\")",
+                    "pattern": "^([0-9]+[smh])+$",
+                    "type": "string"
+                  },
+                  "start": {
+                    "description": "Cron expression (5-field): minute hour day-of-month month day-of-week",
+                    "minLength": 9,
+                    "type": "string"
+                  },
+                  "timezone": {
+                    "default": "UTC",
+                    "description": "IANA timezone (e.g., \"UTC\", \"Europe/Paris\")",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "duration",
+                  "start"
+                ],
+                "type": "object"
+              },
+              "minItems": 1,
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "talosctl": {
+          "additionalProperties": false,
+          "description": "Talosctl specifies the talosctl configuration for upgrade operations",
+          "properties": {
+            "image": {
+              "additionalProperties": false,
+              "description": "Image specifies the talosctl container image",
+              "properties": {
+                "pullPolicy": {
+                  "default": "IfNotPresent",
+                  "description": "PullPolicy describes a policy for if/when to pull a container image",
+                  "enum": [
+                    "Always",
+                    "Never",
+                    "IfNotPresent"
+                  ],
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "repository": {
+                  "default": "ghcr.io/siderolabs/talosctl",
+                  "description": "Repository is the talosctl container image repository",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "tag": {
+                  "description": "Tag is the talosctl container image tag\nIf not specified, defaults to the target version",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "kubernetes"
+      ],
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "status": {
+      "additionalProperties": false,
+      "description": "KubernetesUpgradeStatus defines the observed state of KubernetesUpgrade",
+      "properties": {
+        "completedAt": {
+          "description": "CompletedAt is the time the upgrade reached a terminal phase",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "controllerNode": {
+          "description": "ControllerNode is the controller node being used for the upgrade",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "currentVersion": {
+          "description": "CurrentVersion is the current Kubernetes version detected in the cluster",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "history": {
+          "description": "History records past version transitions on this CR, newest first",
+          "items": {
+            "additionalProperties": false,
+            "description": "UpgradeHistoryEntry records a single completed version transition",
+            "properties": {
+              "completedAt": {
+                "description": "CompletedAt is when the run reached its terminal phase",
+                "format": "date-time",
+                "type": "string"
+              },
+              "fromVersion": {
+                "description": "FromVersion is the cluster version detected at the start of the run",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lastError": {
+                "description": "LastError is the final error message when Phase is Failed",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "phase": {
+                "description": "Phase is the terminal phase reached (Completed or Failed)",
+                "enum": [
+                  "Pending",
+                  "HealthChecking",
+                  "Draining",
+                  "Upgrading",
+                  "Rebooting",
+                  "Completed",
+                  "Failed",
+                  "MaintenanceWindow"
+                ],
+                "type": "string"
+              },
+              "retries": {
+                "description": "Retries is the number of retries recorded during the run",
+                "minimum": 0,
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "startedAt": {
+                "description": "StartedAt is when the run began",
+                "format": "date-time",
+                "type": "string"
+              },
+              "toVersion": {
+                "description": "ToVersion is the spec-target version at the time of completion",
+                "type": "string"
+              }
+            },
+            "required": [
+              "completedAt",
+              "phase",
+              "startedAt",
+              "toVersion"
+            ],
+            "type": "object"
+          },
+          "maxItems": 10,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "jobName": {
+          "description": "JobName is the name of the job handling the upgrade",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lastError": {
+          "description": "LastError contains the last error message",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "lastUpdated": {
+          "description": "LastUpdated timestamp of last status update",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "message": {
+          "description": "Message provides details about the current state",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nextMaintenanceWindow": {
+          "description": "NextMaintenanceWindow reflect the next time a maintenance can happen",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "observedGeneration": {
+          "description": "ObservedGeneration reflects the generation of the most recently observed spec",
+          "format": "int64",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "phase": {
+          "description": "Phase represents the current phase of the upgrade",
+          "enum": [
+            "Pending",
+            "HealthChecking",
+            "Draining",
+            "Upgrading",
+            "Rebooting",
+            "Completed",
+            "Failed",
+            "MaintenanceWindow"
+          ],
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "retries": {
+          "description": "Retries is the number of times the upgrade was attempted",
+          "minimum": 0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "startedAt": {
+          "description": "StartedAt is the time the current upgrade attempt began",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "targetVersion": {
+          "description": "TargetVersion is the target version from the spec",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}

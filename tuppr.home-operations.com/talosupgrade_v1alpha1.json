@@ -1,0 +1,602 @@
+{
+  "description": "TalosUpgrade is the Schema for the talosupgrades API",
+  "properties": {
+    "apiVersion": {
+      "description": "APIVersion defines the versioned schema of this representation of an object.\nServers should convert recognized schemas to the latest internal value, and\nmay reject unrecognized values.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "description": "Kind is a string value representing the REST resource this object represents.\nServers may infer this from the endpoint the client submits requests to.\nCannot be updated.\nIn CamelCase.\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds",
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "spec": {
+      "additionalProperties": false,
+      "description": "TalosUpgradeSpec defines the desired state of TalosUpgrade",
+      "properties": {
+        "drain": {
+          "additionalProperties": false,
+          "description": "Drain configuration for the node prior to upgrade",
+          "properties": {
+            "deleteLocalData": {
+              "description": "DeleteLocalData causes the drain to continue even if there are pods using emptyDir\n(local data that will be deleted when the node is drained).",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "disableEviction": {
+              "description": "DisableEviction forces drain to use delete, even if eviction is supported.",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "force": {
+              "description": "Force continues even if there are pods that do not declare a controller.",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "ignoreDaemonSets": {
+              "description": "IgnoreDaemonSets ignores DaemonSet-managed pods.",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "skipWaitForDeleteTimeout": {
+              "description": "SkipWaitForDeleteTimeout specifies that if a pod DeletionTimestamp is older than N seconds,\nskip waiting for the pod. Seconds must be greater than 0 to skip.",
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "healthChecks": {
+          "description": "HealthChecks defines a list of CEL-based health checks to perform before each node upgrade",
+          "items": {
+            "additionalProperties": false,
+            "description": "HealthCheck defines a CEL-based health check",
+            "properties": {
+              "apiVersion": {
+                "description": "APIVersion of the resource to check",
+                "type": "string"
+              },
+              "description": {
+                "description": "Description of what this check validates (for status/logging)",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "expr": {
+                "description": "CEL expression that must evaluate to true for the check to pass\nThe resource object is available as 'object' and status as 'status'",
+                "type": "string"
+              },
+              "kind": {
+                "description": "Kind of the resource to check",
+                "type": "string"
+              },
+              "name": {
+                "description": "Name of the specific resource (optional, if empty checks all resources of this kind)",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "description": "Namespace of the resource (optional, for namespaced resources)",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "timeout": {
+                "description": "Timeout for this health check",
+                "minLength": 2,
+                "pattern": "^([0-9]+[smh])+$",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "apiVersion",
+              "expr",
+              "kind"
+            ],
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "maintenance": {
+          "additionalProperties": false,
+          "description": "Maintenance configuration behavior for upgrade operations",
+          "properties": {
+            "windows": {
+              "items": {
+                "additionalProperties": false,
+                "properties": {
+                  "duration": {
+                    "description": "How long the window stays open (e.g., \"4h\", \"2h30m\")",
+                    "pattern": "^([0-9]+[smh])+$",
+                    "type": "string"
+                  },
+                  "start": {
+                    "description": "Cron expression (5-field): minute hour day-of-month month day-of-week",
+                    "minLength": 9,
+                    "type": "string"
+                  },
+                  "timezone": {
+                    "default": "UTC",
+                    "description": "IANA timezone (e.g., \"UTC\", \"Europe/Paris\")",
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "duration",
+                  "start"
+                ],
+                "type": "object"
+              },
+              "minItems": 1,
+              "type": [
+                "array",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "nodeSelector": {
+          "additionalProperties": false,
+          "description": "NodeSelector defines which nodes should be included in this upgrade.",
+          "properties": {
+            "matchExpressions": {
+              "description": "matchExpressions is a list of label selector requirements. The requirements are ANDed.",
+              "items": {
+                "additionalProperties": false,
+                "description": "A label selector requirement is a selector that contains values, a key, and an operator that\nrelates the key and values.",
+                "properties": {
+                  "key": {
+                    "description": "key is the label key that the selector applies to.",
+                    "type": "string"
+                  },
+                  "operator": {
+                    "description": "operator represents a key's relationship to a set of values.\nValid operators are In, NotIn, Exists and DoesNotExist.",
+                    "type": "string"
+                  },
+                  "values": {
+                    "description": "values is an array of string values. If the operator is In or NotIn,\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\nthe values array must be empty. This array is replaced during a strategic\nmerge patch.",
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "x-kubernetes-list-type": "atomic"
+                  }
+                },
+                "required": [
+                  "key",
+                  "operator"
+                ],
+                "type": "object"
+              },
+              "type": [
+                "array",
+                "null"
+              ],
+              "x-kubernetes-list-type": "atomic"
+            },
+            "matchLabels": {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "description": "matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\nmap is equivalent to an element of matchExpressions, whose key field is \"key\", the\noperator is \"In\", and the values array contains only \"value\". The requirements are ANDed.",
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ],
+          "x-kubernetes-map-type": "atomic"
+        },
+        "parallelism": {
+          "default": 1,
+          "description": "Parallelism is the number of nodes to upgrade concurrently in each batch.\nDefaults to 1 (sequential upgrades). Must be \u003e= 1 and \u003c= the number of matching nodes.",
+          "format": "int32",
+          "minimum": 1,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "policy": {
+          "additionalProperties": false,
+          "description": "Policy configures upgrade behavior",
+          "properties": {
+            "debug": {
+              "default": true,
+              "description": "Debug enables debug mode for the upgrade",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "force": {
+              "default": false,
+              "description": "Force the upgrade (skip checks on etcd health and members)",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "placement": {
+              "default": "soft",
+              "description": "Placement controls how strictly upgrade jobs avoid the target node\nhard: required avoidance (job will fail if can't avoid target node)\nsoft: preferred avoidance (job prefers to avoid but can run on target node)",
+              "enum": [
+                "hard",
+                "soft"
+              ],
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "rebootMode": {
+              "default": "default",
+              "description": "RebootMode select the reboot mode during upgrade",
+              "enum": [
+                "default",
+                "powercycle"
+              ],
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "stage": {
+              "default": false,
+              "description": "Stage the upgrade to perform it after a reboot",
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "timeout": {
+              "default": "30m",
+              "description": "Timeout for the per-node talosctl upgrade command",
+              "pattern": "^([0-9]+[smh])+$",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "talos": {
+          "additionalProperties": false,
+          "description": "Talos specifies the talos configuration for upgrade operations",
+          "properties": {
+            "version": {
+              "description": "Version is the target Talos version to upgrade to (e.g., \"v1.11.0\")",
+              "pattern": "^v[0-9]+\\.[0-9]+\\.[0-9]+(-[a-zA-Z0-9\\-\\.]+)?$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "version"
+          ],
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "talosctl": {
+          "additionalProperties": false,
+          "description": "Talosctl specifies the talosctl configuration for upgrade operations",
+          "properties": {
+            "image": {
+              "additionalProperties": false,
+              "description": "Image specifies the talosctl container image",
+              "properties": {
+                "pullPolicy": {
+                  "default": "IfNotPresent",
+                  "description": "PullPolicy describes a policy for if/when to pull a container image",
+                  "enum": [
+                    "Always",
+                    "Never",
+                    "IfNotPresent"
+                  ],
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "repository": {
+                  "default": "ghcr.io/siderolabs/talosctl",
+                  "description": "Repository is the talosctl container image repository",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "tag": {
+                  "description": "Tag is the talosctl container image tag\nIf not specified, defaults to the target version",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "status": {
+      "additionalProperties": false,
+      "description": "TalosUpgradeStatus defines the observed state of TalosUpgrade",
+      "properties": {
+        "completedAt": {
+          "description": "CompletedAt is the time the upgrade reached a terminal phase",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "completedNodes": {
+          "description": "CompletedNodes are nodes that have been successfully upgraded",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "currentNode": {
+          "description": "CurrentNode is the node currently being upgraded (first node in batch for backwards compatibility)",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "currentNodes": {
+          "description": "CurrentNodes is the list of nodes currently being upgraded in the active batch",
+          "items": {
+            "type": "string"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "failedNodes": {
+          "description": "FailedNodes are nodes that failed to upgrade",
+          "items": {
+            "additionalProperties": false,
+            "description": "NodeUpgradeStatus tracks the upgrade status of individual nodes",
+            "properties": {
+              "jobName": {
+                "description": "JobName is the name of the job handling this node's upgrade",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "lastError": {
+                "description": "LastError contains the last error message",
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "nodeName": {
+                "description": "NodeName is the name of the node",
+                "type": "string"
+              },
+              "retries": {
+                "description": "Retries is the number of times upgrade was attempted",
+                "minimum": 0,
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "nodeName"
+            ],
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "history": {
+          "description": "History records past version transitions on this CR, newest first",
+          "items": {
+            "additionalProperties": false,
+            "description": "TalosUpgradeHistoryEntry records a single completed Talos upgrade run",
+            "properties": {
+              "completedAt": {
+                "description": "CompletedAt is when the run reached its terminal phase",
+                "format": "date-time",
+                "type": "string"
+              },
+              "completedNodes": {
+                "description": "CompletedNodes are the nodes successfully upgraded during the run",
+                "items": {
+                  "type": "string"
+                },
+                "type": [
+                  "array",
+                  "null"
+                ]
+              },
+              "failedNodes": {
+                "description": "FailedNodes are the nodes that failed during the run",
+                "items": {
+                  "type": "string"
+                },
+                "type": [
+                  "array",
+                  "null"
+                ]
+              },
+              "phase": {
+                "description": "Phase is the terminal phase reached (Completed or Failed)",
+                "enum": [
+                  "Pending",
+                  "HealthChecking",
+                  "Draining",
+                  "Upgrading",
+                  "Rebooting",
+                  "Completed",
+                  "Failed",
+                  "MaintenanceWindow"
+                ],
+                "type": "string"
+              },
+              "startedAt": {
+                "description": "StartedAt is when the run began",
+                "format": "date-time",
+                "type": "string"
+              },
+              "toVersion": {
+                "description": "ToVersion is the spec-target Talos version at the time of completion",
+                "type": "string"
+              }
+            },
+            "required": [
+              "completedAt",
+              "phase",
+              "startedAt",
+              "toVersion"
+            ],
+            "type": "object"
+          },
+          "maxItems": 10,
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "lastUpdated": {
+          "description": "LastUpdated timestamp of last status update",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "message": {
+          "description": "Message provides details about the current state",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nextMaintenanceWindow": {
+          "description": "NextMaintenanceWindow reflect the next time a maintenance can happen",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "observedGeneration": {
+          "description": "ObservedGeneration reflects the generation of the most recently observed spec",
+          "format": "int64",
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "phase": {
+          "description": "Phase represents the current phase of the upgrade",
+          "enum": [
+            "Pending",
+            "HealthChecking",
+            "Draining",
+            "Upgrading",
+            "Rebooting",
+            "Completed",
+            "Failed",
+            "MaintenanceWindow"
+          ],
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "startedAt": {
+          "description": "StartedAt is the time the current upgrade run began",
+          "format": "date-time",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}
