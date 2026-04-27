@@ -23,6 +23,16 @@ locals {
     format("%04d-%s", v.order, k) => merge(v, { key = k })
   }
 
+  raw_rules = {
+    cilium_lb_notrack_dst = { order = 10, chain = "prerouting", action = "notrack", comment = "cilium lb dst bypass conntrack", dst_address = "10.0.45.0/24" }
+    cilium_lb_notrack_src = { order = 20, chain = "prerouting", action = "notrack", comment = "cilium lb src bypass conntrack", src_address = "10.0.45.0/24" }
+  }
+
+  raw_rules_map = {
+    for k, v in local.raw_rules :
+    format("%04d-%s", v.order, k) => merge(v, { key = k })
+  }
+
   # Order field controls rule sequence; spaced by 10 to allow inserting new rules.
   firewall_filter_rules = {
     input_drop_invalid               = { order = 10, chain = "input", action = "drop", comment = "drop invalid", connection_state = "invalid" }
@@ -35,8 +45,8 @@ locals {
     input_allow_dhcp_guest           = { order = 80, chain = "input", action = "accept", comment = "allow DHCP from Guest", protocol = "udp", dst_port = "67,68", in_interface = "guest" }
     input_drop_not_lan               = { order = 90, chain = "input", action = "drop", comment = "drop all not coming from LAN", in_interface_list = "!LAN" }
     forward_drop_invalid             = { order = 100, chain = "forward", action = "drop", comment = "drop invalid", connection_state = "invalid" }
-    forward_accept_established       = { order = 110, chain = "forward", action = "accept", comment = "accept established,related, untracked", connection_state = "established,related,untracked" }
-    forward_fasttrack                = { order = 120, chain = "forward", action = "fasttrack-connection", comment = "fasttrack", connection_state = "established,related", hw_offload = true }
+    forward_fasttrack                = { order = 110, chain = "forward", action = "fasttrack-connection", comment = "fasttrack", connection_state = "established,related", hw_offload = true }
+    forward_accept_established       = { order = 120, chain = "forward", action = "accept", comment = "accept established,related, untracked", connection_state = "established,related,untracked" }
     forward_accept_ipsec_in          = { order = 130, chain = "forward", action = "accept", comment = "accept in ipsec policy", ipsec_policy = "in,ipsec" }
     forward_accept_ipsec_out         = { order = 140, chain = "forward", action = "accept", comment = "accept out ipsec policy", ipsec_policy = "out,ipsec" }
     forward_allow_wg_gatus_icmp_only = { order = 150, chain = "forward", action = "drop", comment = "drop all but icmp from WireGuard peer", protocol = "!icmp", src_address = "10.6.6.4" }
@@ -138,4 +148,28 @@ resource "routeros_move_items" "filter_rules" {
   sequence      = [for idx in sort(keys(local.filter_rules_map)) : routeros_ip_firewall_filter.filter_rules[idx].id]
 
   depends_on = [routeros_ip_firewall_filter.filter_rules]
+}
+
+resource "routeros_ip_firewall_raw" "raw_rules" {
+  for_each = local.raw_rules_map
+
+  chain   = each.value.chain
+  action  = each.value.action
+  comment = coalesce(try(each.value.comment, null), "Managed by Terraform - ${each.value.key}")
+
+  dst_address = try(each.value.dst_address, null)
+  src_address = try(each.value.src_address, null)
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "routeros_move_items" "raw_rules" {
+  count = length(local.raw_rules) > 0 ? 1 : 0
+
+  resource_path = "/ip/firewall/raw"
+  sequence      = [for idx in sort(keys(local.raw_rules_map)) : routeros_ip_firewall_raw.raw_rules[idx].id]
+
+  depends_on = [routeros_ip_firewall_raw.raw_rules]
 }
