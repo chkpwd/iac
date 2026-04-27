@@ -41,6 +41,10 @@ jobs:
         with:
           version: "${{ env.TASK_VERSION }}"
 
+      - name: Prepare cache dirs
+        shell: bash
+        run: mkdir -p "${HOME}/.local/bin"
+
       - name: Restore tool cache
         id: tool-cache
         uses: actions/cache@v4
@@ -53,7 +57,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "${HOME}/.local/bin"
           tmp_dir="$(mktemp -d)"
 
           curl -fsSL "https://github.com/kcl-lang/cli/releases/download/${KCL_VERSION}/kcl-${KCL_VERSION}-linux-amd64.tar.gz" -o "${tmp_dir}/kcl.tar.gz"
@@ -66,14 +69,6 @@ jobs:
       - name: Add tools to PATH
         shell: bash
         run: echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
-
-      - name: Restore KCL cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.kcl
-          key: ${{ runner.os }}-kcl-home-v1-${{ hashFiles('kubernetes/kcl/kcl.mod') }}
-          restore-keys: |
-            ${{ runner.os }}-kcl-home-v1-
 
       - name: Verify toolchain
         shell: bash
