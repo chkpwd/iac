@@ -19,3 +19,23 @@ helmfile -f hacks/crds.yml template -q | kubectl apply --server-side --field-man
 # Apply Foundation
 helmfile --file "hacks/helmfile.yml" apply --skip-diff-on-install --suppress-diff --suppress-secrets
 ```
+
+## KCL
+
+KCL sources live in `kcl/apps/*.k`.
+Generated YAML under `kcl/apps/<name>/resources/` is build output.
+
+Quick reference:
+
+```bash
+# Render one app
+task kcl:build APP=bazarr
+
+# Render all KCL apps
+task kcl:build
+
+# Verify generated YAML is in sync
+task kcl:check
+```
+
+Do not edit generated YAML by hand. Edit `kcl/apps/<name>.k` and rebuild.

@@ -1,0 +1,121 @@
+---
+name: "k8s - KCL OCI"
+on:
+  pull_request:
+    branches: ["main"]
+    paths:
+      - "kubernetes/kcl/**"
+      - "kubernetes/core/**"
+      - "kubernetes/.taskfiles/kcl/**"
+      - "taskfile.yml"
+      - ".github/workflows/kubernetes-kcl-oci.yml"
+  push:
+    branches: ["main"]
+    paths:
+      - "kubernetes/kcl/**"
+      - "kubernetes/core/**"
+      - "kubernetes/.taskfiles/kcl/**"
+      - "taskfile.yml"
+      - ".github/workflows/kubernetes-kcl-oci.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+  packages: write
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: true
+env:
+  KCL_VERSION: v0.12.4
+  TASK_VERSION: 3.50.0
+  YQ_VERSION: v4.53.2
+jobs:
+  build-and-publish:
+    name: KCL render and publish OCI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Task
+        uses: go-task/setup-task@v2
+        with:
+          version: "${{ env.TASK_VERSION }}"
+
+      - name: Restore tool cache
+        id: tool-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/bin
+          key: ${{ runner.os }}-kcl-tools-v1-${{ env.KCL_VERSION }}-${{ env.YQ_VERSION }}
+
+      - name: Install KCL and yq
+        if: steps.tool-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${HOME}/.local/bin"
+          tmp_dir="$(mktemp -d)"
+
+          curl -fsSL "https://github.com/kcl-lang/cli/releases/download/${KCL_VERSION}/kcl-${KCL_VERSION}-linux-amd64.tar.gz" -o "${tmp_dir}/kcl.tar.gz"
+          tar -xzf "${tmp_dir}/kcl.tar.gz" -C "${tmp_dir}"
+          install -m 0755 "${tmp_dir}/kcl" "${HOME}/.local/bin/kcl"
+
+          curl -fsSL "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -o "${HOME}/.local/bin/yq"
+          chmod 0755 "${HOME}/.local/bin/yq"
+
+      - name: Add tools to PATH
+        shell: bash
+        run: echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
+
+      - name: Restore KCL cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.kcl
+          key: ${{ runner.os }}-kcl-home-v1-${{ hashFiles('kubernetes/kcl/kcl.mod') }}
+          restore-keys: |
+            ${{ runner.os }}-kcl-home-v1-
+
+      - name: Verify toolchain
+        shell: bash
+        run: |
+          task --version
+          kcl --version
+          yq --version
+
+      - name: Render KCL outputs
+        shell: bash
+        run: task kcl:build
+
+      - name: Setup Flux CLI
+        if: github.event_name != 'pull_request'
+        uses: fluxcd/flux2/action@v2.8.6
+
+      - name: Login to GitHub Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: "${{ github.actor }}"
+          password: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: Generate artifact tag
+        if: github.event_name != 'pull_request'
+        id: tag
+        shell: bash
+        run: |
+          echo "artifact=ghcr.io/${{ github.repository_owner }}/manifests/kcl-apps:$(git rev-parse --short HEAD)" >> "${GITHUB_OUTPUT}"
+
+      - name: Publish OCI artifact
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          flux push artifact oci://${{ steps.tag.outputs.artifact }} \
+            --path="./" \
+            --source="$(git config --get remote.origin.url)" \
+            --revision="${GITHUB_REF_NAME}/$(git rev-parse HEAD)"
+
+      - name: Tag OCI artifact
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          flux tag artifact oci://${{ steps.tag.outputs.artifact }} --tag main

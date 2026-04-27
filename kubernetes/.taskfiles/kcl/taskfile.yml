@@ -1,0 +1,100 @@
+---
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+vars:
+  KCL_DIR: "{{.ROOT_DIR}}/kubernetes/kcl"
+  KCL_APPS_DIR: "{{.ROOT_DIR}}/kubernetes/kcl/apps"
+
+tasks:
+  build:
+    desc: Build KCL output
+    preconditions:
+      - which kcl
+      - which yq
+    cmds:
+      - task: _build-{{if .APP}}one{{else}}all{{end}}
+        vars: {APP: "{{.APP}}"}
+  _build-one:
+    internal: true
+    requires:
+      vars: [APP]
+    vars:
+      SRC_FILE: "{{.KCL_APPS_DIR}}/{{.APP}}.k"
+      STREAM_FILE: "{{.KCL_APPS_DIR}}/.{{.APP}}.stream.tmp.yml"
+    preconditions:
+      - test -f {{.SRC_FILE}}
+    cmds:
+      - kcl run "{{.SRC_FILE}}" -o "{{.STREAM_FILE}}"
+      - |
+        set -euo pipefail
+        files=$(yq -N e 'select(.__file != null) | .__file' {{.STREAM_FILE}} | sort -u)
+        if [ -z "$files" ]; then
+          echo "ERROR: no __file markers found in KCL output for {{.APP}}" >&2
+          exit 1
+        fi
+        for f in $files; do
+          out="{{.ROOT_DIR}}/${f}"
+          mkdir -p "$(dirname "${out}")"
+          tmp="${out}.tmp"
+          yq e "select(.__file == \"${f}\") | .doc" {{.STREAM_FILE}} > "${tmp}"
+          {
+            echo '---'
+            cat "${tmp}"
+          } > "${out}"
+          rm "${tmp}"
+        done
+      - rm -f {{.STREAM_FILE}}
+  _build-all:
+    internal: true
+    cmds:
+      - for: {var: APP_KS, split: "\n"}
+        cmd: task -t {{.TASKFILE}} _build-one APP={{.ITEM}}
+        vars:
+          APP_KS:
+            sh: find {{.KCL_APPS_DIR}} -mindepth 1 -maxdepth 1 -type f -name '*.k' -printf '%f\n' | sed 's/\.k$//' | sort -u
+  check:
+    desc: Check KCL output drift
+    summary: |
+      Rebuilds all KCL apps and fails on changes in
+      kubernetes/kcl/apps/*/resources/.
+    preconditions:
+      - which kcl yq git
+    cmds:
+      - task: build
+      - |
+        if ! git diff --quiet -- '{{.KCL_APPS_DIR}}/*/resources/'; then
+          echo "ERROR: generated YAML is out of sync with .k sources." >&2
+          echo "Run: task kcl:build" >&2
+          git --no-pager diff -- '{{.KCL_APPS_DIR}}/*/resources/' >&2
+          exit 1
+        fi
+  fmt:
+    desc: Format all .k files
+    preconditions:
+      - which kcl
+    cmds:
+      - kcl fmt {{.KCL_DIR}}
+  lint:
+    desc: Lint all .k files
+    preconditions:
+      - which kcl
+    cmds:
+      - kcl lint {{.KCL_DIR}}
+  clean:
+    desc: Remove generated KCL YAML
+    summary: |
+      Deletes files referenced by __file in kcl/apps/*.k.
+    preconditions:
+      - which kcl yq
+    cmds:
+      - |
+        set -euo pipefail
+        for src in $(find {{.KCL_APPS_DIR}} -mindepth 1 -maxdepth 1 -type f -name '*.k'); do
+          app="$(basename "${src}" .k)"
+          tmp="{{.KCL_APPS_DIR}}/.${app}.stream.tmp.yml"
+          kcl run "${src}" -o "${tmp}" >/dev/null
+          for f in $(yq -N e 'select(.__file != null) | .__file' "${tmp}" | sort -u); do
+            rm -f "{{.ROOT_DIR}}/${f}"
+          done
+          rm -f "${tmp}"
+        done
