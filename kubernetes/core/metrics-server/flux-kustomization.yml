@@ -9,6 +9,7 @@ spec:
   targetNamespace: *ns
   dependsOn:
     - name: prometheus
+    - name: prometheus-adapter
   path: ./kubernetes/core/metrics-server/
   commonMetadata:
     labels:

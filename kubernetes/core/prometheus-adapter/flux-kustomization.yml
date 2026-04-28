@@ -3,11 +3,11 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app keda-operator
-  namespace: &ns system
+  name: &app prometheus-adapter
+  namespace: &ns monitoring
 spec:
   targetNamespace: *ns
-  path: ./kubernetes/core/keda-operator/
+  path: ./kubernetes/core/prometheus-adapter/
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -16,5 +16,5 @@ spec:
     kind: GitRepository
     name: chkpwd-ops
     namespace: flux-system
-  wait: true
+  wait: false
   interval: 30m
