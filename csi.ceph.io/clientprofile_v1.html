@@ -356,9 +356,60 @@ in any namespace</div>
 <div class="prop-leaf">
   <span class="prop-name">nfs</span>
   <span class="type-badge">object</span>
-  <div class="leaf-desc">NfsConfigSpec cdefines the desired NFS configuration
+  <div class="leaf-desc">NfsConfigSpec defines the desired NFS configuration
   </div>
 </div>
+<details class="prop">
+<summary>
+  <span class="prop-name">nvmeof</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">NvmeofConfigSpec defines the desired NVMe-oF configuration</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">cephCsiSecrets</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">CephCsiSecretsSpec defines the secrets used by the client profile
+to access the Ceph cluster and perform operations
+on volumes.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">controllerPublishSecret</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SecretReference represents a Secret Reference. It has enough information to retrieve secret
+in any namespace</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">name is unique within a namespace to reference a secret resource.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">namespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">namespace defines the space within which the secret name must be unique.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">radosNamespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <details class="prop">
 <summary>
   <span class="prop-name">rbd</span>

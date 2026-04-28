@@ -1650,6 +1650,14 @@ The ESO controller is instantiated with a specific controller name and filters V
   </div>
 </div>
 <div class="prop-leaf">
+  <span class="prop-name">getParameters</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">GetParameters are query-string parameters passed to Vault on GET calls.
+Each key may map to multiple values, matching HTTP query-string semantics.
+Ignored for non-GET methods; use Parameters for write bodies.
+  </div>
+</div>
+<div class="prop-leaf">
   <span class="prop-name">method</span>
   <span class="type-badge">string</span>
   <div class="leaf-desc">Vault API method to use (GET/POST/other)
@@ -1849,6 +1857,12 @@ Ignored if referent is not cluster-scoped, otherwise defaults to the namespace o
   </div>
 </div>
 </details>
+<div class="prop-leaf">
+  <span class="prop-name">vaultRole</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">VaultRole specifies the Vault role to use for TLS certificate authentication.
+  </div>
+</div>
   </div>
 </div>
 </details>
