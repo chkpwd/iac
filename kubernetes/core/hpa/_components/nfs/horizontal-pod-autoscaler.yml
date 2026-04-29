@@ -16,11 +16,7 @@ spec:
     - type: External
       external:
         metric:
-          name: probe_success
-          selector:
-            matchLabels:
-              instance: nas-srv-01.chkpwd.com:2049
-              job: probe/monitoring/tcp-endpoints
+          name: probe_success_nfs
         target:
           type: Value
           value: "1"

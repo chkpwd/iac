@@ -18,9 +18,17 @@ spec:
     rules:
       default: false
       external:
-        - seriesQuery: '{__name__="probe_success"}'
+        - seriesQuery: 'probe_success{instance="nas-srv-01.chkpwd.com:2049"}'
           resources:
             namespaced: false
           name:
-            as: probe_success
+            matches: "probe_success"
+            as: "probe_success_nfs"
+          metricsQuery: max_over_time(<<.Series>>{<<.LabelMatchers>>}[1m])
+        - seriesQuery: 'probe_success{instance="ai-inference-01.chkpwd.com:11434"}'
+          resources:
+            namespaced: false
+          name:
+            matches: "probe_success"
+            as: "probe_success_ollama"
           metricsQuery: max_over_time(<<.Series>>{<<.LabelMatchers>>}[1m])
