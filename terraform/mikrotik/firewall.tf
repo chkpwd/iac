@@ -12,24 +12,15 @@ locals {
 
   # - Uses stable map keys (not array indices) so adding/removing rules doesn't cascade changes
   nat_rules = {
-    masquerade  = { order = 10, chain = "srcnat", action = "masquerade", ipsec_policy = "out,none", out_interface_list = "WAN" }
-    cilium      = { order = 20, chain = "dstnat", action = "dst-nat", in_interface_list = "WAN", protocol = "tcp", dst_port = "443", to_addresses = "10.0.45.31", to_ports = "443", comment = "cilium ingress" }
-    plex        = { order = 30, chain = "dstnat", action = "dst-nat", in_interface_list = "WAN", protocol = "tcp", dst_port = "32400", to_addresses = "10.0.45.35", to_ports = "32400", comment = "plex" }
-    qbittorrent = { order = 40, chain = "dstnat", action = "dst-nat", in_interface_list = "WAN", protocol = "tcp", dst_port = "50413", to_addresses = "10.0.45.34", to_ports = "50413", comment = "qbittorrent" }
+    masquerade     = { order = 10, chain = "srcnat", action = "masquerade", ipsec_policy = "out,none", out_interface_list = "WAN" }
+    snat_cilium_lb = { order = 15, chain = "srcnat", action = "masquerade", comment = "asymmetric routing fix", dst_address = "10.0.45.0/24", src_address_list = "private_addr" }
+    cilium         = { order = 20, chain = "dstnat", action = "dst-nat", in_interface_list = "WAN", protocol = "tcp", dst_port = "443", to_addresses = "10.0.45.31", to_ports = "443", comment = "cilium ingress" }
+    plex           = { order = 30, chain = "dstnat", action = "dst-nat", in_interface_list = "WAN", protocol = "tcp", dst_port = "32400", to_addresses = "10.0.45.35", to_ports = "32400", comment = "plex" }
+    qbittorrent    = { order = 40, chain = "dstnat", action = "dst-nat", in_interface_list = "WAN", protocol = "tcp", dst_port = "50413", to_addresses = "10.0.45.34", to_ports = "50413", comment = "qbittorrent" }
   }
 
   nat_rules_map = {
     for k, v in local.nat_rules :
-    format("%04d-%s", v.order, k) => merge(v, { key = k })
-  }
-
-  raw_rules = {
-    cilium_lb_notrack_dst = { order = 10, chain = "prerouting", action = "notrack", comment = "cilium lb dst bypass conntrack", dst_address = "10.0.45.0/24" }
-    cilium_lb_notrack_src = { order = 20, chain = "prerouting", action = "notrack", comment = "cilium lb src bypass conntrack", src_address = "10.0.45.0/24" }
-  }
-
-  raw_rules_map = {
-    for k, v in local.raw_rules :
     format("%04d-%s", v.order, k) => merge(v, { key = k })
   }
 
@@ -51,19 +42,19 @@ locals {
     forward_accept_ipsec_out         = { order = 140, chain = "forward", action = "accept", comment = "accept out ipsec policy", ipsec_policy = "out,ipsec" }
     forward_allow_wg_gatus_icmp_only = { order = 150, chain = "forward", action = "drop", comment = "drop all but icmp from WireGuard peer", protocol = "!icmp", src_address = "10.6.6.4" }
     forward_wan_dstnat_to_k8s_lb     = { order = 165, chain = "forward", action = "accept", comment = "allow DSTNATed WAN to k8s LB IPs", connection_nat_state = "dstnat", dst_address = "10.0.45.0/24", in_interface_list = "WAN" }
-    forward_iot_dns_udp              = { order = 200, chain = "forward", action = "accept", comment = "iot allow DNS (UDP)", protocol = "udp", dst_address = var.dns_ip, dst_port = "53", in_interface = "iot" }
-    forward_iot_dns_tcp              = { order = 210, chain = "forward", action = "accept", comment = "iot allow DNS (TCP)", protocol = "tcp", dst_address = var.dns_ip, dst_port = "53", in_interface = "iot" }
-    forward_iot_wan                  = { order = 220, chain = "forward", action = "accept", comment = "iot -> WAN allow", in_interface = "iot", out_interface_list = "WAN" }
+    forward_iot_dns_udp              = { order = 200, chain = "forward", action = "accept", comment = "allow iot DNS (UDP)", protocol = "udp", dst_address = var.dns_ip, dst_port = "53", in_interface = "iot" }
+    forward_iot_dns_tcp              = { order = 210, chain = "forward", action = "accept", comment = "allow iot DNS (TCP)", protocol = "tcp", dst_address = var.dns_ip, dst_port = "53", in_interface = "iot" }
+    forward_iot_wan                  = { order = 220, chain = "forward", action = "accept", comment = "allow iot -> WAN", in_interface = "iot", out_interface_list = "WAN" }
     forward_iot_drop_local           = { order = 230, chain = "forward", action = "drop", comment = "drop local access on iot net", dst_address_list = "private_addr", in_interface = "iot" }
-    forward_iot_drop_all             = { order = 240, chain = "forward", action = "drop", comment = "iot drop all other forward", in_interface = "iot" }
+    forward_iot_drop_all             = { order = 240, chain = "forward", action = "drop", comment = "drop all other forward from iot", in_interface = "iot" }
     forward_plex_guest               = { order = 300, chain = "forward", action = "accept", comment = "allow plex from media_clients", protocol = "tcp", dst_address = "10.0.45.35", dst_port = "32400", src_address_list = "media_clients", in_interface = "guest" }
     forward_guest_ha_tcp             = { order = 310, chain = "forward", action = "accept", comment = "allow home assistant from guest", protocol = "tcp", dst_address = "10.0.10.8", dst_port = "8123", in_interface = "guest" }
     forward_jellyfin_guest           = { order = 315, chain = "forward", action = "accept", comment = "allow jellyfin from media_clients", protocol = "tcp", dst_address = "10.0.45.37", dst_port = "8096", src_address_list = "media_clients", in_interface = "guest" }
-    forward_guest_dns_udp            = { order = 400, chain = "forward", action = "accept", comment = "guest allow DNS (UDP)", protocol = "udp", dst_address = var.dns_ip, dst_port = "53", in_interface = "guest" }
-    forward_guest_dns_tcp            = { order = 410, chain = "forward", action = "accept", comment = "guest allow DNS (TCP)", protocol = "tcp", dst_address = var.dns_ip, dst_port = "53", in_interface = "guest" }
-    forward_guest_wan                = { order = 420, chain = "forward", action = "accept", comment = "guest -> WAN allow", in_interface = "guest", out_interface_list = "WAN" }
+    forward_guest_dns_udp            = { order = 400, chain = "forward", action = "accept", comment = "allow guest DNS (UDP)", protocol = "udp", dst_address = var.dns_ip, dst_port = "53", in_interface = "guest" }
+    forward_guest_dns_tcp            = { order = 410, chain = "forward", action = "accept", comment = "allow guest DNS (TCP)", protocol = "tcp", dst_address = var.dns_ip, dst_port = "53", in_interface = "guest" }
+    forward_guest_wan                = { order = 420, chain = "forward", action = "accept", comment = "allow guest -> WAN", in_interface = "guest", out_interface_list = "WAN" }
     forward_guest_drop_local         = { order = 430, chain = "forward", action = "drop", comment = "drop local access on guest net", dst_address_list = "private_addr", in_interface = "guest" }
-    forward_guest_drop_all           = { order = 440, chain = "forward", action = "drop", comment = "guest drop all other forward", in_interface = "guest" }
+    forward_guest_drop_all           = { order = 440, chain = "forward", action = "drop", comment = "drop all other forward from guest", in_interface = "guest" }
     forward_drop_wan_not_dstnat      = { order = 500, chain = "forward", action = "drop", comment = "drop all from WAN not DSTNATed", connection_nat_state = "!dstnat", connection_state = "new", in_interface_list = "WAN" }
   }
 
@@ -91,6 +82,8 @@ resource "routeros_ip_firewall_nat" "nat_rules" {
   comment            = try(each.value.comment, null)
   protocol           = try(each.value.protocol, null)
   dst_port           = try(each.value.dst_port, null)
+  dst_address        = try(each.value.dst_address, null)
+  src_address_list   = try(each.value.src_address_list, null)
   to_addresses       = try(each.value.to_addresses, null)
   to_ports           = try(each.value.to_ports, null)
   in_interface_list  = try(each.value.in_interface_list, null)
@@ -148,28 +141,4 @@ resource "routeros_move_items" "filter_rules" {
   sequence      = [for idx in sort(keys(local.filter_rules_map)) : routeros_ip_firewall_filter.filter_rules[idx].id]
 
   depends_on = [routeros_ip_firewall_filter.filter_rules]
-}
-
-resource "routeros_ip_firewall_raw" "raw_rules" {
-  for_each = local.raw_rules_map
-
-  chain   = each.value.chain
-  action  = each.value.action
-  comment = coalesce(try(each.value.comment, null), "Managed by Terraform - ${each.value.key}")
-
-  dst_address = try(each.value.dst_address, null)
-  src_address = try(each.value.src_address, null)
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "routeros_move_items" "raw_rules" {
-  count = length(local.raw_rules) > 0 ? 1 : 0
-
-  resource_path = "/ip/firewall/raw"
-  sequence      = [for idx in sort(keys(local.raw_rules_map)) : routeros_ip_firewall_raw.raw_rules[idx].id]
-
-  depends_on = [routeros_ip_firewall_raw.raw_rules]
 }
