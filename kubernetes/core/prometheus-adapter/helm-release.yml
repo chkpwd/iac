@@ -24,11 +24,11 @@ spec:
           name:
             matches: "probe_success"
             as: "probe_success_nfs"
-          metricsQuery: max_over_time(<<.Series>>{<<.LabelMatchers>>}[1m])
+          metricsQuery: min(max_over_time(probe_success{instance="nas-srv-01.chkpwd.com:2049"}[1m]))
         - seriesQuery: 'probe_success{instance="ai-inference-01.chkpwd.com:11434"}'
           resources:
             namespaced: false
           name:
             matches: "probe_success"
             as: "probe_success_ollama"
-          metricsQuery: max_over_time(<<.Series>>{<<.LabelMatchers>>}[1m])
+          metricsQuery: min(max_over_time(probe_success{instance="ai-inference-01.chkpwd.com:11434"}[1m]))
