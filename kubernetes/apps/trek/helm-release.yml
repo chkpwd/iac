@@ -32,7 +32,7 @@ spec:
           main:
             image:
               repository: docker.io/mauriceboe/trek
-              tag: v3.0.13
+              tag: 3.0.13
             env:
               NODE_ENV: production
               PORT: &port 3000
@@ -44,7 +44,6 @@ spec:
               TRUST_PROXY: "1"
               DEFAULT_LANGUAGE: en
               OIDC_ISSUER: https://authentik.chkpwd.com/application/o/trek/
-              OIDC_DISCOVERY_URL: https://authentik.chkpwd.com/application/o/trek/.well-known/openid-configuration
               OIDC_CLIENT_ID: trek
               OIDC_DISPLAY_NAME: Authentik
               OIDC_SCOPE: openid email profile
