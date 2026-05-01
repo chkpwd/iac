@@ -13,6 +13,7 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+      components.postgres/cpgo: init
   components:
     - ../../core/crunchydata-pgo/components/
     - ../../core/dragonfly-operator/components/
