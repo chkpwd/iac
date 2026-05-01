@@ -25,6 +25,7 @@ locals {
     "grimmory",
     "mediamanager",
     "surmai",
+    "trek",
   ]
 }
 
