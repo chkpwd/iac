@@ -32,7 +32,7 @@ spec:
           main:
             image:
               repository: docker.io/mauriceboe/trek
-              tag: v3.0.13
+              tag: 3.0.13
             command: ["dumb-init", "--"]
             args: ["node", "--import", "tsx", "src/index.ts"]
             env:
