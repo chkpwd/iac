@@ -32,7 +32,9 @@ spec:
           main:
             image:
               repository: docker.io/mauriceboe/trek
-              tag: 3.0.13
+              tag: v3.0.13
+            command: ["dumb-init", "--"]
+            args: ["node", "--import", "tsx", "src/index.ts"]
             env:
               NODE_ENV: production
               PORT: &port 3000
@@ -122,6 +124,11 @@ spec:
           name: "${APP}"
         advancedMounts:
           trek:
+            init-dirs:
+              - path: /app/data
+                subPath: data
+              - path: /app/uploads
+                subPath: uploads
             main:
               - path: /app/data
                 subPath: data
