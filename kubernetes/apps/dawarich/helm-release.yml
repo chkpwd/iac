@@ -35,8 +35,8 @@ spec:
             image: &image
               repository: docker.io/freikin/dawarich
               tag: 0.30.6
-            entrypoint: ["web-entrypoint.sh"]
-            command: ["bin/rails", "server", "-p", "3000", "-b", "::"]
+            command: ["web-entrypoint.sh"]
+            args: ["bin/rails", "server", "-p", "3000", "-b", "::"]
             env: &env
               RAILS_ENV: production
               SELF_HOSTED: "true"
@@ -103,8 +103,8 @@ spec:
         containers:
           app:
             image: *image
-            entrypoint: ["sidekiq-entrypoint.sh"]
-            command: ["sidekiq"]
+            command: ["sidekiq-entrypoint.sh"]
+            args: ["sidekiq"]
             env:
               <<: *env
               BACKGROUND_PROCESSING_CONCURRENCY: "5"
