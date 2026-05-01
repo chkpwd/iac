@@ -5,6 +5,8 @@ kind: Kustomization
 metadata:
   name: &app dawarich
   namespace: &ns tools
+  labels:
+    components.postgres/cpgo: init
   annotations:
     chkpwd.com/gitops-hr-defaults: "disable"
 spec:
@@ -13,7 +15,6 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-      components.postgres/cpgo: init
   components:
     - ../../core/crunchydata-pgo/components/
     - ../../core/dragonfly-operator/components/
