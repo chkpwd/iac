@@ -1,0 +1,136 @@
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: trek
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.2
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  values:
+    defaultPodOptions:
+      securityContext:
+        runAsUser: &context 1999
+        runAsGroup: *context
+        runAsNonRoot: true
+        fsGroup: *context
+        fsGroupChangePolicy: "OnRootMismatch"
+        seccompProfile: {type: RuntimeDefault}
+    controllers:
+      trek:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          main:
+            image:
+              repository: docker.io/mauriceboe/trek
+              tag: v3.0.13
+            env:
+              NODE_ENV: production
+              PORT: &port 3000
+              TZ: America/New_York
+              LOG_LEVEL: info
+              APP_URL: https://trek.chkpwd.com
+              ALLOWED_ORIGINS: https://trek.chkpwd.com
+              FORCE_HTTPS: "true"
+              TRUST_PROXY: "1"
+              DEFAULT_LANGUAGE: en
+              OIDC_ISSUER: https://authentik.chkpwd.com/application/o/trek/
+              OIDC_DISCOVERY_URL: https://authentik.chkpwd.com/application/o/trek/.well-known/openid-configuration
+              OIDC_CLIENT_ID: trek
+              OIDC_DISPLAY_NAME: Authentik
+              OIDC_SCOPE: openid email profile
+              OIDC_ONLY: "true"
+              OIDC_ADMIN_CLAIM: groups
+              OIDC_ADMIN_VALUE: main
+            envFrom:
+              - secretRef:
+                  name: trek
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/health
+                    port: *port
+                  initialDelaySeconds: 15
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/health
+                    port: *port
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 3
+              startup:
+                enabled: false
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
+            resources:
+              requests:
+                cpu: 25m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+    service:
+      app:
+        controller: trek
+        ports:
+          http:
+            port: *port
+    route:
+      public:
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: trek
+                port: *port
+        parentRefs:
+          - name: public
+            namespace: networking
+            sectionName: https
+    persistence:
+      data:
+        accessMode: ReadWriteOnce
+        type: persistentVolumeClaim
+        size: "${VOLSYNC_CAPACITY}"
+        storageClass: ceph-block
+        dataSourceRef:
+          kind: ReplicationDestination
+          apiGroup: volsync.backube
+          name: "${APP}"
+        advancedMounts:
+          trek:
+            main:
+              - path: /app/data
+                subPath: data
+              - path: /app/uploads
+                subPath: uploads
+      tmp:
+        type: emptyDir
+        advancedMounts:
+          trek:
+            main:
+              - path: /tmp
