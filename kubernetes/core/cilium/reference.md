@@ -1,6 +1,6 @@
 # Cilium Reference
 
-Helm chart **v1.19.1**.
+Helm chart **v1.19.2**.
 
 ---
 
@@ -40,7 +40,7 @@ Gateway API ingress is handled by **envoy-gateway** (see `kubernetes/core/envoy-
 | Value                           | Setting       | Effect                                                                          |
 | ------------------------------- | ------------- | ------------------------------------------------------------------------------- |
 | `loadBalancer.algorithm`        | `maglev`      | Consistent hashing for backend selection — same client always hits same pod     |
-| `loadBalancer.mode`             | `snat`        | Source NAT mode for load balancer traffic                                       |
+| `loadBalancer.mode`             | `dsr`         | Direct Server Return mode for load balancer traffic                             |
 | `loadBalancer.acceleration`     | `best-effort` | Use XDP acceleration for LB when available, fall back gracefully                |
 | `loadBalancer.dsrDispatch`      | `opt`         | DSR dispatch via IP options (used when DSR mode is active on specific services) |
 | `localRedirectPolicies.enabled` | `true`        | Enables local redirect policies for steering traffic to node-local backends     |

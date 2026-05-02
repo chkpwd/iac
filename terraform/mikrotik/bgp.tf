@@ -19,8 +19,12 @@ resource "routeros_routing_bgp_connection" "k8s_nodes" {
   # MikroTik's ASN
   as = "64512"
 
-  connect = true
+  connect = false
   listen  = true
+
+  # Keepalive must be lower than negotiated hold time (90s) to avoid flaps.
+  keepalive_time = "30s"
+  hold_time      = "1m30s"
 
   # Rewrite next-hop to MikroTik's own IP so return traffic for DSR
   # passes through the router and stays in the connection tracking table.

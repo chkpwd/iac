@@ -1,0 +1,52 @@
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app dawarich
+  namespace: &ns tools
+  labels:
+    components.postgres/cpgo: init
+  annotations:
+    chkpwd.com/gitops-hr-defaults: "disable"
+spec:
+  targetNamespace: *ns
+  path: ./kubernetes/apps/dawarich/
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../core/crunchydata-pgo/components/
+    - ../../core/dragonfly-operator/components/
+  patches:
+    # PostGIS variant — required for dawarich location data.
+    - patch: |
+        - op: replace
+          path: /spec/image
+          value: registry.developers.crunchydata.com/crunchydata/crunchy-postgres-gis:ubi9-18.3-3.6-2610
+      target:
+        kind: PostgresCluster
+    # Bootstrap PostGIS extension on the dawarich database.
+    - patch: |
+        - op: add
+          path: /spec/databaseInitSQL
+          value:
+            name: dawarich-init-sql
+            key: init.sql
+      target:
+        kind: PostgresCluster
+  postBuild:
+    substitute:
+      APP: *app
+      POSTGRES_DATA_SIZE: 25Gi
+    substituteFrom:
+      - kind: Secret
+        name: cloudflare-id
+        optional: false
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  wait: false
+  interval: 30m

@@ -38,7 +38,7 @@ spec:
           app:
             image:
               repository: ghcr.io/paperless-ngx/paperless-ngx
-              tag: 2.20.13
+              tag: 2.20.15
             env:
               PAPERLESS_OCR_PAGES: 2
               PAPERLESS_THREADS_PER_WORKER: 1
@@ -130,7 +130,7 @@ spec:
           gotenberg:
             image:
               repository: gotenberg/gotenberg
-              tag: 8.29.0
+              tag: 8.32.0
             command:
               - "gotenberg" # Convert .eml files. We do not want to allow external content like tracking pixels or even javascript.
               - "--chromium-disable-javascript=true"

@@ -46,7 +46,7 @@ module "authentik-app-mediamanager" {
 
 module "authentik-app-grimmory" {
   source = "../_modules/authentik/oauth2_app"
-  name   = "grimmory"
+  name   = "Grimmory"
   group  = "main"
   oauth2_values = {
     client_id         = "grimmory"
@@ -69,7 +69,7 @@ module "authentik-app-grimmory" {
 
 module "authentik-app-karakeep" {
   source = "../_modules/authentik/oauth2_app"
-  name   = "karakeep"
+  name   = "Karakeep"
   group  = "main"
   oauth2_values = {
     client_id         = "karakeep"
@@ -88,4 +88,30 @@ module "authentik-app-karakeep" {
   }
 
   access_group = { main = authentik_group.main.id }
+}
+
+module "authentik-app-trek" {
+  source = "../_modules/authentik/oauth2_app"
+  name   = "Trek"
+  group  = "main"
+  oauth2_values = {
+    client_id         = "trek"
+    client_secret     = data.external.bws_lookup.result["trek_oauth_client_secret"]
+    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
+    allowed_redirect_uris = [
+      {
+        matching_mode = "strict",
+        url           = "https://trek.chkpwd.com/api/auth/oidc/callback",
+      },
+    ]
+  }
+  app_values = {
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/trek.webp"
+    meta_description = "Travel Planning"
+  }
+
+  access_group = {
+    main      = authentik_group.main.id
+    secondary = authentik_group.secondary.id
+  }
 }

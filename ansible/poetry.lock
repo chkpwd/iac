@@ -2,14 +2,14 @@
 
 [[package]]
 name = "ansible-compat"
-version = "25.12.0"
+version = "26.3.0"
 description = "Ansible compatibility goodies"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "ansible_compat-25.12.0-py3-none-any.whl", hash = "sha256:322ccc7002030a91588d1fdba21e934703d64736f0e483dc6afe8ecd93a75614"},
-    {file = "ansible_compat-25.12.0.tar.gz", hash = "sha256:d38a149c5f95bb0d529c3b5e5fa3200b26f5e938ec7c31d8bb01d87c1f634410"},
+    {file = "ansible_compat-26.3.0-py3-none-any.whl", hash = "sha256:4fb48f324383033cf24df5ccb63bca4da766cb4ebbd4bc9dbad91b108f512a73"},
+    {file = "ansible_compat-26.3.0.tar.gz", hash = "sha256:15f0ea5ff6fcc5587b6b11a4a436fdeefd0fd4a46afe92d4e483c28370082ae0"},
 ]
 
 [package.dependencies]
@@ -40,18 +40,18 @@ resolvelib = ">=0.5.3,<1.1.0"
 
 [[package]]
 name = "ansible-lint"
-version = "26.3.0"
+version = "26.4.0"
 description = "Checks playbooks for practices and behavior that could potentially be improved"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "ansible_lint-26.3.0-py3-none-any.whl", hash = "sha256:1a30c60adf2e2cc70ac0d8396e05207ea31aaa2f7feeb3a876d40fdc6a080dec"},
-    {file = "ansible_lint-26.3.0.tar.gz", hash = "sha256:dbcf3796d715ccef742a89dfcb21263649a2c2be8d3479ea98da104efa406717"},
+    {file = "ansible_lint-26.4.0-py3-none-any.whl", hash = "sha256:f33c4823544a5a8e5e36614866e111d1a929eeffee5e84481ede10d524a9d6d6"},
+    {file = "ansible_lint-26.4.0.tar.gz", hash = "sha256:29e0438f8af685a4fec96f9ea3404a3beb50d2911bc8df43f283256954ceea5b"},
 ]
 
 [package.dependencies]
-ansible-compat = ">=25.8.2"
+ansible-compat = ">=26.3.0"
 ansible-core = ">=2.16.14"
 black = ">=24.3.0"
 cffi = ">=1.15.1"
@@ -754,14 +754,14 @@ typing-extensions = {version = ">=4.4.0", markers = "python_version < \"3.13\""}
 
 [[package]]
 name = "requests"
-version = "2.33.0"
+version = "2.33.1"
 description = "Python HTTP for Humans."
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "requests-2.33.0-py3-none-any.whl", hash = "sha256:3324635456fa185245e24865e810cecec7b4caf933d7eb133dcde67d48cee69b"},
-    {file = "requests-2.33.0.tar.gz", hash = "sha256:c7ebc5e8b0f21837386ad0e1c8fe8b829fa5f544d8df3b2253bff14ef29d7652"},
+    {file = "requests-2.33.1-py3-none-any.whl", hash = "sha256:4e6d1ef462f3626a1f0a0a9c42dd93c63bad33f9f1c1937509b8c5c8718ab56a"},
+    {file = "requests-2.33.1.tar.gz", hash = "sha256:18817f8c57c6263968bc123d237e3b8b08ac046f5456bd1e307ee8f4250d3517"},
 ]
 
 [package.dependencies]
@@ -772,7 +772,6 @@ urllib3 = ">=1.26,<3"
 
 [package.extras]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
-test = ["PySocks (>=1.5.6,!=1.5.7)", "pytest (>=3)", "pytest-cov", "pytest-httpbin (==2.1.0)", "pytest-mock", "pytest-xdist"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<8)"]
 
 [[package]]

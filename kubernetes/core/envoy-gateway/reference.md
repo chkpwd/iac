@@ -58,7 +58,7 @@ The controller runs in the `networking` namespace. When a Gateway resource is cr
 A single `GatewayClass` named `envoy-gateway` is created with:
 
 - **Controller**: `gateway.envoyproxy.io/gatewayclass-controller`
-- **Parameters**: references the `EnvoyProxy` resource `envoy-proxy-config` in `networking`
+- **Parameters**: references the `EnvoyProxy` resource `config` in `networking`
 
 Both the `private` and `public` Gateways (defined in `kubernetes/core/gateway-api/`) use this GatewayClass.
 
@@ -66,7 +66,7 @@ Both the `private` and `public` Gateways (defined in `kubernetes/core/gateway-ap
 
 ## EnvoyProxy resource
 
-The `envoy-proxy-config` EnvoyProxy resource configures the Envoy data plane pods spawned for each Gateway:
+The `config` EnvoyProxy resource configures the Envoy data plane pods spawned for each Gateway:
 
 | Setting                              | Value                      | Effect                                                               |
 | ------------------------------------ | -------------------------- | -------------------------------------------------------------------- |
@@ -194,7 +194,7 @@ Cilium's Gateway API controller (`gatewayAPI.enabled`) and embedded Envoy (`envo
 | ---------------------------- | ----------------------------------------------------------------------- |
 | `source.yml`                 | OCIRepository for the envoy-gateway Helm chart                          |
 | `helm-release.yml`           | HelmRelease with controller configuration values                        |
-| `gateway-class.yml`          | GatewayClass `envoy-gateway` + EnvoyProxy `envoy-proxy-config`          |
+| `gateway-class.yml`          | GatewayClass `envoy-gateway` + EnvoyProxy `config`                      |
 | `client-traffic-policy.yml`  | ClientTrafficPolicy for `private` and `public` gateways                 |
 | `backend-traffic-policy.yml` | BackendTrafficPolicy for `private` and `public` gateways                |
 | `kustomization.yml`          | Kustomize resource list                                                 |

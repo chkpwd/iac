@@ -1,0 +1,187 @@
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: dawarich
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: app-template
+      version: 4.6.2
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  values:
+    controllers:
+      dawarich:
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+        defaultContainerOptionsStrategy: merge
+        defaultContainerOptions:
+          envFrom: &envFrom
+            - secretRef:
+                name: dawarich
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+        containers:
+          app:
+            image: &image
+              repository: docker.io/freikin/dawarich
+              tag: 0.37.3
+            command: ["web-entrypoint.sh"]
+            args: ["bin/rails", "server", "-p", "3000", "-b", "::"]
+            env: &env
+              RAILS_ENV: production
+              SELF_HOSTED: "true"
+              STORE_GEODATA: "true"
+              RAILS_LOG_TO_STDOUT: "true"
+              TIME_ZONE: America/New_York
+              APPLICATION_PROTOCOL: https
+              APPLICATION_HOSTS: dawarich.chkpwd.com
+              REDIS_URL: redis://dawarich-redis.tools.svc.cluster.local:6379
+              DATABASE_PORT: "5432"
+              PROMETHEUS_EXPORTER_ENABLED: "false"
+              DATABASE_HOST:
+                valueFrom:
+                  secretKeyRef:
+                    name: dawarich-pguser-dawarich
+                    key: host
+              DATABASE_USERNAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: dawarich-pguser-dawarich
+                    key: user
+              DATABASE_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: dawarich-pguser-dawarich
+                    key: password
+              DATABASE_NAME:
+                valueFrom:
+                  secretKeyRef:
+                    name: dawarich-pguser-dawarich
+                    key: dbname
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/v1/health
+                    port: 3000
+                  initialDelaySeconds: 30
+                  periodSeconds: 10
+                  timeoutSeconds: 5
+                  failureThreshold: 30
+              readiness: *probes
+              startup:
+                enabled: false
+            resources:
+              requests:
+                cpu: 50m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+      sidekiq:
+        type: deployment
+        annotations:
+          reloader.stakater.com/auto: "true"
+        defaultContainerOptionsStrategy: merge
+        defaultContainerOptions:
+          envFrom: *envFrom
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+        containers:
+          app:
+            image: *image
+            command: ["sidekiq-entrypoint.sh"]
+            args: ["sidekiq"]
+            env:
+              <<: *env
+              BACKGROUND_PROCESSING_CONCURRENCY: "5"
+            probes:
+              liveness:
+                enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command: ["pgrep", "-f", "sidekiq"]
+                  initialDelaySeconds: 30
+                  periodSeconds: 30
+                  timeoutSeconds: 10
+                  failureThreshold: 5
+              readiness:
+                enabled: false
+              startup:
+                enabled: false
+            resources:
+              requests:
+                cpu: 25m
+                memory: 256Mi
+              limits:
+                memory: 2Gi
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1999
+        runAsGroup: 1999
+        fsGroup: 1999
+        fsGroupChangePolicy: OnRootMismatch
+    service:
+      app:
+        controller: dawarich
+        ports:
+          http:
+            port: 3000
+    route:
+      private:
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        parentRefs:
+          - name: private
+            namespace: networking
+            sectionName: https
+    persistence:
+      storage:
+        type: nfs
+        server: nas-srv-01.chkpwd.com
+        path: /volume1/vault-01/static_media/documents/dawarich/storage
+        advancedMounts:
+          dawarich:
+            app:
+              - path: /var/app/storage
+          sidekiq:
+            app:
+              - path: /var/app/storage
+      watched:
+        type: nfs
+        server: nas-srv-01.chkpwd.com
+        path: /volume1/vault-01/static_media/documents/dawarich/watched
+        advancedMounts:
+          dawarich:
+            app:
+              - path: /var/app/tmp/imports/watched
+          sidekiq:
+            app:
+              - path: /var/app/tmp/imports/watched
+      public:
+        type: emptyDir
+        advancedMounts:
+          dawarich:
+            app:
+              - path: /var/app/public
+          sidekiq:
+            app:
+              - path: /var/app/public
+      tmp:
+        type: emptyDir
