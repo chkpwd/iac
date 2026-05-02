@@ -321,6 +321,39 @@ The resource object is available as &#39;object&#39; and status as &#39;status&#
 </summary>
 <div class="prop-content"><div class="prop-desc">Kubernetes defines the target Kubernetes configuration</div>
   <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">hostAliases</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">HostAliases are appended to the upgrade Job pod&#39;s /etc/hosts. The controller
+auto-discovers an alias for cluster.controlPlane.endpoint from the live
+machine config; entries here override that for any hostname they cover.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">hostnames</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Hostnames for the above IP address.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">ip</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">IP address of the host file entry.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">imageRepository</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">ImageRepository overrides the registry&#43;path prefix for Kubernetes component
+images. When set, each component (kube-apiserver, kube-controller-manager,
+kube-scheduler, kube-proxy, kubelet) is pulled from
+&#34;&lt;imageRepository&gt;/&lt;component&gt;:&lt;version&gt;&#34;.
+  </div>
+</div>
 <div class="prop-leaf">
   <span class="prop-name">version</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
@@ -463,7 +496,7 @@ If not specified, defaults to the target version
 <div class="prop-leaf">
   <span class="prop-name">phase</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Phase is the terminal phase reached (Completed or Failed)<div class="leaf-constraints">enum: Pending, HealthChecking, Draining, Upgrading, Rebooting, Completed, Failed, MaintenanceWindow</div>
+  <div class="leaf-desc">Phase is the terminal phase reached (Completed or Failed)<div class="leaf-constraints">enum: Pending, HealthChecking, PreHook, Draining, Upgrading, Rebooting, PostHook, Completed, Failed, MaintenanceWindow</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -526,7 +559,7 @@ If not specified, defaults to the target version
 <div class="prop-leaf">
   <span class="prop-name">phase</span>
   <span class="type-badge">string</span>
-  <div class="leaf-desc">Phase represents the current phase of the upgrade<div class="leaf-constraints">enum: Pending, HealthChecking, Draining, Upgrading, Rebooting, Completed, Failed, MaintenanceWindow</div>
+  <div class="leaf-desc">Phase represents the current phase of the upgrade<div class="leaf-constraints">enum: Pending, HealthChecking, PreHook, Draining, Upgrading, Rebooting, PostHook, Completed, Failed, MaintenanceWindow</div>
   </div>
 </div>
 <div class="prop-leaf">
