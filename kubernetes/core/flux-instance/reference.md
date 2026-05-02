@@ -1,6 +1,6 @@
 # Flux Instance Reference
 
-Flux Operator chart **v0.45.0**, Flux distribution **v0.30.0**.
+Flux Operator chart **v0.45.1**, Flux distribution **v0.30.0**.
 
 ---
 
