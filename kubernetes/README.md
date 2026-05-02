@@ -34,8 +34,8 @@ task kcl:build APP=bazarr
 # Render all KCL apps
 task kcl:build
 
-# Verify generated YAML is in sync
-task kcl:check
+# Build OCI payload locally
+task kcl:artifact
 ```
 
 Do not edit generated YAML by hand. Edit `kcl/apps/<name>.k` and rebuild.

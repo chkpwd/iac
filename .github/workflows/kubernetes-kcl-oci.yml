@@ -77,9 +77,12 @@ jobs:
           kcl --version
           yq --version
 
-      - name: Render KCL outputs
+      - name: Package rendered files
+        id: package
         shell: bash
-        run: task kcl:build
+        run: |
+          task kcl:artifact OUT_DIR="${RUNNER_TEMP}/kcl-rendered"
+          echo "path=${RUNNER_TEMP}/kcl-rendered" >> "${GITHUB_OUTPUT}"
 
       - name: Setup Flux CLI
         if: github.event_name != 'pull_request'
@@ -105,7 +108,7 @@ jobs:
         shell: bash
         run: |
           flux push artifact oci://${{ steps.tag.outputs.artifact }} \
-            --path="./" \
+            --path="${{ steps.package.outputs.path }}" \
             --source="$(git config --get remote.origin.url)" \
             --revision="${GITHUB_REF_NAME}/$(git rev-parse HEAD)"
 

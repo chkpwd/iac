@@ -24,5 +24,5 @@ kcl/
 - One `<name>.k` per application, located at `apps/<name>.k`.
 - Generated YAML lives at `apps/<name>/*.yml` and is **never edited by hand**.
 - Regenerate with `task kcl:build APP=<name>` or `task kcl:build` for all apps.
-- A pre-commit hook (lefthook) regenerates and blocks the commit on drift.
-- CI runs the same drift check on every PR.
+- Build OCI payload with `task kcl:artifact`.
+- CI builds and publishes the rendered OCI artifact.
