@@ -59,7 +59,7 @@ _fluxKustomization = fk.FluxKustomization {
     namespace = "media"
     components = [
         "${fk.core()}/volsync/components"
-        "${fk.core()}/keda-operator/_components/nfs/"
+        "${fk.core()}/hpa/_components/nfs/"
     ]
     postBuildSubstitute = {
         "CLAIM" = "config-bazarr-0"
