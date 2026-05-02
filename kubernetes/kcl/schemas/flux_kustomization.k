@@ -19,7 +19,7 @@ below instead of hand-counting `../`:
 
     components = [
         "${core()}/volsync/components"
-        "${core()}/keda-operator/_components/nfs/"
+        "${core()}/hpa/_components/nfs/"
     ]
 
 If the generated-output layout ever moves, only this file changes.
