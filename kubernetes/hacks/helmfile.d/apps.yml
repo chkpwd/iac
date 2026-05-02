@@ -14,7 +14,7 @@ releases:
   - name: cilium
     namespace: kube-system
     chart: cilium/cilium
-    version: 1.18.1
+    version: 1.19.3
     values: ["../core/cilium/values.yml"]
     hooks:
       - # Wait for Cilium CRDs
@@ -28,19 +28,19 @@ releases:
   - name: coredns
     namespace: kube-system
     chart: oci://ghcr.io/coredns/charts/coredns
-    version: 1.43.3
+    version: 1.45.2
     values: ["../core/coredns/values.yml"]
     needs: ["kube-system/cilium"]
   - name: cert-manager
     namespace: security
     chart: jetstack/cert-manager
-    version: v1.18.2
+    version: v1.20.2
     values: ["../core/cert-manager/values.yml"]
     needs: ["kube-system/coredns"]
   - name: external-secrets
     namespace: security
     chart: oci://ghcr.io/external-secrets/charts/external-secrets
-    version: 0.19.2
+    version: 2.4.1
     values: ["../core/external-secrets/values.yml"]
     needs: ["security/cert-manager"]
     hooks:
@@ -68,6 +68,6 @@ releases:
   - name: spegel
     namespace: kube-system
     chart: oci://ghcr.io/spegel-org/helm-charts/spegel
-    version: 0.3.0
+    version: 0.7.0
     values: ["../core/spegel/values.yml"]
     needs: ["kube-system/cilium"]

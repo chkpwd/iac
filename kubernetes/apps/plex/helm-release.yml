@@ -57,7 +57,7 @@ spec:
           app:
             image:
               repository: ghcr.io/home-operations/plex
-              tag: 1.43.0.10492
+              tag: 1.43.1.10611
               pullPolicy: IfNotPresent
             env:
               TZ: "America/New_York"
@@ -96,7 +96,7 @@ spec:
                 memory: 1Gi
               limits:
                 gpu.intel.com/i915: 1
-                memory: 2Gi
+                memory: 6Gi
     service:
       app:
         controller: plex

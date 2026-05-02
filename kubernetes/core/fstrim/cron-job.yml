@@ -34,7 +34,7 @@ spec:
               whenUnsatisfiable: DoNotSchedule
           containers:
             - name: app
-              image: public.ecr.aws/docker/library/alpine:3.23.3
+              image: public.ecr.aws/docker/library/alpine:3.23.4
               args:
                 - |
                   nsenter --mount=/host/proc/$(pidof /usr/local/bin/kubelet)/ns/mnt --net=/host/proc/$(pidof /usr/local/bin/kubelet)/ns/net -- sh -c "fstrim --verbose --quiet-unsupported --all"

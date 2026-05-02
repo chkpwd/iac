@@ -1,14 +1,15 @@
 resource "authentik_user" "main" {
   email    = "authentik@chkpwd.com"
   username = "chkpwd"
-  name     = "Bryan Jones"
+  name     = "chkpwd"
   password = data.external.bws_lookup.result["authentik_main_user_password"]
 
 }
 
 resource "authentik_user" "secondary" {
   username = "erykuh"
-  name     = "Approving Wife"
+  name     = "erykuh"
+  email    = "erykuh@chkpwd.com"
   password = data.external.bws_lookup.result["authentik_secondary_user_password"]
 }
 

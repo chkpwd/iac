@@ -125,7 +125,7 @@ controlPlane:
             - name: PodSecurity
               $$patch: delete
           extraArgs:
-            feature-gates: MutatingAdmissionPolicy=true
+            feature-gates: MutatingAdmissionPolicy=true,HPAScaleToZero=true
             runtime-config: admissionregistration.k8s.io/v1beta1=true
         coreDNS:
             disabled: true
@@ -190,3 +190,4 @@ controlPlane:
               - os:admin
             allowedKubernetesNamespaces:
               - actions-runner-system
+              - tuppr

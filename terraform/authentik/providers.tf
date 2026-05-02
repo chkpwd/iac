@@ -3,7 +3,7 @@ terraform {
   required_providers {
     authentik = {
       source  = "goauthentik/authentik"
-      version = "2025.12.1"
+      version = "2026.2.0"
     }
     random = {
       source  = "hashicorp/random"
@@ -16,11 +16,23 @@ terraform {
   }
 }
 
+locals {
+  bws_keys = [
+    "authentik",
+    "plex",
+    "miniflux",
+    "karakeep",
+    "grimmory",
+    "mediamanager",
+    "surmai",
+    "trek",
+  ]
+}
+
 data "external" "bws_lookup" {
   program = ["python3", "../bws_lookup.py"]
-  query = { # TODO: need to revisit this and find a cleaner approach
-    key = "authentik,plex,miniflux,karakeep,grimmory,mediamanager"
-    # authentik = "authentik_bootstrap_token"
+  query = {
+    keys = jsonencode(local.bws_keys)
   }
 }
 

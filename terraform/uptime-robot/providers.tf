@@ -12,10 +12,16 @@ terraform {
   }
 }
 
+locals {
+  bws_keys = [
+    "infra-monitoring-secrets",
+  ]
+}
+
 data "external" "bws_lookup" {
   program = ["python3", "../bws_lookup.py"]
   query = {
-    key = "infra-monitoring-secrets"
+    keys = jsonencode(local.bws_keys)
   }
 }
 

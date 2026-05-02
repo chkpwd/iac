@@ -1,0 +1,29 @@
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app trek
+  namespace: &ns tools
+spec:
+  targetNamespace: *ns
+  path: ./kubernetes/apps/trek/
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../core/volsync/components/
+  postBuild:
+    substitute:
+      APP: *app
+      CLAIM: trek
+      VOLSYNC_PUID: "1999"
+      VOLSYNC_PGID: "1999"
+      VOLSYNC_CAPACITY: "5Gi"
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  wait: false
+  interval: 30m

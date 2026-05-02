@@ -1,0 +1,34 @@
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: prometheus-adapter
+spec:
+  interval: 1h
+  chartRef:
+    kind: OCIRepository
+    name: prometheus-adapter
+  driftDetection:
+    mode: disabled
+  values:
+    prometheus:
+      url: http://prometheus-operated.monitoring.svc.cluster.local
+      port: 9090
+    rules:
+      default: false
+      external:
+        - seriesQuery: 'probe_success{instance="nas-srv-01.chkpwd.com:2049"}'
+          resources:
+            namespaced: false
+          name:
+            matches: "probe_success"
+            as: "probe_success_nfs"
+          metricsQuery: min(max_over_time(probe_success{instance="nas-srv-01.chkpwd.com:2049"}[1m]))
+        - seriesQuery: 'probe_success{instance="ai-inference-01.chkpwd.com:11434"}'
+          resources:
+            namespaced: false
+          name:
+            matches: "probe_success"
+            as: "probe_success_ollama"
+          metricsQuery: min(max_over_time(probe_success{instance="ai-inference-01.chkpwd.com:11434"}[1m]))

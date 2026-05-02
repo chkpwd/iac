@@ -30,6 +30,8 @@ spec:
               env:
                 - name: OUTPUT_DIR
                   value: /output
+                - name: BASE_PATH
+                  value: "/iac"
               resources:
                 requests:
                   cpu: 50m
@@ -47,7 +49,7 @@ spec:
                 - name: output
                   mountPath: /output
             - name: git-push
-              image: alpine/git:2.49.1
+              image: alpine/git:v2.52.0
               command: ["/bin/sh", "-c"]
               args:
                 - |
@@ -95,8 +97,6 @@ spec:
                   value: "gh-pages"
                 - name: HOME
                   value: "/home/git"
-                - name: BASE_PATH
-                  value: "/iac"
               resources:
                 requests:
                   cpu: 10m

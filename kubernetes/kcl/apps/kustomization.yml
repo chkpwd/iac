@@ -1,0 +1,9 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - bazarr/resources/flux-kustomization.yml
+  - prowlarr/resources/flux-kustomization.yml
+  - radarr/resources/flux-kustomization.yml
+  - sonarr/resources/flux-kustomization.yml

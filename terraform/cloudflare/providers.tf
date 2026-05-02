@@ -3,11 +3,11 @@ terraform {
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "5.18.0"
+      version = "5.19.0"
     }
     tfe = {
       source  = "hashicorp/tfe"
-      version = "~> 0.75.0"
+      version = "~> 0.76.0"
     }
     external = {
       source  = "hashicorp/external"
@@ -16,10 +16,21 @@ terraform {
   }
 }
 
+locals {
+  bws_keys = [
+    "common-secrets",
+    "infra-network-secrets",
+    "cloud-aws-proxy-secrets",
+    "cloudflare-dns-secrets",
+    "cloud-github-secrets",
+    "monitoring",
+  ]
+}
+
 data "external" "bws_lookup" {
   program = ["python3", "../bws_lookup.py"]
   query = {
-    key = "common-secrets,infra-network-secrets,cloud-aws-proxy-secrets,cloudflare-dns-secrets,cloud-github-secrets,monitoring"
+    keys = jsonencode(local.bws_keys)
   }
 }
 
