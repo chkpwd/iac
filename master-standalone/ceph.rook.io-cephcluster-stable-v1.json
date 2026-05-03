@@ -418,7 +418,7 @@
               ]
             },
             "pgHealthyRegex": {
-              "description": "PgHealthyRegex is the regular expression that is used to determine which PG states should be considered healthy.\nThe default is `^(active\\+clean|active\\+clean\\+scrubbing|active\\+clean\\+scrubbing\\+deep)$`",
+              "description": "PgHealthyRegex is the regular expression that is used to determine which PG states should be considered healthy.\nThe default is `^active(\\+(clean|deep|scrubbing|snaptrim|snaptrim_wait))+$`",
               "type": [
                 "string",
                 "null"

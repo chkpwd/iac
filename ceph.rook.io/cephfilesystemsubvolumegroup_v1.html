@@ -270,6 +270,13 @@ If not specified, the clusterID will be generated and can be found in the CR sta
   </div>
 </div>
 <div class="prop-leaf">
+  <span class="prop-name">csiMetadataRadosNamespace</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">The RADOS namespace ceph-csi uses for additional metadata it stores in the metadata pool of the CephFS.
+If not specified the default of the ceph-csi driver is used.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
   <span class="prop-name">dataPoolName</span>
   <span class="type-badge">string</span>
   <div class="leaf-desc">The data pool name for the Ceph Filesystem subvolume group layout, if the default CephFS pool is not desired.

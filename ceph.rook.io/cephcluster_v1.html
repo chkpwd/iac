@@ -553,7 +553,7 @@ the default is 30 minutes<div class="leaf-constraints">format: int64</div>
   <span class="prop-name">pgHealthyRegex</span>
   <span class="type-badge">string</span>
   <div class="leaf-desc">PgHealthyRegex is the regular expression that is used to determine which PG states should be considered healthy.
-The default is `^(active\&#43;clean|active\&#43;clean\&#43;scrubbing|active\&#43;clean\&#43;scrubbing\&#43;deep)$`
+The default is `^active(\&#43;(clean|deep|scrubbing|snaptrim|snaptrim_wait))&#43;$`
   </div>
 </div>
   </div>
