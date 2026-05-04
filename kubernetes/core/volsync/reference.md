@@ -1,4 +1,4 @@
-hi# Kopia Policy `repositoryConfig` Reference
+# Kopia Policy `repositoryConfig` Reference
 
 Generated from Kopia **v0.22.3** (VolSync `ghcr.io/perfectra1n/volsync:v0.17.11`).
 
