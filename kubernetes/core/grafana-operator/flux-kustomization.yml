@@ -37,7 +37,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   components:
-    - ../../core/volsync/components/
+    - ../../volsync/components/
   postBuild:
     substitute:
       APP: grafana
