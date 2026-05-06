@@ -26,8 +26,9 @@ resource "gravity_dns_zone" "chkpwd" { # chkpwd.com
       type = "etcd",
     },
     {
-      to   = ["8.8.8.8:53"]
-      type = "forward_ip"
+      to        = ["8.8.8.8:53"]
+      type      = "forward_ip"
+      cache_ttl = -1
     },
   ])
 }
