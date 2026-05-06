@@ -2,18 +2,63 @@
 apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
 metadata:
-  name: external-grafana
+  name: grafana
   labels:
-    dashboards: "external-grafana"
+    dashboards: "grafana"
 spec:
-  external:
-    url: https://grafana.chkpwd.com
-    adminPassword:
-      name: grafana-operator
-      key: GF_SECURITY_ADMIN_PASSWORD
-    adminUser:
-      name: grafana-operator
-      key: GF_SECURITY_ADMIN_USER
+  config:
+    log:
+      mode: "console"
+    server:
+      root_url: "https://grafana.chkpwd.com"
+    auth:
+      disable_login_form: "false"
+    security:
+      cookie_secure: "true"
+  persistentVolumeClaim:
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      storageClassName: ceph-block
+      resources:
+        requests:
+          storage: "${VOLSYNC_CAPACITY}"
+  deployment:
+    spec:
+      strategy:
+        type: Recreate
+      template:
+        spec:
+          containers:
+            - name: grafana
+              env:
+                - name: GF_SECURITY_ADMIN_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-operator
+                      key: GF_SECURITY_ADMIN_USER
+                - name: GF_SECURITY_ADMIN_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: grafana-operator
+                      key: GF_SECURITY_ADMIN_PASSWORD
+              readinessProbe:
+                failureThreshold: 3
+          volumes:
+            - name: grafana-data
+              persistentVolumeClaim:
+                claimName: grafana-pvc
+  service:
+    metadata:
+      labels:
+        app.kubernetes.io/name: grafana
+  httpRoute:
+    spec:
+      parentRefs:
+        - name: public
+          namespace: networking
+          sectionName: https
+      hostnames:
+        - grafana.chkpwd.com
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
@@ -22,51 +67,19 @@ metadata:
 spec:
   instanceSelector:
     matchLabels:
-      dashboards: "external-grafana"
+      dashboards: "grafana"
   datasource:
-    name: talos-k8s-prometheus
+    name: prometheus
     type: prometheus
     access: proxy
-    database: prometheus
     isDefault: true
-    url: "https://k8s-prometheus.chkpwd.com"
+    url: "http://prometheus-prometheus.monitoring.svc.cluster.local:9090"
     jsonData:
       timeInterval: 5s
       prometheusType: Prometheus
       cacheLevel: Low
       manageAlerts: true
       httpMethod: POST
----
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDatasource
-metadata:
-  name: rpi-prometheus
-spec:
-  valuesFrom:
-    - targetPath: "secureJsonData.password"
-      valueFrom:
-        secretKeyRef:
-          name: "grafana-operator"
-          key: "RPI_PROMETHEUS_PASSWORD"
-  instanceSelector:
-    matchLabels:
-      dashboards: "external-grafana"
-  datasource:
-    name: mgmt-rpi-prometheus
-    type: prometheus
-    uid: mgmt-rpi-prometheus
-    access: proxy
-    url: "https://rpi-prometheus.chkpwd.com"
-    basicAuth: true
-    basicAuthUser: chkpwd
-    jsonData:
-      timeInterval: 5s
-      prometheusType: Prometheus
-      cacheLevel: Low
-      manageAlerts: true
-      httpMethod: POST
-    secureJsonData:
-      "password": "$${RPI_PROMETHEUS_PASSWORD}"
 ---
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
@@ -74,6 +87,21 @@ metadata:
   name: teslamate-postgres
 spec:
   valuesFrom:
+    - targetPath: "datasource.url"
+      valueFrom:
+        secretKeyRef:
+          name: teslamate-db-credentials
+          key: host
+    - targetPath: "datasource.user"
+      valueFrom:
+        secretKeyRef:
+          name: teslamate-db-credentials
+          key: user
+    - targetPath: "datasource.database"
+      valueFrom:
+        secretKeyRef:
+          name: teslamate-db-credentials
+          key: dbname
     - targetPath: "secureJsonData.password"
       valueFrom:
         secretKeyRef:
@@ -81,15 +109,15 @@ spec:
           key: password
   instanceSelector:
     matchLabels:
-      dashboards: "external-grafana"
+      dashboards: "grafana"
   datasource:
     name: TeslaMate
     type: postgres
     uid: TeslaMate
     access: proxy
-    url: "10.0.45.36"
-    database: teslamate
-    user: teslamate
+    url: "$${host}"
+    database: "$${dbname}"
+    user: "$${user}"
     jsonData:
       "sslmode": require
       "maxOpenConns": 100

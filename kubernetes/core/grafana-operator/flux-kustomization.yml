@@ -29,14 +29,20 @@ metadata:
   name: &app grafana-operator-resources
   namespace: &ns monitoring
 spec:
+  dependsOn:
+    - name: grafana-operator
   targetNamespace: *ns
   path: ./kubernetes/core/grafana-operator/resources/
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
+  components:
+    - ../../core/volsync/components/
   postBuild:
     substitute:
-      APP: *app
+      APP: grafana
+      CLAIM: grafana-pvc
+      VOLSYNC_CAPACITY: "10Gi"
   prune: true
   sourceRef:
     kind: GitRepository

@@ -82,7 +82,7 @@ spec:
       operator:
         dashboardsConfigMapRefEnabled: true
         matchLabels:
-          dashboards: external-grafana
+          dashboards: grafana
         resyncPeriod: 10m
         folder: Kubernetes
       sidecar:
@@ -90,7 +90,7 @@ spec:
           annotations:
             grafana_folder: Kubernetes
           label: dashboards
-          labelValue: external-grafana
+          labelValue: grafana
           searchNamespace: ALL
           enableNewTablePanelSyntax: true
     prometheusOperator:

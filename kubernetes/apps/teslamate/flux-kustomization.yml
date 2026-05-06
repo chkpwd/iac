@@ -29,16 +29,6 @@ spec:
           value: 17
       target:
         kind: PostgresCluster
-    - patch: |
-        - op: add
-          path: /spec/service
-          value:
-            type: LoadBalancer
-            metadata:
-              annotations:
-                lbipam.cilium.io/ips: 10.0.45.36
-      target:
-        kind: PostgresCluster
   postBuild:
     substitute:
       APP: *app
