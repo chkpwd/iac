@@ -2,6 +2,7 @@
 apiVersion: grafana.integreatly.org/v1beta1
 kind: Grafana
 metadata:
+  namespace: monitoring
   name: grafana
   labels:
     dashboards: "grafana"
@@ -50,6 +51,7 @@ spec:
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
 metadata:
+  namespace: monitoring
   name: prometheus
 spec:
   instanceSelector:
@@ -71,6 +73,7 @@ spec:
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDatasource
 metadata:
+  namespace: monitoring
   name: teslamate-postgres
 spec:
   valuesFrom:
