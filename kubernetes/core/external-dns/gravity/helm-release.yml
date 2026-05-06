@@ -38,6 +38,8 @@ spec:
               secretKeyRef:
                 name: gravity-external-dns
                 key: gravity-token
+          - name: DOMAIN_FILTER
+            value: "chkpwd.com."
         livenessProbe:
           httpGet:
             path: /healthz
