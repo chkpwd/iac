@@ -15,23 +15,10 @@ spec:
       disable_login_form: "false"
     security:
       cookie_secure: "true"
-  persistentVolumeClaim:
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      storageClassName: ceph-block
-      resources:
-        requests:
-          storage: "${VOLSYNC_CAPACITY}"
   deployment:
     spec:
-      strategy:
-        type: Recreate
       template:
         spec:
-          securityContext:
-            runAsUser: 472
-            runAsGroup: 472
-            fsGroup: 472
           containers:
             - name: grafana
               env:
@@ -47,10 +34,6 @@ spec:
                       key: GF_SECURITY_ADMIN_PASSWORD
               readinessProbe:
                 failureThreshold: 3
-          volumes:
-            - name: grafana-data
-              persistentVolumeClaim:
-                claimName: grafana-pvc
   service:
     metadata:
       labels:
