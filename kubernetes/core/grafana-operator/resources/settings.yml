@@ -92,7 +92,7 @@ spec:
         secretKeyRef:
           name: teslamate-db-credentials
           key: dbname
-    - targetPath: "secureJsonData.password"
+    - targetPath: "datasource.secureJsonData.password"
       valueFrom:
         secretKeyRef:
           name: teslamate-db-credentials
@@ -105,16 +105,16 @@ spec:
     type: postgres
     uid: TeslaMate
     access: proxy
-    url: "$${host}"
+    url: "$${host}:5432"
     database: "$${dbname}"
     user: "$${user}"
     jsonData:
-      "sslmode": require
-      "maxOpenConns": 100
-      "maxIdleConns": 100
-      "maxIdleConnsAuto": true
-      "connMaxLifetime": 14400
-      "postgresVersion": 1600
-      "timescaledb": false
+      sslmode: disable
+      maxOpenConns: 100
+      maxIdleConns: 100
+      maxIdleConnsAuto: true
+      connMaxLifetime: 14400
+      postgresVersion: 1600
+      timescaledb: false
     secureJsonData:
-      "password": "$${password}"
+      password: "$${password}"
