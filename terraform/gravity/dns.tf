@@ -62,14 +62,6 @@ resource "gravity_dns_record" "traefik" {
   type     = "A"
 }
 
-resource "gravity_dns_record" "unifi" {
-  zone     = gravity_dns_zone.chkpwd.name
-  hostname = "unifi"
-  uid      = var.default_uid
-  data     = "10.0.10.33"
-  type     = "A"
-}
-
 # Create a new zone for OpenShift
 resource "gravity_dns_zone" "ocp_sno" {
   name          = "sno.chkpwd.com."
