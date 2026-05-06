@@ -88,7 +88,7 @@ resource "gravity_dns_record" "sno-ocp-api" {
   zone     = gravity_dns_zone.ocp_sno.name
   hostname = "api"
   uid      = var.default_uid
-  data     = "10.0.10.55"
+  data     = "10.0.30.50"
   type     = "A"
 }
 
@@ -96,7 +96,7 @@ resource "gravity_dns_record" "sno-ocp-api-int" {
   zone     = gravity_dns_zone.ocp_sno.name
   hostname = "api-int"
   uid      = var.default_uid
-  data     = "10.0.10.55"
+  data     = "10.0.30.50"
   type     = "A"
 }
 
@@ -104,7 +104,7 @@ resource "gravity_dns_record" "sno-ocp-wildcard" {
   zone     = gravity_dns_zone.ocp_sno.name
   hostname = "*.apps"
   uid      = var.default_uid
-  data     = "10.0.10.55"
+  data     = "10.0.30.50"
   type     = "A"
 }
 
