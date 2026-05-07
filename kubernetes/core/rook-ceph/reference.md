@@ -1,6 +1,6 @@
 # Rook-Ceph Reference
 
-Helm charts **rook-ceph v1.19.3** (operator) + **rook-ceph-cluster v1.19.3** (cluster).
+Helm charts **rook-ceph v1.19.5** (operator) + **rook-ceph-cluster v1.19.5** (cluster).
 
 ---
 
