@@ -84,6 +84,8 @@ spec:
       enabled: false
     redisOperator:
       enabled: false
+      managed:
+        enabled: false
     redis:
       # Name of the key inside rails.existingSecret (or rails.secret.values) that contains the Redis password
       passwordKey: "redis-password"
@@ -110,16 +112,6 @@ spec:
     service:
       type: ClusterIP
       port: 80
-    ingress:
-      enabled: false
-      className: ""
-      annotations: {}
-      hosts:
-        - host: sure.local
-          paths:
-            - path: /
-              pathType: Prefix
-      tls: []
     serviceMonitor:
       enabled: false
       interval: 30s
@@ -140,15 +132,6 @@ spec:
           cpu: 100m
           memory: 256Mi
         limits: {}
-      podAnnotations: {}
-      nodeSelector: {}
-      tolerations: []
-      affinity: {}
-      topologySpreadConstraints: []
-      extraEnv: {}
-      extraEnvFrom: []
-      extraVolumeMounts: []
-      extraVolumes: []
       livenessProbe:
         httpGet:
           path: /up
@@ -190,29 +173,12 @@ spec:
       job:
         backoffLimit: 3
         ttlSecondsAfterFinished: 600
-        nodeSelector: {}
-        tolerations: []
-        affinity: {}
-        resources: {}
         command: ["bash", "-lc"]
         args: |
           DB_HOST=$(echo "$DATABASE_URL" | sed 's/.*@//; s/:.*//')
           until pg_isready -h "$DB_HOST" -p 5432; do echo "Waiting for DB..."; sleep 5; done
           echo "Preparing database (db:prepare)" && \
           DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:prepare
-      initContainer:
-        enabled: false
-        command: ["bash", "-lc"]
-        args: |
-          DB_HOST=$(echo "$DATABASE_URL" | sed 's/.*@//; s/:.*//')
-          until pg_isready -h "$DB_HOST" -p 5432; do echo "Waiting for DB..."; sleep 5; done
-          if bundle exec rake db:pending_migrations | grep -q "pending"; then
-            echo "Running db:migrate" && \
-            DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:migrate
-          else
-            echo "No pending migrations"
-          fi
-        resources: {}
     simplefin:
       encryption:
         enabled: true
@@ -236,9 +202,6 @@ spec:
             echo "Running SimpleFin encrypt_access_urls backfill (dry_run=$DRY_RUN)" && \
             bundle exec rake "sure:simplefin:encrypt_access_urls[dry_run=$DRY_RUN]"
           resources: {}
-    cronjobs:
-      enabled: false
-      items: []
     podSecurityContext:
       runAsNonRoot: true
       runAsUser: 1000
@@ -312,11 +275,6 @@ spec:
           memory: 64Mi
         limits:
           memory: 128Mi
-      podAnnotations: {}
-      nodeSelector: {}
-      tolerations: []
-      affinity: {}
-      topologySpreadConstraints: []
       serviceMonitor:
         enabled: true
         interval: 30s
@@ -324,10 +282,4 @@ spec:
         path: /metrics
         portName: proxy
         additionalLabels: {}
-      logging:
-        format: json
-        output: stdout
-        includeAllowed: false
-        includeBlocked: true
-      extraConfig: {}
       requireForExternalAssistant: true
