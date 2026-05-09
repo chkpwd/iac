@@ -1,0 +1,13 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: sure
+spec:
+  interval: 10m
+  timeout: 1m
+  url: https://github.com/we-promise/sure
+  sparseCheckout:
+    - charts
+  ref:
+    branch: main

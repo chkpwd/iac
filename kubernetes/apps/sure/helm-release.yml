@@ -1,0 +1,333 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: sure
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: charts/sure
+      version: 0.7.1-alpha.5
+      interval: 30m
+      reconcileStrategy: Revision
+      sourceRef:
+        kind: GitRepository
+        name: sure
+        namespace: sure
+  values:
+    image:
+      repository: ghcr.io/we-promise/sure
+      tag: 0.7.1-alpha.4@sha256:1346109e7b60d1f608e953fdc03bf88798a68fe537b6a628ec508126d8a82e2c
+      pullPolicy: IfNotPresent
+    rails:
+      env: production
+      encryptionEnv:
+        enabled: true
+      existingSecret: "sure"
+      extraEnvVars:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: sure-pguser-sure
+              key: host
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              name: sure-pguser-sure
+              key: port
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: sure-pguser-sure
+              key: dbname
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: sure-pguser-sure
+              key: user
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sure-pguser-sure
+              key: password
+      secret:
+        enabled: false
+      settings:
+        SELF_HOSTED: "true"
+        ONBOARDING_STATE: "open"
+        AI_DEBUG_MODE: "false"
+        # LLM_CONTEXT_WINDOW = 2048          # Total tokens the model will accept
+        # LLM_MAX_RESPONSE_TOKENS = 512      # Reserved for the model's reply
+        # LLM_MAX_HISTORY_TOKENS =           # Derived if unset (context - response - system_reserve)
+        # LLM_SYSTEM_PROMPT_RESERVE = 256    # Tokens reserved for the system prompt
+        # LLM_MAX_ITEMS_PER_CALL = 25        # Upper bound on auto-categorize / merchant batches
+        # OPENAI_REQUEST_TIMEOUT = 60                # HTTP timeout in seconds; raise for slow local models
+        # OPENAI_SUPPORTS_PDF_PROCESSING = true      # Set to false for endpoints without vision support
+        # OPENAI_SUPPORTS_RESPONSES_ENDPOINT =       # true to force Responses API on custom providers
+        # LLM_JSON_MODE =                            # auto | strict | json_object | none
+        OPENAI_URI_BASE: http://ai-inference-01.chkpwd.com:11434
+        OPENAI_MODEL: gemma3:4b
+        RAILS_FORCE_SSL: "false"
+        RAILS_ASSUME_SSL: "false"
+      # externalAssistant:
+      #   enabled: false
+      #   url: ""           # e.g., https://your-agent-host/v1/chat
+      #   token: ""         # Bearer token for the external AI gateway
+      #   agentId: "main"      # Agent routing identifier
+      #   sessionKey: "agent:main:main"  # Session key for persistent agent sessions
+      #   allowedEmails: ""     # Comma-separated emails allowed to use external assistant (empty = all)
+      #   tokenSecretRef:
+      #     name: external-assistant-secret
+      #     key: token
+    cnpg:
+      enabled: false
+    redisOperator:
+      enabled: false
+    redis:
+      # Name of the key inside rails.existingSecret (or rails.secret.values) that contains the Redis password
+      passwordKey: "redis-password"
+    redisSimple:
+      enabled: true
+      image:
+        repository: docker.io/redis
+        tag: "7.2"
+        pullPolicy: IfNotPresent
+      service:
+        port: 6379
+      auth:
+        enabled: true
+        existingSecret: "sure"
+        passwordKey: "REDIS_PASSWORD"
+      persistence:
+        enabled: false
+      resources:
+        requests:
+          cpu: "100m"
+          memory: "256Mi"
+        limits:
+          memory: "512Mi"
+    service:
+      type: ClusterIP
+      port: 80
+    ingress:
+      enabled: false
+      className: ""
+      annotations: {}
+      hosts:
+        - host: sure.local
+          paths:
+            - path: /
+              pathType: Prefix
+      tls: []
+    serviceMonitor:
+      enabled: false
+      interval: 30s
+      scrapeTimeout: 10s
+      path: /metrics
+      portName: http
+      additionalLabels: {}
+    web:
+      enabled: true
+      replicas: 1
+      revisionHistoryLimit: 3
+      strategy:
+        rollingUpdate:
+          maxUnavailable: 1
+          maxSurge: 0
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits: {}
+      podAnnotations: {}
+      nodeSelector: {}
+      tolerations: []
+      affinity: {}
+      topologySpreadConstraints: []
+      extraEnv: {}
+      extraEnvFrom: []
+      extraVolumeMounts: []
+      extraVolumes: []
+      livenessProbe:
+        httpGet:
+          path: /up
+          port: http
+        initialDelaySeconds: 20
+        periodSeconds: 10
+        timeoutSeconds: 2
+        failureThreshold: 6
+      readinessProbe:
+        httpGet:
+          path: /up
+          port: http
+        initialDelaySeconds: 10
+        periodSeconds: 5
+        timeoutSeconds: 2
+        failureThreshold: 6
+      startupProbe:
+        httpGet:
+          path: /up
+          port: http
+        failureThreshold: 30
+        periodSeconds: 5
+    worker:
+      enabled: true
+      replicas: 1
+      queues: "default"
+      strategy:
+        rollingUpdate:
+          maxUnavailable: 1
+          maxSurge: 0
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          memory: 512Mi
+    migrations:
+      strategy: job
+      job:
+        backoffLimit: 3
+        ttlSecondsAfterFinished: 600
+        nodeSelector: {}
+        tolerations: []
+        affinity: {}
+        resources: {}
+        command: ["bash", "-lc"]
+        args: |
+          DB_HOST=$(echo "$DATABASE_URL" | sed 's/.*@//; s/:.*//')
+          until pg_isready -h "$DB_HOST" -p 5432; do echo "Waiting for DB..."; sleep 5; done
+          echo "Preparing database (db:prepare)" && \
+          DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:prepare
+      initContainer:
+        enabled: false
+        command: ["bash", "-lc"]
+        args: |
+          DB_HOST=$(echo "$DATABASE_URL" | sed 's/.*@//; s/:.*//')
+          until pg_isready -h "$DB_HOST" -p 5432; do echo "Waiting for DB..."; sleep 5; done
+          if bundle exec rake db:pending_migrations | grep -q "pending"; then
+            echo "Running db:migrate" && \
+            DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:migrate
+          else
+            echo "No pending migrations"
+          fi
+        resources: {}
+    simplefin:
+      encryption:
+        enabled: true
+        # If enabled, Active Record Encryption keys must be provided via rails.existingSecret or rails.secret.values
+        backfill:
+          enabled: true
+          dryRun: true # default to dry-run for safety; set false to perform writes
+          ttlSecondsAfterFinished: 600
+          nodeSelector: {}
+          tolerations: []
+          affinity: {}
+          # Optional overrides for the backfill job
+          command: ["bash", "-lc"]
+          args: |
+            # Inline DB_PASSWORD into DATABASE_URL for this job only (DATABASE_URL comes from the chart)
+            if [ -n "$DB_PASSWORD" ]; then
+              export DATABASE_URL="${DATABASE_URL//\$(DB_PASSWORD)/$DB_PASSWORD}"
+            fi
+            DB_HOST=$(echo "$DATABASE_URL" | sed 's/.*@//; s/:.*//')
+            until pg_isready -h "$DB_HOST" -p 5432; do echo "Waiting for DB..."; sleep 5; done
+            echo "Running SimpleFin encrypt_access_urls backfill (dry_run=$DRY_RUN)" && \
+            bundle exec rake "sure:simplefin:encrypt_access_urls[dry_run=$DRY_RUN]"
+          resources: {}
+    cronjobs:
+      enabled: false
+      items: []
+    podSecurityContext:
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      fsGroup: 1000
+      fsGroupChangePolicy: OnRootMismatch
+    securityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+    writableTmp:
+      enabled: true
+    pipelock:
+      enabled: true
+      image:
+        repository: ghcr.io/luckypipewrench/pipelock
+        tag: 2.4.0
+        pullPolicy: IfNotPresent
+      replicas: 1
+      # Pipelock run mode: strict, balanced, audit
+      mode: balanced
+      trustedDomains: ["*.chkpwd.com", "*.sure.svc.cluster.local"] # SSRF scanning allows requests to these domains without blocking
+      forwardProxy:
+        enabled: true
+        port: 8888
+        maxTunnelSeconds: 300
+        idleTimeoutSeconds: 60
+      mcpProxy:
+        port: 8889
+      # WebSocket proxy: bidirectional frame scanning for ws/wss connections.
+      # Runs on the same listener as the forward proxy at /ws?url=<ws-url>.
+      websocketProxy:
+        enabled: true
+        maxMessageBytes: 1048576 # 1MB per message
+        maxConcurrentConnections: 128
+        scanTextFrames: true # DLP + injection scanning on text frames
+        allowBinaryFrames: false # block binary frames by default
+        forwardCookies: false
+        maxConnectionSeconds: 3600 # 1 hour max connection lifetime
+        idleTimeoutSeconds: 300 # 5 min idle timeout
+        originPolicy: rewrite # rewrite, forward, or strip
+      # MCP tool policy: pre-execution rules for tool calls (shell obfuscation, etc.)
+      mcpToolPolicy:
+        enabled: true
+        action: warn
+        # Redirect profiles: route matched tool calls to audited handler programs instead
+        # of blocking. The handler returns a synthetic MCP response. Fail-closed on error.
+        # Example:
+        #   redirectProfiles:
+        #     safe-fetch:
+        #       exec: ["/pipelock", "internal-redirect", "fetch-proxy"]
+        #       reason: "Route fetch calls through audited proxy"
+        redirectProfiles: {}
+      # MCP session binding: pins tool inventory on first tools/list, detects injection
+      mcpSessionBinding:
+        enabled: true
+        unknownToolAction: warn
+      # Tool call chain detection: detects multi-step attack patterns (recon, exfil, etc.)
+      toolChainDetection:
+        enabled: true
+        action: warn
+        windowSize: 20
+        maxGap: 3
+      service:
+        type: ClusterIP
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          memory: 128Mi
+      podAnnotations: {}
+      nodeSelector: {}
+      tolerations: []
+      affinity: {}
+      topologySpreadConstraints: []
+      serviceMonitor:
+        enabled: true
+        interval: 30s
+        scrapeTimeout: 10s
+        path: /metrics
+        portName: proxy
+        additionalLabels: {}
+      logging:
+        format: json
+        output: stdout
+        includeAllowed: false
+        includeBlocked: true
+      extraConfig: {}
+      requireForExternalAssistant: true
