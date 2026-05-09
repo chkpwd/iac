@@ -321,14 +321,21 @@ The resource object is available as &#39;object&#39; and status as &#39;status&#
 </summary>
 <div class="prop-content"><div class="prop-desc">Kubernetes defines the target Kubernetes configuration</div>
   <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">endpoint</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Endpoint overrides the Kubernetes API URL the upgrade Job queries.
+Defaults to https://kubernetes.default.svc.cluster.local:443 so the Job
+does not rely on the external control-plane endpoint being reachable
+from the pod network.<div class="leaf-constraints">pattern: ^https://[^/\s]+</div>
+  </div>
+</div>
 <details class="prop">
 <summary>
   <span class="prop-name">hostAliases</span>
   <span class="type-badge">[]object</span>
 </summary>
-<div class="prop-content"><div class="prop-desc">HostAliases are appended to the upgrade Job pod&#39;s /etc/hosts. The controller
-auto-discovers an alias for cluster.controlPlane.endpoint from the live
-machine config; entries here override that for any hostname they cover.</div>
+<div class="prop-content"><div class="prop-desc">HostAliases are appended to the upgrade Job pod&#39;s /etc/hosts.</div>
   <div class="prop-children">
 <div class="prop-leaf">
   <span class="prop-name">hostnames</span>
