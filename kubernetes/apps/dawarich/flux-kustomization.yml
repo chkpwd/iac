@@ -17,7 +17,6 @@ spec:
       app.kubernetes.io/name: *app
   components:
     - ../../core/crunchydata-pgo/components/
-    - ../../core/dragonfly-operator/components/
   patches:
     # PostGIS variant — required for dawarich location data.
     - patch: |
