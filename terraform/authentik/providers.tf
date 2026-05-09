@@ -23,9 +23,8 @@ locals {
     "miniflux",
     "karakeep",
     "grimmory",
-    "mediamanager",
-    "surmai",
     "trek",
+    "sure",
   ]
 }
 

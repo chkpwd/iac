@@ -21,29 +21,6 @@ module "authentik-app-miniflux" {
   access_group = { main = authentik_group.main.id }
 }
 
-module "authentik-app-mediamanager" {
-  source = "../_modules/authentik/oauth2_app"
-  name   = "MediaManager"
-  group  = "main"
-  oauth2_values = {
-    client_id         = "mediamanager"
-    client_secret     = data.external.bws_lookup.result["mediamanager_oidc_client_secret"]
-    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
-    allowed_redirect_uris = [
-      {
-        matching_mode = "strict",
-        url           = "https://mediamanager.chkpwd.com/api/v1/auth/oauth/callback",
-      }
-    ]
-  }
-  app_values = {
-    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/mediamanager.webp"
-    meta_description = "Media Management for Linux ISOs"
-  }
-
-  access_group = { main = authentik_group.main.id }
-}
-
 module "authentik-app-grimmory" {
   source = "../_modules/authentik/oauth2_app"
   name   = "Grimmory"
@@ -108,6 +85,32 @@ module "authentik-app-trek" {
   app_values = {
     icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/trek.webp"
     meta_description = "Travel Planning"
+  }
+
+  access_group = {
+    main      = authentik_group.main.id
+    secondary = authentik_group.secondary.id
+  }
+}
+
+module "authentik-app-sure" {
+  source = "../_modules/authentik/oauth2_app"
+  name   = "Sure"
+  group  = "main"
+  oauth2_values = {
+    client_id         = "sure"
+    client_secret     = data.external.bws_lookup.result["sure_oidc_client_secret"]
+    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
+    allowed_redirect_uris = [
+      {
+        matching_mode = "strict",
+        url           = "https://sure.chkpwd.com/api/auth/oidc/callback",
+      },
+    ]
+  }
+  app_values = {
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/sure.webp"
+    meta_description = "Financial Management"
   }
 
   access_group = {
