@@ -171,34 +171,25 @@ spec:
         backoffLimit: 3
         ttlSecondsAfterFinished: 600
         command: ["bash", "-lc"]
-        args: |
-          DB_HOST=$(echo "$DATABASE_URL" | sed 's/.*@//; s/:.*//')
-          until pg_isready -h "$DB_HOST" -p 5432; do echo "Waiting for DB..."; sleep 5; done
-          echo "Preparing database (db:prepare)" && \
-          DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:prepare
-    simplefin:
-      encryption:
-        enabled: true
-        # If enabled, Active Record Encryption keys must be provided via rails.existingSecret or rails.secret.values
-        backfill:
-          enabled: true
-          dryRun: true # default to dry-run for safety; set false to perform writes
-          ttlSecondsAfterFinished: 600
-          nodeSelector: {}
-          tolerations: []
-          affinity: {}
-          # Optional overrides for the backfill job
-          command: ["bash", "-lc"]
-          args: |
-            # Inline DB_PASSWORD into DATABASE_URL for this job only (DATABASE_URL comes from the chart)
-            if [ -n "$DB_PASSWORD" ]; then
-              export DATABASE_URL="${DATABASE_URL//\$(DB_PASSWORD)/$DB_PASSWORD}"
-            fi
+        args:
+          - |
             DB_HOST=$(echo "$DATABASE_URL" | sed 's/.*@//; s/:.*//')
             until pg_isready -h "$DB_HOST" -p 5432; do echo "Waiting for DB..."; sleep 5; done
-            echo "Running SimpleFin encrypt_access_urls backfill (dry_run=$DRY_RUN)" && \
-            bundle exec rake "sure:simplefin:encrypt_access_urls[dry_run=$DRY_RUN]"
-          resources: {}
+            echo "Preparing database (db:prepare)" && \
+            DISABLE_DATABASE_ENVIRONMENT_CHECK=1 bundle exec rake db:prepare
+    simplefin:
+      encryption:
+        backfill:
+          command: ["bash", "-lc"]
+          args:
+            - |
+              if [ -n "$DB_PASSWORD" ]; then
+                export DATABASE_URL="${DATABASE_URL//\$(DB_PASSWORD)/$DB_PASSWORD}"
+              fi
+              DB_HOST=$(echo "$DATABASE_URL" | sed 's/.*@//; s/:.*//')
+              until pg_isready -h "$DB_HOST" -p 5432; do echo "Waiting for DB..."; sleep 5; done
+              echo "Running SimpleFin encrypt_access_urls backfill (dry_run=$DRY_RUN)" && \
+              bundle exec rake "sure:simplefin:encrypt_access_urls[dry_run=$DRY_RUN]"
     podSecurityContext:
       runAsNonRoot: true
       runAsUser: 1000
