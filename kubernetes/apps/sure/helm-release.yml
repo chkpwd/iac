@@ -86,9 +86,6 @@ spec:
       enabled: false
       managed:
         enabled: false
-    redis:
-      # Name of the key inside rails.existingSecret (or rails.secret.values) that contains the Redis password
-      passwordKey: "redis-password"
     redisSimple:
       enabled: true
       image:
