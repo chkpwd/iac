@@ -1,0 +1,77 @@
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kro
+spec:
+  interval: 30m
+  chartRef:
+    kind: OCIRepository
+    name: kro
+  driftDetection:
+    mode: disabled
+  values:
+    additionalLabels:
+      app: kro
+    metadata:
+      includeHelmChart: true
+      includeManagedBy: true
+    serviceAccount:
+      create: true
+      automount: true
+    rbac:
+      mode: aggregation
+    deployment:
+      replicaCount: 1
+      containerPort: 8078
+      podSecurityContext:
+        seccompProfile:
+          type: RuntimeDefault
+      securityContext:
+        runAsUser: 1000
+        runAsNonRoot: true
+        allowPrivilegeEscalation: false
+        privileged: false
+        capabilities:
+          drop:
+            - ALL
+      resources:
+        requests:
+          cpu: 256m
+          memory: 128Mi
+        limits:
+          cpu: 1000m
+          memory: 1Gi
+      hostNetwork: false
+      dnsPolicy: ClusterFirst
+    config:
+      allowCRDDeletion: false
+      clientQps: 100
+      clientBurst: 150
+      enableLeaderElection: true
+      metricsBindAddress: :8078
+      healthProbeBindAddress: :8079
+      resourceGraphDefinitionConcurrentReconciles: 1
+      resourceGraphDefinitionProgressRequeueDelay: 3s
+      graphRevisionConcurrentReconciles: 1
+      gracefulShutdownTimeout: 60s
+      dynamicControllerConcurrentReconciles: 1
+      dynamicControllerDefaultResyncPeriod: 36000
+      dynamicControllerDefaultQueueMaxRetries: 20
+      dynamicControllerRateLimiterMinDelay: 200ms
+      dynamicControllerRateLimiterMaxDelay: 1000s
+      dynamicControllerRateLimiterRateLimit: 10
+      dynamicControllerRateLimiterBurstLimit: 100
+      logLevel: "info"
+      logEncoder: "console"
+      rgd:
+        maxCollectionSize: 1000
+        maxCollectionDimensionSize: 10
+        maxGraphRevisions: 5
+      instance:
+        requeueInterval: 3s
+      featureGates: {}
+    metrics:
+      service:
+        create: false
