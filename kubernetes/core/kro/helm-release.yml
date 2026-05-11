@@ -71,7 +71,8 @@ spec:
         maxGraphRevisions: 5
       instance:
         requeueInterval: 3s
-      featureGates: {}
+      featureGates:
+        CELOmitFunction: true
     metrics:
       service:
         create: false
