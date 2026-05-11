@@ -42,7 +42,6 @@ Gateway API ingress is handled by **envoy-gateway** (see `kubernetes/core/envoy-
 | `loadBalancer.algorithm`        | `maglev`      | Consistent hashing for backend selection — same client always hits same pod     |
 | `loadBalancer.mode`             | `dsr`         | Direct Server Return mode for load balancer traffic                             |
 | `loadBalancer.acceleration`     | `best-effort` | Use XDP acceleration for LB when available, fall back gracefully                |
-| `loadBalancer.dsrDispatch`      | `opt`         | DSR dispatch via IP options (used when DSR mode is active on specific services) |
 | `localRedirectPolicies.enabled` | `true`        | Enables local redirect policies for steering traffic to node-local backends     |
 | `socketLB.enabled`              | `true`        | Socket-level load balancing — intercepts at connect() for lower latency         |
 | `socketLB.hostNamespaceOnly`    | `true`        | Socket LB only in host namespace — avoids interference with pod networking      |
