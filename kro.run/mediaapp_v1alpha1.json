@@ -1,0 +1,421 @@
+{
+  "properties": {
+    "apiVersion": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "kind": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metadata": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "spec": {
+      "additionalProperties": false,
+      "properties": {
+        "env": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "value"
+            ],
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "image": {
+          "additionalProperties": false,
+          "properties": {
+            "pullPolicy": {
+              "default": "IfNotPresent",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "repository": {
+              "type": "string"
+            },
+            "tag": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "repository",
+            "tag"
+          ],
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "default": "media",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "nfs": {
+          "additionalProperties": false,
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "server": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "path",
+            "server"
+          ],
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "persistence": {
+          "additionalProperties": false,
+          "default": {},
+          "properties": {
+            "accessMode": {
+              "default": "ReadWriteOnce",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "size": {
+              "default": "1Gi",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "storageClass": {
+              "default": "ceph-block",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "port": {
+          "type": "integer"
+        },
+        "probe": {
+          "additionalProperties": false,
+          "default": {},
+          "properties": {
+            "failureThreshold": {
+              "default": 3,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "initialDelaySeconds": {
+              "default": 0,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "path": {
+              "default": "/ping",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "periodSeconds": {
+              "default": 10,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "timeoutSeconds": {
+              "default": 1,
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "replicas": {
+          "default": 1,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "resources": {
+          "additionalProperties": false,
+          "properties": {
+            "limits": {
+              "additionalProperties": false,
+              "properties": {
+                "cpu": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "memory": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "requests": {
+              "additionalProperties": false,
+              "properties": {
+                "cpu": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "memory": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "type": [
+                "object",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "route": {
+          "additionalProperties": false,
+          "default": {},
+          "properties": {
+            "enabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "gatewayName": {
+              "default": "private",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "gatewayNamespace": {
+              "default": "networking",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "hostname": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "sectionName": {
+              "default": "https",
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "secretName": {
+          "default": "",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "securityContext": {
+          "additionalProperties": false,
+          "default": {},
+          "properties": {
+            "fsGroup": {
+              "default": 100,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "fsGroupChangePolicy": {
+              "default": "OnRootMismatch",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "runAsGroup": {
+              "default": 100,
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "runAsUser": {
+              "default": 1026,
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          },
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "timezone": {
+          "default": "America/New_York",
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "port"
+      ],
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "status": {
+      "additionalProperties": false,
+      "properties": {
+        "availableReplicas": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "conditions": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "lastTransitionTime": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "message": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "observedGeneration": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "reason": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "type": "object"
+          },
+          "type": [
+            "array",
+            "null"
+          ]
+        },
+        "ready": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "state": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  },
+  "type": "object"
+}
