@@ -254,6 +254,12 @@ metadata:
 </summary>
 <div class="prop-content">
   <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">configMountPath</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
 <details class="prop">
 <summary>
   <span class="prop-name">env</span>
@@ -283,12 +289,6 @@ metadata:
 </summary>
 <div class="prop-content">
   <div class="prop-children">
-<div class="prop-leaf">
-  <span class="prop-name">pullPolicy</span>
-  <span class="type-badge">string</span>
-  <div class="leaf-desc">
-  </div>
-</div>
 <div class="prop-leaf">
   <span class="prop-name">repository</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
@@ -324,14 +324,26 @@ metadata:
 <div class="prop-content">
   <div class="prop-children">
 <div class="prop-leaf">
+  <span class="prop-name">enabled</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">mountPath</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
   <span class="prop-name">path</span>
-  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <span class="type-badge">string</span>
   <div class="leaf-desc">
   </div>
 </div>
 <div class="prop-leaf">
   <span class="prop-name">server</span>
-  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <span class="type-badge">string</span>
   <div class="leaf-desc">
   </div>
 </div>
@@ -348,6 +360,12 @@ metadata:
 <div class="prop-leaf">
   <span class="prop-name">accessMode</span>
   <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">enabled</span>
+  <span class="type-badge">boolean</span>
   <div class="leaf-desc">
   </div>
 </div>
@@ -412,12 +430,6 @@ metadata:
   </div>
 </div>
 </details>
-<div class="prop-leaf">
-  <span class="prop-name">replicas</span>
-  <span class="type-badge">integer</span>
-  <div class="leaf-desc">
-  </div>
-</div>
 <details class="prop">
 <summary>
   <span class="prop-name">resources</span>
@@ -432,12 +444,6 @@ metadata:
 </summary>
 <div class="prop-content">
   <div class="prop-children">
-<div class="prop-leaf">
-  <span class="prop-name">cpu</span>
-  <span class="type-badge">string</span>
-  <div class="leaf-desc">
-  </div>
-</div>
 <div class="prop-leaf">
   <span class="prop-name">memory</span>
   <span class="type-badge">string</span>
@@ -513,8 +519,20 @@ metadata:
 </div>
 </details>
 <div class="prop-leaf">
+  <span class="prop-name">secretExtractKey</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
   <span class="prop-name">secretName</span>
   <span class="type-badge">string</span>
+  <div class="leaf-desc">
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">secretTemplate</span>
+  <span class="type-badge">object</span>
   <div class="leaf-desc">
   </div>
 </div>
@@ -552,12 +570,6 @@ metadata:
   </div>
 </div>
 </details>
-<div class="prop-leaf">
-  <span class="prop-name">timezone</span>
-  <span class="type-badge">string</span>
-  <div class="leaf-desc">
-  </div>
-</div>
   </div>
 </div>
 </details>

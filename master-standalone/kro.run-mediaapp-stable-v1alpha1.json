@@ -21,6 +21,13 @@
     "spec": {
       "additionalProperties": false,
       "properties": {
+        "configMountPath": {
+          "default": "/config",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "env": {
           "items": {
             "additionalProperties": false,
@@ -46,13 +53,6 @@
         "image": {
           "additionalProperties": false,
           "properties": {
-            "pullPolicy": {
-              "default": "IfNotPresent",
-              "type": [
-                "string",
-                "null"
-              ]
-            },
             "repository": {
               "type": "string"
             },
@@ -61,8 +61,8 @@
             }
           },
           "required": [
-            "repository",
-            "tag"
+            "tag",
+            "repository"
           ],
           "type": [
             "object",
@@ -81,18 +81,37 @@
         },
         "nfs": {
           "additionalProperties": false,
+          "default": {},
           "properties": {
+            "enabled": {
+              "default": false,
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "mountPath": {
+              "default": "/data",
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "path": {
-              "type": "string"
+              "default": "/volume1/vault-01/media",
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "server": {
-              "type": "string"
+              "default": "nas-srv-01.chkpwd.com",
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
-          "required": [
-            "path",
-            "server"
-          ],
           "type": [
             "object",
             "null"
@@ -106,6 +125,13 @@
               "default": "ReadWriteOnce",
               "type": [
                 "string",
+                "null"
+              ]
+            },
+            "enabled": {
+              "default": true,
+              "type": [
+                "boolean",
                 "null"
               ]
             },
@@ -177,25 +203,12 @@
             "null"
           ]
         },
-        "replicas": {
-          "default": 1,
-          "type": [
-            "integer",
-            "null"
-          ]
-        },
         "resources": {
           "additionalProperties": false,
           "properties": {
             "limits": {
               "additionalProperties": false,
               "properties": {
-                "cpu": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
                 "memory": {
                   "type": [
                     "string",
@@ -261,6 +274,7 @@
               ]
             },
             "hostname": {
+              "default": "",
               "type": [
                 "string",
                 "null"
@@ -279,10 +293,26 @@
             "null"
           ]
         },
+        "secretExtractKey": {
+          "default": "",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "secretName": {
           "default": "",
           "type": [
             "string",
+            "null"
+          ]
+        },
+        "secretTemplate": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": [
+            "object",
             "null"
           ]
         },
@@ -291,7 +321,7 @@
           "default": {},
           "properties": {
             "fsGroup": {
-              "default": 100,
+              "default": 1999,
               "type": [
                 "integer",
                 "null"
@@ -305,14 +335,14 @@
               ]
             },
             "runAsGroup": {
-              "default": 100,
+              "default": 1999,
               "type": [
                 "integer",
                 "null"
               ]
             },
             "runAsUser": {
-              "default": 1026,
+              "default": 1999,
               "type": [
                 "integer",
                 "null"
@@ -323,18 +353,11 @@
             "object",
             "null"
           ]
-        },
-        "timezone": {
-          "default": "America/New_York",
-          "type": [
-            "string",
-            "null"
-          ]
         }
       },
       "required": [
-        "name",
-        "port"
+        "port",
+        "name"
       ],
       "type": [
         "object",
