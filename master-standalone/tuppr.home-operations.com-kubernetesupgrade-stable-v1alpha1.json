@@ -91,42 +91,10 @@
           "description": "Kubernetes defines the target Kubernetes configuration",
           "properties": {
             "endpoint": {
-              "description": "Endpoint overrides the Kubernetes API URL the upgrade Job queries.\nDefaults to https://kubernetes.default.svc.cluster.local:443 so the Job\ndoes not rely on the external control-plane endpoint being reachable\nfrom the pod network.",
+              "description": "Endpoint overrides the Kubernetes API URL the upgrade Job queries.\nDefaults to the in-cluster apiserver ClusterIP, which avoids CoreDNS.",
               "pattern": "^https://[^/\\s]+",
               "type": [
                 "string",
-                "null"
-              ]
-            },
-            "hostAliases": {
-              "description": "HostAliases are appended to the upgrade Job pod's /etc/hosts.",
-              "items": {
-                "additionalProperties": false,
-                "description": "HostAlias holds the mapping between IP and hostnames that will be injected as an entry in the\npod's hosts file.",
-                "properties": {
-                  "hostnames": {
-                    "description": "Hostnames for the above IP address.",
-                    "items": {
-                      "type": "string"
-                    },
-                    "type": [
-                      "array",
-                      "null"
-                    ],
-                    "x-kubernetes-list-type": "atomic"
-                  },
-                  "ip": {
-                    "description": "IP address of the host file entry.",
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "ip"
-                ],
-                "type": "object"
-              },
-              "type": [
-                "array",
                 "null"
               ]
             },

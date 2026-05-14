@@ -293,6 +293,8 @@ Typical Supported values are:
   <span class="type-badge">[]string</span>
   <div class="leaf-desc">Ciphers specifies the set of cipher suites supported when
 negotiating TLS 1.0 - 1.2. This setting has no effect for TLS 1.3.
+For the list of supported ciphers, please refer to the Envoy documentation:
+https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/common.proto#extensions-transport-sockets-tls-v3-tlsparameters
 In non-FIPS Envoy Proxy builds the default cipher list is:
 - [ECDHE-ECDSA-AES128-GCM-SHA256|ECDHE-ECDSA-CHACHA20-POLY1305]
 - [ECDHE-RSA-AES128-GCM-SHA256|ECDHE-RSA-CHACHA20-POLY1305]
@@ -360,6 +362,21 @@ In non-FIPS Envoy Proxy builds the default curves are:
 - P-256
 In builds using BoringSSL FIPS the default curve is:
 - P-256
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">fingerprints</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Fingerprints specifies TLS client fingerprinting.
+When specified, a JAX fingerprint derived from the client’s TLS handshake
+is generated. The fingerprint can be logged in access logs or
+forwarded to upstream services using request headers.
+
+Fingerprinting is disabled if not specified.
+
+Supported values are:
+- JA3
+- JA4
   </div>
 </div>
 <div class="prop-leaf">
@@ -475,6 +492,106 @@ If unspecified, it defaults to Replace.<div class="leaf-constraints">enum: Merge
 the number of cpuset threads on the platform.<div class="leaf-constraints">format: int32</div>
   </div>
 </div>
+<details class="prop">
+<summary>
+  <span class="prop-name">dynamicModules</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">DynamicModules defines the set of dynamic modules that are allowed to be
+used by EnvoyExtensionPolicy resources and dynamic module load balancer
+policies. Each entry registers a module by a logical name and specifies
+the shared library that Envoy will load.
+
+The EnvoyProxy owner is responsible for ensuring the module .so files are available
+on the proxy container&#39;s filesystem (e.g., via init containers, custom images,
+or shared volumes).</div><div class="prop-constraints">maxItems: 16</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">doNotClose</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">DoNotClose prevents the module from being unloaded with dlclose when no
+more references exist. This is useful for modules that maintain global
+state that should not be destroyed on configuration updates.
+Defaults to false.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">loadGlobally</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">LoadGlobally loads the dynamic module with the RTLD_GLOBAL flag.
+By default, modules are loaded with RTLD_LOCAL to avoid symbol conflicts.
+Set this to true when the module needs to share symbols with other
+dynamic libraries it loads.
+Defaults to false.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name is the logical name for this module. EnvoyExtensionPolicy resources
+reference modules by this name.<div class="leaf-constraints">pattern: ^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">source</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Source defines where the dynamic module code is loaded from.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">local</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Local specifies a module loaded from the proxy&#39;s local filesystem
+by absolute path.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Path is the absolute filesystem path to the dynamic module shared library (.so file).<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">remote</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Remote specifies a module fetched from a remote source.
+The module binary is downloaded and cached by Envoy.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">sha256</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">SHA256 checksum that Envoy will use to verify the downloaded module binary.<div class="leaf-constraints">pattern: ^[a-f0-9]{64}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">url</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">URL is the HTTP or HTTPS URL of the dynamic module shared library (.so file).<div class="leaf-constraints">pattern: ^https?://[^/?#]+(?:[/?#].*)?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type is the type of the source of the dynamic module code.
+Defaults to Local.<div class="leaf-constraints">enum: Local, Remote</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
 <div class="prop-leaf">
   <span class="prop-name">extraArgs</span>
   <span class="type-badge">[]string</span>
@@ -523,11 +640,17 @@ Default filter order is:
 
 - envoy.filters.http.wasm
 
+- envoy.filters.http.dynamic_modules
+
+- envoy.filters.http.geoip
+
 - envoy.filters.http.rbac
 
 - envoy.filters.http.local_ratelimit
 
 - envoy.filters.http.ratelimit
+
+- envoy.filters.http.bandwidth_limit
 
 - envoy.filters.http.grpc_web
 
@@ -547,22 +670,188 @@ Note: &#34;envoy.filters.http.router&#34; cannot be reordered, it&#39;s always t
   <span class="prop-name">after</span>
   <span class="type-badge">string</span>
   <div class="leaf-desc">After defines the filter that should come after the filter.
-Only one of Before or After must be set.<div class="leaf-constraints">enum: envoy.filters.http.custom_response, envoy.filters.http.health_check, envoy.filters.http.fault, envoy.filters.http.cors, envoy.filters.http.header_mutation, envoy.filters.http.ext_authz, envoy.filters.http.api_key_auth, envoy.filters.http.basic_auth, envoy.filters.http.oauth2, envoy.filters.http.jwt_authn, envoy.filters.http.stateful_session, envoy.filters.http.buffer, envoy.filters.http.lua, envoy.filters.http.ext_proc, envoy.filters.http.wasm, envoy.filters.http.rbac, envoy.filters.http.local_ratelimit, envoy.filters.http.ratelimit, envoy.filters.http.grpc_web, envoy.filters.http.grpc_stats, envoy.filters.http.credential_injector, envoy.filters.http.compressor, envoy.filters.http.dynamic_forward_proxy</div>
+Only one of Before or After must be set.<div class="leaf-constraints">enum: envoy.filters.http.custom_response, envoy.filters.http.health_check, envoy.filters.http.fault, envoy.filters.http.cors, envoy.filters.http.header_mutation, envoy.filters.http.ext_authz, envoy.filters.http.api_key_auth, envoy.filters.http.basic_auth, envoy.filters.http.oauth2, envoy.filters.http.jwt_authn, envoy.filters.http.stateful_session, envoy.filters.http.buffer, envoy.filters.http.lua, envoy.filters.http.ext_proc, envoy.filters.http.wasm, envoy.filters.http.dynamic_modules, envoy.filters.http.geoip, envoy.filters.http.rbac, envoy.filters.http.local_ratelimit, envoy.filters.http.ratelimit, envoy.filters.http.bandwidth_limit, envoy.filters.http.grpc_web, envoy.filters.http.grpc_stats, envoy.filters.http.credential_injector, envoy.filters.http.compressor, envoy.filters.http.dynamic_forward_proxy</div>
   </div>
 </div>
 <div class="prop-leaf">
   <span class="prop-name">before</span>
   <span class="type-badge">string</span>
   <div class="leaf-desc">Before defines the filter that should come before the filter.
-Only one of Before or After must be set.<div class="leaf-constraints">enum: envoy.filters.http.custom_response, envoy.filters.http.health_check, envoy.filters.http.fault, envoy.filters.http.cors, envoy.filters.http.header_mutation, envoy.filters.http.ext_authz, envoy.filters.http.api_key_auth, envoy.filters.http.basic_auth, envoy.filters.http.oauth2, envoy.filters.http.jwt_authn, envoy.filters.http.stateful_session, envoy.filters.http.buffer, envoy.filters.http.lua, envoy.filters.http.ext_proc, envoy.filters.http.wasm, envoy.filters.http.rbac, envoy.filters.http.local_ratelimit, envoy.filters.http.ratelimit, envoy.filters.http.grpc_web, envoy.filters.http.grpc_stats, envoy.filters.http.credential_injector, envoy.filters.http.compressor, envoy.filters.http.dynamic_forward_proxy</div>
+Only one of Before or After must be set.<div class="leaf-constraints">enum: envoy.filters.http.custom_response, envoy.filters.http.health_check, envoy.filters.http.fault, envoy.filters.http.cors, envoy.filters.http.header_mutation, envoy.filters.http.ext_authz, envoy.filters.http.api_key_auth, envoy.filters.http.basic_auth, envoy.filters.http.oauth2, envoy.filters.http.jwt_authn, envoy.filters.http.stateful_session, envoy.filters.http.buffer, envoy.filters.http.lua, envoy.filters.http.ext_proc, envoy.filters.http.wasm, envoy.filters.http.dynamic_modules, envoy.filters.http.geoip, envoy.filters.http.rbac, envoy.filters.http.local_ratelimit, envoy.filters.http.ratelimit, envoy.filters.http.bandwidth_limit, envoy.filters.http.grpc_web, envoy.filters.http.grpc_stats, envoy.filters.http.credential_injector, envoy.filters.http.compressor, envoy.filters.http.dynamic_forward_proxy</div>
   </div>
 </div>
 <div class="prop-leaf">
   <span class="prop-name">name</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Name of the filter.<div class="leaf-constraints">enum: envoy.filters.http.custom_response, envoy.filters.http.health_check, envoy.filters.http.fault, envoy.filters.http.cors, envoy.filters.http.header_mutation, envoy.filters.http.ext_authz, envoy.filters.http.api_key_auth, envoy.filters.http.basic_auth, envoy.filters.http.oauth2, envoy.filters.http.jwt_authn, envoy.filters.http.stateful_session, envoy.filters.http.buffer, envoy.filters.http.lua, envoy.filters.http.ext_proc, envoy.filters.http.wasm, envoy.filters.http.rbac, envoy.filters.http.local_ratelimit, envoy.filters.http.ratelimit, envoy.filters.http.grpc_web, envoy.filters.http.grpc_stats, envoy.filters.http.credential_injector, envoy.filters.http.compressor, envoy.filters.http.dynamic_forward_proxy</div>
+  <div class="leaf-desc">Name of the filter.<div class="leaf-constraints">enum: envoy.filters.http.custom_response, envoy.filters.http.health_check, envoy.filters.http.fault, envoy.filters.http.cors, envoy.filters.http.header_mutation, envoy.filters.http.ext_authz, envoy.filters.http.api_key_auth, envoy.filters.http.basic_auth, envoy.filters.http.oauth2, envoy.filters.http.jwt_authn, envoy.filters.http.stateful_session, envoy.filters.http.buffer, envoy.filters.http.lua, envoy.filters.http.ext_proc, envoy.filters.http.wasm, envoy.filters.http.dynamic_modules, envoy.filters.http.geoip, envoy.filters.http.rbac, envoy.filters.http.local_ratelimit, envoy.filters.http.ratelimit, envoy.filters.http.bandwidth_limit, envoy.filters.http.grpc_web, envoy.filters.http.grpc_stats, envoy.filters.http.credential_injector, envoy.filters.http.compressor, envoy.filters.http.dynamic_forward_proxy</div>
   </div>
 </div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">geoIP</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">GeoIP defines shared GeoIP provider configuration for this EnvoyProxy fleet.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">provider</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Provider defines the GeoIP provider configuration used by GeoIP filter instances.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">maxMind</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">MaxMind configures the MaxMind provider.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">anonymousIpDbSource</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">AnonymousIPDBSource configures the Anonymous IP database source.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">local</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Local is a database source from a local file.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Path is the path to the database file.<div class="leaf-constraints">pattern: ^.*\.mmdb$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">asnDbSource</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ASNDBSource configures the ASN database source.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">local</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Local is a database source from a local file.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Path is the path to the database file.<div class="leaf-constraints">pattern: ^.*\.mmdb$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">cityDbSource</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">CityDBSource configures the City database source.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">local</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Local is a database source from a local file.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Path is the path to the database file.<div class="leaf-constraints">pattern: ^.*\.mmdb$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">countryDbSource</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">CountryDBSource configures the Country database source.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">local</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Local is a database source from a local file.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Path is the path to the database file.<div class="leaf-constraints">pattern: ^.*\.mmdb$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
+  <span class="prop-name">ispDbSource</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ISPDBSource configures the ISP database source.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">local</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Local is a database source from a local file.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">path</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Path is the path to the database file.<div class="leaf-constraints">pattern: ^.*\.mmdb$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">GeoIPProviderType enumerates GeoIP providers supported by Envoy Gateway.<div class="leaf-constraints">enum: MaxMind</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
   </div>
 </div>
 </details>
@@ -609,6 +898,15 @@ Default: Strict<div class="leaf-constraints">enum: Strict, InsecureSyntax, Disab
 Setting this field to true would merge all Gateway Listeners under the parent Gateway Class.
 This means that the port, protocol and hostname tuple must be unique for every listener.
 If a duplicate listener is detected, the newer listener (based on timestamp) will be rejected and its status will be updated with a &#34;Accepted=False&#34; condition.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">mergeType</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">MergeType controls how this EnvoyProxy merges with less specific configurations
+in the hierarchy (EnvoyGateway defaults &lt; GatewayClass &lt; Gateway).
+If unset, this EnvoyProxy completely replaces less specific settings.
+Note: this field has no effect when set in EnvoyGateway&#39;s default EnvoyProxySpec.<div class="leaf-constraints">enum: Replace, StrategicMerge, JSONMerge</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -12988,6 +13286,51 @@ Default: unlimited.<div class="leaf-constraints">format: int64</div><div class="
   </div>
 </div>
 </details>
+<details class="prop">
+<summary>
+  <span class="prop-name">retryBudget</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RetryBudget provides settings for retry budget, which limits the number of retries in a given percentage.
+RetryBudget take precedence over maxParallelRetries.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">minRetryConcurrency</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MinRetryConcurrency specifies the minimum retry concurrency allowed for the retry budget.
+For example, a budget of 20% with a minimum retry concurrency of 3
+will allow 5 active retries while there are 25 active requests.
+If there are 2 active requests, there are still 3 active retries
+allowed because of the minimum retry concurrency.
+Defaults to 3.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">percent</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Percent specifies the limit on concurrent retries as a percentage [0, 100] of
+the sum of active requests and active pending requests.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">denominator</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">numerator</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
   </div>
 </div>
 </details>
@@ -13177,8 +13520,9 @@ Defaults to 200 only
 <div class="prop-leaf">
   <span class="prop-name">hostname</span>
   <span class="type-badge">string</span>
-  <div class="leaf-desc">Hostname defines the HTTP host that will be requested during health checking.
-Default: HTTPRoute or GRPCRoute hostname.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  <div class="leaf-desc">Hostname defines the HTTP Host header used for active HTTP health checks.
+Host selection uses this order: this field, the associated Backend endpoint
+hostname if available, then the effective Route hostname.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -13192,6 +13536,15 @@ Defaults to GET
   <span class="prop-name">path</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
   <div class="leaf-desc">Path defines the HTTP path that will be requested during health checking.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">retriableStatuses</span>
+  <span class="type-badge">[]integer</span>
+  <div class="leaf-desc">RetriableStatuses defines a list of HTTP response statuses considered retriable.
+Responses matching these statuses count towards the unhealthy threshold but
+do not result in the host being considered immediately unhealthy.
+The expected statuses take precedence for any range overlaps with this field.
   </div>
 </div>
   </div>
@@ -13210,6 +13563,27 @@ Envoy will randomly select a value between 0 and the initial jitter value.<div c
   <div class="leaf-desc">Interval defines the time between active health checks.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
   </div>
 </div>
+<details class="prop">
+<summary>
+  <span class="prop-name">overrides</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Overrides defines the configuration of the overriding health check settings for all endpoints
+in the backend cluster. This allows customization of port and other settings that may differ
+from the main service configuration.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port overrides the health check port.
+If not set, the endpoint&#39;s serving port is used for health checks.
+This is useful when health checks are served on a different port than
+the main service port (e.g., port 443 for service, port 9090 for health checks).<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <details class="prop">
 <summary>
   <span class="prop-name">tcp</span>
@@ -13292,7 +13666,10 @@ It&#39;s required while the health checker type is TCP.</div>
 <div class="prop-leaf">
   <span class="prop-name">unhealthyThreshold</span>
   <span class="type-badge">integer</span>
-  <div class="leaf-desc">UnhealthyThreshold defines the number of unhealthy health checks required before a backend host is marked unhealthy.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  <div class="leaf-desc">UnhealthyThreshold defines the number of unhealthy health checks required before a backend host is marked unhealthy.
+Without RetriableStatuses configured, any health check failure results in the host being immediately
+considered unhealthy. When RetriableStatuses is set, health checks returning those statuses are retried
+up to this threshold before the host is marked unhealthy.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
   </div>
 </div>
   </div>
@@ -13314,6 +13691,13 @@ as load increases. If not set, the default value is 50%. To disable panic mode, 
 </summary>
 <div class="prop-content"><div class="prop-desc">Passive passive check configuration</div>
   <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">alwaysEjectOneEndpoint</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">AlwaysEjectOneEndpoint defines whether at least one host should be ejected,
+regardless of MaxEjectionPercent.
+  </div>
+</div>
 <div class="prop-leaf">
   <span class="prop-name">baseEjectionTime</span>
   <span class="type-badge">string</span>
@@ -13356,7 +13740,7 @@ Defaults to 85.<div class="leaf-constraints">format: int32</div><div class="leaf
 <div class="prop-leaf">
   <span class="prop-name">maxEjectionPercent</span>
   <span class="type-badge">integer</span>
-  <div class="leaf-desc">MaxEjectionPercent sets the maximum percentage of hosts in a cluster that can be ejected.<div class="leaf-constraints">format: int32</div>
+  <div class="leaf-desc">MaxEjectionPercent sets the maximum percentage of hosts in a cluster that can be ejected.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -13378,6 +13762,41 @@ Defaults to 85.<div class="leaf-constraints">format: int32</div><div class="leaf
 </summary>
 <div class="prop-content"><div class="prop-desc">HTTP2 provides HTTP/2 configuration for backend connections.</div>
   <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">connectionKeepalive</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ConnectionKeepalive configures HTTP/2 connection keepalive using PING frames.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">idleInterval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">IdleInterval specifies how long a connection must be idle before a PING is sent.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Interval specifies how often to send HTTP/2 PING frames to keep the connection alive.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">intervalJitter</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">IntervalJitter specifies a random jitter percentage added to each interval.
+Defaults to 15% if not specified.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Timeout specifies how long to wait for a PING response before considering the connection dead.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <div class="prop-leaf">
   <span class="prop-name">initialConnectionWindowSize</span>
   <span class="type-badge">object</span>
@@ -13419,6 +13838,64 @@ Default: TerminateConnection
 <div class="prop-content"><div class="prop-desc">LoadBalancer policy to apply when routing traffic from the gateway to
 the backend endpoints. Defaults to `LeastRequest`.</div>
   <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">backendUtilization</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">BackendUtilization defines the configuration when the load balancer type is
+set to BackendUtilization.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">blackoutPeriod</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">A given endpoint must report load metrics continuously for at least this long before the endpoint weight will be used.
+Default is 10s.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">errorUtilizationPenaltyPercent</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">ErrorUtilizationPenaltyPercent adjusts endpoint weights based on the error rate (eps/qps).
+This is expressed as a percentage-based integer where 100 represents 1.0, 150 represents 1.5, etc.
+
+For example:
+- 100 =&gt; 1.0x
+- 120 =&gt; 1.2x
+- 200 =&gt; 2.0x
+
+Must be non-negative.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">keepResponseHeaders</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">KeepResponseHeaders keeps the ORCA load report headers/trailers before sending the response to the client.
+Defaults to false.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metricNamesForComputingUtilization</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Metric names used to compute utilization if application_utilization is not set.
+For map fields in ORCA proto, use the form &#34;&lt;map_field&gt;.&lt;key&gt;&#34;, e.g., &#34;named_metrics.foo&#34;.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">weightExpirationPeriod</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">If a given endpoint has not reported load metrics in this long, stop using the reported weight. Defaults to 3m.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">weightUpdatePeriod</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">How often endpoint weights are recalculated. Values less than 100ms are capped at 100ms. Default 1s.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <details class="prop">
 <summary>
   <span class="prop-name">consistentHash</span>
@@ -13532,6 +14009,43 @@ Deprecated: use Headers instead</div>
 </details>
 <details class="prop">
 <summary>
+  <span class="prop-name">dynamicModule</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">DynamicModule defines the configuration when the load balancer type is
+set to DynamicModule. The referenced module must be registered in the
+EnvoyProxy resource&#39;s dynamicModules allowlist.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">config</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Config is optional configuration for the module&#39;s load balancer
+implementation. This is serialized and passed to the module&#39;s
+initialization function.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lbPolicyName</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">LBPolicyName identifies a specific load balancer implementation within
+the dynamic module. A single shared library can contain multiple LB
+policy implementations. This value is passed to the module&#39;s
+initialization function to select the appropriate implementation.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name references a dynamic module registered in the EnvoyProxy resource&#39;s
+dynamicModules list. The referenced module must exist in the registry;
+otherwise, the policy will be rejected.<div class="leaf-constraints">pattern: ^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
   <span class="prop-name">endpointOverride</span>
   <span class="type-badge">object</span>
 </summary>
@@ -13569,7 +14083,7 @@ The IPv6 address is enclosed in square brackets.
 </summary>
 <div class="prop-content"><div class="prop-desc">SlowStart defines the configuration related to the slow start load balancer policy.
 If set, during slow start window, traffic sent to the newly added hosts will gradually increase.
-Currently this is only supported for RoundRobin and LeastRequest load balancers</div>
+Supported for RoundRobin, LeastRequest, and BackendUtilization load balancers.</div>
   <div class="prop-children">
 <div class="prop-leaf">
   <span class="prop-name">window</span>
@@ -13591,7 +14105,9 @@ Valid LoadBalancerType values are
 &#34;ConsistentHash&#34;,
 &#34;LeastRequest&#34;,
 &#34;Random&#34;,
-&#34;RoundRobin&#34;.<div class="leaf-constraints">enum: ConsistentHash, LeastRequest, Random, RoundRobin</div>
+&#34;RoundRobin&#34;,
+&#34;BackendUtilization&#34;,
+&#34;DynamicModule&#34;.<div class="leaf-constraints">enum: ConsistentHash, LeastRequest, Random, RoundRobin, BackendUtilization, DynamicModule</div>
   </div>
 </div>
 <details class="prop">
@@ -13641,6 +14157,34 @@ override. This is useful for protecting zones with fewer endpoints.<div class="l
   </div>
 </div>
 </details>
+<details class="prop">
+<summary>
+  <span class="prop-name">weightedZones</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">WeightedZones configures weight-based traffic distribution across locality zones.
+Traffic is distributed proportionally based on the sum of all zone weights.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">weight</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Weight defines the weight for this locality.
+Higher values receive more traffic. The actual traffic distribution
+is proportional to this value relative to other localities.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">zone</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Zone specifies the topology zone this weight applies to.
+The value should match the topology.kubernetes.io/zone label
+of the nodes where endpoints are running.
+Zones not listed in the configuration receive a default weight of 1.
+  </div>
+</div>
+  </div>
+</div>
+</details>
   </div>
 </div>
 </details>
@@ -13657,7 +14201,7 @@ override. This is useful for protecting zones with fewer endpoints.<div class="l
 <div class="prop-leaf">
   <span class="prop-name">version</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Version of ProxyProtol
+  <div class="leaf-desc">Version of ProxyProtocol
 Valid ProxyProtocolVersion values are
 &#34;V1&#34;
 &#34;V2&#34;<div class="leaf-constraints">enum: V1, V2</div>
@@ -13833,6 +14377,13 @@ When set to &#34;0s&#34;, no max duration is applied and streams can run indefin
   <span class="prop-name">requestTimeout</span>
   <span class="type-badge">string</span>
   <div class="leaf-desc">RequestTimeout is the time until which entire response is received from the upstream.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">streamIdleTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc"> The stream idle timeout defines the amount of time a stream can exist without any upstream or downstream activity.
+ If not specified, StreamIdleTimeout is inherited from the listener-level setting, which can be configured via ClientTrafficPolicy.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
   </div>
 </div>
   </div>
@@ -14157,6 +14708,51 @@ Default: unlimited.<div class="leaf-constraints">format: int64</div><div class="
   </div>
 </div>
 </details>
+<details class="prop">
+<summary>
+  <span class="prop-name">retryBudget</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RetryBudget provides settings for retry budget, which limits the number of retries in a given percentage.
+RetryBudget take precedence over maxParallelRetries.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">minRetryConcurrency</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MinRetryConcurrency specifies the minimum retry concurrency allowed for the retry budget.
+For example, a budget of 20% with a minimum retry concurrency of 3
+will allow 5 active retries while there are 25 active requests.
+If there are 2 active requests, there are still 3 active retries
+allowed because of the minimum retry concurrency.
+Defaults to 3.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">percent</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Percent specifies the limit on concurrent retries as a percentage [0, 100] of
+the sum of active requests and active pending requests.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">denominator</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">numerator</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
   </div>
 </div>
 </details>
@@ -14346,8 +14942,9 @@ Defaults to 200 only
 <div class="prop-leaf">
   <span class="prop-name">hostname</span>
   <span class="type-badge">string</span>
-  <div class="leaf-desc">Hostname defines the HTTP host that will be requested during health checking.
-Default: HTTPRoute or GRPCRoute hostname.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  <div class="leaf-desc">Hostname defines the HTTP Host header used for active HTTP health checks.
+Host selection uses this order: this field, the associated Backend endpoint
+hostname if available, then the effective Route hostname.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -14361,6 +14958,15 @@ Defaults to GET
   <span class="prop-name">path</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
   <div class="leaf-desc">Path defines the HTTP path that will be requested during health checking.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">retriableStatuses</span>
+  <span class="type-badge">[]integer</span>
+  <div class="leaf-desc">RetriableStatuses defines a list of HTTP response statuses considered retriable.
+Responses matching these statuses count towards the unhealthy threshold but
+do not result in the host being considered immediately unhealthy.
+The expected statuses take precedence for any range overlaps with this field.
   </div>
 </div>
   </div>
@@ -14379,6 +14985,27 @@ Envoy will randomly select a value between 0 and the initial jitter value.<div c
   <div class="leaf-desc">Interval defines the time between active health checks.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
   </div>
 </div>
+<details class="prop">
+<summary>
+  <span class="prop-name">overrides</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Overrides defines the configuration of the overriding health check settings for all endpoints
+in the backend cluster. This allows customization of port and other settings that may differ
+from the main service configuration.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port overrides the health check port.
+If not set, the endpoint&#39;s serving port is used for health checks.
+This is useful when health checks are served on a different port than
+the main service port (e.g., port 443 for service, port 9090 for health checks).<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <details class="prop">
 <summary>
   <span class="prop-name">tcp</span>
@@ -14461,7 +15088,10 @@ It&#39;s required while the health checker type is TCP.</div>
 <div class="prop-leaf">
   <span class="prop-name">unhealthyThreshold</span>
   <span class="type-badge">integer</span>
-  <div class="leaf-desc">UnhealthyThreshold defines the number of unhealthy health checks required before a backend host is marked unhealthy.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  <div class="leaf-desc">UnhealthyThreshold defines the number of unhealthy health checks required before a backend host is marked unhealthy.
+Without RetriableStatuses configured, any health check failure results in the host being immediately
+considered unhealthy. When RetriableStatuses is set, health checks returning those statuses are retried
+up to this threshold before the host is marked unhealthy.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
   </div>
 </div>
   </div>
@@ -14483,6 +15113,13 @@ as load increases. If not set, the default value is 50%. To disable panic mode, 
 </summary>
 <div class="prop-content"><div class="prop-desc">Passive passive check configuration</div>
   <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">alwaysEjectOneEndpoint</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">AlwaysEjectOneEndpoint defines whether at least one host should be ejected,
+regardless of MaxEjectionPercent.
+  </div>
+</div>
 <div class="prop-leaf">
   <span class="prop-name">baseEjectionTime</span>
   <span class="type-badge">string</span>
@@ -14525,7 +15162,7 @@ Defaults to 85.<div class="leaf-constraints">format: int32</div><div class="leaf
 <div class="prop-leaf">
   <span class="prop-name">maxEjectionPercent</span>
   <span class="type-badge">integer</span>
-  <div class="leaf-desc">MaxEjectionPercent sets the maximum percentage of hosts in a cluster that can be ejected.<div class="leaf-constraints">format: int32</div>
+  <div class="leaf-desc">MaxEjectionPercent sets the maximum percentage of hosts in a cluster that can be ejected.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -14547,6 +15184,41 @@ Defaults to 85.<div class="leaf-constraints">format: int32</div><div class="leaf
 </summary>
 <div class="prop-content"><div class="prop-desc">HTTP2 provides HTTP/2 configuration for backend connections.</div>
   <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">connectionKeepalive</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ConnectionKeepalive configures HTTP/2 connection keepalive using PING frames.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">idleInterval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">IdleInterval specifies how long a connection must be idle before a PING is sent.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Interval specifies how often to send HTTP/2 PING frames to keep the connection alive.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">intervalJitter</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">IntervalJitter specifies a random jitter percentage added to each interval.
+Defaults to 15% if not specified.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Timeout specifies how long to wait for a PING response before considering the connection dead.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <div class="prop-leaf">
   <span class="prop-name">initialConnectionWindowSize</span>
   <span class="type-badge">object</span>
@@ -14588,6 +15260,64 @@ Default: TerminateConnection
 <div class="prop-content"><div class="prop-desc">LoadBalancer policy to apply when routing traffic from the gateway to
 the backend endpoints. Defaults to `LeastRequest`.</div>
   <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">backendUtilization</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">BackendUtilization defines the configuration when the load balancer type is
+set to BackendUtilization.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">blackoutPeriod</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">A given endpoint must report load metrics continuously for at least this long before the endpoint weight will be used.
+Default is 10s.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">errorUtilizationPenaltyPercent</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">ErrorUtilizationPenaltyPercent adjusts endpoint weights based on the error rate (eps/qps).
+This is expressed as a percentage-based integer where 100 represents 1.0, 150 represents 1.5, etc.
+
+For example:
+- 100 =&gt; 1.0x
+- 120 =&gt; 1.2x
+- 200 =&gt; 2.0x
+
+Must be non-negative.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">keepResponseHeaders</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">KeepResponseHeaders keeps the ORCA load report headers/trailers before sending the response to the client.
+Defaults to false.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metricNamesForComputingUtilization</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Metric names used to compute utilization if application_utilization is not set.
+For map fields in ORCA proto, use the form &#34;&lt;map_field&gt;.&lt;key&gt;&#34;, e.g., &#34;named_metrics.foo&#34;.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">weightExpirationPeriod</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">If a given endpoint has not reported load metrics in this long, stop using the reported weight. Defaults to 3m.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">weightUpdatePeriod</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">How often endpoint weights are recalculated. Values less than 100ms are capped at 100ms. Default 1s.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <details class="prop">
 <summary>
   <span class="prop-name">consistentHash</span>
@@ -14701,6 +15431,43 @@ Deprecated: use Headers instead</div>
 </details>
 <details class="prop">
 <summary>
+  <span class="prop-name">dynamicModule</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">DynamicModule defines the configuration when the load balancer type is
+set to DynamicModule. The referenced module must be registered in the
+EnvoyProxy resource&#39;s dynamicModules allowlist.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">config</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Config is optional configuration for the module&#39;s load balancer
+implementation. This is serialized and passed to the module&#39;s
+initialization function.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lbPolicyName</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">LBPolicyName identifies a specific load balancer implementation within
+the dynamic module. A single shared library can contain multiple LB
+policy implementations. This value is passed to the module&#39;s
+initialization function to select the appropriate implementation.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name references a dynamic module registered in the EnvoyProxy resource&#39;s
+dynamicModules list. The referenced module must exist in the registry;
+otherwise, the policy will be rejected.<div class="leaf-constraints">pattern: ^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
   <span class="prop-name">endpointOverride</span>
   <span class="type-badge">object</span>
 </summary>
@@ -14738,7 +15505,7 @@ The IPv6 address is enclosed in square brackets.
 </summary>
 <div class="prop-content"><div class="prop-desc">SlowStart defines the configuration related to the slow start load balancer policy.
 If set, during slow start window, traffic sent to the newly added hosts will gradually increase.
-Currently this is only supported for RoundRobin and LeastRequest load balancers</div>
+Supported for RoundRobin, LeastRequest, and BackendUtilization load balancers.</div>
   <div class="prop-children">
 <div class="prop-leaf">
   <span class="prop-name">window</span>
@@ -14760,7 +15527,9 @@ Valid LoadBalancerType values are
 &#34;ConsistentHash&#34;,
 &#34;LeastRequest&#34;,
 &#34;Random&#34;,
-&#34;RoundRobin&#34;.<div class="leaf-constraints">enum: ConsistentHash, LeastRequest, Random, RoundRobin</div>
+&#34;RoundRobin&#34;,
+&#34;BackendUtilization&#34;,
+&#34;DynamicModule&#34;.<div class="leaf-constraints">enum: ConsistentHash, LeastRequest, Random, RoundRobin, BackendUtilization, DynamicModule</div>
   </div>
 </div>
 <details class="prop">
@@ -14810,6 +15579,34 @@ override. This is useful for protecting zones with fewer endpoints.<div class="l
   </div>
 </div>
 </details>
+<details class="prop">
+<summary>
+  <span class="prop-name">weightedZones</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">WeightedZones configures weight-based traffic distribution across locality zones.
+Traffic is distributed proportionally based on the sum of all zone weights.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">weight</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Weight defines the weight for this locality.
+Higher values receive more traffic. The actual traffic distribution
+is proportional to this value relative to other localities.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">zone</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Zone specifies the topology zone this weight applies to.
+The value should match the topology.kubernetes.io/zone label
+of the nodes where endpoints are running.
+Zones not listed in the configuration receive a default weight of 1.
+  </div>
+</div>
+  </div>
+</div>
+</details>
   </div>
 </div>
 </details>
@@ -14826,7 +15623,7 @@ override. This is useful for protecting zones with fewer endpoints.<div class="l
 <div class="prop-leaf">
   <span class="prop-name">version</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Version of ProxyProtol
+  <div class="leaf-desc">Version of ProxyProtocol
 Valid ProxyProtocolVersion values are
 &#34;V1&#34;
 &#34;V2&#34;<div class="leaf-constraints">enum: V1, V2</div>
@@ -15004,6 +15801,13 @@ When set to &#34;0s&#34;, no max duration is applied and streams can run indefin
   <div class="leaf-desc">RequestTimeout is the time until which entire response is received from the upstream.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
   </div>
 </div>
+<div class="prop-leaf">
+  <span class="prop-name">streamIdleTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc"> The stream idle timeout defines the amount of time a stream can exist without any upstream or downstream activity.
+ If not specified, StreamIdleTimeout is inherited from the listener-level setting, which can be configured via ClientTrafficPolicy.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
   </div>
 </div>
 </details>
@@ -15054,7 +15858,13 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+&lt;gateway:experimental:description&gt;
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2
+&lt;/gateway:experimental:description&gt;
+
+&lt;gateway:experimental:validation:Pattern=`^[!-~]&#43;([\t ]?[!-~]&#43;)*$`&gt;<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -15064,6 +15874,7 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
   <span class="prop-name">host</span>
   <span class="type-badge">string</span>
   <div class="leaf-desc">Host define the extension service hostname.
+
 Deprecated: Use BackendRefs instead.
   </div>
 </div>
@@ -15071,6 +15882,7 @@ Deprecated: Use BackendRefs instead.
   <span class="prop-name">port</span>
   <span class="type-badge">integer</span>
   <div class="leaf-desc">Port defines the port the extension service is exposed on.
+
 Deprecated: Use BackendRefs instead.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
   </div>
 </div>
@@ -15109,7 +15921,7 @@ Deprecated: Use ResourceAttributes instead.
 If type not defined, the setting would apply to:
 (1) All Routes.
 (2) Listeners if and only if Envoy does not find a matching route for a request.
-If type is defined, the accesslog settings would apply to the relevant component (as-is).<div class="leaf-constraints">enum: Listener, Route</div>
+If type is defined, the accesslog settings would apply to the relevant component (as-is).<div class="leaf-constraints">enum: Listener, Route, Upstream</div>
   </div>
 </div>
   </div>
@@ -15140,6 +15952,16 @@ The supported operators for this pattern are:
 Only xDS Clusters created for HTTPRoute and GRPCRoute are currently supported.
 Default: `%ROUTE_KIND%/%ROUTE_NAMESPACE%/%ROUTE_NAME%/rule/%ROUTE_RULE_NUMBER%`
 Example: `httproute/my-ns/my-route/rule/0`
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">enableGRPCStats</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">EnableGRPCStats enables the gRPC stats filter on listeners.
+This is enabled by default for GRPCRoute and opt-in for HTTPRoute.
+In general, gRPC traffic should be handled via GRPCRoute, but there are cases where
+users want to route gRPC using HTTPRoute for its richer matching capabilities.
+Therefore, we enable this behavior only when it is explicitly opted in.
   </div>
 </div>
 <div class="prop-leaf">
@@ -15491,6 +16313,51 @@ Default: unlimited.<div class="leaf-constraints">format: int64</div><div class="
   </div>
 </div>
 </details>
+<details class="prop">
+<summary>
+  <span class="prop-name">retryBudget</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RetryBudget provides settings for retry budget, which limits the number of retries in a given percentage.
+RetryBudget take precedence over maxParallelRetries.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">minRetryConcurrency</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MinRetryConcurrency specifies the minimum retry concurrency allowed for the retry budget.
+For example, a budget of 20% with a minimum retry concurrency of 3
+will allow 5 active retries while there are 25 active requests.
+If there are 2 active requests, there are still 3 active retries
+allowed because of the minimum retry concurrency.
+Defaults to 3.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">percent</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Percent specifies the limit on concurrent retries as a percentage [0, 100] of
+the sum of active requests and active pending requests.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">denominator</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">numerator</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
   </div>
 </div>
 </details>
@@ -15680,8 +16547,9 @@ Defaults to 200 only
 <div class="prop-leaf">
   <span class="prop-name">hostname</span>
   <span class="type-badge">string</span>
-  <div class="leaf-desc">Hostname defines the HTTP host that will be requested during health checking.
-Default: HTTPRoute or GRPCRoute hostname.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  <div class="leaf-desc">Hostname defines the HTTP Host header used for active HTTP health checks.
+Host selection uses this order: this field, the associated Backend endpoint
+hostname if available, then the effective Route hostname.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -15695,6 +16563,15 @@ Defaults to GET
   <span class="prop-name">path</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
   <div class="leaf-desc">Path defines the HTTP path that will be requested during health checking.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">retriableStatuses</span>
+  <span class="type-badge">[]integer</span>
+  <div class="leaf-desc">RetriableStatuses defines a list of HTTP response statuses considered retriable.
+Responses matching these statuses count towards the unhealthy threshold but
+do not result in the host being considered immediately unhealthy.
+The expected statuses take precedence for any range overlaps with this field.
   </div>
 </div>
   </div>
@@ -15713,6 +16590,27 @@ Envoy will randomly select a value between 0 and the initial jitter value.<div c
   <div class="leaf-desc">Interval defines the time between active health checks.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
   </div>
 </div>
+<details class="prop">
+<summary>
+  <span class="prop-name">overrides</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Overrides defines the configuration of the overriding health check settings for all endpoints
+in the backend cluster. This allows customization of port and other settings that may differ
+from the main service configuration.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port overrides the health check port.
+If not set, the endpoint&#39;s serving port is used for health checks.
+This is useful when health checks are served on a different port than
+the main service port (e.g., port 443 for service, port 9090 for health checks).<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <details class="prop">
 <summary>
   <span class="prop-name">tcp</span>
@@ -15795,7 +16693,10 @@ It&#39;s required while the health checker type is TCP.</div>
 <div class="prop-leaf">
   <span class="prop-name">unhealthyThreshold</span>
   <span class="type-badge">integer</span>
-  <div class="leaf-desc">UnhealthyThreshold defines the number of unhealthy health checks required before a backend host is marked unhealthy.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  <div class="leaf-desc">UnhealthyThreshold defines the number of unhealthy health checks required before a backend host is marked unhealthy.
+Without RetriableStatuses configured, any health check failure results in the host being immediately
+considered unhealthy. When RetriableStatuses is set, health checks returning those statuses are retried
+up to this threshold before the host is marked unhealthy.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
   </div>
 </div>
   </div>
@@ -15817,6 +16718,13 @@ as load increases. If not set, the default value is 50%. To disable panic mode, 
 </summary>
 <div class="prop-content"><div class="prop-desc">Passive passive check configuration</div>
   <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">alwaysEjectOneEndpoint</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">AlwaysEjectOneEndpoint defines whether at least one host should be ejected,
+regardless of MaxEjectionPercent.
+  </div>
+</div>
 <div class="prop-leaf">
   <span class="prop-name">baseEjectionTime</span>
   <span class="type-badge">string</span>
@@ -15859,7 +16767,7 @@ Defaults to 85.<div class="leaf-constraints">format: int32</div><div class="leaf
 <div class="prop-leaf">
   <span class="prop-name">maxEjectionPercent</span>
   <span class="type-badge">integer</span>
-  <div class="leaf-desc">MaxEjectionPercent sets the maximum percentage of hosts in a cluster that can be ejected.<div class="leaf-constraints">format: int32</div>
+  <div class="leaf-desc">MaxEjectionPercent sets the maximum percentage of hosts in a cluster that can be ejected.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -15881,6 +16789,41 @@ Defaults to 85.<div class="leaf-constraints">format: int32</div><div class="leaf
 </summary>
 <div class="prop-content"><div class="prop-desc">HTTP2 provides HTTP/2 configuration for backend connections.</div>
   <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">connectionKeepalive</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ConnectionKeepalive configures HTTP/2 connection keepalive using PING frames.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">idleInterval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">IdleInterval specifies how long a connection must be idle before a PING is sent.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Interval specifies how often to send HTTP/2 PING frames to keep the connection alive.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">intervalJitter</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">IntervalJitter specifies a random jitter percentage added to each interval.
+Defaults to 15% if not specified.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Timeout specifies how long to wait for a PING response before considering the connection dead.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <div class="prop-leaf">
   <span class="prop-name">initialConnectionWindowSize</span>
   <span class="type-badge">object</span>
@@ -15922,6 +16865,64 @@ Default: TerminateConnection
 <div class="prop-content"><div class="prop-desc">LoadBalancer policy to apply when routing traffic from the gateway to
 the backend endpoints. Defaults to `LeastRequest`.</div>
   <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">backendUtilization</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">BackendUtilization defines the configuration when the load balancer type is
+set to BackendUtilization.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">blackoutPeriod</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">A given endpoint must report load metrics continuously for at least this long before the endpoint weight will be used.
+Default is 10s.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">errorUtilizationPenaltyPercent</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">ErrorUtilizationPenaltyPercent adjusts endpoint weights based on the error rate (eps/qps).
+This is expressed as a percentage-based integer where 100 represents 1.0, 150 represents 1.5, etc.
+
+For example:
+- 100 =&gt; 1.0x
+- 120 =&gt; 1.2x
+- 200 =&gt; 2.0x
+
+Must be non-negative.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">keepResponseHeaders</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">KeepResponseHeaders keeps the ORCA load report headers/trailers before sending the response to the client.
+Defaults to false.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metricNamesForComputingUtilization</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Metric names used to compute utilization if application_utilization is not set.
+For map fields in ORCA proto, use the form &#34;&lt;map_field&gt;.&lt;key&gt;&#34;, e.g., &#34;named_metrics.foo&#34;.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">weightExpirationPeriod</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">If a given endpoint has not reported load metrics in this long, stop using the reported weight. Defaults to 3m.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">weightUpdatePeriod</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">How often endpoint weights are recalculated. Values less than 100ms are capped at 100ms. Default 1s.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <details class="prop">
 <summary>
   <span class="prop-name">consistentHash</span>
@@ -16035,6 +17036,43 @@ Deprecated: use Headers instead</div>
 </details>
 <details class="prop">
 <summary>
+  <span class="prop-name">dynamicModule</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">DynamicModule defines the configuration when the load balancer type is
+set to DynamicModule. The referenced module must be registered in the
+EnvoyProxy resource&#39;s dynamicModules allowlist.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">config</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Config is optional configuration for the module&#39;s load balancer
+implementation. This is serialized and passed to the module&#39;s
+initialization function.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lbPolicyName</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">LBPolicyName identifies a specific load balancer implementation within
+the dynamic module. A single shared library can contain multiple LB
+policy implementations. This value is passed to the module&#39;s
+initialization function to select the appropriate implementation.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name references a dynamic module registered in the EnvoyProxy resource&#39;s
+dynamicModules list. The referenced module must exist in the registry;
+otherwise, the policy will be rejected.<div class="leaf-constraints">pattern: ^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
   <span class="prop-name">endpointOverride</span>
   <span class="type-badge">object</span>
 </summary>
@@ -16072,7 +17110,7 @@ The IPv6 address is enclosed in square brackets.
 </summary>
 <div class="prop-content"><div class="prop-desc">SlowStart defines the configuration related to the slow start load balancer policy.
 If set, during slow start window, traffic sent to the newly added hosts will gradually increase.
-Currently this is only supported for RoundRobin and LeastRequest load balancers</div>
+Supported for RoundRobin, LeastRequest, and BackendUtilization load balancers.</div>
   <div class="prop-children">
 <div class="prop-leaf">
   <span class="prop-name">window</span>
@@ -16094,7 +17132,9 @@ Valid LoadBalancerType values are
 &#34;ConsistentHash&#34;,
 &#34;LeastRequest&#34;,
 &#34;Random&#34;,
-&#34;RoundRobin&#34;.<div class="leaf-constraints">enum: ConsistentHash, LeastRequest, Random, RoundRobin</div>
+&#34;RoundRobin&#34;,
+&#34;BackendUtilization&#34;,
+&#34;DynamicModule&#34;.<div class="leaf-constraints">enum: ConsistentHash, LeastRequest, Random, RoundRobin, BackendUtilization, DynamicModule</div>
   </div>
 </div>
 <details class="prop">
@@ -16144,6 +17184,34 @@ override. This is useful for protecting zones with fewer endpoints.<div class="l
   </div>
 </div>
 </details>
+<details class="prop">
+<summary>
+  <span class="prop-name">weightedZones</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">WeightedZones configures weight-based traffic distribution across locality zones.
+Traffic is distributed proportionally based on the sum of all zone weights.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">weight</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Weight defines the weight for this locality.
+Higher values receive more traffic. The actual traffic distribution
+is proportional to this value relative to other localities.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">zone</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Zone specifies the topology zone this weight applies to.
+The value should match the topology.kubernetes.io/zone label
+of the nodes where endpoints are running.
+Zones not listed in the configuration receive a default weight of 1.
+  </div>
+</div>
+  </div>
+</div>
+</details>
   </div>
 </div>
 </details>
@@ -16160,7 +17228,7 @@ override. This is useful for protecting zones with fewer endpoints.<div class="l
 <div class="prop-leaf">
   <span class="prop-name">version</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Version of ProxyProtol
+  <div class="leaf-desc">Version of ProxyProtocol
 Valid ProxyProtocolVersion values are
 &#34;V1&#34;
 &#34;V2&#34;<div class="leaf-constraints">enum: V1, V2</div>
@@ -16338,6 +17406,13 @@ When set to &#34;0s&#34;, no max duration is applied and streams can run indefin
   <div class="leaf-desc">RequestTimeout is the time until which entire response is received from the upstream.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
   </div>
 </div>
+<div class="prop-leaf">
+  <span class="prop-name">streamIdleTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc"> The stream idle timeout defines the amount of time a stream can exist without any upstream or downstream activity.
+ If not specified, StreamIdleTimeout is inherited from the listener-level setting, which can be configured via ClientTrafficPolicy.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
   </div>
 </div>
 </details>
@@ -16388,7 +17463,13 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+&lt;gateway:experimental:description&gt;
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2
+&lt;/gateway:experimental:description&gt;
+
+&lt;gateway:experimental:validation:Pattern=`^[!-~]&#43;([\t ]?[!-~]&#43;)*$`&gt;<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -16398,6 +17479,7 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
   <span class="prop-name">host</span>
   <span class="type-badge">string</span>
   <div class="leaf-desc">Host define the service hostname.
+
 Deprecated: Use BackendRefs instead.
   </div>
 </div>
@@ -16405,6 +17487,7 @@ Deprecated: Use BackendRefs instead.
   <span class="prop-name">port</span>
   <span class="type-badge">integer</span>
   <div class="leaf-desc">Port defines the port the service is exposed on.
+
 Deprecated: Use BackendRefs instead.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 65535</div>
   </div>
 </div>
@@ -16720,6 +17803,51 @@ Default: unlimited.<div class="leaf-constraints">format: int64</div><div class="
   </div>
 </div>
 </details>
+<details class="prop">
+<summary>
+  <span class="prop-name">retryBudget</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">RetryBudget provides settings for retry budget, which limits the number of retries in a given percentage.
+RetryBudget take precedence over maxParallelRetries.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">minRetryConcurrency</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">MinRetryConcurrency specifies the minimum retry concurrency allowed for the retry budget.
+For example, a budget of 20% with a minimum retry concurrency of 3
+will allow 5 active retries while there are 25 active requests.
+If there are 2 active requests, there are still 3 active retries
+allowed because of the minimum retry concurrency.
+Defaults to 3.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">percent</span>
+  <span class="type-badge">object</span> <span class="required-badge">required</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Percent specifies the limit on concurrent retries as a percentage [0, 100] of
+the sum of active requests and active pending requests.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">denominator</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">numerator</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
   </div>
 </div>
 </details>
@@ -16909,8 +18037,9 @@ Defaults to 200 only
 <div class="prop-leaf">
   <span class="prop-name">hostname</span>
   <span class="type-badge">string</span>
-  <div class="leaf-desc">Hostname defines the HTTP host that will be requested during health checking.
-Default: HTTPRoute or GRPCRoute hostname.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  <div class="leaf-desc">Hostname defines the HTTP Host header used for active HTTP health checks.
+Host selection uses this order: this field, the associated Backend endpoint
+hostname if available, then the effective Route hostname.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -16924,6 +18053,15 @@ Defaults to GET
   <span class="prop-name">path</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
   <div class="leaf-desc">Path defines the HTTP path that will be requested during health checking.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">retriableStatuses</span>
+  <span class="type-badge">[]integer</span>
+  <div class="leaf-desc">RetriableStatuses defines a list of HTTP response statuses considered retriable.
+Responses matching these statuses count towards the unhealthy threshold but
+do not result in the host being considered immediately unhealthy.
+The expected statuses take precedence for any range overlaps with this field.
   </div>
 </div>
   </div>
@@ -16942,6 +18080,27 @@ Envoy will randomly select a value between 0 and the initial jitter value.<div c
   <div class="leaf-desc">Interval defines the time between active health checks.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
   </div>
 </div>
+<details class="prop">
+<summary>
+  <span class="prop-name">overrides</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Overrides defines the configuration of the overriding health check settings for all endpoints
+in the backend cluster. This allows customization of port and other settings that may differ
+from the main service configuration.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">port</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">Port overrides the health check port.
+If not set, the endpoint&#39;s serving port is used for health checks.
+This is useful when health checks are served on a different port than
+the main service port (e.g., port 443 for service, port 9090 for health checks).<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div><div class="leaf-constraints">maximum: 65535</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <details class="prop">
 <summary>
   <span class="prop-name">tcp</span>
@@ -17024,7 +18183,10 @@ It&#39;s required while the health checker type is TCP.</div>
 <div class="prop-leaf">
   <span class="prop-name">unhealthyThreshold</span>
   <span class="type-badge">integer</span>
-  <div class="leaf-desc">UnhealthyThreshold defines the number of unhealthy health checks required before a backend host is marked unhealthy.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  <div class="leaf-desc">UnhealthyThreshold defines the number of unhealthy health checks required before a backend host is marked unhealthy.
+Without RetriableStatuses configured, any health check failure results in the host being immediately
+considered unhealthy. When RetriableStatuses is set, health checks returning those statuses are retried
+up to this threshold before the host is marked unhealthy.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
   </div>
 </div>
   </div>
@@ -17046,6 +18208,13 @@ as load increases. If not set, the default value is 50%. To disable panic mode, 
 </summary>
 <div class="prop-content"><div class="prop-desc">Passive passive check configuration</div>
   <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">alwaysEjectOneEndpoint</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">AlwaysEjectOneEndpoint defines whether at least one host should be ejected,
+regardless of MaxEjectionPercent.
+  </div>
+</div>
 <div class="prop-leaf">
   <span class="prop-name">baseEjectionTime</span>
   <span class="type-badge">string</span>
@@ -17088,7 +18257,7 @@ Defaults to 85.<div class="leaf-constraints">format: int32</div><div class="leaf
 <div class="prop-leaf">
   <span class="prop-name">maxEjectionPercent</span>
   <span class="type-badge">integer</span>
-  <div class="leaf-desc">MaxEjectionPercent sets the maximum percentage of hosts in a cluster that can be ejected.<div class="leaf-constraints">format: int32</div>
+  <div class="leaf-desc">MaxEjectionPercent sets the maximum percentage of hosts in a cluster that can be ejected.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -17110,6 +18279,41 @@ Defaults to 85.<div class="leaf-constraints">format: int32</div><div class="leaf
 </summary>
 <div class="prop-content"><div class="prop-desc">HTTP2 provides HTTP/2 configuration for backend connections.</div>
   <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">connectionKeepalive</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ConnectionKeepalive configures HTTP/2 connection keepalive using PING frames.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">idleInterval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">IdleInterval specifies how long a connection must be idle before a PING is sent.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Interval specifies how often to send HTTP/2 PING frames to keep the connection alive.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">intervalJitter</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">IntervalJitter specifies a random jitter percentage added to each interval.
+Defaults to 15% if not specified.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Timeout specifies how long to wait for a PING response before considering the connection dead.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <div class="prop-leaf">
   <span class="prop-name">initialConnectionWindowSize</span>
   <span class="type-badge">object</span>
@@ -17151,6 +18355,64 @@ Default: TerminateConnection
 <div class="prop-content"><div class="prop-desc">LoadBalancer policy to apply when routing traffic from the gateway to
 the backend endpoints. Defaults to `LeastRequest`.</div>
   <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">backendUtilization</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">BackendUtilization defines the configuration when the load balancer type is
+set to BackendUtilization.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">blackoutPeriod</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">A given endpoint must report load metrics continuously for at least this long before the endpoint weight will be used.
+Default is 10s.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">errorUtilizationPenaltyPercent</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">ErrorUtilizationPenaltyPercent adjusts endpoint weights based on the error rate (eps/qps).
+This is expressed as a percentage-based integer where 100 represents 1.0, 150 represents 1.5, etc.
+
+For example:
+- 100 =&gt; 1.0x
+- 120 =&gt; 1.2x
+- 200 =&gt; 2.0x
+
+Must be non-negative.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">keepResponseHeaders</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">KeepResponseHeaders keeps the ORCA load report headers/trailers before sending the response to the client.
+Defaults to false.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">metricNamesForComputingUtilization</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Metric names used to compute utilization if application_utilization is not set.
+For map fields in ORCA proto, use the form &#34;&lt;map_field&gt;.&lt;key&gt;&#34;, e.g., &#34;named_metrics.foo&#34;.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">weightExpirationPeriod</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">If a given endpoint has not reported load metrics in this long, stop using the reported weight. Defaults to 3m.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">weightUpdatePeriod</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">How often endpoint weights are recalculated. Values less than 100ms are capped at 100ms. Default 1s.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <details class="prop">
 <summary>
   <span class="prop-name">consistentHash</span>
@@ -17264,6 +18526,43 @@ Deprecated: use Headers instead</div>
 </details>
 <details class="prop">
 <summary>
+  <span class="prop-name">dynamicModule</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">DynamicModule defines the configuration when the load balancer type is
+set to DynamicModule. The referenced module must be registered in the
+EnvoyProxy resource&#39;s dynamicModules allowlist.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">config</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">Config is optional configuration for the module&#39;s load balancer
+implementation. This is serialized and passed to the module&#39;s
+initialization function.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">lbPolicyName</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">LBPolicyName identifies a specific load balancer implementation within
+the dynamic module. A single shared library can contain multiple LB
+policy implementations. This value is passed to the module&#39;s
+initialization function to select the appropriate implementation.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">name</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Name references a dynamic module registered in the EnvoyProxy resource&#39;s
+dynamicModules list. The referenced module must exist in the registry;
+otherwise, the policy will be rejected.<div class="leaf-constraints">pattern: ^[a-z0-9]([a-z0-9.-]*[a-z0-9])?$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
   <span class="prop-name">endpointOverride</span>
   <span class="type-badge">object</span>
 </summary>
@@ -17301,7 +18600,7 @@ The IPv6 address is enclosed in square brackets.
 </summary>
 <div class="prop-content"><div class="prop-desc">SlowStart defines the configuration related to the slow start load balancer policy.
 If set, during slow start window, traffic sent to the newly added hosts will gradually increase.
-Currently this is only supported for RoundRobin and LeastRequest load balancers</div>
+Supported for RoundRobin, LeastRequest, and BackendUtilization load balancers.</div>
   <div class="prop-children">
 <div class="prop-leaf">
   <span class="prop-name">window</span>
@@ -17323,7 +18622,9 @@ Valid LoadBalancerType values are
 &#34;ConsistentHash&#34;,
 &#34;LeastRequest&#34;,
 &#34;Random&#34;,
-&#34;RoundRobin&#34;.<div class="leaf-constraints">enum: ConsistentHash, LeastRequest, Random, RoundRobin</div>
+&#34;RoundRobin&#34;,
+&#34;BackendUtilization&#34;,
+&#34;DynamicModule&#34;.<div class="leaf-constraints">enum: ConsistentHash, LeastRequest, Random, RoundRobin, BackendUtilization, DynamicModule</div>
   </div>
 </div>
 <details class="prop">
@@ -17373,6 +18674,34 @@ override. This is useful for protecting zones with fewer endpoints.<div class="l
   </div>
 </div>
 </details>
+<details class="prop">
+<summary>
+  <span class="prop-name">weightedZones</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">WeightedZones configures weight-based traffic distribution across locality zones.
+Traffic is distributed proportionally based on the sum of all zone weights.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">weight</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Weight defines the weight for this locality.
+Higher values receive more traffic. The actual traffic distribution
+is proportional to this value relative to other localities.<div class="leaf-constraints">format: int32</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">zone</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Zone specifies the topology zone this weight applies to.
+The value should match the topology.kubernetes.io/zone label
+of the nodes where endpoints are running.
+Zones not listed in the configuration receive a default weight of 1.
+  </div>
+</div>
+  </div>
+</div>
+</details>
   </div>
 </div>
 </details>
@@ -17389,7 +18718,7 @@ override. This is useful for protecting zones with fewer endpoints.<div class="l
 <div class="prop-leaf">
   <span class="prop-name">version</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Version of ProxyProtol
+  <div class="leaf-desc">Version of ProxyProtocol
 Valid ProxyProtocolVersion values are
 &#34;V1&#34;
 &#34;V2&#34;<div class="leaf-constraints">enum: V1, V2</div>
@@ -17567,6 +18896,13 @@ When set to &#34;0s&#34;, no max duration is applied and streams can run indefin
   <div class="leaf-desc">RequestTimeout is the time until which entire response is received from the upstream.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
   </div>
 </div>
+<div class="prop-leaf">
+  <span class="prop-name">streamIdleTimeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc"> The stream idle timeout defines the amount of time a stream can exist without any upstream or downstream activity.
+ If not specified, StreamIdleTimeout is inherited from the listener-level setting, which can be configured via ClientTrafficPolicy.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
   </div>
 </div>
 </details>
@@ -17597,6 +18933,7 @@ Default: 10 seconds.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms
   <span class="prop-name">host</span>
   <span class="type-badge">string</span>
   <div class="leaf-desc">Host define the provider service hostname.
+
 Deprecated: Use BackendRefs instead.
   </div>
 </div>
@@ -17631,7 +18968,13 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+&lt;gateway:experimental:description&gt;
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2
+&lt;/gateway:experimental:description&gt;
+
+&lt;gateway:experimental:validation:Pattern=`^[!-~]&#43;([\t ]?[!-~]&#43;)*$`&gt;<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -17644,6 +18987,45 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 It&#39;s recommended to follow semantic conventions: https://opentelemetry.io/docs/reference/specification/resource/semantic_conventions/
   </div>
 </div>
+<details class="prop">
+<summary>
+  <span class="prop-name">sampler</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Sampler controls whether spans are exported.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">samplingPercentage</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">SamplingPercentage controls the percentage of traces to sample.
+Defaults to 100% when not set.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">denominator</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">numerator</span>
+  <span class="type-badge">integer</span> <span class="required-badge">required</span>
+  <div class="leaf-desc"><div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Type is the sampler type.<div class="leaf-constraints">enum: AlwaysOn, AlwaysOff, TraceIdRatio, ParentBasedAlwaysOn, ParentBasedAlwaysOff, ParentBasedTraceIdRatio</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
   </div>
 </div>
 </details>
@@ -17651,6 +19033,7 @@ It&#39;s recommended to follow semantic conventions: https://opentelemetry.io/do
   <span class="prop-name">port</span>
   <span class="type-badge">integer</span>
   <div class="leaf-desc">Port defines the port the provider service is exposed on.
+
 Deprecated: Use BackendRefs instead.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div>
   </div>
 </div>

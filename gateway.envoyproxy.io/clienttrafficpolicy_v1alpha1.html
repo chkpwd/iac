@@ -435,6 +435,29 @@ Deprecated: Use ProxyProtocol instead.
 </div>
 <details class="prop">
 <summary>
+  <span class="prop-name">grpc</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">GRPC provides gRPC configuration on the listener.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">enableWeb</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">EnableWeb configures the gRPC-web filter on the listener.
+The gRPC-web filter allows clients (typically browsers) to make gRPC calls
+using HTTP/1.1 or HTTP/2.
+
+This is enabled by default for GRPCRoute and opt-in for HTTPRoute.
+In general, gRPC traffic should be handled via GRPCRoute, but there are cases where
+users want to route gRPC using HTTPRoute for its richer matching capabilities.
+Therefore, we enable this behavior only when it is explicitly opted in.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<details class="prop">
+<summary>
   <span class="prop-name">headers</span>
   <span class="type-badge">object</span>
 </summary>
@@ -493,7 +516,13 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+&lt;gateway:experimental:description&gt;
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2
+&lt;/gateway:experimental:description&gt;
+
+&lt;gateway:experimental:validation:Pattern=`^[!-~]&#43;([\t ]?[!-~]&#43;)*$`&gt;<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -537,7 +566,13 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+&lt;gateway:experimental:description&gt;
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2
+&lt;/gateway:experimental:description&gt;
+
+&lt;gateway:experimental:validation:Pattern=`^[!-~]&#43;([\t ]?[!-~]&#43;)*$`&gt;<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -625,7 +660,13 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+&lt;gateway:experimental:description&gt;
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2
+&lt;/gateway:experimental:description&gt;
+
+&lt;gateway:experimental:validation:Pattern=`^[!-~]&#43;([\t ]?[!-~]&#43;)*$`&gt;<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -686,7 +727,13 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+&lt;gateway:experimental:description&gt;
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2
+&lt;/gateway:experimental:description&gt;
+
+&lt;gateway:experimental:validation:Pattern=`^[!-~]&#43;([\t ]?[!-~]&#43;)*$`&gt;<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -730,7 +777,13 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+&lt;gateway:experimental:description&gt;
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2
+&lt;/gateway:experimental:description&gt;
+
+&lt;gateway:experimental:validation:Pattern=`^[!-~]&#43;([\t ]?[!-~]&#43;)*$`&gt;<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -818,7 +871,13 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+&lt;gateway:experimental:description&gt;
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2
+&lt;/gateway:experimental:description&gt;
+
+&lt;gateway:experimental:validation:Pattern=`^[!-~]&#43;([\t ]?[!-~]&#43;)*$`&gt;<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -833,6 +892,7 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
   <div class="leaf-desc">PreserveXRequestID configures Envoy to keep the X-Request-ID header if passed for a request that is edge
 (Edge request is the request from external clients to front Envoy) and not reset it, which is the current Envoy behaviour.
 Defaults to false and cannot be combined with RequestID.
+
 Deprecated: use RequestID=PreserveOrGenerate instead
   </div>
 </div>
@@ -958,6 +1018,35 @@ ClientTrafficPolicy invalid.
   </div>
 </div>
 </details>
+<details class="prop">
+<summary>
+  <span class="prop-name">ignoredUpgradeTypes</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">IgnoredUpgradeTypes specifies a list of upgrade types for which
+HTTP/1.1 Upgrade requests should be ignored by Envoy instead of being
+rejected with a 403 response. When a client sends an HTTP/1.1 request
+with Connection: Upgrade and an Upgrade header matching one of these
+matchers, Envoy will strip the upgrade headers and process the request
+as a normal HTTP/1.1 request.
+
+Example: To ignore TLS upgrade requests (RFC 2817), use a Prefix match with value &#34;TLS/&#34;.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">type</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Type specifies how to match against a string.<div class="leaf-constraints">enum: Exact, Prefix, Suffix, RegularExpression</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">value</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Value specifies the string value that the match must have.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 1024</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <div class="prop-leaf">
   <span class="prop-name">preserveHeaderCase</span>
   <span class="type-badge">boolean</span>
@@ -975,6 +1064,41 @@ By default, Envoy will lowercase all the headers.
 </summary>
 <div class="prop-content"><div class="prop-desc">HTTP2 provides HTTP/2 configuration on the listener.</div>
   <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">connectionKeepalive</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">ConnectionKeepalive configures HTTP/2 connection keepalive using PING frames.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">idleInterval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">IdleInterval specifies how long a connection must be idle before a PING is sent.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">interval</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Interval specifies how often to send HTTP/2 PING frames to keep the connection alive.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">intervalJitter</span>
+  <span class="type-badge">integer</span>
+  <div class="leaf-desc">IntervalJitter specifies a random jitter percentage added to each interval.
+Defaults to 15% if not specified.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 0</div><div class="leaf-constraints">maximum: 100</div>
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">timeout</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Timeout specifies how long to wait for a PING response before considering the connection dead.<div class="leaf-constraints">pattern: ^([0-9]{1,5}(h|m|s|ms)){1,4}$</div>
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <div class="prop-leaf">
   <span class="prop-name">initialConnectionWindowSize</span>
   <span class="type-badge">object</span>
@@ -1225,9 +1349,87 @@ merge patch.
 <div class="prop-leaf">
   <span class="prop-name">matchLabels</span>
   <span class="type-badge">object</span>
-  <div class="leaf-desc">MatchLabels are the set of label selectors for identifying the targeted resource
+  <div class="leaf-desc">MatchLabels are the set of label selectors for identifying the targeted resource.
   </div>
 </div>
+<details class="prop">
+<summary>
+  <span class="prop-name">namespaces</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Namespaces determines which namespaces are considered for target selection.
+
+If unspecified, only targets in the same namespace as this policy are considered.
+
+When specified, the effective set of namespaces is always constrained to the
+namespaces watched by Envoy Gateway.
+
+Selecting targets across namespaces requires a ReferenceGrant in the target
+namespace that allows this policy kind to reference the selected target kind.
+Cross-namespace targets without a matching ReferenceGrant are ignored.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">from</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">From indicates how namespaces are selected for this target selector.
+
+All means all namespaces watched by Envoy Gateway.
+Selector means namespaces watched by Envoy Gateway that match Selector.<div class="leaf-constraints">enum: Same, All, Selector</div>
+  </div>
+</div>
+<details class="prop">
+<summary>
+  <span class="prop-name">selector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">Selector selects namespaces when From is set to Selector.</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">matchExpressions is a list of label selector requirements. The requirements are ANDed.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">key is the label key that the selector applies to.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">operator represents a key&#39;s relationship to a set of values.
+Valid operators are In, NotIn, Exists and DoesNotExist.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">values is an array of string values. If the operator is In or NotIn,
+the values array must be non-empty. If the operator is Exists or DoesNotExist,
+the values array must be empty. This array is replaced during a strategic
+merge patch.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+map is equivalent to an element of matchExpressions, whose key field is &#34;key&#34;, the
+operator is &#34;In&#34;, and the values array contains only &#34;value&#34;. The requirements are ANDed.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+  </div>
+</div>
+</details>
   </div>
 </div>
 </details>
@@ -1357,6 +1559,8 @@ Typical Supported values are:
   <span class="type-badge">[]string</span>
   <div class="leaf-desc">Ciphers specifies the set of cipher suites supported when
 negotiating TLS 1.0 - 1.2. This setting has no effect for TLS 1.3.
+For the list of supported ciphers, please refer to the Envoy documentation:
+https://www.envoyproxy.io/docs/envoy/latest/api-v3/extensions/transport_sockets/tls/v3/common.proto#extensions-transport-sockets-tls-v3-tlsparameters
 In non-FIPS Envoy Proxy builds the default cipher list is:
 - [ECDHE-ECDSA-AES128-GCM-SHA256|ECDHE-ECDSA-CHACHA20-POLY1305]
 - [ECDHE-RSA-AES128-GCM-SHA256|ECDHE-RSA-CHACHA20-POLY1305]
@@ -1505,10 +1709,19 @@ Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9]
 </div>
 </details>
 <div class="prop-leaf">
+  <span class="prop-name">mode</span>
+  <span class="type-badge">string</span>
+  <div class="leaf-desc">Mode defines how the Gateway or Listener validates client certificates.
+If not specified, defaults to RequireAndVerify.<div class="leaf-constraints">enum: Request, RequireAny, VerifyIfGiven, RequireAndVerify</div>
+  </div>
+</div>
+<div class="prop-leaf">
   <span class="prop-name">optional</span>
   <span class="type-badge">boolean</span>
   <div class="leaf-desc">Optional set to true accepts connections even when a client doesn&#39;t present a certificate.
 Defaults to false, which rejects connections without a valid client certificate.
+
+Deprecated: Use Mode instead.
   </div>
 </div>
 <div class="prop-leaf">
@@ -1659,6 +1872,21 @@ In non-FIPS Envoy Proxy builds the default curves are:
 - P-256
 In builds using BoringSSL FIPS the default curve is:
 - P-256
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">fingerprints</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">Fingerprints specifies TLS client fingerprinting.
+When specified, a JAX fingerprint derived from the client’s TLS handshake
+is generated. The fingerprint can be logged in access logs or
+forwarded to upstream services using request headers.
+
+Fingerprinting is disabled if not specified.
+
+Supported values are:
+- JA3
+- JA4
   </div>
 </div>
 <div class="prop-leaf">

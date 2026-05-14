@@ -517,7 +517,7 @@ Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9]
   <span class="prop-name">rules</span>
   <span class="type-badge">[]object</span>
 </summary>
-<div class="prop-content"><div class="prop-desc">Rules are a list of HTTP matchers, filters and actions.</div><div class="prop-constraints">maxItems: 16</div>
+<div class="prop-content"><div class="prop-desc">Rules are a list of HTTP matchers, filters and actions.</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 16</div>
   <div class="prop-children">
 <details class="prop">
 <summary>
@@ -603,7 +603,7 @@ Support: Extended
   <div class="leaf-desc">AllowHeaders indicates which HTTP request headers are supported for
 accessing the requested resource.
 
-Header names are not case sensitive.
+Header names are not case-sensitive.
 
 Multiple header names in the value of the `Access-Control-Allow-Headers`
 response header are separated by a comma (&#34;,&#34;).
@@ -622,18 +622,21 @@ does not recognize by the client, it will also occur an error on the
 client side.
 
 A wildcard indicates that the requests with all HTTP headers are allowed.
-The `Access-Control-Allow-Headers` response header can only use `*`
-wildcard as value when the `AllowCredentials` field is false or omitted.
+If config contains the wildcard &#34;*&#34; in allowHeaders and the request is
+not credentialed, the `Access-Control-Allow-Headers` response header
+can either use the `*` wildcard or the value of
+Access-Control-Request-Headers from the request.
 
-When the `AllowCredentials` field is true and `AllowHeaders` field
-specified with the `*` wildcard, the gateway must specify one or more
+When the request is credentialed, the gateway must not specify the `*`
+wildcard in the `Access-Control-Allow-Headers` response header. When
+also the `AllowCredentials` field is true and `AllowHeaders` field
+is specified with the `*` wildcard, the gateway must specify one or more
 HTTP headers in the value of the `Access-Control-Allow-Headers` response
 header. The value of the header `Access-Control-Allow-Headers` is same as
 the `Access-Control-Request-Headers` header provided by the client. If
 the header `Access-Control-Request-Headers` is not included in the
 request, the gateway will omit the `Access-Control-Allow-Headers`
-response header, instead of specifying the `*` wildcard. A Gateway
-implementation may choose to add implementation-specific default headers.
+response header, instead of specifying the `*` wildcard.
 
 Support: Extended<div class="leaf-constraints">maxItems: 64</div>
   </div>
@@ -647,7 +650,7 @@ requested resource.
 Valid values are any method defined by RFC9110, along with the special
 value `*`, which represents all HTTP methods are allowed.
 
-Method names are case sensitive, so these values are also case-sensitive.
+Method names are case-sensitive, so these values are also case-sensitive.
 (See https://www.rfc-editor.org/rfc/rfc2616#section-5.1.1)
 
 Multiple method names in the value of the `Access-Control-Allow-Methods`
@@ -667,18 +670,21 @@ is not included in the list of methods specified by the response header
 `Access-Control-Allow-Methods`, it will present an error on the client
 side.
 
-The `Access-Control-Allow-Methods` response header can only use `*`
-wildcard as value when the `AllowCredentials` field is false or omitted.
+If config contains the wildcard &#34;*&#34; in allowMethods and the request is
+not credentialed, the `Access-Control-Allow-Methods` response header
+can either use the `*` wildcard or the value of
+Access-Control-Request-Method from the request.
 
-When the `AllowCredentials` field is true and `AllowMethods` field
+When the request is credentialed, the gateway must not specify the `*`
+wildcard in the `Access-Control-Allow-Methods` response header. When
+also the `AllowCredentials` field is true and `AllowMethods` field
 specified with the `*` wildcard, the gateway must specify one HTTP method
 in the value of the Access-Control-Allow-Methods response header. The
 value of the header `Access-Control-Allow-Methods` is same as the
 `Access-Control-Request-Method` header provided by the client. If the
 header `Access-Control-Request-Method` is not included in the request,
 the gateway will omit the `Access-Control-Allow-Methods` response header,
-instead of specifying the `*` wildcard. A Gateway implementation may
-choose to add implementation-specific default methods.
+instead of specifying the `*` wildcard.
 
 Support: Extended<div class="leaf-constraints">maxItems: 9</div>
   </div>
@@ -728,10 +734,19 @@ cross-origin response headers. Alternatively, the gateway responds with
 the CORS headers. The cross-origin request fails on the client side.
 Therefore, the client doesn&#39;t attempt the actual cross-origin request.
 
-The `Access-Control-Allow-Origin` response header can only use `*`
-wildcard as value when the `AllowCredentials` field is false or omitted.
+Conversely, if the request `Origin` matches one of the configured
+allowed origins, the gateway sets the response header
+`Access-Control-Allow-Origin` to the same value as the `Origin`
+header provided by the client.
 
-When the `AllowCredentials` field is true and `AllowOrigins` field
+When config has the wildcard (&#34;*&#34;) in allowOrigins, and the request
+is not credentialed (e.g., it is a preflight request), the
+`Access-Control-Allow-Origin` response header either contains the
+wildcard as well or the Origin from the request.
+
+When the request is credentialed, the gateway must not specify the `*`
+wildcard in the `Access-Control-Allow-Origin` response header. When
+also the `AllowCredentials` field is true and `AllowOrigins` field
 specified with the `*` wildcard, the gateway must return a single origin
 in the value of the `Access-Control-Allow-Origin` response header,
 instead of specifying the `*` wildcard. The value of the header
@@ -764,14 +779,18 @@ When an HTTP header name is specified using the `ExposeHeaders` field,
 this additional header will be exposed as part of the response to the
 client.
 
-Header names are not case sensitive.
+Header names are not case-sensitive.
 
 Multiple header names in the value of the `Access-Control-Expose-Headers`
 response header are separated by a comma (&#34;,&#34;).
 
 A wildcard indicates that the responses with all HTTP headers are exposed
 to clients. The `Access-Control-Expose-Headers` response header can only
-use `*` wildcard as value when the `AllowCredentials` field is false or omitted.
+use `*` wildcard as value when the request is not credentialed.
+
+When the `exposeHeaders` config field contains the &#34;*&#34; wildcard and
+the request is credentialed, the gateway cannot use the `*` wildcard in
+the `Access-Control-Expose-Headers` response header.
 
 Support: Extended<div class="leaf-constraints">maxItems: 64</div>
   </div>
@@ -787,7 +806,10 @@ The information provided by the `Access-Control-Allow-Methods` and
 client until the time specified by `Access-Control-Max-Age` elapses.
 
 The default value of `Access-Control-Max-Age` response header is 5
-(seconds).<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+(seconds).
+
+When the `MaxAge` field is unspecified, the gateway sets the response
+header &#34;Access-Control-Max-Age: 5&#34; by default.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
   </div>
 </div>
   </div>
@@ -974,7 +996,7 @@ will be sent to the authorization server.
 
 If this list is empty, then all headers must be sent.
 
-If the list has entries, only those entries must be sent.
+If the list has entries, only those entries must be sent.<div class="leaf-constraints">maxItems: 64</div>
   </div>
 </div>
   </div>
@@ -1016,7 +1038,7 @@ body of the request to the authorization server.
 So if the `forwardBody` stanza is unset, or `forwardBody.maxSize` is set
 to `0`, then `Content-Length` must be `0`. If `forwardBody.maxSize` is set
 to anything other than `0`, then the `Content-Length` of the authorization
-request must be set to the actual number of bytes forwarded.
+request must be set to the actual number of bytes forwarded.<div class="leaf-constraints">maxItems: 64</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -1026,7 +1048,7 @@ request must be set to the actual number of bytes forwarded.
 will be copied into the request to the backend.
 
 If this list is empty, then all headers from the authorization server
-except Authority or Host must be copied.
+except Authority or Host must be copied.<div class="leaf-constraints">maxItems: 64</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -1117,7 +1139,10 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2<div class="leaf-constraints">pattern: ^[!-~]+([\t ]?[!-~]+)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -1182,7 +1207,10 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2<div class="leaf-constraints">pattern: ^[!-~]+([\t ]?[!-~]+)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -1468,7 +1496,7 @@ Unknown values here must result in the implementation setting the
 Accepted Condition for the Route to `status: False`, with a
 Reason of `UnsupportedValue`.
 
-Support: Core<div class="leaf-constraints">enum: 301, 302</div>
+Support: Core<div class="leaf-constraints">enum: 301, 302, 303, 307, 308</div>
   </div>
 </div>
   </div>
@@ -1522,7 +1550,10 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2<div class="leaf-constraints">pattern: ^[!-~]+([\t ]?[!-~]+)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -1587,7 +1618,10 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2<div class="leaf-constraints">pattern: ^[!-~]+([\t ]?[!-~]+)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -1862,7 +1896,7 @@ Support: Extended
   <div class="leaf-desc">AllowHeaders indicates which HTTP request headers are supported for
 accessing the requested resource.
 
-Header names are not case sensitive.
+Header names are not case-sensitive.
 
 Multiple header names in the value of the `Access-Control-Allow-Headers`
 response header are separated by a comma (&#34;,&#34;).
@@ -1881,18 +1915,21 @@ does not recognize by the client, it will also occur an error on the
 client side.
 
 A wildcard indicates that the requests with all HTTP headers are allowed.
-The `Access-Control-Allow-Headers` response header can only use `*`
-wildcard as value when the `AllowCredentials` field is false or omitted.
+If config contains the wildcard &#34;*&#34; in allowHeaders and the request is
+not credentialed, the `Access-Control-Allow-Headers` response header
+can either use the `*` wildcard or the value of
+Access-Control-Request-Headers from the request.
 
-When the `AllowCredentials` field is true and `AllowHeaders` field
-specified with the `*` wildcard, the gateway must specify one or more
+When the request is credentialed, the gateway must not specify the `*`
+wildcard in the `Access-Control-Allow-Headers` response header. When
+also the `AllowCredentials` field is true and `AllowHeaders` field
+is specified with the `*` wildcard, the gateway must specify one or more
 HTTP headers in the value of the `Access-Control-Allow-Headers` response
 header. The value of the header `Access-Control-Allow-Headers` is same as
 the `Access-Control-Request-Headers` header provided by the client. If
 the header `Access-Control-Request-Headers` is not included in the
 request, the gateway will omit the `Access-Control-Allow-Headers`
-response header, instead of specifying the `*` wildcard. A Gateway
-implementation may choose to add implementation-specific default headers.
+response header, instead of specifying the `*` wildcard.
 
 Support: Extended<div class="leaf-constraints">maxItems: 64</div>
   </div>
@@ -1906,7 +1943,7 @@ requested resource.
 Valid values are any method defined by RFC9110, along with the special
 value `*`, which represents all HTTP methods are allowed.
 
-Method names are case sensitive, so these values are also case-sensitive.
+Method names are case-sensitive, so these values are also case-sensitive.
 (See https://www.rfc-editor.org/rfc/rfc2616#section-5.1.1)
 
 Multiple method names in the value of the `Access-Control-Allow-Methods`
@@ -1926,18 +1963,21 @@ is not included in the list of methods specified by the response header
 `Access-Control-Allow-Methods`, it will present an error on the client
 side.
 
-The `Access-Control-Allow-Methods` response header can only use `*`
-wildcard as value when the `AllowCredentials` field is false or omitted.
+If config contains the wildcard &#34;*&#34; in allowMethods and the request is
+not credentialed, the `Access-Control-Allow-Methods` response header
+can either use the `*` wildcard or the value of
+Access-Control-Request-Method from the request.
 
-When the `AllowCredentials` field is true and `AllowMethods` field
+When the request is credentialed, the gateway must not specify the `*`
+wildcard in the `Access-Control-Allow-Methods` response header. When
+also the `AllowCredentials` field is true and `AllowMethods` field
 specified with the `*` wildcard, the gateway must specify one HTTP method
 in the value of the Access-Control-Allow-Methods response header. The
 value of the header `Access-Control-Allow-Methods` is same as the
 `Access-Control-Request-Method` header provided by the client. If the
 header `Access-Control-Request-Method` is not included in the request,
 the gateway will omit the `Access-Control-Allow-Methods` response header,
-instead of specifying the `*` wildcard. A Gateway implementation may
-choose to add implementation-specific default methods.
+instead of specifying the `*` wildcard.
 
 Support: Extended<div class="leaf-constraints">maxItems: 9</div>
   </div>
@@ -1987,10 +2027,19 @@ cross-origin response headers. Alternatively, the gateway responds with
 the CORS headers. The cross-origin request fails on the client side.
 Therefore, the client doesn&#39;t attempt the actual cross-origin request.
 
-The `Access-Control-Allow-Origin` response header can only use `*`
-wildcard as value when the `AllowCredentials` field is false or omitted.
+Conversely, if the request `Origin` matches one of the configured
+allowed origins, the gateway sets the response header
+`Access-Control-Allow-Origin` to the same value as the `Origin`
+header provided by the client.
 
-When the `AllowCredentials` field is true and `AllowOrigins` field
+When config has the wildcard (&#34;*&#34;) in allowOrigins, and the request
+is not credentialed (e.g., it is a preflight request), the
+`Access-Control-Allow-Origin` response header either contains the
+wildcard as well or the Origin from the request.
+
+When the request is credentialed, the gateway must not specify the `*`
+wildcard in the `Access-Control-Allow-Origin` response header. When
+also the `AllowCredentials` field is true and `AllowOrigins` field
 specified with the `*` wildcard, the gateway must return a single origin
 in the value of the `Access-Control-Allow-Origin` response header,
 instead of specifying the `*` wildcard. The value of the header
@@ -2023,14 +2072,18 @@ When an HTTP header name is specified using the `ExposeHeaders` field,
 this additional header will be exposed as part of the response to the
 client.
 
-Header names are not case sensitive.
+Header names are not case-sensitive.
 
 Multiple header names in the value of the `Access-Control-Expose-Headers`
 response header are separated by a comma (&#34;,&#34;).
 
 A wildcard indicates that the responses with all HTTP headers are exposed
 to clients. The `Access-Control-Expose-Headers` response header can only
-use `*` wildcard as value when the `AllowCredentials` field is false or omitted.
+use `*` wildcard as value when the request is not credentialed.
+
+When the `exposeHeaders` config field contains the &#34;*&#34; wildcard and
+the request is credentialed, the gateway cannot use the `*` wildcard in
+the `Access-Control-Expose-Headers` response header.
 
 Support: Extended<div class="leaf-constraints">maxItems: 64</div>
   </div>
@@ -2046,7 +2099,10 @@ The information provided by the `Access-Control-Allow-Methods` and
 client until the time specified by `Access-Control-Max-Age` elapses.
 
 The default value of `Access-Control-Max-Age` response header is 5
-(seconds).<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
+(seconds).
+
+When the `MaxAge` field is unspecified, the gateway sets the response
+header &#34;Access-Control-Max-Age: 5&#34; by default.<div class="leaf-constraints">format: int32</div><div class="leaf-constraints">minimum: 1</div>
   </div>
 </div>
   </div>
@@ -2233,7 +2289,7 @@ will be sent to the authorization server.
 
 If this list is empty, then all headers must be sent.
 
-If the list has entries, only those entries must be sent.
+If the list has entries, only those entries must be sent.<div class="leaf-constraints">maxItems: 64</div>
   </div>
 </div>
   </div>
@@ -2275,7 +2331,7 @@ body of the request to the authorization server.
 So if the `forwardBody` stanza is unset, or `forwardBody.maxSize` is set
 to `0`, then `Content-Length` must be `0`. If `forwardBody.maxSize` is set
 to anything other than `0`, then the `Content-Length` of the authorization
-request must be set to the actual number of bytes forwarded.
+request must be set to the actual number of bytes forwarded.<div class="leaf-constraints">maxItems: 64</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -2285,7 +2341,7 @@ request must be set to the actual number of bytes forwarded.
 will be copied into the request to the backend.
 
 If this list is empty, then all headers from the authorization server
-except Authority or Host must be copied.
+except Authority or Host must be copied.<div class="leaf-constraints">maxItems: 64</div>
   </div>
 </div>
 <div class="prop-leaf">
@@ -2376,7 +2432,10 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2<div class="leaf-constraints">pattern: ^[!-~]+([\t ]?[!-~]+)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -2441,7 +2500,10 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2<div class="leaf-constraints">pattern: ^[!-~]+([\t ]?[!-~]+)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -2727,7 +2789,7 @@ Unknown values here must result in the implementation setting the
 Accepted Condition for the Route to `status: False`, with a
 Reason of `UnsupportedValue`.
 
-Support: Core<div class="leaf-constraints">enum: 301, 302</div>
+Support: Core<div class="leaf-constraints">enum: 301, 302, 303, 307, 308</div>
   </div>
 </div>
   </div>
@@ -2781,7 +2843,10 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2<div class="leaf-constraints">pattern: ^[!-~]+([\t ]?[!-~]+)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -2846,7 +2911,10 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2<div class="leaf-constraints">pattern: ^[!-~]+([\t ]?[!-~]+)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -3078,7 +3146,10 @@ determine the supported dialect.<div class="leaf-constraints">enum: Exact, Regul
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2<div class="leaf-constraints">pattern: ^[!-~]+([\t ]?[!-~]+)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -3222,7 +3293,7 @@ retry attempts and is represented in Gateway API Duration formatting.
 For example, setting the `rules[].retry.backoff` field to the value
 `100ms` will cause a backend request to first be retried approximately
 100 milliseconds after timing out or receiving a response code configured
-to be retryable.
+to be retriable.
 
 An implementation MAY use an exponential or alternative backoff strategy
 for subsequent retry attempts, MAY cap the maximum backoff duration to
@@ -3348,7 +3419,7 @@ Support: Implementation-specific<div class="leaf-constraints">maxLength: 128</di
   <span class="prop-name">type</span>
   <span class="type-badge">string</span>
   <div class="leaf-desc">Type defines the type of session persistence such as through
-the use a header or cookie. Defaults to cookie based session
+the use of a header or cookie. Defaults to cookie based session
 persistence.
 
 Support: Core for &#34;Cookie&#34; type
@@ -3495,7 +3566,7 @@ due to lack of controller visibility, that includes when:
 
 * The Route refers to a nonexistent parent.
 * The Route is of a type that the controller does not support.
-* The Route is in a namespace the controller does not have access to.</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 8</div>
+* The Route is in a namespace to which the controller does not have access.</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 8</div>
   <div class="prop-children">
 <div class="prop-leaf">
   <span class="prop-name">lastTransitionTime</span>

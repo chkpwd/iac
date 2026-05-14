@@ -287,8 +287,7 @@ it to the backend service.</div>
 This is an Opaque secret. The credential should be stored in the key
 &#34;credential&#34;, and the value should be the credential to be injected.
 For example, for basic authentication, the value should be &#34;Basic &lt;base64 encoded username:password&gt;&#34;.
-for bearer token, the value should be &#34;Bearer &lt;token&gt;&#34;.
-Note: The secret must be in the same namespace as the HTTPRouteFilter.</div>
+for bearer token, the value should be &#34;Bearer &lt;token&gt;&#34;.</div>
   <div class="prop-children">
 <div class="prop-leaf">
   <span class="prop-name">group</span>
@@ -358,7 +357,8 @@ If not specified, the default value is false.
   <span class="prop-name">body</span>
   <span class="type-badge">object</span>
 </summary>
-<div class="prop-content"><div class="prop-desc">Body of the direct response.</div>
+<div class="prop-content"><div class="prop-desc">Body of the direct response.
+Supports Envoy command operators for dynamic content (see https://www.envoyproxy.io/docs/envoy/latest/configuration/observability/access_log/usage#command-operators).</div>
   <div class="prop-children">
 <div class="prop-leaf">
   <span class="prop-name">inline</span>
@@ -461,7 +461,13 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+&lt;gateway:experimental:description&gt;
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2
+&lt;/gateway:experimental:description&gt;
+
+&lt;gateway:experimental:validation:Pattern=`^[!-~]&#43;([\t ]?[!-~]&#43;)*$`&gt;<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -526,7 +532,13 @@ equivalent.<div class="leaf-constraints">pattern: ^[A-Za-z0-9!#$%&amp;&#39;*+\-.
 <div class="prop-leaf">
   <span class="prop-name">value</span>
   <span class="type-badge">string</span> <span class="required-badge">required</span>
-  <div class="leaf-desc">Value is the value of HTTP Header to be matched.<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
+  <div class="leaf-desc">Value is the value of HTTP Header to be matched.
+&lt;gateway:experimental:description&gt;
+Must consist of printable US-ASCII characters, optionally separated
+by single tabs or spaces. See: https://tools.ietf.org/html/rfc7230#section-3.2
+&lt;/gateway:experimental:description&gt;
+
+&lt;gateway:experimental:validation:Pattern=`^[!-~]&#43;([\t ]?[!-~]&#43;)*$`&gt;<div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 4096</div>
   </div>
 </div>
   </div>
@@ -594,6 +606,14 @@ All specified matchers must match.</div><div class="prop-constraints">minItems: 
 </summary>
 <div class="prop-content"><div class="prop-desc">HTTPURLRewriteFilter define rewrites of HTTP URL components such as path and host</div>
   <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">appendXForwardedHost</span>
+  <span class="type-badge">boolean</span>
+  <div class="leaf-desc">AppendXForwardedHost controls whether the original Host header value is
+appended to the X-Forwarded-Host header when hostname rewriting is configured.
+Defaults to true for backward compatibility.
+  </div>
+</div>
 <details class="prop">
 <summary>
   <span class="prop-name">hostname</span>

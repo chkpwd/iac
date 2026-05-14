@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Udproute v1alpha2 — gateway.networking.k8s.io</title>
+<title>Tlsroute v1 — gateway.networking.k8s.io</title>
 <link rel="icon" type="image/svg+xml" href="/iac/favicon.svg">
 <style>
   :root {
@@ -210,12 +210,12 @@
   <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">☀/☾</button>
 </div>
 <div class="meta-cards">
-  <div class="meta-card"><div class="label">Kind</div><div class="value">Udproute</div></div>
+  <div class="meta-card"><div class="label">Kind</div><div class="value">Tlsroute</div></div>
   <div class="meta-card"><div class="label">Group</div><div class="value">gateway.networking.k8s.io</div></div>
-  <div class="meta-card"><div class="label">Version</div><div class="value">v1alpha2</div></div>
+  <div class="meta-card"><div class="label">Version</div><div class="value">v1</div></div>
 </div>
-<div class="yaml-block">apiVersion: gateway.networking.k8s.io/v1alpha2
-kind: Udproute
+<div class="yaml-block">apiVersion: gateway.networking.k8s.io/v1
+kind: Tlsroute
 metadata:
   name: example</div>
 <div class="toolbar">
@@ -224,8 +224,8 @@ metadata:
     <button id="collapse-all">Collapse all</button>
   </div>
   <div class="toolbar-left">
-    <a href="/iac/gateway.networking.k8s.io/udproute_v1alpha2.json" target="_blank">View raw schema</a>
-    <button id="copy-url" data-url="/iac/gateway.networking.k8s.io/udproute_v1alpha2.json">Copy schema URL</button>
+    <a href="/iac/gateway.networking.k8s.io/tlsroute_v1.json" target="_blank">View raw schema</a>
+    <button id="copy-url" data-url="/iac/gateway.networking.k8s.io/tlsroute_v1.json">Copy schema URL</button>
   </div>
 </div>
 <div id="properties">
@@ -259,8 +259,20 @@ More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-
   <span class="prop-name">spec</span>
   <span class="type-badge">object</span> <span class="required-badge">required</span>
 </summary>
-<div class="prop-content"><div class="prop-desc">Spec defines the desired state of UDPRoute.</div>
+<div class="prop-content"><div class="prop-desc">Spec defines the desired state of TLSRoute.</div>
   <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">hostnames</span>
+  <span class="type-badge">[]string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">Hostnames defines a set of SNI hostnames that should match against the
+SNI attribute of TLS ClientHello message in TLS handshake. This matches
+the RFC 1123 definition of a hostname with 2 notable exceptions:
+
+1. IPs are not allowed in SNI hostnames per RFC 6066.
+2. A hostname may be prefixed with a wildcard label (`*.`). The wildcard
+   label must appear by itself as the first label.<div class="leaf-constraints">minItems: 1</div><div class="leaf-constraints">maxItems: 16</div>
+  </div>
+</div>
 <details class="prop">
 <summary>
   <span class="prop-name">parentRefs</span>
@@ -459,7 +471,7 @@ Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9]
   <span class="prop-name">rules</span>
   <span class="type-badge">[]object</span> <span class="required-badge">required</span>
 </summary>
-<div class="prop-content"><div class="prop-desc">Rules are a list of UDP matchers and actions.</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 16</div>
+<div class="prop-content"><div class="prop-desc">Rules are a list of actions.</div><div class="prop-constraints">minItems: 1</div><div class="prop-constraints">maxItems: 1</div>
   <div class="prop-children">
 <details class="prop">
 <summary>
@@ -467,11 +479,13 @@ Support: Core<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9]
   <span class="type-badge">[]object</span> <span class="required-badge">required</span>
 </summary>
 <div class="prop-content"><div class="prop-desc">BackendRefs defines the backend(s) where matching requests should be
-sent. If unspecified or invalid (refers to a nonexistent resource or a
-Service with no endpoints), the underlying implementation MUST actively
-reject connection attempts to this backend. Packet drops must
-respect weight; if an invalid backend is requested to have 80% of
-the packets, then 80% of packets must be dropped instead.
+sent. If unspecified or invalid (refers to a nonexistent resource or
+a Service with no endpoints), the rule performs no forwarding; if no
+filters are specified that would result in a response being sent, the
+underlying implementation must actively reject request attempts to this
+backend, by rejecting the connection. Request rejections must respect
+weight; if an invalid backend is requested to have 80% of requests, then
+80% of requests must be rejected instead.
 
 Support: Core for Kubernetes Service
 
@@ -561,9 +575,7 @@ Support for this field varies based on the context where used.<div class="leaf-c
 <div class="prop-leaf">
   <span class="prop-name">name</span>
   <span class="type-badge">string</span>
-  <div class="leaf-desc">Name is the name of the route rule. This name MUST be unique within a Route if it is set.
-
-Support: Extended<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
+  <div class="leaf-desc">Name is the name of the route rule. This name MUST be unique within a Route if it is set.<div class="leaf-constraints">pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$</div><div class="leaf-constraints">minLength: 1</div><div class="leaf-constraints">maxLength: 253</div>
   </div>
 </div>
   </div>
@@ -594,7 +606,7 @@ certainly not use a default Gateway.<div class="leaf-constraints">enum: All, Non
   <span class="prop-name">status</span>
   <span class="type-badge">object</span>
 </summary>
-<div class="prop-content"><div class="prop-desc">Status defines the current state of UDPRoute.</div>
+<div class="prop-content"><div class="prop-desc">Status defines the current state of TLSRoute.</div>
   <div class="prop-children">
 <details class="prop">
 <summary>
