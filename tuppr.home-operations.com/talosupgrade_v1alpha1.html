@@ -335,6 +335,56 @@ The resource object is available as &#39;object&#39; and status as &#39;status&#
   <div class="leaf-desc">Kind of the resource to check
   </div>
 </div>
+<details class="prop">
+<summary>
+  <span class="prop-name">labelSelector</span>
+  <span class="type-badge">object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">LabelSelector selects resources to check when name is empty</div>
+  <div class="prop-children">
+<details class="prop">
+<summary>
+  <span class="prop-name">matchExpressions</span>
+  <span class="type-badge">[]object</span>
+</summary>
+<div class="prop-content"><div class="prop-desc">matchExpressions is a list of label selector requirements. The requirements are ANDed.</div>
+  <div class="prop-children">
+<div class="prop-leaf">
+  <span class="prop-name">key</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">key is the label key that the selector applies to.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">operator</span>
+  <span class="type-badge">string</span> <span class="required-badge">required</span>
+  <div class="leaf-desc">operator represents a key&#39;s relationship to a set of values.
+Valid operators are In, NotIn, Exists and DoesNotExist.
+  </div>
+</div>
+<div class="prop-leaf">
+  <span class="prop-name">values</span>
+  <span class="type-badge">[]string</span>
+  <div class="leaf-desc">values is an array of string values. If the operator is In or NotIn,
+the values array must be non-empty. If the operator is Exists or DoesNotExist,
+the values array must be empty. This array is replaced during a strategic
+merge patch.
+  </div>
+</div>
+  </div>
+</div>
+</details>
+<div class="prop-leaf">
+  <span class="prop-name">matchLabels</span>
+  <span class="type-badge">object</span>
+  <div class="leaf-desc">matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels
+map is equivalent to an element of matchExpressions, whose key field is &#34;key&#34;, the
+operator is &#34;In&#34;, and the values array contains only &#34;value&#34;. The requirements are ANDed.
+  </div>
+</div>
+  </div>
+</div>
+</details>
 <div class="prop-leaf">
   <span class="prop-name">name</span>
   <span class="type-badge">string</span>
