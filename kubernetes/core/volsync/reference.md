@@ -1,6 +1,6 @@
 # Kopia Policy `repositoryConfig` Reference
 
-Generated from Kopia **v0.22.3** (VolSync `ghcr.io/perfectra1n/volsync:v0.17.11`).
+Generated from Kopia **v0.23.0** (VolSync `ghcr.io/perfectra1n/volsync:v0.17.11`).
 
 Valid JSON fields for `policyConfig.repositoryConfig` in a VolSync `ReplicationSource` or `ReplicationDestination`.
 
