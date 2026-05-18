@@ -1,6 +1,6 @@
 # Envoy Gateway Reference
 
-Helm chart **v1.7.2** from `oci://mirror.gcr.io/envoyproxy/gateway-helm`.
+Helm chart **v1.8.0** from `oci://mirror.gcr.io/envoyproxy/gateway-helm`.
 
 ---
 
