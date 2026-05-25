@@ -1,7 +1,7 @@
 ---
 dns_service_definitions:
   - name: gravity
-    image: "ghcr.io/beryju/gravity:latest@sha256:a9ee639f0d1b72cecabe46d598c4d27831c6772f96d122e8b629e4e38071f4d8"
+    image: "ghcr.io/beryju/gravity:latest@sha256:21b771b416ca0652064ed8d174cd8bdaf14a4dabcd2452e9464099f2cba92aae"
     hostname: "{{ inventory_hostname }}"
     ports:
       - 53:53/udp
