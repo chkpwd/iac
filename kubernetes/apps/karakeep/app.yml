@@ -1,0 +1,303 @@
+# karakeep uses 3 separate GenericApp instances because kro cannot emit
+# N Deployments dynamically from a single RGD. Each controller = one instance.
+# The chrome and meilisearch instances have no route and no ExternalSecret.
+---
+apiVersion: kro.run/v1alpha1
+kind: GenericApp
+metadata:
+  name: karakeep
+  namespace: tools
+spec:
+  name: karakeep
+  namespace: tools
+
+  podSecurityContext:
+    runAsUser: 1999
+    runAsGroup: 1999
+    fsGroup: 1999
+    fsGroupChangePolicy: OnRootMismatch
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+
+  workload:
+    type: deployment
+    strategy: Recreate
+
+  secretName: karakeep
+  secretExtractKey: infra-karakeep-secrets
+  secretTemplate:
+    NEXTAUTH_SECRET: "{{ .nextauth_secret }}"
+    MEILI_MASTER_KEY: "{{ .meili_master_key }}"
+
+  containers:
+    - name: karakeep
+      image:
+        repository: ghcr.io/karakeep-app/karakeep
+        tag: "0.31.0"
+      ports:
+        - 3000
+      env:
+        - name: BROWSER_WEB_URL
+          value: http://karakeep-chrome.tools.svc.cluster.local:9222
+        - name: CRAWLER_DOWNLOAD_BANNER_IMAGE
+          value: "true"
+        - name: CRAWLER_ENABLE_ADBLOCKER
+          value: "true"
+        - name: CRAWLER_STORE_SCREENSHOT
+          value: "true"
+        - name: CRAWLER_FULL_PAGE_SCREENSHOT
+          value: "false"
+        - name: DATA_DIR
+          value: /data
+        - name: MAX_ASSET_SIZE_MB
+          value: "50"
+        - name: MEILI_ADDR
+          value: http://karakeep-meilisearch.tools.svc.cluster.local:7700
+        - name: NEXTAUTH_URL
+          value: https://karakeep.chkpwd.com
+        - name: DISABLE_NEW_RELEASE_CHECK
+          value: "true"
+        - name: DISABLE_SIGNUPS
+          value: "false"
+        - name: DISABLE_PASSWORD_AUTH
+          value: "true"
+        - name: OAUTH_PROVIDER_NAME
+          value: Authentik
+        - name: OAUTH_SCOPES
+          value: "openid profile email"
+        - name: OAUTH_CLIENT_ID
+          value: karakeep
+        - name: OAUTH_WELLKNOWN_URL
+          value: https://authentik.chkpwd.com/application/o/karakeep/.well-known/openid-configuration
+        - name: OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING
+          value: "true"
+        - name: OLLAMA_BASE_URL
+          value: http://ai-inference-01.chkpwd.com:11434
+        - name: INFERENCE_TEXT_MODEL
+          value: gemma3:4b
+        - name: INFERENCE_IMAGE_MODEL
+          value: llava-llama3
+        - name: INFERENCE_CONTEXT_LENGTH
+          value: "8192"
+      envFrom:
+        - secretRef:
+            name: karakeep
+      resources:
+        requests:
+          cpu: 10m
+        limits:
+          memory: 2Gi
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: [ALL]
+        seccompProfile:
+          type: RuntimeDefault
+      probes:
+        liveness:
+          enabled: true
+          path: /
+          port: 3000
+        readiness:
+          enabled: true
+          path: /
+          port: 3000
+
+  persistence:
+    - name: data
+      type: pvc
+      size: 10Gi
+      storageClass: ceph-block
+      accessMode: ReadWriteOnce
+      dataSourceRef:
+        kind: ReplicationDestination
+        apiGroup: volsync.backube
+        name: karakeep
+      mounts:
+        - mountPath: /data
+          subPath: karakeep
+          container: karakeep
+    - name: cache
+      type: emptyDir
+      mounts:
+        - mountPath: /.cache
+          container: karakeep
+    - name: appcache
+      type: emptyDir
+      mounts:
+        - mountPath: /app/apps/web/.next/cache
+          container: karakeep
+
+  services:
+    - name: karakeep
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 3000
+
+  routes:
+    - name: karakeep
+      gatewayName: public
+      gatewayNamespace: networking
+      sectionName: https
+      hostnames:
+        - karakeep.chkpwd.com
+      rules:
+        - matches:
+            - pathType: PathPrefix
+              pathValue: /
+          backendRefs:
+            - serviceName: karakeep
+              port: 3000
+
+---
+# Chrome — headless browser sidecar for karakeep crawler
+apiVersion: kro.run/v1alpha1
+kind: GenericApp
+metadata:
+  name: karakeep-chrome
+  namespace: tools
+spec:
+  name: karakeep-chrome
+  namespace: tools
+
+  podSecurityContext:
+    runAsUser: 1999
+    runAsGroup: 1999
+    fsGroup: 1999
+    fsGroupChangePolicy: OnRootMismatch
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+
+  workload:
+    type: deployment
+    strategy: Recreate
+
+  containers:
+    - name: chrome
+      image:
+        repository: gcr.io/zenika-hub/alpine-chrome
+        tag: "124"
+      ports:
+        - 9222
+      command:
+        - chromium-browser
+      args:
+        - --headless
+        - --no-sandbox
+        - --disable-gpu
+        - --disable-dev-shm-usage
+        - --remote-debugging-address=0.0.0.0
+        - --remote-debugging-port=9222
+        - --hide-scrollbars
+      resources:
+        requests:
+          cpu: 10m
+        limits:
+          memory: 2Gi
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: false
+        capabilities:
+          drop: [ALL]
+
+  services:
+    - name: karakeep-chrome
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 9222
+
+  routes: []
+  persistence: []
+
+---
+# Meilisearch — search engine for karakeep
+apiVersion: kro.run/v1alpha1
+kind: GenericApp
+metadata:
+  name: karakeep-meilisearch
+  namespace: tools
+spec:
+  name: karakeep-meilisearch
+  namespace: tools
+
+  podSecurityContext:
+    runAsUser: 1999
+    runAsGroup: 1999
+    fsGroup: 1999
+    fsGroupChangePolicy: OnRootMismatch
+    runAsNonRoot: true
+    seccompProfile:
+      type: RuntimeDefault
+
+  # co-locate with karakeep pod
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - karakeep
+          topologyKey: kubernetes.io/hostname
+
+  workload:
+    type: deployment
+    strategy: Recreate
+
+  containers:
+    - name: meilisearch
+      image:
+        repository: docker.io/getmeili/meilisearch
+        tag: v1.43.0
+      ports:
+        - 7700
+      args:
+        - /bin/meilisearch
+        - --experimental-dumpless-upgrade
+      env:
+        - name: MEILI_NO_ANALYTICS
+          value: "true"
+        - name: MEILI_MASTER_KEY
+          valueFrom:
+            secretKeyRef:
+              name: karakeep
+              key: MEILI_MASTER_KEY
+      resources:
+        requests:
+          cpu: 10m
+        limits:
+          memory: 3Gi
+      securityContext:
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        capabilities:
+          drop: [ALL]
+
+  persistence:
+    - name: data
+      type: pvc
+      size: 10Gi
+      storageClass: ceph-block
+      accessMode: ReadWriteOnce
+      dataSourceRef:
+        kind: ReplicationDestination
+        apiGroup: volsync.backube
+        name: karakeep
+      mounts:
+        - mountPath: /meili_data
+          subPath: meilisearch
+
+  services:
+    - name: karakeep-meilisearch
+      type: ClusterIP
+      ports:
+        - name: http
+          port: 7700
+
+  routes: []

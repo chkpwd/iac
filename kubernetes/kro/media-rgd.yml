@@ -1,0 +1,382 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: media-app
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: MediaApp
+    types:
+      ResourceRequirements:
+        requests:
+          cpu: string
+          memory: string
+        limits:
+          memory: string
+      EnvVar:
+        name: string | required=true
+        value: string | default=""
+        valueFrom: object
+      LivenessProbeSpec:
+        path: string | default="/ping"
+        initialDelaySeconds: integer | default=10
+        periodSeconds: integer | default=10
+        timeoutSeconds: integer | default=1
+        failureThreshold: integer | default=5
+      ReadinessProbeSpec:
+        path: string | default="/ping"
+        initialDelaySeconds: integer | default=0
+        periodSeconds: integer | default=10
+        timeoutSeconds: integer | default=1
+        failureThreshold: integer | default=3
+      PodSecurityContext:
+        runAsUser: integer | default=1999
+        runAsGroup: integer | default=1999
+        fsGroup: integer | default=1999
+        fsGroupChangePolicy: string | default="OnRootMismatch"
+      PersistenceSpec:
+        enabled: boolean | default=true
+        size: string | default="1Gi"
+        storageClass: string | default="ceph-block"
+        accessMode: string | default="ReadWriteOnce"
+      NfsSpec:
+        enabled: boolean | default=false
+        server: string | default="nas-srv-01.chkpwd.com"
+        path: string | default="/volume1/vault-01/media"
+        mountPath: string | default="/data"
+      RouteSpec:
+        enabled: boolean | default=false
+        hostname: string | default=""
+        gatewayName: string | default="private"
+        gatewayNamespace: string | default="networking"
+        sectionName: string | default="https"
+      ExtraStorageSpec:
+        name: string | required=true
+        mountPath: string | required=true
+        readOnly: boolean | default=false
+        volume: object | required=true
+    spec:
+      name: string | required=true
+      namespace: string | default="media"
+      image:
+        repository: string | required=true
+        tag: string | required=true
+      port: integer | required=true
+      configMountPath: string | default="/config"
+      tmpDir: boolean | default=false
+      env: "[]EnvVar"
+      secretName: string | default=""
+      secretExtractKey: string | default=""
+      secretTemplate: "map[string]string"
+      resources: ResourceRequirements
+      securityContext: PodSecurityContext
+      livenessProbe: LivenessProbeSpec
+      readinessProbe: ReadinessProbeSpec
+      persistence: PersistenceSpec
+      nfs: NfsSpec
+      route: RouteSpec
+      extraStorage: "[]ExtraStorageSpec"
+    status:
+      ready: ${deployment.status.availableReplicas >= 1}
+      availableReplicas: ${deployment.status.availableReplicas}
+    additionalPrinterColumns:
+      - name: Ready
+        type: boolean
+        jsonPath: .status.ready
+      - name: Tag
+        type: string
+        jsonPath: .spec.image.tag
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+  resources:
+    - id: serviceaccount
+      template:
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          name: ${schema.spec.name}
+          namespace: ${schema.spec.namespace}
+          labels:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+            app.kubernetes.io/version: ${schema.spec.image.tag}
+            app.kubernetes.io/managed-by: kro
+    - id: configpvc
+      includeWhen:
+        - ${schema.spec.persistence.enabled}
+      template:
+        apiVersion: v1
+        kind: PersistentVolumeClaim
+        metadata:
+          name: ${schema.spec.name + "-config"}
+          namespace: ${schema.spec.namespace}
+          labels:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+            app.kubernetes.io/version: ${schema.spec.image.tag}
+            app.kubernetes.io/managed-by: kro
+        spec:
+          accessModes:
+            - ${schema.spec.persistence.accessMode}
+          storageClassName: ${schema.spec.persistence.storageClass}
+          resources:
+            requests:
+              storage: ${schema.spec.persistence.size}
+    - id: externalsecret
+      includeWhen:
+        - ${schema.spec.secretExtractKey != ""}
+      template:
+        apiVersion: external-secrets.io/v1
+        kind: ExternalSecret
+        metadata:
+          name: '${schema.spec.secretName != "" ? schema.spec.secretName : schema.spec.name}'
+          namespace: ${schema.spec.namespace}
+          labels:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+            app.kubernetes.io/version: ${schema.spec.image.tag}
+            app.kubernetes.io/managed-by: kro
+        spec:
+          refreshInterval: 3h
+          secretStoreRef:
+            name: bitwarden-secrets-manager
+            kind: ClusterSecretStore
+          target:
+            name: '${schema.spec.secretName != "" ? schema.spec.secretName : schema.spec.name}'
+            creationPolicy: Owner
+            template:
+              engineVersion: v2
+              data: ${schema.spec.secretTemplate}
+          dataFrom:
+            - extract:
+                key: ${schema.spec.secretExtractKey}
+    - id: service
+      template:
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: ${schema.spec.name}
+          namespace: ${schema.spec.namespace}
+          labels:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+            app.kubernetes.io/version: ${schema.spec.image.tag}
+            app.kubernetes.io/managed-by: kro
+        spec:
+          type: ClusterIP
+          ports:
+            - port: ${schema.spec.port}
+              targetPort: ${schema.spec.port}
+              protocol: TCP
+              name: http
+          selector:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+    - id: deployment
+      template:
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: ${schema.spec.name}
+          namespace: ${schema.spec.namespace}
+          labels:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+            app.kubernetes.io/version: ${schema.spec.image.tag}
+            app.kubernetes.io/managed-by: kro
+          annotations:
+            reloader.stakater.com/auto: "true"
+        spec:
+          revisionHistoryLimit: 3
+          replicas: 1
+          strategy:
+            type: Recreate
+          selector:
+            matchLabels:
+              app.kubernetes.io/name: ${schema.spec.name}
+              app.kubernetes.io/instance: ${schema.spec.name}
+          template:
+            metadata:
+              labels:
+                app.kubernetes.io/name: ${schema.spec.name}
+                app.kubernetes.io/instance: ${schema.spec.name}
+                app.kubernetes.io/version: ${schema.spec.image.tag}
+            spec:
+              enableServiceLinks: false
+              serviceAccountName: ${serviceaccount.metadata.name}
+              automountServiceAccountToken: false
+              securityContext:
+                runAsNonRoot: true
+                runAsUser: ${schema.spec.securityContext.runAsUser}
+                runAsGroup: ${schema.spec.securityContext.runAsGroup}
+                fsGroup: ${schema.spec.securityContext.fsGroup}
+                fsGroupChangePolicy: ${schema.spec.securityContext.fsGroupChangePolicy}
+                seccompProfile:
+                  type: RuntimeDefault
+              hostIPC: false
+              hostNetwork: false
+              hostPID: false
+              dnsPolicy: ClusterFirst
+              containers:
+                - name: app
+                  image: '${schema.spec.image.repository + ":" + schema.spec.image.tag}'
+                  imagePullPolicy: IfNotPresent
+                  env: ${schema.spec.env}
+                  envFrom:
+                    - secretRef:
+                        name: '${schema.spec.secretName != "" ? schema.spec.secretName : schema.spec.name}'
+                        optional: true
+                  ports:
+                    - containerPort: ${schema.spec.port}
+                      name: http
+                      protocol: TCP
+                  livenessProbe:
+                    httpGet:
+                      path: ${schema.spec.livenessProbe.path}
+                      port: ${schema.spec.port}
+                    initialDelaySeconds: ${schema.spec.livenessProbe.initialDelaySeconds}
+                    periodSeconds: ${schema.spec.livenessProbe.periodSeconds}
+                    timeoutSeconds: ${schema.spec.livenessProbe.timeoutSeconds}
+                    failureThreshold: ${schema.spec.livenessProbe.failureThreshold}
+                  readinessProbe:
+                    httpGet:
+                      path: ${schema.spec.readinessProbe.path}
+                      port: ${schema.spec.port}
+                    initialDelaySeconds: ${schema.spec.readinessProbe.initialDelaySeconds}
+                    periodSeconds: ${schema.spec.readinessProbe.periodSeconds}
+                    timeoutSeconds: ${schema.spec.readinessProbe.timeoutSeconds}
+                    failureThreshold: ${schema.spec.readinessProbe.failureThreshold}
+                  resources:
+                    requests:
+                      cpu: ${schema.spec.resources.requests.cpu}
+                      memory: ${schema.spec.resources.requests.memory}
+                    limits:
+                      memory: ${schema.spec.resources.limits.memory}
+                  securityContext:
+                    allowPrivilegeEscalation: false
+                    readOnlyRootFilesystem: true
+                    capabilities:
+                      drop:
+                        - ALL
+                    seccompProfile:
+                      type: RuntimeDefault
+                  volumeMounts: >-
+                    ${
+                      (
+                        schema.spec.persistence.enabled
+                        ? [
+                            {
+                              "mountPath": schema.spec.configMountPath,
+                              "name": "config",
+                              "readOnly": false
+                            }
+                          ]
+                        : []
+                      ) +
+                      (
+                        schema.spec.nfs.enabled
+                        ? [
+                            {
+                              "mountPath": schema.spec.nfs.mountPath,
+                              "name": "data",
+                              "readOnly": false
+                            }
+                          ]
+                        : []
+                      ) +
+                      (
+                        schema.spec.tmpDir
+                        ? [
+                            {
+                              "mountPath": "/tmp",
+                              "name": "tmp",
+                              "readOnly": false
+                            }
+                          ]
+                        : []
+                      ) +
+                      schema.spec.extraStorage.map(s, {
+                        "name": s.name,
+                        "mountPath": s.mountPath,
+                        "readOnly": s.readOnly
+                      })
+                    }
+              volumes: >-
+                ${
+                  (
+                    schema.spec.persistence.enabled
+                    ? [
+                        {
+                          "name": "config",
+                          "persistentVolumeClaim": {
+                            "claimName": schema.spec.name + "-config",
+                            "readOnly": false
+                          }
+                        }
+                      ]
+                    : []
+                  ) +
+                  (
+                    schema.spec.nfs.enabled
+                    ? [
+                        {
+                          "name": "data",
+                          "nfs": {
+                            "path": schema.spec.nfs.path,
+                            "server": schema.spec.nfs.server,
+                            "readOnly": false
+                          }
+                        }
+                      ]
+                    : []
+                  ) +
+                  (
+                    schema.spec.tmpDir
+                    ? [
+                        {
+                          "name": "tmp",
+                          "emptyDir": {}
+                        }
+                      ]
+                    : []
+                  ) +
+                  schema.spec.extraStorage.map(s, {
+                    "name": s.name
+                  } + s.volume)
+                }
+    - id: httproute
+      includeWhen:
+        - ${schema.spec.route.enabled}
+      template:
+        apiVersion: gateway.networking.k8s.io/v1
+        kind: HTTPRoute
+        metadata:
+          name: ${schema.spec.name}
+          namespace: ${schema.spec.namespace}
+          labels:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+            app.kubernetes.io/version: ${schema.spec.image.tag}
+            app.kubernetes.io/managed-by: kro
+        spec:
+          parentRefs:
+            - group: gateway.networking.k8s.io
+              kind: Gateway
+              name: ${schema.spec.route.gatewayName}
+              namespace: ${schema.spec.route.gatewayNamespace}
+              sectionName: ${schema.spec.route.sectionName}
+          hostnames:
+            - ${schema.spec.route.hostname}
+          rules:
+            - matches:
+                - path:
+                    type: PathPrefix
+                    value: /
+              backendRefs:
+                - group: ""
+                  kind: Service
+                  name: ${service.metadata.name}
+                  namespace: ${schema.spec.namespace}
+                  port: ${schema.spec.port}
+                  weight: 1

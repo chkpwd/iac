@@ -1,0 +1,41 @@
+---
+apiVersion: kro.run/v1alpha1
+kind: MediaApp
+metadata:
+  name: sonarr
+  namespace: media-test
+spec:
+  name: sonarr
+  namespace: media-test
+  image:
+    repository: ghcr.io/home-operations/sonarr
+    tag: "4.0.17.2967"
+  port: 8989
+  nfs:
+    enabled: true
+  env:
+    - name: TZ
+      value: America/New_York
+  secretName: sonarr
+  secretExtractKey: infra-media-secrets
+  secretTemplate:
+    SONARR_API_KEY: "{{ .sonarr_api_key }}"
+  livenessProbe:
+    path: /ping
+    initialDelaySeconds: 10
+    failureThreshold: 5
+  readinessProbe:
+    path: /ping
+    initialDelaySeconds: 0
+    failureThreshold: 3
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      memory: 3Gi
+  persistence:
+    size: 2Gi
+  route:
+    enabled: true
+    hostname: sonarr-test.chkpwd.com

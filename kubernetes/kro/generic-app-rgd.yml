@@ -1,0 +1,667 @@
+apiVersion: kro.run/v1alpha1
+kind: ResourceGraphDefinition
+metadata:
+  name: generic-app
+spec:
+  schema:
+    apiVersion: v1alpha1
+    kind: GenericApp
+    types:
+      # --- Container types ---
+      EnvVar:
+        name: string | required=true
+        value: string | default=""
+        valueFrom: object
+      EnvFromSource:
+        secretRef: object
+        configMapRef: object
+      ContainerResources:
+        requests: object
+        limits: object
+      ProbeSpec:
+        enabled: boolean | default=false
+        path: string | default="/ping"
+        port: integer | default=0
+        # port=0 means "use the container's first port"
+        initialDelaySeconds: integer | default=0
+        periodSeconds: integer | default=10
+        timeoutSeconds: integer | default=1
+        failureThreshold: integer | default=3
+        # custom: set spec directly as raw object instead of httpGet
+        custom: boolean | default=false
+        spec: object
+      ContainerProbes:
+        liveness: ProbeSpec
+        readiness: ProbeSpec
+        startup: ProbeSpec
+      ContainerSecurityContext:
+        allowPrivilegeEscalation: boolean | default=false
+        readOnlyRootFilesystem: boolean | default=true
+        runAsUser: integer | default=0
+        runAsGroup: integer | default=0
+        runAsNonRoot: boolean | default=false
+        capabilities: object
+        seccompProfile: object
+      ContainerSpec:
+        name: string | required=true
+        image:
+          repository: string | required=true
+          tag: string | required=true
+          pullPolicy: string | default="IfNotPresent"
+        # command and args are raw string lists
+        command: "[]string"
+        args: "[]string"
+        env: "[]EnvVar"
+        envFrom: "[]EnvFromSource"
+        ports: "[]integer"
+        resources: ContainerResources
+        securityContext: ContainerSecurityContext
+        probes: ContainerProbes
+        # restartPolicy: "Always" makes this an inline sidecar (k8s 1.29+)
+        restartPolicy: string | default=""
+
+      # --- Workload types ---
+      WorkloadType:
+        # type: deployment | statefulset | cronjob
+        type: string | default="deployment"
+        # statefulset only
+        volumeClaimTemplates: "[]object"
+        podManagementPolicy: string | default="OrderedReady"
+        # cronjob only
+        schedule: string | default=""
+        concurrencyPolicy: string | default="Forbid"
+        successfulJobsHistory: integer | default=1
+        failedJobsHistory: integer | default=1
+        startingDeadlineSeconds: integer | default=30
+        backoffLimit: integer | default=1
+        # deployment only
+        strategy: string | default="Recreate"
+
+      # --- Pod-level types ---
+      PodSecurityContext:
+        runAsUser: integer | default=1999
+        runAsGroup: integer | default=1999
+        fsGroup: integer | default=1999
+        fsGroupChangePolicy: string | default="OnRootMismatch"
+        runAsNonRoot: boolean | default=true
+        seccompProfile: object
+
+      # --- Persistence types ---
+      VolumeMount:
+        mountPath: string | required=true
+        readOnly: boolean | default=false
+        subPath: string | default=""
+        # container: if set, only mount into this container name; empty = all containers
+        container: string | default=""
+      PersistenceSpec:
+        name: string | required=true
+        # type: pvc | emptyDir | nfs | configMap | secret | custom
+        type: string | default="pvc"
+        # pvc fields
+        size: string | default="1Gi"
+        storageClass: string | default="ceph-block"
+        accessMode: string | default="ReadWriteOnce"
+        dataSourceRef: object
+        # emptyDir fields
+        medium: string | default=""
+        sizeLimit: string | default=""
+        # nfs fields
+        nfsServer: string | default="nas-srv-01.chkpwd.com"
+        nfsPath: string | default="/volume1/vault-01/media"
+        # configMap / secret fields
+        refName: string | default=""
+        # custom: pass raw volume source object
+        volumeSpec: object
+        # mounts: list of mount targets
+        mounts: "[]VolumeMount"
+
+      # --- Service types ---
+      ServicePort:
+        name: string | default="http"
+        port: integer | required=true
+        protocol: string | default="TCP"
+      ServiceSpec:
+        name: string | required=true
+        type: string | default="ClusterIP"
+        ports: "[]ServicePort"
+        annotations: object
+
+      # --- Route types ---
+      RouteMatch:
+        pathType: string | default="PathPrefix"
+        pathValue: string | default="/"
+      RouteBackendRef:
+        serviceName: string | required=true
+        port: integer | required=true
+        weight: integer | default=1
+      RouteRule:
+        matches: "[]RouteMatch"
+        backendRefs: "[]RouteBackendRef"
+        # optional URLRewrite filter
+        urlRewrite: object
+      RouteSpec:
+        name: string | required=true
+        gatewayName: string | default="private"
+        gatewayNamespace: string | default="networking"
+        sectionName: string | default="https"
+        hostnames: "[]string"
+        rules: "[]RouteRule"
+        # optional route-level timeouts
+        timeouts: object
+
+    spec:
+      name: string | required=true
+      namespace: string | default="default"
+
+      workload: WorkloadType
+      podSecurityContext: PodSecurityContext
+
+      # affinity, tolerations, nodeSelector passed raw
+      affinity: object
+      tolerations: "[]object"
+      nodeSelector: object
+      hostname: string | default=""
+      automountServiceAccountToken: boolean | default=false
+
+      containers: "[]ContainerSpec"
+      # initContainers: same shape as containers; restartPolicy=Always = sidecar
+      initContainers: "[]ContainerSpec"
+
+      persistence: "[]PersistenceSpec"
+      services: "[]ServiceSpec"
+      routes: "[]RouteSpec"
+
+      # ExternalSecret integration
+      secretName: string | default=""
+      secretExtractKey: string | default=""
+      secretTemplate: "map[string]string"
+
+    status:
+      ready: ${workload.status.availableReplicas >= 1}
+      availableReplicas: ${workload.status.availableReplicas}
+
+    additionalPrinterColumns:
+      - name: Ready
+        type: boolean
+        jsonPath: .status.ready
+      - name: Age
+        type: date
+        jsonPath: .metadata.creationTimestamp
+
+  resources:
+    # -------------------------------------------------------------------------
+    # ServiceAccount
+    # -------------------------------------------------------------------------
+    - id: serviceaccount
+      template:
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          name: ${schema.spec.name}
+          namespace: ${schema.spec.namespace}
+          labels:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+            app.kubernetes.io/managed-by: kro
+
+    # -------------------------------------------------------------------------
+    # ExternalSecret (optional)
+    # -------------------------------------------------------------------------
+    - id: externalsecret
+      includeWhen:
+        - ${schema.spec.secretExtractKey != ""}
+      template:
+        apiVersion: external-secrets.io/v1
+        kind: ExternalSecret
+        metadata:
+          name: '${schema.spec.secretName != "" ? schema.spec.secretName : schema.spec.name}'
+          namespace: ${schema.spec.namespace}
+          labels:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+            app.kubernetes.io/managed-by: kro
+        spec:
+          refreshInterval: 3h
+          secretStoreRef:
+            name: bitwarden-secrets-manager
+            kind: ClusterSecretStore
+          target:
+            name: '${schema.spec.secretName != "" ? schema.spec.secretName : schema.spec.name}'
+            creationPolicy: Owner
+            template:
+              engineVersion: v2
+              data: ${schema.spec.secretTemplate}
+          dataFrom:
+            - extract:
+                key: ${schema.spec.secretExtractKey}
+
+    # -------------------------------------------------------------------------
+    # PersistentVolumeClaims — one per persistence entry with type=pvc
+    # Only standalone PVCs; statefulset VCTs are embedded in volumeClaimTemplates.
+    # -------------------------------------------------------------------------
+    - id: pvcs
+      includeWhen:
+        - ${schema.spec.persistence.exists(p, p.type == "pvc")}
+      template:
+        apiVersion: v1
+        kind: PersistentVolumeClaim
+        metadata:
+          # NOTE: kro does not support emitting multiple resources from a list.
+          # If you need multiple PVCs, use statefulset.volumeClaimTemplates or
+          # extraStorage on the media-rgd. This resource emits the FIRST pvc entry.
+          name: ${schema.spec.persistence.filter(p, p.type == "pvc")[0].name}
+          namespace: ${schema.spec.namespace}
+          labels:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+            app.kubernetes.io/managed-by: kro
+        spec:
+          accessModes:
+            - ${schema.spec.persistence.filter(p, p.type == "pvc")[0].accessMode}
+          storageClassName: ${schema.spec.persistence.filter(p, p.type == "pvc")[0].storageClass}
+          resources:
+            requests:
+              storage: ${schema.spec.persistence.filter(p, p.type == "pvc")[0].size}
+          dataSourceRef: ${schema.spec.persistence.filter(p, p.type == "pvc")[0].dataSourceRef}
+
+    # -------------------------------------------------------------------------
+    # Services
+    # -------------------------------------------------------------------------
+    - id: services
+      includeWhen:
+        - ${schema.spec.services.size() > 0}
+      template:
+        # NOTE: kro cannot emit N services dynamically. This emits the FIRST
+        # service entry. For multi-service apps, use separate RGD instances or
+        # a dedicated RGD. This covers the overwhelming majority (single-service) case.
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: ${schema.spec.services[0].name}
+          namespace: ${schema.spec.namespace}
+          labels:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+            app.kubernetes.io/managed-by: kro
+          annotations: ${schema.spec.services[0].annotations}
+        spec:
+          type: ${schema.spec.services[0].type}
+          selector:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+          ports: >-
+            ${schema.spec.services[0].ports.map(p, {
+              "name": p.name,
+              "port": p.port,
+              "targetPort": p.port,
+              "protocol": p.protocol
+            })}
+
+    # -------------------------------------------------------------------------
+    # Workload — Deployment
+    # -------------------------------------------------------------------------
+    - id: workload
+      includeWhen:
+        - ${schema.spec.workload.type == "deployment" || schema.spec.workload.type == ""}
+      template:
+        apiVersion: apps/v1
+        kind: Deployment
+        metadata:
+          name: ${schema.spec.name}
+          namespace: ${schema.spec.namespace}
+          labels:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+            app.kubernetes.io/managed-by: kro
+          annotations:
+            reloader.stakater.com/auto: "true"
+        spec:
+          revisionHistoryLimit: 3
+          replicas: 1
+          strategy:
+            type: ${schema.spec.workload.strategy}
+          selector:
+            matchLabels:
+              app.kubernetes.io/name: ${schema.spec.name}
+              app.kubernetes.io/instance: ${schema.spec.name}
+          template:
+            metadata:
+              labels:
+                app.kubernetes.io/name: ${schema.spec.name}
+                app.kubernetes.io/instance: ${schema.spec.name}
+            spec:
+              enableServiceLinks: false
+              serviceAccountName: ${serviceaccount.metadata.name}
+              automountServiceAccountToken: ${schema.spec.automountServiceAccountToken}
+              hostname: ${schema.spec.hostname != "" ? schema.spec.hostname : schema.spec.name}
+              affinity: ${schema.spec.affinity}
+              tolerations: ${schema.spec.tolerations}
+              nodeSelector: ${schema.spec.nodeSelector}
+              securityContext:
+                runAsNonRoot: ${schema.spec.podSecurityContext.runAsNonRoot}
+                runAsUser: ${schema.spec.podSecurityContext.runAsUser}
+                runAsGroup: ${schema.spec.podSecurityContext.runAsGroup}
+                fsGroup: ${schema.spec.podSecurityContext.fsGroup}
+                fsGroupChangePolicy: ${schema.spec.podSecurityContext.fsGroupChangePolicy}
+                seccompProfile: ${schema.spec.podSecurityContext.seccompProfile}
+              hostIPC: false
+              hostNetwork: false
+              hostPID: false
+              dnsPolicy: ClusterFirst
+              initContainers: >-
+                ${schema.spec.initContainers.map(c, {
+                  "name": c.name,
+                  "image": c.image.repository + ":" + c.image.tag,
+                  "imagePullPolicy": c.image.pullPolicy,
+                  "command": c.command,
+                  "args": c.args,
+                  "env": c.env,
+                  "envFrom": c.envFrom,
+                  "resources": c.resources,
+                  "restartPolicy": c.restartPolicy != "" ? c.restartPolicy : null,
+                  "securityContext": {
+                    "allowPrivilegeEscalation": c.securityContext.allowPrivilegeEscalation,
+                    "readOnlyRootFilesystem": c.securityContext.readOnlyRootFilesystem,
+                    "capabilities": c.securityContext.capabilities,
+                    "seccompProfile": c.securityContext.seccompProfile
+                  },
+                  "volumeMounts": schema.spec.persistence.map(p,
+                    p.mounts.filter(m, m.container == "" || m.container == c.name).map(m, {
+                      "name": p.name,
+                      "mountPath": m.mountPath,
+                      "readOnly": m.readOnly,
+                      "subPath": m.subPath != "" ? m.subPath : null
+                    })
+                  ).flatten()
+                })}
+              containers: >-
+                ${schema.spec.containers.map(c, {
+                  "name": c.name,
+                  "image": c.image.repository + ":" + c.image.tag,
+                  "imagePullPolicy": c.image.pullPolicy,
+                  "command": c.command,
+                  "args": c.args,
+                  "env": c.env,
+                  "envFrom": c.envFrom,
+                  "ports": c.ports.map(p, {"containerPort": p, "protocol": "TCP"}),
+                  "resources": c.resources,
+                  "securityContext": {
+                    "allowPrivilegeEscalation": c.securityContext.allowPrivilegeEscalation,
+                    "readOnlyRootFilesystem": c.securityContext.readOnlyRootFilesystem,
+                    "capabilities": c.securityContext.capabilities,
+                    "seccompProfile": c.securityContext.seccompProfile
+                  },
+                  "livenessProbe": !c.probes.liveness.enabled ? null :
+                    c.probes.liveness.custom ? c.probes.liveness.spec : {
+                      "httpGet": {
+                        "path": c.probes.liveness.path,
+                        "port": c.probes.liveness.port > 0 ? c.probes.liveness.port : c.ports[0]
+                      },
+                      "initialDelaySeconds": c.probes.liveness.initialDelaySeconds,
+                      "periodSeconds": c.probes.liveness.periodSeconds,
+                      "timeoutSeconds": c.probes.liveness.timeoutSeconds,
+                      "failureThreshold": c.probes.liveness.failureThreshold
+                    },
+                  "readinessProbe": !c.probes.readiness.enabled ? null :
+                    c.probes.readiness.custom ? c.probes.readiness.spec : {
+                      "httpGet": {
+                        "path": c.probes.readiness.path,
+                        "port": c.probes.readiness.port > 0 ? c.probes.readiness.port : c.ports[0]
+                      },
+                      "initialDelaySeconds": c.probes.readiness.initialDelaySeconds,
+                      "periodSeconds": c.probes.readiness.periodSeconds,
+                      "timeoutSeconds": c.probes.readiness.timeoutSeconds,
+                      "failureThreshold": c.probes.readiness.failureThreshold
+                    },
+                  "startupProbe": !c.probes.startup.enabled ? null :
+                    c.probes.startup.custom ? c.probes.startup.spec : {
+                      "httpGet": {
+                        "path": c.probes.startup.path,
+                        "port": c.probes.startup.port > 0 ? c.probes.startup.port : c.ports[0]
+                      },
+                      "initialDelaySeconds": c.probes.startup.initialDelaySeconds,
+                      "periodSeconds": c.probes.startup.periodSeconds,
+                      "timeoutSeconds": c.probes.startup.timeoutSeconds,
+                      "failureThreshold": c.probes.startup.failureThreshold
+                    },
+                  "volumeMounts": schema.spec.persistence.map(p,
+                    p.mounts.filter(m, m.container == "" || m.container == c.name).map(m, {
+                      "name": p.name,
+                      "mountPath": m.mountPath,
+                      "readOnly": m.readOnly,
+                      "subPath": m.subPath != "" ? m.subPath : null
+                    })
+                  ).flatten()
+                })}
+              volumes: >-
+                ${schema.spec.persistence.map(p,
+                  p.type == "pvc" ? {
+                    "name": p.name,
+                    "persistentVolumeClaim": {"claimName": p.name}
+                  } :
+                  p.type == "emptyDir" ? {
+                    "name": p.name,
+                    "emptyDir": (p.medium != "" ? {"medium": p.medium} : {}) +
+                                (p.sizeLimit != "" ? {"sizeLimit": p.sizeLimit} : {})
+                  } :
+                  p.type == "nfs" ? {
+                    "name": p.name,
+                    "nfs": {"server": p.nfsServer, "path": p.nfsPath, "readOnly": false}
+                  } :
+                  p.type == "configMap" ? {
+                    "name": p.name,
+                    "configMap": {"name": p.refName}
+                  } :
+                  p.type == "secret" ? {
+                    "name": p.name,
+                    "secret": {"secretName": p.refName}
+                  } :
+                  {
+                    "name": p.name
+                  } + p.volumeSpec
+                )}
+
+    # -------------------------------------------------------------------------
+    # Workload — StatefulSet
+    # -------------------------------------------------------------------------
+    - id: statefulworkload
+      includeWhen:
+        - ${schema.spec.workload.type == "statefulset"}
+      template:
+        apiVersion: apps/v1
+        kind: StatefulSet
+        metadata:
+          name: ${schema.spec.name}
+          namespace: ${schema.spec.namespace}
+          labels:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+            app.kubernetes.io/managed-by: kro
+          annotations:
+            reloader.stakater.com/auto: "true"
+        spec:
+          revisionHistoryLimit: 3
+          replicas: 1
+          podManagementPolicy: ${schema.spec.workload.podManagementPolicy}
+          selector:
+            matchLabels:
+              app.kubernetes.io/name: ${schema.spec.name}
+              app.kubernetes.io/instance: ${schema.spec.name}
+          volumeClaimTemplates: ${schema.spec.workload.volumeClaimTemplates}
+          template:
+            metadata:
+              labels:
+                app.kubernetes.io/name: ${schema.spec.name}
+                app.kubernetes.io/instance: ${schema.spec.name}
+            spec:
+              enableServiceLinks: false
+              serviceAccountName: ${serviceaccount.metadata.name}
+              automountServiceAccountToken: ${schema.spec.automountServiceAccountToken}
+              hostname: ${schema.spec.hostname != "" ? schema.spec.hostname : schema.spec.name}
+              affinity: ${schema.spec.affinity}
+              tolerations: ${schema.spec.tolerations}
+              nodeSelector: ${schema.spec.nodeSelector}
+              securityContext:
+                runAsNonRoot: ${schema.spec.podSecurityContext.runAsNonRoot}
+                runAsUser: ${schema.spec.podSecurityContext.runAsUser}
+                runAsGroup: ${schema.spec.podSecurityContext.runAsGroup}
+                fsGroup: ${schema.spec.podSecurityContext.fsGroup}
+                fsGroupChangePolicy: ${schema.spec.podSecurityContext.fsGroupChangePolicy}
+                seccompProfile: ${schema.spec.podSecurityContext.seccompProfile}
+              hostIPC: false
+              hostNetwork: false
+              hostPID: false
+              dnsPolicy: ClusterFirst
+              initContainers: >-
+                ${schema.spec.initContainers.map(c, {
+                  "name": c.name,
+                  "image": c.image.repository + ":" + c.image.tag,
+                  "imagePullPolicy": c.image.pullPolicy,
+                  "command": c.command,
+                  "args": c.args,
+                  "env": c.env,
+                  "envFrom": c.envFrom,
+                  "resources": c.resources,
+                  "restartPolicy": c.restartPolicy != "" ? c.restartPolicy : null,
+                  "securityContext": {
+                    "allowPrivilegeEscalation": c.securityContext.allowPrivilegeEscalation,
+                    "readOnlyRootFilesystem": c.securityContext.readOnlyRootFilesystem,
+                    "capabilities": c.securityContext.capabilities,
+                    "seccompProfile": c.securityContext.seccompProfile
+                  },
+                  "volumeMounts": schema.spec.persistence.map(p,
+                    p.mounts.filter(m, m.container == "" || m.container == c.name).map(m, {
+                      "name": p.name,
+                      "mountPath": m.mountPath,
+                      "readOnly": m.readOnly,
+                      "subPath": m.subPath != "" ? m.subPath : null
+                    })
+                  ).flatten()
+                })}
+              containers: >-
+                ${schema.spec.containers.map(c, {
+                  "name": c.name,
+                  "image": c.image.repository + ":" + c.image.tag,
+                  "imagePullPolicy": c.image.pullPolicy,
+                  "command": c.command,
+                  "args": c.args,
+                  "env": c.env,
+                  "envFrom": c.envFrom,
+                  "ports": c.ports.map(p, {"containerPort": p, "protocol": "TCP"}),
+                  "resources": c.resources,
+                  "securityContext": {
+                    "allowPrivilegeEscalation": c.securityContext.allowPrivilegeEscalation,
+                    "readOnlyRootFilesystem": c.securityContext.readOnlyRootFilesystem,
+                    "capabilities": c.securityContext.capabilities,
+                    "seccompProfile": c.securityContext.seccompProfile
+                  },
+                  "livenessProbe": !c.probes.liveness.enabled ? null :
+                    c.probes.liveness.custom ? c.probes.liveness.spec : {
+                      "httpGet": {
+                        "path": c.probes.liveness.path,
+                        "port": c.probes.liveness.port > 0 ? c.probes.liveness.port : c.ports[0]
+                      },
+                      "initialDelaySeconds": c.probes.liveness.initialDelaySeconds,
+                      "periodSeconds": c.probes.liveness.periodSeconds,
+                      "timeoutSeconds": c.probes.liveness.timeoutSeconds,
+                      "failureThreshold": c.probes.liveness.failureThreshold
+                    },
+                  "readinessProbe": !c.probes.readiness.enabled ? null :
+                    c.probes.readiness.custom ? c.probes.readiness.spec : {
+                      "httpGet": {
+                        "path": c.probes.readiness.path,
+                        "port": c.probes.readiness.port > 0 ? c.probes.readiness.port : c.ports[0]
+                      },
+                      "initialDelaySeconds": c.probes.readiness.initialDelaySeconds,
+                      "periodSeconds": c.probes.readiness.periodSeconds,
+                      "timeoutSeconds": c.probes.readiness.timeoutSeconds,
+                      "failureThreshold": c.probes.readiness.failureThreshold
+                    },
+                  "startupProbe": !c.probes.startup.enabled ? null :
+                    c.probes.startup.custom ? c.probes.startup.spec : {
+                      "httpGet": {
+                        "path": c.probes.startup.path,
+                        "port": c.probes.startup.port > 0 ? c.probes.startup.port : c.ports[0]
+                      },
+                      "initialDelaySeconds": c.probes.startup.initialDelaySeconds,
+                      "periodSeconds": c.probes.startup.periodSeconds,
+                      "timeoutSeconds": c.probes.startup.timeoutSeconds,
+                      "failureThreshold": c.probes.startup.failureThreshold
+                    },
+                  "volumeMounts": schema.spec.persistence.map(p,
+                    p.mounts.filter(m, m.container == "" || m.container == c.name).map(m, {
+                      "name": p.name,
+                      "mountPath": m.mountPath,
+                      "readOnly": m.readOnly,
+                      "subPath": m.subPath != "" ? m.subPath : null
+                    })
+                  ).flatten()
+                })}
+              volumes: >-
+                ${schema.spec.persistence.filter(p, p.type != "pvc").map(p,
+                  p.type == "emptyDir" ? {
+                    "name": p.name,
+                    "emptyDir": (p.medium != "" ? {"medium": p.medium} : {}) +
+                                (p.sizeLimit != "" ? {"sizeLimit": p.sizeLimit} : {})
+                  } :
+                  p.type == "nfs" ? {
+                    "name": p.name,
+                    "nfs": {"server": p.nfsServer, "path": p.nfsPath, "readOnly": false}
+                  } :
+                  p.type == "configMap" ? {
+                    "name": p.name,
+                    "configMap": {"name": p.refName}
+                  } :
+                  p.type == "secret" ? {
+                    "name": p.name,
+                    "secret": {"secretName": p.refName}
+                  } :
+                  {
+                    "name": p.name
+                  } + p.volumeSpec
+                )}
+
+    # -------------------------------------------------------------------------
+    # HTTPRoutes
+    # NOTE: kro cannot emit N routes dynamically. This emits the FIRST route.
+    # For multi-route apps (rmfakecloud, your-spotify), use a dedicated RGD.
+    # -------------------------------------------------------------------------
+    - id: httproute
+      includeWhen:
+        - ${schema.spec.routes.size() > 0}
+      template:
+        apiVersion: gateway.networking.k8s.io/v1
+        kind: HTTPRoute
+        metadata:
+          name: ${schema.spec.routes[0].name}
+          namespace: ${schema.spec.namespace}
+          labels:
+            app.kubernetes.io/name: ${schema.spec.name}
+            app.kubernetes.io/instance: ${schema.spec.name}
+            app.kubernetes.io/managed-by: kro
+        spec:
+          parentRefs:
+            - group: gateway.networking.k8s.io
+              kind: Gateway
+              name: ${schema.spec.routes[0].gatewayName}
+              namespace: ${schema.spec.routes[0].gatewayNamespace}
+              sectionName: ${schema.spec.routes[0].sectionName}
+          hostnames: ${schema.spec.routes[0].hostnames}
+          timeouts: ${schema.spec.routes[0].timeouts}
+          rules: >-
+            ${schema.spec.routes[0].rules.map(r, {
+              "matches": r.matches.map(m, {
+                "path": {
+                  "type": m.pathType,
+                  "value": m.pathValue
+                }
+              }),
+              "filters": r.urlRewrite != null ? [{"type": "URLRewrite", "urlRewrite": r.urlRewrite}] : [],
+              "backendRefs": r.backendRefs.map(b, {
+                "group": "",
+                "kind": "Service",
+                "name": b.serviceName,
+                "port": b.port,
+                "weight": b.weight
+              })
+            })}
