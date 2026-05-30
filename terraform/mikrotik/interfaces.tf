@@ -10,20 +10,21 @@ resource "routeros_interface_bridge" "bridge" {
 }
 
 resource "routeros_interface_bridge_port" "bridge_ports" {
-  for_each = toset([
-    "ether2",
-    "ether3",
-    "ether4",
-    "ether5",
-    "ether6",
-    "ether7",
-    "ether8",
-    "sfp-sfpplus1"
-  ])
+  for_each = {
+    ether2       = { pvid = 1, frame_types = "admit-all" }
+    ether3       = { pvid = 1, frame_types = "admit-all" }
+    ether4       = { pvid = 20, frame_types = "admit-only-untagged-and-priority-tagged" }
+    ether5       = { pvid = 1, frame_types = "admit-all" }
+    ether6       = { pvid = 1, frame_types = "admit-all" }
+    ether7       = { pvid = 1, frame_types = "admit-all" }
+    ether8       = { pvid = 1, frame_types = "admit-all" }
+    sfp-sfpplus1 = { pvid = 1, frame_types = "admit-all" }
+  }
 
-  bridge    = routeros_interface_bridge.bridge.name
-  interface = each.key
-  pvid      = 1
+  bridge      = routeros_interface_bridge.bridge.name
+  interface   = each.key
+  pvid        = each.value.pvid
+  frame_types = each.value.frame_types
 }
 
 resource "routeros_interface_vlan" "vlans" {
@@ -47,6 +48,7 @@ resource "routeros_interface_bridge_vlan" "tagged" {
   bridge   = routeros_interface_bridge.bridge.name
   vlan_ids = [each.value.vlan_id]
   tagged   = ["bridge", "ether2"]
+  untagged = each.value.untagged_ports
 }
 
 resource "routeros_interface_list" "wan" { name = "WAN" }

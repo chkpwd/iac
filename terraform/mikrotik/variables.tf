@@ -23,16 +23,16 @@ variable "disabled_services" {
 
 variable "networks" {
   type = map(object({
-    vlan_id   = number
-    interface = string
+    vlan_id        = number
+    interface      = string
+    untagged_ports = optional(list(string), [])
   }))
   default = {
     lan   = { vlan_id = 10, interface = "bridge" }
-    iot   = { vlan_id = 20, interface = "iot" }
+    iot   = { vlan_id = 20, interface = "iot", untagged_ports = ["ether4"] }
     guest = { vlan_id = 30, interface = "guest" }
   }
 }
-
 variable "dns_ip" {
   type    = string
   default = "10.0.10.4"
