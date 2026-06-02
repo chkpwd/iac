@@ -14,7 +14,7 @@ service_definitions:
       - "{{ compose_configuration_path }}/nginx_webserver/files:/files"
     state: stopped
   - name: scanservjs
-    image: sbs20/scanservjs:v3.0.4
+    image: sbs20/scanservjs:3.1.0
     ports:
       - 8087:8080
     env:
