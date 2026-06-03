@@ -133,8 +133,8 @@ spec:
                   - ports:
                       - port: "8096"
                         protocol: TCP
-              - fromCIDR:
-                  - 10.0.30.0/24
+              - toCIDRSet:
+                  - cidrGroupRef: media-clients
                 toPorts:
                   - ports:
                       - port: "8096"
