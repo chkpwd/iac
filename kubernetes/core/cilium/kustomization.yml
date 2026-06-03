@@ -8,8 +8,9 @@ resources:
   - pools.yml
   - source.yml
   - http-route.yml
-  - netpols/allow-dns-egress.yaml
-  - netpols/allow-cluster-egress.yaml
+  - netpols/media-clients-cidr.yml
+  - netpols/allow-dns-egress.yml
+  - netpols/allow-cluster-egress.yml
 configMapGenerator:
   - name: cilium-values
     files:
