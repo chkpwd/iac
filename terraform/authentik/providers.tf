@@ -19,7 +19,6 @@ terraform {
 locals {
   bws_keys = [
     "authentik",
-    "plex",
     "miniflux",
     "karakeep",
     "grimmory",
