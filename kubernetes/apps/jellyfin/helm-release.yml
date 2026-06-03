@@ -144,7 +144,6 @@ spec:
                   - matchLabels:
                       k8s:io.kubernetes.pod.namespace: media
                       app.kubernetes.io/name: sonarr
-                      app.kubernetes.io/instance: sonarr
                 toPorts:
                   - ports:
                       - port: "8989"
@@ -153,7 +152,6 @@ spec:
                   - matchLabels:
                       k8s:io.kubernetes.pod.namespace: media
                       app.kubernetes.io/name: radarr
-                      app.kubernetes.io/instance: radarr
                 toPorts:
                   - ports:
                       - port: "7878"
