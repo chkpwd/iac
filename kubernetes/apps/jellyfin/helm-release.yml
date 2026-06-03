@@ -35,6 +35,8 @@ spec:
               globalMounts:
                 - path: /config
         pod:
+          labels:
+            egress.home.arpa/custom-egress: "true"
           securityContext:
             runAsUser: 1999
             runAsGroup: &group 1999
@@ -118,11 +120,15 @@ spec:
                   - matchLabels:
                       k8s:io.kubernetes.pod.namespace: media
                       app.kubernetes.io/name: sonarr
-                      app.kubernetes.io/instance: sonarr
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: radarr
                   - matchLabels:
                       k8s:io.kubernetes.pod.namespace: media
                       app.kubernetes.io/name: maintainerr
-                      app.kubernetes.io/instance: maintainerr
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: seerr
                 toPorts:
                   - ports:
                       - port: "8096"
@@ -134,16 +140,6 @@ spec:
                       - port: "8096"
                         protocol: TCP
             egress:
-              - toEndpoints:
-                  - matchLabels:
-                      k8s:io.kubernetes.pod.namespace: kube-system
-                      k8s-app: kube-dns
-                toPorts:
-                  - ports:
-                      - port: "53"
-                        protocol: UDP
-                      - port: "53"
-                        protocol: TCP
               - toEndpoints:
                   - matchLabels:
                       k8s:io.kubernetes.pod.namespace: media
@@ -161,14 +157,6 @@ spec:
                 toPorts:
                   - ports:
                       - port: "7878"
-                        protocol: TCP
-              - toEntities:
-                  - world
-                toPorts:
-                  - ports:
-                      - port: "80"
-                        protocol: TCP
-                      - port: "443"
                         protocol: TCP
     route:
       private:
