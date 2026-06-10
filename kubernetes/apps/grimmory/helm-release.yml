@@ -165,7 +165,7 @@ spec:
           http:
             port: 6060
     route:
-      private:
+      public:
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
         rules:
@@ -177,7 +177,7 @@ spec:
               - name: grimmory
                 port: 6060
         parentRefs:
-          - name: private
+          - name: public
             namespace: networking
             sectionName: https
     persistence:
