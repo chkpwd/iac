@@ -1,0 +1,15 @@
+---
+llamacpp_model: /usr/share/llamacpp/models/gemma-3-4b-it-Q4_K_M.gguf
+llamacpp_mmproj: /usr/share/llamacpp/models/mmproj-model-f16.gguf
+llamacpp_parallel: 1
+llamacpp_ctx_size: 8192
+llamacpp_models:
+  - repo: ggml-org/gemma-3-4b-it-GGUF
+    file: gemma-3-4b-it-Q4_K_M.gguf # 2.5 GiB
+    mmproj: mmproj-model-f16.gguf # vision projector (same repo)
+  - repo: ggml-org/gemma-3-12b-it-GGUF
+    file: gemma-3-12b-it-Q4_K_M.gguf # 6.8 GiB
+  - repo: bartowski/Qwen2.5-14B-Instruct-GGUF
+    file: Qwen2.5-14B-Instruct-Q4_K_M.gguf # 8.4 GiB
+  - repo: bartowski/Qwen2.5-14B-Instruct-GGUF
+    file: Qwen2.5-14B-Instruct-Q6_K.gguf # 11.3 GiB
