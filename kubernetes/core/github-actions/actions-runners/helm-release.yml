@@ -12,6 +12,9 @@ spec:
   values:
     githubConfigUrl: https://github.com/chkpwd/iac
     githubConfigSecret: github-org-token
+    controllerServiceAccount:
+      name: actions-runner-controller
+      namespace: actions-runner-system
     minRunners: 0
     maxRunners: 2
     containerMode:
