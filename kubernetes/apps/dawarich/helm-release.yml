@@ -34,7 +34,7 @@ spec:
           app:
             image: &image
               repository: docker.io/freikin/dawarich
-              tag: 1.8.0
+              tag: 1.8.1
             command: ["web-entrypoint.sh"]
             args: ["bin/rails", "server", "-p", "3000", "-b", "::"]
             env: &env
