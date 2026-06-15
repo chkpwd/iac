@@ -1,0 +1,30 @@
+---
+llamacpp_user: llamacpp
+llamacpp_group: llamacpp
+llamacpp_host: "0.0.0.0"
+llamacpp_port: 8080
+
+llamacpp_version: "b9592"
+llamacpp_repo_url: "https://github.com/ggml-org/llama.cpp.git"
+
+llamacpp_build_dir: "/tmp/llama.cpp"
+llamacpp_install_dir: "/usr/local/bin"
+llamacpp_binary_path: "{{ llamacpp_install_dir }}/llama-server"
+llamacpp_home_dir: "/usr/share/llamacpp"
+llamacpp_model_dir: "/usr/share/llamacpp/models"
+
+llamacpp_model: "" # set llamacpp_model_hf_repo (e.g. "ggml-org/GLM-4.7-Flash-GGUF:Q4_K_M")
+llamacpp_model_hf_repo: ""
+
+llamacpp_mmproj: ""
+
+llamacpp_n_gpu_layers: "all" # "all" or number of layers to offload to GPU (e.g. 20). Only for CUDA backend.
+llamacpp_ctx_size: 4096
+llamacpp_parallel: 4
+llamacpp_threads: -1
+
+llamacpp_cuda_enabled: true
+llamacpp_cuda_arch: "52"
+
+llamacpp_models: []
+llamacpp_hf_token: ""

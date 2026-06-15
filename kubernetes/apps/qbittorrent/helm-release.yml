@@ -44,7 +44,7 @@ spec:
           app:
             image:
               repository: ghcr.io/home-operations/qbittorrent
-              tag: 5.2.0
+              tag: 5.2.1
             env:
               TZ: "America/New_York"
               QBT_TORRENTING_PORT: &torrentPort 50413
@@ -82,7 +82,7 @@ spec:
             dependsOn: app
             image:
               repository: registry.k8s.io/git-sync/git-sync
-              tag: v4.6.0
+              tag: v4.7.0
             args:
               - --repo=https://github.com/WDaan/VueTorrent
               - --ref=latest-release

@@ -1,0 +1,62 @@
+---
+- name: Install pip and packaging prerequisites
+  become: true
+  ansible.builtin.apt:
+    name:
+      - python3-pip
+      - python3-packaging
+    state: present
+
+- name: Install huggingface_hub and hf_transfer
+  become: true
+  ansible.builtin.pip:
+    name:
+      - huggingface_hub
+      - hf_transfer
+    state: present
+    extra_args: --break-system-packages
+
+- name: Build flat list of files to download (models + projectors)
+  ansible.builtin.set_fact:
+    _llamacpp_files: >-
+      {{
+        _llamacpp_files | default([])
+        + [{'repo': item.repo, 'file': item.file}]
+        + ([{'repo': item.repo, 'file': item.mmproj}] if item.mmproj is defined else [])
+      }}
+  loop: "{{ llamacpp_models }}"
+  loop_control:
+    label: "{{ item.file }}"
+
+- name: Download models from Hugging Face
+  become: true
+  environment:
+    HF_HUB_ENABLE_HF_TRANSFER: "1"
+  ansible.builtin.command:
+    cmd: >
+      hf download {{ item.repo }} {{ item.file }}
+      --local-dir {{ llamacpp_model_dir }}
+      {{ '--token ' + llamacpp_hf_token if llamacpp_hf_token else '' }}
+    creates: "{{ llamacpp_model_dir }}/{{ item.file }}"
+  loop: "{{ _llamacpp_files }}"
+  loop_control:
+    label: "{{ item.file }}"
+  async: 3600
+  poll: 30
+
+- name: Remove Hugging Face cache from model directory
+  become: true
+  ansible.builtin.file:
+    path: "{{ llamacpp_model_dir }}/.cache"
+    state: absent
+
+- name: Fix model file ownership
+  become: true
+  ansible.builtin.file:
+    path: "{{ llamacpp_model_dir }}/{{ item.file }}"
+    owner: "{{ llamacpp_user }}"
+    group: "{{ llamacpp_group }}"
+    mode: "0644"
+  loop: "{{ _llamacpp_files }}"
+  loop_control:
+    label: "{{ item.file }}"

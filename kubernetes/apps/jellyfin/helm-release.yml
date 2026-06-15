@@ -35,6 +35,8 @@ spec:
               globalMounts:
                 - path: /config
         pod:
+          labels:
+            egress.home.arpa/custom-egress: "true"
           securityContext:
             runAsUser: 1999
             runAsGroup: &group 1999
@@ -44,7 +46,7 @@ spec:
           app:
             image:
               repository: ghcr.io/jellyfin/jellyfin
-              tag: 10.11.9
+              tag: 10.11.11
               pullPolicy: IfNotPresent
             env:
               TZ: "America/New_York"
@@ -89,14 +91,126 @@ spec:
         ports:
           http:
             port: *port
+    rawResources:
+      deny-403:
+        manifest:
+          apiVersion: gateway.envoyproxy.io/v1alpha1
+          kind: HTTPRouteFilter
+          spec:
+            directResponse:
+              statusCode: 403
+              body:
+                type: Inline
+                inline: "Forbidden"
+      ciliumnetworkpolicy:
+        forceRename: jellyfin
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/name: jellyfin
+                app.kubernetes.io/instance: jellyfin
+            ingress:
+              - fromEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: networking
+                      gateway.networking.k8s.io/gateway-name: public
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: sonarr
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: radarr
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: maintainerr
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: seerr
+                toPorts:
+                  - ports:
+                      - port: "8096"
+                        protocol: TCP
+              - fromCIDRSet:
+                  - cidrGroupRef: media-clients
+                toPorts:
+                  - ports:
+                      - port: "8096"
+                        protocol: TCP
+            egress:
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: sonarr
+                toPorts:
+                  - ports:
+                      - port: "8989"
+                        protocol: TCP
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: radarr
+                toPorts:
+                  - ports:
+                      - port: "7878"
+                        protocol: TCP
     route:
       private:
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
         parentRefs:
-          - name: private
+          - name: public
             namespace: networking
             sectionName: https
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /api-docs
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: gateway.envoyproxy.io
+                  kind: HTTPRouteFilter
+                  name: deny-403
+          - matches:
+              - path:
+                  type: Exact
+                  value: /metrics
+              - path:
+                  type: Exact
+                  value: /health
+            filters:
+              - type: ExtensionRef
+                extensionRef:
+                  group: gateway.envoyproxy.io
+                  kind: HTTPRouteFilter
+                  name: deny-403
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: jellyfin
+                namespace: media
+                port: 8096
+                weight: 1
+            filters:
+              - type: ResponseHeaderModifier
+                responseHeaderModifier:
+                  add:
+                    - name: Strict-Transport-Security
+                      value: "max-age=63072000; includeSubDomains; preload"
+                    - name: X-Frame-Options
+                      value: "SAMEORIGIN"
+                    - name: X-Content-Type-Options
+                      value: "nosniff"
+                    - name: Referrer-Policy
+                      value: "strict-origin-when-cross-origin"
+                    - name: Permissions-Policy
+                      value: "geolocation=(), microphone=(), camera=()"
     persistence:
       data:
         type: nfs
@@ -104,6 +218,7 @@ spec:
         path: /volume1/vault-01/media
         globalMounts:
           - path: /data
+            readOnly: true
       transcode:
         type: emptyDir
         globalMounts:

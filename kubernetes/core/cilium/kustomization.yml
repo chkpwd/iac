@@ -7,8 +7,10 @@ resources:
   - bgp.yml
   - pools.yml
   - source.yml
-  # - http-route.yml
-  # - policy.yml  # L2 announcements replaced by BGP
+  - http-route.yml
+  - netpols/media-clients-cidr.yml
+  - netpols/allow-dns-egress.yml
+  - netpols/allow-cluster-egress.yml
 configMapGenerator:
   - name: cilium-values
     files:

@@ -102,7 +102,7 @@ Gateway API is now managed by envoy-gateway running in the `networking` namespac
 | Value                  | Setting | Effect                                                          |
 | ---------------------- | ------- | --------------------------------------------------------------- |
 | `cni.exclusive`        | `false` | Allow other CNI plugins alongside Cilium (needed for Multus)    |
-| `hubble.enabled`       | `false` | Hubble observability plane disabled                             |
+| `hubble.enabled`       | `true`  | Hubble observability plane enabled                             |
 | `operator.rollOutPods` | `true`  | Operator pods restart automatically on ConfigMap/Secret changes |
 | `rollOutCiliumPods`    | `true`  | Agent pods restart automatically on config changes              |
 

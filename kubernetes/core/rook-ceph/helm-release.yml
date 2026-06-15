@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: rook-ceph
-      version: v1.19.5
+      version: v1.19.6
       sourceRef:
         kind: HelmRepository
         name: rook-ceph
@@ -61,7 +61,7 @@ spec:
               memory: 48Mi
               cpu: 15m
             limits:
-              memory: 128Mi
+              memory: 192Mi
               cpu: 200m
         - name : liveness-prometheus
           resource:

@@ -40,7 +40,7 @@ spec:
               op: "add", path: "/spec/template/spec/initContainers/-",
               value: Object.spec.template.spec.initContainers{
                 name: "shuffle",
-                image: "busybox:1.37.0",
+                image: "busybox:1.38.0",
                 imagePullPolicy: "IfNotPresent",
                 command: ["sh", "-c", "sleep $(shuf -i 0-150 -n 1)"]
               }

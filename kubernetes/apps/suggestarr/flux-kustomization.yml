@@ -3,24 +3,23 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app plex
+  name: &app suggestarr
   namespace: &ns media
 spec:
   targetNamespace: *ns
-  path: ./kubernetes/apps/plex/
+  path: ./kubernetes/apps/suggestarr/
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
   components:
     - ../../core/volsync/components/
-    - ../../core/hpa/_components/nfs/
   postBuild:
     substitute:
       APP: *app
-      CLAIM: config-plex-0
-      VOLSYNC_PUID: "1026"
-      VOLSYNC_PGID: "100"
-      VOLSYNC_CAPACITY: "5Gi"
+      CLAIM: config-suggestarr-0
+      VOLSYNC_PUID: "1999"
+      VOLSYNC_PGID: "1999"
+      VOLSYNC_CAPACITY: "10Gi"
       VOLSYNC_CACHE_CAPACITY: "10Gi"
   patches:
     - patch: |
@@ -32,7 +31,7 @@ spec:
             monthly: 6
       target:
         kind: ReplicationSource
-        name: plex
+        name: suggestarr
   prune: true
   sourceRef:
     kind: GitRepository

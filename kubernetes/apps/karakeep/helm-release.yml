@@ -51,10 +51,13 @@ spec:
               OAUTH_CLIENT_ID: karakeep
               OAUTH_WELLKNOWN_URL: https://authentik.chkpwd.com/application/o/karakeep/.well-known/openid-configuration
               OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING: true
-              OLLAMA_BASE_URL: http://ai-inference-01.chkpwd.com:11434
-              INFERENCE_TEXT_MODEL: gemma3:4b
-              INFERENCE_IMAGE_MODEL: llava-llama3
-              INFERENCE_CONTEXT_LENGTH: "8192"
+              OPENAI_API_KEY: llamacpp
+              OPENAI_BASE_URL: http://ai-inference-01.chkpwd.com:8080/v1
+              INFERENCE_TEXT_MODEL: gemma3-4b-it
+              INFERENCE_IMAGE_MODEL: gemma3-4b-it
+              INFERENCE_CONTEXT_LENGTH: "4096"
+              INFERENCE_JOB_TIMEOUT_SEC: "120"
+              INFERENCE_OUTPUT_SCHEMA: json
             envFrom:
               - secretRef:
                   name: karakeep
@@ -113,7 +116,7 @@ spec:
           main:
             image:
               repository: docker.io/getmeili/meilisearch
-              tag: v1.44.0
+              tag: v1.47.0
             args:
               - /bin/meilisearch
               - --experimental-dumpless-upgrade

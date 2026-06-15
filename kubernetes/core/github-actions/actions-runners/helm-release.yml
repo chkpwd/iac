@@ -12,6 +12,9 @@ spec:
   values:
     githubConfigUrl: https://github.com/chkpwd/iac
     githubConfigSecret: github-org-token
+    controllerServiceAccount:
+      name: actions-runner-controller
+      namespace: actions-runner-system
     minRunners: 0
     maxRunners: 2
     containerMode:
@@ -51,7 +54,7 @@ spec:
             type: RuntimeDefault
         containers:
           - name: runner
-            image: ghcr.io/actions/actions-runner:2.334.0
+            image: ghcr.io/actions/actions-runner:2.335.1
             resources:
               requests:
                 cpu: 100m

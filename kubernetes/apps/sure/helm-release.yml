@@ -18,7 +18,7 @@ spec:
   values:
     image:
       repository: ghcr.io/we-promise/sure
-      tag: 0.7.1-alpha.4@sha256:1346109e7b60d1f608e953fdc03bf88798a68fe537b6a628ec508126d8a82e2c
+      tag: 0.7.2-alpha.4@sha256:6a747ef84a7b036bf4727d1ab283bc05e0ec964e629bb917b91343a414703d43
       pullPolicy: IfNotPresent
     rails:
       env: production
@@ -57,7 +57,7 @@ spec:
         SELF_HOSTED: "true"
         ONBOARDING_STATE: "open"
         AI_DEBUG_MODE: "false"
-        OPENAI_URI_BASE: http://ai-inference-01.chkpwd.com:11434
+        OPENAI_URI_BASE: http://ai-inference-01.chkpwd.com:8080
         OPENAI_MODEL: gemma3:4b
         RAILS_FORCE_SSL: "false"
         RAILS_ASSUME_SSL: "false"
@@ -73,7 +73,7 @@ spec:
       enabled: true
       image:
         repository: docker.io/redis
-        tag: "8.6"
+        tag: "8.8"
         pullPolicy: IfNotPresent
       service:
         port: 6379
@@ -189,7 +189,7 @@ spec:
       enabled: true
       image:
         repository: ghcr.io/luckypipewrench/pipelock
-        tag: 2.5.0
+        tag: 2.7.0
         pullPolicy: IfNotPresent
       replicas: 1
       # Pipelock run mode: strict, balanced, audit

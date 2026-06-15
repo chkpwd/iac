@@ -1,6 +1,6 @@
-# CoreDNS Reference
+### CoreDNS Reference
 
-Helm chart **v1.45.2**.
+Helm chart **v1.46.0**.
 
 ---
 

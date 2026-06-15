@@ -1,6 +1,6 @@
 ## Prometheus (kube-prometheus-stack) Reference
 
-Helm chart **kube-prometheus-stack v85.2.0**.
+Helm chart **kube-prometheus-stack v86.0.0**.
 
 ---
 

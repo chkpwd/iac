@@ -1,0 +1,151 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/common-4.5.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: suggestarr
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: app-template
+      version: 5.0.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  values:
+    controllers:
+      suggestarr:
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              accessMode: ReadWriteOnce
+              size: "${VOLSYNC_CAPACITY}"
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              globalMounts:
+                - path: /app/config/config_files
+        pod:
+          labels:
+            egress.home.arpa/custom-egress: "true"
+          securityContext:
+            runAsUser: 1999
+            runAsGroup: &group 1999
+            fsGroup: *group
+            fsGroupChangePolicy: "OnRootMismatch"
+        containers:
+          app:
+            image:
+              repository: docker.io/ciuse99/suggestarr
+              tag: v2.9.0
+              pullPolicy: IfNotPresent
+            env:
+              TZ: "America/New_York"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /health
+                    port: &port 5000
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probes
+              startup:
+                enabled: false
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                cpu: 50m
+                memory: 500Mi
+              limits:
+                memory: 1Gi
+    service:
+      app:
+        controller: suggestarr
+        ports:
+          http:
+            port: *port
+    rawResources:
+      ciliumnetworkpolicy:
+        forceRename: suggestarr
+        manifest:
+          apiVersion: cilium.io/v2
+          kind: CiliumNetworkPolicy
+          spec:
+            endpointSelector:
+              matchLabels:
+                app.kubernetes.io/name: suggestarr
+                app.kubernetes.io/instance: suggestarr
+            ingress:
+              - fromEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: networking
+                      gateway.networking.k8s.io/gateway-name: public
+                toPorts:
+                  - ports:
+                      - port: "5000"
+                        protocol: TCP
+            egress:
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: jellyfin
+                toPorts:
+                  - ports:
+                      - port: "8096"
+                        protocol: TCP
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: seerr
+                toPorts:
+                  - ports:
+                      - port: "5055"
+                        protocol: TCP
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: sonarr
+                toPorts:
+                  - ports:
+                      - port: "8989"
+                        protocol: TCP
+              - toEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: radarr
+                toPorts:
+                  - ports:
+                      - port: "7878"
+                        protocol: TCP
+    route:
+      private:
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        parentRefs:
+          - name: private
+            namespace: networking
+            sectionName: https
+    persistence:
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp

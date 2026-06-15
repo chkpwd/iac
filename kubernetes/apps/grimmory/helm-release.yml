@@ -51,7 +51,7 @@ spec:
           mariadb:
             image:
               repository: docker.io/library/mariadb
-              tag: 12.2.2-noble
+              tag: 12.3.2-noble
             env:
               MARIADB_USER: grimmory
               MARIADB_DATABASE: grimmory
@@ -103,7 +103,7 @@ spec:
           app:
             image:
               repository: ghcr.io/grimmory-tools/grimmory
-              tag: v3.1.0
+              tag: v3.2.0
             command:
               - java
             args:
@@ -165,7 +165,7 @@ spec:
           http:
             port: 6060
     route:
-      private:
+      public:
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
         rules:
@@ -177,7 +177,7 @@ spec:
               - name: grimmory
                 port: 6060
         parentRefs:
-          - name: private
+          - name: public
             namespace: networking
             sectionName: https
     persistence:

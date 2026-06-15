@@ -4,10 +4,10 @@ locals {
     { address = "10.0.0.0/8", comment = "rfc1918", list = "private_addr" },
     { address = "172.16.0.0/12", comment = "rfc1918", list = "private_addr" },
     { address = "192.168.0.0/16", comment = "rfc1918", list = "private_addr" },
-    { address = "10.0.30.2", comment = "plex access", list = "media_clients" },
-    { address = "10.0.30.3", comment = "plex access", list = "media_clients" },
-    { address = "10.0.30.5", comment = "plex access", list = "media_clients" },
-    { address = "10.0.30.17", comment = "plex access", list = "media_clients" },
+    { address = "10.0.30.2", comment = "jellyfin access", list = "media_clients" },
+    { address = "10.0.30.3", comment = "jellyfin access", list = "media_clients" },
+    { address = "10.0.30.5", comment = "jellyfin access", list = "media_clients" },
+    { address = "10.0.30.17", comment = "jellyfin access", list = "media_clients" },
   ]
 
   # - Uses stable map keys (not array indices) so adding/removing rules doesn't cascade changes
@@ -15,7 +15,6 @@ locals {
     masquerade     = { order = 10, chain = "srcnat", action = "masquerade", ipsec_policy = "out,none", out_interface_list = "WAN" }
     snat_cilium_lb = { order = 15, chain = "srcnat", action = "masquerade", comment = "asymmetric routing fix", dst_address = "10.0.45.0/24", src_address_list = "private_addr" }
     cilium         = { order = 20, chain = "dstnat", action = "dst-nat", in_interface_list = "WAN", protocol = "tcp", dst_port = "443", to_addresses = "10.0.45.31", to_ports = "443", comment = "cilium ingress" }
-    plex           = { order = 30, chain = "dstnat", action = "dst-nat", in_interface_list = "WAN", protocol = "tcp", dst_port = "32400", to_addresses = "10.0.45.35", to_ports = "32400", comment = "plex" }
     qbittorrent    = { order = 40, chain = "dstnat", action = "dst-nat", in_interface_list = "WAN", protocol = "tcp", dst_port = "50413", to_addresses = "10.0.45.34", to_ports = "50413", comment = "qbittorrent" }
   }
 
@@ -47,7 +46,6 @@ locals {
     forward_iot_wan                  = { order = 220, chain = "forward", action = "accept", comment = "allow iot -> WAN", in_interface = "iot", out_interface_list = "WAN" }
     forward_iot_drop_local           = { order = 230, chain = "forward", action = "drop", comment = "drop local access on iot net", dst_address_list = "private_addr", in_interface = "iot" }
     forward_iot_drop_all             = { order = 240, chain = "forward", action = "drop", comment = "drop all other forward from iot", in_interface = "iot" }
-    forward_plex_guest               = { order = 300, chain = "forward", action = "accept", comment = "allow plex from media_clients", protocol = "tcp", dst_address = "10.0.45.35", dst_port = "32400", src_address_list = "media_clients", in_interface = "guest" }
     forward_guest_ha_tcp             = { order = 310, chain = "forward", action = "accept", comment = "allow home assistant from guest", protocol = "tcp", dst_address = "10.0.10.8", dst_port = "8123", in_interface = "guest" }
     forward_jellyfin_guest           = { order = 315, chain = "forward", action = "accept", comment = "allow jellyfin from media_clients", protocol = "tcp", dst_address = "10.0.45.37", dst_port = "8096", src_address_list = "media_clients", in_interface = "guest" }
     forward_guest_dns_udp            = { order = 400, chain = "forward", action = "accept", comment = "allow guest DNS (UDP)", protocol = "udp", dst_address = var.dns_ip, dst_port = "53", in_interface = "guest" }
