@@ -108,13 +108,14 @@ spec:
                   - matchLabels:
                       k8s:io.kubernetes.pod.namespace: networking
                       gateway.networking.k8s.io/gateway-name: private
-                  - matchLabels:
-                      k8s:io.kubernetes.pod.namespace: media
-                      app.kubernetes.io/name: jellyfin
                 toPorts:
                   - ports:
                       - port: "5000"
                         protocol: TCP
+              - fromEndpoints:
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: jellyfin
             egress:
               - toEndpoints:
                   - matchLabels:
