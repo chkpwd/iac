@@ -118,6 +118,19 @@ spec:
             egress:
               - toEndpoints:
                   - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: kube-system
+                      k8s-app: kube-dns
+                toPorts:
+                  - ports:
+                      - port: "53"
+                        protocol: UDP
+                      - port: "53"
+                        protocol: TCP
+                    rules:
+                      dns:
+                        - matchPattern: "*"
+              - toEndpoints:
+                  - matchLabels:
                       k8s:io.kubernetes.pod.namespace: media
                       app.kubernetes.io/name: jellyfin
                 toPorts:
