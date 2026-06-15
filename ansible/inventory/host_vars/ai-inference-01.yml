@@ -3,6 +3,7 @@ llamacpp_model: /usr/share/llamacpp/models/gemma-3-4b-it-Q4_K_M.gguf
 llamacpp_mmproj: /usr/share/llamacpp/models/mmproj-model-f16.gguf
 llamacpp_parallel: 1
 llamacpp_ctx_size: 8192
+
 llamacpp_models:
   - repo: ggml-org/gemma-3-4b-it-GGUF
     file: gemma-3-4b-it-Q4_K_M.gguf # 2.5 GiB
@@ -13,3 +14,22 @@ llamacpp_models:
     file: Qwen2.5-14B-Instruct-Q4_K_M.gguf # 8.4 GiB
   - repo: bartowski/Qwen2.5-14B-Instruct-GGUF
     file: Qwen2.5-14B-Instruct-Q6_K.gguf # 11.3 GiB
+
+llamacpp_swap_enabled: true
+llamacpp_swap_models:
+  # id MUST match Karakeep INFERENCE_TEXT_MODEL / INFERENCE_IMAGE_MODEL
+  - id: gemma3-4b-it
+    model: gemma-3-4b-it-Q4_K_M.gguf
+    mmproj: mmproj-model-f16.gguf # vision for Karakeep
+    name: "Gemma 3 4B (vision)"
+    aliases:
+      - gemma3-4b
+  - id: gemma3-12b-it
+    model: gemma-3-12b-it-Q4_K_M.gguf
+    name: "Gemma 3 12B"
+  - id: qwen2.5-14b
+    model: Qwen2.5-14B-Instruct-Q4_K_M.gguf
+    name: "Qwen2.5 14B (Q4_K_M)"
+  - id: qwen2.5-14b-q6
+    model: Qwen2.5-14B-Instruct-Q6_K.gguf
+    name: "Qwen2.5 14B (Q6_K)"
