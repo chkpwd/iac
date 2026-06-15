@@ -35,8 +35,6 @@ spec:
               globalMounts:
                 - path: /app/config/config_files
         pod:
-          labels:
-            egress.home.arpa/custom-egress: "true"
           securityContext:
             runAsUser: 1999
             runAsGroup: &group 1999
@@ -110,6 +108,9 @@ spec:
                   - matchLabels:
                       k8s:io.kubernetes.pod.namespace: networking
                       gateway.networking.k8s.io/gateway-name: private
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: jellyfin
                 toPorts:
                   - ports:
                       - port: "5000"
