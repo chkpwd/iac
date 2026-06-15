@@ -122,6 +122,9 @@ spec:
                       app.kubernetes.io/name: sonarr
                   - matchLabels:
                       k8s:io.kubernetes.pod.namespace: media
+                      app.kubernetes.io/name: suggestarr
+                  - matchLabels:
+                      k8s:io.kubernetes.pod.namespace: media
                       app.kubernetes.io/name: radarr
                   - matchLabels:
                       k8s:io.kubernetes.pod.namespace: media
