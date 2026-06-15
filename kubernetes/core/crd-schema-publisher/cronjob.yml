@@ -25,7 +25,7 @@ spec:
               type: RuntimeDefault
           containers:
             - name: crd-schema-publisher
-              image: ghcr.io/sholdee/crd-schema-publisher:v2026.419.85756
+              image: ghcr.io/sholdee/crd-schema-publisher:v2026.609.12656
               args: ["extract"]
               env:
                 - name: OUTPUT_DIR
@@ -53,7 +53,7 @@ spec:
               command: ["/bin/sh", "-c"]
               args:
                 - |
-                  while [ ! -f /data/index.html ]; do sleep 5; done
+                  while [ ! -f /data/current/index.html ]; do sleep 5; done
                   echo "Publisher complete, starting git sync"
 
                   git config --global user.name "crd-schema-publisher"
@@ -72,7 +72,7 @@ spec:
 
                   cd /repo
 
-                  cp -r /data/. /repo/
+                  cp -r /data/current/. /repo/
 
                   git add -A
                   if ! git diff --cached --quiet; then
