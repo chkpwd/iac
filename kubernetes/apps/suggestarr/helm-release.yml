@@ -50,19 +50,30 @@ spec:
               pullPolicy: IfNotPresent
             env:
               TZ: "America/New_York"
+              PYTHONDONTWRITEBYTECODE: "1"
             probes:
-              liveness: &probes
+              liveness:
                 enabled: true
                 custom: true
                 spec:
                   httpGet:
-                    path: /health
+                    path: /api/health/live
                     port: &port 5000
-                  initialDelaySeconds: 0
+                  initialDelaySeconds: 10
                   periodSeconds: 10
                   timeoutSeconds: 1
                   failureThreshold: 3
-              readiness: *probes
+              readiness:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/health/live
+                    port: *port
+                  initialDelaySeconds: 10
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
               startup:
                 enabled: false
             securityContext:
@@ -98,7 +109,7 @@ spec:
               - fromEndpoints:
                   - matchLabels:
                       k8s:io.kubernetes.pod.namespace: networking
-                      gateway.networking.k8s.io/gateway-name: public
+                      gateway.networking.k8s.io/gateway-name: private
                 toPorts:
                   - ports:
                       - port: "5000"
