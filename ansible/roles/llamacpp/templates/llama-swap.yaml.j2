@@ -1,0 +1,35 @@
+# {{ ansible_managed }}
+healthCheckTimeout: {{ llamacpp_swap_health_timeout }}
+logLevel: {{ llamacpp_swap_log_level }}
+globalTTL: {{ llamacpp_swap_ttl }}
+
+models:
+{% for m in llamacpp_swap_models %}
+  "{{ m.id }}":
+    cmd: |
+      {{ llamacpp_binary_path }}
+      --host 127.0.0.1
+      --port ${PORT}
+      --model {{ llamacpp_model_dir }}/{{ m.model }}
+      --ctx-size {{ m.ctx_size | default(llamacpp_ctx_size) }}
+      --n-gpu-layers {{ m.n_gpu_layers | default(llamacpp_n_gpu_layers) }}
+      --parallel {{ m.parallel | default(llamacpp_parallel) }}
+{% if m.mmproj is defined %}
+      --mmproj {{ llamacpp_model_dir }}/{{ m.mmproj }}
+{% endif %}
+{% if m.extra_args is defined %}
+      {{ m.extra_args }}
+{% endif %}
+{% if m.ttl is defined %}
+    ttl: {{ m.ttl }}
+{% endif %}
+{% if m.name is defined %}
+    name: "{{ m.name }}"
+{% endif %}
+{% if m.aliases is defined %}
+    aliases:
+{% for a in m.aliases %}
+      - "{{ a }}"
+{% endfor %}
+{% endif %}
+{% endfor %}

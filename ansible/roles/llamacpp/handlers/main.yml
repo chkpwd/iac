@@ -5,3 +5,10 @@
     name: llama-server
     state: restarted
     daemon_reload: true
+
+- name: Restart llama-swap
+  become: true
+  ansible.builtin.systemd_service:
+    name: llama-swap
+    state: restarted
+    daemon_reload: true

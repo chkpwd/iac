@@ -1,0 +1,18 @@
+[Unit]
+Description=llama-swap (on-demand multi-model llama.cpp proxy)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart={{ llamacpp_swap_binary_path }} --config {{ llamacpp_swap_config_path }} --listen {{ llamacpp_swap_listen }}
+User={{ llamacpp_user }}
+Group={{ llamacpp_group }}
+Restart=always
+RestartSec=3
+
+# Inherited by the spawned llama-server processes
+Environment="GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
+Environment="PATH=/usr/local/cuda/bin:/usr/local/bin:/usr/bin:/bin"
+
+[Install]
+WantedBy=multi-user.target

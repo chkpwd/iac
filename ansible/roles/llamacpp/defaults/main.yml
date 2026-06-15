@@ -13,12 +13,12 @@ llamacpp_binary_path: "{{ llamacpp_install_dir }}/llama-server"
 llamacpp_home_dir: "/usr/share/llamacpp"
 llamacpp_model_dir: "/usr/share/llamacpp/models"
 
-llamacpp_model: "" # set llamacpp_model_hf_repo (e.g. "ggml-org/GLM-4.7-Flash-GGUF:Q4_K_M")
+llamacpp_model: ""
 llamacpp_model_hf_repo: ""
 
 llamacpp_mmproj: ""
 
-llamacpp_n_gpu_layers: "all" # "all" or number of layers to offload to GPU (e.g. 20). Only for CUDA backend.
+llamacpp_n_gpu_layers: "all" # "all", "auto", or a layer count
 llamacpp_ctx_size: 4096
 llamacpp_parallel: 4
 llamacpp_threads: -1
@@ -28,3 +28,14 @@ llamacpp_cuda_arch: "52"
 
 llamacpp_models: []
 llamacpp_hf_token: ""
+
+# llama-swap: on-demand multi-model serving (replaces the single-model service)
+llamacpp_swap_enabled: false
+llamacpp_swap_version: "225"
+llamacpp_swap_binary_path: "{{ llamacpp_install_dir }}/llama-swap"
+llamacpp_swap_config_path: "/etc/llama-swap/config.yaml"
+llamacpp_swap_listen: "{{ llamacpp_host }}:{{ llamacpp_port }}"
+llamacpp_swap_health_timeout: 300
+llamacpp_swap_log_level: "info"
+llamacpp_swap_ttl: 300
+llamacpp_swap_models: []

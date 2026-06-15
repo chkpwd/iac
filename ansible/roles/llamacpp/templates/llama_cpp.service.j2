@@ -9,7 +9,6 @@ Group={{ llamacpp_group }}
 Restart=always
 RestartSec=3
 
-# Core server parameters (see: llama-server --help)
 Environment="LLAMA_ARG_HOST={{ llamacpp_host }}"
 Environment="LLAMA_ARG_PORT={{ llamacpp_port }}"
 Environment="LLAMA_ARG_N_GPU_LAYERS={{ llamacpp_n_gpu_layers }}"
@@ -26,7 +25,6 @@ Environment="LLAMA_ARG_MMPROJ={{ llamacpp_mmproj }}"
 {% endif %}
 
 # Allow VRAM overflow to fall back to system RAM instead of crashing
-# (useful if model is slightly larger than 12 GB on the Titan X)
 Environment="GGML_CUDA_ENABLE_UNIFIED_MEMORY=1"
 
 Environment="PATH=/usr/local/cuda/bin:/usr/local/bin:/usr/bin:/bin"

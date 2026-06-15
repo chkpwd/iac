@@ -1,0 +1,65 @@
+---
+- name: Check installed llama-swap version
+  ansible.builtin.command: "{{ llamacpp_swap_binary_path }} --version"
+  register: _llamaswap_version
+  changed_when: false
+  failed_when: false
+
+- name: Download and extract llama-swap {{ llamacpp_swap_version }}
+  become: true
+  when: llamacpp_swap_version not in (_llamaswap_version.stdout | default(''))
+  ansible.builtin.unarchive:
+    src: >-
+      https://github.com/mostlygeek/llama-swap/releases/download/v{{ llamacpp_swap_version }}/llama-swap_{{ llamacpp_swap_version }}_linux_amd64.tar.gz
+    dest: "{{ llamacpp_install_dir }}"
+    remote_src: true
+    include:
+      - llama-swap
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Create llama-swap config directory
+  become: true
+  ansible.builtin.file:
+    path: "{{ llamacpp_swap_config_path | dirname }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Template llama-swap config
+  become: true
+  ansible.builtin.template:
+    src: templates/llama-swap.yaml.j2
+    dest: "{{ llamacpp_swap_config_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart llama-swap
+
+- name: Create llama-swap systemd service
+  become: true
+  ansible.builtin.template:
+    src: templates/llama-swap.service.j2
+    dest: /etc/systemd/system/llama-swap.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart llama-swap
+
+- name: Disable plain llama-server service
+  become: true
+  ansible.builtin.systemd_service:
+    name: llama-server
+    state: stopped
+    enabled: false
+  failed_when: false
+
+- name: Enable and start llama-swap
+  become: true
+  ansible.builtin.systemd_service:
+    name: llama-swap
+    state: started
+    enabled: true
+    daemon_reload: true
