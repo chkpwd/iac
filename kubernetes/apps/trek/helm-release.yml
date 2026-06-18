@@ -33,6 +33,10 @@ spec:
             image:
               repository: docker.io/mauriceboe/trek
               tag: 3.1.0
+            workingDir: /app/server
+            command: ["dumb-init", "--"]
+            args:
+              ["node", "--require", "tsconfig-paths/register", "dist/index.js"]
             env:
               NODE_ENV: production
               PORT: &port 3000
