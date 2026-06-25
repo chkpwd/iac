@@ -19,6 +19,7 @@ spec:
       services:
         - hostname: echo.chkpwd.com
           origin: echo.networking.svc.cluster.local:8080
+          proxy_protocol: none
       inviteTokenSecret:
         name: towonel-agent-secret
         key: TOWONEL_INVITE_TOKEN
