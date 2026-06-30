@@ -159,6 +159,9 @@ spec:
                   - ports:
                       - port: "7878"
                         protocol: TCP
+                        egress:
+              - toEntities: [cluster]
+              - toEntities: [world]
     route:
       private:
         kind: HTTPRoute
