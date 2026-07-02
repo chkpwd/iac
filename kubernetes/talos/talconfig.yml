@@ -90,6 +90,9 @@ controlPlane:
             content: |
               [plugins."io.containerd.cri.v1.images"]
                 discard_unpacked_layers = false
+              # https://github.com/kubevirt/containerized-data-importer/blob/main/doc/block_cri_ownership_config.md
+              [plugins."io.containerd.cri.v1.runtime"]
+                device_ownership_from_security_context = true
     # Disable search domain (DHCP is used)
     - |-
       machine:
