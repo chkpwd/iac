@@ -7,3 +7,12 @@ metadata:
 spec:
   interval: 2h
   url: https://charts.rook.io/release
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/source.toolkit.fluxcd.io/helmrepository_v1.json
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: ceph-csi-operator
+spec:
+  interval: 2h
+  url: https://ceph.github.io/ceph-csi-operator

@@ -17,6 +17,8 @@ spec:
   dependsOn:
     - name: rook-ceph-operator
       namespace: rook-ceph
+    - name: ceph-csi-drivers
+      namespace: rook-ceph
   values:
     monitoring:
       enabled: true

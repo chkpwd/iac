@@ -25,6 +25,28 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
+  name: &app ceph-csi-drivers
+  namespace: &ns rook-ceph
+spec:
+  targetNamespace: *ns
+  interval: 1h
+  path: ./kubernetes/core/rook-ceph/csi-drivers
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  prune: false
+  retryInterval: 2m
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  timeout: 5m
+  wait: false
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
   name: &app rook-ceph-cluster
   namespace: &ns rook-ceph
 spec:
