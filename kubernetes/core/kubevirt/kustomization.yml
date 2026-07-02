@@ -1,0 +1,19 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: kubevirt
+resources:
+  - https://github.com/kubevirt/kubevirt/releases/download/v1.8.4/kubevirt-operator.yaml
+  - kubevirt.yml
+patches:
+  # Namespace is owned centrally by the `namespaces` ResourceSet.
+  - patch: |
+      $patch: delete
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: kubevirt
+    target:
+      kind: Namespace
+      name: kubevirt

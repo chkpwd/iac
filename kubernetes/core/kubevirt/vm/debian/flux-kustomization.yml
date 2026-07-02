@@ -1,0 +1,23 @@
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app debian
+  namespace: &ns vm
+spec:
+  targetNamespace: *ns
+  path: ./kubernetes/core/kubevirt/vm/debian/
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  dependsOn:
+    - name: kubevirt
+      namespace: kubevirt
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  wait: false
+  interval: 30m

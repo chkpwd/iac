@@ -1,0 +1,19 @@
+---
+apiVersion: instancetype.kubevirt.io/v1beta1
+kind: VirtualMachinePreference
+metadata:
+  name: linux
+spec:
+  devices:
+    preferredDiskBus: virtio
+    preferredInterfaceModel: virtio
+    preferredAutoattachSerialConsole: true
+    preferredAutoattachGraphicsDevice: false
+    preferredAutoattachInputDevice: true
+    preferredInputType: tablet
+  firmware:
+    preferredUseEfi: true
+    preferredUseSecureBoot: false
+  volumes:
+    preferredStorageClassName: ceph-block
+  preferredTerminationGracePeriodSeconds: 180

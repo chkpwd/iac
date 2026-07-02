@@ -1,0 +1,82 @@
+---
+apiVersion: kubevirt.io/v1
+kind: VirtualMachine
+metadata:
+  name: debian
+spec:
+  runStrategy: Always
+  instancetype:
+    kind: VirtualMachineInstancetype
+    name: debian
+  preference:
+    kind: VirtualMachinePreference
+    name: linux
+  dataVolumeTemplates:
+    - metadata:
+        name: debian-root
+      spec:
+        source:
+          http:
+            url: https://cloud.debian.org/images/cloud/bookworm/latest/debian-12-generic-amd64.qcow2
+        storage:
+          accessModes:
+            - ReadWriteOnce
+          volumeMode: Block
+          storageClassName: ceph-block
+          resources:
+            requests:
+              storage: 20Gi
+  template:
+    metadata:
+      labels:
+        vm.chkpwd.com: debian
+        vm.chkpwd.com/os: linux
+    spec:
+      hostname: debian
+      networks:
+        - name: lan
+          multus:
+            networkName: vlan30-bridge
+      domain:
+        devices:
+          disks:
+            - name: root
+              disk:
+                bus: virtio
+            - name: cloudinit
+              disk:
+                bus: virtio
+          interfaces:
+            - name: lan
+              bridge: {}
+      volumes:
+        - name: root
+          dataVolume:
+            name: debian-root
+        - name: cloudinit
+          cloudInitNoCloud:
+            networkData: |
+              version: 2
+              ethernets:
+                lan:
+                  match:
+                    name: en*
+                  dhcp4: true
+            userData: |
+              #cloud-config
+              hostname: debian
+              fqdn: debian
+              users:
+                - name: debian
+                  sudo: ALL=(ALL) NOPASSWD:ALL
+                  groups: sudo
+                  shell: /bin/bash
+                  lock_passwd: true
+                  ssh_authorized_keys:
+                    - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBK2VnKgOX7i1ISETheqjAO3/xo6D9n7QbWyfDAPsXwa chezmoi@bitwarden
+              ssh_pwauth: false
+              package_update: true
+              packages:
+                - qemu-guest-agent
+              runcmd:
+                - systemctl enable --now qemu-guest-agent

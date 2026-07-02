@@ -1,0 +1,14 @@
+---
+apiVersion: kubevirt.io/v1
+kind: KubeVirt
+metadata:
+  name: kubevirt
+  namespace: kubevirt
+spec:
+  certificateRotateStrategy: {}
+  imagePullPolicy: IfNotPresent
+  # Single-node RWO RBD disks cannot live-migrate, so leave workloadUpdateStrategy
+  # unset (no automatic, disruptive VM restarts on KubeVirt upgrades).
+  configuration:
+    developerConfiguration:
+      featureGates: []
