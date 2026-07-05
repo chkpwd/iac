@@ -72,7 +72,17 @@ spec:
                   failureThreshold: 3
               readiness: *probes
               startup:
-                enabled: false
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api
+                    port: *port
+                  initialDelaySeconds: 0
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  # allow up to 5m for first-boot db migration to bind :6767
+                  failureThreshold: 30
             securityContext:
               allowPrivilegeEscalation: false
               capabilities:
