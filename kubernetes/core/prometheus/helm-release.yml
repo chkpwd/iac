@@ -189,3 +189,7 @@ spec:
       create: true
       disabled:
         Watchdog: true
+        # False positive: histogram_quantile(0.01, …) picks up short-TTL client
+        # certs that renew every scrape (p01 = seconds on .11/.12 while the real
+        # cert TTL is ~91d). No expr override is possible via chart values.
+        KubeClientCertificateExpiration: true
