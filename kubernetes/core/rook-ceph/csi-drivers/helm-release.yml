@@ -34,6 +34,9 @@ spec:
       rbd:
         enabled: true
         name: rook-ceph.rbd.csi.ceph.com
+        # Deploy the csi-snapshotter sidecar; without it the operator defaults to
+        # snapshotPolicy=none and VolSync Snapshot-copyMethod backups hang forever.
+        snapshotPolicy: volumeSnapshot
       cephfs:
         enabled: false
         name: rook-ceph.cephfs.csi.ceph.com
