@@ -5,7 +5,7 @@ package-mode = false
 python = ">=3.11"  # ansible-core 2.18 requires Python >=3.11
 # 2.18.x only: <2.19 because cloud.terraform 4.0.0 calls get_bin_path(required=True),
 # a kwarg removed in 2.19; >=2.18 because community.general 13.x requires >=2.18.0.
-ansible-core = ">=2.18,<2.19"
+ansible-core = ">=2.21,<2.22"
 requests = "^2.32.3"
 yamllint = "^1.37.0"
 ansible-lint = "^26.0.0"
