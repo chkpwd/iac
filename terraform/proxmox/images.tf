@@ -1,4 +1,4 @@
-resource "proxmox_virtual_environment_download_file" "debian_bookworm_qcow2_generic" {
+resource "proxmox_download_file" "debian_bookworm_qcow2_generic" {
   content_type       = "iso"
   datastore_id       = "local"
   file_name          = "debian-12-nocloud-amd64.qcow2.img"
@@ -8,22 +8,22 @@ resource "proxmox_virtual_environment_download_file" "debian_bookworm_qcow2_gene
   checksum_algorithm = "sha512"
 }
 
-resource "proxmox_virtual_environment_download_file" "debian_trixie_qcow2_generic" {
+resource "proxmox_download_file" "debian_trixie_qcow2_generic" {
   content_type       = "iso"
   datastore_id       = "local"
   file_name          = "debian-13-genericcloud-amd64.qcow2.img"
   node_name          = var.node
-  url                = "https://cloud.debian.org/images/cloud/trixie/daily/20250619-2148/debian-13-generic-amd64-daily-20250619-2148.qcow2"
-  checksum           = "046d9691b1a6026fd457b85c85476fa721249dd9379e23ab877bb34b2d6fa662994b03a23ffe7b527c5421cb1a69e81b6873c82f0e1ac9403bbaad263fffd3d8"
+  url                = "https://cloud.debian.org/images/cloud/trixie/20260706-2531/debian-13-generic-amd64-20260706-2531.qcow2"
+  checksum           = "aca6eefc7b87faddad617b197fb621c44cc2c440f7097d78ac06e113f78177f6b7a1a39a581fbb24c2513354ab6938e63e78730259ce204b53452e8186f53a37"
   checksum_algorithm = "sha512"
 }
 
-resource "proxmox_virtual_environment_download_file" "ubuntu_noble_cloud_image" { # TODO: use renovate to update the checksum
+resource "proxmox_download_file" "ubuntu_noble_cloud_image" { # TODO: use renovate to update the checksum
   content_type       = "iso"
   datastore_id       = "local"
   file_name          = "ubuntu-24.04-cloudimg-amd64.qcow.iso"
   node_name          = var.node
-  url                = "https://cloud-images.ubuntu.com/noble/20250610/noble-server-cloudimg-amd64.img"
-  checksum           = "92d2c4591af9a82785464bede56022c49d4be27bde1bdcf4a9fccc62425cda43"
+  url                = "https://cloud-images.ubuntu.com/noble/20260615/noble-server-cloudimg-amd64.img"
+  checksum           = "5fa5b05e5ec239858c4531485d6023b0896448c2df7c63b34f8dae6ea6051a44"
   checksum_algorithm = "sha256"
 }

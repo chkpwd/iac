@@ -13,6 +13,10 @@ terraform {
       source  = "hashicorp/external"
       version = "~> 2"
     }
+    tfe = {
+      source  = "hashicorp/tfe"
+      version = "~> 0.79.0"
+    }
   }
 }
 
@@ -28,6 +32,11 @@ data "external" "bws_lookup" {
   query = {
     keys = jsonencode(local.bws_keys)
   }
+}
+
+data "tfe_outputs" "mikrotik" {
+  organization = "chkpwd"
+  workspace    = "mikrotik"
 }
 
 provider "aws" {
