@@ -34,9 +34,8 @@ spec:
     spec:
       hostname: debian
       networks:
-        - name: lan
-          multus:
-            networkName: vlan30-bridge
+        - name: default
+          pod: {}
       domain:
         devices:
           disks:
@@ -47,8 +46,11 @@ spec:
               disk:
                 bus: virtio
           interfaces:
-            - name: lan
-              bridge: {}
+            - name: default
+              masquerade: {}
+              # Pinned locally-administered MAC; KubeVirt auto-assignment yielded
+              # an empty MAC on the masquerade/pod-network path here.
+              macAddress: "02:00:00:00:00:a1"
       volumes:
         - name: root
           dataVolume:
