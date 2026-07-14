@@ -25,6 +25,7 @@ spec:
               tag: v3.0.0
             env:
               DB_VECTOR_EXTENSION: pgvector
+              DB_SSL_MODE: require
               DB_HOSTNAME:
                 valueFrom:
                   secretKeyRef:
