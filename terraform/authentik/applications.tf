@@ -93,6 +93,37 @@ module "authentik-app-trek" {
   }
 }
 
+module "authentik-app-immich" {
+  source = "../_modules/authentik/oauth2_app"
+  name   = "Immich"
+  group  = "main"
+  oauth2_values = {
+    client_id         = "immich"
+    client_secret     = data.external.bws_lookup.result["immich_oidc_client_secret"]
+    property_mappings = data.authentik_property_mapping_provider_scope.sources.ids
+    allowed_redirect_uris = [
+      {
+        matching_mode = "strict",
+        url           = "https://immich.chkpwd.com/auth/login",
+      },
+      {
+        matching_mode = "strict",
+        url           = "https://immich.chkpwd.com/user-settings",
+      },
+      {
+        matching_mode = "strict",
+        url           = "app.immich:///oauth-callback",
+      },
+    ]
+  }
+  app_values = {
+    icon_url         = "https://cdn.jsdelivr.net/gh/selfhst/icons/webp/immich.webp"
+    meta_description = "Self-Hosted Photo and Video Management"
+  }
+
+  access_group = { main = authentik_group.main.id }
+}
+
 module "authentik-app-sure" {
   source = "../_modules/authentik/oauth2_app"
   name   = "Sure"

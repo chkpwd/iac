@@ -24,6 +24,7 @@ locals {
     "grimmory",
     "trek",
     "sure",
+    "immich",
   ]
 }
 

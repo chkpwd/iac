@@ -1,0 +1,32 @@
+---
+# The immich chart does not create the library volume; it requires an existing
+# PVC. Photos/videos live on the NAS like other media apps (jellyfin, paperless).
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: immich-library
+spec:
+  capacity:
+    storage: 1Ti
+  accessModes: ["ReadWriteMany"]
+  nfs:
+    server: nas-srv-01.chkpwd.com
+    path: /volume1/vault-01/static_media/immich
+  mountOptions: ["nfsvers=4.1", "hard"]
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  claimRef:
+    name: immich-library
+    namespace: tools
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-library
+spec:
+  accessModes: ["ReadWriteMany"]
+  storageClassName: ""
+  volumeName: immich-library
+  resources:
+    requests:
+      storage: 1Ti
