@@ -16,7 +16,6 @@ spec:
         name: immich
         namespace: flux-system
   values:
-    # Shared across the server and machine-learning components.
     controllers:
       main:
         containers:
@@ -58,11 +57,16 @@ spec:
       configurationKind: Secret
     server:
       enabled: true
+      service:
+        main:
+          type: LoadBalancer
+          annotations:
+            lbipam.cilium.io/ips: 10.0.45.38
       route:
         main:
           hostnames: ["immich.chkpwd.com"]
           parentRefs:
-            - name: private
+            - name: public
               namespace: networking
               sectionName: https
       resources:
