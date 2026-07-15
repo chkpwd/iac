@@ -8,6 +8,7 @@ resource "authentik_provider_oauth2" "oauth2" {
   invalidation_flow     = data.authentik_flow.default-provider-invalidation-flow.id
   access_token_validity = "minutes=10"
   property_mappings     = var.oauth2_values.property_mappings
+  grant_types           = var.oauth2_values.grant_types
   allowed_redirect_uris = var.oauth2_values.allowed_redirect_uris
   signing_key           = data.authentik_certificate_key_pair.generated.id
   lifecycle {
