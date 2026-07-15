@@ -48,6 +48,7 @@ locals {
     forward_iot_drop_all             = { order = 240, chain = "forward", action = "drop", comment = "drop all other forward from iot", in_interface = "iot" }
     forward_guest_ha_tcp             = { order = 310, chain = "forward", action = "accept", comment = "allow home assistant from guest", protocol = "tcp", dst_address = "10.0.10.8", dst_port = "8123", in_interface = "guest" }
     forward_jellyfin_guest           = { order = 315, chain = "forward", action = "accept", comment = "allow jellyfin from media_clients", protocol = "tcp", dst_address = "10.0.45.37", dst_port = "8096", src_address_list = "media_clients", in_interface = "guest" }
+    forward_immich_guest             = { order = 320, chain = "forward", action = "accept", comment = "allow immich from media_clients", protocol = "tcp", dst_address = "10.0.45.38", dst_port = "2283", src_address_list = "media_clients", in_interface = "guest" }
     forward_guest_dns_udp            = { order = 400, chain = "forward", action = "accept", comment = "allow guest DNS (UDP)", protocol = "udp", dst_address = var.dns_ip, dst_port = "53", in_interface = "guest" }
     forward_guest_dns_tcp            = { order = 410, chain = "forward", action = "accept", comment = "allow guest DNS (TCP)", protocol = "tcp", dst_address = var.dns_ip, dst_port = "53", in_interface = "guest" }
     forward_guest_wan                = { order = 420, chain = "forward", action = "accept", comment = "allow guest -> WAN", in_interface = "guest", out_interface_list = "WAN" }
