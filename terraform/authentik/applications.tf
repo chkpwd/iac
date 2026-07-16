@@ -121,7 +121,10 @@ module "authentik-app-immich" {
     meta_description = "Self-Hosted Photo and Video Management"
   }
 
-  access_group = { main = authentik_group.main.id }
+  access_group = {
+    main      = authentik_group.main.id
+    secondary = authentik_group.secondary.id
+  }
 }
 
 module "authentik-app-sure" {
