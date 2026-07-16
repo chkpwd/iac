@@ -1,7 +1,4 @@
 ---
-# Frigate configuration — https://docs.frigate.video/configuration/reference
-# Managed via GitOps and mounted read-only at /config/config.yml.
-# Secrets are injected as env vars (must be prefixed FRIGATE_) and referenced as {FRIGATE_*}.
 mqtt:
   enabled: true
   host: 10.0.10.8
@@ -59,13 +56,10 @@ birdseye:
   enabled: true
   mode: continuous
 
-# Built-in authentication for the exposed :8971 port.
 auth:
   enabled: true
 
 cameras:
-  # Placeholder camera so Frigate boots — replace with real cameras.
-  # RTSP credentials come from the FRIGATE_RTSP_PASSWORD secret.
   example:
     enabled: false
     ffmpeg:
