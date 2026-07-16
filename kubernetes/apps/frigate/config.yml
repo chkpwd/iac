@@ -1,0 +1,80 @@
+---
+# Frigate configuration — https://docs.frigate.video/configuration/reference
+# Managed via GitOps and mounted read-only at /config/config.yml.
+# Secrets are injected as env vars (must be prefixed FRIGATE_) and referenced as {FRIGATE_*}.
+mqtt:
+  enabled: true
+  host: 10.0.10.8
+  user: "{FRIGATE_MQTT_USER}"
+  password: "{FRIGATE_MQTT_PASSWORD}"
+
+# Object detection on the Intel iGPU via OpenVINO (gpu.intel.com/i915).
+detectors:
+  ov:
+    type: openvino
+    device: GPU
+
+# Default SSDLite MobileNet v2 model bundled in the image.
+model:
+  width: 300
+  height: 300
+  input_tensor: nhwc
+  input_pixel_format: bgr
+  path: /openvino-model/ssdlite_mobilenet_v2.xml
+  labelmap_path: /openvino-model/coco_91cl_bkgr.txt
+
+# Intel VAAPI hardware-accelerated decoding.
+ffmpeg:
+  hwaccel_args: preset-vaapi
+
+detect:
+  enabled: true
+  fps: 5
+
+objects:
+  track:
+    - person
+    - car
+    - dog
+    - cat
+
+record:
+  enabled: true
+  retain:
+    days: 3
+    mode: motion
+  alerts:
+    retain:
+      days: 30
+  detections:
+    retain:
+      days: 30
+
+snapshots:
+  enabled: true
+  retain:
+    default: 30
+
+birdseye:
+  enabled: true
+  mode: continuous
+
+# Built-in authentication for the exposed :8971 port.
+auth:
+  enabled: true
+
+cameras:
+  # Placeholder camera so Frigate boots — replace with real cameras.
+  # RTSP credentials come from the FRIGATE_RTSP_PASSWORD secret.
+  example:
+    enabled: false
+    ffmpeg:
+      inputs:
+        - path: rtsp://viewer:{FRIGATE_RTSP_PASSWORD}@10.0.10.10:554/stream1
+          roles:
+            - detect
+            - record
+    detect:
+      width: 1280
+      height: 720
+      fps: 5

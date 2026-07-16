@@ -1,0 +1,41 @@
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: &app frigate
+  namespace: &ns frigate
+spec:
+  targetNamespace: *ns
+  path: ./kubernetes/apps/frigate/
+  commonMetadata:
+    labels:
+      app.kubernetes.io/name: *app
+  components:
+    - ../../core/volsync/components/
+  postBuild:
+    substitute:
+      APP: *app
+      CLAIM: config-frigate-0
+      VOLSYNC_PUID: "0"
+      VOLSYNC_PGID: "0"
+      VOLSYNC_CAPACITY: "5Gi"
+      VOLSYNC_CACHE_CAPACITY: "5Gi"
+  patches:
+    - patch: |
+        - op: replace
+          path: /spec/kopia/retain
+          value:
+            daily: 7
+            weekly: 4
+            monthly: 2
+      target:
+        kind: ReplicationSource
+        name: frigate
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: chkpwd-ops
+    namespace: flux-system
+  wait: false
+  interval: 30m
