@@ -1,0 +1,30 @@
+---
+- name: Configure MikroTik SwOS switches
+  hosts: switches
+  gather_facts: false
+  tasks:
+    - name: Ensure backup directory exists
+      delegate_to: localhost
+      run_once: true
+      ansible.builtin.file:
+        path: "{{ playbook_dir }}/../../backups/swos"
+        state: directory
+        mode: "0755"
+
+    - name: Apply VLAN / PVID configuration
+      swos:
+        host: "{{ ansible_host }}"
+        username: "{{ swos_username | default('admin') }}"
+        password: "{{ swos_password | default('') }}"
+        platform: "{{ swos_platform | default(omit) }}"
+        config: "{{ swos_config }}"
+        backup: true
+        backup_options:
+          filename: "{{ inventory_hostname }}.swb"
+          dir_path: "{{ playbook_dir }}/../../backups/swos"
+      register: swos_result
+
+    - name: Show applied changes
+      ansible.builtin.debug:
+        var: swos_result.changes
+      when: swos_result.changes is defined

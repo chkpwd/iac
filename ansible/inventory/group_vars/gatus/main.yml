@@ -35,6 +35,10 @@ gatus_config:
       group: network
       url: icmp://10.0.10.2
       <<: *gatus_icmp_tcp_default
+    - name: Mikrotik Switch
+      group: network
+      url: icmp://10.0.10.57
+      <<: *gatus_icmp_tcp_default
     - name: Unifi AP
       group: network
       url: icmp://10.0.10.9

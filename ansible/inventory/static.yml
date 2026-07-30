@@ -37,6 +37,12 @@ all:
       vars:
         ansible_user: pi
         ansible_become_user: pi
+    switches:
+      hosts:
+        mk-sw-01:
+          ansible_host: 10.0.10.57
+      vars:
+        ansible_connection: local
     cloud:
       children:
         aws:
