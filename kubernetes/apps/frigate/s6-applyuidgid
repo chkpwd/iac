@@ -1,7 +1,4 @@
 #!/bin/bash
-# Non-root override for /package/admin/s6/command/s6-applyuidgid.
-# s6 cannot switch uid/gid without privileges when the container already
-# runs as a non-root user, so drop the leading uid/gid args and exec the
-# target program directly.
+# Non-root override: skip the s6 uid/gid switch, exec the target directly.
 ARGS=( "$@" )
 exec ${ARGS[@]:2}

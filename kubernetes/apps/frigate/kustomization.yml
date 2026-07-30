@@ -9,7 +9,6 @@ configMapGenerator:
   - name: frigate-configmap
     files:
       - config.yml=./config.yml
-  # s6-overlay override scripts required to run Frigate as a non-root UID.
   - name: frigate-s6-scripts
     files:
       - run=./s6-log-prepare-run

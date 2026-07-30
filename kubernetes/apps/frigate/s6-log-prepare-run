@@ -1,9 +1,7 @@
 #!/command/with-contenv bash
 set -o errexit -o nounset -o pipefail
 
-# Non-root override for /etc/s6-overlay/s6-rc.d/log-prepare/run.
-# The stock script chowns/chmods the log dirs, which fails when Frigate
-# runs as a non-root UID. Just create the directories.
+# Non-root override: create log dirs without the stock chown/chmod.
 dirs=(
   /dev/shm/logs/frigate
   /dev/shm/logs/go2rtc
