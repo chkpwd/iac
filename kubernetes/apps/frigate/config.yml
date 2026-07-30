@@ -37,9 +37,11 @@ objects:
 
 record:
   enabled: true
-  retain:
+  # 0.17 replaced record.retain with continuous/motion blocks.
+  continuous:
     days: 3
-    mode: motion
+  motion:
+    days: 7
   alerts:
     retain:
       days: 30

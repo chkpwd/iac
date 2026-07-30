@@ -34,17 +34,38 @@ spec:
                 name: "${APP}"
               globalMounts:
                 - path: /config
-        containers:
-          app:
-            image:
+        initContainers:
+          # Copy the GitOps-managed config into the writable /config PVC.
+          init-config:
+            image: &image
               repository: ghcr.io/blakeblackshear/frigate
               tag: 0.17.2
               pullPolicy: IfNotPresent
+            command:
+              - /bin/bash
+              - -c
+              - cp -f /tmp/frigate-config/config.yml /config/config.yml
+          # Seed a writable copy of nginx's tree so the non-root user can
+          # write runtime/log/temp files under /usr/local/nginx.
+          init-nginx:
+            image: *image
+            command:
+              - /bin/bash
+              - -c
+              - cp -Rf /usr/local/nginx/. /nginx/
+        containers:
+          app:
+            image: *image
             envFrom:
               - secretRef:
                   name: frigate
             env:
               TZ: America/New_York
+              # Non-root (s6-overlay) plumbing — see s6-* override scripts.
+              HOME: /tmp/home
+              USER: &uid "1026"
+              S6_CATCHALL_USER: *uid
+              S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: "1"
             probes:
               liveness: &probes
                 enabled: true
@@ -67,6 +88,11 @@ spec:
                     port: *port
                   failureThreshold: 30
                   periodSeconds: 10
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
             resources:
               requests:
                 gpu.intel.com/i915: 1
@@ -77,7 +103,18 @@ spec:
                 memory: 4Gi
     defaultPodOptions:
       automountServiceAccountToken: false
-      # hostUsers: false
+      # Run as the NAS-owning user (1026:100) — matching the arr apps — so
+      # Frigate writes recordings to NFS under standard root_squash instead
+      # of running as root. Frigate's s6-overlay image needs the s6-* script
+      # overrides + HOME/S6_* env + writable /run,/usr/local/nginx,/tmp/home.
+      securityContext:
+        runAsUser: 1026
+        runAsGroup: &gid 100
+        fsGroup: *gid
+        fsGroupChangePolicy: OnRootMismatch
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
     service:
       app:
         controller: frigate
@@ -105,8 +142,19 @@ spec:
         type: configMap
         name: frigate-configmap
         globalMounts:
-          - path: /config/config.yml
-            subPath: config.yml
+          - path: /tmp/frigate-config
+            readOnly: true
+      # s6-overlay override scripts (executable) for non-root operation.
+      s6-scripts:
+        type: configMap
+        name: frigate-s6-scripts
+        defaultMode: 0555
+        globalMounts:
+          - path: /etc/s6-overlay/s6-rc.d/log-prepare/run
+            subPath: run
+            readOnly: true
+          - path: /package/admin/s6/command/s6-applyuidgid
+            subPath: s6-applyuidgid
             readOnly: true
       media:
         type: nfs
@@ -126,3 +174,25 @@ spec:
         sizeLimit: 512Mi
         globalMounts:
           - path: /dev/shm
+      # Writable dirs the non-root user needs (stock image expects root here).
+      run:
+        type: emptyDir
+        medium: Memory
+        globalMounts:
+          - path: /run
+      home:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp/home
+      letsencrypt:
+        type: emptyDir
+        globalMounts:
+          - path: /etc/letsencrypt
+      nginx:
+        type: emptyDir
+        advancedMounts:
+          frigate:
+            init-nginx:
+              - path: /nginx
+            app:
+              - path: /usr/local/nginx
