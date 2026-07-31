@@ -1,6 +1,4 @@
 ---
-# CSS318-16G-2S+ speaks the full-SwOS HTTP schema despite its "CSS" name, which
-# the module would otherwise misdetect as SwOS Lite. Force it.
 swos_platform: swos
 
 swos_vlan_group: [1, 20, 30]
@@ -10,7 +8,7 @@ swos_config:
     trunk_vlans: "{{ swos_vlan_group }}"
 
   port_config:
-    1: {mode: trunk, native_vlan: 1, vlan_group: trunk_vlans}
+    1: {mode: access, vlan: 1}
     2: {mode: access, vlan: 1}
     3: {mode: access, vlan: 20}
     4: {mode: access, vlan: 1}
@@ -25,4 +23,10 @@ swos_config:
     13: {mode: access, vlan: 1}
     14: {mode: access, vlan: 1}
     15: {mode: access, vlan: 1}
-    16: {mode: trunk, native_vlan: 1, vlan_group: trunk_vlans}
+    16:
+      {mode: trunk, native_vlan: 1, vlan_group: trunk_vlans, vlan_mode: Strict}
+
+  vlans:
+    - {vlan_id: 1, learning: true}
+    - {vlan_id: 20, learning: true}
+    - {vlan_id: 30, learning: true}
