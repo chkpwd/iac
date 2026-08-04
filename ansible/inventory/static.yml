@@ -43,6 +43,9 @@ all:
           ansible_host: 10.0.10.57
       vars:
         ansible_connection: local
+        # Local connection: force the venv's Python (the one running ansible-playbook)
+        # so the mikrotik-swos module is importable instead of Homebrew's system Python.
+        ansible_python_interpreter: "{{ ansible_playbook_python }}"
     cloud:
       children:
         aws:

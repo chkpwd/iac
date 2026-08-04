@@ -1,4 +1,8 @@
 ---
+system:
+  device_name: "mk-sw-01"
+  model: "CSS318-16G-2S+"
+
 swos_platform: swos
 
 swos_vlan_group: [1, 20, 30]
@@ -22,11 +26,22 @@ swos_config:
     12: {mode: access, vlan: 1}
     13: {mode: access, vlan: 1}
     14: {mode: access, vlan: 1}
-    15: {mode: access, vlan: 1}
+    15: {mode: access, vlan: 20}
     16:
-      {mode: trunk, native_vlan: 1, vlan_group: trunk_vlans, vlan_mode: Strict}
+      mode: trunk
+      native_vlan: 1
+      vlan_group: trunk_vlans
+      vlan_mode: Strict
 
   vlans:
-    - {vlan_id: 1, learning: true}
-    - {vlan_id: 20, learning: true}
-    - {vlan_id: 30, learning: true}
+    - vlan_id: 1
+      learning: true
+      members: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+
+    - vlan_id: 20
+      learning: true
+      members: [3, 5, 15, 16]
+
+    - vlan_id: 30
+      learning: true
+      members: [16]
