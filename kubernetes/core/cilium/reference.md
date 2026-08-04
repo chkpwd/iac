@@ -1,5 +1,5 @@
 ## Cilium Reference
 
-Helm chart **v1.19.5**.
+Helm chart **v1.19.6**.
 
 ---
