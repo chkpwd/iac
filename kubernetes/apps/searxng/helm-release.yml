@@ -1,0 +1,124 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/common-4.5.0/charts/library/common/values.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: searxng
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: app-template
+      version: 5.0.1
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  values:
+    controllers:
+      searxng:
+        containers:
+          app:
+            image:
+              repository: ghcr.io/searxng/searxng
+              tag: 2026.8.14-094c33d40
+            env:
+              TZ: America/New_York
+              SEARXNG_SECRET:
+                valueFrom:
+                  secretKeyRef:
+                    name: searxng
+                    key: searxng-secret
+              SEARXNG_URL: https://searxng.chkpwd.com
+              SEARXNG_VALKEY_URL: valkey://searxng-valkey.tools.svc.cluster.local:6379/0
+              UWSGI_WORKERS: "1"
+            probes:
+              liveness: &probe
+                enabled: true
+                type: HTTP
+                path: /healthz
+              readiness: *probe
+              startup:
+                <<: *probe
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: [ALL]}
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1999
+            runAsGroup: 1999
+            fsGroup: 1999
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile: {type: RuntimeDefault}
+      valkey:
+        containers:
+          app:
+            image:
+              repository: docker.io/valkey/valkey
+              tag: 9.1.0
+            command:
+              - valkey-server
+              - --save
+              - "30"
+              - "1"
+              - --loglevel
+              - warning
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: [ALL]}
+            resources:
+              requests:
+                cpu: 5m
+                memory: 32Mi
+              limits:
+                memory: 128Mi
+        pod:
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1999
+            runAsGroup: 1999
+            fsGroup: 1999
+            fsGroupChangePolicy: OnRootMismatch
+            seccompProfile: {type: RuntimeDefault}
+    service:
+      searxng:
+        controller: searxng
+        ports:
+          http:
+            port: 8080
+      valkey:
+        controller: valkey
+        ports:
+          http:
+            port: 6379
+    persistence:
+      tmp:
+        type: emptyDir
+        advancedMounts:
+          searxng:
+            app:
+              - path: /tmp
+                subPath: tmp
+              - path: /etc/searxng
+                subPath: etc/searxng
+      valkey-data:
+        type: emptyDir
+        advancedMounts:
+          valkey:
+            app:
+              - path: /data
+    route:
+      private:
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        parentRefs:
+          - name: private
+            namespace: networking
+            sectionName: https
