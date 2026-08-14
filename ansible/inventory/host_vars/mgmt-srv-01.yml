@@ -37,7 +37,7 @@ service_definitions:
       traefik.http.routers.scanservjs.tls.domains[0].main: chkpwd.com
       traefik.http.routers.scanservjs.tls.domains[0].sans: "*.chkpwd.com"
     dns_servers:
-      - 10.0.10.4
+      - 10.0.10.1
   - name: dyrne
     image: ghcr.io/overengineers-anonymous/dyrne
     ports: ["5001:5000"]

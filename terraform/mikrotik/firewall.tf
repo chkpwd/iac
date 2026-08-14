@@ -12,7 +12,7 @@ locals {
     { address = local.lease_addr["hisense-android-tv"], comment = "jellyfin access", list = "media_clients" },
     { address = local.lease_addr["print-srv-01"], comment = "print-srv-01", list = "iot_wan_allow" },
     { address = local.lease_addr["haos"], comment = "haos", list = "iot_wan_allow" },
-    { address = local.lease_addr["rlnk-doorbell"], comment = "rlnk-doorbell", list = "iot_wan_allow" },
+    { address = local.lease_addr["rk-doorbell"], comment = "rk-doorbell", list = "iot_wan_allow" },
     { address = local.lease_addr["enphase-envoy"], comment = "enphase-envoy", list = "iot_wan_allow" },
     { address = local.lease_addr["dreame_vacuum"], comment = "dreame_vacuum", list = "iot_wan_allow" },
   ]

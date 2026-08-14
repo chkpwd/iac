@@ -61,11 +61,6 @@ resource "routeros_ip_service" "ssl" {
   certificate = routeros_system_certificate.ss-web-cert.name
 }
 
-resource "routeros_dns" "dns-server" {
-  allow_remote_requests = true
-  servers               = ["1.1.1.1", "8.8.8.8"]
-}
-
 resource "routeros_ipv6_settings" "disable" {
   disable_ipv6 = "true"
 }

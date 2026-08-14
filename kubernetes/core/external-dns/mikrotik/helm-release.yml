@@ -1,0 +1,101 @@
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: mikrotik-external-dns
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: external-dns
+      interval: 30m
+      version: 1.20.0
+      sourceRef:
+        kind: HelmRepository
+        name: external-dns
+  values:
+    logLevel: debug
+    logFormat: json
+    podSecurityContext:
+      fsGroup: 65534
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop: ["ALL"]
+    provider:
+      name: webhook
+      webhook:
+        image:
+          repository: ghcr.io/mirceanton/external-dns-provider-mikrotik
+          tag: v1.6.3@sha256:5794c1572153346e030a7de898e58c1fb81e6bd2f3eea563aabfa6d64ed199e0
+        env:
+          - name: LOG_FORMAT
+            value: json
+          - name: LOG_LEVEL
+            value: debug
+          - name: MIKROTIK_DEFAULT_TTL
+            value: "1800"
+          - name: MIKROTIK_DEFAULT_COMMENT
+            value: Managed by ExternalDNS
+          - name: MIKROTIK_BASEURL
+            valueFrom:
+              secretKeyRef:
+                name: mikrotik-external-dns
+                key: MIKROTIK_BASEURL
+          - name: MIKROTIK_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mikrotik-external-dns
+                key: MIKROTIK_USERNAME
+          - name: MIKROTIK_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: mikrotik-external-dns
+                key: MIKROTIK_PASSWORD
+          - name: MIKROTIK_SKIP_TLS_VERIFY
+            valueFrom:
+              secretKeyRef:
+                name: mikrotik-external-dns
+                key: MIKROTIK_SKIP_TLS_VERIFY
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: http-webhook
+          initialDelaySeconds: 10
+          timeoutSeconds: 5
+        resources:
+          requests:
+            memory: 20Mi
+            cpu: 10m
+          limits:
+            memory: 100Mi
+    extraArgs:
+      - --gateway-name=private
+      # IPv6 is disabled on the router; keep private records A-only to avoid
+      # AAAA leaks 404'ing dual-stack browsers.
+      - --managed-record-types=A
+      - --managed-record-types=CNAME
+      - --managed-record-types=TXT
+    sources: ["crd", "gateway-httproute"]
+    policy: sync
+    registry: txt
+    txtOwnerId: mikrotik
+    txtPrefix: reg-
+    domainFilter: ["chkpwd.com"]
+    serviceMonitor:
+      enabled: false
+    resources:
+      requests:
+        cpu: 10m
+        memory: 100Mi
+      limits:
+        memory: 300Mi
