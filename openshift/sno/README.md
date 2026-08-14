@@ -119,10 +119,10 @@ Uses [NMState](https://nmstate.io/) declarative format. [OpenShift NMState docs]
 
 #### dns-resolver.config
 
-| Field      | Value       | Description                                                                                                                                   |
-| ---------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `server[]` | `10.0.10.4` | Internal Gravity DNS server with the authoritative `sno.chkpwd.com` zone. Must not use public DNS — Cloudflare proxy records would interfere. |
-| `search[]` | `[]`        | Empty. Any search domain would cause double-suffix DNS lookups that break validation.                                                         |
+| Field      | Value       | Description                                                                                                                            |
+| ---------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `server[]` | `10.0.10.1` | Internal MikroTik router DNS holding the `sno.chkpwd.com` records. Must not use public DNS — Cloudflare proxy records would interfere. |
+| `search[]` | `[]`        | Empty. Any search domain would cause double-suffix DNS lookups that break validation.                                                  |
 
 ---
 
