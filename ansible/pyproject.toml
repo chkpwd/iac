@@ -1,7 +1,7 @@
 [project]
 name = "ansible"
 version = "0.0.0"
-requires-python = ">=3.11,<3.14"  # ansible-core 2.18: needs >=3.11, and 3.14 requires ansible-core >=2.20
+requires-python = ">=3.14,<3.15"  # ansible-core 2.18: needs >=3.11, and 3.14 requires ansible-core >=2.20
 dependencies = [
     # 2.18.x only: <2.19 because cloud.terraform 4.0.0 calls get_bin_path(required=True),
     # a kwarg removed in 2.19; >=2.18 because community.general 13.x requires >=2.18.0.
