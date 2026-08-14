@@ -1,8 +1,17 @@
 locals {
+  leases     = jsondecode(file("${path.module}/leases.json"))
+  lease_addr = { for l in concat(local.leases.guest, local.leases.iot, local.leases.lan) : l.name => l.address }
+
   address_list = [
     { address = "10.0.10.0/24", comment = "LAN", list = "LAN" },
-    { address = "10.0.0.0/8", comment = "rfc1918", list = "private_addr" },
-    { address = "172.16.0.0/12", comment = "rfc1918", list = "private_addr" },
+    { address = local.lease_addr["onn-tv-01"], comment = "jellyfin access", list = "media_clients" },
+    { address = local.lease_addr["tv-tlc-01"], comment = "jellyfin access", list = "media_clients" },
+    { address = local.lease_addr["hisense-android-tv"], comment = "jellyfin access", list = "media_clients" },
+    { address = local.lease_addr["print-srv-01"], comment = "print-srv-01", list = "iot_wan_allow" },
+    { address = local.lease_addr["haos"], comment = "haos", list = "iot_wan_allow" },
+    { address = local.lease_addr["rlnk-doorbell"], comment = "rlnk-doorbell", list = "iot_wan_allow" },
+    { address = local.lease_addr["enphase-envoy"], comment = "enphase-envoy", list = "iot_wan_allow" },
+    { address = local.lease_addr["dreame_vacuum"], comment = "dreame_vacuum", list = "iot_wan_allow" },
     { address = "192.168.0.0/16", comment = "rfc1918", list = "private_addr" },
     { address = "10.0.30.2", comment = "jellyfin access", list = "media_clients" },
     { address = "10.0.30.3", comment = "jellyfin access", list = "media_clients" },
