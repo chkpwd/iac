@@ -18,6 +18,24 @@ spec:
   values:
     controllers:
       searxng:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        initContainers:
+          config-yampl:
+            image:
+              repository: ghcr.io/clevyr/yampl
+              tag: 0.9.1
+            command:
+              - sh
+              - -c
+              - exec yampl --strip /config/settings.yml > /etc/searxng/settings.yml
+            envFrom:
+              - secretRef:
+                  name: searxng
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities: {drop: [ALL]}
         containers:
           app:
             image:
@@ -25,13 +43,6 @@ spec:
               tag: 2026.8.14-094c33d40
             env:
               TZ: America/New_York
-              SEARXNG_SECRET:
-                valueFrom:
-                  secretKeyRef:
-                    name: searxng
-                    key: searxng-secret
-              SEARXNG_URL: https://searxng.chkpwd.com
-              SEARXNG_VALKEY_URL: valkey://searxng-valkey.tools.svc.cluster.local:6379/0
               UWSGI_WORKERS: "1"
             probes:
               liveness: &probe
@@ -51,9 +62,9 @@ spec:
         pod:
           securityContext:
             runAsNonRoot: true
-            runAsUser: 1999
-            runAsGroup: 1999
-            fsGroup: 1999
+            runAsUser: 977
+            runAsGroup: 977
+            fsGroup: 977
             fsGroupChangePolicy: OnRootMismatch
             seccompProfile: {type: RuntimeDefault}
       valkey:
@@ -99,10 +110,20 @@ spec:
           http:
             port: 6379
     persistence:
+      config:
+        type: configMap
+        name: searxng-config
+        advancedMounts:
+          searxng:
+            config-yampl:
+              - path: /config
       tmp:
         type: emptyDir
         advancedMounts:
           searxng:
+            config-yampl:
+              - path: /etc/searxng
+                subPath: etc/searxng
             app:
               - path: /tmp
                 subPath: tmp

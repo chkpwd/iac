@@ -1,0 +1,33 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.31.0/configmap.json
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: searxng-config
+data:
+  settings.yml: |
+    use_default_settings: true
+
+    general:
+      instance_name: SearXNG
+
+    server:
+      base_url: https://searxng.chkpwd.com
+      secret_key: "notset" #yampl {{ .Env.SEARXNG_SECRET }}
+      limiter: false
+      image_proxy: true
+
+    search:
+      formats:
+        - html
+        - json
+
+    valkey:
+      url: valkey://searxng-valkey.tools.svc.cluster.local:6379/0
+
+    engines:
+      # Tor-only engines; fail to load without a Tor proxy.
+      - name: ahmia
+        disabled: true
+      - name: torch
+        disabled: true
