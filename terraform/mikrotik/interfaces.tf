@@ -44,10 +44,13 @@ resource "routeros_interface_bridge_vlan" "tagged" {
     name => net if name != "lan"
   }
 
-  comment  = each.key
-  bridge   = routeros_interface_bridge.bridge.name
+  comment = each.key
+  bridge  = routeros_interface_bridge.bridge.name
+  # Two tagged uplinks carry VLAN 20/30: ether1 -> unmanaged switch -> AP
+  # (wireless iot/guest SSIDs), ether8 -> CSS318 (wired iot). Native VLAN 1
+  # (LAN, 10.0.10.x) stays untagged on both. Do NOT drop either port.
   vlan_ids = [each.value.vlan_id]
-  tagged   = ["bridge", "ether1"]
+  tagged   = ["bridge", "ether1", "ether8"]
   untagged = each.value.untagged_ports
 }
 
