@@ -38,14 +38,14 @@ service_definitions:
       traefik.http.routers.scanservjs.tls.domains[0].sans: "*.chkpwd.com"
     dns_servers:
       - 10.0.10.1
-  - name: dyrne
-    image: ghcr.io/overengineers-anonymous/dyrne
-    ports: ["5001:5000"]
-  - name: bws-cache
-    image: ghcr.io/ripplefcl/bws-cache:v3.2.2
-    env:
-      PARSE_SECRET_VALUES: "true"
-      LOG_LEVEL: "warning"
-      ENABLE_TELEMETRY: "true"
-      SENTRY_ENVIRONMENT: "chkpwd"
-    ports: ["5000:5000"]
+  # - name: dyrne
+  #   image: ghcr.io/overengineers-anonymous/dyrne
+  #   ports: ["5001:5000"]
+  # - name: bws-cache
+  #   image: ghcr.io/ripplefcl/bws-cache:v3.2.2
+  #   env:
+  #     PARSE_SECRET_VALUES: "true"
+  #     LOG_LEVEL: "warning"
+  #     ENABLE_TELEMETRY: "true"
+  #     SENTRY_ENVIRONMENT: "chkpwd"
+  #   ports: ["5000:5000"]
