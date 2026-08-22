@@ -183,12 +183,35 @@ spec:
                 expr: rate(container_cpu_cfs_throttled_seconds_total{namespace="rook-ceph"}[5m]) == 0
                 labels:
                   severity: none
+      kube-hpa-rules:
+        groups:
+          - name: kube-hpa-rules
+            rules:
+              - alert: KubeHpaMaxedOut
+                for: 15m
+                labels:
+                  severity: warning
+                annotations:
+                  description: HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler }} has been running at max replicas for longer than 15 minutes.
+                  summary: HPA is running at max replicas
+                expr: |-
+                  (
+                    kube_horizontalpodautoscaler_status_current_replicas{job="kube-state-metrics", horizontalpodautoscaler!~".+-probe"}
+                      ==
+                    kube_horizontalpodautoscaler_spec_max_replicas{job="kube-state-metrics", horizontalpodautoscaler!~".+-probe"}
+                  )
+                  and on (namespace, horizontalpodautoscaler, cluster) (
+                    kube_horizontalpodautoscaler_spec_max_replicas{job="kube-state-metrics", horizontalpodautoscaler!~".+-probe"}
+                      !=
+                    kube_horizontalpodautoscaler_spec_min_replicas{job="kube-state-metrics", horizontalpodautoscaler!~".+-probe"}
+                  )
     thanosRuler:
       enabled: false
     defaultRules:
       create: true
       disabled:
         Watchdog: true
+        KubeHpaMaxedOut: true
         # False positive: histogram_quantile(0.01, …) picks up short-TTL client
         # certs that renew every scrape (p01 = seconds on .11/.12 while the real
         # cert TTL is ~91d). No expr override is possible via chart values.
