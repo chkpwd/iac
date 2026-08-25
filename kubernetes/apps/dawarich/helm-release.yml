@@ -76,6 +76,12 @@ spec:
                   httpGet:
                     path: /api/v1/health
                     port: 3000
+                    # App forces SSL (APPLICATION_PROTOCOL=https); without this
+                    # header the probe gets a 301->https and fails the TLS
+                    # handshake against plaintext Puma. Tell Rails it's secure.
+                    httpHeaders:
+                      - name: X-Forwarded-Proto
+                        value: https
                   initialDelaySeconds: 30
                   periodSeconds: 10
                   timeoutSeconds: 5
