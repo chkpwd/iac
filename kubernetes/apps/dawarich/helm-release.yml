@@ -178,6 +178,14 @@ spec:
       private:
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: dawarich
+                port: 3000
         parentRefs:
           - name: private
             namespace: networking
