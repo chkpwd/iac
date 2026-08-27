@@ -69,7 +69,6 @@ spec:
             securityContext: *securityContext
       mongodb:
         type: statefulset
-        rollingUpdate: *rollingUpdate
         statefulset:
           podManagementPolicy: OrderedReady
           volumeClaimTemplates:
