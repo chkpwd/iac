@@ -7,14 +7,15 @@ locals {
     { address = "10.0.0.0/8", comment = "rfc1918", list = "private_addr" },
     { address = "172.16.0.0/12", comment = "rfc1918", list = "private_addr" },
     { address = "192.168.0.0/16", comment = "rfc1918", list = "private_addr" },
-    { address = local.lease_addr["onn-tv-01"], comment = "jellyfin access", list = "media_clients" },
-    { address = local.lease_addr["tv-tlc-01"], comment = "jellyfin access", list = "media_clients" },
-    { address = local.lease_addr["hisense-android-tv"], comment = "jellyfin access", list = "media_clients" },
+    { address = local.lease_addr["hisense-android-tv"], comment = "hisense-android-tv", list = "media_clients" },
     { address = local.lease_addr["print-srv-01"], comment = "print-srv-01", list = "iot_wan_allow" },
     { address = local.lease_addr["haos"], comment = "haos", list = "iot_wan_allow" },
     { address = local.lease_addr["rk-doorbell"], comment = "rk-doorbell", list = "iot_wan_allow" },
+    { address = local.lease_addr["rk-cx810-02"], comment = "rk-cx810-02", list = "iot_wan_allow" },
+    { address = local.lease_addr["rk-trackmix-01"], comment = "rk-trackmix-01", list = "iot_wan_allow" },
     { address = local.lease_addr["enphase-envoy"], comment = "enphase-envoy", list = "iot_wan_allow" },
     { address = local.lease_addr["dreame_vacuum"], comment = "dreame_vacuum", list = "iot_wan_allow" },
+    { address = local.lease_addr["hisense-android-tv"], comment = "hisense-android-tv", list = "iot_wan_allow" },
   ]
 
   # - Uses stable map keys (not array indices) so adding/removing rules doesn't cascade changes
@@ -56,11 +57,11 @@ locals {
     forward_iot_ntp                  = { order = 215, chain = "forward", action = "accept", comment = "allow iot NTP to WAN (clock sync)", protocol = "udp", dst_port = "123", in_interface = "iot", out_interface_list = "WAN" }
     forward_iot_wan                  = { order = 220, chain = "forward", action = "accept", comment = "allow iot to WAN (allow-list only)", in_interface = "iot", out_interface_list = "WAN", src_address_list = "iot_wan_allow" }
     forward_ha_media_clients         = { order = 225, chain = "forward", action = "accept", comment = "allow home assistant to media_clients", protocol = "tcp", src_address = "10.0.20.4", dst_address_list = "media_clients", in_interface = "iot" }
+    forward_jellyfin_media_clients   = { order = 226, chain = "forward", action = "accept", comment = "allow jellyfin from media_clients", protocol = "tcp", dst_address = "10.0.45.37", dst_port = "8096", src_address_list = "media_clients", in_interface = "iot" }
+    forward_immich_media_clients     = { order = 227, chain = "forward", action = "accept", comment = "allow immich from media_clients", protocol = "tcp", dst_address = "10.0.45.38", dst_port = "2283", src_address_list = "media_clients", in_interface = "iot" }
     forward_iot_drop_local           = { order = 230, chain = "forward", action = "drop", comment = "drop local access on iot net", dst_address_list = "private_addr", in_interface = "iot" }
     forward_iot_drop_all             = { order = 240, chain = "forward", action = "drop", comment = "drop all other forward from iot", in_interface = "iot" }
     forward_guest_ha_tcp             = { order = 310, chain = "forward", action = "accept", comment = "allow home assistant from guest", protocol = "tcp", dst_address = "10.0.20.4", dst_port = "8123", in_interface = "guest" }
-    forward_jellyfin_guest           = { order = 315, chain = "forward", action = "accept", comment = "allow jellyfin from media_clients", protocol = "tcp", dst_address = "10.0.45.37", dst_port = "8096", src_address_list = "media_clients", in_interface = "guest" }
-    forward_immich_guest             = { order = 320, chain = "forward", action = "accept", comment = "allow immich from media_clients", protocol = "tcp", dst_address = "10.0.45.38", dst_port = "2283", src_address_list = "media_clients", in_interface = "guest" }
     forward_ha_sonarr                = { order = 325, chain = "forward", action = "accept", comment = "allow home assistant to sonarr", protocol = "tcp", src_address = "10.0.20.4", dst_address = "10.0.45.31", dst_port = "443", tls_host = "sonarr.chkpwd.com" }
     forward_ha_radarr                = { order = 326, chain = "forward", action = "accept", comment = "allow home assistant to radarr", protocol = "tcp", src_address = "10.0.20.4", dst_address = "10.0.45.31", dst_port = "443", tls_host = "radarr.chkpwd.com" }
     forward_guest_wan                = { order = 420, chain = "forward", action = "accept", comment = "allow guest -> WAN", in_interface = "guest", out_interface_list = "WAN" }
