@@ -59,7 +59,7 @@ spec:
               - 0.0.0.0:8084
               - shelfmark.main:app
             env:
-              INGEST_DIR: /bookdrop
+              INGEST_DIR: /books
             probes:
               liveness: &probe
                 enabled: true
@@ -72,9 +72,9 @@ spec:
             resources:
               requests:
                 cpu: 10m
-                memory: 128Mi
-              limits:
                 memory: 512Mi
+              limits:
+                memory: 2Gi
             securityContext:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
@@ -110,3 +110,11 @@ spec:
             subPath: tmp
           - path: /var/log
             subPath: var-log
+          - path: /tmp/shelfmark
+            subPath: shelfmark
+          - path: /tmp/shelfmark/seleniumbase
+            subPath: seleniumbase
+          - path: /tmp/shelfmark/seleniumbase/downloaded_files
+            subPath: seleniumbase-downloaded-files
+          - path: /tmp/shelfmark/seleniumbase/archived_files
+            subPath: seleniumbase-archived-files
