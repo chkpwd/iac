@@ -89,12 +89,35 @@ spec:
           http:
             port: *port
     route:
-      private:
+      public:
+        kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
         parentRefs:
-          - name: private
+          - name: public
             namespace: networking
             sectionName: https
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: audiobookshelf
+                port: *port
+            filters:
+              - type: ResponseHeaderModifier
+                responseHeaderModifier:
+                  add:
+                    - name: Strict-Transport-Security
+                      value: "max-age=63072000; includeSubDomains; preload"
+                    - name: X-Frame-Options
+                      value: "SAMEORIGIN"
+                    - name: X-Content-Type-Options
+                      value: "nosniff"
+                    - name: Referrer-Policy
+                      value: "strict-origin-when-cross-origin"
+                    - name: Permissions-Policy
+                      value: "geolocation=(), microphone=(), camera=()"
     persistence:
       books:
         type: nfs
