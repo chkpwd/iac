@@ -34,7 +34,7 @@ releases:
   - name: cert-manager
     namespace: security
     chart: jetstack/cert-manager
-    version: v1.21.1
+    version: v1.21.2
     values: ["../core/cert-manager/values.yml"]
     needs: ["kube-system/coredns"]
   - name: external-secrets
