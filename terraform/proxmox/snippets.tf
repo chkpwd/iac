@@ -22,73 +22,8 @@ resource "proxmox_virtual_environment_file" "common_cloud_init" {
   }
 }
 
-# resource "proxmox_virtual_environment_file" "common_network" {
-#   content_type = "snippets"
-#   datastore_id = "local"
-#   node_name    = var.node
-
-#   source_raw {
-#     data = <<-EOF
-#     #cloud-config
-#     network:
-#       version: 2
-#       renderer: networkd
-#       ethernets:
-#         enp1s0:
-#           mtu: 1500
-#           addresses:
-#             - 10.0.10.2/24
-#           dhcp4: true
-#           dhcp4-overrides:
-#             use-dns: true
-#             use-ntp: true
-#             send-hostname: true
-#             use-routes: false
-#             use-domains: true
-#           accept-ra: false
-#     EOF
-
-#     file_name = "network.yaml"
-#   }
-# }
-
-resource "proxmox_virtual_environment_file" "ollama_meta_data" {
-  content_type = "snippets"
-  datastore_id = "local"
-  node_name    = var.node
-
-  source_raw {
-    data = templatefile("${path.root}/meta-data.tftpl", {
-      hostname = "ai-inference-01"
-    })
-    file_name = "ollama-meta-data.yaml"
-  }
-}
-
-resource "proxmox_virtual_environment_file" "openshift-tools_meta_data" {
-  content_type = "snippets"
-  datastore_id = "local"
-  node_name    = var.node
-
-  source_raw {
-    data = templatefile("${path.root}/meta-data.tftpl", {
-      hostname = "openshift-tools"
-    })
-    file_name = "openshift-tools-meta-data.yaml"
-  }
-}
-
-resource "proxmox_virtual_environment_file" "mc_kasten_meta_data" {
-  for_each = {
-    mc-kasten-01 = {
-      hostname  = "mc-kasten-01"
-      file_name = "mc-kasten-01-meta-data.yaml"
-    }
-    mc-kasten-02 = {
-      hostname  = "mc-kasten-02"
-      file_name = "mc-kasten-02-meta-data.yaml"
-    }
-  }
+resource "proxmox_virtual_environment_file" "meta_data" {
+  for_each = var.nodes_cfg
 
   content_type = "snippets"
   datastore_id = "local"
@@ -96,8 +31,8 @@ resource "proxmox_virtual_environment_file" "mc_kasten_meta_data" {
 
   source_raw {
     data = templatefile("${path.root}/meta-data.tftpl", {
-      hostname = each.value.hostname
+      hostname = each.value.name
     })
-    file_name = each.value.file_name
+    file_name = "${each.key}-meta-data.yaml"
   }
 }

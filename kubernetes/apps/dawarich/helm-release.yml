@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.0.1
+      version: 5.3.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -34,7 +34,7 @@ spec:
           app:
             image: &image
               repository: docker.io/freikin/dawarich
-              tag: 1.9.2
+              tag: 1.15.3
             command: ["web-entrypoint.sh"]
             args: ["bin/rails", "server", "-p", "3000", "-b", "::"]
             env: &env
@@ -76,6 +76,12 @@ spec:
                   httpGet:
                     path: /api/v1/health
                     port: 3000
+                    # App forces SSL (APPLICATION_PROTOCOL=https); without this
+                    # header the probe gets a 301->https and fails the TLS
+                    # handshake against plaintext Puma. Tell Rails it's secure.
+                    httpHeaders:
+                      - name: X-Forwarded-Proto
+                        value: https
                   initialDelaySeconds: 30
                   periodSeconds: 10
                   timeoutSeconds: 5
@@ -129,6 +135,32 @@ spec:
                 memory: 256Mi
               limits:
                 memory: 2Gi
+      redis:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: docker.io/valkey/valkey
+              tag: 9.1.2
+            command:
+              - valkey-server
+              - --save
+              - "60"
+              - "1"
+              - --loglevel
+              - warning
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: true
+              capabilities:
+                drop: ["ALL"]
+            resources:
+              requests:
+                cpu: 5m
+                memory: 32Mi
+              limits:
+                memory: 256Mi
     defaultPodOptions:
       automountServiceAccountToken: false
       securityContext:
@@ -138,15 +170,28 @@ spec:
         fsGroup: 1999
         fsGroupChangePolicy: OnRootMismatch
     service:
-      app:
+      dawarich:
         controller: dawarich
         ports:
           http:
             port: 3000
+      redis:
+        controller: redis
+        ports:
+          http:
+            port: 6379
     route:
       private:
         kind: HTTPRoute
         hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        rules:
+          - matches:
+              - path:
+                  type: PathPrefix
+                  value: /
+            backendRefs:
+              - name: dawarich
+                port: 3000
         parentRefs:
           - name: private
             namespace: networking
@@ -183,5 +228,11 @@ spec:
           sidekiq:
             app:
               - path: /var/app/public
+      redis-data:
+        type: emptyDir
+        advancedMounts:
+          redis:
+            app:
+              - path: /data
       tmp:
         type: emptyDir

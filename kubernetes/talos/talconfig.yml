@@ -26,9 +26,6 @@ nodes:
           - vlanId: 20
             dhcp: false
             addresses: []
-          - vlanId: 30
-            dhcp: false
-            addresses: []
   - hostname: ct-k8s-02.chkpwd.com
     ipAddress: 10.0.10.11
     controlPlane: true
@@ -43,9 +40,6 @@ nodes:
           - vlanId: 20
             dhcp: false
             addresses: []
-          - vlanId: 30
-            dhcp: false
-            addresses: []
   - hostname: ct-k8s-03.chkpwd.com
     ipAddress: 10.0.10.12
     controlPlane: true
@@ -58,9 +52,6 @@ nodes:
           ip: *vip
         vlans:
           - vlanId: 20
-            dhcp: false
-            addresses: []
-          - vlanId: 30
             dhcp: false
             addresses: []
 controlPlane:

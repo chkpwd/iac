@@ -7,8 +7,20 @@
       - gcc
       - g++
       - git
+      - gnupg
       - pkg-config
     state: present
+
+- name: Enable contrib and non-free repositories for CUDA toolkit
+  become: true
+  when: llamacpp_cuda_enabled | bool and ansible_os_family == "Debian"
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb http://deb.debian.org/debian/ {{ ansible_distribution_release }}
+      main non-free-firmware contrib non-free
+    filename: debian
+    state: present
+    update_cache: true
 
 - name: Install NVIDIA CUDA toolkit
   become: true

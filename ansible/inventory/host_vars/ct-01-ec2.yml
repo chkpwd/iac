@@ -11,7 +11,8 @@ common_env: &common_env
   PGID: "1000"
 service_definitions:
   - name: wireguard
-    image: lscr.io/linuxserver/wireguard:1.0.20250521
+    image: lscr.io/linuxserver/wireguard:1.0.20260223
+    restart_policy: unless-stopped
     capabilities:
       - net_admin # Allows modifications of net utils
       # - sys_module # No longer needed if host loads the modules already
@@ -25,12 +26,14 @@ service_definitions:
     networks:
       - name: net_swag
   - name: gatus
-    image: twinproduction/gatus:v5.36.0
+    image: twinproduction/gatus:v5.37.0
+    restart_policy: unless-stopped
     volumes:
       - "{{ configuration_path }}/gatus:/config"
     network_mode: container:wireguard
   - name: swag
-    image: lscr.io/linuxserver/swag:5.6.0
+    image: lscr.io/linuxserver/swag:5.8.0
+    restart_policy: unless-stopped
     ports:
       - 443:443
       - 80:80

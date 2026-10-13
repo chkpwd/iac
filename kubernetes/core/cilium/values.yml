@@ -39,6 +39,10 @@ hubble:
   ui:
     enabled: true
     rollOutPods: true
+    frontend:
+      server:
+        ipv6:
+          enabled: false
 ipam:
   mode: kubernetes
 ipv4NativeRoutingCIDR: 10.244.0.0/16

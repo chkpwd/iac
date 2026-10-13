@@ -11,6 +11,7 @@ spec:
     - name: ai
     - name: authentik
     - name: databases
+    - name: frigate
     - name: media
     - name: monitoring
     - name: networking
@@ -34,6 +35,6 @@ spec:
       name: << inputs.name >>
       annotations:
         kustomize.toolkit.fluxcd.io/prune: disabled
-        << if or (eq inputs.name "media") (eq inputs.name "tools") >>
+        << if or (eq inputs.name "media") (eq inputs.name "tools") (eq inputs.name "frigate") >>
         volsync.backube/privileged-movers: "true"
         << end >>

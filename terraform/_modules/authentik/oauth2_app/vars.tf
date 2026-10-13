@@ -17,9 +17,13 @@ variable "oauth2_values" {
     client_secret     = optional(string)
     client_type       = optional(string)
     property_mappings = optional(list(string))
+    grant_types       = optional(list(string), ["authorization_code", "refresh_token"])
     allowed_redirect_uris = list(object({
       matching_mode = string
       url           = string
+      # authentik's API stamps every redirect URI with this; set it so we don't
+      # perpetually diff it back to null.
+      redirect_uri_type = optional(string, "authorization")
     }))
   })
 }

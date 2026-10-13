@@ -3,7 +3,7 @@ resource "macaddress" "main" {
   prefix   = [188, 36, 17]
 }
 
-resource "proxmox_virtual_environment_vm" "ollama" {
+resource "proxmox_virtual_environment_vm" "ai" {
   name      = var.nodes_cfg["ai-inference-01"].name
   node_name = "pve-srv-01"
   vm_id     = var.nodes_cfg["ai-inference-01"].vm_id
@@ -36,7 +36,7 @@ resource "proxmox_virtual_environment_vm" "ollama" {
     }
 
     user_data_file_id = proxmox_virtual_environment_file.common_cloud_init.id
-    meta_data_file_id = proxmox_virtual_environment_file.ollama_meta_data.id
+    meta_data_file_id = proxmox_virtual_environment_file.meta_data["ai-inference-01"].id
   }
 
   network_device {
@@ -46,7 +46,7 @@ resource "proxmox_virtual_environment_vm" "ollama" {
 
   disk {
     datastore_id = "prod-nvme"
-    file_id      = proxmox_virtual_environment_download_file.debian_trixie_qcow2_generic.id
+    file_id      = proxmox_download_file.debian_trixie_qcow2_generic.id
     interface    = "virtio0"
     iothread     = true
     discard      = "on"
@@ -104,17 +104,17 @@ resource "proxmox_virtual_environment_vm" "mc-kasten" {
       }
     }
     user_data_file_id = proxmox_virtual_environment_file.common_cloud_init.id
-    meta_data_file_id = proxmox_virtual_environment_file.mc_kasten_meta_data[each.key].id
+    meta_data_file_id = proxmox_virtual_environment_file.meta_data[each.key].id
   }
 
   network_device {
-    bridge      = "vmbr0"
+    bridge      = "vmbr30"
     mac_address = macaddress.main[each.key].id
   }
 
   disk {
     datastore_id = "prod-nvme"
-    file_id      = proxmox_virtual_environment_download_file.debian_trixie_qcow2_generic.id
+    file_id      = proxmox_download_file.debian_trixie_qcow2_generic.id
     interface    = "virtio0"
     iothread     = true
     discard      = "on"

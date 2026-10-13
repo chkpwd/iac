@@ -35,7 +35,7 @@ variable "networks" {
 }
 variable "dns_ip" {
   type    = string
-  default = "10.0.10.4"
+  default = "10.0.10.1"
 }
 
 variable "domain" {

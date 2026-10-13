@@ -3,11 +3,11 @@ terraform {
   required_providers {
     authentik = {
       source  = "goauthentik/authentik"
-      version = "2026.5.0"
+      version = "2026.8.0"
     }
     random = {
       source  = "hashicorp/random"
-      version = "3.9.0"
+      version = "3.9.1"
     }
     external = {
       source  = "hashicorp/external"
@@ -24,6 +24,7 @@ locals {
     "grimmory",
     "trek",
     "sure",
+    "immich",
   ]
 }
 

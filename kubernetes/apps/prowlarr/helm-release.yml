@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.0.1
+      version: 5.3.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -45,7 +45,7 @@ spec:
           app:
             image:
               repository: ghcr.io/home-operations/prowlarr
-              tag: 2.5.0.5422
+              tag: 2.6.5.5623
               pullPolicy: IfNotPresent
             env:
               TZ: "America/New_York"

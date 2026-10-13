@@ -11,14 +11,14 @@ resource "routeros_interface_bridge" "bridge" {
 
 resource "routeros_interface_bridge_port" "bridge_ports" {
   for_each = {
-    ether2       = { pvid = 1, frame_types = "admit-all" }
-    ether3       = { pvid = 1, frame_types = "admit-all" }
-    ether4       = { pvid = 20, frame_types = "admit-only-untagged-and-priority-tagged" }
-    ether5       = { pvid = 1, frame_types = "admit-all" }
-    ether6       = { pvid = 1, frame_types = "admit-all" }
-    ether7       = { pvid = 1, frame_types = "admit-all" }
-    ether8       = { pvid = 1, frame_types = "admit-all" }
-    sfp-sfpplus1 = { pvid = 1, frame_types = "admit-all" }
+    ether1 = { pvid = 1, frame_types = "admit-all" }
+    ether2 = { pvid = 1, frame_types = "admit-all" }
+    ether3 = { pvid = 1, frame_types = "admit-all" }
+    ether4 = { pvid = 20, frame_types = "admit-only-untagged-and-priority-tagged" }
+    ether5 = { pvid = 1, frame_types = "admit-all" }
+    ether6 = { pvid = 1, frame_types = "admit-all" }
+    ether7 = { pvid = 1, frame_types = "admit-all" }
+    ether8 = { pvid = 1, frame_types = "admit-all" }
   }
 
   bridge      = routeros_interface_bridge.bridge.name
@@ -44,10 +44,13 @@ resource "routeros_interface_bridge_vlan" "tagged" {
     name => net if name != "lan"
   }
 
-  comment  = each.key
-  bridge   = routeros_interface_bridge.bridge.name
+  comment = each.key
+  bridge  = routeros_interface_bridge.bridge.name
+  # Two tagged uplinks carry VLAN 20/30: ether1 -> unmanaged switch -> AP
+  # (wireless iot/guest SSIDs), ether8 -> CSS318 (wired iot). Native VLAN 1
+  # (LAN, 10.0.10.x) stays untagged on both. Do NOT drop either port.
   vlan_ids = [each.value.vlan_id]
-  tagged   = ["bridge", "ether2"]
+  tagged   = ["bridge", "ether1", "ether8"]
   untagged = each.value.untagged_ports
 }
 
@@ -56,7 +59,7 @@ resource "routeros_interface_list" "wan" { name = "WAN" }
 resource "routeros_interface_list" "lan" { name = "LAN" }
 
 resource "routeros_interface_list_member" "wan" {
-  interface = "ether1"
+  interface = "sfp-sfpplus1"
   list      = routeros_interface_list.wan.name
 }
 
@@ -94,5 +97,5 @@ resource "routeros_ip_address" "wireguard" {
 }
 
 resource "routeros_ip_dhcp_client" "wan" {
-  interface = "ether1"
+  interface = "sfp-sfpplus1"
 }

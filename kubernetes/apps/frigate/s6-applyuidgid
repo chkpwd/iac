@@ -1,0 +1,4 @@
+#!/bin/bash
+# Non-root override: skip the s6 uid/gid switch, exec the target directly.
+ARGS=( "$@" )
+exec ${ARGS[@]:2}

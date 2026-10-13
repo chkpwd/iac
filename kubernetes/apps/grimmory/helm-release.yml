@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.0.1
+      version: 5.3.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -51,7 +51,7 @@ spec:
           mariadb:
             image:
               repository: docker.io/library/mariadb
-              tag: 12.3.2-noble
+              tag: 12.3.3-noble
             env:
               MARIADB_USER: grimmory
               MARIADB_DATABASE: grimmory
@@ -89,7 +89,7 @@ spec:
           wait-for-mariadb:
             image:
               repository: wait4x/wait4x
-              tag: 3.6.0
+              tag: 3.7.2
             args:
               - "mysql"
               - "grimmory:$(DB_PASSWORD)@tcp(localhost:3306)/grimmory"
@@ -103,7 +103,7 @@ spec:
           app:
             image:
               repository: ghcr.io/grimmory-tools/grimmory
-              tag: v3.2.4
+              tag: v3.5.0
             command:
               - java
             args:

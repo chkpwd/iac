@@ -1,0 +1,188 @@
+---
+# yaml-language-server: $schema=https://chkpwd.github.io/iac/helm.toolkit.fluxcd.io/helmrelease_v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: frigate
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: app-template
+      version: 5.3.0
+      interval: 30m
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s-labs
+        namespace: flux-system
+  values:
+    controllers:
+      frigate:
+        type: statefulset
+        annotations:
+          reloader.stakater.com/auto: "true"
+        replicas: 1
+        statefulset:
+          volumeClaimTemplates:
+            - name: config
+              accessMode: ReadWriteOnce
+              size: "${VOLSYNC_CAPACITY}"
+              storageClass: ceph-block
+              dataSourceRef:
+                kind: ReplicationDestination
+                apiGroup: volsync.backube
+                name: "${APP}"
+              globalMounts:
+                - path: /config
+        initContainers:
+          init-config:
+            image: &image
+              repository: ghcr.io/blakeblackshear/frigate
+              tag: 0.18.0-beta2
+              pullPolicy: IfNotPresent
+            command:
+              - /bin/bash
+              - -c
+              - cp -f /tmp/frigate-config/config.yml /config/config.yml
+          init-nginx:
+            image: *image
+            command:
+              - /bin/bash
+              - -c
+              - cp -Rf /usr/local/nginx/. /nginx/
+        containers:
+          app:
+            image: *image
+            envFrom:
+              - secretRef:
+                  name: frigate
+            env:
+              TZ: America/New_York
+              HOME: /tmp/home
+              USER: &uid "1026"
+              S6_CATCHALL_USER: *uid
+              S6_YES_I_WANT_A_WORLD_WRITABLE_RUN_BECAUSE_KUBERNETES: "1"
+            probes:
+              liveness: &probes
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/version
+                    port: &port 5000
+                  initialDelaySeconds: 0
+                  periodSeconds: 30
+                  timeoutSeconds: 5
+                  failureThreshold: 5
+              readiness: *probes
+              startup:
+                enabled: true
+                custom: true
+                spec:
+                  httpGet:
+                    path: /api/version
+                    port: *port
+                  failureThreshold: 30
+                  periodSeconds: 10
+            securityContext:
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                  - ALL
+            resources:
+              requests:
+                gpu.intel.com/i915: 1
+                cpu: 100m
+                memory: 1Gi
+              limits:
+                gpu.intel.com/i915: 1
+                memory: 4Gi
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 1026
+        runAsGroup: &gid 100
+        fsGroup: *gid
+        fsGroupChangePolicy: OnRootMismatch
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+    service:
+      app:
+        controller: frigate
+        ports:
+          http:
+            port: 8971
+          go2rtc:
+            port: 1984
+          rtsp:
+            port: 8554
+    route:
+      private:
+        kind: HTTPRoute
+        hostnames: ["{{ .Release.Name }}.chkpwd.com"]
+        parentRefs:
+          - name: private
+            namespace: networking
+            sectionName: https
+        rules:
+          - backendRefs:
+              - name: frigate
+                port: 8971
+    persistence:
+      config-file:
+        type: configMap
+        name: frigate-configmap
+        globalMounts:
+          - path: /tmp/frigate-config
+            readOnly: true
+      s6-scripts:
+        type: configMap
+        name: frigate-s6-scripts
+        defaultMode: 0555
+        globalMounts:
+          - path: /etc/s6-overlay/s6-rc.d/log-prepare/run
+            subPath: run
+            readOnly: true
+          - path: /package/admin/s6/command/s6-applyuidgid
+            subPath: s6-applyuidgid
+            readOnly: true
+      media:
+        type: nfs
+        server: "nas-srv-01.chkpwd.com"
+        path: /volume1/vault-01/frigate
+        globalMounts:
+          - path: /media/frigate
+      cache:
+        type: emptyDir
+        medium: Memory
+        sizeLimit: 1Gi
+        globalMounts:
+          - path: /tmp/cache
+      shm:
+        type: emptyDir
+        medium: Memory
+        sizeLimit: 512Mi
+        globalMounts:
+          - path: /dev/shm
+      run:
+        type: emptyDir
+        medium: Memory
+        globalMounts:
+          - path: /run
+      home:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp/home
+      letsencrypt:
+        type: emptyDir
+        globalMounts:
+          - path: /etc/letsencrypt
+      nginx:
+        type: emptyDir
+        advancedMounts:
+          frigate:
+            init-nginx:
+              - path: /nginx
+            app:
+              - path: /usr/local/nginx

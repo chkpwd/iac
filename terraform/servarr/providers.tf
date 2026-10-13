@@ -3,15 +3,15 @@ terraform {
   required_providers {
     sonarr = {
       source  = "devopsarr/sonarr"
-      version = "3.4.2"
+      version = "3.5.0"
     }
     prowlarr = {
       source  = "devopsarr/prowlarr"
-      version = "3.2.1"
+      version = "3.2.2"
     }
     radarr = {
       source  = "devopsarr/radarr"
-      version = "2.4.0"
+      version = "2.5.0"
     }
     external = {
       source  = "hashicorp/external"

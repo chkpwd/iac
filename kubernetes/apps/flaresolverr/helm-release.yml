@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.0.1
+      version: 5.3.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -22,7 +22,7 @@ spec:
           app:
             image:
               repository: ghcr.io/flaresolverr/flaresolverr
-              tag: v3.5.0
+              tag: v3.5.2
             env:
               TZ: "America/New_York"
               LANG: en_US
@@ -32,7 +32,7 @@ spec:
                 cpu: 10m
                 memory: 150Mi
               limits:
-                memory: 500Mi
+                memory: 700Mi
     service:
       app:
         controller: flaresolverr

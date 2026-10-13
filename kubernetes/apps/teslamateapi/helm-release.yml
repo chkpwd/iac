@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.0.1
+      version: 5.3.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -42,7 +42,7 @@ spec:
           app:
             env:
               API_TOKEN_DISABLE: "false"
-              MQTT_HOST: 10.0.10.8
+              MQTT_HOST: 10.0.20.4
               TZ: America/New_York
               MQTT_PASSWORD:
                 valueFrom:

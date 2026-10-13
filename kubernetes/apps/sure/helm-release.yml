@@ -18,7 +18,7 @@ spec:
   values:
     image:
       repository: ghcr.io/we-promise/sure
-      tag: 0.7.2-alpha.4@sha256:6a747ef84a7b036bf4727d1ab283bc05e0ec964e629bb917b91343a414703d43
+      tag: 0.7.6-alpha.4@sha256:59b70af0840773cbc11aa3e79188c8972d3e97aa295051c7c7df5e5c9bdf8ef5
       pullPolicy: IfNotPresent
     rails:
       env: production
@@ -73,7 +73,7 @@ spec:
       enabled: true
       image:
         repository: docker.io/redis
-        tag: "8.8"
+        tag: "8.10"
         pullPolicy: IfNotPresent
       service:
         port: 6379
@@ -189,7 +189,7 @@ spec:
       enabled: true
       image:
         repository: ghcr.io/luckypipewrench/pipelock
-        tag: 3.0.0
+        tag: 3.6.0
         pullPolicy: IfNotPresent
       replicas: 1
       # Pipelock run mode: strict, balanced, audit

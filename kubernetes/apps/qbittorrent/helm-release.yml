@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.0.1
+      version: 5.3.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -44,7 +44,7 @@ spec:
           app:
             image:
               repository: ghcr.io/home-operations/qbittorrent
-              tag: 5.2.2
+              tag: 5.2.4
             env:
               TZ: "America/New_York"
               QBT_TORRENTING_PORT: &torrentPort 50413
@@ -82,7 +82,7 @@ spec:
             dependsOn: app
             image:
               repository: registry.k8s.io/git-sync/git-sync
-              tag: v4.7.0
+              tag: v4.7.1
             args:
               - --repo=https://github.com/WDaan/VueTorrent
               - --ref=latest-release

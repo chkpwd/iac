@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.0.1
+      version: 5.3.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -36,7 +36,7 @@ spec:
           app:
             env:
               CHECK_ORIGIN: true
-              MQTT_HOST: 10.0.10.8
+              MQTT_HOST: 10.0.20.4
               PORT: &port 80
               TZ: America/New_York
               VIRTUAL_HOST: "{{ .Release.Name }}.chkpwd.com"
@@ -78,7 +78,7 @@ spec:
               DATABASE_SSL: "noverify"
             image:
               repository: docker.io/teslamate/teslamate
-              tag: 4.0.1
+              tag: 4.3.0
             probes:
               liveness: &probes
                 enabled: true

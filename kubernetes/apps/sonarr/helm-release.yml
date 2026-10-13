@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 5.0.1
+      version: 5.3.0
       interval: 30m
       sourceRef:
         kind: HelmRepository
@@ -44,7 +44,7 @@ spec:
           app:
             image:
               repository: ghcr.io/home-operations/sonarr
-              tag: 4.0.18.2978
+              tag: 5.0.0.2569
               pullPolicy: IfNotPresent
             env:
               TZ: "America/New_York"
@@ -60,6 +60,7 @@ spec:
               SONARR__LOG__LEVEL: info
               SONARR__SERVER__PORT: &port 8989
               SONARR__UPDATE__BRANCH: develop
+              SONARR__SERVER__ALLOWEDHOSTS: "*"
             probes:
               liveness: &probes
                 enabled: true

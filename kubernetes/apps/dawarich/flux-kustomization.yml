@@ -5,8 +5,6 @@ kind: Kustomization
 metadata:
   name: &app dawarich
   namespace: &ns tools
-  labels:
-    components.postgres/cpgo: init
   annotations:
     chkpwd.com/gitops-hr-defaults: "disable"
 spec:
@@ -32,6 +30,18 @@ spec:
           value:
             name: dawarich-init-sql
             key: init.sql
+      target:
+        kind: PostgresCluster
+    # Fresh install: drop the pgBackRest restore dataSource. Authored here
+    # (not via the cpgo=init label) so it does not clobber the patches above.
+    - patch: |
+        apiVersion: postgres-operator.crunchydata.com/v1beta1
+        kind: PostgresCluster
+        metadata:
+          name: not-used
+        spec:
+          dataSource:
+            $patch: delete
       target:
         kind: PostgresCluster
   postBuild:

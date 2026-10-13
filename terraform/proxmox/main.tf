@@ -1,11 +1,11 @@
-resource "proxmox_virtual_environment_cluster_options" "options" {
+resource "proxmox_cluster_options" "options" {
   language    = "en"
   keyboard    = "en-us"
   email_from  = "proxmox@chkpwd.com"
   max_workers = 5
 }
 
-resource "proxmox_virtual_environment_hardware_mapping_pci" "titan-x" {
+resource "proxmox_hardware_mapping_pci" "titan-x" {
   name = "titan-x"
   map = [
     {

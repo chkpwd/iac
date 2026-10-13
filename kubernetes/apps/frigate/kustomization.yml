@@ -1,0 +1,19 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - helm-release.yml
+  - external-secret.yml
+configMapGenerator:
+  - name: frigate-configmap
+    files:
+      - config.yml=./config.yml
+  - name: frigate-s6-scripts
+    files:
+      - run=./s6-log-prepare-run
+      - s6-applyuidgid=./s6-applyuidgid
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled

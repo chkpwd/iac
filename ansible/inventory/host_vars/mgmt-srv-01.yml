@@ -14,7 +14,7 @@ service_definitions:
       - "{{ compose_configuration_path }}/nginx_webserver/files:/files"
     state: stopped
   - name: scanservjs
-    image: sbs20/scanservjs:3.1.0
+    image: sbs20/scanservjs:3.3.0
     ports:
       - 8087:8080
     env:
@@ -37,15 +37,15 @@ service_definitions:
       traefik.http.routers.scanservjs.tls.domains[0].main: chkpwd.com
       traefik.http.routers.scanservjs.tls.domains[0].sans: "*.chkpwd.com"
     dns_servers:
-      - 10.0.10.4
-  - name: dyrne
-    image: ghcr.io/overengineers-anonymous/dyrne
-    ports: ["5001:5000"]
-  - name: bws-cache
-    image: ghcr.io/ripplefcl/bws-cache:v3.2.2
-    env:
-      PARSE_SECRET_VALUES: "true"
-      LOG_LEVEL: "warning"
-      ENABLE_TELEMETRY: "true"
-      SENTRY_ENVIRONMENT: "chkpwd"
-    ports: ["5000:5000"]
+      - 10.0.10.1
+  # - name: dyrne
+  #   image: ghcr.io/overengineers-anonymous/dyrne
+  #   ports: ["5001:5000"]
+  # - name: bws-cache
+  #   image: ghcr.io/ripplefcl/bws-cache:v3.2.2
+  #   env:
+  #     PARSE_SECRET_VALUES: "true"
+  #     LOG_LEVEL: "warning"
+  #     ENABLE_TELEMETRY: "true"
+  #     SENTRY_ENVIRONMENT: "chkpwd"
+  #   ports: ["5000:5000"]
