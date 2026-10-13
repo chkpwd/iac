@@ -1,21 +1,72 @@
 {
   $schema: "https://docs.renovatebot.com/renovate-schema.json",
+  customDatasources: {
+    // grafana.com dashboard registry — resolves a dashboard `id` to its latest `revision`.
+    "grafana-dashboards": {
+      defaultRegistryUrlTemplate: "https://grafana.com/api/dashboards/{{packageName}}",
+      format: "json",
+      transformTemplates: [
+        '{"releases":[{"version": $string(revision)}], "sourceDirectory": name}',
+      ],
+    },
+  },
   customManagers: [
     {
       customType: "regex",
       description: "Process annotated dependencies",
-      managerFilePatterns: ["^kubernetes/talos/talconfig\\.ya?ml$"],
+      // Broadened from talconfig-only to every kubernetes manifest so all `# renovate:`
+      // annotations are tracked (e.g. core/tuppr/resources/upgrades.yml), not just talconfig.
+      managerFilePatterns: ["/^kubernetes/.+\\.ya?ml$/"],
       matchStrings: [
-        // # renovate: datasource=helm depName=cilium repository=https://helm.cilium.io
-        // version: 1.15.1
-        // # renovate: datasource=docker depName=ghcr.io/siderolabs/kubelet
-        // KUBERNETES_VERSION=v1.35.2
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( repository=(?<registryUrl>\\S+))?\\n.+(:\\s|=)(&\\S+\\s)?(?<currentValue>\\S+)",
+        // # renovate: datasource=docker depName=ghcr.io/siderolabs/installer
+        // version: v1.12.7
+        // Handles YAML values, quoted values, YAML anchors and KEY=value env lines.
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( repository=(?<registryUrl>\\S+))?\\n.+(:\\s|=)(&\\S+\\s)?[\"']?(?<currentValue>[^\"'\\s]+)[\"']?",
         // # renovate: datasource=docker depName=ghcr.io/prometheus-operator/prometheus-operator
-        // https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.0/example/prometheus-operator-crd/monitoring.coreos.com_alertmanagerconfigs.yaml
+        // https://raw.githubusercontent.com/prometheus-operator/prometheus-operator/v0.80.0/example/...yaml
         "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\n.+/(?<currentValue>(v|\\d)[^/]+)",
       ],
       datasourceTemplate: "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
+    },
+    {
+      customType: "regex",
+      description: "Pick up tagged `oci://` references (Flux artifacts, OCI Helm charts)",
+      managerFilePatterns: ["/^kubernetes/.+\\.ya?ml$/"],
+      matchStrings: ["oci://(?<depName>[^:]+):(?<currentValue>\\S+)"],
+      datasourceTemplate: "docker",
+    },
+    {
+      // grafana-operator GrafanaDashboard CRs express the dependency as structured
+      // `spec.grafanaCom.{id,revision}` fields. Everything between the two keys is captured
+      // in `gap` and replayed verbatim so blank lines and comments survive the update.
+      // One match string per common indent width (YAML forbids tabs); other indents are
+      // simply left untracked, which is the safe way to fail.
+      description: "Process grafana-operator GrafanaDashboard CRs",
+      customType: "regex",
+      managerFilePatterns: ["/^kubernetes/.+/dashboards\\.ya?ml$/"],
+      matchStrings: [
+        "grafanaCom:(?<pad>[^\\n]*)\\n(?<indent> {2})id:\\s*(?<depName>\\d+)(?<gap>[ \\t]*(?:#[^\\n]*)?(?:\\n[ \\t]*(?:#[^\\n]*)?)*?\\n {2})revision:\\s*(?<currentValue>\\d+)",
+        "grafanaCom:(?<pad>[^\\n]*)\\n(?<indent> {4})id:\\s*(?<depName>\\d+)(?<gap>[ \\t]*(?:#[^\\n]*)?(?:\\n[ \\t]*(?:#[^\\n]*)?)*?\\n {4})revision:\\s*(?<currentValue>\\d+)",
+        "grafanaCom:(?<pad>[^\\n]*)\\n(?<indent> {6})id:\\s*(?<depName>\\d+)(?<gap>[ \\t]*(?:#[^\\n]*)?(?:\\n[ \\t]*(?:#[^\\n]*)?)*?\\n {6})revision:\\s*(?<currentValue>\\d+)",
+        "grafanaCom:(?<pad>[^\\n]*)\\n(?<indent> {8})id:\\s*(?<depName>\\d+)(?<gap>[ \\t]*(?:#[^\\n]*)?(?:\\n[ \\t]*(?:#[^\\n]*)?)*?\\n {8})revision:\\s*(?<currentValue>\\d+)",
+      ],
+      datasourceTemplate: "custom.grafana-dashboards",
+      versioningTemplate: "regex:^(?<major>\\d+)$",
+      autoReplaceStringTemplate: "grafanaCom:{{{pad}}}\n{{{indent}}}id: {{{depName}}}{{{gap}}}revision: {{{newValue}}}",
+    },
+    {
+      description: "Process grafana-operator GrafanaDashboard CRs (reversed key order)",
+      customType: "regex",
+      managerFilePatterns: ["/^kubernetes/.+/dashboards\\.ya?ml$/"],
+      matchStrings: [
+        "grafanaCom:(?<pad>[^\\n]*)\\n(?<indent> {2})revision:\\s*(?<currentValue>\\d+)(?<gap>[ \\t]*(?:#[^\\n]*)?(?:\\n[ \\t]*(?:#[^\\n]*)?)*?\\n {2})id:\\s*(?<depName>\\d+)",
+        "grafanaCom:(?<pad>[^\\n]*)\\n(?<indent> {4})revision:\\s*(?<currentValue>\\d+)(?<gap>[ \\t]*(?:#[^\\n]*)?(?:\\n[ \\t]*(?:#[^\\n]*)?)*?\\n {4})id:\\s*(?<depName>\\d+)",
+        "grafanaCom:(?<pad>[^\\n]*)\\n(?<indent> {6})revision:\\s*(?<currentValue>\\d+)(?<gap>[ \\t]*(?:#[^\\n]*)?(?:\\n[ \\t]*(?:#[^\\n]*)?)*?\\n {6})id:\\s*(?<depName>\\d+)",
+        "grafanaCom:(?<pad>[^\\n]*)\\n(?<indent> {8})revision:\\s*(?<currentValue>\\d+)(?<gap>[ \\t]*(?:#[^\\n]*)?(?:\\n[ \\t]*(?:#[^\\n]*)?)*?\\n {8})id:\\s*(?<depName>\\d+)",
+      ],
+      datasourceTemplate: "custom.grafana-dashboards",
+      versioningTemplate: "regex:^(?<major>\\d+)$",
+      autoReplaceStringTemplate: "grafanaCom:{{{pad}}}\n{{{indent}}}revision: {{{newValue}}}{{{gap}}}id: {{{depName}}}",
     },
     {
       customType: "regex",

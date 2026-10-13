@@ -43,5 +43,11 @@
       semanticCommitScope: "github-release",
       commitMessageTopic: "release {{depName}}",
     },
+    {
+      matchDatasources: ["custom.grafana-dashboards"],
+      semanticCommitType: "chore",
+      semanticCommitScope: "grafana-dashboards",
+      commitMessageTopic: "dashboard {{depName}}",
+    },
   ],
 }
