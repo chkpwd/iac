@@ -60,6 +60,7 @@ spec:
               SONARR__LOG__LEVEL: info
               SONARR__SERVER__PORT: &port 8989
               SONARR__UPDATE__BRANCH: develop
+              SONARR__SERVER__ALLOWEDHOSTS: "*"
             probes:
               liveness: &probes
                 enabled: true
