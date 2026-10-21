@@ -1,32 +1,42 @@
 cluster:
-  allowSchedulingOnControlPlanes: true
-  network:
-    cni:
-      name: none # Cilium deployed separately
-  coreDNS:
-    disabled: true
-  proxy:
-    disabled: true
-  apiServer:
-    certSANs:
-      - 127.0.0.1
-    extraArgs:
-      feature-gates: MutatingAdmissionPolicy=true,HPAScaleToZero=true
-      runtime-config: admissionregistration.k8s.io/v1beta1=true
-  scheduler:
-    config:
-      apiVersion: kubescheduler.config.k8s.io/v1
-      kind: KubeSchedulerConfiguration
-      profiles:
-        - schedulerName: default-scheduler
-          pluginConfig:
-            - name: PodTopologySpread
-              args:
-                defaultingType: List
-                defaultConstraints:
-                  - maxSkew: 1
-                    topologyKey: kubernetes.io/hostname
-                    whenUnsatisfiable: ScheduleAnyway
   etcd:
     advertisedSubnets:
       - 10.0.10.0/24
+---
+apiVersion: v1alpha1
+kind: KubeAPIServerConfig
+extraArgs:
+  runtime-config: admissionregistration.k8s.io/v1beta1=true # for the volsync MutatingAdmissionPolicy
+certExtraSANs:
+  - 127.0.0.1
+---
+apiVersion: v1alpha1
+kind: KubeSchedulerConfig
+config:
+  profiles:
+    - schedulerName: default-scheduler
+      pluginConfig:
+        - name: PodTopologySpread
+          args:
+            defaultingType: List
+            defaultConstraints:
+              - maxSkew: 1
+                topologyKey: kubernetes.io/hostname
+                whenUnsatisfiable: ScheduleAnyway
+---
+apiVersion: v1alpha1
+kind: KubeProxyConfig
+enabled: false # Cilium replaces kube-proxy
+---
+apiVersion: v1alpha1
+kind: KubeCoreDNSConfig
+enabled: false # CoreDNS managed separately
+---
+apiVersion: v1alpha1
+kind: KubeFlannelCNIConfig
+$patch: delete # cni: none (Cilium)
+---
+apiVersion: v1alpha1
+kind: KubeAdmissionControlConfig
+name: PodSecurity
+$patch: delete # no baseline PodSecurity enforcement (privileged workloads)

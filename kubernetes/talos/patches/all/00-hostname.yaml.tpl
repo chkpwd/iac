@@ -1,5 +1,4 @@
-# Static hostname via HostnameConfig doc (not machine.network.hostname, which
-# conflicts with the HostnameConfig doc topf emits).
+# Static per-node hostname (HostnameConfig doc, not machine.network.hostname).
 ---
 apiVersion: v1alpha1
 kind: HostnameConfig

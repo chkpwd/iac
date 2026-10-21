@@ -1,7 +1,0 @@
-# Disable Talos userspace oom-killer (workaround for a v1.12.x bug — recheck if still needed on 1.14).
----
-apiVersion: v1alpha1
-kind: OOMConfig
-triggerExpression: "false"
-cgroupRankingExpression: "0.0"
-sampleInterval: "5s"
