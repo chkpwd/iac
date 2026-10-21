@@ -3,7 +3,7 @@ resource "authentik_provider_oauth2" "oauth2" {
   client_id             = var.oauth2_values.client_id
   client_secret         = var.oauth2_values.client_secret
   client_type           = var.oauth2_values.client_type
-  authentication_flow   = data.authentik_flow.default-source-authentication.id
+  authentication_flow   = data.authentik_flow.default-authentication-flow.id
   authorization_flow    = data.authentik_flow.default-authorization-flow.id
   invalidation_flow     = data.authentik_flow.default-provider-invalidation-flow.id
   access_token_validity = "minutes=10"
