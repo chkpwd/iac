@@ -18,10 +18,11 @@ resource "routeros_ip_pool" "pool" {
 resource "routeros_ip_dhcp_server" "servers" {
   for_each = var.networks
 
-  name         = each.key
-  interface    = each.value.interface
-  address_pool = routeros_ip_pool.pool[each.key].name
-  lease_time   = "8h"
+  name                      = each.key
+  interface                 = each.value.interface
+  address_pool              = routeros_ip_pool.pool[each.key].name
+  lease_time                = "8h"
+  dynamic_lease_identifiers = "client-mac,client-id"
 }
 
 locals {

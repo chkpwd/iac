@@ -13,10 +13,10 @@ resource "routeros_interface_bridge_port" "bridge_ports" {
   for_each = {
     ether1 = { pvid = 1, frame_types = "admit-all" }
     ether2 = { pvid = 1, frame_types = "admit-all" }
-    ether3 = { pvid = 1, frame_types = "admit-all" }
+    ether3 = { pvid = 30, frame_types = "admit-only-untagged-and-priority-tagged" }
     ether4 = { pvid = 20, frame_types = "admit-only-untagged-and-priority-tagged" }
-    ether5 = { pvid = 1, frame_types = "admit-all" }
-    ether6 = { pvid = 1, frame_types = "admit-all" }
+    ether5 = { pvid = 20, frame_types = "admit-only-untagged-and-priority-tagged" }
+    ether6 = { pvid = 30, frame_types = "admit-only-untagged-and-priority-tagged" }
     ether7 = { pvid = 1, frame_types = "admit-all" }
     ether8 = { pvid = 1, frame_types = "admit-all" }
   }
