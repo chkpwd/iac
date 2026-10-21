@@ -1,0 +1,35 @@
+---
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+name: "k8s - Dead Values"
+
+on:
+  pull_request:
+    branches: ["main"]
+    paths: ["kubernetes/**"]
+  push:
+    branches: ["main"]
+    paths: ["kubernetes/**"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  deadvalues:
+    name: Dead Values
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Dead Values
+        uses: guarnz/deadvalues@v0
+        with:
+          path: kubernetes
