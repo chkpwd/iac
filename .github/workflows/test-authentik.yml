@@ -16,7 +16,7 @@ jobs:
     steps:
       - name: Checkout
         id: checkout
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Get authentik token
         id: authentik-token
         uses: goauthentik/configure-authentik-credentials@v1.2.0
