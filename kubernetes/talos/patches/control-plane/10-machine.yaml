@@ -1,0 +1,73 @@
+machine:
+  certSANs:
+    - 127.0.0.1
+  install:
+    diskSelector:
+      model: INTEL SSDSC2BB12
+  network:
+    disableSearchDomain: true # DHCP is used
+    interfaces:
+      - interface: enp0s31f6
+        dhcp: true
+        vip:
+          ip: 10.0.10.13
+        vlans:
+          - vlanId: 20
+            dhcp: false
+            addresses: []
+          - vlanId: 30
+            dhcp: false
+            addresses: []
+  files:
+    # discard_unpacked_layers (spegel, https://spegel.dev/docs/getting-started/#talos)
+    - op: create
+      path: /etc/cri/conf.d/20-customization.part
+      content: |-
+        [plugins."io.containerd.cri.v1.images"]
+          discard_unpacked_layers = false
+        # https://github.com/kubevirt/containerized-data-importer/blob/main/doc/block_cri_ownership_config.md
+        [plugins."io.containerd.cri.v1.runtime"]
+          device_ownership_from_security_context = true
+    - op: overwrite
+      path: /etc/nfsmount.conf
+      permissions: 0o644
+      content: |
+        [ NFSMount_Global_Options ]
+        nfsvers=4.2
+        hard=True
+        noatime=True
+        nconnect=16
+  sysctls:
+    fs.inotify.max_user_instances: 8192
+    fs.inotify.max_user_watches: 1048576
+    net.core.rmem_max: 67108864 # max socket receive buffer size - QUIC
+    net.core.wmem_max: 67108864 # max socket send buffer size - QUIC
+    net.core.default_qdisc: fq # Fair Queueing
+    net.ipv4.tcp_congestion_control: bbr # BBR congestion control
+    user.max_user_namespaces: "11255" # rootless containers (hostUsers)
+  udev:
+    rules:
+      - SUBSYSTEM=="drm", KERNEL=="renderD*", GROUP="44", MODE="0660" # Intel GPU
+  kubelet:
+    extraConfig:
+      maxPods: 150
+      serializeImagePulls: false
+      imageGCHighThresholdPercent: 70
+      imageGCLowThresholdPercent: 50
+    nodeIP:
+      validSubnets:
+        - 10.0.10.0/24
+  nodeLabels:
+    intel.feature.node.kubernetes.io/gpu: "true"
+  features:
+    hostDNS:
+      enabled: true
+      resolveMemberNames: true
+      forwardKubeDNSToHost: false
+    kubernetesTalosAPIAccess:
+      enabled: true
+      allowedRoles:
+        - os:admin
+      allowedKubernetesNamespaces:
+        - actions-runner-system
+        - tuppr

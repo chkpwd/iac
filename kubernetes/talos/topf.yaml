@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/postfinance/topf/main/docs/assets/topf.schema.json
+clusterName: cattle-k8s
+clusterEndpoint: https://10.0.10.13:6443
+# renovate: depName=ghcr.io/siderolabs/installer datasource=docker
+talosVersion: v1.12.7
+# renovate: depName=ghcr.io/siderolabs/kubelet datasource=docker
+kubernetesVersion: v1.35.4
+# Image Factory schematic (official system extensions) — see schematic.yaml
+schematicId: "@schematic.yaml"
+secretsPath: secrets.sops.yaml
+patchesDir: patches
+nodes:
+  - host: ct-k8s-01.chkpwd.com
+    ip: 10.0.10.10
+    role: control-plane
+  - host: ct-k8s-02.chkpwd.com
+    ip: 10.0.10.11
+    role: control-plane
+  - host: ct-k8s-03.chkpwd.com
+    ip: 10.0.10.12
+    role: control-plane

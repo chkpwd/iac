@@ -2,88 +2,74 @@
 # yml-language-server: $schema=https://taskfile.dev/schema.json
 version: "3"
 
-tasks:
-  generate-clusterconfig:
-    desc: Generate clusterconfig for Talos
-    preconditions:
-      - which test talhelper
-      - test -f {{.K8S_DIR}}/talos/talconfig.yml
-    cmds:
-      - talhelper genconfig
-        --config-file {{.K8S_DIR}}/talos/talconfig.yml
-        --out-dir {{.K8S_DIR}}/talos/clusterconfig
+vars:
+  TALOS_DIR: "{{.K8S_DIR}}/talos"
+  CLUSTERCONFIG: "{{.K8S_DIR}}/talos/clusterconfig"
 
-  apply-clusterconfig:
-    desc: Apply clusterconfig for a Talos cluster
-    vars:
-      CLUSTERCONFIG_FILES:
-        sh: ls {{.K8S_DIR}}/talos/clusterconfig/*.yaml
+env:
+  TOPFCONFIG: "{{.K8S_DIR}}/talos/topf.yaml"
+
+tasks:
+  render:
+    desc: Render Talos machine configs with topf
+    dir: "{{.TALOS_DIR}}"
     preconditions:
-      - test -f {{.TALOSCONFIG}}
+      - which topf talosctl
+      - test -f "{{.TALOS_DIR}}/topf.yaml"
     cmds:
-      - for:
-          var: CLUSTERCONFIG_FILES
-        task: _apply-machineconfig
-        vars:
-          FILENAME: "{{.ITEM}}"
-          HOSTNAME: |-
-            {{ trimPrefix (printf "cattle-k8s-") (base .ITEM) | trimSuffix ".yaml" }}
-          DRY_RUN: "{{ .DRY_RUN }}"
-          INSECURE: "{{ .INSECURE }}"
+      - topf render --output "{{.CLUSTERCONFIG}}" {{.CLI_ARGS}}
+
+  validate:
+    desc: Validate rendered machine configs (topf does not validate on its own)
+    dir: "{{.TALOS_DIR}}"
+    deps: [render]
+    cmds:
+      - for: {var: FILES}
+        cmd: talosctl validate --mode metal --config "{{.ITEM}}"
+    vars:
+      FILES:
+        sh: ls {{.CLUSTERCONFIG}}/*.yaml
+
+  apply:
+    desc: Apply config to the whole cluster via topf [CLI_ARGS="--dry-run"]
+    dir: "{{.TALOS_DIR}}"
+    preconditions:
+      - which topf
+      - test -f "{{.TALOS_DIR}}/topf.yaml"
+    cmds:
+      - topf apply {{.CLI_ARGS}}
 
   apply-node:
-    desc: Apply Talos config to a node [NODE=required]
-    preconditions:
-      - which talosctl
-      - test -f "${TALOSCONFIG}"
-      - talosctl --nodes {{.NODE}} get machineconfig
+    desc: Apply config to a single node [NODE=<hostname>] [CLI_ARGS="--dry-run"]
+    dir: "{{.TALOS_DIR}}"
     requires:
-      vars:
-        - NODE
-    vars:
-      FILE:
-        sh: ls {{.K8S_DIR}}/talos/clusterconfig/home-ops-{{.NODE}}*.yml
+      vars: [NODE]
     cmds:
-      - task: _apply-machineconfig
-        vars:
-          FILENAME: "{{.FILE}}"
-          HOSTNAME: "{{.NODE}}"
-      - talosctl --nodes {{.NODE}} health
+      # topf --nodes-filter matches the declared hostname (regex), not the IP
+      - topf --nodes-filter "{{.NODE}}" apply {{.CLI_ARGS}}
+
+  upgrade:
+    desc: Upgrade Talos on the whole cluster to topf.yaml talosVersion
+    dir: "{{.TALOS_DIR}}"
+    cmds:
+      - topf upgrade {{.CLI_ARGS}}
 
   upgrade-node:
-    desc: Upgrade Talos on a single node [NODE=required]
-    preconditions:
-      - which talosctl
-      - test -f "${TALOSCONFIG}"
-      - talosctl --nodes {{.NODE}} get machineconfig
+    desc: Upgrade Talos on a single node [NODE=<hostname>]
+    dir: "{{.TALOS_DIR}}"
     requires:
-      vars:
-        - NODE
-    vars:
-      FILE:
-        sh: ls {{.K8S_DIR}}/talos/clusterconfig/home-ops-{{.NODE}}*.yml
-      TALOS_IMAGE:
-        sh: yq '.machine.install.image' < "{{.FILE}}"
+      vars: [NODE]
     cmds:
-      - talosctl --nodes {{.NODE}} upgrade --image="{{.TALOS_IMAGE}}" --timeout=10m
-      - talosctl --nodes {{.NODE}} health
+      - topf --nodes-filter "{{.NODE}}" upgrade {{.CLI_ARGS}}
 
-  _apply-machineconfig:
-    internal: true
-    desc: Apply a single Talos machineConfig to a Talos node
-    preconditions:
-      - which talosctl
-      - test -f "{{.FILENAME}}"
-    requires:
-      vars:
-        - HOSTNAME
-        - FILENAME
-    vars:
-      MODE: '{{.MODE | default "auto"}}'
+  kubeconfig:
+    desc: Generate a temporary admin kubeconfig via topf
+    dir: "{{.TALOS_DIR}}"
     cmds:
-      - talosctl apply-config
-        --nodes "{{.HOSTNAME}}"
-        --file "{{.FILENAME}}"
-        --mode="{{.MODE}}"
-        {{ if eq "true" .INSECURE }}--insecure{{ end }}
-        {{ if eq "true" .DRY_RUN }}--dry-run{{ end }}
+      - topf kubeconfig {{.CLI_ARGS}}
+
+  secrets:
+    desc: Get or (re)generate the Talos secrets bundle
+    dir: "{{.TALOS_DIR}}"
+    cmds:
+      - topf secrets {{.CLI_ARGS}}

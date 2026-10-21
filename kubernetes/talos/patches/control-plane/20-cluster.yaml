@@ -1,0 +1,42 @@
+# All cluster-level config for control-plane nodes (consolidated).
+cluster:
+  allowSchedulingOnControlPlanes: true
+  network:
+    cni:
+      name: none # Cilium deployed separately
+  coreDNS:
+    disabled: true
+  proxy:
+    disabled: true
+  apiServer:
+    certSANs:
+      - 127.0.0.1
+    admissionControl:
+      - name: PodSecurity
+        $patch: delete
+    extraArgs:
+      # TODO(k8s v1.37 bump / Phase 3): delete both args below. At v1.37:
+      #   - MutatingAdmissionPolicy is GA (1.36) and default-on → gate is a no-op
+      #     and the v1beta1 runtime-config is obsolete (API is admissionregistration.k8s.io/v1).
+      #   - HPAScaleToZero is beta (1.37) and default-on → gate is a no-op.
+      # They are KEPT for now because at the current k8s v1.35.4 both are still
+      # off by default and removing them would disable live functionality.
+      feature-gates: MutatingAdmissionPolicy=true,HPAScaleToZero=true
+      runtime-config: admissionregistration.k8s.io/v1beta1=true
+  scheduler:
+    config:
+      apiVersion: kubescheduler.config.k8s.io/v1
+      kind: KubeSchedulerConfiguration
+      profiles:
+        - schedulerName: default-scheduler
+          pluginConfig:
+            - name: PodTopologySpread
+              args:
+                defaultingType: List
+                defaultConstraints:
+                  - maxSkew: 1
+                    topologyKey: kubernetes.io/hostname
+                    whenUnsatisfiable: ScheduleAnyway
+  etcd:
+    advertisedSubnets:
+      - 10.0.10.0/24

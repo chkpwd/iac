@@ -1,0 +1,7 @@
+# Disable oom-killer (addresses talos v1.12.x bug). Separate document kind.
+---
+apiVersion: v1alpha1
+kind: OOMConfig
+triggerExpression: "false"
+cgroupRankingExpression: "0.0"
+sampleInterval: "5s"
