@@ -46,7 +46,7 @@ jobs:
         run: python .github/scripts/update-reference-docs.py
       - name: Post analysis comment
         if: github.event_name == 'pull_request' && steps.updater.outputs.comment != ''
-        uses: mshick/add-pr-comment@v3
+        uses: mshick/add-pr-comment@ec328af66588ab8f77cdeb2c264f14aba45bbf59 # v3.12.0
         with:
           message-id: "reference-docs-analysis"
           message: ${{ steps.updater.outputs.comment }}
