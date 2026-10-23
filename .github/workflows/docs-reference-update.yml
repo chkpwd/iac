@@ -28,7 +28,7 @@ jobs:
           # Checkout the PR branch so we can commit back to it
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
           fetch-depth: 0
-      - uses: actions/setup-python@v7
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: "3.15"
           cache: pip
