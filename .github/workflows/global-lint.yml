@@ -26,7 +26,7 @@ jobs:
             .github/workflows/**/*.yaml
       - name: Run actionlint
         if: steps.changed-files.outputs.any_changed == 'true'
-        uses: bjw-s/action-actionlint@v0.1
+        uses: bjw-s/action-actionlint@b346813e82708106544f48a93a5b3fbeeb8e37eb # v0.1
         with:
           file_pattern: ${{ steps.changed-files.outputs.all_changed_files }}
   yamllint:
@@ -70,7 +70,7 @@ jobs:
             **.md
       - name: Run markdownlint-cli2
         if: steps.changed-files.outputs.any_changed == 'true'
-        uses: bjw-s/action-markdownlint-cli2@v0.1
+        uses: bjw-s/action-markdownlint-cli2@c3c44cc6f77516007f1a85d982ed6276e840dcec # v0.1
         with:
           markdownlint_config: .markdownlint.yml
           file_pattern: ${{ steps.changed-files.outputs.all_changed_files }}
@@ -87,7 +87,7 @@ jobs:
         uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
       - name: Run prettier
         if: steps.changed-files.outputs.any_changed == 'true'
-        uses: bjw-s/action-prettier-lint@v0.1
+        uses: bjw-s/action-prettier-lint@1014e6a3453ff28a8b746715f44a75306d223266 # v0.1
         with:
           prettier_ignore: .prettierignore
           prettier_config: .prettierrc.yml

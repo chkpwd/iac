@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Get authentik token
         id: authentik-token
-        uses: goauthentik/configure-authentik-credentials@v1.2.0
+        uses: goauthentik/configure-authentik-credentials@26ddaf5362494a88585b1aa719c3618dc4ec35b2 # v1.2.0
         with:
           authentik_url: https://authentik.chkpwd.com
           client_id: ${{ github.event.inputs.client_id }}
