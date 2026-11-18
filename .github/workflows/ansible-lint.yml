@@ -31,7 +31,7 @@ jobs:
             ${{ runner.OS }}-ansible-lint-cache-
       # need to find a way to cache the requirements
       - name: Run ansible-lint
-        uses: ansible/ansible-lint@main
+        uses: ansible/ansible-lint@a40df8181f416b65ddbab9deecd8ac57f4447054 # main
         with:
           setup_python: "false"
           working_directory: "ansible/"
