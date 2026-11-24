@@ -70,8 +70,11 @@ spec:
             enabled: true
           - name: pg_autoscaler
             enabled: true
+          # Orchestrator backend is unused (everything is declared via CRs) and
+          # its 15s pod polling is the prime suspect for the active mgr leaking
+          # ~100MiB/h until OOMKilled.
           - name: rook
-            enabled: true
+            enabled: false
       network:
         provider: host
         connections:
@@ -85,7 +88,7 @@ spec:
       resources:
         mgr:
           limits:
-            cpu: 500m
+            cpu: 1000m
             memory: 2Gi
           requests:
             cpu: 50m
