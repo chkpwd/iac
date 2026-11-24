@@ -22,7 +22,7 @@ jobs:
         run: env | sort
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Download Pluto
-        uses: FairwindsOps/pluto/github-action@master
+        uses: FairwindsOps/pluto/github-action@436c77cea5a73e95a1a1d8a64e5177f0b3942fc0 # master
         with:
           IMAGE_TAG: v5
       - name: Pluto detect-files
