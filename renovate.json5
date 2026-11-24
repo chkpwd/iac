@@ -34,6 +34,14 @@
   },
   packageRules: [
     {
+      // Flux v2.7 (flux-operator-manifests v0.30.0) only serves Alert/Provider at v1beta3;
+      // bumping to v1 breaks the root chkpwd-ops Kustomization. Re-enable after upgrading Flux.
+      description: "Hold Flux notification Alert/Provider apiVersion bumps",
+      matchDatasources: ["kubernetes-api"],
+      matchPackageNames: ["Alert", "Provider"],
+      enabled: false,
+    },
+    {
       description: "Treat 0.x minor bumps as breaking",
       matchUpdateTypes: ["minor"],
       matchCurrentVersion: "/^v?0\\./",
