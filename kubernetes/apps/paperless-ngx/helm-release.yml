@@ -75,19 +75,31 @@ spec:
                     key: PAPERLESS_SECRET_KEY
               USERMAP_UID: 1026
               USERMAP_GID: 100
+            # paperless >=3.5 enforces ALLOWED_HOSTS (derived from PAPERLESS_URL),
+            # so probes must send the public Host header instead of the pod IP.
             probes:
-              liveness:
+              liveness: &probe
                 enabled: true
-                type: HTTP
-              readiness:
-                enabled: true
-                type: HTTP
+                custom: true
+                spec:
+                  httpGet: &httpGet
+                    path: /
+                    port: 8000
+                    httpHeaders:
+                      - name: Host
+                        value: paperless-ngx.chkpwd.com
+                  periodSeconds: 10
+                  timeoutSeconds: 1
+                  failureThreshold: 3
+              readiness: *probe
               startup:
                 enabled: true
+                custom: true
                 spec:
-                  failureThreshold: 30
+                  httpGet: *httpGet
                   periodSeconds: 5
-                type: HTTP
+                  timeoutSeconds: 1
+                  failureThreshold: 30
             resources:
               requests:
                 cpu: 25m
