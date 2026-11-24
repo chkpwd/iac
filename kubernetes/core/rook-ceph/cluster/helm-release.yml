@@ -41,6 +41,26 @@ spec:
             namespace: networking
             sectionName: https
     cephClusterSpec:
+      # CVE-2025-30156: rotate core daemon (mon/mgr/osd) cephx keys to AES256K.
+      # CSI keys stay on the chart default `aes` until all Talos nodes run kernel 7.0+.
+      # https://rook.io/docs/rook/latest/Storage-Configuration/Advanced/cephx-key-rotation/
+      security:
+        cephx:
+          daemon:
+            keyRotationPolicy: KeyGeneration
+            keyGeneration: 2
+      healthCheck:
+        # Warnings that persist while CSI/client keys remain AES (see link above).
+        # Unmute once every key is rotated to aes256k.
+        muteHealthWarning:
+          AUTH_INSECURE_ROTATING_SERVICE_KEY_TYPE:
+            policy: mute
+          AUTH_INSECURE_CLIENT_KEY_TYPE:
+            policy: mute
+          AUTH_INSECURE_KEYS_ALLOWED:
+            policy: mute
+          AUTH_INSECURE_KEYS_CREATABLE:
+            policy: mute
       cephConfig:
         global:
           bdev_enable_discard: "true" # quote
